@@ -1414,9 +1414,8 @@ and you must not call g_action_group_change_action_state().
 The state type of a particular action will never change but it is
 possible for an action to be removed and for a new action to be added
 with the same name but a different state type.</doc>
-        <return-value transfer-ownership="full" nullable="1">
-          <doc xml:space="preserve">the state type, if the action
-is stateful</doc>
+        <return-value transfer-ownership="none" nullable="1">
+          <doc xml:space="preserve">the state type, if the action is stateful</doc>
           <type name="GLib.VariantType" c:type="const GVariantType*"/>
         </return-value>
         <parameters>
@@ -1840,9 +1839,8 @@ and you must not call g_action_group_change_action_state().
 The state type of a particular action will never change but it is
 possible for an action to be removed and for a new action to be added
 with the same name but a different state type.</doc>
-        <return-value transfer-ownership="full" nullable="1">
-          <doc xml:space="preserve">the state type, if the action
-is stateful</doc>
+        <return-value transfer-ownership="none" nullable="1">
+          <doc xml:space="preserve">the state type, if the action is stateful</doc>
           <type name="GLib.VariantType" c:type="const GVariantType*"/>
         </return-value>
         <parameters>
@@ -2135,9 +2133,8 @@ actions in the groupb</doc>
       </field>
       <field name="get_action_state_type">
         <callback name="get_action_state_type">
-          <return-value transfer-ownership="full" nullable="1">
-            <doc xml:space="preserve">the state type, if the action
-is stateful</doc>
+          <return-value transfer-ownership="none" nullable="1">
+            <doc xml:space="preserve">the state type, if the action is stateful</doc>
             <type name="GLib.VariantType" c:type="const GVariantType*"/>
           </return-value>
           <parameters>
@@ -6237,8 +6234,8 @@ decide to perform certain actions, including direct local handling
 
 In the event that the application is marked
 %G_APPLICATION_HANDLES_COMMAND_LINE the "normal processing" will
-send the @option dictionary to the primary instance where it can be
-read with g_application_command_line_get_options().  The signal
+send the @options dictionary to the primary instance where it can be
+read with g_application_command_line_get_options_dict().  The signal
 handler can modify the dictionary before returning, and the
 modified dictionary will be sent.
 
@@ -11023,6 +11020,13 @@ is authorized.</doc>
 an owner for the destination name in response to this method
 invocation.</doc>
       </member>
+      <member name="allow_interactive_authorization"
+              value="2"
+              c:identifier="G_DBUS_CALL_FLAGS_ALLOW_INTERACTIVE_AUTHORIZATION"
+              glib:nick="allow-interactive-authorization">
+        <doc xml:space="preserve">the caller is prepared to
+wait for interactive authorization. Since 2.46.</doc>
+      </member>
     </bitfield>
     <bitfield name="DBusCapabilityFlags"
               version="2.26"
@@ -11397,7 +11401,14 @@ dispatched anywhere else - not even the standard dispatch machinery
 (that API such as g_dbus_connection_signal_subscribe() and
 g_dbus_connection_send_message_with_reply() relies on) will see the
 message. Similary, if a filter consumes an outgoing message, the
-message will not be sent to the other peer.</doc>
+message will not be sent to the other peer.
+
+If @user_data_free_func is non-%NULL, it will be called (in the
+thread-default main context of the thread you are calling this
+method from) at some point after @user_data is no longer
+needed. (It is not guaranteed to be called synchronously when the
+filter is removed, and may be called after @connection has been
+destroyed.)</doc>
         <return-value transfer-ownership="none">
           <doc xml:space="preserve">a filter identifier that can be used with
     g_dbus_connection_remove_filter()</doc>
@@ -12356,6 +12367,7 @@ message bus connection.</doc>
       </method>
       <method name="register_object"
               c:identifier="g_dbus_connection_register_object"
+              shadowed-by="register_object_with_closures"
               version="2.26"
               throws="1">
         <doc xml:space="preserve">Registers callbacks for exported objects at @object_path with the
@@ -12437,6 +12449,54 @@ See this [server][gdbus-server] for an example of how to use this method.</doc>
           </parameter>
         </parameters>
       </method>
+      <method name="register_object_with_closures"
+              c:identifier="g_dbus_connection_register_object_with_closures"
+              shadows="register_object"
+              version="2.46"
+              throws="1">
+        <doc xml:space="preserve">Version of g_dbus_connection_register_object() using closures instead of a
+#GDBusInterfaceVTable for easier binding in other languages.</doc>
+        <return-value transfer-ownership="none">
+          <doc xml:space="preserve">0 if @error is set, otherwise a registration id (never 0)
+that can be used with g_dbus_connection_unregister_object() .</doc>
+          <type name="guint" c:type="guint"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="connection" transfer-ownership="none">
+            <doc xml:space="preserve">A #GDBusConnection.</doc>
+            <type name="DBusConnection" c:type="GDBusConnection*"/>
+          </instance-parameter>
+          <parameter name="object_path" transfer-ownership="none">
+            <doc xml:space="preserve">The object path to register at.</doc>
+            <type name="utf8" c:type="const gchar*"/>
+          </parameter>
+          <parameter name="interface_info" transfer-ownership="none">
+            <doc xml:space="preserve">Introspection data for the interface.</doc>
+            <type name="DBusInterfaceInfo" c:type="GDBusInterfaceInfo*"/>
+          </parameter>
+          <parameter name="method_call_closure"
+                     transfer-ownership="none"
+                     nullable="1"
+                     allow-none="1">
+            <doc xml:space="preserve">#GClosure for handling incoming method calls.</doc>
+            <type name="GObject.Closure" c:type="GClosure*"/>
+          </parameter>
+          <parameter name="get_property_closure"
+                     transfer-ownership="none"
+                     nullable="1"
+                     allow-none="1">
+            <doc xml:space="preserve">#GClosure for getting a property.</doc>
+            <type name="GObject.Closure" c:type="GClosure*"/>
+          </parameter>
+          <parameter name="set_property_closure"
+                     transfer-ownership="none"
+                     nullable="1"
+                     allow-none="1">
+            <doc xml:space="preserve">#GClosure for setting a property.</doc>
+            <type name="GObject.Closure" c:type="GClosure*"/>
+          </parameter>
+        </parameters>
+      </method>
       <method name="register_subtree"
               c:identifier="g_dbus_connection_register_subtree"
               version="2.26"
@@ -12513,7 +12573,14 @@ that can be used with g_dbus_connection_unregister_subtree() .</doc>
       <method name="remove_filter"
               c:identifier="g_dbus_connection_remove_filter"
               version="2.26">
-        <doc xml:space="preserve">Removes a filter.</doc>
+        <doc xml:space="preserve">Removes a filter.
+
+Note that since filters run in a different thread, there is a race
+condition where it is possible that the filter will be running even
+after calling g_dbus_connection_remove_filter(), so you cannot just
+free data that the filter might be using. Instead, you should pass
+a #GDestroyNotify to g_dbus_connection_add_filter(), which will be
+called when it is guaranteed that the data is no longer needed.</doc>
         <return-value transfer-ownership="none">
           <type name="none" c:type="void"/>
         </return-value>
@@ -12818,7 +12885,14 @@ processing the received signal.
 If one of %G_DBUS_SIGNAL_FLAGS_MATCH_ARG0_NAMESPACE or
 %G_DBUS_SIGNAL_FLAGS_MATCH_ARG0_PATH are given, @arg0 is
 interpreted as part of a namespace or path.  The first argument
-of a signal is matched against that part as specified by D-Bus.</doc>
+of a signal is matched against that part as specified by D-Bus.
+
+If @user_data_free_func is non-%NULL, it will be called (in the
+thread-default main context of the thread you are calling this
+method from) at some point after @user_data is no longer
+needed. (It is not guaranteed to be called synchronously when the
+signal is unsubscribed from, and may be called after @connection
+has been destroyed.)</doc>
         <return-value transfer-ownership="none">
           <doc xml:space="preserve">a subscription identifier that can be used with g_dbus_connection_signal_unsubscribe()</doc>
           <type name="guint" c:type="guint"/>
@@ -12869,7 +12943,8 @@ of a signal is matched against that part as specified by D-Bus.</doc>
             <type name="utf8" c:type="const gchar*"/>
           </parameter>
           <parameter name="flags" transfer-ownership="none">
-            <doc xml:space="preserve">flags describing how to subscribe to the signal (currently unused)</doc>
+            <doc xml:space="preserve">#GDBusSignalFlags describing how arg0 is used in subscribing to the
+    signal</doc>
             <type name="DBusSignalFlags" c:type="GDBusSignalFlags"/>
           </parameter>
           <parameter name="callback"
@@ -16089,6 +16164,14 @@ a message to be sent to the other peer.</doc>
               glib:nick="no-auto-start">
         <doc xml:space="preserve">The bus must not launch an
 owner for the destination name in response to this message.</doc>
+      </member>
+      <member name="allow_interactive_authorization"
+              value="4"
+              c:identifier="G_DBUS_MESSAGE_FLAGS_ALLOW_INTERACTIVE_AUTHORIZATION"
+              glib:nick="allow-interactive-authorization">
+        <doc xml:space="preserve">If set on a method
+call, this flag means that the caller is prepared to wait for interactive
+authorization. Since 2.46.</doc>
       </member>
     </bitfield>
     <enumeration name="DBusMessageHeaderField"
@@ -25258,6 +25341,18 @@ Corresponding #GFileAttributeType is %G_FILE_ATTRIBUTE_TYPE_BOOLEAN.</doc>
 Corresponding #GFileAttributeType is %G_FILE_ATTRIBUTE_TYPE_BOOLEAN.</doc>
       <type name="utf8" c:type="gchar*"/>
     </constant>
+    <constant name="FILE_ATTRIBUTE_STANDARD_IS_VOLATILE"
+              value="standard::is-volatile"
+              c:type="G_FILE_ATTRIBUTE_STANDARD_IS_VOLATILE"
+              version="2.46">
+      <doc xml:space="preserve">A key in the "standard" namespace for checking if a file is
+volatile. This is meant for opaque, non-POSIX-like backends to
+indicate that the URI is not persistent. Applications should look
+at #G_FILE_ATTRIBUTE_STANDARD_SYMLINK_TARGET for the persistent URI.
+
+Corresponding #GFileAttributeType is %G_FILE_ATTRIBUTE_TYPE_BOOLEAN.</doc>
+      <type name="utf8" c:type="gchar*"/>
+    </constant>
     <constant name="FILE_ATTRIBUTE_STANDARD_NAME"
               value="standard::name"
               c:type="G_FILE_ATTRIBUTE_STANDARD_NAME">
@@ -26899,7 +26994,8 @@ This call does no blocking I/O.</doc>
         </parameters>
       </virtual-method>
       <virtual-method name="get_path" invoker="get_path">
-        <doc xml:space="preserve">Gets the local pathname for #GFile, if one exists.
+        <doc xml:space="preserve">Gets the local pathname for #GFile, if one exists. If non-%NULL, this is
+guaranteed to be an absolute, canonical path. It might contain symlinks.
 
 This call does no blocking I/O.</doc>
         <return-value transfer-ownership="full" nullable="1">
@@ -30510,7 +30606,8 @@ This call does no blocking I/O.</doc>
         </parameters>
       </method>
       <method name="get_path" c:identifier="g_file_get_path">
-        <doc xml:space="preserve">Gets the local pathname for #GFile, if one exists.
+        <doc xml:space="preserve">Gets the local pathname for #GFile, if one exists. If non-%NULL, this is
+guaranteed to be an absolute, canonical path. It might contain symlinks.
 
 This call does no blocking I/O.</doc>
         <return-value transfer-ownership="full" nullable="1">
@@ -30594,10 +30691,10 @@ This call does no blocking I/O.</doc>
 
 If @parent is %NULL then this function returns %TRUE if @file has any
 parent at all.  If @parent is non-%NULL then %TRUE is only returned
-if @file is a child of @parent.</doc>
+if @file is an immediate child of @parent.</doc>
         <return-value transfer-ownership="none">
-          <doc xml:space="preserve">%TRUE if @file is a child of @parent (or any parent in the
-         case that @parent is %NULL).</doc>
+          <doc xml:space="preserve">%TRUE if @file is an immediate child of @parent (or any parent in
+         the case that @parent is %NULL).</doc>
           <type name="gboolean" c:type="gboolean"/>
         </return-value>
         <parameters>
@@ -32530,7 +32627,9 @@ If @etag is specified (not %NULL), any existing file must have that etag,
 or the error %G_IO_ERROR_WRONG_ETAG will be returned.
 
 If @make_backup is %TRUE, this function will attempt to make a backup
-of @file.
+of @file. Internally, it uses g_file_replace(), so will try to replace the
+file contents in the safest way possible. For example, atomic renames are
+used when replacing local files’ contents.
 
 If @cancellable is not %NULL, then the operation can be cancelled by
 triggering the cancellable object from another thread. If the operation
@@ -40544,7 +40643,7 @@ context is still running).</doc>
       <virtual-method name="cancel" invoker="cancel">
         <doc xml:space="preserve">Cancels a file monitor.</doc>
         <return-value transfer-ownership="none">
-          <doc xml:space="preserve">%TRUE if monitor was cancelled.</doc>
+          <doc xml:space="preserve">always %TRUE</doc>
           <type name="gboolean" c:type="gboolean"/>
         </return-value>
         <parameters>
@@ -40576,7 +40675,7 @@ context is still running).</doc>
       <method name="cancel" c:identifier="g_file_monitor_cancel">
         <doc xml:space="preserve">Cancels a file monitor.</doc>
         <return-value transfer-ownership="none">
-          <doc xml:space="preserve">%TRUE if monitor was cancelled.</doc>
+          <doc xml:space="preserve">always %TRUE</doc>
           <type name="gboolean" c:type="gboolean"/>
         </return-value>
         <parameters>
@@ -40587,30 +40686,20 @@ context is still running).</doc>
         </parameters>
       </method>
       <method name="emit_event" c:identifier="g_file_monitor_emit_event">
-        <doc xml:space="preserve">Emits the #GFileMonitor::changed signal if a change
-has taken place. Should be called from file monitor
-implementations only.
-
-The signal will be emitted from an idle handler (in the
-[thread-default main context][g-main-context-push-thread-default]).</doc>
         <return-value transfer-ownership="none">
           <type name="none" c:type="void"/>
         </return-value>
         <parameters>
           <instance-parameter name="monitor" transfer-ownership="none">
-            <doc xml:space="preserve">a #GFileMonitor.</doc>
             <type name="FileMonitor" c:type="GFileMonitor*"/>
           </instance-parameter>
           <parameter name="child" transfer-ownership="none">
-            <doc xml:space="preserve">a #GFile.</doc>
             <type name="File" c:type="GFile*"/>
           </parameter>
           <parameter name="other_file" transfer-ownership="none">
-            <doc xml:space="preserve">a #GFile.</doc>
             <type name="File" c:type="GFile*"/>
           </parameter>
           <parameter name="event_type" transfer-ownership="none">
-            <doc xml:space="preserve">a set of #GFileMonitorEvent flags.</doc>
             <type name="FileMonitorEvent" c:type="GFileMonitorEvent"/>
           </parameter>
         </parameters>
@@ -40650,13 +40739,6 @@ consecutive change events to the same file.</doc>
       <property name="cancelled" transfer-ownership="none">
         <type name="gboolean" c:type="gboolean"/>
       </property>
-      <property name="context"
-                readable="0"
-                writable="1"
-                construct-only="1"
-                transfer-ownership="none">
-        <type name="GLib.MainContext"/>
-      </property>
       <property name="rate-limit" writable="1" transfer-ownership="none">
         <type name="gint" c:type="gint"/>
       </property>
@@ -40669,7 +40751,28 @@ consecutive change events to the same file.</doc>
       <glib:signal name="changed" when="last">
         <doc xml:space="preserve">Emitted when @file has been changed.
 
-If using #G_FILE_MONITOR_SEND_MOVED flag and @event_type is
+If using %G_FILE_MONITOR_WATCH_RENAMES on a directory monitor, and
+the information is available (and if supported by the backend),
+@event_type may be %G_FILE_MONITOR_EVENT_RENAMED,
+%G_FILE_MONITOR_EVENT_MOVED_IN or %G_FILE_MONITOR_EVENT_MOVED_OUT.
+
+In all cases @file will be a child of the monitored directory.  For
+renames, @file will be the old name and @other_file is the new
+name.  For "moved in" events, @file is the name of the file that
+appeared and @other_file is the old name that it was moved from (in
+another directory).  For "moved out" events, @file is the name of
+the file that used to be in this directory and @other_file is the
+name of the file at its new location.
+
+It makes sense to treat %G_FILE_MONITOR_EVENT_MOVED_IN as
+equivalent to %G_FILE_MONITOR_EVENT_CREATED and
+%G_FILE_MONITOR_EVENT_MOVED_OUT as equivalent to
+%G_FILE_MONITOR_EVENT_DELETED, with extra information.
+%G_FILE_MONITOR_EVENT_RENAMED is equivalent to a delete/create
+pair.  This is exactly how the events will be reported in the case
+that the %G_FILE_MONITOR_WATCH_RENAMES flag is not in use.
+
+If using the deprecated flag %G_FILE_MONITOR_SEND_MOVED flag and @event_type is
 #G_FILE_MONITOR_EVENT_MOVED, @file will be set to a #GFile containing the
 old path, and @other_file will be set to a #GFile containing the new path.
 
@@ -40726,7 +40829,7 @@ In all the other cases, @other_file will be set to #NULL.</doc>
       <field name="cancel">
         <callback name="cancel">
           <return-value transfer-ownership="none">
-            <doc xml:space="preserve">%TRUE if monitor was cancelled.</doc>
+            <doc xml:space="preserve">always %TRUE</doc>
             <type name="gboolean" c:type="gboolean"/>
           </return-value>
           <parameters>
@@ -40824,7 +40927,32 @@ In all the other cases, @other_file will be set to #NULL.</doc>
               value="7"
               c:identifier="G_FILE_MONITOR_EVENT_MOVED"
               glib:nick="moved">
-        <doc xml:space="preserve">the file was moved.</doc>
+        <doc xml:space="preserve">the file was moved -- only sent if the
+  (deprecated) %G_FILE_MONITOR_SEND_MOVED flag is set</doc>
+      </member>
+      <member name="renamed"
+              value="8"
+              c:identifier="G_FILE_MONITOR_EVENT_RENAMED"
+              glib:nick="renamed">
+        <doc xml:space="preserve">the file was renamed within the
+  current directory -- only sent if the %G_FILE_MONITOR_WATCH_MOVES
+  flag is set.  Since: 2.44.</doc>
+      </member>
+      <member name="moved_in"
+              value="9"
+              c:identifier="G_FILE_MONITOR_EVENT_MOVED_IN"
+              glib:nick="moved-in">
+        <doc xml:space="preserve">the file was moved into the
+  monitored directory from another location -- only sent if the
+  %G_FILE_MONITOR_WATCH_MOVES flag is set.  Since: 2.44.</doc>
+      </member>
+      <member name="moved_out"
+              value="10"
+              c:identifier="G_FILE_MONITOR_EVENT_MOVED_OUT"
+              glib:nick="moved-out">
+        <doc xml:space="preserve">the file was moved out of the
+  monitored directory to another location -- only sent if the
+  %G_FILE_MONITOR_WATCH_MOVES flag is set.  Since: 2.44</doc>
       </member>
     </enumeration>
     <bitfield name="FileMonitorFlags"
@@ -40852,7 +40980,8 @@ In all the other cases, @other_file will be set to #NULL.</doc>
   by file renames (moves) and send a single G_FILE_MONITOR_EVENT_MOVED
   event instead (NB: not supported on all backends; the default
   behaviour -without specifying this flag- is to send single DELETED
-  and CREATED events).</doc>
+  and CREATED events).  Deprecated since 2.44: use
+  %G_FILE_MONITOR_WATCH_MOVES instead.</doc>
       </member>
       <member name="watch_hard_links"
               value="4"
@@ -40860,6 +40989,15 @@ In all the other cases, @other_file will be set to #NULL.</doc>
               glib:nick="watch-hard-links">
         <doc xml:space="preserve">Watch for changes to the file made
   via another hard link. Since 2.36.</doc>
+      </member>
+      <member name="watch_moves"
+              value="8"
+              c:identifier="G_FILE_MONITOR_WATCH_MOVES"
+              glib:nick="watch-moves">
+        <doc xml:space="preserve">Watch for rename operations on a
+  monitored directory.  This causes %G_FILE_MONITOR_EVENT_RENAMED,
+  %G_FILE_MONITOR_EVENT_MOVED_IN and %G_FILE_MONITOR_EVENT_MOVED_OUT
+  events to be emitted when possible.  Since: 2.44.</doc>
       </member>
     </bitfield>
     <record name="FileMonitorPrivate"
@@ -46518,7 +46656,7 @@ efficiently.</doc>
           </instance-parameter>
           <parameter name="item" transfer-ownership="none">
             <doc xml:space="preserve">the new item</doc>
-            <type name="gpointer" c:type="gpointer"/>
+            <type name="GObject.Object" c:type="gpointer"/>
           </parameter>
         </parameters>
       </method>
@@ -46545,14 +46683,13 @@ efficiently.</doc>
           </parameter>
           <parameter name="item" transfer-ownership="none">
             <doc xml:space="preserve">the new item</doc>
-            <type name="gpointer" c:type="gpointer"/>
+            <type name="GObject.Object" c:type="gpointer"/>
           </parameter>
         </parameters>
       </method>
       <method name="insert_sorted"
               c:identifier="g_list_store_insert_sorted"
-              version="2.44"
-              introspectable="0">
+              version="2.44">
         <doc xml:space="preserve">Inserts @item into @store at a position to be determined by the
 @compare_func.
 
@@ -46572,9 +46709,12 @@ This function takes a ref on @item.</doc>
           </instance-parameter>
           <parameter name="item" transfer-ownership="none">
             <doc xml:space="preserve">the new item</doc>
-            <type name="gpointer" c:type="gpointer"/>
+            <type name="GObject.Object" c:type="gpointer"/>
           </parameter>
-          <parameter name="compare_func" transfer-ownership="none" closure="2">
+          <parameter name="compare_func"
+                     transfer-ownership="none"
+                     scope="call"
+                     closure="2">
             <doc xml:space="preserve">pairwise comparison function for sorting</doc>
             <type name="GLib.CompareDataFunc" c:type="GCompareDataFunc"/>
           </parameter>
@@ -46618,10 +46758,30 @@ efficiently.</doc>
           </instance-parameter>
         </parameters>
       </method>
-      <method name="splice"
-              c:identifier="g_list_store_splice"
-              version="2.44"
-              introspectable="0">
+      <method name="sort" c:identifier="g_list_store_sort" version="2.46">
+        <doc xml:space="preserve">Sort the items in @store according to @compare_func.</doc>
+        <return-value transfer-ownership="none">
+          <type name="none" c:type="void"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="store" transfer-ownership="none">
+            <doc xml:space="preserve">a #GListStore</doc>
+            <type name="ListStore" c:type="GListStore*"/>
+          </instance-parameter>
+          <parameter name="compare_func"
+                     transfer-ownership="none"
+                     scope="call"
+                     closure="1">
+            <doc xml:space="preserve">pairwise comparison function for sorting</doc>
+            <type name="GLib.CompareDataFunc" c:type="GCompareDataFunc"/>
+          </parameter>
+          <parameter name="user_data" transfer-ownership="none">
+            <doc xml:space="preserve">user data for @compare_func</doc>
+            <type name="gpointer" c:type="gpointer"/>
+          </parameter>
+        </parameters>
+      </method>
+      <method name="splice" c:identifier="g_list_store_splice" version="2.44">
         <doc xml:space="preserve">Changes @store by removing @n_removals items and adding @n_additions
 items to it. @additions must contain @n_additions items of type
 #GListStore:item-type.  %NULL is not permitted.
@@ -46654,7 +46814,7 @@ the list at the time this function is called).</doc>
           <parameter name="additions" transfer-ownership="none">
             <doc xml:space="preserve">the items to add</doc>
             <array length="3" zero-terminated="0" c:type="gpointer*">
-              <type name="gpointer" c:type="gpointer"/>
+              <type name="GObject.Object"/>
             </array>
           </parameter>
           <parameter name="n_additions" transfer-ownership="none">
@@ -52553,6 +52713,11 @@ information is send by the mounting operation.</doc>
 See [Extending GIO][extending-gio].</doc>
       <type name="utf8" c:type="gchar*"/>
     </constant>
+    <record name="NativeSocketAddress"
+            c:type="GNativeSocketAddress"
+            disguised="1">
+      <doc xml:space="preserve">An socket address of some unknown native type.</doc>
+    </record>
     <class name="NativeVolumeMonitor"
            c:symbol-prefix="native_volume_monitor"
            c:type="GNativeVolumeMonitor"
@@ -52679,8 +52844,9 @@ service name rather than as a numeric port, but this functionality
 is deprecated, because it depends on the contents of /etc/services,
 which is generally quite sparse on platforms other than Linux.)</doc>
         <return-value transfer-ownership="full">
-          <doc xml:space="preserve">the new #GNetworkAddress, or %NULL on error</doc>
-          <type name="SocketConnectable" c:type="GSocketConnectable*"/>
+          <doc xml:space="preserve">the new
+  #GNetworkAddress, or %NULL on error</doc>
+          <type name="NetworkAddress" c:type="GSocketConnectable*"/>
         </return-value>
         <parameters>
           <parameter name="host_and_port" transfer-ownership="none">
@@ -52704,8 +52870,9 @@ Using this rather than g_network_address_new() or
 g_network_address_parse() allows #GSocketClient to determine
 when to use application-specific proxy protocols.</doc>
         <return-value transfer-ownership="full">
-          <doc xml:space="preserve">the new #GNetworkAddress, or %NULL on error</doc>
-          <type name="SocketConnectable" c:type="GSocketConnectable*"/>
+          <doc xml:space="preserve">the new
+  #GNetworkAddress, or %NULL on error</doc>
+          <type name="NetworkAddress" c:type="GSocketConnectable*"/>
         </return-value>
         <parameters>
           <parameter name="uri" transfer-ownership="none">
@@ -53138,6 +53305,22 @@ reachable. See #GNetworkMonitor:network-available for more details.</doc>
           </instance-parameter>
         </parameters>
       </method>
+      <method name="get_network_metered"
+              c:identifier="g_network_monitor_get_network_metered"
+              version="2.46">
+        <doc xml:space="preserve">Checks if the network is metered.
+See #GNetworkMonitor:network-metered for more details.</doc>
+        <return-value transfer-ownership="none">
+          <doc xml:space="preserve">whether the connection is metered</doc>
+          <type name="gboolean" c:type="gboolean"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="monitor" transfer-ownership="none">
+            <doc xml:space="preserve">the #GNetworkMonitor</doc>
+            <type name="NetworkMonitor" c:type="GNetworkMonitor*"/>
+          </instance-parameter>
+        </parameters>
+      </method>
       <property name="connectivity" version="2.44" transfer-ownership="none">
         <doc xml:space="preserve">More detailed information about the host's network connectivity.
 See g_network_monitor_get_connectivity() and
@@ -53164,6 +53347,28 @@ hosts at all are reachable, and should indicate this to the user
 in its UI.)
 
 See also #GNetworkMonitor::network-changed.</doc>
+        <type name="gboolean" c:type="gboolean"/>
+      </property>
+      <property name="network-metered"
+                version="2.46"
+                transfer-ownership="none">
+        <doc xml:space="preserve">Whether the network is considered metered. That is, whether the
+system has traffic flowing through the default connection that is
+subject to limitations set by service providers. For example, traffic
+might be billed by the amount of data transmitted, or there might be a
+quota on the amount of traffic per month. This is typical with tethered
+connections (3G and 4G) and in such situations, bandwidth intensive
+applications may wish to avoid network activity where possible if it will
+cost the user money or use up their limited quota.
+
+If more information is required about specific devices then the
+system network management API should be used instead (for example,
+NetworkManager or ConnMan).
+
+If this information is not available then no networks will be
+marked as metered.
+
+See also #GNetworkMonitor:network-available.</doc>
         <type name="gboolean" c:type="gboolean"/>
       </property>
       <glib:signal name="network-changed" when="last" version="2.32">
@@ -57179,6 +57384,15 @@ If the action is disabled then calls to g_action_activate() and
 g_action_change_state() have no effect.</doc>
         <type name="gboolean" c:type="gboolean"/>
       </property>
+      <property name="invert-boolean"
+                version="2.46"
+                writable="1"
+                construct-only="1"
+                transfer-ownership="none">
+        <doc xml:space="preserve">If %TRUE, the state of the action will be the negation of the
+property value, provided the property is boolean.</doc>
+        <type name="gboolean" c:type="gboolean"/>
+      </property>
       <property name="name"
                 version="2.38"
                 writable="1"
@@ -60114,7 +60328,7 @@ as a guint32, and the ttl as a guint32.
             c:symbol-prefix="resource">
       <doc xml:space="preserve">Applications and libraries often contain binary or textual data that is
 really part of the application, rather than user data. For instance
-#GtkBuilder .ui files, splashscreen images, GMenu markup xml, CSS files,
+#GtkBuilder .ui files, splashscreen images, GMenu markup XML, CSS files,
 icons, etc. These are often shipped as files in `$datadir/appname`, or
 manually included as literal strings in the code.
 
@@ -60135,7 +60349,7 @@ Resource files can also be marked to be preprocessed, by setting the value of th
 The only options currently supported are:
 
 `xml-stripblanks` which will use the xmllint command
-to strip ignorable whitespace from the xml file. For this to work,
+to strip ignorable whitespace from the XML file. For this to work,
 the `XMLLINT` environment variable must be set to the full path to
 the xmllint executable, or xmllint must be in the `PATH`; otherwise
 the preprocessing step is skipped.
@@ -60148,7 +60362,7 @@ set to the full path to the gdk-pixbuf-pixdata executable; otherwise the resourc
 abort.
 
 Resource bundles are created by the [glib-compile-resources][glib-compile-resources] program
-which takes an xml file that describes the bundle, and a set of files that the xml references. These
+which takes an XML file that describes the bundle, and a set of files that the XML references. These
 are combined into a binary resource bundle.
 
 An example resource description:
@@ -60170,23 +60384,29 @@ This will create a resource bundle with the following files:
 /org/gtk/Example/menumarkup.xml
 ]|
 
-Note that all resources in the process share the same namespace, so use java-style
+Note that all resources in the process share the same namespace, so use Java-style
 path prefixes (like in the above example) to avoid conflicts.
 
-You can then use [glib-compile-resources][glib-compile-resources] to compile the xml to a
+You can then use [glib-compile-resources][glib-compile-resources] to compile the XML to a
 binary bundle that you can load with g_resource_load(). However, its more common to use the --generate-source and
 --generate-header arguments to create a source file and header to link directly into your application.
+This will generate `get_resource()`, `register_resource()` and
+`unregister_resource()` functions, prefixed by the `--c-name` argument passed
+to [glib-compile-resources][glib-compile-resources]. `get_resource()` returns
+the generated #GResource object. The register and unregister functions
+register the resource so its files can be accessed using
+g_resources_lookup_data().
 
 Once a #GResource has been created and registered all the data in it can be accessed globally in the process by
 using API calls like g_resources_open_stream() to stream the data or g_resources_lookup_data() to get a direct pointer
-to the data. You can also use uris like "resource:///org/gtk/Example/data/splashscreen.png" with #GFile to access
+to the data. You can also use URIs like "resource:///org/gtk/Example/data/splashscreen.png" with #GFile to access
 the resource data.
 
 There are two forms of the generated source, the default version uses the compiler support for constructor
 and destructor functions (where available) to automatically create and register the #GResource on startup
 or library load time. If you pass --manual-register two functions to register/unregister the resource is instead
 created. This requires an explicit initialization call in your application/library, but it works on all platforms,
-even on the minor ones where this is not available. (Constructor support is available for at least Win32, MacOS and Linux.)
+even on the minor ones where this is not available. (Constructor support is available for at least Win32, Mac OS and Linux.)
 
 Note that resource data can point directly into the data segment of e.g. a library, so if you are unloading libraries
 during runtime you need to be very careful with keeping around pointers to data from a resource, as this goes away
@@ -60252,6 +60472,9 @@ with the global resource lookup functions like g_resources_lookup_data().</doc>
         <doc xml:space="preserve">Returns all the names of children at the specified @path in the resource.
 The return result is a %NULL terminated list of strings which should
 be released with g_strfreev().
+
+If @path is invalid or does not exist in the #GResource,
+%G_RESOURCE_ERROR_NOT_FOUND will be returned.
 
 @lookup_flags controls the behaviour of the lookup.</doc>
         <return-value transfer-ownership="full">
@@ -60389,7 +60612,7 @@ returns a #GInputStream that lets you read the data.
         </parameters>
       </method>
       <method name="ref" c:identifier="g_resource_ref" version="2.32">
-        <doc xml:space="preserve">Atomically increments the reference count of @array by one. This
+        <doc xml:space="preserve">Atomically increments the reference count of @resource by one. This
 function is MT-safe and may be called from any thread.</doc>
         <return-value transfer-ownership="full">
           <doc xml:space="preserve">The passed in #GResource</doc>
@@ -60404,7 +60627,7 @@ function is MT-safe and may be called from any thread.</doc>
       </method>
       <method name="unref" c:identifier="g_resource_unref" version="2.32">
         <doc xml:space="preserve">Atomically decrements the reference count of @resource by one. If the
-reference count drops to 0, all memory allocated by the array is
+reference count drops to 0, all memory allocated by the resource is
 released. This function is MT-safe and may be called from any
 thread.</doc>
         <return-value transfer-ownership="none">
@@ -60892,7 +61115,8 @@ values, as well as some other information.
 
 Normally, a schema has as fixed path that determines where the settings
 are stored in the conceptual global tree of settings. However, schemas
-can also be 'relocatable', i.e. not equipped with a fixed path. This is
+can also be '[relocatable][gsettings-relocatable]', i.e. not equipped with
+a fixed path. This is
 useful e.g. when the schema describes an 'account', and you want to be
 able to store a arbitrary number of accounts.
 
@@ -60911,22 +61135,36 @@ are restricted to lowercase characters, numbers and '-'. Furthermore,
 the names must begin with a lowercase character, must not end
 with a '-', and must not contain consecutive dashes.
 
-GSettings supports change notification.  The primary mechanism to
-watch for changes is to connect to the "changed" signal.  You can
-optionally watch for changes on only a single key by using a signal
-detail.  Signals are only guaranteed to be emitted for a given key
-after you have read the value of that key while a signal handler was
-connected for that key.  Signals may or may not be emitted in the
-case that the key "changed" to the value that you had previously
-read.  Signals may be reported in additional cases as well and the
-"changed" signal should really be treated as "may have changed".
-
 Similar to GConf, the default values in GSettings schemas can be
 localized, but the localized values are stored in gettext catalogs
 and looked up with the domain that is specified in the
-gettext-domain attribute of the &lt;schemalist&gt; or &lt;schema&gt;
-elements and the category that is specified in the l10n attribute of
-the &lt;key&gt; element.
+`gettext-domain` attribute of the &lt;schemalist&gt; or &lt;schema&gt;
+elements and the category that is specified in the `l10n` attribute of
+the &lt;default&gt; element. The string which is translated includes all text in
+the &lt;default&gt; element, including any surrounding quotation marks.
+
+The `l10n` attribute must be set to `messages` or `time`, and sets the
+[locale category for
+translation](https://www.gnu.org/software/gettext/manual/html_node/Aspects.html#index-locale-categories-1).
+The `messages` category should be used by default; use `time` for
+translatable date or time formats. A translation comment can be added as an
+XML comment immediately above the &lt;default&gt; element — it is recommended to
+add these comments to aid translators understand the meaning and
+implications of the default value. An optional translation `context`
+attribute can be set on the &lt;default&gt; element to disambiguate multiple
+defaults which use the same string.
+
+For example:
+|[
+ &lt;!-- Translators: A list of words which are not allowed to be typed, in
+      GVariant serialization syntax.
+      See: https://developer.gnome.org/glib/stable/gvariant-text.html --&gt;
+ &lt;default l10n='messages' context='Banned words'&gt;['bad', 'words']&lt;/default&gt;
+]|
+
+Translations of default values must remain syntactically valid serialized
+#GVariants (e.g. retaining any surrounding quotation marks) or runtime
+errors will occur.
 
 GSettings uses schemas in a compact binary form that is created
 by the [glib-compile-schemas][glib-compile-schemas]
@@ -61055,7 +61293,84 @@ underlying settings. To make this even more convenient, GSettings
 looks for a boolean property with the name "sensitivity" and
 automatically binds it to the writability of the bound setting.
 If this 'magic' gets in the way, it can be suppressed with the
-#G_SETTINGS_BIND_NO_SENSITIVITY flag.</doc>
+#G_SETTINGS_BIND_NO_SENSITIVITY flag.
+
+## Relocatable schemas # {#gsettings-relocatable}
+
+A relocatable schema is one with no `path` attribute specified on its
+&lt;schema&gt; element. By using g_settings_new_with_path(), a #GSettings object
+can be instantiated for a relocatable schema, assigning a path to the
+instance. Paths passed to g_settings_new_with_path() will typically be
+constructed dynamically from a constant prefix plus some form of instance
+identifier; but they must still be valid GSettings paths. Paths could also
+be constant and used with a globally installed schema originating from a
+dependency library.
+
+For example, a relocatable schema could be used to store geometry information
+for different windows in an application. If the schema ID was
+`org.foo.MyApp.Window`, it could be instantiated for paths
+`/org/foo/MyApp/main/`, `/org/foo/MyApp/document-1/`,
+`/org/foo/MyApp/document-2/`, etc. If any of the paths are well-known
+they can be specified as &lt;child&gt; elements in the parent schema, e.g.:
+|[
+&lt;schema id="org.foo.MyApp" path="/org/foo/MyApp/"&gt;
+  &lt;child name="main" schema="org.foo.MyApp.Window"/&gt;
+&lt;/schema&gt;
+]|
+
+## Build system integration # {#gsettings-build-system}
+
+GSettings comes with autotools integration to simplify compiling and
+installing schemas. To add GSettings support to an application, add the
+following to your `configure.ac`:
+|[
+GLIB_GSETTINGS
+]|
+
+In the appropriate `Makefile.am`, use the following snippet to compile and
+install the named schema:
+|[
+gsettings_SCHEMAS = org.foo.MyApp.gschema.xml
+EXTRA_DIST = $(gsettings_SCHEMAS)
+
+@GSETTINGS_RULES@
+]|
+
+No changes are needed to the build system to mark a schema XML file for
+translation. Assuming it sets the `gettext-domain` attribute, a schema may
+be marked for translation by adding it to `POTFILES.in`, assuming gettext
+0.19 is in use (the preferred method for translation):
+|[
+data/org.foo.MyApp.gschema.xml
+]|
+
+Alternatively, if intltool 0.50.1 is in use:
+|[
+[type: gettext/gsettings]data/org.foo.MyApp.gschema.xml
+]|
+
+GSettings will use gettext to look up translations for the &lt;summary&gt; and
+&lt;description&gt; elements, and also any &lt;default&gt; elements which have a `l10n`
+attribute set. Translations must not be included in the `.gschema.xml` file
+by the build system, for example by using intltool XML rules with a
+`.gschema.xml.in` template.
+
+If an enumerated type defined in a C header file is to be used in a GSettings
+schema, it can either be defined manually using an &lt;enum&gt; element in the
+schema XML, or it can be extracted automatically from the C header. This
+approach is preferred, as it ensures the two representations are always
+synchronised. To do so, add the following to the relevant `Makefile.am`:
+|[
+gsettings_ENUM_NAMESPACE = org.foo.MyApp
+gsettings_ENUM_FILES = my-app-enums.h my-app-misc.h
+]|
+
+`gsettings_ENUM_NAMESPACE` specifies the schema namespace for the enum files,
+which are specified in `gsettings_ENUM_FILES`. This will generate a
+`org.foo.MyApp.enums.xml` file containing the extracted enums, which will be
+automatically included in the schema compilation, install and uninstall
+rules. It should not be committed to version control or included in
+`EXTRA_DIST`.</doc>
       <constructor name="new" c:identifier="g_settings_new" version="2.26">
         <doc xml:space="preserve">Creates a new #GSettings object with the schema specified by
 @schema_id.
@@ -63051,6 +63366,28 @@ with it.</doc>
           </instance-parameter>
         </parameters>
       </method>
+      <method name="list_keys"
+              c:identifier="g_settings_schema_list_keys"
+              version="2.46">
+        <doc xml:space="preserve">Introspects the list of keys on @schema.
+
+You should probably not be calling this function from "normal" code
+(since you should already know what keys are in your schema).  This
+function is intended for introspection reasons.</doc>
+        <return-value transfer-ownership="full">
+          <doc xml:space="preserve">a list of the keys on
+  @schema</doc>
+          <array c:type="gchar**">
+            <type name="utf8"/>
+          </array>
+        </return-value>
+        <parameters>
+          <instance-parameter name="schema" transfer-ownership="none">
+            <doc xml:space="preserve">a #GSettingsSchema</doc>
+            <type name="SettingsSchema" c:type="GSettingsSchema*"/>
+          </instance-parameter>
+        </parameters>
+      </method>
       <method name="ref" c:identifier="g_settings_schema_ref" version="2.32">
         <doc xml:space="preserve">Increase the reference count of @schema, returning a new reference.</doc>
         <return-value transfer-ownership="full">
@@ -63897,7 +64234,7 @@ If no action of this name is in the group then nothing happens.</doc>
            glib:type-name="GSimpleAsyncResult"
            glib:get-type="g_simple_async_result_get_type"
            glib:type-struct="SimpleAsyncResultClass">
-      <doc xml:space="preserve">As of GLib 2.36, #GSimpleAsyncResult is deprecated in favor of
+      <doc xml:space="preserve">As of GLib 2.46, #GSimpleAsyncResult is deprecated in favor of
 #GTask, which provides a simpler API.
 
 #GSimpleAsyncResult implements #GAsyncResult.
@@ -64062,7 +64399,10 @@ baker_bake_cake_finish (Baker        *self,
 }
 ]|</doc>
       <implements name="AsyncResult"/>
-      <constructor name="new" c:identifier="g_simple_async_result_new">
+      <constructor name="new"
+                   c:identifier="g_simple_async_result_new"
+                   deprecated="1"
+                   deprecated-version="2.46">
         <doc xml:space="preserve">Creates a #GSimpleAsyncResult.
 
 The common convention is to create the #GSimpleAsyncResult in the
@@ -64073,6 +64413,7 @@ If your operation supports cancellation with #GCancellable (which it
 probably should) then you should provide the user's cancellable to
 g_simple_async_result_set_check_cancellable() immediately after
 this function returns.</doc>
+        <doc-deprecated xml:space="preserve">Use g_task_new() instead.</doc-deprecated>
         <return-value transfer-ownership="full">
           <doc xml:space="preserve">a #GSimpleAsyncResult.</doc>
           <type name="SimpleAsyncResult" c:type="GSimpleAsyncResult*"/>
@@ -64106,8 +64447,11 @@ this function returns.</doc>
       </constructor>
       <constructor name="new_error"
                    c:identifier="g_simple_async_result_new_error"
-                   introspectable="0">
+                   introspectable="0"
+                   deprecated="1"
+                   deprecated-version="2.46">
         <doc xml:space="preserve">Creates a new #GSimpleAsyncResult with a set error.</doc>
+        <doc-deprecated xml:space="preserve">Use g_task_new() and g_task_return_new_error() instead.</doc-deprecated>
         <return-value transfer-ownership="full">
           <doc xml:space="preserve">a #GSimpleAsyncResult.</doc>
           <type name="SimpleAsyncResult" c:type="GSimpleAsyncResult*"/>
@@ -64152,8 +64496,11 @@ this function returns.</doc>
         </parameters>
       </constructor>
       <constructor name="new_from_error"
-                   c:identifier="g_simple_async_result_new_from_error">
+                   c:identifier="g_simple_async_result_new_from_error"
+                   deprecated="1"
+                   deprecated-version="2.46">
         <doc xml:space="preserve">Creates a #GSimpleAsyncResult from an error condition.</doc>
+        <doc-deprecated xml:space="preserve">Use g_task_new() and g_task_return_error() instead.</doc-deprecated>
         <return-value transfer-ownership="full">
           <doc xml:space="preserve">a #GSimpleAsyncResult.</doc>
           <type name="SimpleAsyncResult" c:type="GSimpleAsyncResult*"/>
@@ -64188,9 +64535,12 @@ this function returns.</doc>
       <constructor name="new_take_error"
                    c:identifier="g_simple_async_result_new_take_error"
                    version="2.28"
-                   introspectable="0">
+                   introspectable="0"
+                   deprecated="1"
+                   deprecated-version="2.46">
         <doc xml:space="preserve">Creates a #GSimpleAsyncResult from an error condition, and takes over the
 caller's ownership of @error, so the caller does not need to free it anymore.</doc>
+        <doc-deprecated xml:space="preserve">Use g_task_new() and g_task_return_error() instead.</doc-deprecated>
         <return-value transfer-ownership="full">
           <doc xml:space="preserve">a #GSimpleAsyncResult</doc>
           <type name="SimpleAsyncResult" c:type="GSimpleAsyncResult*"/>
@@ -64224,7 +64574,9 @@ caller's ownership of @error, so the caller does not need to free it anymore.</d
       </constructor>
       <function name="is_valid"
                 c:identifier="g_simple_async_result_is_valid"
-                version="2.20">
+                version="2.20"
+                deprecated="1"
+                deprecated-version="2.46">
         <doc xml:space="preserve">Ensures that the data passed to the _finish function of an async
 operation is consistent.  Three checks are performed.
 
@@ -64237,6 +64589,7 @@ to the _async function corresponding to the _finish function from
 which this function is called).  (Alternatively, if either
 @source_tag or @result's source tag is %NULL, then the source tag
 check is skipped.)</doc>
+        <doc-deprecated xml:space="preserve">Use #GTask and g_task_is_valid() instead.</doc-deprecated>
         <return-value transfer-ownership="none">
           <doc xml:space="preserve">#TRUE if all checks passed or #FALSE if any failed.</doc>
           <type name="gboolean" c:type="gboolean"/>
@@ -64262,7 +64615,10 @@ check is skipped.)</doc>
           </parameter>
         </parameters>
       </function>
-      <method name="complete" c:identifier="g_simple_async_result_complete">
+      <method name="complete"
+              c:identifier="g_simple_async_result_complete"
+              deprecated="1"
+              deprecated-version="2.46">
         <doc xml:space="preserve">Completes an asynchronous I/O job immediately. Must be called in
 the thread where the asynchronous result was to be delivered, as it
 invokes the callback directly. If you are in a different thread use
@@ -64270,6 +64626,7 @@ g_simple_async_result_complete_in_idle().
 
 Calling this function takes a reference to @simple for as long as
 is needed to complete the call.</doc>
+        <doc-deprecated xml:space="preserve">Use #GTask instead.</doc-deprecated>
         <return-value transfer-ownership="none">
           <type name="none" c:type="void"/>
         </return-value>
@@ -64281,7 +64638,9 @@ is needed to complete the call.</doc>
         </parameters>
       </method>
       <method name="complete_in_idle"
-              c:identifier="g_simple_async_result_complete_in_idle">
+              c:identifier="g_simple_async_result_complete_in_idle"
+              deprecated="1"
+              deprecated-version="2.46">
         <doc xml:space="preserve">Completes an asynchronous function in an idle handler in the
 [thread-default main context][g-main-context-push-thread-default]
 of the thread that @simple was initially created in
@@ -64289,6 +64648,7 @@ of the thread that @simple was initially created in
 
 Calling this function takes a reference to @simple for as long as
 is needed to complete the call.</doc>
+        <doc-deprecated xml:space="preserve">Use #GTask instead.</doc-deprecated>
         <return-value transfer-ownership="none">
           <type name="none" c:type="void"/>
         </return-value>
@@ -64300,8 +64660,11 @@ is needed to complete the call.</doc>
         </parameters>
       </method>
       <method name="get_op_res_gboolean"
-              c:identifier="g_simple_async_result_get_op_res_gboolean">
+              c:identifier="g_simple_async_result_get_op_res_gboolean"
+              deprecated="1"
+              deprecated-version="2.46">
         <doc xml:space="preserve">Gets the operation result boolean from within the asynchronous result.</doc>
+        <doc-deprecated xml:space="preserve">Use #GTask and g_task_propagate_boolean() instead.</doc-deprecated>
         <return-value transfer-ownership="none">
           <doc xml:space="preserve">%TRUE if the operation's result was %TRUE, %FALSE
     if the operation's result was %FALSE.</doc>
@@ -64316,8 +64679,11 @@ is needed to complete the call.</doc>
       </method>
       <method name="get_op_res_gpointer"
               c:identifier="g_simple_async_result_get_op_res_gpointer"
-              introspectable="0">
+              introspectable="0"
+              deprecated="1"
+              deprecated-version="2.46">
         <doc xml:space="preserve">Gets a pointer result as returned by the asynchronous function.</doc>
+        <doc-deprecated xml:space="preserve">Use #GTask and g_task_propagate_pointer() instead.</doc-deprecated>
         <return-value>
           <doc xml:space="preserve">a pointer from the result.</doc>
           <type name="gpointer" c:type="gpointer"/>
@@ -64330,8 +64696,11 @@ is needed to complete the call.</doc>
         </parameters>
       </method>
       <method name="get_op_res_gssize"
-              c:identifier="g_simple_async_result_get_op_res_gssize">
+              c:identifier="g_simple_async_result_get_op_res_gssize"
+              deprecated="1"
+              deprecated-version="2.46">
         <doc xml:space="preserve">Gets a gssize from the asynchronous result.</doc>
+        <doc-deprecated xml:space="preserve">Use #GTask and g_task_propagate_int() instead.</doc-deprecated>
         <return-value transfer-ownership="none">
           <doc xml:space="preserve">a gssize returned from the asynchronous function.</doc>
           <type name="gssize" c:type="gssize"/>
@@ -64345,8 +64714,11 @@ is needed to complete the call.</doc>
       </method>
       <method name="get_source_tag"
               c:identifier="g_simple_async_result_get_source_tag"
-              introspectable="0">
+              introspectable="0"
+              deprecated="1"
+              deprecated-version="2.46.">
         <doc xml:space="preserve">Gets the source tag for the #GSimpleAsyncResult.</doc>
+        <doc-deprecated xml:space="preserve">Use #GTask and g_task_get_source_tag() instead.</doc-deprecated>
         <return-value>
           <doc xml:space="preserve">a #gpointer to the source object for the #GSimpleAsyncResult.</doc>
           <type name="gpointer" c:type="gpointer"/>
@@ -64360,6 +64732,8 @@ is needed to complete the call.</doc>
       </method>
       <method name="propagate_error"
               c:identifier="g_simple_async_result_propagate_error"
+              deprecated="1"
+              deprecated-version="2.46"
               throws="1">
         <doc xml:space="preserve">Propagates an error from within the simple asynchronous result to
 a given destination.
@@ -64367,6 +64741,7 @@ a given destination.
 If the #GCancellable given to a prior call to
 g_simple_async_result_set_check_cancellable() is cancelled then this
 function will return %TRUE with @dest set appropriately.</doc>
+        <doc-deprecated xml:space="preserve">Use #GTask instead.</doc-deprecated>
         <return-value transfer-ownership="none">
           <doc xml:space="preserve">%TRUE if the error was propagated to @dest. %FALSE otherwise.</doc>
           <type name="gboolean" c:type="gboolean"/>
@@ -64380,13 +64755,16 @@ function will return %TRUE with @dest set appropriately.</doc>
       </method>
       <method name="run_in_thread"
               c:identifier="g_simple_async_result_run_in_thread"
-              introspectable="0">
+              introspectable="0"
+              deprecated="1"
+              deprecated-version="2.46">
         <doc xml:space="preserve">Runs the asynchronous job in a separate thread and then calls
 g_simple_async_result_complete_in_idle() on @simple to return
 the result to the appropriate main loop.
 
 Calling this function takes a reference to @simple for as long as
 is needed to run the job and report its completion.</doc>
+        <doc-deprecated xml:space="preserve">Use #GTask and g_task_run_in_thread() instead.</doc-deprecated>
         <return-value transfer-ownership="none">
           <type name="none" c:type="void"/>
         </return-value>
@@ -64415,7 +64793,9 @@ is needed to run the job and report its completion.</doc>
       </method>
       <method name="set_check_cancellable"
               c:identifier="g_simple_async_result_set_check_cancellable"
-              version="2.32">
+              version="2.32"
+              deprecated="1"
+              deprecated-version="2.46">
         <doc xml:space="preserve">Sets a #GCancellable to check before dispatching results.
 
 This function has one very specific purpose: the provided cancellable
@@ -64431,6 +64811,7 @@ already been sent as an idle to the main context to be dispatched).
 
 The checking described above is done regardless of any call to the
 unrelated g_simple_async_result_set_handle_cancellation() function.</doc>
+        <doc-deprecated xml:space="preserve">Use #GTask instead.</doc-deprecated>
         <return-value transfer-ownership="none">
           <type name="none" c:type="void"/>
         </return-value>
@@ -64450,8 +64831,11 @@ unrelated g_simple_async_result_set_handle_cancellation() function.</doc>
       </method>
       <method name="set_error"
               c:identifier="g_simple_async_result_set_error"
-              introspectable="0">
+              introspectable="0"
+              deprecated="1"
+              deprecated-version="2.46">
         <doc xml:space="preserve">Sets an error within the asynchronous result without a #GError.</doc>
+        <doc-deprecated xml:space="preserve">Use #GTask and g_task_return_new_error() instead.</doc-deprecated>
         <return-value transfer-ownership="none">
           <type name="none" c:type="void"/>
         </return-value>
@@ -64480,9 +64864,12 @@ unrelated g_simple_async_result_set_handle_cancellation() function.</doc>
       </method>
       <method name="set_error_va"
               c:identifier="g_simple_async_result_set_error_va"
-              introspectable="0">
+              introspectable="0"
+              deprecated="1"
+              deprecated-version="2.46">
         <doc xml:space="preserve">Sets an error within the asynchronous result without a #GError.
 Unless writing a binding, see g_simple_async_result_set_error().</doc>
+        <doc-deprecated xml:space="preserve">Use #GTask and g_task_return_error() instead.</doc-deprecated>
         <return-value transfer-ownership="none">
           <type name="none" c:type="void"/>
         </return-value>
@@ -64510,8 +64897,11 @@ Unless writing a binding, see g_simple_async_result_set_error().</doc>
         </parameters>
       </method>
       <method name="set_from_error"
-              c:identifier="g_simple_async_result_set_from_error">
+              c:identifier="g_simple_async_result_set_from_error"
+              deprecated="1"
+              deprecated-version="2.46">
         <doc xml:space="preserve">Sets the result from a #GError.</doc>
+        <doc-deprecated xml:space="preserve">Use #GTask and g_task_return_error() instead.</doc-deprecated>
         <return-value transfer-ownership="none">
           <type name="none" c:type="void"/>
         </return-value>
@@ -64527,7 +64917,9 @@ Unless writing a binding, see g_simple_async_result_set_error().</doc>
         </parameters>
       </method>
       <method name="set_handle_cancellation"
-              c:identifier="g_simple_async_result_set_handle_cancellation">
+              c:identifier="g_simple_async_result_set_handle_cancellation"
+              deprecated="1"
+              deprecated-version="2.46">
         <doc xml:space="preserve">Sets whether to handle cancellation within the asynchronous operation.
 
 This function has nothing to do with
@@ -64548,8 +64940,11 @@ g_simple_async_result_set_check_cancellable().  It only refers to the
         </parameters>
       </method>
       <method name="set_op_res_gboolean"
-              c:identifier="g_simple_async_result_set_op_res_gboolean">
+              c:identifier="g_simple_async_result_set_op_res_gboolean"
+              deprecated="1"
+              deprecated-version="2.46">
         <doc xml:space="preserve">Sets the operation result to a boolean within the asynchronous result.</doc>
+        <doc-deprecated xml:space="preserve">Use #GTask and g_task_return_boolean() instead.</doc-deprecated>
         <return-value transfer-ownership="none">
           <type name="none" c:type="void"/>
         </return-value>
@@ -64566,8 +64961,11 @@ g_simple_async_result_set_check_cancellable().  It only refers to the
       </method>
       <method name="set_op_res_gpointer"
               c:identifier="g_simple_async_result_set_op_res_gpointer"
-              introspectable="0">
+              introspectable="0"
+              deprecated="1"
+              deprecated-version="2.46">
         <doc xml:space="preserve">Sets the operation result within the asynchronous result to a pointer.</doc>
+        <doc-deprecated xml:space="preserve">Use #GTask and g_task_return_pointer() instead.</doc-deprecated>
         <return-value transfer-ownership="none">
           <type name="none" c:type="void"/>
         </return-value>
@@ -64589,9 +64987,12 @@ g_simple_async_result_set_check_cancellable().  It only refers to the
         </parameters>
       </method>
       <method name="set_op_res_gssize"
-              c:identifier="g_simple_async_result_set_op_res_gssize">
+              c:identifier="g_simple_async_result_set_op_res_gssize"
+              deprecated="1"
+              deprecated-version="2.46">
         <doc xml:space="preserve">Sets the operation result within the asynchronous result to
 the given @op_res.</doc>
+        <doc-deprecated xml:space="preserve">Use #GTask and g_task_return_int() instead.</doc-deprecated>
         <return-value transfer-ownership="none">
           <type name="none" c:type="void"/>
         </return-value>
@@ -64609,9 +65010,12 @@ the given @op_res.</doc>
       <method name="take_error"
               c:identifier="g_simple_async_result_take_error"
               version="2.28"
-              introspectable="0">
+              introspectable="0"
+              deprecated="1"
+              deprecated-version="2.46">
         <doc xml:space="preserve">Sets the result from @error, and takes over the caller's ownership
 of @error, so the caller does not need to free it any more.</doc>
+        <doc-deprecated xml:space="preserve">Use #GTask and g_task_return_error() instead.</doc-deprecated>
         <return-value transfer-ownership="none">
           <type name="none" c:type="void"/>
         </return-value>
@@ -65067,7 +65471,10 @@ will be set to non-blocking mode, independent on the blocking
 mode of the #GSocket.
 
 On success, the returned #GSocket takes ownership of @fd. On failure, the
-caller must close @fd themselves.</doc>
+caller must close @fd themselves.
+
+Since GLib 2.46, it is no longer a fatal error to call this on a non-socket
+descriptor.  Instead, a GError will be set with code %G_IO_ERROR_FAILED</doc>
         <return-value transfer-ownership="full">
           <doc xml:space="preserve">a #GSocket or %NULL on error.
     Free the returned object with g_object_unref().</doc>
@@ -68487,7 +68894,10 @@ the future; unrecognized @event values should be ignored.</doc>
             <doc xml:space="preserve">the #GSocketConnectable that @event is occurring on</doc>
             <type name="SocketConnectable"/>
           </parameter>
-          <parameter name="connection" transfer-ownership="none">
+          <parameter name="connection"
+                     transfer-ownership="none"
+                     nullable="1"
+                     allow-none="1">
             <doc xml:space="preserve">the current representation of the connection</doc>
             <type name="IOStream"/>
           </parameter>
@@ -69020,7 +69430,7 @@ applications to print e.g. "Connecting to example.com
 This can be useful if you want to do something unusual on it
 not supported by the #GSocketConnection APIs.</doc>
         <return-value transfer-ownership="none">
-          <doc xml:space="preserve">a #GSocketAddress or %NULL on error.</doc>
+          <doc xml:space="preserve">a #GSocket or %NULL on error.</doc>
           <type name="Socket" c:type="GSocket*"/>
         </return-value>
         <parameters>
@@ -69512,6 +69922,22 @@ or g_socket_listener_add_inet_port().</doc>
           </instance-parameter>
         </parameters>
       </virtual-method>
+      <virtual-method name="event">
+        <return-value transfer-ownership="none">
+          <type name="none" c:type="void"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="listener" transfer-ownership="none">
+            <type name="SocketListener" c:type="GSocketListener*"/>
+          </instance-parameter>
+          <parameter name="event" transfer-ownership="none">
+            <type name="SocketListenerEvent" c:type="GSocketListenerEvent*"/>
+          </parameter>
+          <parameter name="socket" transfer-ownership="none">
+            <type name="Socket" c:type="GSocket*"/>
+          </parameter>
+        </parameters>
+      </virtual-method>
       <method name="accept"
               c:identifier="g_socket_listener_accept"
               version="2.22"
@@ -69946,6 +70372,25 @@ See g_socket_set_listen_backlog() for details</doc>
       <field name="priv">
         <type name="SocketListenerPrivate" c:type="GSocketListenerPrivate*"/>
       </field>
+      <glib:signal name="event" when="last" version="2.46">
+        <doc xml:space="preserve">Emitted when @listener's activity on @socket changes state.
+Note that when @listener is used to listen on both IPv4 and
+IPv6, a separate set of signals will be emitted for each, and
+the order they happen in is undefined.</doc>
+        <return-value transfer-ownership="none">
+          <type name="none" c:type="void"/>
+        </return-value>
+        <parameters>
+          <parameter name="event" transfer-ownership="none">
+            <doc xml:space="preserve">the event that is occurring</doc>
+            <type name="SocketListenerEvent"/>
+          </parameter>
+          <parameter name="socket" transfer-ownership="none">
+            <doc xml:space="preserve">the #GSocket the event is occurring on</doc>
+            <type name="Socket"/>
+          </parameter>
+        </parameters>
+      </glib:signal>
     </class>
     <record name="SocketListenerClass"
             c:type="GSocketListenerClass"
@@ -69966,11 +70411,22 @@ See g_socket_set_listen_backlog() for details</doc>
           </parameters>
         </callback>
       </field>
-      <field name="_g_reserved1" introspectable="0">
-        <callback name="_g_reserved1">
+      <field name="event">
+        <callback name="event">
           <return-value transfer-ownership="none">
             <type name="none" c:type="void"/>
           </return-value>
+          <parameters>
+            <parameter name="listener" transfer-ownership="none">
+              <type name="SocketListener" c:type="GSocketListener*"/>
+            </parameter>
+            <parameter name="event" transfer-ownership="none">
+              <type name="SocketListenerEvent" c:type="GSocketListenerEvent*"/>
+            </parameter>
+            <parameter name="socket" transfer-ownership="none">
+              <type name="Socket" c:type="GSocket*"/>
+            </parameter>
+          </parameters>
         </callback>
       </field>
       <field name="_g_reserved2" introspectable="0">
@@ -70009,6 +70465,42 @@ See g_socket_set_listen_backlog() for details</doc>
         </callback>
       </field>
     </record>
+    <enumeration name="SocketListenerEvent"
+                 version="2.46"
+                 glib:type-name="GSocketListenerEvent"
+                 glib:get-type="g_socket_listener_event_get_type"
+                 c:type="GSocketListenerEvent">
+      <doc xml:space="preserve">Describes an event occurring on a #GSocketListener. See the
+#GSocketListener::event signal for more details.
+
+Additional values may be added to this type in the future.</doc>
+      <member name="binding"
+              value="0"
+              c:identifier="G_SOCKET_LISTENER_BINDING"
+              glib:nick="binding">
+        <doc xml:space="preserve">The listener is about to bind a socket.</doc>
+      </member>
+      <member name="bound"
+              value="1"
+              c:identifier="G_SOCKET_LISTENER_BOUND"
+              glib:nick="bound">
+        <doc xml:space="preserve">The listener has bound a socket.</doc>
+      </member>
+      <member name="listening"
+              value="2"
+              c:identifier="G_SOCKET_LISTENER_LISTENING"
+              glib:nick="listening">
+        <doc xml:space="preserve">The listener is about to start
+   listening on this socket.</doc>
+      </member>
+      <member name="listened"
+              value="3"
+              c:identifier="G_SOCKET_LISTENER_LISTENED"
+              glib:nick="listened">
+        <doc xml:space="preserve">The listener is now listening on
+  this socket.</doc>
+      </member>
+    </enumeration>
     <record name="SocketListenerPrivate"
             c:type="GSocketListenerPrivate"
             disguised="1">
@@ -70214,6 +70706,14 @@ will happen automatically when the #GSocketService is finalized.)</doc>
           </instance-parameter>
         </parameters>
       </method>
+      <property name="active"
+                version="2.46"
+                writable="1"
+                construct="1"
+                transfer-ownership="none">
+        <doc xml:space="preserve">Whether the service is currently accepting connections.</doc>
+        <type name="gboolean" c:type="gboolean"/>
+      </property>
       <field name="parent_instance">
         <type name="SocketListener" c:type="GSocketListener"/>
       </field>
@@ -71562,9 +72062,8 @@ and will be used as the environment that the process is launched in.</doc>
         <doc xml:space="preserve">Returns the value of the environment variable @variable in the
 environment of processes launched from this launcher.
 
-The returned string is in the GLib file name encoding.  On UNIX, this
-means that it can be an arbitrary byte string.  On Windows, it will
-be UTF-8.</doc>
+On UNIX, the returned string can be an arbitrary byte string.
+On Windows, it will be UTF-8.</doc>
         <return-value transfer-ownership="none">
           <doc xml:space="preserve">the value of the environment variable, %NULL if unset</doc>
           <type name="utf8" c:type="const gchar*"/>
@@ -71660,9 +72159,8 @@ g_environ_unsetenv(), etc.
 As an alternative, you can use g_subprocess_launcher_setenv(),
 g_subprocess_launcher_unsetenv(), etc.
 
-All strings in this array are expected to be in the GLib file name
-encoding.  On UNIX, this means that they can be arbitrary byte
-strings.  On Windows, they should be in UTF-8.</doc>
+On UNIX, all strings in this array can be arbitrary byte strings.
+On Windows, they should be in UTF-8.</doc>
         <return-value transfer-ownership="none">
           <type name="none" c:type="void"/>
         </return-value>
@@ -71798,9 +72296,9 @@ This feature is only available on UNIX.</doc>
         <doc xml:space="preserve">Sets the environment variable @variable in the environment of
 processes launched from this launcher.
 
-Both the variable's name and value should be in the GLib file name
-encoding. On UNIX, this means that they can be arbitrary byte
-strings. On Windows, they should be in UTF-8.</doc>
+On UNIX, both the variable's name and value can be arbitrary byte
+strings, except that the variable's name cannot contain '='.
+On Windows, they should be in UTF-8.</doc>
         <return-value transfer-ownership="none">
           <type name="none" c:type="void"/>
         </return-value>
@@ -72012,9 +72510,8 @@ This feature is only available on UNIX.</doc>
         <doc xml:space="preserve">Removes the environment variable @variable from the environment of
 processes launched from this launcher.
 
-The variable name should be in the GLib file name encoding.  On UNIX,
-this means that they can be arbitrary byte strings.  On Windows, they
-should be in UTF-8.</doc>
+On UNIX, the variable's name can be an arbitrary byte string not
+containing '='. On Windows, it should be in UTF-8.</doc>
         <return-value transfer-ownership="none">
           <type name="none" c:type="void"/>
         </return-value>
@@ -73169,7 +73666,13 @@ reference on it.</doc>
 
 This takes a ref on @task until the task completes.
 
-See #GTaskThreadFunc for more details about how @task_func is handled.</doc>
+See #GTaskThreadFunc for more details about how @task_func is handled.
+
+Although GLib currently rate-limits the tasks queued via
+g_task_run_in_thread(), you should not assume that it will always
+do this. If you have a very large number of tasks to run, but don't
+want them to all run at once, you should only queue a limited
+number of them at a time.</doc>
         <return-value transfer-ownership="none">
           <type name="none" c:type="void"/>
         </return-value>
@@ -73197,7 +73700,13 @@ See #GTaskThreadFunc for more details about how @task_func is handled.
 Normally this is used with tasks created with a %NULL
 `callback`, but note that even if the task does
 have a callback, it will not be invoked when @task_func returns.
-#GTask:completed will be set to %TRUE just before this function returns.</doc>
+#GTask:completed will be set to %TRUE just before this function returns.
+
+Although GLib currently rate-limits the tasks queued via
+g_task_run_in_thread_sync(), you should not assume that it will
+always do this. If you have a very large number of tasks to run,
+but don't want them to all run at once, you should only queue a
+limited number of them at a time.</doc>
         <return-value transfer-ownership="none">
           <type name="none" c:type="void"/>
         </return-value>
@@ -74869,6 +75378,52 @@ communicate with the server identified by @server_identity.</doc>
           </parameter>
         </parameters>
       </function>
+      <virtual-method name="copy_session_state"
+                      invoker="copy_session_state"
+                      version="2.46">
+        <doc xml:space="preserve">Copies session state from one connection to another. This is
+not normally needed, but may be used when the same session
+needs to be used between different endpoints as is required
+by some protocols such as FTP over TLS. @source should have
+already completed a handshake, and @conn should not have
+completed a handshake.</doc>
+        <return-value transfer-ownership="none">
+          <type name="none" c:type="void"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="conn" transfer-ownership="none">
+            <doc xml:space="preserve">a #GTlsClientConnection</doc>
+            <type name="TlsClientConnection" c:type="GTlsClientConnection*"/>
+          </instance-parameter>
+          <parameter name="source" transfer-ownership="none">
+            <doc xml:space="preserve">a #GTlsClientConnection</doc>
+            <type name="TlsClientConnection" c:type="GTlsClientConnection*"/>
+          </parameter>
+        </parameters>
+      </virtual-method>
+      <method name="copy_session_state"
+              c:identifier="g_tls_client_connection_copy_session_state"
+              version="2.46">
+        <doc xml:space="preserve">Copies session state from one connection to another. This is
+not normally needed, but may be used when the same session
+needs to be used between different endpoints as is required
+by some protocols such as FTP over TLS. @source should have
+already completed a handshake, and @conn should not have
+completed a handshake.</doc>
+        <return-value transfer-ownership="none">
+          <type name="none" c:type="void"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="conn" transfer-ownership="none">
+            <doc xml:space="preserve">a #GTlsClientConnection</doc>
+            <type name="TlsClientConnection" c:type="GTlsClientConnection*"/>
+          </instance-parameter>
+          <parameter name="source" transfer-ownership="none">
+            <doc xml:space="preserve">a #GTlsClientConnection</doc>
+            <type name="TlsClientConnection" c:type="GTlsClientConnection*"/>
+          </parameter>
+        </parameters>
+      </method>
       <method name="get_accepted_cas"
               c:identifier="g_tls_client_connection_get_accepted_cas"
               version="2.28">
@@ -75078,6 +75633,23 @@ overrides the default via #GTlsConnection::accept-certificate.</doc>
       <field name="g_iface">
         <doc xml:space="preserve">The parent interface.</doc>
         <type name="GObject.TypeInterface" c:type="GTypeInterface"/>
+      </field>
+      <field name="copy_session_state">
+        <callback name="copy_session_state">
+          <return-value transfer-ownership="none">
+            <type name="none" c:type="void"/>
+          </return-value>
+          <parameters>
+            <parameter name="conn" transfer-ownership="none">
+              <doc xml:space="preserve">a #GTlsClientConnection</doc>
+              <type name="TlsClientConnection" c:type="GTlsClientConnection*"/>
+            </parameter>
+            <parameter name="source" transfer-ownership="none">
+              <doc xml:space="preserve">a #GTlsClientConnection</doc>
+              <type name="TlsClientConnection" c:type="GTlsClientConnection*"/>
+            </parameter>
+          </parameters>
+        </callback>
       </field>
     </record>
     <class name="TlsConnection"
@@ -77074,7 +77646,11 @@ result of verification.</doc>
     </class>
     <record name="TlsDatabaseClass"
             c:type="GTlsDatabaseClass"
-            glib:is-gtype-struct-for="TlsDatabase">
+            glib:is-gtype-struct-for="TlsDatabase"
+            version="2.30">
+      <doc xml:space="preserve">The class for #GTlsDatabase. Derived classes should implement the various
+virtual methods. _async and _finish methods have a default
+implementation that runs the corresponding sync method in a thread.</doc>
       <field name="parent_class">
         <type name="GObject.ObjectClass" c:type="GObjectClass"/>
       </field>
@@ -86714,10 +87290,13 @@ recursively.</doc>
     </function>
     <function name="simple_async_report_error_in_idle"
               c:identifier="g_simple_async_report_error_in_idle"
-              introspectable="0">
+              introspectable="0"
+              deprecated="1"
+              deprecated-version="2.46">
       <doc xml:space="preserve">Reports an error in an asynchronous function in an idle function by
 directly setting the contents of the #GAsyncResult with the given error
 information.</doc>
+      <doc-deprecated xml:space="preserve">Use g_task_report_error().</doc-deprecated>
       <return-value transfer-ownership="none">
         <type name="none" c:type="void"/>
       </return-value>
@@ -86761,10 +87340,13 @@ information.</doc>
       </parameters>
     </function>
     <function name="simple_async_report_gerror_in_idle"
-              c:identifier="g_simple_async_report_gerror_in_idle">
+              c:identifier="g_simple_async_report_gerror_in_idle"
+              deprecated="1"
+              deprecated-version="2.46">
       <doc xml:space="preserve">Reports an error in an idle function. Similar to
 g_simple_async_report_error_in_idle(), but takes a #GError rather
 than building a new one.</doc>
+      <doc-deprecated xml:space="preserve">Use g_task_report_error().</doc-deprecated>
       <return-value transfer-ownership="none">
         <type name="none" c:type="void"/>
       </return-value>
@@ -86798,10 +87380,13 @@ than building a new one.</doc>
     <function name="simple_async_report_take_gerror_in_idle"
               c:identifier="g_simple_async_report_take_gerror_in_idle"
               version="2.28"
-              introspectable="0">
+              introspectable="0"
+              deprecated="1"
+              deprecated-version="2.46">
       <doc xml:space="preserve">Reports an error in an idle function. Similar to
 g_simple_async_report_gerror_in_idle(), but takes over the caller's
 ownership of @error, so the caller does not have to free it any more.</doc>
+      <doc-deprecated xml:space="preserve">Use g_task_report_error().</doc-deprecated>
       <return-value transfer-ownership="none">
         <type name="none" c:type="void"/>
       </return-value>

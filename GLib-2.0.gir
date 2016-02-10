@@ -143,6 +143,9 @@ particular string. A GQuark value of zero is associated to %NULL.</doc>
     <alias name="StringChunk_autoptr" c:type="GStringChunk_autoptr">
       <type name="gpointer" c:type="gpointer"/>
     </alias>
+    <alias name="String_autoptr" c:type="GString_autoptr">
+      <type name="gpointer" c:type="gpointer"/>
+    </alias>
     <alias name="Strv" c:type="GStrv">
       <doc xml:space="preserve">A C representable type name for #G_TYPE_STRV.</doc>
       <type name="gpointer" c:type="gpointer"/>
@@ -800,6 +803,48 @@ This function must be called while holding the @queue's lock.</doc>
           </parameter>
         </parameters>
       </method>
+      <method name="push_front"
+              c:identifier="g_async_queue_push_front"
+              version="2.46">
+        <doc xml:space="preserve">Pushes the @data into the @queue. @data must not be %NULL.
+In contrast to g_async_queue_push(), this function
+pushes the new item ahead of the items already in the queue,
+so that it will be the next one to be popped off the queue.</doc>
+        <return-value transfer-ownership="none">
+          <type name="none" c:type="void"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="queue" transfer-ownership="none">
+            <doc xml:space="preserve">a #GAsyncQueue</doc>
+            <type name="AsyncQueue" c:type="GAsyncQueue*"/>
+          </instance-parameter>
+          <parameter name="item" transfer-ownership="none">
+            <type name="gpointer" c:type="gpointer"/>
+          </parameter>
+        </parameters>
+      </method>
+      <method name="push_front_unlocked"
+              c:identifier="g_async_queue_push_front_unlocked"
+              version="2.46">
+        <doc xml:space="preserve">Pushes the @data into the @queue. @data must not be %NULL.
+In contrast to g_async_queue_push_unlocked(), this function
+pushes the new item ahead of the items already in the queue,
+so that it will be the next one to be popped off the queue.
+
+This function must be called while holding the @queue's lock.</doc>
+        <return-value transfer-ownership="none">
+          <type name="none" c:type="void"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="queue" transfer-ownership="none">
+            <doc xml:space="preserve">a #GAsyncQueue</doc>
+            <type name="AsyncQueue" c:type="GAsyncQueue*"/>
+          </instance-parameter>
+          <parameter name="item" transfer-ownership="none">
+            <type name="gpointer" c:type="gpointer"/>
+          </parameter>
+        </parameters>
+      </method>
       <method name="push_sorted"
               c:identifier="g_async_queue_push_sorted"
               version="2.10"
@@ -925,6 +970,42 @@ lock.</doc-deprecated>
             <doc xml:space="preserve">a #GAsyncQueue</doc>
             <type name="AsyncQueue" c:type="GAsyncQueue*"/>
           </instance-parameter>
+        </parameters>
+      </method>
+      <method name="remove" c:identifier="g_async_queue_remove" version="2.46">
+        <doc xml:space="preserve">Remove an item from the queue.</doc>
+        <return-value transfer-ownership="none">
+          <doc xml:space="preserve">%TRUE if the item was removed</doc>
+          <type name="gboolean" c:type="gboolean"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="queue" transfer-ownership="none">
+            <doc xml:space="preserve">a #GAsyncQueue</doc>
+            <type name="AsyncQueue" c:type="GAsyncQueue*"/>
+          </instance-parameter>
+          <parameter name="item" transfer-ownership="none">
+            <type name="gpointer" c:type="gpointer"/>
+          </parameter>
+        </parameters>
+      </method>
+      <method name="remove_unlocked"
+              c:identifier="g_async_queue_remove_unlocked"
+              version="2.46">
+        <doc xml:space="preserve">Remove an item from the queue.
+
+This function must be called while holding the @queue's lock.</doc>
+        <return-value transfer-ownership="none">
+          <doc xml:space="preserve">%TRUE if the item was removed</doc>
+          <type name="gboolean" c:type="gboolean"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="queue" transfer-ownership="none">
+            <doc xml:space="preserve">a #GAsyncQueue</doc>
+            <type name="AsyncQueue" c:type="GAsyncQueue*"/>
+          </instance-parameter>
+          <parameter name="item" transfer-ownership="none">
+            <type name="gpointer" c:type="gpointer"/>
+          </parameter>
         </parameters>
       </method>
       <method name="sort"
@@ -4097,8 +4178,8 @@ etc. The date must be valid.</doc>
       <method name="get_monday_week_of_year"
               c:identifier="g_date_get_monday_week_of_year">
         <doc xml:space="preserve">Returns the week of the year, where weeks are understood to start on
-Monday. If the date is before the first Monday of the year, return
-0. The date must be valid.</doc>
+Monday. If the date is before the first Monday of the year, return 0.
+The date must be valid.</doc>
         <return-value transfer-ownership="none">
           <doc xml:space="preserve">week of the year</doc>
           <type name="guint" c:type="guint"/>
@@ -4125,9 +4206,9 @@ Monday. If the date is before the first Monday of the year, return
       </method>
       <method name="get_sunday_week_of_year"
               c:identifier="g_date_get_sunday_week_of_year">
-        <doc xml:space="preserve">Returns the week of the year during which this date falls, if weeks
-are understood to being on Sunday. The date must be valid. Can return
-0 if the day is before the first Sunday of the year.</doc>
+        <doc xml:space="preserve">Returns the week of the year during which this date falls, if
+weeks are understood to being on Sunday. The date must be valid.
+Can return 0 if the day is before the first Sunday of the year.</doc>
         <return-value transfer-ownership="none">
           <doc xml:space="preserve">week number</doc>
           <type name="guint" c:type="guint"/>
@@ -5297,7 +5378,7 @@ The following format specifiers are supported:
 - \%A: the full weekday name according to the current locale
 - \%b: the abbreviated month name according to the current locale
 - \%B: the full month name according to the current locale
-- \%c: the  preferred date and time rpresentation for the current locale
+- \%c: the preferred date and time representation for the current locale
 - \%C: the century number (year/100) as a 2-digit integer (00-99)
 - \%d: the day of the month as a decimal number (range 01 to 31)
 - \%e: the day of the month as a decimal number (range  1 to 31)
@@ -6270,7 +6351,7 @@ be returned.
 If @domain contains a `FAILED` (or otherwise generic) error code,
 you should generally not check for it explicitly, but should
 instead treat any not-explicitly-recognized error code as being
-equilalent to the `FAILED` code. This way, if the domain is
+equivalent to the `FAILED` code. This way, if the domain is
 extended in the future to provide a more specific error code for
 a certain case, your code will still work.</doc>
         <return-value transfer-ownership="none">
@@ -7449,7 +7530,7 @@ the #GHashTable, the old value is freed using that function.
 If you supplied a @key_destroy_func when creating the
 #GHashTable, the old key is freed using that function.</doc>
         <return-value transfer-ownership="none">
-          <doc xml:space="preserve">%TRUE of the key did not exist yet</doc>
+          <doc xml:space="preserve">%TRUE if the key did not exist yet</doc>
           <type name="gboolean" c:type="gboolean"/>
         </return-value>
         <parameters>
@@ -9907,22 +9988,12 @@ giving the command line to execute. It is only valid for desktop
 entries with the `Application` type.</doc>
       <type name="utf8" c:type="gchar*"/>
     </constant>
-    <constant name="KEY_FILE_DESKTOP_KEY_FULLNAME"
-              value="X-GNOME-FullName"
-              c:type="G_KEY_FILE_DESKTOP_KEY_FULLNAME">
-      <type name="utf8" c:type="gchar*"/>
-    </constant>
     <constant name="KEY_FILE_DESKTOP_KEY_GENERIC_NAME"
               value="GenericName"
               c:type="G_KEY_FILE_DESKTOP_KEY_GENERIC_NAME"
               version="2.14">
       <doc xml:space="preserve">A key under #G_KEY_FILE_DESKTOP_GROUP, whose value is a localized
 string giving the generic name of the desktop entry.</doc>
-      <type name="utf8" c:type="gchar*"/>
-    </constant>
-    <constant name="KEY_FILE_DESKTOP_KEY_GETTEXT_DOMAIN"
-              value="X-GNOME-Gettext-Domain"
-              c:type="G_KEY_FILE_DESKTOP_KEY_GETTEXT_DOMAIN">
       <type name="utf8" c:type="gchar*"/>
     </constant>
     <constant name="KEY_FILE_DESKTOP_KEY_HIDDEN"
@@ -9940,11 +10011,6 @@ stating whether the desktop entry has been deleted by the user.</doc>
       <doc xml:space="preserve">A key under #G_KEY_FILE_DESKTOP_GROUP, whose value is a localized
 string giving the name of the icon to be displayed for the desktop
 entry.</doc>
-      <type name="utf8" c:type="gchar*"/>
-    </constant>
-    <constant name="KEY_FILE_DESKTOP_KEY_KEYWORDS"
-              value="Keywords"
-              c:type="G_KEY_FILE_DESKTOP_KEY_KEYWORDS">
       <type name="utf8" c:type="gchar*"/>
     </constant>
     <constant name="KEY_FILE_DESKTOP_KEY_MIME_TYPE"
@@ -10204,7 +10270,9 @@ and @error is set to #G_KEY_FILE_ERROR_INVALID_VALUE.</doc>
         <doc xml:space="preserve">Retrieves a comment above @key from @group_name.
 If @key is %NULL then @comment will be read from above
 @group_name. If both @key and @group_name are %NULL, then
-@comment will be read from above the first group in the file.</doc>
+@comment will be read from above the first group in the file.
+
+Note that the returned string includes the '#' comment markers.</doc>
         <return-value transfer-ownership="full">
           <doc xml:space="preserve">a comment that should be freed with g_free()</doc>
           <type name="utf8" c:type="gchar*"/>
@@ -11079,9 +11147,13 @@ If @group_name is %NULL, the start_group is used.</doc>
               version="2.6"
               throws="1">
         <doc xml:space="preserve">Places a comment above @key from @group_name.
+
 If @key is %NULL then @comment will be written above @group_name.
 If both @key and @group_name  are %NULL, then @comment will be
-written above the first group in the file.</doc>
+written above the first group in the file.
+
+Note that this function prepends a '#' comment marker to
+each line of @comment.</doc>
         <return-value transfer-ownership="none">
           <doc xml:space="preserve">%TRUE if the comment was written, %FALSE otherwise</doc>
           <type name="gboolean" c:type="gboolean"/>
@@ -11602,7 +11674,7 @@ it in any public header files.
 
 For example, GTK+ uses this in its Makefile.am:
 |[
-INCLUDES = -DG_LOG_DOMAIN=\"Gtk\"
+AM_CPPFLAGS = -DG_LOG_DOMAIN=\"Gtk\"
 ]|</doc>
       <type name="gchar" c:type="gchar"/>
     </constant>
@@ -12591,7 +12663,7 @@ linked against at application run time.</doc>
       <doc xml:space="preserve">The maximum value which can be held in a #guint8.</doc>
       <type name="guint8" c:type="guint8"/>
     </constant>
-    <constant name="MICRO_VERSION" value="1" c:type="GLIB_MICRO_VERSION">
+    <constant name="MICRO_VERSION" value="0" c:type="GLIB_MICRO_VERSION">
       <doc xml:space="preserve">The micro version number of the GLib library.
 
 Like #gtk_micro_version, but from the headers used at
@@ -12618,7 +12690,7 @@ linked against at application run time.</doc>
       <doc xml:space="preserve">The minimum value which can be held in a #gint8.</doc>
       <type name="gint8" c:type="gint8"/>
     </constant>
-    <constant name="MINOR_VERSION" value="44" c:type="GLIB_MINOR_VERSION">
+    <constant name="MINOR_VERSION" value="46" c:type="GLIB_MINOR_VERSION">
       <doc xml:space="preserve">The minor version number of the GLib library.
 
 Like #gtk_minor_version, but from the headers used at
@@ -14661,7 +14733,9 @@ to zero, it frees all the memory associated with the match_info structure.</doc>
     <record name="MemVTable" c:type="GMemVTable">
       <doc xml:space="preserve">A set of functions used to perform memory allocation. The same #GMemVTable must
 be used for all allocations in the same program; a call to g_mem_set_vtable(),
-if it exists, should be prior to any use of GLib.</doc>
+if it exists, should be prior to any use of GLib.
+
+This functions related to this has been deprecated in 2.46, and no longer work.</doc>
       <field name="malloc" introspectable="0">
         <callback name="malloc" introspectable="0">
           <return-value>
@@ -23481,6 +23555,9 @@ The exact type of @func depends on the type of source; ie. you
 should not count on @func being called with @data as its first
 parameter.
 
+See [memory management of sources][mainloop-memory-management] for details
+on how to handle memory management of @data.
+
 Typically, you won't use this function. Instead use functions specific
 to the type of source you are using.</doc>
         <return-value transfer-ownership="none">
@@ -24430,7 +24507,7 @@ free it after use with g_free().</doc>
           <type name="utf8" c:type="gchar*"/>
         </return-value>
         <parameters>
-          <instance-parameter name="string" transfer-ownership="none">
+          <instance-parameter name="string" transfer-ownership="full">
             <doc xml:space="preserve">a #GString</doc>
             <type name="String" c:type="GString*"/>
           </instance-parameter>
@@ -25356,6 +25433,10 @@ Some systems restrict the length of @name to 16 bytes.
 If the thread can not be created the program aborts. See
 g_thread_try_new() if you want to attempt to deal with failures.
 
+If you are using threads to offload (potentially many) short-lived tasks,
+#GThreadPool may be more appropriate than manually spawning and tracking
+multiple #GThreads.
+
 To free the struct returned by this function, use g_thread_unref().
 Note that g_thread_join() implicitly unrefs the #GThread as well.</doc>
         <return-value transfer-ownership="full">
@@ -25624,6 +25705,26 @@ After calling this function @pool must not be used anymore.</doc>
             <doc xml:space="preserve">a #GThreadPool</doc>
             <type name="ThreadPool" c:type="GThreadPool*"/>
           </instance-parameter>
+        </parameters>
+      </method>
+      <method name="move_to_front"
+              c:identifier="g_thread_pool_move_to_front"
+              version="2.46">
+        <doc xml:space="preserve">Moves the item to the front of the queue of unprocessed
+items, so that it will be processed next.</doc>
+        <return-value transfer-ownership="none">
+          <doc xml:space="preserve">%TRUE if the item was found and moved</doc>
+          <type name="gboolean" c:type="gboolean"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="pool" transfer-ownership="none">
+            <doc xml:space="preserve">a #GThreadPool</doc>
+            <type name="ThreadPool" c:type="GThreadPool*"/>
+          </instance-parameter>
+          <parameter name="data" transfer-ownership="none">
+            <doc xml:space="preserve">an unprocessed item in the pool</doc>
+            <type name="gpointer" c:type="gpointer"/>
+          </parameter>
         </parameters>
       </method>
       <method name="push" c:identifier="g_thread_pool_push" throws="1">
@@ -28962,7 +29063,9 @@ g_variant_is_signature() if you're not sure.</doc>
                    version="2.24">
         <doc xml:space="preserve">Creates a string #GVariant with the contents of @string.
 
-@string must be valid UTF-8.</doc>
+@string must be valid UTF-8, and must not be %NULL. To encode
+potentially-%NULL strings, use g_variant_new() with `ms` as the
+[format string][gvariant-format-strings-maybe-types].</doc>
         <return-value transfer-ownership="none">
           <doc xml:space="preserve">a floating reference to a new string #GVariant instance</doc>
           <type name="Variant" c:type="GVariant*"/>
@@ -29004,7 +29107,8 @@ If @length is -1 then @strv is %NULL-terminated.</doc>
                    introspectable="0">
         <doc xml:space="preserve">Creates a string #GVariant with the contents of @string.
 
-@string must be valid UTF-8.
+@string must be valid UTF-8, and must not be %NULL. To encode
+potentially-%NULL strings, use this with g_variant_new_maybe().
 
 This function consumes @string.  g_free() will be called on @string
 when it is no longer required.
@@ -29984,7 +30088,7 @@ involved.</doc>
 type.  This includes the types %G_VARIANT_TYPE_STRING,
 %G_VARIANT_TYPE_OBJECT_PATH and %G_VARIANT_TYPE_SIGNATURE.
 
-The string will always be UTF-8 encoded.
+The string will always be UTF-8 encoded, and will never be %NULL.
 
 If @length is non-%NULL then the length of the string (in bytes) is
 returned there.  For trusted values, this information is already
@@ -30693,7 +30797,8 @@ errors (in the case that the type would have been ambiguous, such as
 with empty arrays).
 
 In the event that the parsing is successful, the resulting #GVariant
-is returned.
+is returned. It is never floating, and must be freed with
+g_variant_unref().
 
 In case of any error, %NULL will be returned.  If @error is non-%NULL
 then it will be set to reflect the error that occurred.
@@ -30701,7 +30806,7 @@ then it will be set to reflect the error that occurred.
 Officially, the language understood by the parser is "any string
 produced by g_variant_print()".</doc>
         <return-value transfer-ownership="full">
-          <doc xml:space="preserve">a reference to a #GVariant, or %NULL</doc>
+          <doc xml:space="preserve">a non-floating reference to a #GVariant, or %NULL</doc>
           <type name="Variant" c:type="GVariant*"/>
         </return-value>
         <parameters>
@@ -34094,7 +34199,8 @@ from (but not including) @nth_bit upwards. Bits are numbered
 from 0 (least significant) to sizeof(#gulong) * 8 - 1 (31 or 63,
 usually). To start searching from the 0th bit, set @nth_bit to -1.</doc>
       <return-value transfer-ownership="none">
-        <doc xml:space="preserve">the index of the first bit set which is higher than @nth_bit</doc>
+        <doc xml:space="preserve">the index of the first bit set which is higher than @nth_bit, or -1
+   if no higher bits are set</doc>
         <type name="gint" c:type="gint"/>
       </return-value>
       <parameters>
@@ -34115,7 +34221,8 @@ from 0 (least significant) to sizeof(#gulong) * 8 - 1 (31 or 63,
 usually). To start searching from the last bit, set @nth_bit to
 -1 or GLIB_SIZEOF_LONG * 8.</doc>
       <return-value transfer-ownership="none">
-        <doc xml:space="preserve">the index of the first bit set which is lower than @nth_bit</doc>
+        <doc xml:space="preserve">the index of the first bit set which is lower than @nth_bit, or -1
+   if no lower bits are set</doc>
         <type name="gint" c:type="gint"/>
       </return-value>
       <parameters>
@@ -36098,8 +36205,7 @@ provided list @envp.</doc>
           </array>
         </parameter>
         <parameter name="variable" transfer-ownership="none">
-          <doc xml:space="preserve">the environment variable to get, in the GLib file name
-    encoding</doc>
+          <doc xml:space="preserve">the environment variable to get</doc>
           <type name="utf8" c:type="const gchar*"/>
         </parameter>
       </parameters>
@@ -37288,9 +37394,9 @@ will not reflect any change once the special directories are loaded.</doc>
     <function name="getenv" c:identifier="g_getenv">
       <doc xml:space="preserve">Returns the value of an environment variable.
 
-The name and value are in the GLib file name encoding. On UNIX,
-this means the actual bytes which might or might not be in some
-consistent character set and encoding. On Windows, it is in UTF-8.
+On UNIX, the name and value are byte strings which might or might not
+be in some consistent character set and encoding. On Windows, they are
+in UTF-8.
 On Windows, in case the environment variable's value contains
 references to other environment variables, they are expanded.</doc>
       <return-value transfer-ownership="none">
@@ -37302,8 +37408,7 @@ references to other environment variables, they are expanded.</doc>
       </return-value>
       <parameters>
         <parameter name="variable" transfer-ownership="none">
-          <doc xml:space="preserve">the environment variable to get, in the GLib file name
-    encoding</doc>
+          <doc xml:space="preserve">the environment variable to get</doc>
           <type name="utf8" c:type="const gchar*"/>
         </parameter>
       </parameters>
@@ -37519,7 +37624,7 @@ the #GHashTable, the old value is freed using that function.
 If you supplied a @key_destroy_func when creating the
 #GHashTable, the old key is freed using that function.</doc>
       <return-value transfer-ownership="none">
-        <doc xml:space="preserve">%TRUE of the key did not exist yet</doc>
+        <doc xml:space="preserve">%TRUE if the key did not exist yet</doc>
         <type name="gboolean" c:type="gboolean"/>
       </return-value>
       <parameters>
@@ -37880,6 +37985,9 @@ default idle priority, #G_PRIORITY_DEFAULT_IDLE.  If the function
 returns %FALSE it is automatically removed from the list of event
 sources and will not be called again.
 
+See [memory management of sources][mainloop-memory-management] for details
+on how to handle the return value and memory management of @data.
+
 This internally creates a main loop source using g_idle_source_new()
 and attaches it to the global #GMainContext using g_source_attach(), so
 the callback will be invoked in whichever thread is running that main
@@ -37906,6 +38014,9 @@ use a custom main context.</doc>
       <doc xml:space="preserve">Adds a function to be called whenever there are no higher priority
 events pending.  If the function returns %FALSE it is automatically
 removed from the list of event sources and will not be called again.
+
+See [memory management of sources][mainloop-memory-management] for details
+on how to handle the return value and memory management of @data.
 
 This internally creates a main loop source using g_idle_source_new()
 and attaches it to the global #GMainContext using g_source_attach(), so
@@ -38481,6 +38592,7 @@ g_log_default_handler() as default log handler.</doc>
     </function>
     <function name="log_set_handler"
               c:identifier="g_log_set_handler"
+              shadowed-by="log_set_handler_full"
               introspectable="0">
       <doc xml:space="preserve">Sets the log handler for a domain and a set of log levels.
 To handle fatal and recursive messages the @log_levels parameter
@@ -38536,6 +38648,49 @@ g_log_set_handler ("GLib", G_LOG_LEVEL_MASK | G_LOG_FLAG_FATAL
         <parameter name="user_data" transfer-ownership="none">
           <doc xml:space="preserve">data passed to the log handler</doc>
           <type name="gpointer" c:type="gpointer"/>
+        </parameter>
+      </parameters>
+    </function>
+    <function name="log_set_handler_full"
+              c:identifier="g_log_set_handler_full"
+              shadows="log_set_handler"
+              version="2.46">
+      <doc xml:space="preserve">Like g_log_sets_handler(), but takes a destroy notify for the @user_data.</doc>
+      <return-value transfer-ownership="none">
+        <doc xml:space="preserve">the id of the new handler</doc>
+        <type name="guint" c:type="guint"/>
+      </return-value>
+      <parameters>
+        <parameter name="log_domain"
+                   transfer-ownership="none"
+                   nullable="1"
+                   allow-none="1">
+          <doc xml:space="preserve">the log domain, or %NULL for the default ""
+    application domain</doc>
+          <type name="utf8" c:type="const gchar*"/>
+        </parameter>
+        <parameter name="log_levels" transfer-ownership="none">
+          <doc xml:space="preserve">the log levels to apply the log handler for.
+    To handle fatal and recursive messages as well, combine
+    the log levels with the #G_LOG_FLAG_FATAL and
+    #G_LOG_FLAG_RECURSION bit flags.</doc>
+          <type name="LogLevelFlags" c:type="GLogLevelFlags"/>
+        </parameter>
+        <parameter name="log_func"
+                   transfer-ownership="none"
+                   scope="notified"
+                   closure="3"
+                   destroy="4">
+          <doc xml:space="preserve">the log handler function</doc>
+          <type name="LogFunc" c:type="GLogFunc"/>
+        </parameter>
+        <parameter name="user_data" transfer-ownership="none">
+          <doc xml:space="preserve">data passed to the log handler</doc>
+          <type name="gpointer" c:type="gpointer"/>
+        </parameter>
+        <parameter name="destroy" transfer-ownership="none" scope="async">
+          <doc xml:space="preserve">destroy notify for @user_data, or %NULL</doc>
+          <type name="DestroyNotify" c:type="GDestroyNotify"/>
         </parameter>
       </parameters>
     </function>
@@ -38975,46 +39130,42 @@ of g_markup_escape_text(). See g_markup_printf_escaped().</doc>
       </parameters>
     </function>
     <function name="mem_is_system_malloc"
-              c:identifier="g_mem_is_system_malloc">
+              c:identifier="g_mem_is_system_malloc"
+              deprecated="1"
+              deprecated-version="2.46">
       <doc xml:space="preserve">Checks whether the allocator used by g_malloc() is the system's
 malloc implementation. If it returns %TRUE memory allocated with
 malloc() can be used interchangeable with memory allocated using g_malloc().
 This function is useful for avoiding an extra copy of allocated memory returned
-by a non-GLib-based API.
-
-A different allocator can be set using g_mem_set_vtable().</doc>
+by a non-GLib-based API.</doc>
+      <doc-deprecated xml:space="preserve">GLib always uses the system malloc, so this function always
+returns %TRUE.</doc-deprecated>
       <return-value transfer-ownership="none">
         <doc xml:space="preserve">if %TRUE, malloc() and g_malloc() can be mixed.</doc>
         <type name="gboolean" c:type="gboolean"/>
       </return-value>
     </function>
-    <function name="mem_profile" c:identifier="g_mem_profile">
-      <doc xml:space="preserve">Outputs a summary of memory usage.
-
-It outputs the frequency of allocations of different sizes,
-the total number of bytes which have been allocated,
-the total number of bytes which have been freed,
-and the difference between the previous two values, i.e. the number of bytes
-still in use.
-
-Note that this function will not output anything unless you have
-previously installed the #glib_mem_profiler_table with g_mem_set_vtable().</doc>
+    <function name="mem_profile"
+              c:identifier="g_mem_profile"
+              deprecated="1"
+              deprecated-version="2.46">
+      <doc xml:space="preserve">GLib used to support some tools for memory profiling, but this
+no longer works. There are many other useful tools for memory
+profiling these days which can be used instead.</doc>
+      <doc-deprecated xml:space="preserve">Use other memory profiling tools instead</doc-deprecated>
       <return-value transfer-ownership="none">
         <type name="none" c:type="void"/>
       </return-value>
     </function>
-    <function name="mem_set_vtable" c:identifier="g_mem_set_vtable">
-      <doc xml:space="preserve">Sets the #GMemVTable to use for memory allocation. You can use this
-to provide custom memory allocation routines.
-
-The @vtable only needs to provide malloc(), realloc(), and free()
-functions; GLib can provide default implementations of the others.
-The malloc() and realloc() implementations should return %NULL on
-failure, GLib will handle error-checking for you. @vtable is copied,
-so need not persist after this function has been called.
-
-Note that this function must be called before using any other GLib
-functions.</doc>
+    <function name="mem_set_vtable"
+              c:identifier="g_mem_set_vtable"
+              deprecated="1"
+              deprecated-version="2.46">
+      <doc xml:space="preserve">This function used to let you override the memory allocation function.
+However, its use was incompatible with the use of global constructors
+in GLib and GIO, because those use the GLib allocators before main is
+reached. Therefore this function is now deprecated and is just a stub.</doc>
+      <doc-deprecated xml:space="preserve">Use other memory profiling tools instead</doc-deprecated>
       <return-value transfer-ownership="none">
         <type name="none" c:type="void"/>
       </return-value>
@@ -40576,10 +40727,9 @@ example.</doc>
       </parameters>
     </function>
     <function name="setenv" c:identifier="g_setenv" version="2.4">
-      <doc xml:space="preserve">Sets an environment variable. Both the variable's name and value
-should be in the GLib file name encoding. On UNIX, this means that
-they can be arbitrary byte strings. On Windows, they should be in
-UTF-8.
+      <doc xml:space="preserve">Sets an environment variable. On UNIX, both the variable's name and
+value can be arbitrary byte strings, except that the variable's name
+cannot contain '='. On Windows, they should be in UTF-8.
 
 Note that on some systems, when variables are overwritten, the memory
 used for the previous variables and its value isn't reclaimed.
@@ -41145,13 +41295,8 @@ tools it is enough to make the program have a wmain() instead of
 main(). wmain() has a wide character argument vector as parameter.
 
 At least currently, mingw doesn't support wmain(), so if you use
-mingw to develop the spawned program, it will have to call the
-undocumented function __wgetmainargs() to get the wide character
-argument vector and environment. See gspawn-win32-helper.c in the
-GLib sources or init.c in the mingw runtime sources for a prototype
-for that function. Alternatively, you can retrieve the Win32 system
-level wide character command line passed to the spawned program
-using the GetCommandLineW() function.
+mingw to develop the spawned program, it should call
+g_win32_get_command_line() to get arguments in UTF-8.
 
 On Windows the low-level child process creation API CreateProcess()
 doesn't use argument vectors, but a command line. The C runtime
@@ -41740,7 +41885,11 @@ the string, is updated: `hash = hash * 33 + c`. This function
 uses the signed value of each byte.
 
 It can be passed to g_hash_table_new() as the @hash_func parameter,
-when using non-%NULL strings as keys in a #GHashTable.</doc>
+when using non-%NULL strings as keys in a #GHashTable.
+
+Note that this function may not be a perfect fit for all use cases.
+For example, it produces some hash collisions with strings as short
+as 2.</doc>
       <return-value transfer-ownership="none">
         <doc xml:space="preserve">a hash value corresponding to the key</doc>
         <type name="guint" c:type="guint"/>
@@ -42190,13 +42339,17 @@ on a %NULL value, g_strdupv() simply returns %NULL.</doc>
       </parameters>
     </function>
     <function name="strerror" c:identifier="g_strerror">
-      <doc xml:space="preserve">Returns a string corresponding to the given error code, e.g.
-"no such process". You should use this function in preference to
-strerror(), because it returns a string in UTF-8 encoding, and since
-not all platforms support the strerror() function.</doc>
+      <doc xml:space="preserve">Returns a string corresponding to the given error code, e.g. "no
+such process". Unlike strerror(), this always returns a string in
+UTF-8 encoding, and the pointer is guaranteed to remain valid for
+the lifetime of the process.
+
+Note that the string may be translated according to the current locale.
+
+The value of %errno will not be changed by this function.</doc>
       <return-value transfer-ownership="none">
         <doc xml:space="preserve">a UTF-8 string describing the error code. If the error code
-    is unknown, it returns "unknown error (&lt;code&gt;)".</doc>
+    is unknown, it returns a string like "unknown error (&lt;code&gt;)".</doc>
         <type name="utf8" c:type="const gchar*"/>
       </return-value>
       <parameters>
@@ -44055,6 +44208,9 @@ After each call to the timeout function, the time of the next
 timeout is recalculated based on the current time and the given interval
 (it does not try to 'catch up' time lost in delays).
 
+See [memory management of sources][mainloop-memory-management] for details
+on how to handle the return value and memory management of @data.
+
 If you want to have a timer in the "seconds" range and do not care
 about the exact time of the first call of the timer, use the
 g_timeout_add_seconds() function; this function allows for more
@@ -44103,6 +44259,9 @@ event sources. Thus they should not be relied on for precise timing.
 After each call to the timeout function, the time of the next
 timeout is recalculated based on the current time and the given interval
 (it does not try to 'catch up' time lost in delays).
+
+See [memory management of sources][mainloop-memory-management] for details
+on how to handle the return value and memory management of @data.
 
 This internally creates a main loop source using g_timeout_source_new()
 and attaches it to the global #GMainContext using g_source_attach(), so
@@ -44168,6 +44327,9 @@ Note that the first call of the timer may not be precise for timeouts
 of one second. If you need finer precision and have such a timeout,
 you may want to use g_timeout_add() instead.
 
+See [memory management of sources][mainloop-memory-management] for details
+on how to handle the return value and memory management of @data.
+
 The interval given is in terms of monotonic time, not wall clock
 time.  See g_get_monotonic_time().</doc>
       <return-value transfer-ownership="none">
@@ -44210,6 +44372,9 @@ Note that timeout functions may be delayed, due to the processing of other
 event sources. Thus they should not be relied on for precise timing.
 After each call to the timeout function, the time of the next
 timeout is recalculated based on the current time and the given @interval
+
+See [memory management of sources][mainloop-memory-management] for details
+on how to handle the return value and memory management of @data.
 
 If you want timing more precise than whole seconds, use g_timeout_add()
 instead.
@@ -46567,7 +46732,8 @@ errors (in the case that the type would have been ambiguous, such as
 with empty arrays).
 
 In the event that the parsing is successful, the resulting #GVariant
-is returned.
+is returned. It is never floating, and must be freed with
+g_variant_unref().
 
 In case of any error, %NULL will be returned.  If @error is non-%NULL
 then it will be set to reflect the error that occurred.
@@ -46575,7 +46741,7 @@ then it will be set to reflect the error that occurred.
 Officially, the language understood by the parser is "any string
 produced by g_variant_print()".</doc>
       <return-value transfer-ownership="full">
-        <doc xml:space="preserve">a reference to a #GVariant, or %NULL</doc>
+        <doc xml:space="preserve">a non-floating reference to a #GVariant, or %NULL</doc>
         <type name="Variant" c:type="GVariant*"/>
       </return-value>
       <parameters>
