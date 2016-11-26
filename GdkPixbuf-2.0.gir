@@ -97,17 +97,17 @@ the gdk-pixbuf library.  Currently only RGB is supported.</doc>
 "0.8.2" for example.</doc>
       <type name="gint" c:type="gint"/>
     </constant>
-    <constant name="PIXBUF_MICRO" value="4" c:type="GDK_PIXBUF_MICRO">
+    <constant name="PIXBUF_MICRO" value="0" c:type="GDK_PIXBUF_MICRO">
       <doc xml:space="preserve">Micro version of gdk-pixbuf library, that is the "2" in
 "0.8.2" for example.</doc>
       <type name="gint" c:type="gint"/>
     </constant>
-    <constant name="PIXBUF_MINOR" value="31" c:type="GDK_PIXBUF_MINOR">
+    <constant name="PIXBUF_MINOR" value="36" c:type="GDK_PIXBUF_MINOR">
       <doc xml:space="preserve">Minor version of gdk-pixbuf library, that is the "8" in
 "0.8.2" for example.</doc>
       <type name="gint" c:type="gint"/>
     </constant>
-    <constant name="PIXBUF_VERSION" value="2.31.4" c:type="GDK_PIXBUF_VERSION">
+    <constant name="PIXBUF_VERSION" value="2.36.0" c:type="GDK_PIXBUF_VERSION">
       <doc xml:space="preserve">Contains the full version of the gdk-pixbuf header as a string.
 This is the version being compiled against; contrast with
 #gdk_pixbuf_version.</doc>
@@ -262,7 +262,10 @@ See also gdk_pixbuf_new_from_bytes().</doc>
 drops to zero, or %NULL if the data should not be freed</doc>
             <type name="PixbufDestroyNotify" c:type="GdkPixbufDestroyNotify"/>
           </parameter>
-          <parameter name="destroy_fn_data" transfer-ownership="none">
+          <parameter name="destroy_fn_data"
+                     transfer-ownership="none"
+                     nullable="1"
+                     allow-none="1">
             <doc xml:space="preserve">Closure data to pass to the destroy notification function</doc>
             <type name="gpointer" c:type="gpointer"/>
           </parameter>
@@ -719,7 +722,10 @@ get the result of the operation.</doc>
             <doc xml:space="preserve">a #GAsyncReadyCallback to call when the the pixbuf is loaded</doc>
             <type name="Gio.AsyncReadyCallback" c:type="GAsyncReadyCallback"/>
           </parameter>
-          <parameter name="user_data" transfer-ownership="none">
+          <parameter name="user_data"
+                     transfer-ownership="none"
+                     nullable="1"
+                     allow-none="1">
             <doc xml:space="preserve">the data to pass to the callback function</doc>
             <type name="gpointer" c:type="gpointer"/>
           </parameter>
@@ -808,7 +814,10 @@ You can then call gdk_pixbuf_new_from_stream_finish() to get the result of the o
             <doc xml:space="preserve">a #GAsyncReadyCallback to call when the the pixbuf is loaded</doc>
             <type name="Gio.AsyncReadyCallback" c:type="GAsyncReadyCallback"/>
           </parameter>
-          <parameter name="user_data" transfer-ownership="none">
+          <parameter name="user_data"
+                     transfer-ownership="none"
+                     nullable="1"
+                     allow-none="1">
             <doc xml:space="preserve">the data to pass to the callback function</doc>
             <type name="gpointer" c:type="gpointer"/>
           </parameter>
@@ -860,7 +869,10 @@ You can then call gdk_pixbuf_new_from_stream_finish() to get the result of the o
             <doc xml:space="preserve">a #GAsyncReadyCallback to call when the the pixbuf is loaded</doc>
             <type name="Gio.AsyncReadyCallback" c:type="GAsyncReadyCallback"/>
           </parameter>
-          <parameter name="user_data" transfer-ownership="none">
+          <parameter name="user_data"
+                     transfer-ownership="none"
+                     nullable="1"
+                     allow-none="1">
             <doc xml:space="preserve">the data to pass to the callback function</doc>
             <type name="gpointer" c:type="gpointer"/>
           </parameter>
@@ -1141,7 +1153,8 @@ allocated for it.</doc>
       </method>
       <method name="copy" c:identifier="gdk_pixbuf_copy">
         <doc xml:space="preserve">Creates a new #GdkPixbuf with a copy of the information in the specified
-@pixbuf.</doc>
+@pixbuf. Note that this does not copy the options set on the original #GdkPixbuf,
+use gdk_pixbuf_copy_options() for this.</doc>
         <return-value transfer-ownership="full">
           <doc xml:space="preserve">A newly-created pixbuf with a reference count of 1, or %NULL if
 not enough memory could be allocated.</doc>
@@ -1196,6 +1209,28 @@ Therefore, you can not use this function to scroll a pixbuf.</doc>
           <parameter name="dest_y" transfer-ownership="none">
             <doc xml:space="preserve">Y coordinate within @dest_pixbuf.</doc>
             <type name="gint" c:type="int"/>
+          </parameter>
+        </parameters>
+      </method>
+      <method name="copy_options"
+              c:identifier="gdk_pixbuf_copy_options"
+              version="2.36">
+        <doc xml:space="preserve">Copy the key/value pair options attached to a #GdkPixbuf to another.
+This is useful to keep original metadata after having manipulated
+a file. However be careful to remove metadata which you've already
+applied, such as the "orientation" option after rotating the image.</doc>
+        <return-value transfer-ownership="none">
+          <doc xml:space="preserve">%TRUE on success.</doc>
+          <type name="gboolean" c:type="gboolean"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="src_pixbuf" transfer-ownership="none">
+            <doc xml:space="preserve">a #GdkPixbuf to copy options from</doc>
+            <type name="Pixbuf" c:type="GdkPixbuf*"/>
+          </instance-parameter>
+          <parameter name="dest_pixbuf" transfer-ownership="none">
+            <doc xml:space="preserve">the #GdkPixbuf to copy options to</doc>
+            <type name="Pixbuf" c:type="GdkPixbuf*"/>
           </parameter>
         </parameters>
       </method>
@@ -1537,6 +1572,25 @@ pixbuf.</doc>
           </instance-parameter>
         </parameters>
       </method>
+      <method name="remove_option"
+              c:identifier="gdk_pixbuf_remove_option"
+              version="2.36">
+        <doc xml:space="preserve">Remove the key/value pair option attached to a #GdkPixbuf.</doc>
+        <return-value transfer-ownership="none">
+          <doc xml:space="preserve">%TRUE if an option was removed, %FALSE if not.</doc>
+          <type name="gboolean" c:type="gboolean"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="pixbuf" transfer-ownership="none">
+            <doc xml:space="preserve">a #GdkPixbuf</doc>
+            <type name="Pixbuf" c:type="GdkPixbuf*"/>
+          </instance-parameter>
+          <parameter name="key" transfer-ownership="none">
+            <doc xml:space="preserve">a nul-terminated string representing the key to remove.</doc>
+            <type name="utf8" c:type="const gchar*"/>
+          </parameter>
+        </parameters>
+      </method>
       <method name="rotate_simple"
               c:identifier="gdk_pixbuf_rotate_simple"
               version="2.6">
@@ -1820,7 +1874,10 @@ See gdk_pixbuf_save() for more details.</doc>
   the save routine generates.</doc>
             <type name="PixbufSaveFunc" c:type="GdkPixbufSaveFunc"/>
           </parameter>
-          <parameter name="user_data" transfer-ownership="none">
+          <parameter name="user_data"
+                     transfer-ownership="none"
+                     nullable="1"
+                     allow-none="1">
             <doc xml:space="preserve">user data to pass to the save function.</doc>
             <type name="gpointer" c:type="gpointer"/>
           </parameter>
@@ -1865,7 +1922,10 @@ gdk_pixbuf_save_to_callback () for more details.</doc>
   the save routine generates.</doc>
             <type name="PixbufSaveFunc" c:type="GdkPixbufSaveFunc"/>
           </parameter>
-          <parameter name="user_data" transfer-ownership="none">
+          <parameter name="user_data"
+                     transfer-ownership="none"
+                     nullable="1"
+                     allow-none="1">
             <doc xml:space="preserve">user data to pass to the save function.</doc>
             <type name="gpointer" c:type="gpointer"/>
           </parameter>
@@ -1983,13 +2043,126 @@ You can then call gdk_pixbuf_save_to_stream_finish() to get the result of the op
             <doc xml:space="preserve">a #GAsyncReadyCallback to call when the the pixbuf is loaded</doc>
             <type name="Gio.AsyncReadyCallback" c:type="GAsyncReadyCallback"/>
           </parameter>
-          <parameter name="user_data" transfer-ownership="none">
+          <parameter name="user_data"
+                     transfer-ownership="none"
+                     nullable="1"
+                     allow-none="1">
             <doc xml:space="preserve">the data to pass to the callback function</doc>
             <type name="gpointer" c:type="gpointer"/>
           </parameter>
           <parameter name="..." transfer-ownership="none">
             <doc xml:space="preserve">list of key-value save options</doc>
             <varargs/>
+          </parameter>
+        </parameters>
+      </method>
+      <method name="save_to_streamv"
+              c:identifier="gdk_pixbuf_save_to_streamv"
+              version="2.36"
+              throws="1">
+        <doc xml:space="preserve">Saves @pixbuf to an output stream.
+
+Supported file formats are currently "jpeg", "tiff", "png", "ico" or
+"bmp". See gdk_pixbuf_save_to_stream() for more details.</doc>
+        <return-value transfer-ownership="none">
+          <doc xml:space="preserve">%TRUE if the pixbuf was saved successfully, %FALSE if an
+    error was set.</doc>
+          <type name="gboolean" c:type="gboolean"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="pixbuf" transfer-ownership="none">
+            <doc xml:space="preserve">a #GdkPixbuf</doc>
+            <type name="Pixbuf" c:type="GdkPixbuf*"/>
+          </instance-parameter>
+          <parameter name="stream" transfer-ownership="none">
+            <doc xml:space="preserve">a #GOutputStream to save the pixbuf to</doc>
+            <type name="Gio.OutputStream" c:type="GOutputStream*"/>
+          </parameter>
+          <parameter name="type" transfer-ownership="none">
+            <doc xml:space="preserve">name of file format</doc>
+            <type name="utf8" c:type="const char*"/>
+          </parameter>
+          <parameter name="option_keys" transfer-ownership="none">
+            <doc xml:space="preserve">name of options to set, %NULL-terminated</doc>
+            <array c:type="char**">
+              <type name="utf8" c:type="char*"/>
+            </array>
+          </parameter>
+          <parameter name="option_values" transfer-ownership="none">
+            <doc xml:space="preserve">values for named options</doc>
+            <array c:type="char**">
+              <type name="utf8" c:type="char*"/>
+            </array>
+          </parameter>
+          <parameter name="cancellable"
+                     transfer-ownership="none"
+                     nullable="1"
+                     allow-none="1">
+            <doc xml:space="preserve">optional #GCancellable object, %NULL to ignore</doc>
+            <type name="Gio.Cancellable" c:type="GCancellable*"/>
+          </parameter>
+        </parameters>
+      </method>
+      <method name="save_to_streamv_async"
+              c:identifier="gdk_pixbuf_save_to_streamv_async"
+              version="2.36">
+        <doc xml:space="preserve">Saves @pixbuf to an output stream asynchronously.
+
+For more details see gdk_pixbuf_save_to_streamv(), which is the synchronous
+version of this function.
+
+When the operation is finished, @callback will be called in the main thread.
+You can then call gdk_pixbuf_save_to_stream_finish() to get the result of the operation.</doc>
+        <return-value transfer-ownership="none">
+          <type name="none" c:type="void"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="pixbuf" transfer-ownership="none">
+            <doc xml:space="preserve">a #GdkPixbuf</doc>
+            <type name="Pixbuf" c:type="GdkPixbuf*"/>
+          </instance-parameter>
+          <parameter name="stream" transfer-ownership="none">
+            <doc xml:space="preserve">a #GOutputStream to which to save the pixbuf</doc>
+            <type name="Gio.OutputStream" c:type="GOutputStream*"/>
+          </parameter>
+          <parameter name="type" transfer-ownership="none">
+            <doc xml:space="preserve">name of file format</doc>
+            <type name="utf8" c:type="const gchar*"/>
+          </parameter>
+          <parameter name="option_keys" transfer-ownership="none">
+            <doc xml:space="preserve">name of options to set, %NULL-terminated</doc>
+            <array c:type="gchar**">
+              <type name="utf8" c:type="gchar*"/>
+            </array>
+          </parameter>
+          <parameter name="option_values" transfer-ownership="none">
+            <doc xml:space="preserve">values for named options</doc>
+            <array c:type="gchar**">
+              <type name="utf8" c:type="gchar*"/>
+            </array>
+          </parameter>
+          <parameter name="cancellable"
+                     transfer-ownership="none"
+                     nullable="1"
+                     allow-none="1">
+            <doc xml:space="preserve">optional #GCancellable object, %NULL to ignore</doc>
+            <type name="Gio.Cancellable" c:type="GCancellable*"/>
+          </parameter>
+          <parameter name="callback"
+                     transfer-ownership="none"
+                     nullable="1"
+                     allow-none="1"
+                     scope="async"
+                     closure="6">
+            <doc xml:space="preserve">a #GAsyncReadyCallback to call when the the pixbuf is loaded</doc>
+            <type name="Gio.AsyncReadyCallback" c:type="GAsyncReadyCallback"/>
+          </parameter>
+          <parameter name="user_data"
+                     transfer-ownership="none"
+                     nullable="1"
+                     allow-none="1">
+            <doc xml:space="preserve">the data to pass to the callback function</doc>
+            <type name="gpointer" c:type="gpointer"/>
           </parameter>
         </parameters>
       </method>
@@ -2129,6 +2302,31 @@ allocated for it.</doc>
           </parameter>
         </parameters>
       </method>
+      <method name="set_option"
+              c:identifier="gdk_pixbuf_set_option"
+              version="2.2">
+        <doc xml:space="preserve">Attaches a key/value pair as an option to a #GdkPixbuf. If @key already
+exists in the list of options attached to @pixbuf, the new value is
+ignored and %FALSE is returned.</doc>
+        <return-value transfer-ownership="none">
+          <doc xml:space="preserve">%TRUE on success.</doc>
+          <type name="gboolean" c:type="gboolean"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="pixbuf" transfer-ownership="none">
+            <doc xml:space="preserve">a #GdkPixbuf</doc>
+            <type name="Pixbuf" c:type="GdkPixbuf*"/>
+          </instance-parameter>
+          <parameter name="key" transfer-ownership="none">
+            <doc xml:space="preserve">a nul-terminated string.</doc>
+            <type name="utf8" c:type="const gchar*"/>
+          </parameter>
+          <parameter name="value" transfer-ownership="none">
+            <doc xml:space="preserve">a nul-terminated string.</doc>
+            <type name="utf8" c:type="const gchar*"/>
+          </parameter>
+        </parameters>
+      </method>
       <method name="unref"
               c:identifier="gdk_pixbuf_unref"
               introspectable="0"
@@ -2247,8 +2445,8 @@ back to a bilevel clipping mask.</doc>
       <constructor name="new_from_file"
                    c:identifier="gdk_pixbuf_animation_new_from_file"
                    throws="1">
-        <doc xml:space="preserve">Creates a new animation by loading it from a file.  The file format is
-detected automatically.  If the file's format does not support multi-frame
+        <doc xml:space="preserve">Creates a new animation by loading it from a file. The file format is
+detected automatically. If the file's format does not support multi-frame
 images, then an animation with a single frame will be created. Possible errors
 are in the #GDK_PIXBUF_ERROR and #G_FILE_ERROR domains.</doc>
         <return-value transfer-ownership="full">
@@ -2374,7 +2572,10 @@ result of the operation.</doc>
             <doc xml:space="preserve">a #GAsyncReadyCallback to call when the the pixbuf is loaded</doc>
             <type name="Gio.AsyncReadyCallback" c:type="GAsyncReadyCallback"/>
           </parameter>
-          <parameter name="user_data" transfer-ownership="none">
+          <parameter name="user_data"
+                     transfer-ownership="none"
+                     nullable="1"
+                     allow-none="1">
             <doc xml:space="preserve">the data to pass to the callback function</doc>
             <type name="gpointer" c:type="gpointer"/>
           </parameter>
@@ -2395,14 +2596,14 @@ result of the operation.</doc>
       </method>
       <method name="get_iter" c:identifier="gdk_pixbuf_animation_get_iter">
         <doc xml:space="preserve">Get an iterator for displaying an animation. The iterator provides
-the frames that should be displayed at a given time.
-It should be freed after use with g_object_unref().
+the frames that should be displayed at a given time. It should be
+freed after use with g_object_unref().
 
-@start_time would normally come from g_get_current_time(), and
-marks the beginning of animation playback. After creating an
-iterator, you should immediately display the pixbuf returned by
-gdk_pixbuf_animation_iter_get_pixbuf(). Then, you should install a
-timeout (with g_timeout_add()) or by some other mechanism ensure
+@start_time would normally come from g_get_current_time(), and marks
+the beginning of animation playback. After creating an iterator, you
+should immediately display the pixbuf returned by
+gdk_pixbuf_animation_iter_get_pixbuf(). Then, you should install
+a timeout (with g_timeout_add()) or by some other mechanism ensure
 that you'll update the image after
 gdk_pixbuf_animation_iter_get_delay_time() milliseconds. Each time
 the image is updated, you should reinstall the timeout with the new,
@@ -2479,9 +2680,9 @@ function will return %NULL.</doc>
       </method>
       <method name="is_static_image"
               c:identifier="gdk_pixbuf_animation_is_static_image">
-        <doc xml:space="preserve">If you load a file with gdk_pixbuf_animation_new_from_file() and it turns
-out to be a plain, unanimated image, then this function will return
-%TRUE. Use gdk_pixbuf_animation_get_static_image() to retrieve
+        <doc xml:space="preserve">If you load a file with gdk_pixbuf_animation_new_from_file() and it
+turns out to be a plain, unanimated image, then this function will
+return %TRUE. Use gdk_pixbuf_animation_get_static_image() to retrieve
 the image.</doc>
         <return-value transfer-ownership="none">
           <doc xml:space="preserve">%TRUE if the "animation" was really just an image</doc>
@@ -2603,7 +2804,7 @@ for GIF images is currently 20 milliseconds.</doc>
 be the same size as the animation itself
 (gdk_pixbuf_animation_get_width(), gdk_pixbuf_animation_get_height()).
 This pixbuf should be displayed for
-gdk_pixbuf_animation_iter_get_delay_time() milliseconds.  The caller
+gdk_pixbuf_animation_iter_get_delay_time() milliseconds. The caller
 of this function does not own a reference to the returned pixbuf;
 the returned pixbuf will become invalid when the iterator advances
 to the next frame, which may happen anytime you call
@@ -2658,7 +2859,11 @@ when the pixbuf is finalized.</doc>
             <type name="guint8"/>
           </array>
         </parameter>
-        <parameter name="data" transfer-ownership="none" closure="1">
+        <parameter name="data"
+                   transfer-ownership="none"
+                   nullable="1"
+                   allow-none="1"
+                   closure="1">
           <doc xml:space="preserve">User closure data.</doc>
           <type name="gpointer" c:type="gpointer"/>
         </parameter>
@@ -2708,6 +2913,12 @@ domain.</doc>
               c:identifier="GDK_PIXBUF_ERROR_FAILED"
               glib:nick="failed">
         <doc xml:space="preserve">Generic failure code, something went wrong.</doc>
+      </member>
+      <member name="incomplete_animation"
+              value="6"
+              c:identifier="GDK_PIXBUF_ERROR_INCOMPLETE_ANIMATION"
+              glib:nick="incomplete-animation">
+        <doc xml:space="preserve">Only part of the animation was loaded.</doc>
       </member>
       <function name="quark" c:identifier="gdk_pixbuf_error_quark">
         <return-value transfer-ownership="none">
@@ -2846,6 +3057,27 @@ gdk_pixbuf_format_set_disabled().</doc>
             <doc xml:space="preserve">a #GdkPixbufFormat</doc>
             <type name="PixbufFormat" c:type="GdkPixbufFormat*"/>
           </instance-parameter>
+        </parameters>
+      </method>
+      <method name="is_save_option_supported"
+              c:identifier="gdk_pixbuf_format_is_save_option_supported"
+              version="2.36">
+        <doc xml:space="preserve">Returns %TRUE if the save option specified by @option_key is supported when
+saving a pixbuf using the module implementing @format.
+See gdk_pixbuf_save() for more information about option keys.</doc>
+        <return-value transfer-ownership="none">
+          <doc xml:space="preserve">%TRUE if the specified option is supported</doc>
+          <type name="gboolean" c:type="gboolean"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="format" transfer-ownership="none">
+            <doc xml:space="preserve">a #GdkPixbufFormat</doc>
+            <type name="PixbufFormat" c:type="GdkPixbufFormat*"/>
+          </instance-parameter>
+          <parameter name="option_key" transfer-ownership="none">
+            <doc xml:space="preserve">the name of an option</doc>
+            <type name="utf8" c:type="const gchar*"/>
+          </parameter>
         </parameters>
       </method>
       <method name="is_scalable"
@@ -3065,7 +3297,7 @@ bytes yet (hasn't emitted the "area-prepared" signal) this function will
 return %NULL.</doc>
         <return-value transfer-ownership="none">
           <doc xml:space="preserve">The #GdkPixbufAnimation that the loader is loading, or %NULL if
- not enough data has been read to determine the information.</doc>
+not enough data has been read to determine the information.</doc>
           <type name="PixbufAnimation" c:type="GdkPixbufAnimation*"/>
         </return-value>
         <parameters>
@@ -3408,7 +3640,11 @@ will fail with the same error.</doc>
           <doc xml:space="preserve">A location to return an error.</doc>
           <type name="GLib.Error" c:type="GError**"/>
         </parameter>
-        <parameter name="data" transfer-ownership="none" closure="3">
+        <parameter name="data"
+                   transfer-ownership="none"
+                   nullable="1"
+                   allow-none="1"
+                   closure="3">
           <doc xml:space="preserve">user data passed to gdk_pixbuf_save_to_callback().</doc>
           <type name="gpointer" c:type="gpointer"/>
         </parameter>
@@ -3599,7 +3835,7 @@ or %GDK_PIXBUF_ERROR_UNKNOWN_TYPE.</doc>
 pixel data is run-length encoded into newly-allocated memory and a
 pointer to that memory is returned.</doc>
         <doc-deprecated xml:space="preserve">Use #GResource instead.</doc-deprecated>
-        <return-value nullable="1">
+        <return-value transfer-ownership="none" nullable="1">
           <doc xml:space="preserve">If @use_rle is %TRUE, a pointer to the
   newly-allocated memory for the run-length encoded pixel data,
   otherwise %NULL.</doc>
