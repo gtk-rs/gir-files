@@ -431,7 +431,10 @@ print_attributes (GIBaseInfo *info)
             <doc xml:space="preserve">a #GIBaseInfo</doc>
             <type name="BaseInfo" c:type="GIBaseInfo*"/>
           </instance-parameter>
-          <parameter name="iterator" transfer-ownership="none">
+          <parameter name="iterator"
+                     direction="inout"
+                     caller-allocates="0"
+                     transfer-ownership="full">
             <doc xml:space="preserve">a #GIAttributeIter structure, must be initialized; see below</doc>
             <type name="AttributeIter" c:type="GIAttributeIter*"/>
           </parameter>
@@ -596,7 +599,7 @@ drops to 0, the info is freed.</doc>
               c:type="GIObjectInfoGetValueFunction"
               introspectable="0">
       <doc xml:space="preserve">Extract an object instance out of @value</doc>
-      <return-value transfer-ownership="full">
+      <return-value transfer-ownership="full" nullable="1">
         <doc xml:space="preserve">the object instance</doc>
         <type name="gpointer" c:type="void*"/>
       </return-value>
@@ -611,12 +614,15 @@ drops to 0, the info is freed.</doc>
               c:type="GIObjectInfoRefFunction"
               introspectable="0">
       <doc xml:space="preserve">Increases the reference count of an object instance.</doc>
-      <return-value transfer-ownership="full">
+      <return-value transfer-ownership="full" nullable="1">
         <doc xml:space="preserve">the object instance</doc>
         <type name="gpointer" c:type="void*"/>
       </return-value>
       <parameters>
-        <parameter name="object" transfer-ownership="none">
+        <parameter name="object"
+                   transfer-ownership="none"
+                   nullable="1"
+                   allow-none="1">
           <doc xml:space="preserve">object instance pointer</doc>
           <type name="gpointer" c:type="void*"/>
         </parameter>
@@ -634,7 +640,10 @@ drops to 0, the info is freed.</doc>
           <doc xml:space="preserve">a #GValue</doc>
           <type name="GObject.Value" c:type="GValue*"/>
         </parameter>
-        <parameter name="object" transfer-ownership="none">
+        <parameter name="object"
+                   transfer-ownership="none"
+                   nullable="1"
+                   allow-none="1">
           <doc xml:space="preserve">object instance pointer</doc>
           <type name="gpointer" c:type="void*"/>
         </parameter>
@@ -648,7 +657,10 @@ drops to 0, the info is freed.</doc>
         <type name="none" c:type="void"/>
       </return-value>
       <parameters>
-        <parameter name="object" transfer-ownership="none">
+        <parameter name="object"
+                   transfer-ownership="none"
+                   nullable="1"
+                   allow-none="1">
           <doc xml:space="preserve">object instance pointer</doc>
           <type name="gpointer" c:type="void*"/>
         </parameter>
@@ -1438,7 +1450,10 @@ cleaning up the container and item resources of this transfer.</doc>
           <parameter name="symbol_name" transfer-ownership="none">
             <type name="utf8" c:type="const gchar*"/>
           </parameter>
-          <parameter name="symbol" transfer-ownership="none">
+          <parameter name="symbol"
+                     transfer-ownership="none"
+                     nullable="1"
+                     allow-none="1">
             <type name="gpointer" c:type="gpointer*"/>
           </parameter>
         </parameters>
@@ -1746,7 +1761,7 @@ g_base_info_unref() when done.</doc>
       <doc xml:space="preserve">See whether the caller owns the return value of this callable.
 #GITransfer contains a list of possible transfer values.</doc>
       <return-value transfer-ownership="none">
-        <doc xml:space="preserve">%TRUE if the caller owns the return value, %FALSE otherwise.</doc>
+        <doc xml:space="preserve">the transfer mode for the return value of the callable</doc>
         <type name="Transfer" c:type="GITransfer"/>
       </return-value>
       <parameters>
@@ -1761,7 +1776,7 @@ g_base_info_unref() when done.</doc>
       <doc xml:space="preserve">Obtains the ownership transfer for the instance argument.
 #GITransfer contains a list of possible transfer values.</doc>
       <return-value transfer-ownership="none">
-        <doc xml:space="preserve">the transfer</doc>
+        <doc xml:space="preserve">the transfer mode of the instance argument</doc>
         <type name="Transfer" c:type="GITransfer"/>
       </return-value>
       <parameters>
@@ -1830,7 +1845,10 @@ g_base_info_unref() when done.</doc>
           <doc xml:space="preserve">TODO</doc>
           <type name="CallableInfo" c:type="GICallableInfo*"/>
         </parameter>
-        <parameter name="function" transfer-ownership="none">
+        <parameter name="function"
+                   transfer-ownership="none"
+                   nullable="1"
+                   allow-none="1">
           <doc xml:space="preserve">TODO</doc>
           <type name="gpointer" c:type="gpointer"/>
         </parameter>
@@ -1907,7 +1925,10 @@ similar API.</doc>
           <doc xml:space="preserve">a #GICallableInfo</doc>
           <type name="CallableInfo" c:type="GICallableInfo*"/>
         </parameter>
-        <parameter name="iterator" transfer-ownership="none">
+        <parameter name="iterator"
+                   direction="inout"
+                   caller-allocates="0"
+                   transfer-ownership="full">
           <doc xml:space="preserve">a #GIAttributeIter structure, must be initialized; see below</doc>
           <type name="AttributeIter" c:type="GIAttributeIter*"/>
         </parameter>
@@ -2185,7 +2206,10 @@ even if that is actually readable.</doc>
           <doc xml:space="preserve">a #GIFieldInfo</doc>
           <type name="FieldInfo" c:type="GIFieldInfo*"/>
         </parameter>
-        <parameter name="mem" transfer-ownership="none">
+        <parameter name="mem"
+                   transfer-ownership="none"
+                   nullable="1"
+                   allow-none="1">
           <doc xml:space="preserve">pointer to a block of memory representing a C structure or union</doc>
           <type name="gpointer" c:type="gpointer"/>
         </parameter>
@@ -2271,7 +2295,10 @@ with a type such as 'char *' must be set with a setter function.</doc>
           <doc xml:space="preserve">a #GIFieldInfo</doc>
           <type name="FieldInfo" c:type="GIFieldInfo*"/>
         </parameter>
-        <parameter name="mem" transfer-ownership="none">
+        <parameter name="mem"
+                   transfer-ownership="none"
+                   nullable="1"
+                   allow-none="1">
           <doc xml:space="preserve">pointer to a block of memory representing a C structure or union</doc>
           <type name="gpointer" c:type="gpointer"/>
         </parameter>
@@ -3468,6 +3495,25 @@ stop the emission of the signal.</doc>
         </parameter>
       </parameters>
     </function>
+    <function name="struct_info_find_field"
+              c:identifier="g_struct_info_find_field">
+      <doc xml:space="preserve">Obtain the type information for field named @name.</doc>
+      <return-value transfer-ownership="full">
+        <doc xml:space="preserve">the #GIFieldInfo or %NULL if not found,
+free it with g_base_info_unref() when done.</doc>
+        <type name="FieldInfo" c:type="GIFieldInfo*"/>
+      </return-value>
+      <parameters>
+        <parameter name="info" transfer-ownership="none">
+          <doc xml:space="preserve">a #GIStructInfo</doc>
+          <type name="StructInfo" c:type="GIStructInfo*"/>
+        </parameter>
+        <parameter name="name" transfer-ownership="none">
+          <doc xml:space="preserve">a field name</doc>
+          <type name="utf8" c:type="const gchar*"/>
+        </parameter>
+      </parameters>
+    </function>
     <function name="struct_info_find_method"
               c:identifier="g_struct_info_find_method">
       <doc xml:space="preserve">Obtain the type information for method named @name.</doc>
@@ -3709,7 +3755,12 @@ of type tags.</doc>
     </function>
     <function name="type_info_is_pointer"
               c:identifier="g_type_info_is_pointer">
-      <doc xml:space="preserve">Obtain if the type is passed as a reference.</doc>
+      <doc xml:space="preserve">Obtain if the type is passed as a reference.
+
+Note that the types of %GI_DIRECTION_OUT and %GI_DIRECTION_INOUT parameters
+will only be pointers if the underlying type being transferred is a pointer
+(i.e. only if the type of the C function’s formal parameter is a pointer to a
+pointer).</doc>
       <return-value transfer-ownership="none">
         <doc xml:space="preserve">%TRUE if it is a pointer</doc>
         <type name="gboolean" c:type="gboolean"/>
@@ -3806,7 +3857,7 @@ when done.</doc>
     <function name="union_info_get_discriminator_offset"
               c:identifier="g_union_info_get_discriminator_offset">
       <doc xml:space="preserve">Returns offset of the discriminator field in the structure.</doc>
-      <return-value transfer-ownership="full">
+      <return-value transfer-ownership="none">
         <doc xml:space="preserve">offset in bytes of the discriminator</doc>
         <type name="gint" c:type="gint"/>
       </return-value>
@@ -3943,11 +3994,10 @@ when done.</doc>
     </function>
     <function name="vfunc_info_get_address"
               c:identifier="g_vfunc_info_get_address"
-              introspectable="0"
               throws="1">
       <doc xml:space="preserve">This method will look up where inside the type struct of @implementor_gtype
 is the implementation for @info.</doc>
-      <return-value>
+      <return-value transfer-ownership="none" nullable="1">
         <doc xml:space="preserve">address to a function or %NULL if an error happened</doc>
         <type name="gpointer" c:type="gpointer"/>
       </return-value>
