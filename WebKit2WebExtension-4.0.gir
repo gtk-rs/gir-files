@@ -495,7 +495,7 @@ If the @user_data #GVariant is floating, it is consumed.</doc>
       <member name="copy_image_url_to_clipboard"
               value="8"
               c:identifier="WEBKIT_CONTEXT_MENU_ACTION_COPY_IMAGE_URL_TO_CLIPBOARD">
-        <doc xml:space="preserve">Copy curent image location to the clipboard.</doc>
+        <doc xml:space="preserve">Copy current image location to the clipboard.</doc>
       </member>
       <member name="open_frame_in_new_window"
               value="9"
@@ -520,7 +520,7 @@ If the @user_data #GVariant is floating, it is consumed.</doc>
       <member name="reload"
               value="13"
               c:identifier="WEBKIT_CONTEXT_MENU_ACTION_RELOAD">
-        <doc xml:space="preserve">Reload the conents of current view.</doc>
+        <doc xml:space="preserve">Reload the contents of current view.</doc>
       </member>
       <member name="copy"
               value="14"
@@ -719,8 +719,12 @@ If the @user_data #GVariant is floating, it is consumed.</doc>
            glib:type-name="WebKitContextMenuItem"
            glib:get-type="webkit_context_menu_item_get_type"
            glib:type-struct="ContextMenuItemClass">
-      <constructor name="new" c:identifier="webkit_context_menu_item_new">
+      <constructor name="new"
+                   c:identifier="webkit_context_menu_item_new"
+                   deprecated="1"
+                   deprecated-version="2.18">
         <doc xml:space="preserve">Creates a new #WebKitContextMenuItem for the given @action.</doc>
+        <doc-deprecated xml:space="preserve">Use webkit_context_menu_item_new_from_gaction() instead.</doc-deprecated>
         <return-value transfer-ownership="none">
           <doc xml:space="preserve">the newly created #WebKitContextMenuItem object.</doc>
           <type name="ContextMenuItem" c:type="WebKitContextMenuItem*"/>
@@ -729,6 +733,33 @@ If the @user_data #GVariant is floating, it is consumed.</doc>
           <parameter name="action" transfer-ownership="none">
             <doc xml:space="preserve">a #GtkAction</doc>
             <type name="Gtk.Action" c:type="GtkAction*"/>
+          </parameter>
+        </parameters>
+      </constructor>
+      <constructor name="new_from_gaction"
+                   c:identifier="webkit_context_menu_item_new_from_gaction"
+                   version="2.18">
+        <doc xml:space="preserve">Creates a new #WebKitContextMenuItem for the given @action and @label. On activation
+@target will be passed as parameter to the callback.</doc>
+        <return-value transfer-ownership="none">
+          <doc xml:space="preserve">the newly created #WebKitContextMenuItem object.</doc>
+          <type name="ContextMenuItem" c:type="WebKitContextMenuItem*"/>
+        </return-value>
+        <parameters>
+          <parameter name="action" transfer-ownership="none">
+            <doc xml:space="preserve">a #GAction</doc>
+            <type name="Gio.Action" c:type="GAction*"/>
+          </parameter>
+          <parameter name="label" transfer-ownership="none">
+            <doc xml:space="preserve">the menu item label text</doc>
+            <type name="utf8" c:type="const gchar*"/>
+          </parameter>
+          <parameter name="target"
+                     transfer-ownership="none"
+                     nullable="1"
+                     allow-none="1">
+            <doc xml:space="preserve">a #GVariant to use as the action target</doc>
+            <type name="GLib.Variant" c:type="GVariant*"/>
           </parameter>
         </parameters>
       </constructor>
@@ -741,7 +772,7 @@ activated the action associated will be handled by WebKit and the current
 load operation will be stopped. You can get the #GtkAction of a
 #WebKitContextMenuItem created with a #WebKitContextMenuAction with
 webkit_context_menu_item_get_action() and connect to #GtkAction::activate signal
-to be notified when the item is activated. But you can't prevent the asociated
+to be notified when the item is activated. But you can't prevent the associated
 action from being performed.</doc>
         <return-value transfer-ownership="none">
           <doc xml:space="preserve">the newly created #WebKitContextMenuItem object.</doc>
@@ -801,12 +832,31 @@ Stock actions have a predefined label, this method can be used to create a
         </parameters>
       </constructor>
       <method name="get_action"
-              c:identifier="webkit_context_menu_item_get_action">
-        <doc xml:space="preserve">Gets the action associated to @item.</doc>
+              c:identifier="webkit_context_menu_item_get_action"
+              deprecated="1"
+              deprecated-version="2.18">
+        <doc xml:space="preserve">Gets the action associated to @item as a #GtkAction.</doc>
+        <doc-deprecated xml:space="preserve">Use webkit_context_menu_item_get_gaction() instead.</doc-deprecated>
         <return-value transfer-ownership="none">
           <doc xml:space="preserve">the #GtkAction associated to the #WebKitContextMenuItem,
    or %NULL if @item is a separator.</doc>
           <type name="Gtk.Action" c:type="GtkAction*"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="item" transfer-ownership="none">
+            <doc xml:space="preserve">a #WebKitContextMenuItem</doc>
+            <type name="ContextMenuItem" c:type="WebKitContextMenuItem*"/>
+          </instance-parameter>
+        </parameters>
+      </method>
+      <method name="get_gaction"
+              c:identifier="webkit_context_menu_item_get_gaction"
+              version="2.18">
+        <doc xml:space="preserve">Gets the action associated to @item as a #GAction.</doc>
+        <return-value transfer-ownership="none">
+          <doc xml:space="preserve">the #GAction associated to the #WebKitContextMenuItem,
+   or %NULL if @item is a separator.</doc>
+          <type name="Gio.Action" c:type="GAction*"/>
         </return-value>
         <parameters>
           <instance-parameter name="item" transfer-ownership="none">
@@ -1885,6 +1935,187 @@ submenu of @item is removed.</doc>
             glib:is-gtype-struct-for="DOMCharacterData">
       <field name="parent_class">
         <type name="DOMNodeClass" c:type="WebKitDOMNodeClass"/>
+      </field>
+    </record>
+    <class name="DOMClientRect"
+           c:symbol-prefix="dom_client_rect"
+           c:type="WebKitDOMClientRect"
+           parent="DOMObject"
+           glib:type-name="WebKitDOMClientRect"
+           glib:get-type="webkit_dom_client_rect_get_type"
+           glib:type-struct="DOMClientRectClass">
+      <method name="get_bottom"
+              c:identifier="webkit_dom_client_rect_get_bottom"
+              version="2.18">
+        <doc xml:space="preserve">Returns the bottom coordinate of @self, relative to the viewport.</doc>
+        <return-value transfer-ownership="none">
+          <doc xml:space="preserve">A #gfloat</doc>
+          <type name="gfloat" c:type="gfloat"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="self" transfer-ownership="none">
+            <doc xml:space="preserve">A #WebKitDOMClientRect</doc>
+            <type name="DOMClientRect" c:type="WebKitDOMClientRect*"/>
+          </instance-parameter>
+        </parameters>
+      </method>
+      <method name="get_height"
+              c:identifier="webkit_dom_client_rect_get_height"
+              version="2.18">
+        <doc xml:space="preserve">Returns the height of @self.</doc>
+        <return-value transfer-ownership="none">
+          <doc xml:space="preserve">A #gfloat</doc>
+          <type name="gfloat" c:type="gfloat"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="self" transfer-ownership="none">
+            <doc xml:space="preserve">A #WebKitDOMClientRect</doc>
+            <type name="DOMClientRect" c:type="WebKitDOMClientRect*"/>
+          </instance-parameter>
+        </parameters>
+      </method>
+      <method name="get_left"
+              c:identifier="webkit_dom_client_rect_get_left"
+              version="2.18">
+        <doc xml:space="preserve">Returns the left coordinate of @self, relative to the viewport.</doc>
+        <return-value transfer-ownership="none">
+          <doc xml:space="preserve">A #gfloat</doc>
+          <type name="gfloat" c:type="gfloat"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="self" transfer-ownership="none">
+            <doc xml:space="preserve">A #WebKitDOMClientRect</doc>
+            <type name="DOMClientRect" c:type="WebKitDOMClientRect*"/>
+          </instance-parameter>
+        </parameters>
+      </method>
+      <method name="get_right"
+              c:identifier="webkit_dom_client_rect_get_right"
+              version="2.18">
+        <doc xml:space="preserve">Returns the right coordinate of @self, relative to the viewport.</doc>
+        <return-value transfer-ownership="none">
+          <doc xml:space="preserve">A #gfloat</doc>
+          <type name="gfloat" c:type="gfloat"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="self" transfer-ownership="none">
+            <doc xml:space="preserve">A #WebKitDOMClientRect</doc>
+            <type name="DOMClientRect" c:type="WebKitDOMClientRect*"/>
+          </instance-parameter>
+        </parameters>
+      </method>
+      <method name="get_top"
+              c:identifier="webkit_dom_client_rect_get_top"
+              version="2.18">
+        <doc xml:space="preserve">Returns the top coordinate of @self, relative to the viewport.</doc>
+        <return-value transfer-ownership="none">
+          <doc xml:space="preserve">A #gfloat</doc>
+          <type name="gfloat" c:type="gfloat"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="self" transfer-ownership="none">
+            <doc xml:space="preserve">A #WebKitDOMClientRect</doc>
+            <type name="DOMClientRect" c:type="WebKitDOMClientRect*"/>
+          </instance-parameter>
+        </parameters>
+      </method>
+      <method name="get_width"
+              c:identifier="webkit_dom_client_rect_get_width"
+              version="2.18">
+        <doc xml:space="preserve">Returns the width of @self.</doc>
+        <return-value transfer-ownership="none">
+          <doc xml:space="preserve">A #gfloat</doc>
+          <type name="gfloat" c:type="gfloat"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="self" transfer-ownership="none">
+            <doc xml:space="preserve">A #WebKitDOMClientRect</doc>
+            <type name="DOMClientRect" c:type="WebKitDOMClientRect*"/>
+          </instance-parameter>
+        </parameters>
+      </method>
+      <property name="bottom" transfer-ownership="none">
+        <type name="gfloat" c:type="gfloat"/>
+      </property>
+      <property name="height" transfer-ownership="none">
+        <type name="gfloat" c:type="gfloat"/>
+      </property>
+      <property name="left" transfer-ownership="none">
+        <type name="gfloat" c:type="gfloat"/>
+      </property>
+      <property name="right" transfer-ownership="none">
+        <type name="gfloat" c:type="gfloat"/>
+      </property>
+      <property name="top" transfer-ownership="none">
+        <type name="gfloat" c:type="gfloat"/>
+      </property>
+      <property name="width" transfer-ownership="none">
+        <type name="gfloat" c:type="gfloat"/>
+      </property>
+      <field name="parent_instance">
+        <type name="DOMObject" c:type="WebKitDOMObject"/>
+      </field>
+    </class>
+    <record name="DOMClientRectClass"
+            c:type="WebKitDOMClientRectClass"
+            glib:is-gtype-struct-for="DOMClientRect">
+      <field name="parent_class">
+        <type name="DOMObjectClass" c:type="WebKitDOMObjectClass"/>
+      </field>
+    </record>
+    <class name="DOMClientRectList"
+           c:symbol-prefix="dom_client_rect_list"
+           c:type="WebKitDOMClientRectList"
+           parent="DOMObject"
+           glib:type-name="WebKitDOMClientRectList"
+           glib:get-type="webkit_dom_client_rect_list_get_type"
+           glib:type-struct="DOMClientRectListClass">
+      <method name="get_length"
+              c:identifier="webkit_dom_client_rect_list_get_length"
+              version="2.18">
+        <doc xml:space="preserve">Returns the number of #WebKitDOMClientRect objects that @self contains.</doc>
+        <return-value transfer-ownership="none">
+          <doc xml:space="preserve">A #gulong</doc>
+          <type name="gulong" c:type="gulong"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="self" transfer-ownership="none">
+            <doc xml:space="preserve">A #WebKitDOMClientRectList</doc>
+            <type name="DOMClientRectList" c:type="WebKitDOMClientRectList*"/>
+          </instance-parameter>
+        </parameters>
+      </method>
+      <method name="item"
+              c:identifier="webkit_dom_client_rect_list_item"
+              version="2.18">
+        <doc xml:space="preserve">Returns the #WebKitDOMClientRect object that @self contains at @index.</doc>
+        <return-value transfer-ownership="none">
+          <doc xml:space="preserve">A #WebKitDOMClientRect</doc>
+          <type name="DOMClientRect" c:type="WebKitDOMClientRect*"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="self" transfer-ownership="none">
+            <doc xml:space="preserve">A #WebKitDOMClientRectList</doc>
+            <type name="DOMClientRectList" c:type="WebKitDOMClientRectList*"/>
+          </instance-parameter>
+          <parameter name="index" transfer-ownership="none">
+            <doc xml:space="preserve">A #gulong</doc>
+            <type name="gulong" c:type="gulong"/>
+          </parameter>
+        </parameters>
+      </method>
+      <property name="length" transfer-ownership="none">
+        <type name="gulong" c:type="gulong"/>
+      </property>
+      <field name="parent_instance">
+        <type name="DOMObject" c:type="WebKitDOMObject"/>
+      </field>
+    </class>
+    <record name="DOMClientRectListClass"
+            c:type="WebKitDOMClientRectListClass"
+            glib:is-gtype-struct-for="DOMClientRectList">
+      <field name="parent_class">
+        <type name="DOMObjectClass" c:type="WebKitDOMObjectClass"/>
       </field>
     </record>
     <class name="DOMComment"
@@ -5916,6 +6147,22 @@ submenu of @item is removed.</doc>
           </instance-parameter>
         </parameters>
       </method>
+      <method name="get_bounding_client_rect"
+              c:identifier="webkit_dom_element_get_bounding_client_rect"
+              version="2.18">
+        <doc xml:space="preserve">Returns a #WebKitDOMClientRect representing the size and position of @self
+relative to the viewport.</doc>
+        <return-value transfer-ownership="full">
+          <doc xml:space="preserve">A #WebKitDOMClientRect</doc>
+          <type name="DOMClientRect" c:type="WebKitDOMClientRect*"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="self" transfer-ownership="none">
+            <doc xml:space="preserve">A #WebKitDOMElement</doc>
+            <type name="DOMElement" c:type="WebKitDOMElement*"/>
+          </instance-parameter>
+        </parameters>
+      </method>
       <method name="get_child_element_count"
               c:identifier="webkit_dom_element_get_child_element_count">
         <return-value transfer-ownership="none">
@@ -5988,6 +6235,22 @@ submenu of @item is removed.</doc>
         <return-value transfer-ownership="none">
           <doc xml:space="preserve">A #gdouble</doc>
           <type name="gdouble" c:type="gdouble"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="self" transfer-ownership="none">
+            <doc xml:space="preserve">A #WebKitDOMElement</doc>
+            <type name="DOMElement" c:type="WebKitDOMElement*"/>
+          </instance-parameter>
+        </parameters>
+      </method>
+      <method name="get_client_rects"
+              c:identifier="webkit_dom_element_get_client_rects"
+              version="2.18">
+        <doc xml:space="preserve">Returns a collection of #WebKitDOMClientRect objects, each of which describe
+the size and position of a CSS border box relative to the viewport.</doc>
+        <return-value transfer-ownership="full">
+          <doc xml:space="preserve">A #WebKitDOMClientRectList</doc>
+          <type name="DOMClientRectList" c:type="WebKitDOMClientRectList*"/>
         </return-value>
         <parameters>
           <instance-parameter name="self" transfer-ownership="none">
@@ -24201,7 +24464,7 @@ between the WebKit and JavaScriptCore APIs.</doc>
       <method name="is_main_frame"
               c:identifier="webkit_frame_is_main_frame"
               version="2.2">
-        <doc xml:space="preserve">Gets whether @frame is the a main frame of a #WebKitWebPage</doc>
+        <doc xml:space="preserve">Gets whether @frame is the main frame of a #WebKitWebPage</doc>
         <return-value transfer-ownership="none">
           <doc xml:space="preserve">%TRUE if @frame is a main frame or %FALSE otherwise</doc>
           <type name="gboolean" c:type="gboolean"/>
@@ -24238,132 +24501,188 @@ between the WebKit and JavaScriptCore APIs.</doc>
            glib:type-struct="HitTestResultClass">
       <method name="context_is_editable"
               c:identifier="webkit_hit_test_result_context_is_editable">
+        <doc xml:space="preserve">Gets whether %WEBKIT_HIT_TEST_RESULT_CONTEXT_EDITABLE flag is present in
+#WebKitHitTestResult:context.</doc>
         <return-value transfer-ownership="none">
+          <doc xml:space="preserve">%TRUE if there's an editable element at the coordinates of the @hit_test_result,
+   or %FALSE otherwise</doc>
           <type name="gboolean" c:type="gboolean"/>
         </return-value>
         <parameters>
           <instance-parameter name="hit_test_result" transfer-ownership="none">
+            <doc xml:space="preserve">a #WebKitHitTestResult</doc>
             <type name="HitTestResult" c:type="WebKitHitTestResult*"/>
           </instance-parameter>
         </parameters>
       </method>
       <method name="context_is_image"
               c:identifier="webkit_hit_test_result_context_is_image">
+        <doc xml:space="preserve">Gets whether %WEBKIT_HIT_TEST_RESULT_CONTEXT_IMAGE flag is present in
+#WebKitHitTestResult:context.</doc>
         <return-value transfer-ownership="none">
+          <doc xml:space="preserve">%TRUE if there's an image element in the coordinates of the Hit Test,
+   or %FALSE otherwise</doc>
           <type name="gboolean" c:type="gboolean"/>
         </return-value>
         <parameters>
           <instance-parameter name="hit_test_result" transfer-ownership="none">
+            <doc xml:space="preserve">a #WebKitHitTestResult</doc>
             <type name="HitTestResult" c:type="WebKitHitTestResult*"/>
           </instance-parameter>
         </parameters>
       </method>
       <method name="context_is_link"
               c:identifier="webkit_hit_test_result_context_is_link">
+        <doc xml:space="preserve">Gets whether %WEBKIT_HIT_TEST_RESULT_CONTEXT_LINK flag is present in
+#WebKitHitTestResult:context.</doc>
         <return-value transfer-ownership="none">
+          <doc xml:space="preserve">%TRUE if there's a link element in the coordinates of the Hit Test,
+   or %FALSE otherwise</doc>
           <type name="gboolean" c:type="gboolean"/>
         </return-value>
         <parameters>
           <instance-parameter name="hit_test_result" transfer-ownership="none">
+            <doc xml:space="preserve">a #WebKitHitTestResult</doc>
             <type name="HitTestResult" c:type="WebKitHitTestResult*"/>
           </instance-parameter>
         </parameters>
       </method>
       <method name="context_is_media"
               c:identifier="webkit_hit_test_result_context_is_media">
+        <doc xml:space="preserve">Gets whether %WEBKIT_HIT_TEST_RESULT_CONTEXT_MEDIA flag is present in
+#WebKitHitTestResult:context.</doc>
         <return-value transfer-ownership="none">
+          <doc xml:space="preserve">%TRUE if there's a media element in the coordinates of the Hit Test,
+   or %FALSE otherwise</doc>
           <type name="gboolean" c:type="gboolean"/>
         </return-value>
         <parameters>
           <instance-parameter name="hit_test_result" transfer-ownership="none">
+            <doc xml:space="preserve">a #WebKitHitTestResult</doc>
             <type name="HitTestResult" c:type="WebKitHitTestResult*"/>
           </instance-parameter>
         </parameters>
       </method>
       <method name="context_is_scrollbar"
               c:identifier="webkit_hit_test_result_context_is_scrollbar">
+        <doc xml:space="preserve">Gets whether %WEBKIT_HIT_TEST_RESULT_CONTEXT_SCROLLBAR flag is present in
+#WebKitHitTestResult:context.</doc>
         <return-value transfer-ownership="none">
+          <doc xml:space="preserve">%TRUE if there's a scrollbar element at the coordinates of the @hit_test_result,
+   or %FALSE otherwise</doc>
           <type name="gboolean" c:type="gboolean"/>
         </return-value>
         <parameters>
           <instance-parameter name="hit_test_result" transfer-ownership="none">
+            <doc xml:space="preserve">a #WebKitHitTestResult</doc>
             <type name="HitTestResult" c:type="WebKitHitTestResult*"/>
           </instance-parameter>
         </parameters>
       </method>
       <method name="context_is_selection"
-              c:identifier="webkit_hit_test_result_context_is_selection">
+              c:identifier="webkit_hit_test_result_context_is_selection"
+              version="2.8">
+        <doc xml:space="preserve">Gets whether %WEBKIT_HIT_TEST_RESULT_CONTEXT_SELECTION flag is present in
+#WebKitHitTestResult:context.</doc>
         <return-value transfer-ownership="none">
+          <doc xml:space="preserve">%TRUE if there's a selected element at the coordinates of the @hit_test_result,
+   or %FALSE otherwise</doc>
           <type name="gboolean" c:type="gboolean"/>
         </return-value>
         <parameters>
           <instance-parameter name="hit_test_result" transfer-ownership="none">
+            <doc xml:space="preserve">a #WebKitHitTestResult</doc>
             <type name="HitTestResult" c:type="WebKitHitTestResult*"/>
           </instance-parameter>
         </parameters>
       </method>
       <method name="get_context"
               c:identifier="webkit_hit_test_result_get_context">
+        <doc xml:space="preserve">Gets the value of the #WebKitHitTestResult:context property.</doc>
         <return-value transfer-ownership="none">
+          <doc xml:space="preserve">a bitmask of #WebKitHitTestResultContext flags</doc>
           <type name="guint" c:type="guint"/>
         </return-value>
         <parameters>
           <instance-parameter name="hit_test_result" transfer-ownership="none">
+            <doc xml:space="preserve">a #WebKitHitTestResult</doc>
             <type name="HitTestResult" c:type="WebKitHitTestResult*"/>
           </instance-parameter>
         </parameters>
       </method>
       <method name="get_image_uri"
               c:identifier="webkit_hit_test_result_get_image_uri">
+        <doc xml:space="preserve">Gets the value of the #WebKitHitTestResult:image-uri property.</doc>
         <return-value transfer-ownership="none">
+          <doc xml:space="preserve">the URI of the image element in the coordinates of the Hit Test,
+   or %NULL if there isn't an image element in @hit_test_result context</doc>
           <type name="utf8" c:type="const gchar*"/>
         </return-value>
         <parameters>
           <instance-parameter name="hit_test_result" transfer-ownership="none">
+            <doc xml:space="preserve">a #WebKitHitTestResult</doc>
             <type name="HitTestResult" c:type="WebKitHitTestResult*"/>
           </instance-parameter>
         </parameters>
       </method>
       <method name="get_link_label"
               c:identifier="webkit_hit_test_result_get_link_label">
+        <doc xml:space="preserve">Gets the value of the #WebKitHitTestResult:link-label property.</doc>
         <return-value transfer-ownership="none">
+          <doc xml:space="preserve">the label of the link element in the coordinates of the Hit Test,
+   or %NULL if there isn't a link element in @hit_test_result context or the
+   link element doesn't have a label</doc>
           <type name="utf8" c:type="const gchar*"/>
         </return-value>
         <parameters>
           <instance-parameter name="hit_test_result" transfer-ownership="none">
+            <doc xml:space="preserve">a #WebKitHitTestResult</doc>
             <type name="HitTestResult" c:type="WebKitHitTestResult*"/>
           </instance-parameter>
         </parameters>
       </method>
       <method name="get_link_title"
               c:identifier="webkit_hit_test_result_get_link_title">
+        <doc xml:space="preserve">Gets the value of the #WebKitHitTestResult:link-title property.</doc>
         <return-value transfer-ownership="none">
+          <doc xml:space="preserve">the title of the link element in the coordinates of the Hit Test,
+   or %NULL if there isn't a link element in @hit_test_result context or the
+   link element doesn't have a title</doc>
           <type name="utf8" c:type="const gchar*"/>
         </return-value>
         <parameters>
           <instance-parameter name="hit_test_result" transfer-ownership="none">
+            <doc xml:space="preserve">a #WebKitHitTestResult</doc>
             <type name="HitTestResult" c:type="WebKitHitTestResult*"/>
           </instance-parameter>
         </parameters>
       </method>
       <method name="get_link_uri"
               c:identifier="webkit_hit_test_result_get_link_uri">
+        <doc xml:space="preserve">Gets the value of the #WebKitHitTestResult:link-uri property.</doc>
         <return-value transfer-ownership="none">
+          <doc xml:space="preserve">the URI of the link element in the coordinates of the Hit Test,
+   or %NULL if there isn't a link element in @hit_test_result context</doc>
           <type name="utf8" c:type="const gchar*"/>
         </return-value>
         <parameters>
           <instance-parameter name="hit_test_result" transfer-ownership="none">
+            <doc xml:space="preserve">a #WebKitHitTestResult</doc>
             <type name="HitTestResult" c:type="WebKitHitTestResult*"/>
           </instance-parameter>
         </parameters>
       </method>
       <method name="get_media_uri"
               c:identifier="webkit_hit_test_result_get_media_uri">
+        <doc xml:space="preserve">Gets the value of the #WebKitHitTestResult:media-uri property.</doc>
         <return-value transfer-ownership="none">
+          <doc xml:space="preserve">the URI of the media element in the coordinates of the Hit Test,
+   or %NULL if there isn't a media element in @hit_test_result context</doc>
           <type name="utf8" c:type="const gchar*"/>
         </return-value>
         <parameters>
           <instance-parameter name="hit_test_result" transfer-ownership="none">
+            <doc xml:space="preserve">a #WebKitHitTestResult</doc>
             <type name="HitTestResult" c:type="WebKitHitTestResult*"/>
           </instance-parameter>
         </parameters>
@@ -24372,36 +24691,48 @@ between the WebKit and JavaScriptCore APIs.</doc>
                 writable="1"
                 construct-only="1"
                 transfer-ownership="none">
+        <doc xml:space="preserve">Bitmask of #WebKitHitTestResultContext flags representing
+the context of the #WebKitHitTestResult.</doc>
         <type name="guint" c:type="guint"/>
       </property>
       <property name="image-uri"
                 writable="1"
                 construct-only="1"
                 transfer-ownership="none">
+        <doc xml:space="preserve">The URI of the image if flag %WEBKIT_HIT_TEST_RESULT_CONTEXT_IMAGE
+is present in #WebKitHitTestResult:context</doc>
         <type name="utf8" c:type="gchar*"/>
       </property>
       <property name="link-label"
                 writable="1"
                 construct-only="1"
                 transfer-ownership="none">
+        <doc xml:space="preserve">The label of the link if flag %WEBKIT_HIT_TEST_RESULT_CONTEXT_LINK
+is present in #WebKitHitTestResult:context</doc>
         <type name="utf8" c:type="gchar*"/>
       </property>
       <property name="link-title"
                 writable="1"
                 construct-only="1"
                 transfer-ownership="none">
+        <doc xml:space="preserve">The title of the link if flag %WEBKIT_HIT_TEST_RESULT_CONTEXT_LINK
+is present in #WebKitHitTestResult:context</doc>
         <type name="utf8" c:type="gchar*"/>
       </property>
       <property name="link-uri"
                 writable="1"
                 construct-only="1"
                 transfer-ownership="none">
+        <doc xml:space="preserve">The URI of the link if flag %WEBKIT_HIT_TEST_RESULT_CONTEXT_LINK
+is present in #WebKitHitTestResult:context</doc>
         <type name="utf8" c:type="gchar*"/>
       </property>
       <property name="media-uri"
                 writable="1"
                 construct-only="1"
                 transfer-ownership="none">
+        <doc xml:space="preserve">The URI of the media if flag %WEBKIT_HIT_TEST_RESULT_CONTEXT_MEDIA
+is present in #WebKitHitTestResult:context</doc>
         <type name="utf8" c:type="gchar*"/>
       </property>
       <field name="parent">
@@ -24595,56 +24926,73 @@ webkit_frame_get_javascript_context_for_script_world().</doc>
            glib:get-type="webkit_uri_request_get_type"
            glib:type-struct="URIRequestClass">
       <constructor name="new" c:identifier="webkit_uri_request_new">
+        <doc xml:space="preserve">Creates a new #WebKitURIRequest for the given URI.</doc>
         <return-value transfer-ownership="full">
+          <doc xml:space="preserve">a new #WebKitURIRequest</doc>
           <type name="URIRequest" c:type="WebKitURIRequest*"/>
         </return-value>
         <parameters>
           <parameter name="uri" transfer-ownership="none">
+            <doc xml:space="preserve">an URI</doc>
             <type name="utf8" c:type="const gchar*"/>
           </parameter>
         </parameters>
       </constructor>
       <method name="get_http_headers"
               c:identifier="webkit_uri_request_get_http_headers">
-        <return-value transfer-ownership="full">
+        <doc xml:space="preserve">Get the HTTP headers of a #WebKitURIRequest as a #SoupMessageHeaders.</doc>
+        <return-value transfer-ownership="none">
+          <doc xml:space="preserve">a #SoupMessageHeaders with the HTTP headers of @request
+   or %NULL if @request is not an HTTP request.</doc>
           <type name="Soup.MessageHeaders" c:type="SoupMessageHeaders*"/>
         </return-value>
         <parameters>
           <instance-parameter name="request" transfer-ownership="none">
+            <doc xml:space="preserve">a #WebKitURIRequest</doc>
             <type name="URIRequest" c:type="WebKitURIRequest*"/>
           </instance-parameter>
         </parameters>
       </method>
       <method name="get_http_method"
-              c:identifier="webkit_uri_request_get_http_method">
+              c:identifier="webkit_uri_request_get_http_method"
+              version="2.12">
+        <doc xml:space="preserve">Get the HTTP method of the #WebKitURIRequest.</doc>
         <return-value transfer-ownership="none">
+          <doc xml:space="preserve">the HTTP method of the #WebKitURIRequest or %NULL if @request is not
+   an HTTP request.</doc>
           <type name="utf8" c:type="const gchar*"/>
         </return-value>
         <parameters>
           <instance-parameter name="request" transfer-ownership="none">
+            <doc xml:space="preserve">a #WebKitURIRequest</doc>
             <type name="URIRequest" c:type="WebKitURIRequest*"/>
           </instance-parameter>
         </parameters>
       </method>
       <method name="get_uri" c:identifier="webkit_uri_request_get_uri">
         <return-value transfer-ownership="none">
+          <doc xml:space="preserve">the uri of the #WebKitURIRequest</doc>
           <type name="utf8" c:type="const gchar*"/>
         </return-value>
         <parameters>
           <instance-parameter name="request" transfer-ownership="none">
+            <doc xml:space="preserve">a #WebKitURIRequest</doc>
             <type name="URIRequest" c:type="WebKitURIRequest*"/>
           </instance-parameter>
         </parameters>
       </method>
       <method name="set_uri" c:identifier="webkit_uri_request_set_uri">
+        <doc xml:space="preserve">Set the URI of @request</doc>
         <return-value transfer-ownership="none">
           <type name="none" c:type="void"/>
         </return-value>
         <parameters>
           <instance-parameter name="request" transfer-ownership="none">
+            <doc xml:space="preserve">a #WebKitURIRequest</doc>
             <type name="URIRequest" c:type="WebKitURIRequest*"/>
           </instance-parameter>
           <parameter name="uri" transfer-ownership="none">
+            <doc xml:space="preserve">an URI</doc>
             <type name="utf8" c:type="const gchar*"/>
           </parameter>
         </parameters>
@@ -24653,6 +25001,7 @@ webkit_frame_get_javascript_context_for_script_world().</doc>
                 writable="1"
                 construct="1"
                 transfer-ownership="none">
+        <doc xml:space="preserve">The URI to which the request will be made.</doc>
         <type name="utf8" c:type="gchar*"/>
       </property>
       <field name="parent">
@@ -24710,22 +25059,31 @@ webkit_frame_get_javascript_context_for_script_world().</doc>
            glib:type-struct="URIResponseClass">
       <method name="get_content_length"
               c:identifier="webkit_uri_response_get_content_length">
+        <doc xml:space="preserve">Get the expected content length of the #WebKitURIResponse. It can
+be 0 if the server provided an incorrect or missing Content-Length.</doc>
         <return-value transfer-ownership="none">
+          <doc xml:space="preserve">the expected content length of @response.</doc>
           <type name="guint64" c:type="guint64"/>
         </return-value>
         <parameters>
           <instance-parameter name="response" transfer-ownership="none">
+            <doc xml:space="preserve">a #WebKitURIResponse</doc>
             <type name="URIResponse" c:type="WebKitURIResponse*"/>
           </instance-parameter>
         </parameters>
       </method>
       <method name="get_http_headers"
-              c:identifier="webkit_uri_response_get_http_headers">
-        <return-value transfer-ownership="full">
+              c:identifier="webkit_uri_response_get_http_headers"
+              version="2.6">
+        <doc xml:space="preserve">Get the HTTP headers of a #WebKitURIResponse as a #SoupMessageHeaders.</doc>
+        <return-value transfer-ownership="none">
+          <doc xml:space="preserve">a #SoupMessageHeaders with the HTTP headers of @response
+   or %NULL if @response is not an HTTP response.</doc>
           <type name="Soup.MessageHeaders" c:type="SoupMessageHeaders*"/>
         </return-value>
         <parameters>
           <instance-parameter name="response" transfer-ownership="none">
+            <doc xml:space="preserve">a #WebKitURIResponse</doc>
             <type name="URIResponse" c:type="WebKitURIResponse*"/>
           </instance-parameter>
         </parameters>
@@ -24733,62 +25091,84 @@ webkit_frame_get_javascript_context_for_script_world().</doc>
       <method name="get_mime_type"
               c:identifier="webkit_uri_response_get_mime_type">
         <return-value transfer-ownership="none">
+          <doc xml:space="preserve">the MIME type of the #WebKitURIResponse</doc>
           <type name="utf8" c:type="const gchar*"/>
         </return-value>
         <parameters>
           <instance-parameter name="response" transfer-ownership="none">
+            <doc xml:space="preserve">a #WebKitURIResponse</doc>
             <type name="URIResponse" c:type="WebKitURIResponse*"/>
           </instance-parameter>
         </parameters>
       </method>
       <method name="get_status_code"
               c:identifier="webkit_uri_response_get_status_code">
+        <doc xml:space="preserve">Get the status code of the #WebKitURIResponse as returned by
+the server. It will normally be a #SoupKnownStatusCode, for
+example %SOUP_STATUS_OK, though the server can respond with any
+unsigned integer.</doc>
         <return-value transfer-ownership="none">
+          <doc xml:space="preserve">the status code of @response</doc>
           <type name="guint" c:type="guint"/>
         </return-value>
         <parameters>
           <instance-parameter name="response" transfer-ownership="none">
+            <doc xml:space="preserve">a #WebKitURIResponse</doc>
             <type name="URIResponse" c:type="WebKitURIResponse*"/>
           </instance-parameter>
         </parameters>
       </method>
       <method name="get_suggested_filename"
               c:identifier="webkit_uri_response_get_suggested_filename">
+        <doc xml:space="preserve">Get the suggested filename for @response, as specified by
+the 'Content-Disposition' HTTP header, or %NULL if it's not
+present.</doc>
         <return-value transfer-ownership="none">
+          <doc xml:space="preserve">the suggested filename or %NULL if
+   the 'Content-Disposition' HTTP header is not present.</doc>
           <type name="utf8" c:type="const gchar*"/>
         </return-value>
         <parameters>
           <instance-parameter name="response" transfer-ownership="none">
+            <doc xml:space="preserve">a #WebKitURIResponse</doc>
             <type name="URIResponse" c:type="WebKitURIResponse*"/>
           </instance-parameter>
         </parameters>
       </method>
       <method name="get_uri" c:identifier="webkit_uri_response_get_uri">
         <return-value transfer-ownership="none">
+          <doc xml:space="preserve">the uri of the #WebKitURIResponse</doc>
           <type name="utf8" c:type="const gchar*"/>
         </return-value>
         <parameters>
           <instance-parameter name="response" transfer-ownership="none">
+            <doc xml:space="preserve">a #WebKitURIResponse</doc>
             <type name="URIResponse" c:type="WebKitURIResponse*"/>
           </instance-parameter>
         </parameters>
       </method>
       <property name="content-length" transfer-ownership="none">
+        <doc xml:space="preserve">The expected content length of the response.</doc>
         <type name="guint64" c:type="guint64"/>
       </property>
-      <property name="http-headers" transfer-ownership="none">
+      <property name="http-headers" version="2.6" transfer-ownership="none">
+        <doc xml:space="preserve">The HTTP headers of the response, or %NULL if the response is not an HTTP response.</doc>
         <type name="Soup.MessageHeaders"/>
       </property>
       <property name="mime-type" transfer-ownership="none">
+        <doc xml:space="preserve">The MIME type of the response.</doc>
         <type name="utf8" c:type="gchar*"/>
       </property>
       <property name="status-code" transfer-ownership="none">
+        <doc xml:space="preserve">The status code of the response as returned by the server.</doc>
         <type name="guint" c:type="guint"/>
       </property>
       <property name="suggested-filename" transfer-ownership="none">
+        <doc xml:space="preserve">The suggested filename for the URI response.</doc>
         <type name="utf8" c:type="gchar*"/>
       </property>
       <property name="uri" transfer-ownership="none">
+        <doc xml:space="preserve">The URI for which the response was made.</doc>
         <type name="utf8" c:type="gchar*"/>
       </property>
       <field name="parent">
@@ -24897,7 +25277,7 @@ selection.</doc>
         <doc xml:space="preserve">Get the web page of the given @page_id.</doc>
         <return-value transfer-ownership="none">
           <doc xml:space="preserve">the #WebKitWebPage for the given @page_id, or %NULL if the
-   identifier doesn't correspond to an exsiting web page.</doc>
+   identifier doesn't correspond to an existing web page.</doc>
           <type name="WebPage" c:type="WebKitWebPage*"/>
         </return-value>
         <parameters>
@@ -25146,8 +25526,8 @@ signal of @web_page.</doc>
         <type name="WebPagePrivate" c:type="WebKitWebPagePrivate*"/>
       </field>
       <glib:signal name="console-message-sent" when="last" version="2.12">
-        <doc xml:space="preserve">Emmited when a message is sent to the console. This can be a message
-produced by the use of JavaScript console API, a javascript exception,
+        <doc xml:space="preserve">Emitted when a message is sent to the console. This can be a message
+produced by the use of JavaScript console API, a JavaScript exception,
 a security error or other errors, warnings, debug or log messages.
 The @console_message contains information of the message.</doc>
         <return-value transfer-ownership="none">
@@ -25161,13 +25541,13 @@ The @console_message contains information of the message.</doc>
         </parameters>
       </glib:signal>
       <glib:signal name="context-menu" when="last" version="2.8">
-        <doc xml:space="preserve">Emmited before a context menu is displayed in the UI Process to
+        <doc xml:space="preserve">Emitted before a context menu is displayed in the UI Process to
 give the application a chance to customize the proposed menu,
 build its own context menu or pass user data to the UI Process.
 This signal is useful when the information available in the UI Process
 is not enough to build or customize the context menu, for example, to
 add menu entries depending on the #WebKitDOMNode at the coordinates of the
-@hit_test_result. Otherwise, it's recommened to use #WebKitWebView::context-menu
+@hit_test_result. Otherwise, it's recommended to use #WebKitWebView::context-menu
 signal instead.</doc>
         <return-value transfer-ownership="none">
           <doc xml:space="preserve">%TRUE if the proposed @context_menu has been modified, or %FALSE otherwise.</doc>
@@ -25196,7 +25576,7 @@ webkit_web_page_get_dom_document().</doc>
       </glib:signal>
       <glib:signal name="form-controls-associated" when="last" version="2.16">
         <doc xml:space="preserve">Emitted after form elements (or form associated elements) are associated to a particular web
-page. This is useful to implement form autofilling for web pages where form fields are added
+page. This is useful to implement form auto filling for web pages where form fields are added
 dynamically. This signal might be emitted multiple times for the same web page.
 
 Note that this signal could be also emitted when form controls are moved between forms. In
