@@ -26,7 +26,7 @@ allowed. The year is represented with four digits.</doc>
     </alias>
     <alias name="MutexLocker" c:type="GMutexLocker">
       <doc xml:space="preserve">Opaque type. See g_mutex_locker_new() for details.</doc>
-      <type name="gpointer" c:type="gpointer"/>
+      <type name="none" c:type="void"/>
     </alias>
     <alias name="Pid" c:type="GPid">
       <doc xml:space="preserve">A type which is used to hold a process identification.
@@ -46,7 +46,7 @@ particular string. A GQuark value of zero is associated to %NULL.</doc>
     <alias name="Strv" c:type="GStrv">
       <doc xml:space="preserve">A typedef alias for gchar**. This is mostly useful when used together with
 g_auto().</doc>
-      <type name="gpointer" c:type="gpointer"/>
+      <type name="utf8" c:type="gchar**"/>
     </alias>
     <alias name="Time" c:type="GTime">
       <doc xml:space="preserve">Simply a replacement for time_t. It has been deprecated
@@ -3360,6 +3360,9 @@ date to include new hashing algorithm types.</doc>
       </member>
       <member name="sha512" value="3" c:identifier="G_CHECKSUM_SHA512">
         <doc xml:space="preserve">Use the SHA-512 hashing algorithm (Since: 2.36)</doc>
+      </member>
+      <member name="sha384" value="4" c:identifier="G_CHECKSUM_SHA384">
+        <doc xml:space="preserve">Use the SHA-384 hashing algorithm (Since: 2.51)</doc>
       </member>
     </enumeration>
     <callback name="ChildWatchFunc" c:type="GChildWatchFunc">
@@ -7987,7 +7990,8 @@ g_hmac_get_digest() have been called on a #GHmac, the HMAC
 will be closed and it won't be possible to call g_hmac_update()
 on it anymore.
 
-Support for digests of type %G_CHECKSUM_SHA512 has been added in GLib 2.42.</doc>
+Support for digests of type %G_CHECKSUM_SHA512 has been added in GLib 2.42.
+Support for %G_CHECKSUM_SHA384 was added in GLib 2.52.</doc>
         <return-value>
           <doc xml:space="preserve">the newly created #GHmac, or %NULL.
   Use g_hmac_unref() to free the memory allocated by it.</doc>
@@ -10524,7 +10528,8 @@ integer.
 
 If @key cannot be found then 0 is returned and @error is set to
 #G_KEY_FILE_ERROR_KEY_NOT_FOUND. Likewise, if the value associated
-with @key cannot be interpreted as an integer then 0 is returned
+with @key cannot be interpreted as an integer, or is out of range
+for a #gint, then 0 is returned
 and @error is set to #G_KEY_FILE_ERROR_INVALID_VALUE.</doc>
         <return-value transfer-ownership="none">
           <doc xml:space="preserve">the value associated with the key as an integer, or
@@ -10555,7 +10560,8 @@ integers.
 
 If @key cannot be found then %NULL is returned and @error is set to
 #G_KEY_FILE_ERROR_KEY_NOT_FOUND. Likewise, if the values associated
-with @key cannot be interpreted as integers then %NULL is returned
+with @key cannot be interpreted as integers, or are out of range for
+#gint, then %NULL is returned
 and @error is set to #G_KEY_FILE_ERROR_INVALID_VALUE.</doc>
         <return-value transfer-ownership="container">
           <doc xml:space="preserve">
@@ -11015,9 +11021,13 @@ set to either a #GFileError or #GKeyFileError.</doc>
               throws="1">
         <doc xml:space="preserve">This function looks for a key file named @file in the paths
 specified in @search_dirs, loads the file into @key_file and
-returns the file's full path in @full_path.  If the file could not
-be loaded then an %error is set to either a #GFileError or
-#GKeyFileError.</doc>
+returns the file's full path in @full_path.
+
+If the file could not be found in any of the @search_dirs,
+%G_KEY_FILE_ERROR_NOT_FOUND is returned. If
+the file is found but the OS returns an error when opening or reading the
+file, a %G_FILE_ERROR is returned. If there is a problem parsing the file, a
+%G_KEY_FILE_ERROR is returned.</doc>
         <return-value transfer-ownership="none">
           <doc xml:space="preserve">%TRUE if a key file could be loaded, %FALSE otherwise</doc>
           <type name="gboolean" c:type="gboolean"/>
@@ -11058,8 +11068,13 @@ be loaded then an %error is set to either a #GFileError or
               version="2.6"
               throws="1">
         <doc xml:space="preserve">Loads a key file into an empty #GKeyFile structure.
-If the file could not be loaded then @error is set to
-either a #GFileError or #GKeyFileError.</doc>
+
+If the OS returns an error when opening or reading the file, a
+%G_FILE_ERROR is returned. If there is a problem parsing the file, a
+%G_KEY_FILE_ERROR is returned.
+
+This function will never return a %G_KEY_FILE_ERROR_NOT_FOUND error. If the
+@file is not found, %G_FILE_ERROR_NOENT is returned.</doc>
         <return-value transfer-ownership="none">
           <doc xml:space="preserve">%TRUE if a key file could be loaded, %FALSE otherwise</doc>
           <type name="gboolean" c:type="gboolean"/>
@@ -12941,7 +12956,7 @@ linked against at application run time.</doc>
       <doc xml:space="preserve">The minimum value which can be held in a #gint8.</doc>
       <type name="gint8" c:type="gint8"/>
     </constant>
-    <constant name="MINOR_VERSION" value="50" c:type="GLIB_MINOR_VERSION">
+    <constant name="MINOR_VERSION" value="52" c:type="GLIB_MINOR_VERSION">
       <doc xml:space="preserve">The minor version number of the GLib library.
 
 Like #gtk_minor_version, but from the headers used at
@@ -13024,7 +13039,7 @@ You must have successfully acquired the context with
 g_main_context_acquire() before you may call this function.</doc>
         <return-value transfer-ownership="none">
           <doc xml:space="preserve">%TRUE if some sources are ready to be dispatched.</doc>
-          <type name="gint" c:type="gint"/>
+          <type name="gboolean" c:type="gboolean"/>
         </return-value>
         <parameters>
           <instance-parameter name="context" transfer-ownership="none">
@@ -16347,18 +16362,14 @@ arguments.</doc>
           <parameter name="argc"
                      direction="inout"
                      caller-allocates="0"
-                     transfer-ownership="full"
-                     nullable="1"
-                     allow-none="1">
+                     transfer-ownership="full">
             <doc xml:space="preserve">a pointer to the number of command line arguments</doc>
             <type name="gint" c:type="gint*"/>
           </parameter>
           <parameter name="argv"
                      direction="inout"
                      caller-allocates="0"
-                     transfer-ownership="full"
-                     nullable="1"
-                     allow-none="1">
+                     transfer-ownership="full">
             <doc xml:space="preserve">a pointer to the array of command line arguments</doc>
             <array length="0" zero-terminated="0" c:type="gchar***">
               <type name="utf8" c:type="gchar**"/>
@@ -25679,7 +25690,7 @@ These two options correspond rather directly to the 'dist' and
 'built' terminology that automake uses and are explicitly used to
 distinguish between the 'srcdir' and 'builddir' being separate.  All
 files in your project should either be dist (in the
-`DIST_EXTRA` or `dist_schema_DATA`
+`EXTRA_DIST` or `dist_schema_DATA`
 sense, in which case they will always be in the srcdir) or built (in
 the `BUILT_SOURCES` sense, in which case they will
 always be in the builddir).
@@ -27917,7 +27928,7 @@ This macro is provided for code readability.</doc>
 Since new unicode versions may add new types here, applications should be ready
 to handle unknown values. They may be regarded as %G_UNICODE_BREAK_UNKNOWN.
 
-See &lt;ulink url="http://www.unicode.org/unicode/reports/tr14/"&gt;http://www.unicode.org/unicode/reports/tr14/&lt;/ulink&gt;.</doc>
+See [Unicode Line Breaking Algorithm](http://www.unicode.org/unicode/reports/tr14/).</doc>
       <member name="mandatory"
               value="0"
               c:identifier="G_UNICODE_BREAK_MANDATORY">
@@ -28100,6 +28111,21 @@ See &lt;ulink url="http://www.unicode.org/unicode/reports/tr14/"&gt;http://www.u
               c:identifier="G_UNICODE_BREAK_REGIONAL_INDICATOR">
         <doc xml:space="preserve">Regional Indicator (RI). Since: 2.36</doc>
       </member>
+      <member name="emoji_base"
+              value="40"
+              c:identifier="G_UNICODE_BREAK_EMOJI_BASE">
+        <doc xml:space="preserve">Emoji Base (EB). Since: 2.50</doc>
+      </member>
+      <member name="emoji_modifier"
+              value="41"
+              c:identifier="G_UNICODE_BREAK_EMOJI_MODIFIER">
+        <doc xml:space="preserve">Emoji Modifier (EM). Since: 2.50</doc>
+      </member>
+      <member name="zero_width_joiner"
+              value="42"
+              c:identifier="G_UNICODE_BREAK_ZERO_WIDTH_JOINER">
+        <doc xml:space="preserve">Zero Width Joiner (ZWJ). Since: 2.50</doc>
+      </member>
     </enumeration>
     <enumeration name="UnicodeScript" c:type="GUnicodeScript">
       <doc xml:space="preserve">The #GUnicodeScript enumeration identifies different writing
@@ -28109,9 +28135,7 @@ and is interchangeable with #PangoScript.
 
 Note that new types may be added in the future. Applications
 should be ready to handle unknown values.
-See &lt;ulink
-url="http://www.unicode.org/reports/tr24/"&gt;Unicode Standard Annex
-#24: Script names&lt;/ulink&gt;.</doc>
+See [Unicode Standard Annex #24: Script names](http://www.unicode.org/reports/tr24/).</doc>
       <member name="invalid_code"
               value="-1"
               c:identifier="G_UNICODE_SCRIPT_INVALID_CODE">
@@ -28686,11 +28710,33 @@ url="http://www.unicode.org/reports/tr24/"&gt;Unicode Standard Annex
               c:identifier="G_UNICODE_SCRIPT_SIGNWRITING">
         <doc xml:space="preserve">Signwriting. Since: 2.48</doc>
       </member>
+      <member name="adlam" value="132" c:identifier="G_UNICODE_SCRIPT_ADLAM">
+        <doc xml:space="preserve">Adlam. Since: 2.50</doc>
+      </member>
+      <member name="bhaiksuki"
+              value="133"
+              c:identifier="G_UNICODE_SCRIPT_BHAIKSUKI">
+        <doc xml:space="preserve">Bhaiksuki. Since: 2.50</doc>
+      </member>
+      <member name="marchen"
+              value="134"
+              c:identifier="G_UNICODE_SCRIPT_MARCHEN">
+        <doc xml:space="preserve">Marchen. Since: 2.50</doc>
+      </member>
+      <member name="newa" value="135" c:identifier="G_UNICODE_SCRIPT_NEWA">
+        <doc xml:space="preserve">Newa. Since: 2.50</doc>
+      </member>
+      <member name="osage" value="136" c:identifier="G_UNICODE_SCRIPT_OSAGE">
+        <doc xml:space="preserve">Osage. Since: 2.50</doc>
+      </member>
+      <member name="tangut" value="137" c:identifier="G_UNICODE_SCRIPT_TANGUT">
+        <doc xml:space="preserve">Tangut. Since: 2.50</doc>
+      </member>
     </enumeration>
     <enumeration name="UnicodeType" c:type="GUnicodeType">
       <doc xml:space="preserve">These are the possible character classifications from the
 Unicode specification.
-See &lt;ulink url="http://www.unicode.org/reports/tr44/#General_Category_Values"&gt;Unicode Character Database&lt;/unlink&gt;.</doc>
+See [Unicode Character Database](http://www.unicode.org/reports/tr44/#General_Category_Values).</doc>
       <member name="control" value="0" c:identifier="G_UNICODE_CONTROL">
         <doc xml:space="preserve">General category "Other, Control" (Cc)</doc>
       </member>
@@ -31949,11 +31995,41 @@ this function.</doc>
       </method>
       <method name="open" c:identifier="g_variant_builder_open" version="2.24">
         <doc xml:space="preserve">Opens a subcontainer inside the given @builder.  When done adding
-items to the subcontainer, g_variant_builder_close() must be called.
+items to the subcontainer, g_variant_builder_close() must be called. @type
+is the type of the container: so to build a tuple of several values, @type
+must include the tuple itself.
 
 It is an error to call this function in any way that would cause an
 inconsistent value to be constructed (ie: adding too many values or
-a value of an incorrect type).</doc>
+a value of an incorrect type).
+
+Example of building a nested variant:
+|[&lt;!-- language="C" --&gt;
+GVariantBuilder builder;
+guint32 some_number = get_number ();
+g_autoptr (GHashTable) some_dict = get_dict ();
+GHashTableIter iter;
+const gchar *key;
+const GVariant *value;
+g_autoptr (GVariant) output = NULL;
+
+g_variant_builder_init (&amp;builder, G_VARIANT_TYPE ("(ua{sv})"));
+g_variant_builder_add (&amp;builder, "u", some_number);
+g_variant_builder_open (&amp;builder, G_VARIANT_TYPE ("a{sv}"));
+
+g_hash_table_iter_init (&amp;iter, some_dict);
+while (g_hash_table_iter_next (&amp;iter, (gpointer *) &amp;key, (gpointer *) &amp;value))
+  {
+    g_variant_builder_open (&amp;builder, G_VARIANT_TYPE ("{sv}"));
+    g_variant_builder_add (&amp;builder, "s", key);
+    g_variant_builder_add (&amp;builder, "v", value);
+    g_variant_builder_close (&amp;builder);
+  }
+
+g_variant_builder_close (&amp;builder);
+
+output = g_variant_builder_end (&amp;builder);
+]|</doc>
         <return-value transfer-ownership="none">
           <type name="none" c:type="void"/>
         </return-value>
@@ -31963,7 +32039,7 @@ a value of an incorrect type).</doc>
             <type name="VariantBuilder" c:type="GVariantBuilder*"/>
           </instance-parameter>
           <parameter name="type" transfer-ownership="none">
-            <doc xml:space="preserve">a #GVariantType</doc>
+            <doc xml:space="preserve">the #GVariantType of the container</doc>
             <type name="VariantType" c:type="const GVariantType*"/>
           </parameter>
         </parameters>
@@ -34847,7 +34923,9 @@ representation.</doc>
 
 The output buffer must be large enough to fit all the data that will
 be written to it. It will need up to 4 bytes, or up to 5 bytes if
-line-breaking is enabled.</doc>
+line-breaking is enabled.
+
+The @out array will not be automatically nul-terminated.</doc>
       <return-value transfer-ownership="none">
         <doc xml:space="preserve">The number of bytes of output that was written</doc>
         <type name="gsize" c:type="gsize"/>
@@ -37193,8 +37271,7 @@ codes are those in the #GFileError enumeration. In the error case,
                    direction="out"
                    caller-allocates="0"
                    transfer-ownership="full"
-                   optional="1"
-                   allow-none="1">
+                   nullable="1">
           <doc xml:space="preserve">location to store length in bytes of the contents, or %NULL</doc>
           <type name="gsize" c:type="gsize*"/>
         </parameter>
@@ -37453,11 +37530,9 @@ encoding used for filenames.</doc>
                    direction="out"
                    caller-allocates="0"
                    transfer-ownership="full"
-                   nullable="1"
                    optional="1"
                    allow-none="1">
-          <doc xml:space="preserve">Location to store hostname for the
-           URI.
+          <doc xml:space="preserve">Location to store hostname for the URI.
            If there is no hostname in the URI, %NULL will be
            stored in this location.</doc>
           <type name="utf8" c:type="gchar**"/>
@@ -40672,18 +40747,25 @@ created. Returns -1 if an error occurred, with errno set.</doc>
         </parameter>
       </parameters>
     </function>
-    <function name="mkdtemp" c:identifier="g_mkdtemp" version="2.30">
+    <function name="mkdtemp"
+              c:identifier="g_mkdtemp"
+              version="2.30"
+              introspectable="0">
       <doc xml:space="preserve">Creates a temporary directory. See the mkdtemp() documentation
 on most UNIX-like systems.
 
 The parameter is a string that should follow the rules for
 mkdtemp() templates, i.e. contain the string "XXXXXX".
 g_mkdtemp() is slightly more flexible than mkdtemp() in that the
-sequence does not have to occur at the very end of the template
-and you can pass a @mode and additional @flags. The X string will
-be modified to form the name of a directory that didn't exist.
+sequence does not have to occur at the very end of the template.
+The X string will be modified to form the name of a directory that
+didn't exist.
 The string should be in the GLib file name encoding. Most importantly,
-on Windows it should be in UTF-8.</doc>
+on Windows it should be in UTF-8.
+
+If you are going to be creating a temporary directory inside the
+directory returned by g_get_tmp_dir(), you might want to use
+g_dir_make_tmp() instead.</doc>
       <return-value transfer-ownership="full" nullable="1">
         <doc xml:space="preserve">A pointer to @tmpl, which has been
     modified to hold the directory name.  In case of errors, %NULL is
@@ -40697,18 +40779,25 @@ on Windows it should be in UTF-8.</doc>
         </parameter>
       </parameters>
     </function>
-    <function name="mkdtemp_full" c:identifier="g_mkdtemp_full" version="2.30">
+    <function name="mkdtemp_full"
+              c:identifier="g_mkdtemp_full"
+              version="2.30"
+              introspectable="0">
       <doc xml:space="preserve">Creates a temporary directory. See the mkdtemp() documentation
 on most UNIX-like systems.
 
 The parameter is a string that should follow the rules for
 mkdtemp() templates, i.e. contain the string "XXXXXX".
-g_mkdtemp() is slightly more flexible than mkdtemp() in that the
+g_mkdtemp_full() is slightly more flexible than mkdtemp() in that the
 sequence does not have to occur at the very end of the template
 and you can pass a @mode. The X string will be modified to form
 the name of a directory that didn't exist. The string should be
 in the GLib file name encoding. Most importantly, on Windows it
-should be in UTF-8.</doc>
+should be in UTF-8.
+
+If you are going to be creating a temporary directory inside the
+directory returned by g_get_tmp_dir(), you might want to use
+g_dir_make_tmp() instead.</doc>
       <return-value transfer-ownership="full" nullable="1">
         <doc xml:space="preserve">A pointer to @tmpl, which has been
     modified to hold the directory name. In case of errors, %NULL is
@@ -40726,7 +40815,7 @@ should be in UTF-8.</doc>
         </parameter>
       </parameters>
     </function>
-    <function name="mkstemp" c:identifier="g_mkstemp">
+    <function name="mkstemp" c:identifier="g_mkstemp" introspectable="0">
       <doc xml:space="preserve">Opens a temporary file. See the mkstemp() documentation
 on most UNIX-like systems.
 
@@ -40752,7 +40841,10 @@ Most importantly, on Windows it should be in UTF-8.</doc>
         </parameter>
       </parameters>
     </function>
-    <function name="mkstemp_full" c:identifier="g_mkstemp_full" version="2.22">
+    <function name="mkstemp_full"
+              c:identifier="g_mkstemp_full"
+              version="2.22"
+              introspectable="0">
       <doc xml:space="preserve">Opens a temporary file. See the mkstemp() documentation
 on most UNIX-like systems.
 
@@ -41279,9 +41371,7 @@ to take advantage of this feature is up to you.</doc>
         <parameter name="err"
                    direction="inout"
                    caller-allocates="0"
-                   transfer-ownership="full"
-                   nullable="1"
-                   allow-none="1">
+                   transfer-ownership="full">
           <doc xml:space="preserve">a return location for a #GError</doc>
           <type name="Error" c:type="GError**"/>
         </parameter>
@@ -44997,6 +45087,7 @@ So far, the following arguments are understood:
 - `--verbose`: Run tests verbosely.
 - `-q`, `--quiet`: Run tests quietly.
 - `-p PATH`: Execute all tests matching the given path.
+- `-s PATH`: Skip all tests matching the given path.
   This can also be used to force a test to run that would otherwise
   be skipped (ie, a test whose name contains "/subprocess").
 - `-m {perf|slow|thorough|quick|undefined|no-undefined}`: Execute tests according to these test modes:
@@ -45166,7 +45257,7 @@ order for test result reports.</doc>
               version="2.16">
       <doc xml:space="preserve">This function enqueus a callback @destroy_func to be executed
 during the next test case teardown phase. This is most useful
-to auto destruct allocted test resources at the end of a test run.
+to auto destruct allocated test resources at the end of a test run.
 Resources are released in reverse queue order, that means enqueueing
 callback A before callback B will cause B() to be called before
 A() during teardown.</doc>
@@ -45277,8 +45368,9 @@ see g_test_rand_int() for details on test case random numbers.</doc>
       <doc xml:space="preserve">Runs all tests under the toplevel suite which can be retrieved
 with g_test_get_root(). Similar to g_test_run_suite(), the test
 cases to be run are filtered according to test path arguments
-(`-p testpath`) as parsed by g_test_init(). g_test_run_suite()
-or g_test_run() may only be called once in a program.
+(`-p testpath` and `-s testpath`) as parsed by g_test_init().
+g_test_run_suite() or g_test_run() may only be called once in a
+program.
 
 In general, the tests and sub-suites within each suite are run in
 the order in which they are defined. However, note that prior to
@@ -45315,9 +45407,10 @@ producing TAP output, or 77 (treated as "skip test" by Automake) otherwise.</doc
               version="2.16">
       <doc xml:space="preserve">Execute the tests within @suite and all nested #GTestSuites.
 The test suites to be executed are filtered according to
-test path arguments (`-p testpath`) as parsed by g_test_init().
-See the g_test_run() documentation for more information on the
-order that tests are run in.
+test path arguments (`-p testpath` and `-s testpath`) as parsed by
+g_test_init(). See the g_test_run() documentation for more
+information on the order that tests are run in.
+
 
 g_test_run_suite() or g_test_run() may only be called once
 in a program.</doc>
@@ -47843,8 +47936,35 @@ overlong encodings of valid characters.</doc>
           <type name="utf8" c:type="const gchar*"/>
         </parameter>
         <parameter name="max_len" transfer-ownership="none">
-          <doc xml:space="preserve">the maximum number of bytes to read, or -1, for no maximum or
-    if @p is nul-terminated</doc>
+          <doc xml:space="preserve">the maximum number of bytes to read, or -1 if @p is nul-terminated</doc>
+          <type name="gssize" c:type="gssize"/>
+        </parameter>
+      </parameters>
+    </function>
+    <function name="utf8_make_valid"
+              c:identifier="g_utf8_make_valid"
+              version="2.52">
+      <doc xml:space="preserve">If the provided string is valid UTF-8, return a copy of it. If not,
+return a copy in which bytes that could not be interpreted as valid Unicode
+are replaced with the Unicode replacement character (U+FFFD).
+
+For example, this is an appropriate function to use if you have received
+a string that was incorrectly declared to be UTF-8, and you need a valid
+UTF-8 version of it that can be logged or displayed to the user, with the
+assumption that it is close enough to ASCII or UTF-8 to be mostly
+readable as-is.</doc>
+      <return-value transfer-ownership="full">
+        <doc xml:space="preserve">a valid UTF-8 string whose content resembles @str</doc>
+        <type name="utf8" c:type="gchar*"/>
+      </return-value>
+      <parameters>
+        <parameter name="str" transfer-ownership="none">
+          <doc xml:space="preserve">string to coerce into UTF-8</doc>
+          <type name="utf8" c:type="const gchar*"/>
+        </parameter>
+        <parameter name="len" transfer-ownership="none">
+          <doc xml:space="preserve">the maximum length of @str to use, in bytes. If @len &lt; 0,
+    then the string is nul-terminated.</doc>
           <type name="gssize" c:type="gssize"/>
         </parameter>
       </parameters>
@@ -48328,6 +48448,37 @@ doing anything else with it.</doc>
           <type name="utf8" c:type="const gchar**"/>
         </parameter>
       </parameters>
+    </function>
+    <function name="uuid_string_is_valid"
+              c:identifier="g_uuid_string_is_valid"
+              version="2.52">
+      <doc xml:space="preserve">Parses the string @str and verify if it is a UUID.
+
+The function accepts the following syntax:
+
+- simple forms (e.g. `f81d4fae-7dec-11d0-a765-00a0c91e6bf6`)
+
+Note that hyphens are required within the UUID string itself,
+as per the aforementioned RFC.</doc>
+      <return-value transfer-ownership="none">
+        <doc xml:space="preserve">%TRUE if @str is a valid UUID, %FALSE otherwise.</doc>
+        <type name="gboolean" c:type="gboolean"/>
+      </return-value>
+      <parameters>
+        <parameter name="str" transfer-ownership="none">
+          <doc xml:space="preserve">a string representing a UUID</doc>
+          <type name="utf8" c:type="const gchar*"/>
+        </parameter>
+      </parameters>
+    </function>
+    <function name="uuid_string_random"
+              c:identifier="g_uuid_string_random"
+              version="2.52">
+      <doc xml:space="preserve">Generates a random UUID (RFC 4122 version 4) as a string.</doc>
+      <return-value transfer-ownership="full">
+        <doc xml:space="preserve">A string that should be freed with g_free().</doc>
+        <type name="utf8" c:type="gchar*"/>
+      </return-value>
     </function>
     <function name="variant_get_gtype" c:identifier="g_variant_get_gtype">
       <return-value transfer-ownership="none">
