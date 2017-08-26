@@ -130,12 +130,12 @@ keys.</doc>
 (e.g. in version 3.1.4 this is 3).</doc>
       <type name="gint" c:type="gint"/>
     </constant>
-    <constant name="MICRO_VERSION" value="2" c:type="VTE_MICRO_VERSION">
+    <constant name="MICRO_VERSION" value="3" c:type="VTE_MICRO_VERSION">
       <doc xml:space="preserve">The micro version number of the VTE library
 (e.g. in version 3.1.4 this is 4).</doc>
       <type name="gint" c:type="gint"/>
     </constant>
-    <constant name="MINOR_VERSION" value="40" c:type="VTE_MINOR_VERSION">
+    <constant name="MINOR_VERSION" value="48" c:type="VTE_MINOR_VERSION">
       <doc xml:space="preserve">The minor version number of the VTE library
 (e.g. in version 3.1.4 this is 1).</doc>
       <type name="gint" c:type="gint"/>
@@ -162,7 +162,7 @@ and close it on finalize.</doc>
           <type name="Pty" c:type="VtePty*"/>
         </return-value>
         <parameters>
-          <parameter name="fd" transfer-ownership="full">
+          <parameter name="fd" transfer-ownership="none">
             <doc xml:space="preserve">a file descriptor to the PTY</doc>
             <type name="gint" c:type="int"/>
           </parameter>
@@ -191,18 +191,7 @@ When using vte_terminal_spawn_sync() with a custom child setup
 function, vte_pty_child_setup() will be called before the supplied
 function; you must not call it again.
 
-Also, you MUST pass the %G_SPAWN_DO_NOT_REAP_CHILD flag.
-
-If GNOME PTY Helper is available and
-unless some of the %VTE_PTY_NO_LASTLOG, %VTE_PTY_NO_UTMP or
-%VTE_PTY_NO_WTMP flags are passed in @flags, the
-session is logged in the corresponding lastlog, utmp or wtmp
-system files.  When passing %VTE_PTY_NO_HELPER in @flags, the
-GNOME PTY Helper is bypassed entirely.
-
-When passing %VTE_PTY_NO_FALLBACK in @flags,
-and opening a PTY using the PTY helper fails, there will
-be no fallback to allocate a PTY using Unix98 PTY functions.</doc>
+Also, you MUST pass the %G_SPAWN_DO_NOT_REAP_CHILD flag.</doc>
         <return-value transfer-ownership="full">
           <doc xml:space="preserve">a new #VtePty, or %NULL on error with @error filled in</doc>
           <type name="Pty" c:type="VtePty*"/>
@@ -233,9 +222,11 @@ be no fallback to allocate a PTY using Unix98 PTY functions.</doc>
           </instance-parameter>
         </parameters>
       </method>
-      <method name="close" c:identifier="vte_pty_close">
-        <doc xml:space="preserve">Cleans up the PTY, specifically any logging performed for the session.
-The file descriptor to the PTY master remains open.</doc>
+      <method name="close"
+              c:identifier="vte_pty_close"
+              deprecated="1"
+              deprecated-version="0.42">
+        <doc xml:space="preserve">Since 0.42 this is a no-op.</doc>
         <return-value transfer-ownership="none">
           <type name="none" c:type="void"/>
         </return-value>
@@ -335,6 +326,141 @@ discipline do multibyte backspace correctly.</doc>
           </parameter>
         </parameters>
       </method>
+      <method name="spawn_async"
+              c:identifier="vte_pty_spawn_async"
+              version="0.48">
+        <doc xml:space="preserve">Starts the specified command under the pseudo-terminal @pty.
+The @argv and @envv lists should be %NULL-terminated.
+The "TERM" environment variable is automatically set to a default value,
+but can be overridden from @envv.
+@pty_flags controls logging the session to the specified system log files.
+
+Note that %G_SPAWN_DO_NOT_REAP_CHILD will always be added to @spawn_flags.
+
+Note that all open file descriptors will be closed in the child. If you want
+to keep some file descriptor open for use in the child process, you need to
+use a child setup function that unsets the FD_CLOEXEC flag on that file
+descriptor.
+
+See vte_pty_new(), g_spawn_async() and vte_terminal_watch_child() for more information.</doc>
+        <return-value transfer-ownership="none">
+          <type name="none" c:type="void"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="pty" transfer-ownership="none">
+            <doc xml:space="preserve">a #VtePty</doc>
+            <type name="Pty" c:type="VtePty*"/>
+          </instance-parameter>
+          <parameter name="working_directory"
+                     transfer-ownership="none"
+                     nullable="1"
+                     allow-none="1">
+            <doc xml:space="preserve">the name of a directory the command should start
+  in, or %NULL to use the current working directory</doc>
+            <type name="utf8" c:type="const char*"/>
+          </parameter>
+          <parameter name="argv" transfer-ownership="none">
+            <doc xml:space="preserve">child's argument vector</doc>
+            <array c:type="char**">
+              <type name="filename"/>
+            </array>
+          </parameter>
+          <parameter name="envv"
+                     transfer-ownership="none"
+                     nullable="1"
+                     allow-none="1">
+            <doc xml:space="preserve">a list of environment
+  variables to be added to the environment before starting the process, or %NULL</doc>
+            <array c:type="char**">
+              <type name="filename"/>
+            </array>
+          </parameter>
+          <parameter name="spawn_flags" transfer-ownership="none">
+            <doc xml:space="preserve">flags from #GSpawnFlags</doc>
+            <type name="GLib.SpawnFlags" c:type="GSpawnFlags"/>
+          </parameter>
+          <parameter name="child_setup"
+                     transfer-ownership="none"
+                     nullable="1"
+                     allow-none="1"
+                     scope="notified"
+                     closure="5"
+                     destroy="6">
+            <doc xml:space="preserve">an extra child setup function to run in the child just before exec(), or %NULL</doc>
+            <type name="GLib.SpawnChildSetupFunc"
+                  c:type="GSpawnChildSetupFunc"/>
+          </parameter>
+          <parameter name="child_setup_data"
+                     transfer-ownership="none"
+                     nullable="1"
+                     allow-none="1"
+                     scope="notified"
+                     closure="4">
+            <doc xml:space="preserve">user data for @child_setup, or %NULL</doc>
+            <type name="gpointer" c:type="gpointer"/>
+          </parameter>
+          <parameter name="child_setup_data_destroy"
+                     transfer-ownership="none"
+                     scope="async"
+                     destroy="5">
+            <doc xml:space="preserve">a #GDestroyNotify for @child_setup_data, or %NULL</doc>
+            <type name="GLib.DestroyNotify" c:type="GDestroyNotify"/>
+          </parameter>
+          <parameter name="timeout" transfer-ownership="none">
+            <doc xml:space="preserve">a timeout value in ms, or -1 to wait indefinitely</doc>
+            <type name="gint" c:type="int"/>
+          </parameter>
+          <parameter name="cancellable"
+                     transfer-ownership="none"
+                     nullable="1"
+                     allow-none="1">
+            <doc xml:space="preserve">a #GCancellable, or %NULL</doc>
+            <type name="Gio.Cancellable" c:type="GCancellable*"/>
+          </parameter>
+          <parameter name="callback"
+                     transfer-ownership="none"
+                     nullable="1"
+                     allow-none="1"
+                     scope="async"
+                     closure="10">
+            <type name="Gio.AsyncReadyCallback" c:type="GAsyncReadyCallback"/>
+          </parameter>
+          <parameter name="user_data"
+                     transfer-ownership="none"
+                     nullable="1"
+                     allow-none="1">
+            <type name="gpointer" c:type="gpointer"/>
+          </parameter>
+        </parameters>
+      </method>
+      <method name="spawn_finish"
+              c:identifier="vte_pty_spawn_finish"
+              version="0.48"
+              throws="1">
+        <return-value transfer-ownership="none">
+          <doc xml:space="preserve">%TRUE on success, or %FALSE on error with @error filled in</doc>
+          <type name="gboolean" c:type="gboolean"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="pty" transfer-ownership="none">
+            <doc xml:space="preserve">a #VtePty</doc>
+            <type name="Pty" c:type="VtePty*"/>
+          </instance-parameter>
+          <parameter name="result" transfer-ownership="none">
+            <doc xml:space="preserve">a #GAsyncResult</doc>
+            <type name="Gio.AsyncResult" c:type="GAsyncResult*"/>
+          </parameter>
+          <parameter name="child_pid"
+                     direction="out"
+                     caller-allocates="0"
+                     transfer-ownership="full"
+                     optional="1"
+                     allow-none="1">
+            <doc xml:space="preserve">a location to store the child PID, or %NULL</doc>
+            <type name="GLib.Pid" c:type="GPid*"/>
+          </parameter>
+        </parameters>
+      </method>
       <property name="fd"
                 writable="1"
                 construct-only="1"
@@ -346,8 +472,7 @@ discipline do multibyte backspace correctly.</doc>
                 writable="1"
                 construct-only="1"
                 transfer-ownership="none">
-        <doc xml:space="preserve">Controls how the session is recorded in lastlog, utmp, and wtmp,
-and whether to use the GNOME PTY helper.</doc>
+        <doc xml:space="preserve">Flags.</doc>
         <type name="PtyFlags"/>
       </property>
     </class>
@@ -365,8 +490,7 @@ and whether to use the GNOME PTY helper.</doc>
               value="0"
               c:identifier="VTE_PTY_ERROR_PTY_HELPER_FAILED"
               glib:nick="pty-helper-failed">
-        <doc xml:space="preserve">failure when using the GNOME PTY helper to
-  allocate the PTY</doc>
+        <doc xml:space="preserve">Obsolete. Deprecated: 0.42</doc>
       </member>
       <member name="pty98_failed"
               value="1"
@@ -391,32 +515,31 @@ enumeration. See #GError for more information on error domains.</doc>
               value="1"
               c:identifier="VTE_PTY_NO_LASTLOG"
               glib:nick="no-lastlog">
-        <doc xml:space="preserve">don't record the session in lastlog. Deprecated: 0.38</doc>
+        <doc xml:space="preserve">Unused. Deprecated: 0.38</doc>
       </member>
       <member name="no_utmp"
               value="2"
               c:identifier="VTE_PTY_NO_UTMP"
               glib:nick="no-utmp">
-        <doc xml:space="preserve">don't record the session in utmp. Deprecated: 0.38</doc>
+        <doc xml:space="preserve">Unused. Deprecated: 0.38</doc>
       </member>
       <member name="no_wtmp"
               value="4"
               c:identifier="VTE_PTY_NO_WTMP"
               glib:nick="no-wtmp">
-        <doc xml:space="preserve">don't record the session in wtmp. Deprecated: 0.38</doc>
+        <doc xml:space="preserve">Unused. Deprecated: 0.38</doc>
       </member>
       <member name="no_helper"
               value="8"
               c:identifier="VTE_PTY_NO_HELPER"
               glib:nick="no-helper">
-        <doc xml:space="preserve">don't use the GNOME PTY helper to allocate the PTY. Deprecated: 0.38</doc>
+        <doc xml:space="preserve">Unused. Deprecated: 0.38</doc>
       </member>
       <member name="no_fallback"
               value="16"
               c:identifier="VTE_PTY_NO_FALLBACK"
               glib:nick="no-fallback">
-        <doc xml:space="preserve">when allocating the PTY with the PTY helper fails,
-  don't fall back to try using PTY98. Deprecated: 0.38</doc>
+        <doc xml:space="preserve">Unused. Deprecated: 0.38</doc>
       </member>
       <member name="default"
               value="0"
@@ -425,6 +548,114 @@ enumeration. See #GError for more information on error domains.</doc>
         <doc xml:space="preserve">the default flags</doc>
       </member>
     </bitfield>
+    <constant name="REGEX_FLAGS_DEFAULT"
+              value="1075314688"
+              c:type="VTE_REGEX_FLAGS_DEFAULT">
+      <type name="gint" c:type="gint"/>
+    </constant>
+    <record name="Regex"
+            c:type="VteRegex"
+            glib:type-name="VteRegex"
+            glib:get-type="vte_regex_get_type"
+            c:symbol-prefix="regex">
+      <constructor name="new_for_match"
+                   c:identifier="vte_regex_new_for_match"
+                   throws="1">
+        <return-value transfer-ownership="full">
+          <type name="Regex" c:type="VteRegex*"/>
+        </return-value>
+        <parameters>
+          <parameter name="pattern" transfer-ownership="none">
+            <type name="utf8" c:type="const char*"/>
+          </parameter>
+          <parameter name="pattern_length" transfer-ownership="none">
+            <type name="gssize" c:type="gssize"/>
+          </parameter>
+          <parameter name="flags" transfer-ownership="none">
+            <type name="guint32" c:type="guint32"/>
+          </parameter>
+        </parameters>
+      </constructor>
+      <constructor name="new_for_search"
+                   c:identifier="vte_regex_new_for_search"
+                   throws="1">
+        <return-value transfer-ownership="full">
+          <type name="Regex" c:type="VteRegex*"/>
+        </return-value>
+        <parameters>
+          <parameter name="pattern" transfer-ownership="none">
+            <type name="utf8" c:type="const char*"/>
+          </parameter>
+          <parameter name="pattern_length" transfer-ownership="none">
+            <type name="gssize" c:type="gssize"/>
+          </parameter>
+          <parameter name="flags" transfer-ownership="none">
+            <type name="guint32" c:type="guint32"/>
+          </parameter>
+        </parameters>
+      </constructor>
+      <method name="jit" c:identifier="vte_regex_jit" throws="1">
+        <return-value transfer-ownership="none">
+          <type name="gboolean" c:type="gboolean"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="regex" transfer-ownership="none">
+            <type name="Regex" c:type="VteRegex*"/>
+          </instance-parameter>
+          <parameter name="flags" transfer-ownership="none">
+            <type name="guint32" c:type="guint32"/>
+          </parameter>
+        </parameters>
+      </method>
+      <method name="ref" c:identifier="vte_regex_ref">
+        <return-value transfer-ownership="full">
+          <type name="Regex" c:type="VteRegex*"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="regex" transfer-ownership="none">
+            <type name="Regex" c:type="VteRegex*"/>
+          </instance-parameter>
+        </parameters>
+      </method>
+      <method name="unref" c:identifier="vte_regex_unref">
+        <return-value transfer-ownership="full">
+          <type name="Regex" c:type="VteRegex*"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="regex" transfer-ownership="none">
+            <type name="Regex" c:type="VteRegex*"/>
+          </instance-parameter>
+        </parameters>
+      </method>
+    </record>
+    <enumeration name="RegexError"
+                 version="0.46"
+                 glib:type-name="VteRegexError"
+                 glib:get-type="vte_regex_error_get_type"
+                 c:type="VteRegexError"
+                 glib:error-domain="vte-regex-error">
+      <doc xml:space="preserve">An enum type for regex errors. In addition to the values listed above,
+any PCRE2 error values may occur.</doc>
+      <member name="incompatible"
+              value="2147483646"
+              c:identifier="VTE_REGEX_ERROR_INCOMPATIBLE"
+              glib:nick="incompatible">
+        <doc xml:space="preserve">The PCRE2 library was built without
+  Unicode support which is required for VTE</doc>
+      </member>
+      <member name="not_supported"
+              value="2147483647"
+              c:identifier="VTE_REGEX_ERROR_NOT_SUPPORTED"
+              glib:nick="not-supported">
+        <doc xml:space="preserve">Regexes are not supported because VTE was
+  built without PCRE2 support</doc>
+      </member>
+      <function name="quark" c:identifier="vte_regex_error_quark">
+        <return-value transfer-ownership="none">
+          <type name="GLib.Quark" c:type="GQuark"/>
+        </return-value>
+      </function>
+    </enumeration>
     <constant name="SPAWN_NO_PARENT_ENVV"
               value="33554432"
               c:type="VTE_SPAWN_NO_PARENT_ENVV">
@@ -450,7 +681,11 @@ a cell has to be selected or not.</doc>
           <doc xml:space="preserve">row in which the cell is.</doc>
           <type name="glong" c:type="glong"/>
         </parameter>
-        <parameter name="data" transfer-ownership="none" closure="3">
+        <parameter name="data"
+                   transfer-ownership="none"
+                   nullable="1"
+                   allow-none="1"
+                   closure="3">
           <doc xml:space="preserve">user data.</doc>
           <type name="gpointer" c:type="gpointer"/>
         </parameter>
@@ -815,6 +1050,105 @@ selection.</doc>
             <doc xml:space="preserve">a #VteTerminal</doc>
             <type name="Terminal" c:type="VteTerminal*"/>
           </instance-parameter>
+        </parameters>
+      </method>
+      <method name="event_check_gregex_simple"
+              c:identifier="vte_terminal_event_check_gregex_simple"
+              version="0.44"
+              deprecated="1"
+              deprecated-version="0.46">
+        <doc xml:space="preserve">Checks each regex in @regexes if the text in and around the position of
+the event matches the regular expressions.  If a match exists, the matched
+text is stored in @matches at the position of the regex in @regexes; otherwise
+%NULL is stored there.</doc>
+        <doc-deprecated xml:space="preserve">Use vte_terminal_event_check_regex_simple() instead.</doc-deprecated>
+        <return-value transfer-ownership="none">
+          <doc xml:space="preserve">%TRUE iff any of the regexes produced a match</doc>
+          <type name="gboolean" c:type="gboolean"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="terminal" transfer-ownership="none">
+            <doc xml:space="preserve">a #VteTerminal</doc>
+            <type name="Terminal" c:type="VteTerminal*"/>
+          </instance-parameter>
+          <parameter name="event" transfer-ownership="none">
+            <doc xml:space="preserve">a #GdkEvent</doc>
+            <type name="Gdk.Event" c:type="GdkEvent*"/>
+          </parameter>
+          <parameter name="regexes" transfer-ownership="none">
+            <doc xml:space="preserve">an array of #GRegex</doc>
+            <array length="2" zero-terminated="0" c:type="GRegex**">
+              <type name="GLib.Regex" c:type="GRegex*"/>
+            </array>
+          </parameter>
+          <parameter name="n_regexes"
+                     direction="out"
+                     caller-allocates="0"
+                     transfer-ownership="full">
+            <doc xml:space="preserve">number of items in @regexes</doc>
+            <type name="gsize" c:type="gsize"/>
+          </parameter>
+          <parameter name="match_flags" transfer-ownership="none">
+            <doc xml:space="preserve">the #GRegexMatchFlags to use when matching the regexes</doc>
+            <type name="GLib.RegexMatchFlags" c:type="GRegexMatchFlags"/>
+          </parameter>
+          <parameter name="matches"
+                     direction="out"
+                     caller-allocates="1"
+                     transfer-ownership="none">
+            <doc xml:space="preserve">a location to store the matches</doc>
+            <array length="2" zero-terminated="0" c:type="char**">
+              <type name="utf8" c:type="char*"/>
+            </array>
+          </parameter>
+        </parameters>
+      </method>
+      <method name="event_check_regex_simple"
+              c:identifier="vte_terminal_event_check_regex_simple"
+              version="0.46">
+        <doc xml:space="preserve">Checks each regex in @regexes if the text in and around the position of
+the event matches the regular expressions.  If a match exists, the matched
+text is stored in @matches at the position of the regex in @regexes; otherwise
+%NULL is stored there.</doc>
+        <return-value transfer-ownership="none">
+          <doc xml:space="preserve">%TRUE iff any of the regexes produced a match</doc>
+          <type name="gboolean" c:type="gboolean"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="terminal" transfer-ownership="none">
+            <doc xml:space="preserve">a #VteTerminal</doc>
+            <type name="Terminal" c:type="VteTerminal*"/>
+          </instance-parameter>
+          <parameter name="event" transfer-ownership="none">
+            <doc xml:space="preserve">a #GdkEvent</doc>
+            <type name="Gdk.Event" c:type="GdkEvent*"/>
+          </parameter>
+          <parameter name="regexes" transfer-ownership="none">
+            <doc xml:space="preserve">an array of #VteRegex</doc>
+            <array length="2" zero-terminated="0" c:type="VteRegex**">
+              <type name="Regex" c:type="VteRegex*"/>
+            </array>
+          </parameter>
+          <parameter name="n_regexes"
+                     direction="out"
+                     caller-allocates="0"
+                     transfer-ownership="full">
+            <doc xml:space="preserve">number of items in @regexes</doc>
+            <type name="gsize" c:type="gsize"/>
+          </parameter>
+          <parameter name="match_flags" transfer-ownership="none">
+            <doc xml:space="preserve">PCRE2 match flags, or 0</doc>
+            <type name="guint32" c:type="guint32"/>
+          </parameter>
+          <parameter name="matches"
+                     direction="out"
+                     caller-allocates="1"
+                     transfer-ownership="none">
+            <doc xml:space="preserve">a location to store the matches</doc>
+            <array length="2" zero-terminated="0" c:type="char**">
+              <type name="utf8" c:type="char*"/>
+            </array>
+          </parameter>
         </parameters>
       </method>
       <method name="feed" c:identifier="vte_terminal_feed">
@@ -1253,7 +1587,10 @@ the character's position, colors, and other characteristics.</doc>
             <doc xml:space="preserve">a #VteSelectionFunc callback</doc>
             <type name="SelectionFunc" c:type="VteSelectionFunc"/>
           </parameter>
-          <parameter name="user_data" transfer-ownership="none">
+          <parameter name="user_data"
+                     transfer-ownership="none"
+                     nullable="1"
+                     allow-none="1">
             <doc xml:space="preserve">user data to be passed to the callback</doc>
             <type name="gpointer" c:type="gpointer"/>
           </parameter>
@@ -1295,7 +1632,10 @@ lines are included.</doc>
             <doc xml:space="preserve">a #VteSelectionFunc callback</doc>
             <type name="SelectionFunc" c:type="VteSelectionFunc"/>
           </parameter>
-          <parameter name="user_data" transfer-ownership="none">
+          <parameter name="user_data"
+                     transfer-ownership="none"
+                     nullable="1"
+                     allow-none="1">
             <doc xml:space="preserve">user data to be passed to the callback</doc>
             <type name="gpointer" c:type="gpointer"/>
           </parameter>
@@ -1352,7 +1692,10 @@ contents of the buffer using this function.</doc>
             <doc xml:space="preserve">a #VteSelectionFunc callback</doc>
             <type name="SelectionFunc" c:type="VteSelectionFunc"/>
           </parameter>
-          <parameter name="user_data" transfer-ownership="none">
+          <parameter name="user_data"
+                     transfer-ownership="none"
+                     nullable="1"
+                     allow-none="1">
             <doc xml:space="preserve">user data to be passed to the callback</doc>
             <type name="gpointer" c:type="gpointer"/>
           </parameter>
@@ -1400,7 +1743,36 @@ If %NULL, a built-in set is used.</doc>
         </parameters>
       </method>
       <method name="match_add_gregex"
-              c:identifier="vte_terminal_match_add_gregex">
+              c:identifier="vte_terminal_match_add_gregex"
+              deprecated="1"
+              deprecated-version="0.46">
+        <doc xml:space="preserve">Adds the regular expression @regex to the list of matching expressions.  When the
+user moves the mouse cursor over a section of displayed text which matches
+this expression, the text will be highlighted.</doc>
+        <doc-deprecated xml:space="preserve">Use vte_terminal_match_add_regex() or vte_terminal_match_add_regex_full() instead.</doc-deprecated>
+        <return-value transfer-ownership="none">
+          <doc xml:space="preserve">an integer associated with this expression, or -1 if @gregex could not be
+  transformed into a #VteRegex or @flags were incompatible</doc>
+          <type name="gint" c:type="int"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="terminal" transfer-ownership="none">
+            <doc xml:space="preserve">a #VteTerminal</doc>
+            <type name="Terminal" c:type="VteTerminal*"/>
+          </instance-parameter>
+          <parameter name="gregex" transfer-ownership="none">
+            <doc xml:space="preserve">a #GRegex</doc>
+            <type name="GLib.Regex" c:type="GRegex*"/>
+          </parameter>
+          <parameter name="gflags" transfer-ownership="none">
+            <doc xml:space="preserve">the #GRegexMatchFlags to use when matching the regex</doc>
+            <type name="GLib.RegexMatchFlags" c:type="GRegexMatchFlags"/>
+          </parameter>
+        </parameters>
+      </method>
+      <method name="match_add_regex"
+              c:identifier="vte_terminal_match_add_regex"
+              version="0.46">
         <doc xml:space="preserve">Adds the regular expression @regex to the list of matching expressions.  When the
 user moves the mouse cursor over a section of displayed text which matches
 this expression, the text will be highlighted.</doc>
@@ -1414,16 +1786,19 @@ this expression, the text will be highlighted.</doc>
             <type name="Terminal" c:type="VteTerminal*"/>
           </instance-parameter>
           <parameter name="regex" transfer-ownership="none">
-            <doc xml:space="preserve">a #GRegex</doc>
-            <type name="GLib.Regex" c:type="GRegex*"/>
+            <doc xml:space="preserve">a #VteRegex</doc>
+            <type name="Regex" c:type="VteRegex*"/>
           </parameter>
           <parameter name="flags" transfer-ownership="none">
-            <doc xml:space="preserve">the #GRegexMatchFlags to use when matching the regex</doc>
-            <type name="GLib.RegexMatchFlags" c:type="GRegexMatchFlags"/>
+            <doc xml:space="preserve">PCRE2 match flags, or 0</doc>
+            <type name="guint32" c:type="guint32"/>
           </parameter>
         </parameters>
       </method>
-      <method name="match_check" c:identifier="vte_terminal_match_check">
+      <method name="match_check"
+              c:identifier="vte_terminal_match_check"
+              deprecated="1"
+              deprecated-version="0.46">
         <doc xml:space="preserve">Checks if the text in and around the specified position matches any of the
 regular expressions previously set using vte_terminal_match_add().  If a
 match exists, the text string is returned and if @tag is not %NULL, the number
@@ -1432,6 +1807,7 @@ associated with the matched regular expression will be stored in @tag.
 If more than one regular expression has been set with
 vte_terminal_match_add(), then expressions are checked in the order in
 which they were added.</doc>
+        <doc-deprecated xml:space="preserve">Use vte_terminal_match_check_event() instead.</doc-deprecated>
         <return-value transfer-ownership="full">
           <doc xml:space="preserve">a newly allocated string which matches one of the previously
   set regular expressions</doc>
@@ -1716,10 +2092,27 @@ vte_terminal_search_set_gregex().</doc>
         </parameters>
       </method>
       <method name="search_get_gregex"
-              c:identifier="vte_terminal_search_get_gregex">
+              c:identifier="vte_terminal_search_get_gregex"
+              deprecated="1"
+              deprecated-version="0.46">
+        <doc-deprecated xml:space="preserve">use vte_terminal_search_get_regex() instead.</doc-deprecated>
         <return-value transfer-ownership="none">
           <doc xml:space="preserve">the search #GRegex regex set in @terminal, or %NULL</doc>
           <type name="GLib.Regex" c:type="GRegex*"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="terminal" transfer-ownership="none">
+            <doc xml:space="preserve">a #VteTerminal</doc>
+            <type name="Terminal" c:type="VteTerminal*"/>
+          </instance-parameter>
+        </parameters>
+      </method>
+      <method name="search_get_regex"
+              c:identifier="vte_terminal_search_get_regex"
+              version="0.46">
+        <return-value transfer-ownership="none">
+          <doc xml:space="preserve">the search #VteRegex regex set in @terminal, or %NULL</doc>
+          <type name="Regex" c:type="VteRegex*"/>
         </return-value>
         <parameters>
           <instance-parameter name="terminal" transfer-ownership="none">
@@ -1742,8 +2135,36 @@ vte_terminal_search_set_gregex().</doc>
         </parameters>
       </method>
       <method name="search_set_gregex"
-              c:identifier="vte_terminal_search_set_gregex">
+              c:identifier="vte_terminal_search_set_gregex"
+              deprecated="1"
+              deprecated-version="0.46">
         <doc xml:space="preserve">Sets the #GRegex regex to search for. Unsets the search regex when passed %NULL.</doc>
+        <doc-deprecated xml:space="preserve">use vte_terminal_search_set_regex() instead.</doc-deprecated>
+        <return-value transfer-ownership="none">
+          <type name="none" c:type="void"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="terminal" transfer-ownership="none">
+            <doc xml:space="preserve">a #VteTerminal</doc>
+            <type name="Terminal" c:type="VteTerminal*"/>
+          </instance-parameter>
+          <parameter name="gregex"
+                     transfer-ownership="none"
+                     nullable="1"
+                     allow-none="1">
+            <doc xml:space="preserve">a #GRegex, or %NULL</doc>
+            <type name="GLib.Regex" c:type="GRegex*"/>
+          </parameter>
+          <parameter name="gflags" transfer-ownership="none">
+            <doc xml:space="preserve">flags from #GRegexMatchFlags</doc>
+            <type name="GLib.RegexMatchFlags" c:type="GRegexMatchFlags"/>
+          </parameter>
+        </parameters>
+      </method>
+      <method name="search_set_regex"
+              c:identifier="vte_terminal_search_set_regex"
+              version="0.46">
+        <doc xml:space="preserve">Sets the regex to search for. Unsets the search regex when passed %NULL.</doc>
         <return-value transfer-ownership="none">
           <type name="none" c:type="void"/>
         </return-value>
@@ -1756,12 +2177,12 @@ vte_terminal_search_set_gregex().</doc>
                      transfer-ownership="none"
                      nullable="1"
                      allow-none="1">
-            <doc xml:space="preserve">a #GRegex, or %NULL</doc>
-            <type name="GLib.Regex" c:type="GRegex*"/>
+            <doc xml:space="preserve">a #VteRegex, or %NULL</doc>
+            <type name="Regex" c:type="VteRegex*"/>
           </parameter>
           <parameter name="flags" transfer-ownership="none">
-            <doc xml:space="preserve">flags from #GRegexMatchFlags</doc>
-            <type name="GLib.RegexMatchFlags" c:type="GRegexMatchFlags"/>
+            <doc xml:space="preserve">PCRE2 match flags, or 0</doc>
+            <type name="guint32" c:type="guint32"/>
           </parameter>
         </parameters>
       </method>
@@ -1922,6 +2343,29 @@ reversed.</doc>
             <type name="Terminal" c:type="VteTerminal*"/>
           </instance-parameter>
           <parameter name="cursor_background"
+                     transfer-ownership="none"
+                     nullable="1"
+                     allow-none="1">
+            <doc xml:space="preserve">the new color to use for the text cursor, or %NULL</doc>
+            <type name="Gdk.RGBA" c:type="const GdkRGBA*"/>
+          </parameter>
+        </parameters>
+      </method>
+      <method name="set_color_cursor_foreground"
+              c:identifier="vte_terminal_set_color_cursor_foreground"
+              version="0.44">
+        <doc xml:space="preserve">Sets the foreground color for text which is under the cursor.  If %NULL, text
+under the cursor will be drawn with foreground and background colors
+reversed.</doc>
+        <return-value transfer-ownership="none">
+          <type name="none" c:type="void"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="terminal" transfer-ownership="none">
+            <doc xml:space="preserve">a #VteTerminal</doc>
+            <type name="Terminal" c:type="VteTerminal*"/>
+          </instance-parameter>
+          <parameter name="cursor_foreground"
                      transfer-ownership="none"
                      nullable="1"
                      allow-none="1">
@@ -2316,8 +2760,7 @@ scrollback.
 A negative value means "infinite scrollback".
 
 Note that this setting only affects the normal screen buffer.
-For terminal types which have an alternate screen buffer, no scrollback is
-allowed on the alternate screen buffer.</doc>
+No scrollback is allowed on the alternate screen buffer.</doc>
         <return-value transfer-ownership="none">
           <type name="none" c:type="void"/>
         </return-value>
@@ -2380,8 +2823,123 @@ Use %NULL to reset the set of exception characters to the default.</doc>
           </parameter>
         </parameters>
       </method>
+      <method name="spawn_async"
+              c:identifier="vte_terminal_spawn_async"
+              version="0.48"
+              introspectable="0">
+        <doc xml:space="preserve">A convenience function that wraps creating the #VtePty and spawning
+the child process on it. See vte_pty_new_sync(), vte_pty_spawn_async(),
+and vte_pty_spawn_finish() for more information.
+
+When the operation is finished successfully, @callback will be called
+with the child #GPid, and a %NULL #GError. The child PID will already be
+watched via vte_terminal_watch_child().
+
+When the operation fails, @callback will be called with a -1 #GPid,
+and a non-%NULL #GError containing the error information.
+
+Note that if @terminal has been destroyed before the operation is called,
+@callback will be called with a %NULL @terminal; you must not do anything
+in the callback besides freeing any resources associated with @user_data,
+but taking care not to access the now-destroyed #VteTerminal. Note that
+in this case, if spawning was successful, the child process will be aborted
+automatically.</doc>
+        <return-value transfer-ownership="none">
+          <type name="none" c:type="void"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="terminal" transfer-ownership="none">
+            <doc xml:space="preserve">a #VteTerminal</doc>
+            <type name="Terminal" c:type="VteTerminal*"/>
+          </instance-parameter>
+          <parameter name="pty_flags" transfer-ownership="none">
+            <doc xml:space="preserve">flags from #VtePtyFlags</doc>
+            <type name="PtyFlags" c:type="VtePtyFlags"/>
+          </parameter>
+          <parameter name="working_directory"
+                     transfer-ownership="none"
+                     nullable="1"
+                     allow-none="1">
+            <doc xml:space="preserve">the name of a directory the command should start
+  in, or %NULL to use the current working directory</doc>
+            <type name="utf8" c:type="const char*"/>
+          </parameter>
+          <parameter name="argv" transfer-ownership="none">
+            <doc xml:space="preserve">child's argument vector</doc>
+            <array c:type="char**">
+              <type name="filename"/>
+            </array>
+          </parameter>
+          <parameter name="envv"
+                     transfer-ownership="none"
+                     nullable="1"
+                     allow-none="1">
+            <doc xml:space="preserve">a list of environment
+  variables to be added to the environment before starting the process, or %NULL</doc>
+            <array c:type="char**">
+              <type name="filename"/>
+            </array>
+          </parameter>
+          <parameter name="spawn_flags_" transfer-ownership="none">
+            <doc xml:space="preserve">flags from #GSpawnFlags</doc>
+            <type name="GLib.SpawnFlags" c:type="GSpawnFlags"/>
+          </parameter>
+          <parameter name="child_setup"
+                     transfer-ownership="none"
+                     nullable="1"
+                     allow-none="1"
+                     scope="notified"
+                     closure="6"
+                     destroy="7">
+            <doc xml:space="preserve">an extra child setup function to run in the child just before exec(), or %NULL</doc>
+            <type name="GLib.SpawnChildSetupFunc"
+                  c:type="GSpawnChildSetupFunc"/>
+          </parameter>
+          <parameter name="child_setup_data"
+                     transfer-ownership="none"
+                     nullable="1"
+                     allow-none="1"
+                     scope="notified"
+                     closure="5">
+            <doc xml:space="preserve">user data for @child_setup, or %NULL</doc>
+            <type name="gpointer" c:type="gpointer"/>
+          </parameter>
+          <parameter name="child_setup_data_destroy"
+                     transfer-ownership="none"
+                     scope="async"
+                     destroy="6">
+            <doc xml:space="preserve">a #GDestroyNotify for @child_setup_data, or %NULL</doc>
+            <type name="GLib.DestroyNotify" c:type="GDestroyNotify"/>
+          </parameter>
+          <parameter name="timeout" transfer-ownership="none">
+            <doc xml:space="preserve">a timeout value in ms, or -1 to wait indefinitely</doc>
+            <type name="gint" c:type="int"/>
+          </parameter>
+          <parameter name="cancellable"
+                     transfer-ownership="none"
+                     nullable="1"
+                     allow-none="1">
+            <doc xml:space="preserve">a #GCancellable, or %NULL</doc>
+            <type name="Gio.Cancellable" c:type="GCancellable*"/>
+          </parameter>
+          <parameter name="callback" transfer-ownership="none" closure="11">
+            <doc xml:space="preserve">a #VteTerminalSpawnAsyncCallback, or %NULL</doc>
+            <type name="TerminalSpawnAsyncCallback"
+                  c:type="VteTerminalSpawnAsyncCallback"/>
+          </parameter>
+          <parameter name="user_data"
+                     transfer-ownership="none"
+                     nullable="1"
+                     allow-none="1">
+            <doc xml:space="preserve">user data for @callback, or %NULL</doc>
+            <type name="gpointer" c:type="gpointer"/>
+          </parameter>
+        </parameters>
+      </method>
       <method name="spawn_sync"
               c:identifier="vte_terminal_spawn_sync"
+              deprecated="1"
+              deprecated-version="0.48"
               throws="1">
         <doc xml:space="preserve">Starts the specified command under a newly-allocated controlling
 pseudo-terminal.  The @argv and @envv lists should be %NULL-terminated.
@@ -2391,11 +2949,13 @@ but can be overridden from @envv.
 
 Note that %G_SPAWN_DO_NOT_REAP_CHILD will always be added to @spawn_flags.
 
-Note that unless @spawn_flags contains %G_SPAWN_LEAVE_DESCRIPTORS_OPEN, all file
-descriptors except stdin/stdout/stderr will be closed before calling exec()
-in the child.
+Note that all open file descriptors will be closed in the child. If you want
+to keep some file descriptor open for use in the child process, you need to
+use a child setup function that unsets the FD_CLOEXEC flag on that file
+descriptor.
 
 See vte_pty_new(), g_spawn_async() and vte_terminal_watch_child() for more information.</doc>
+        <doc-deprecated xml:space="preserve">Use vte_terminal_spawn_async() instead.</doc-deprecated>
         <return-value transfer-ownership="none">
           <doc xml:space="preserve">%TRUE on success, or %FALSE on error with @error filled in</doc>
           <type name="gboolean" c:type="gboolean"/>
@@ -2447,7 +3007,10 @@ See vte_pty_new(), g_spawn_async() and vte_terminal_watch_child() for more infor
             <type name="GLib.SpawnChildSetupFunc"
                   c:type="GSpawnChildSetupFunc"/>
           </parameter>
-          <parameter name="child_setup_data" transfer-ownership="none">
+          <parameter name="child_setup_data"
+                     transfer-ownership="none"
+                     nullable="1"
+                     allow-none="1">
             <doc xml:space="preserve">user data for @child_setup</doc>
             <type name="gpointer" c:type="gpointer"/>
           </parameter>
@@ -2562,7 +3125,7 @@ repainting text with a different offset.</doc>
       <property name="backspace-binding"
                 writable="1"
                 transfer-ownership="none">
-        <doc xml:space="preserve">*Controls what string or control sequence the terminal sends to its child
+        <doc xml:space="preserve">Controls what string or control sequence the terminal sends to its child
 when the user presses the backspace key.</doc>
         <type name="EraseBinding"/>
       </property>
@@ -2684,8 +3247,10 @@ If %NULL, a built-in set is used.</doc>
       <field name="widget">
         <type name="Gtk.Widget" c:type="GtkWidget"/>
       </field>
-      <field name="pvt" readable="0" private="1">
-        <type name="TerminalPrivate" c:type="VteTerminalPrivate*"/>
+      <field name="_unused_padding" readable="0" private="1">
+        <array zero-terminated="0" c:type="gpointer" fixed-size="1">
+          <type name="gpointer" c:type="gpointer*"/>
+        </array>
       </field>
       <glib:signal name="bell" when="last">
         <doc xml:space="preserve">This signal is emitted when the a child sends a bell request to the
@@ -3327,8 +3892,40 @@ circumstances.</doc>
             c:type="VteTerminalClassPrivate"
             disguised="1">
     </record>
-    <record name="TerminalPrivate" c:type="VteTerminalPrivate" disguised="1">
-    </record>
+    <callback name="TerminalSpawnAsyncCallback"
+              c:type="VteTerminalSpawnAsyncCallback"
+              version="0.48">
+      <doc xml:space="preserve">Callback for vte_terminal_spawn_async().
+
+On success, @pid contains the PID of the spawned process, and @error
+is %NULL.
+On failure, @pid is -1 and @error contains the error information.</doc>
+      <return-value transfer-ownership="none">
+        <type name="none" c:type="void"/>
+      </return-value>
+      <parameters>
+        <parameter name="terminal" transfer-ownership="none">
+          <doc xml:space="preserve">the #VteTerminal</doc>
+          <type name="Terminal" c:type="VteTerminal*"/>
+        </parameter>
+        <parameter name="pid" transfer-ownership="none">
+          <doc xml:space="preserve">a #GPid</doc>
+          <type name="GLib.Pid" c:type="GPid"/>
+        </parameter>
+        <parameter name="error" transfer-ownership="none">
+          <doc xml:space="preserve">a #GError, or %NULL</doc>
+          <type name="GLib.Error" c:type="GError*"/>
+        </parameter>
+        <parameter name="user_data"
+                   transfer-ownership="none"
+                   nullable="1"
+                   allow-none="1"
+                   closure="3">
+          <doc xml:space="preserve">user data that was passed to vte_terminal_spawn_async</doc>
+          <type name="gpointer" c:type="gpointer"/>
+        </parameter>
+      </parameters>
+    </callback>
     <enumeration name="WriteFlags"
                  glib:type-name="VteWriteFlags"
                  glib:get-type="vte_write_flags_get_type"
@@ -3403,6 +4000,13 @@ system default (usually "/bin/sh") should be used.</doc>
 enumeration. See #GError for more information on error domains.</doc>
       <return-value transfer-ownership="none">
         <doc xml:space="preserve">the error domain for VTE PTY errors</doc>
+        <type name="GLib.Quark" c:type="GQuark"/>
+      </return-value>
+    </function>
+    <function name="regex_error_quark"
+              c:identifier="vte_regex_error_quark"
+              moved-to="RegexError.quark">
+      <return-value transfer-ownership="none">
         <type name="GLib.Quark" c:type="GQuark"/>
       </return-value>
     </function>

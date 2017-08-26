@@ -15,9 +15,6 @@ and/or use gtk-doc annotations.  -->
              shared-library="libgtksourceview-3.0.so.1"
              c:identifier-prefixes="GtkSource"
              c:symbol-prefixes="gtk_source">
-    <alias name="Tag_autoptr" c:type="GtkSourceTag_autoptr">
-      <type name="gpointer" c:type="gpointer"/>
-    </alias>
     <enumeration name="BackgroundPatternType"
                  version="3.16"
                  glib:type-name="GtkSourceBackgroundPatternType"
@@ -783,12 +780,15 @@ closing bracket character will be highlighted.</doc>
       </method>
       <method name="set_highlight_syntax"
               c:identifier="gtk_source_buffer_set_highlight_syntax">
-        <doc xml:space="preserve">Controls whether syntax is highlighted in the buffer. If @highlight
-is %TRUE, the text will be highlighted according to the syntax
-patterns specified in the language set with
-gtk_source_buffer_set_language(). If @highlight is %FALSE, syntax highlighting
-is disabled and all the GtkTextTag objects that have been added by the
-syntax highlighting engine are removed from the buffer.</doc>
+        <doc xml:space="preserve">Controls whether syntax is highlighted in the buffer.
+
+If @highlight is %TRUE, the text will be highlighted according to the syntax
+patterns specified in the #GtkSourceLanguage set with
+gtk_source_buffer_set_language().
+
+If @highlight is %FALSE, syntax highlighting is disabled and all the
+#GtkTextTag objects that have been added by the syntax highlighting engine
+are removed from the buffer.</doc>
         <return-value transfer-ownership="none">
           <type name="none" c:type="void"/>
         </return-value>
@@ -838,11 +838,11 @@ content is not modified when saved into a file.</doc>
       </method>
       <method name="set_language"
               c:identifier="gtk_source_buffer_set_language">
-        <doc xml:space="preserve">Associate a #GtkSourceLanguage with the buffer. If @language is
-not-%NULL and syntax highlighting is enabled (see gtk_source_buffer_set_highlight_syntax()),
-the syntax patterns defined in @language will be used to highlight the text
-contained in the buffer. If @language is %NULL, the text contained in the
-buffer is not highlighted.
+        <doc xml:space="preserve">Associates a #GtkSourceLanguage with the buffer.
+
+Note that a #GtkSourceLanguage affects not only the syntax highlighting, but
+also the [context classes][context-classes]. If you want to disable just the
+syntax highlighting, see gtk_source_buffer_set_highlight_syntax().
 
 The buffer holds a reference to @language.</doc>
         <return-value transfer-ownership="none">
@@ -887,8 +887,19 @@ If @max_undo_levels is 0, the undo/redo is disabled.</doc>
       </method>
       <method name="set_style_scheme"
               c:identifier="gtk_source_buffer_set_style_scheme">
-        <doc xml:space="preserve">Sets style scheme used by the buffer. If @scheme is %NULL no
-style scheme is used.</doc>
+        <doc xml:space="preserve">Sets a #GtkSourceStyleScheme to be used by the buffer and the view.
+
+Note that a #GtkSourceStyleScheme affects not only the syntax highlighting,
+but also other #GtkSourceView features such as highlighting the current line,
+matching brackets, the line numbers, etc.
+
+Instead of setting a %NULL @scheme, it is better to disable syntax
+highlighting with gtk_source_buffer_set_highlight_syntax(), and setting the
+#GtkSourceStyleScheme with the "classic" or "tango" ID, because those two
+style schemes follow more closely the GTK+ theme (for example for the
+background color).
+
+The buffer holds a reference to @scheme.</doc>
         <return-value transfer-ownership="none">
           <type name="none" c:type="void"/>
         </return-value>
@@ -1049,9 +1060,8 @@ A use-case for this signal is to show messages in a #GtkStatusbar.</doc>
       </glib:signal>
       <glib:signal name="highlight-updated" when="last">
         <doc xml:space="preserve">The ::highlight-updated signal is emitted when the syntax
-highlighting is updated in a certain region of the @buffer. This
-signal is useful to be notified when a context class region is
-updated (e.g. the no-spell-check context class).</doc>
+highlighting and [context classes][context-classes] are updated in a
+certain region of the @buffer.</doc>
         <return-value transfer-ownership="none">
           <type name="none" c:type="void"/>
         </return-value>
@@ -1409,8 +1419,8 @@ list of #GtkSourceCompletionProvider.</doc>
         <doc xml:space="preserve">The #GtkSourceView associated with @completion, or %NULL if the view has been
 destroyed.</doc>
         <return-value transfer-ownership="none" nullable="1">
-          <doc xml:space="preserve">
-The #GtkSourceView associated with @completion, or %NULL.</doc>
+          <doc xml:space="preserve">The #GtkSourceView associated with
+@completion, or %NULL.</doc>
           <type name="View" c:type="GtkSourceView*"/>
         </return-value>
         <parameters>
@@ -2206,10 +2216,14 @@ before the real "show".</doc>
            glib:get-type="gtk_source_completion_item_get_type"
            glib:type-struct="CompletionItemClass">
       <implements name="CompletionProposal"/>
-      <constructor name="new" c:identifier="gtk_source_completion_item_new">
+      <constructor name="new"
+                   c:identifier="gtk_source_completion_item_new"
+                   deprecated="1"
+                   deprecated-version="3.24">
         <doc xml:space="preserve">Create a new #GtkSourceCompletionItem with label @label, icon @icon and
 extra information @info. Both @icon and @info can be %NULL in which case
 there will be no icon shown and no extra information available.</doc>
+        <doc-deprecated xml:space="preserve">Use gtk_source_completion_item_new2() instead.</doc-deprecated>
         <return-value transfer-ownership="full">
           <doc xml:space="preserve">a new #GtkSourceCompletionItem.</doc>
           <type name="CompletionItem" c:type="GtkSourceCompletionItem*"/>
@@ -2245,7 +2259,7 @@ there will be no icon shown and no extra information available.</doc>
                    deprecated-version="3.10">
         <doc xml:space="preserve">Creates a new #GtkSourceCompletionItem from a stock item. If @label is %NULL,
 the stock label will be used.</doc>
-        <doc-deprecated xml:space="preserve">Use gtk_source_completion_item_new() instead.</doc-deprecated>
+        <doc-deprecated xml:space="preserve">Use gtk_source_completion_item_new2() instead.</doc-deprecated>
         <return-value transfer-ownership="full">
           <doc xml:space="preserve">a new #GtkSourceCompletionItem.</doc>
           <type name="CompletionItem" c:type="GtkSourceCompletionItem*"/>
@@ -2276,10 +2290,13 @@ the stock label will be used.</doc>
         </parameters>
       </constructor>
       <constructor name="new_with_markup"
-                   c:identifier="gtk_source_completion_item_new_with_markup">
+                   c:identifier="gtk_source_completion_item_new_with_markup"
+                   deprecated="1"
+                   deprecated-version="3.24">
         <doc xml:space="preserve">Create a new #GtkSourceCompletionItem with markup label @markup, icon
 @icon and extra information @info. Both @icon and @info can be %NULL in
 which case there will be no icon shown and no extra information available.</doc>
+        <doc-deprecated xml:space="preserve">Use gtk_source_completion_item_new2() instead.</doc-deprecated>
         <return-value transfer-ownership="full">
           <doc xml:space="preserve">a new #GtkSourceCompletionItem.</doc>
           <type name="CompletionItem" c:type="GtkSourceCompletionItem*"/>
@@ -2309,6 +2326,156 @@ which case there will be no icon shown and no extra information available.</doc>
           </parameter>
         </parameters>
       </constructor>
+      <function name="new2"
+                c:identifier="gtk_source_completion_item_new2"
+                version="3.24">
+        <doc xml:space="preserve">Creates a new #GtkSourceCompletionItem. The desired properties need to be set
+afterwards.</doc>
+        <return-value transfer-ownership="full">
+          <doc xml:space="preserve">a new #GtkSourceCompletionItem.</doc>
+          <type name="CompletionItem" c:type="GtkSourceCompletionItem*"/>
+        </return-value>
+      </function>
+      <method name="set_gicon"
+              c:identifier="gtk_source_completion_item_set_gicon"
+              version="3.24">
+        <return-value transfer-ownership="none">
+          <type name="none" c:type="void"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="item" transfer-ownership="none">
+            <doc xml:space="preserve">a #GtkSourceCompletionItem.</doc>
+            <type name="CompletionItem" c:type="GtkSourceCompletionItem*"/>
+          </instance-parameter>
+          <parameter name="gicon"
+                     transfer-ownership="none"
+                     nullable="1"
+                     allow-none="1">
+            <doc xml:space="preserve">the #GIcon, or %NULL.</doc>
+            <type name="Gio.Icon" c:type="GIcon*"/>
+          </parameter>
+        </parameters>
+      </method>
+      <method name="set_icon"
+              c:identifier="gtk_source_completion_item_set_icon"
+              version="3.24">
+        <return-value transfer-ownership="none">
+          <type name="none" c:type="void"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="item" transfer-ownership="none">
+            <doc xml:space="preserve">a #GtkSourceCompletionItem.</doc>
+            <type name="CompletionItem" c:type="GtkSourceCompletionItem*"/>
+          </instance-parameter>
+          <parameter name="icon"
+                     transfer-ownership="none"
+                     nullable="1"
+                     allow-none="1">
+            <doc xml:space="preserve">the #GdkPixbuf, or %NULL.</doc>
+            <type name="GdkPixbuf.Pixbuf" c:type="GdkPixbuf*"/>
+          </parameter>
+        </parameters>
+      </method>
+      <method name="set_icon_name"
+              c:identifier="gtk_source_completion_item_set_icon_name"
+              version="3.24">
+        <return-value transfer-ownership="none">
+          <type name="none" c:type="void"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="item" transfer-ownership="none">
+            <doc xml:space="preserve">a #GtkSourceCompletionItem.</doc>
+            <type name="CompletionItem" c:type="GtkSourceCompletionItem*"/>
+          </instance-parameter>
+          <parameter name="icon_name"
+                     transfer-ownership="none"
+                     nullable="1"
+                     allow-none="1">
+            <doc xml:space="preserve">the icon name, or %NULL.</doc>
+            <type name="utf8" c:type="const gchar*"/>
+          </parameter>
+        </parameters>
+      </method>
+      <method name="set_info"
+              c:identifier="gtk_source_completion_item_set_info"
+              version="3.24">
+        <return-value transfer-ownership="none">
+          <type name="none" c:type="void"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="item" transfer-ownership="none">
+            <doc xml:space="preserve">a #GtkSourceCompletionItem.</doc>
+            <type name="CompletionItem" c:type="GtkSourceCompletionItem*"/>
+          </instance-parameter>
+          <parameter name="info"
+                     transfer-ownership="none"
+                     nullable="1"
+                     allow-none="1">
+            <doc xml:space="preserve">the info, or %NULL.</doc>
+            <type name="utf8" c:type="const gchar*"/>
+          </parameter>
+        </parameters>
+      </method>
+      <method name="set_label"
+              c:identifier="gtk_source_completion_item_set_label"
+              version="3.24">
+        <return-value transfer-ownership="none">
+          <type name="none" c:type="void"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="item" transfer-ownership="none">
+            <doc xml:space="preserve">a #GtkSourceCompletionItem.</doc>
+            <type name="CompletionItem" c:type="GtkSourceCompletionItem*"/>
+          </instance-parameter>
+          <parameter name="label"
+                     transfer-ownership="none"
+                     nullable="1"
+                     allow-none="1">
+            <doc xml:space="preserve">the label, or %NULL.</doc>
+            <type name="utf8" c:type="const gchar*"/>
+          </parameter>
+        </parameters>
+      </method>
+      <method name="set_markup"
+              c:identifier="gtk_source_completion_item_set_markup"
+              version="3.24">
+        <return-value transfer-ownership="none">
+          <type name="none" c:type="void"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="item" transfer-ownership="none">
+            <doc xml:space="preserve">a #GtkSourceCompletionItem.</doc>
+            <type name="CompletionItem" c:type="GtkSourceCompletionItem*"/>
+          </instance-parameter>
+          <parameter name="markup"
+                     transfer-ownership="none"
+                     nullable="1"
+                     allow-none="1">
+            <doc xml:space="preserve">the markup, or %NULL.</doc>
+            <type name="utf8" c:type="const gchar*"/>
+          </parameter>
+        </parameters>
+      </method>
+      <method name="set_text"
+              c:identifier="gtk_source_completion_item_set_text"
+              version="3.24">
+        <return-value transfer-ownership="none">
+          <type name="none" c:type="void"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="item" transfer-ownership="none">
+            <doc xml:space="preserve">a #GtkSourceCompletionItem.</doc>
+            <type name="CompletionItem" c:type="GtkSourceCompletionItem*"/>
+          </instance-parameter>
+          <parameter name="text"
+                     transfer-ownership="none"
+                     nullable="1"
+                     allow-none="1">
+            <doc xml:space="preserve">the text, or %NULL.</doc>
+            <type name="utf8" c:type="const gchar*"/>
+          </parameter>
+        </parameters>
+      </method>
       <property name="gicon"
                 version="3.18"
                 writable="1"
@@ -3760,14 +3927,14 @@ info widget.</doc>
                      transfer-ownership="none"
                      nullable="1"
                      allow-none="1">
-            <doc xml:space="preserve">The name for the provider</doc>
+            <doc xml:space="preserve">The name for the provider, or %NULL.</doc>
             <type name="utf8" c:type="const gchar*"/>
           </parameter>
           <parameter name="icon"
                      transfer-ownership="none"
                      nullable="1"
                      allow-none="1">
-            <doc xml:space="preserve">A specific icon for the provider</doc>
+            <doc xml:space="preserve">A specific icon for the provider, or %NULL.</doc>
             <type name="GdkPixbuf.Pixbuf" c:type="GdkPixbuf*"/>
           </parameter>
         </parameters>
@@ -3894,6 +4061,8 @@ info widget.</doc>
       </member>
     </enumeration>
     <bitfield name="DrawSpacesFlags"
+              deprecated="1"
+              deprecated-version="3.24"
               glib:type-name="GtkSourceDrawSpacesFlags"
               glib:get-type="gtk_source_draw_spaces_flags_get_type"
               c:type="GtkSourceDrawSpacesFlags">
@@ -3901,6 +4070,8 @@ info widget.</doc>
 of GTK_SOURCE_DRAW_SPACES_LEADING, GTK_SOURCE_DRAW_SPACES_TEXT or
 GTK_SOURCE_DRAW_SPACES_TRAILING is specified, whitespaces at any position in
 the line will be drawn (i.e. it has the same effect as specifying all of them).</doc>
+      <doc-deprecated xml:space="preserve">Use #GtkSourceSpaceTypeFlags and
+#GtkSourceSpaceLocationFlags instead.</doc-deprecated>
       <member name="space"
               value="1"
               c:identifier="GTK_SOURCE_DRAW_SPACES_SPACE"
@@ -3917,7 +4088,9 @@ the line will be drawn (i.e. it has the same effect as specifying all of them).<
               value="4"
               c:identifier="GTK_SOURCE_DRAW_SPACES_NEWLINE"
               glib:nick="newline">
-        <doc xml:space="preserve">whether the line breaks should be drawn.</doc>
+        <doc xml:space="preserve">whether the line breaks should be drawn. If
+  the #GtkSourceBuffer:implicit-trailing-newline property is %TRUE, a line
+  break is also drawn at the end of the buffer.</doc>
       </member>
       <member name="nbsp"
               value="8"
@@ -4310,7 +4483,10 @@ called.</doc>
             <type name="MountOperationFactory"
                   c:type="GtkSourceMountOperationFactory"/>
           </parameter>
-          <parameter name="user_data" transfer-ownership="none">
+          <parameter name="user_data"
+                     transfer-ownership="none"
+                     nullable="1"
+                     allow-none="1">
             <doc xml:space="preserve">the data to pass to the @callback function.</doc>
             <type name="gpointer" c:type="gpointer"/>
           </parameter>
@@ -4563,7 +4739,10 @@ function.</doc>
             <type name="Gio.FileProgressCallback"
                   c:type="GFileProgressCallback"/>
           </parameter>
-          <parameter name="progress_callback_data" transfer-ownership="none">
+          <parameter name="progress_callback_data"
+                     transfer-ownership="none"
+                     nullable="1"
+                     allow-none="1">
             <doc xml:space="preserve">user data to pass to @progress_callback.</doc>
             <type name="gpointer" c:type="gpointer"/>
           </parameter>
@@ -4587,7 +4766,10 @@ function.</doc>
   satisfied.</doc>
             <type name="Gio.AsyncReadyCallback" c:type="GAsyncReadyCallback"/>
           </parameter>
-          <parameter name="user_data" transfer-ownership="none">
+          <parameter name="user_data"
+                     transfer-ownership="none"
+                     nullable="1"
+                     allow-none="1">
             <doc xml:space="preserve">user data to pass to @callback.</doc>
             <type name="gpointer" c:type="gpointer"/>
           </parameter>
@@ -4936,7 +5118,10 @@ documentation to know how to use this function.</doc>
             <type name="Gio.FileProgressCallback"
                   c:type="GFileProgressCallback"/>
           </parameter>
-          <parameter name="progress_callback_data" transfer-ownership="none">
+          <parameter name="progress_callback_data"
+                     transfer-ownership="none"
+                     nullable="1"
+                     allow-none="1">
             <doc xml:space="preserve">user data to pass to @progress_callback.</doc>
             <type name="gpointer" c:type="gpointer"/>
           </parameter>
@@ -4960,7 +5145,10 @@ documentation to know how to use this function.</doc>
   satisfied.</doc>
             <type name="Gio.AsyncReadyCallback" c:type="GAsyncReadyCallback"/>
           </parameter>
-          <parameter name="user_data" transfer-ownership="none">
+          <parameter name="user_data"
+                     transfer-ownership="none"
+                     nullable="1"
+                     allow-none="1">
             <doc xml:space="preserve">user data to pass to @callback.</doc>
             <type name="gpointer" c:type="gpointer"/>
           </parameter>
@@ -5259,6 +5447,20 @@ from the #GtkSourceFile at construction time.</doc>
           </parameter>
         </parameters>
       </method>
+      <method name="get_view"
+              c:identifier="gtk_source_gutter_get_view"
+              version="3.24">
+        <return-value transfer-ownership="none">
+          <doc xml:space="preserve">the associated #GtkSourceView.</doc>
+          <type name="View" c:type="GtkSourceView*"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="gutter" transfer-ownership="none">
+            <doc xml:space="preserve">a #GtkSourceGutter.</doc>
+            <type name="Gutter" c:type="GtkSourceGutter*"/>
+          </instance-parameter>
+        </parameters>
+      </method>
       <method name="get_window"
               c:identifier="gtk_source_gutter_get_window"
               version="2.8"
@@ -5271,6 +5473,20 @@ gutter has at least one, non-zero width, cell renderer packed.</doc>
           <doc xml:space="preserve">the #GdkWindow of the gutter, or %NULL
 if the gutter has no window.</doc>
           <type name="Gdk.Window" c:type="GdkWindow*"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="gutter" transfer-ownership="none">
+            <doc xml:space="preserve">a #GtkSourceGutter.</doc>
+            <type name="Gutter" c:type="GtkSourceGutter*"/>
+          </instance-parameter>
+        </parameters>
+      </method>
+      <method name="get_window_type"
+              c:identifier="gtk_source_gutter_get_window_type"
+              version="3.24">
+        <return-value transfer-ownership="none">
+          <doc xml:space="preserve">the #GtkTextWindowType of @gutter.</doc>
+          <type name="Gtk.TextWindowType" c:type="GtkTextWindowType"/>
         </return-value>
         <parameters>
           <instance-parameter name="gutter" transfer-ownership="none">
@@ -5840,7 +6056,8 @@ be taken into account to properly draw the different possible states
                      transfer-ownership="none"
                      optional="1"
                      allow-none="1">
-            <doc xml:space="preserve">return location for the x-alignment (can be %NULL)</doc>
+            <doc xml:space="preserve">return location for the x-alignment,
+  or %NULL to ignore.</doc>
             <type name="gfloat" c:type="gfloat*"/>
           </parameter>
           <parameter name="yalign"
@@ -5849,7 +6066,8 @@ be taken into account to properly draw the different possible states
                      transfer-ownership="none"
                      optional="1"
                      allow-none="1">
-            <doc xml:space="preserve">return location for the y-alignment (can be %NULL)</doc>
+            <doc xml:space="preserve">return location for the y-alignment,
+  or %NULL to ignore.</doc>
             <type name="gfloat" c:type="gfloat*"/>
           </parameter>
         </parameters>
@@ -5910,7 +6128,8 @@ renderer is aligned (see :xalign and :yalign).</doc>
                      transfer-ownership="none"
                      optional="1"
                      allow-none="1">
-            <doc xml:space="preserve">return location for the x-padding (can be %NULL)</doc>
+            <doc xml:space="preserve">return location for the x-padding,
+  or %NULL to ignore.</doc>
             <type name="gint" c:type="gint*"/>
           </parameter>
           <parameter name="ypad"
@@ -5919,7 +6138,8 @@ renderer is aligned (see :xalign and :yalign).</doc>
                      transfer-ownership="none"
                      optional="1"
                      allow-none="1">
-            <doc xml:space="preserve">return location for the y-padding (can be %NULL)</doc>
+            <doc xml:space="preserve">return location for the y-padding,
+  or %NULL to ignore.</doc>
             <type name="gint" c:type="gint*"/>
           </parameter>
         </parameters>
@@ -6770,7 +6990,7 @@ text wrapping).</doc>
                      transfer-ownership="none"
                      nullable="1"
                      allow-none="1">
-            <doc xml:space="preserve">the icon</doc>
+            <doc xml:space="preserve">the icon, or %NULL.</doc>
             <type name="Gio.Icon" c:type="GIcon*"/>
           </parameter>
         </parameters>
@@ -6790,7 +7010,7 @@ text wrapping).</doc>
                      transfer-ownership="none"
                      nullable="1"
                      allow-none="1">
-            <doc xml:space="preserve">the icon name</doc>
+            <doc xml:space="preserve">the icon name, or %NULL.</doc>
             <type name="utf8" c:type="const gchar*"/>
           </parameter>
         </parameters>
@@ -6810,7 +7030,7 @@ text wrapping).</doc>
                      transfer-ownership="none"
                      nullable="1"
                      allow-none="1">
-            <doc xml:space="preserve">the pixbuf</doc>
+            <doc xml:space="preserve">the pixbuf, or %NULL.</doc>
             <type name="GdkPixbuf.Pixbuf" c:type="GdkPixbuf*"/>
           </parameter>
         </parameters>
@@ -8094,7 +8314,10 @@ g_free() when done with it.</doc>
           <doc xml:space="preserve">a #GtkSourceFile.</doc>
           <type name="File" c:type="GtkSourceFile*"/>
         </parameter>
-        <parameter name="userdata" transfer-ownership="none">
+        <parameter name="userdata"
+                   transfer-ownership="none"
+                   nullable="1"
+                   allow-none="1">
           <doc xml:space="preserve">user data</doc>
           <type name="gpointer" c:type="gpointer"/>
         </parameter>
@@ -9208,6 +9431,378 @@ call to the gtk_source_print_compositor_paginate() function.</doc>
             c:type="GtkSourcePrintCompositorPrivate"
             disguised="1">
     </record>
+    <class name="Region"
+           c:symbol-prefix="region"
+           c:type="GtkSourceRegion"
+           parent="GObject.Object"
+           glib:type-name="GtkSourceRegion"
+           glib:get-type="gtk_source_region_get_type"
+           glib:type-struct="RegionClass">
+      <constructor name="new"
+                   c:identifier="gtk_source_region_new"
+                   version="3.22">
+        <return-value transfer-ownership="full">
+          <doc xml:space="preserve">a new #GtkSourceRegion object for @buffer.</doc>
+          <type name="Region" c:type="GtkSourceRegion*"/>
+        </return-value>
+        <parameters>
+          <parameter name="buffer" transfer-ownership="none">
+            <doc xml:space="preserve">a #GtkTextBuffer.</doc>
+            <type name="Gtk.TextBuffer" c:type="GtkTextBuffer*"/>
+          </parameter>
+        </parameters>
+      </constructor>
+      <method name="add_region"
+              c:identifier="gtk_source_region_add_region"
+              version="3.22">
+        <doc xml:space="preserve">Adds @region_to_add to @region. @region_to_add is not modified.</doc>
+        <return-value transfer-ownership="none">
+          <type name="none" c:type="void"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="region" transfer-ownership="none">
+            <doc xml:space="preserve">a #GtkSourceRegion.</doc>
+            <type name="Region" c:type="GtkSourceRegion*"/>
+          </instance-parameter>
+          <parameter name="region_to_add"
+                     transfer-ownership="none"
+                     nullable="1"
+                     allow-none="1">
+            <doc xml:space="preserve">the #GtkSourceRegion to add to @region, or %NULL.</doc>
+            <type name="Region" c:type="GtkSourceRegion*"/>
+          </parameter>
+        </parameters>
+      </method>
+      <method name="add_subregion"
+              c:identifier="gtk_source_region_add_subregion"
+              version="3.22">
+        <doc xml:space="preserve">Adds the subregion delimited by @_start and @_end to @region.</doc>
+        <return-value transfer-ownership="none">
+          <type name="none" c:type="void"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="region" transfer-ownership="none">
+            <doc xml:space="preserve">a #GtkSourceRegion.</doc>
+            <type name="Region" c:type="GtkSourceRegion*"/>
+          </instance-parameter>
+          <parameter name="_start" transfer-ownership="none">
+            <doc xml:space="preserve">the start of the subregion.</doc>
+            <type name="Gtk.TextIter" c:type="const GtkTextIter*"/>
+          </parameter>
+          <parameter name="_end" transfer-ownership="none">
+            <doc xml:space="preserve">the end of the subregion.</doc>
+            <type name="Gtk.TextIter" c:type="const GtkTextIter*"/>
+          </parameter>
+        </parameters>
+      </method>
+      <method name="get_bounds"
+              c:identifier="gtk_source_region_get_bounds"
+              version="3.22">
+        <doc xml:space="preserve">Gets the @start and @end bounds of the @region.</doc>
+        <return-value transfer-ownership="none">
+          <doc xml:space="preserve">%TRUE if @start and @end have been set successfully (if non-%NULL),
+  or %FALSE if the @region is empty.</doc>
+          <type name="gboolean" c:type="gboolean"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="region" transfer-ownership="none">
+            <doc xml:space="preserve">a #GtkSourceRegion.</doc>
+            <type name="Region" c:type="GtkSourceRegion*"/>
+          </instance-parameter>
+          <parameter name="start"
+                     direction="out"
+                     caller-allocates="1"
+                     transfer-ownership="none"
+                     optional="1"
+                     allow-none="1">
+            <doc xml:space="preserve">iterator to initialize with the start of @region,
+  or %NULL.</doc>
+            <type name="Gtk.TextIter" c:type="GtkTextIter*"/>
+          </parameter>
+          <parameter name="end"
+                     direction="out"
+                     caller-allocates="1"
+                     transfer-ownership="none"
+                     optional="1"
+                     allow-none="1">
+            <doc xml:space="preserve">iterator to initialize with the end of @region,
+  or %NULL.</doc>
+            <type name="Gtk.TextIter" c:type="GtkTextIter*"/>
+          </parameter>
+        </parameters>
+      </method>
+      <method name="get_buffer"
+              c:identifier="gtk_source_region_get_buffer"
+              version="3.22">
+        <return-value transfer-ownership="none" nullable="1">
+          <doc xml:space="preserve">the #GtkTextBuffer.</doc>
+          <type name="Gtk.TextBuffer" c:type="GtkTextBuffer*"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="region" transfer-ownership="none">
+            <doc xml:space="preserve">a #GtkSourceRegion.</doc>
+            <type name="Region" c:type="GtkSourceRegion*"/>
+          </instance-parameter>
+        </parameters>
+      </method>
+      <method name="get_start_region_iter"
+              c:identifier="gtk_source_region_get_start_region_iter"
+              version="3.22">
+        <doc xml:space="preserve">Initializes a #GtkSourceRegionIter to the first subregion of @region. If
+@region is empty, @iter will be initialized to the end iterator.</doc>
+        <return-value transfer-ownership="none">
+          <type name="none" c:type="void"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="region" transfer-ownership="none">
+            <doc xml:space="preserve">a #GtkSourceRegion.</doc>
+            <type name="Region" c:type="GtkSourceRegion*"/>
+          </instance-parameter>
+          <parameter name="iter"
+                     direction="out"
+                     caller-allocates="1"
+                     transfer-ownership="none">
+            <doc xml:space="preserve">iterator to initialize to the first subregion.</doc>
+            <type name="RegionIter" c:type="GtkSourceRegionIter*"/>
+          </parameter>
+        </parameters>
+      </method>
+      <method name="intersect_region"
+              c:identifier="gtk_source_region_intersect_region"
+              version="3.22">
+        <doc xml:space="preserve">Returns the intersection between @region1 and @region2. @region1 and
+@region2 are not modified.</doc>
+        <return-value transfer-ownership="full" nullable="1">
+          <doc xml:space="preserve">the intersection as a #GtkSourceRegion
+  object.</doc>
+          <type name="Region" c:type="GtkSourceRegion*"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="region1"
+                              transfer-ownership="none"
+                              nullable="1"
+                              allow-none="1">
+            <doc xml:space="preserve">a #GtkSourceRegion, or %NULL.</doc>
+            <type name="Region" c:type="GtkSourceRegion*"/>
+          </instance-parameter>
+          <parameter name="region2"
+                     transfer-ownership="none"
+                     nullable="1"
+                     allow-none="1">
+            <doc xml:space="preserve">a #GtkSourceRegion, or %NULL.</doc>
+            <type name="Region" c:type="GtkSourceRegion*"/>
+          </parameter>
+        </parameters>
+      </method>
+      <method name="intersect_subregion"
+              c:identifier="gtk_source_region_intersect_subregion"
+              version="3.22">
+        <doc xml:space="preserve">Returns the intersection between @region and the subregion delimited by
+@_start and @_end. @region is not modified.</doc>
+        <return-value transfer-ownership="full" nullable="1">
+          <doc xml:space="preserve">the intersection as a new
+  #GtkSourceRegion.</doc>
+          <type name="Region" c:type="GtkSourceRegion*"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="region" transfer-ownership="none">
+            <doc xml:space="preserve">a #GtkSourceRegion.</doc>
+            <type name="Region" c:type="GtkSourceRegion*"/>
+          </instance-parameter>
+          <parameter name="_start" transfer-ownership="none">
+            <doc xml:space="preserve">the start of the subregion.</doc>
+            <type name="Gtk.TextIter" c:type="const GtkTextIter*"/>
+          </parameter>
+          <parameter name="_end" transfer-ownership="none">
+            <doc xml:space="preserve">the end of the subregion.</doc>
+            <type name="Gtk.TextIter" c:type="const GtkTextIter*"/>
+          </parameter>
+        </parameters>
+      </method>
+      <method name="is_empty"
+              c:identifier="gtk_source_region_is_empty"
+              version="3.22">
+        <doc xml:space="preserve">Returns whether the @region is empty. A %NULL @region is considered empty.</doc>
+        <return-value transfer-ownership="none">
+          <doc xml:space="preserve">whether the @region is empty.</doc>
+          <type name="gboolean" c:type="gboolean"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="region"
+                              transfer-ownership="none"
+                              nullable="1"
+                              allow-none="1">
+            <doc xml:space="preserve">a #GtkSourceRegion, or %NULL.</doc>
+            <type name="Region" c:type="GtkSourceRegion*"/>
+          </instance-parameter>
+        </parameters>
+      </method>
+      <method name="subtract_region"
+              c:identifier="gtk_source_region_subtract_region"
+              version="3.22">
+        <doc xml:space="preserve">Subtracts @region_to_subtract from @region. @region_to_subtract is not
+modified.</doc>
+        <return-value transfer-ownership="none">
+          <type name="none" c:type="void"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="region" transfer-ownership="none">
+            <doc xml:space="preserve">a #GtkSourceRegion.</doc>
+            <type name="Region" c:type="GtkSourceRegion*"/>
+          </instance-parameter>
+          <parameter name="region_to_subtract"
+                     transfer-ownership="none"
+                     nullable="1"
+                     allow-none="1">
+            <doc xml:space="preserve">the #GtkSourceRegion to subtract from
+  @region, or %NULL.</doc>
+            <type name="Region" c:type="GtkSourceRegion*"/>
+          </parameter>
+        </parameters>
+      </method>
+      <method name="subtract_subregion"
+              c:identifier="gtk_source_region_subtract_subregion"
+              version="3.22">
+        <doc xml:space="preserve">Subtracts the subregion delimited by @_start and @_end from @region.</doc>
+        <return-value transfer-ownership="none">
+          <type name="none" c:type="void"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="region" transfer-ownership="none">
+            <doc xml:space="preserve">a #GtkSourceRegion.</doc>
+            <type name="Region" c:type="GtkSourceRegion*"/>
+          </instance-parameter>
+          <parameter name="_start" transfer-ownership="none">
+            <doc xml:space="preserve">the start of the subregion.</doc>
+            <type name="Gtk.TextIter" c:type="const GtkTextIter*"/>
+          </parameter>
+          <parameter name="_end" transfer-ownership="none">
+            <doc xml:space="preserve">the end of the subregion.</doc>
+            <type name="Gtk.TextIter" c:type="const GtkTextIter*"/>
+          </parameter>
+        </parameters>
+      </method>
+      <method name="to_string"
+              c:identifier="gtk_source_region_to_string"
+              version="3.22">
+        <doc xml:space="preserve">Gets a string represention of @region, for debugging purposes.
+
+The returned string contains the character offsets of the subregions. It
+doesn't include a newline character at the end of the string.</doc>
+        <return-value transfer-ownership="full" nullable="1">
+          <doc xml:space="preserve">a string represention of @region. Free
+  with g_free() when no longer needed.</doc>
+          <type name="utf8" c:type="gchar*"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="region" transfer-ownership="none">
+            <doc xml:space="preserve">a #GtkSourceRegion.</doc>
+            <type name="Region" c:type="GtkSourceRegion*"/>
+          </instance-parameter>
+        </parameters>
+      </method>
+      <property name="buffer"
+                version="3.22"
+                writable="1"
+                construct-only="1"
+                transfer-ownership="none">
+        <doc xml:space="preserve">The #GtkTextBuffer. The #GtkSourceRegion has a weak reference to the
+buffer.</doc>
+        <type name="Gtk.TextBuffer"/>
+      </property>
+      <field name="parent_instance">
+        <type name="GObject.Object" c:type="GObject"/>
+      </field>
+    </class>
+    <record name="RegionClass"
+            c:type="GtkSourceRegionClass"
+            glib:is-gtype-struct-for="Region">
+      <field name="parent_class">
+        <type name="GObject.ObjectClass" c:type="GObjectClass"/>
+      </field>
+      <field name="padding">
+        <array zero-terminated="0" c:type="gpointer" fixed-size="8">
+          <type name="gpointer" c:type="gpointer"/>
+        </array>
+      </field>
+    </record>
+    <record name="RegionIter" c:type="GtkSourceRegionIter" version="3.22">
+      <doc xml:space="preserve">#GtkSourceRegionIter is an opaque datatype; ignore all its fields.
+Initialize the iter with gtk_source_region_get_start_region_iter().</doc>
+      <field name="dummy1" readable="0" private="1">
+        <type name="gpointer" c:type="gpointer"/>
+      </field>
+      <field name="dummy2" readable="0" private="1">
+        <type name="guint32" c:type="guint32"/>
+      </field>
+      <field name="dummy3" readable="0" private="1">
+        <type name="gpointer" c:type="gpointer"/>
+      </field>
+      <method name="get_subregion"
+              c:identifier="gtk_source_region_iter_get_subregion"
+              version="3.22">
+        <doc xml:space="preserve">Gets the subregion at this iterator.</doc>
+        <return-value transfer-ownership="none">
+          <doc xml:space="preserve">%TRUE if @start and @end have been set successfully (if non-%NULL),
+  or %FALSE if @iter is the end iterator or if the region is empty.</doc>
+          <type name="gboolean" c:type="gboolean"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="iter" transfer-ownership="none">
+            <doc xml:space="preserve">a #GtkSourceRegionIter.</doc>
+            <type name="RegionIter" c:type="GtkSourceRegionIter*"/>
+          </instance-parameter>
+          <parameter name="start"
+                     direction="out"
+                     caller-allocates="1"
+                     transfer-ownership="none"
+                     optional="1"
+                     allow-none="1">
+            <doc xml:space="preserve">iterator to initialize with the subregion start, or %NULL.</doc>
+            <type name="Gtk.TextIter" c:type="GtkTextIter*"/>
+          </parameter>
+          <parameter name="end"
+                     direction="out"
+                     caller-allocates="1"
+                     transfer-ownership="none"
+                     optional="1"
+                     allow-none="1">
+            <doc xml:space="preserve">iterator to initialize with the subregion end, or %NULL.</doc>
+            <type name="Gtk.TextIter" c:type="GtkTextIter*"/>
+          </parameter>
+        </parameters>
+      </method>
+      <method name="is_end"
+              c:identifier="gtk_source_region_iter_is_end"
+              version="3.22">
+        <return-value transfer-ownership="none">
+          <doc xml:space="preserve">whether @iter is the end iterator.</doc>
+          <type name="gboolean" c:type="gboolean"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="iter" transfer-ownership="none">
+            <doc xml:space="preserve">a #GtkSourceRegionIter.</doc>
+            <type name="RegionIter" c:type="GtkSourceRegionIter*"/>
+          </instance-parameter>
+        </parameters>
+      </method>
+      <method name="next"
+              c:identifier="gtk_source_region_iter_next"
+              version="3.22">
+        <doc xml:space="preserve">Moves @iter to the next subregion.</doc>
+        <return-value transfer-ownership="none">
+          <doc xml:space="preserve">%TRUE if @iter moved and is dereferenceable, or %FALSE if @iter has
+  been set to the end iterator.</doc>
+          <type name="gboolean" c:type="gboolean"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="iter" transfer-ownership="none">
+            <doc xml:space="preserve">a #GtkSourceRegionIter.</doc>
+            <type name="RegionIter" c:type="GtkSourceRegionIter*"/>
+          </instance-parameter>
+        </parameters>
+      </method>
+    </record>
     <class name="SearchContext"
            c:symbol-prefix="search_context"
            c:type="GtkSourceSearchContext"
@@ -9242,10 +9837,13 @@ gtk_source_search_context_get_settings().</doc>
       </constructor>
       <method name="backward"
               c:identifier="gtk_source_search_context_backward"
-              version="3.10">
+              version="3.10"
+              deprecated="1"
+              deprecated-version="3.22">
         <doc xml:space="preserve">Synchronous backward search. It is recommended to use the asynchronous
 functions instead, to not block the user interface. However, if you are sure
 that the @buffer is small, this function is more convenient to use.</doc>
+        <doc-deprecated xml:space="preserve">Use gtk_source_search_context_backward2() instead.</doc-deprecated>
         <return-value transfer-ownership="none">
           <doc xml:space="preserve">whether a match was found.</doc>
           <type name="gboolean" c:type="gboolean"/>
@@ -9279,11 +9877,74 @@ that the @buffer is small, this function is more convenient to use.</doc>
           </parameter>
         </parameters>
       </method>
+      <method name="backward2"
+              c:identifier="gtk_source_search_context_backward2"
+              version="3.22">
+        <doc xml:space="preserve">Synchronous backward search. It is recommended to use the asynchronous
+functions instead, to not block the user interface. However, if you are sure
+that the @buffer is small, this function is more convenient to use.
+
+The difference with gtk_source_search_context_backward() is that the
+@has_wrapped_around out parameter has been added for convenience.
+
+If the #GtkSourceSearchSettings:wrap-around property is %FALSE, this function
+doesn't try to wrap around.
+
+The @has_wrapped_around out parameter is set independently of whether a match
+is found. So if this function returns %FALSE, @has_wrapped_around will have
+the same value as the #GtkSourceSearchSettings:wrap-around property.</doc>
+        <return-value transfer-ownership="none">
+          <doc xml:space="preserve">whether a match was found.</doc>
+          <type name="gboolean" c:type="gboolean"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="search" transfer-ownership="none">
+            <doc xml:space="preserve">a #GtkSourceSearchContext.</doc>
+            <type name="SearchContext" c:type="GtkSourceSearchContext*"/>
+          </instance-parameter>
+          <parameter name="iter" transfer-ownership="none">
+            <doc xml:space="preserve">start of search.</doc>
+            <type name="Gtk.TextIter" c:type="const GtkTextIter*"/>
+          </parameter>
+          <parameter name="match_start"
+                     direction="out"
+                     caller-allocates="1"
+                     transfer-ownership="none"
+                     optional="1"
+                     allow-none="1">
+            <doc xml:space="preserve">return location for start of match, or %NULL.</doc>
+            <type name="Gtk.TextIter" c:type="GtkTextIter*"/>
+          </parameter>
+          <parameter name="match_end"
+                     direction="out"
+                     caller-allocates="1"
+                     transfer-ownership="none"
+                     optional="1"
+                     allow-none="1">
+            <doc xml:space="preserve">return location for end of match, or %NULL.</doc>
+            <type name="Gtk.TextIter" c:type="GtkTextIter*"/>
+          </parameter>
+          <parameter name="has_wrapped_around"
+                     direction="out"
+                     caller-allocates="0"
+                     transfer-ownership="full"
+                     optional="1"
+                     allow-none="1">
+            <doc xml:space="preserve">return location to know whether the
+  search has wrapped around, or %NULL.</doc>
+            <type name="gboolean" c:type="gboolean*"/>
+          </parameter>
+        </parameters>
+      </method>
       <method name="backward_async"
               c:identifier="gtk_source_search_context_backward_async"
               version="3.10">
-        <doc xml:space="preserve">Asynchronous backward search. See the #GAsyncResult documentation to know
-how to use this function.
+        <doc xml:space="preserve">The asynchronous version of gtk_source_search_context_backward2().
+
+See the documentation of gtk_source_search_context_backward2() for more
+details.
+
+See the #GAsyncResult documentation to know how to use this function.
 
 If the operation is cancelled, the @callback will only be called if
 @cancellable was not %NULL. gtk_source_search_context_backward_async() takes
@@ -9316,7 +9977,10 @@ ownership of @cancellable, so you can unref it after calling this function.</doc
             <doc xml:space="preserve">a #GAsyncReadyCallback to call when the operation is finished.</doc>
             <type name="Gio.AsyncReadyCallback" c:type="GAsyncReadyCallback"/>
           </parameter>
-          <parameter name="user_data" transfer-ownership="none">
+          <parameter name="user_data"
+                     transfer-ownership="none"
+                     nullable="1"
+                     allow-none="1">
             <doc xml:space="preserve">the data to pass to the @callback function.</doc>
             <type name="gpointer" c:type="gpointer"/>
           </parameter>
@@ -9325,9 +9989,12 @@ ownership of @cancellable, so you can unref it after calling this function.</doc
       <method name="backward_finish"
               c:identifier="gtk_source_search_context_backward_finish"
               version="3.10"
+              deprecated="1"
+              deprecated-version="3.22"
               throws="1">
         <doc xml:space="preserve">Finishes a backward search started with
 gtk_source_search_context_backward_async().</doc>
+        <doc-deprecated xml:space="preserve">Use gtk_source_search_context_backward_finish2() instead.</doc-deprecated>
         <return-value transfer-ownership="none">
           <doc xml:space="preserve">whether a match was found.</doc>
           <type name="gboolean" c:type="gboolean"/>
@@ -9361,12 +10028,67 @@ gtk_source_search_context_backward_async().</doc>
           </parameter>
         </parameters>
       </method>
+      <method name="backward_finish2"
+              c:identifier="gtk_source_search_context_backward_finish2"
+              version="3.22"
+              throws="1">
+        <doc xml:space="preserve">Finishes a backward search started with
+gtk_source_search_context_backward_async().
+
+See the documentation of gtk_source_search_context_backward2() for more
+details.</doc>
+        <return-value transfer-ownership="none">
+          <doc xml:space="preserve">whether a match was found.</doc>
+          <type name="gboolean" c:type="gboolean"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="search" transfer-ownership="none">
+            <doc xml:space="preserve">a #GtkSourceSearchContext.</doc>
+            <type name="SearchContext" c:type="GtkSourceSearchContext*"/>
+          </instance-parameter>
+          <parameter name="result" transfer-ownership="none">
+            <doc xml:space="preserve">a #GAsyncResult.</doc>
+            <type name="Gio.AsyncResult" c:type="GAsyncResult*"/>
+          </parameter>
+          <parameter name="match_start"
+                     direction="out"
+                     caller-allocates="1"
+                     transfer-ownership="none"
+                     optional="1"
+                     allow-none="1">
+            <doc xml:space="preserve">return location for start of match, or %NULL.</doc>
+            <type name="Gtk.TextIter" c:type="GtkTextIter*"/>
+          </parameter>
+          <parameter name="match_end"
+                     direction="out"
+                     caller-allocates="1"
+                     transfer-ownership="none"
+                     optional="1"
+                     allow-none="1">
+            <doc xml:space="preserve">return location for end of match, or %NULL.</doc>
+            <type name="Gtk.TextIter" c:type="GtkTextIter*"/>
+          </parameter>
+          <parameter name="has_wrapped_around"
+                     direction="out"
+                     caller-allocates="0"
+                     transfer-ownership="full"
+                     optional="1"
+                     allow-none="1">
+            <doc xml:space="preserve">return location to know whether the
+  search has wrapped around, or %NULL.</doc>
+            <type name="gboolean" c:type="gboolean*"/>
+          </parameter>
+        </parameters>
+      </method>
       <method name="forward"
               c:identifier="gtk_source_search_context_forward"
-              version="3.10">
+              version="3.10"
+              deprecated="1"
+              deprecated-version="3.22">
         <doc xml:space="preserve">Synchronous forward search. It is recommended to use the asynchronous
 functions instead, to not block the user interface. However, if you are sure
 that the @buffer is small, this function is more convenient to use.</doc>
+        <doc-deprecated xml:space="preserve">Use gtk_source_search_context_forward2() instead.</doc-deprecated>
         <return-value transfer-ownership="none">
           <doc xml:space="preserve">whether a match was found.</doc>
           <type name="gboolean" c:type="gboolean"/>
@@ -9400,11 +10122,74 @@ that the @buffer is small, this function is more convenient to use.</doc>
           </parameter>
         </parameters>
       </method>
+      <method name="forward2"
+              c:identifier="gtk_source_search_context_forward2"
+              version="3.22">
+        <doc xml:space="preserve">Synchronous forward search. It is recommended to use the asynchronous
+functions instead, to not block the user interface. However, if you are sure
+that the @buffer is small, this function is more convenient to use.
+
+The difference with gtk_source_search_context_forward() is that the
+@has_wrapped_around out parameter has been added for convenience.
+
+If the #GtkSourceSearchSettings:wrap-around property is %FALSE, this function
+doesn't try to wrap around.
+
+The @has_wrapped_around out parameter is set independently of whether a match
+is found. So if this function returns %FALSE, @has_wrapped_around will have
+the same value as the #GtkSourceSearchSettings:wrap-around property.</doc>
+        <return-value transfer-ownership="none">
+          <doc xml:space="preserve">whether a match was found.</doc>
+          <type name="gboolean" c:type="gboolean"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="search" transfer-ownership="none">
+            <doc xml:space="preserve">a #GtkSourceSearchContext.</doc>
+            <type name="SearchContext" c:type="GtkSourceSearchContext*"/>
+          </instance-parameter>
+          <parameter name="iter" transfer-ownership="none">
+            <doc xml:space="preserve">start of search.</doc>
+            <type name="Gtk.TextIter" c:type="const GtkTextIter*"/>
+          </parameter>
+          <parameter name="match_start"
+                     direction="out"
+                     caller-allocates="1"
+                     transfer-ownership="none"
+                     optional="1"
+                     allow-none="1">
+            <doc xml:space="preserve">return location for start of match, or %NULL.</doc>
+            <type name="Gtk.TextIter" c:type="GtkTextIter*"/>
+          </parameter>
+          <parameter name="match_end"
+                     direction="out"
+                     caller-allocates="1"
+                     transfer-ownership="none"
+                     optional="1"
+                     allow-none="1">
+            <doc xml:space="preserve">return location for end of match, or %NULL.</doc>
+            <type name="Gtk.TextIter" c:type="GtkTextIter*"/>
+          </parameter>
+          <parameter name="has_wrapped_around"
+                     direction="out"
+                     caller-allocates="0"
+                     transfer-ownership="full"
+                     optional="1"
+                     allow-none="1">
+            <doc xml:space="preserve">return location to know whether the
+  search has wrapped around, or %NULL.</doc>
+            <type name="gboolean" c:type="gboolean*"/>
+          </parameter>
+        </parameters>
+      </method>
       <method name="forward_async"
               c:identifier="gtk_source_search_context_forward_async"
               version="3.10">
-        <doc xml:space="preserve">Asynchronous forward search. See the #GAsyncResult documentation to know
-how to use this function.
+        <doc xml:space="preserve">The asynchronous version of gtk_source_search_context_forward2().
+
+See the documentation of gtk_source_search_context_forward2() for more
+details.
+
+See the #GAsyncResult documentation to know how to use this function.
 
 If the operation is cancelled, the @callback will only be called if
 @cancellable was not %NULL. gtk_source_search_context_forward_async() takes
@@ -9437,7 +10222,10 @@ ownership of @cancellable, so you can unref it after calling this function.</doc
             <doc xml:space="preserve">a #GAsyncReadyCallback to call when the operation is finished.</doc>
             <type name="Gio.AsyncReadyCallback" c:type="GAsyncReadyCallback"/>
           </parameter>
-          <parameter name="user_data" transfer-ownership="none">
+          <parameter name="user_data"
+                     transfer-ownership="none"
+                     nullable="1"
+                     allow-none="1">
             <doc xml:space="preserve">the data to pass to the @callback function.</doc>
             <type name="gpointer" c:type="gpointer"/>
           </parameter>
@@ -9446,9 +10234,12 @@ ownership of @cancellable, so you can unref it after calling this function.</doc
       <method name="forward_finish"
               c:identifier="gtk_source_search_context_forward_finish"
               version="3.10"
+              deprecated="1"
+              deprecated-version="3.22"
               throws="1">
         <doc xml:space="preserve">Finishes a forward search started with
 gtk_source_search_context_forward_async().</doc>
+        <doc-deprecated xml:space="preserve">Use gtk_source_search_context_forward_finish2() instead.</doc-deprecated>
         <return-value transfer-ownership="none">
           <doc xml:space="preserve">whether a match was found.</doc>
           <type name="gboolean" c:type="gboolean"/>
@@ -9479,6 +10270,58 @@ gtk_source_search_context_forward_async().</doc>
                      allow-none="1">
             <doc xml:space="preserve">return location for end of match, or %NULL.</doc>
             <type name="Gtk.TextIter" c:type="GtkTextIter*"/>
+          </parameter>
+        </parameters>
+      </method>
+      <method name="forward_finish2"
+              c:identifier="gtk_source_search_context_forward_finish2"
+              version="3.22"
+              throws="1">
+        <doc xml:space="preserve">Finishes a forward search started with
+gtk_source_search_context_forward_async().
+
+See the documentation of gtk_source_search_context_forward2() for more
+details.</doc>
+        <return-value transfer-ownership="none">
+          <doc xml:space="preserve">whether a match was found.</doc>
+          <type name="gboolean" c:type="gboolean"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="search" transfer-ownership="none">
+            <doc xml:space="preserve">a #GtkSourceSearchContext.</doc>
+            <type name="SearchContext" c:type="GtkSourceSearchContext*"/>
+          </instance-parameter>
+          <parameter name="result" transfer-ownership="none">
+            <doc xml:space="preserve">a #GAsyncResult.</doc>
+            <type name="Gio.AsyncResult" c:type="GAsyncResult*"/>
+          </parameter>
+          <parameter name="match_start"
+                     direction="out"
+                     caller-allocates="1"
+                     transfer-ownership="none"
+                     optional="1"
+                     allow-none="1">
+            <doc xml:space="preserve">return location for start of match, or %NULL.</doc>
+            <type name="Gtk.TextIter" c:type="GtkTextIter*"/>
+          </parameter>
+          <parameter name="match_end"
+                     direction="out"
+                     caller-allocates="1"
+                     transfer-ownership="none"
+                     optional="1"
+                     allow-none="1">
+            <doc xml:space="preserve">return location for end of match, or %NULL.</doc>
+            <type name="Gtk.TextIter" c:type="GtkTextIter*"/>
+          </parameter>
+          <parameter name="has_wrapped_around"
+                     direction="out"
+                     caller-allocates="0"
+                     transfer-ownership="full"
+                     optional="1"
+                     allow-none="1">
+            <doc xml:space="preserve">return location to know whether the
+  search has wrapped around, or %NULL.</doc>
+            <type name="gboolean" c:type="gboolean*"/>
           </parameter>
         </parameters>
       </method>
@@ -9605,6 +10448,8 @@ Free the return value with g_error_free().</doc>
       <method name="replace"
               c:identifier="gtk_source_search_context_replace"
               version="3.10"
+              deprecated="1"
+              deprecated-version="3.22"
               throws="1">
         <doc xml:space="preserve">Replaces a search match by another text. If @match_start and @match_end
 doesn't correspond to a search match, %FALSE is returned.
@@ -9612,6 +10457,7 @@ doesn't correspond to a search match, %FALSE is returned.
 For a regular expression replacement, you can check if @replace is valid by
 calling g_regex_check_replacement(). The @replace text can contain
 backreferences; read the g_regex_replace() documentation for more details.</doc>
+        <doc-deprecated xml:space="preserve">Use gtk_source_search_context_replace2() instead.</doc-deprecated>
         <return-value transfer-ownership="none">
           <doc xml:space="preserve">whether the match has been replaced.</doc>
           <type name="gboolean" c:type="gboolean"/>
@@ -9628,6 +10474,46 @@ backreferences; read the g_regex_replace() documentation for more details.</doc>
           <parameter name="match_end" transfer-ownership="none">
             <doc xml:space="preserve">the end of the match to replace.</doc>
             <type name="Gtk.TextIter" c:type="const GtkTextIter*"/>
+          </parameter>
+          <parameter name="replace" transfer-ownership="none">
+            <doc xml:space="preserve">the replacement text.</doc>
+            <type name="utf8" c:type="const gchar*"/>
+          </parameter>
+          <parameter name="replace_length" transfer-ownership="none">
+            <doc xml:space="preserve">the length of @replace in bytes, or -1.</doc>
+            <type name="gint" c:type="gint"/>
+          </parameter>
+        </parameters>
+      </method>
+      <method name="replace2"
+              c:identifier="gtk_source_search_context_replace2"
+              version="3.22"
+              throws="1">
+        <doc xml:space="preserve">Replaces a search match by another text. If @match_start and @match_end
+doesn't correspond to a search match, %FALSE is returned.
+
+Unlike with gtk_source_search_context_replace(), the @match_start and
+@match_end iters are revalidated to point to the replacement text boundaries.
+
+For a regular expression replacement, you can check if @replace is valid by
+calling g_regex_check_replacement(). The @replace text can contain
+backreferences; read the g_regex_replace() documentation for more details.</doc>
+        <return-value transfer-ownership="none">
+          <doc xml:space="preserve">whether the match has been replaced.</doc>
+          <type name="gboolean" c:type="gboolean"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="search" transfer-ownership="none">
+            <doc xml:space="preserve">a #GtkSourceSearchContext.</doc>
+            <type name="SearchContext" c:type="GtkSourceSearchContext*"/>
+          </instance-parameter>
+          <parameter name="match_start" transfer-ownership="none">
+            <doc xml:space="preserve">the start of the match to replace.</doc>
+            <type name="Gtk.TextIter" c:type="GtkTextIter*"/>
+          </parameter>
+          <parameter name="match_end" transfer-ownership="none">
+            <doc xml:space="preserve">the end of the match to replace.</doc>
+            <type name="Gtk.TextIter" c:type="GtkTextIter*"/>
           </parameter>
           <parameter name="replace" transfer-ownership="none">
             <doc xml:space="preserve">the replacement text.</doc>
@@ -9705,18 +10591,26 @@ gtk_source_search_context_set_highlight().</doc>
                      transfer-ownership="none"
                      nullable="1"
                      allow-none="1">
-            <doc xml:space="preserve">a #GtkSourceStyle.</doc>
+            <doc xml:space="preserve">a #GtkSourceStyle, or %NULL.</doc>
             <type name="Style" c:type="GtkSourceStyle*"/>
           </parameter>
         </parameters>
       </method>
       <method name="set_settings"
               c:identifier="gtk_source_search_context_set_settings"
-              version="3.10">
+              version="3.10"
+              deprecated="1"
+              deprecated-version="3.24">
         <doc xml:space="preserve">Associate a #GtkSourceSearchSettings with the search context. If @settings is
 %NULL, a new one will be created.
 
 The search context holds a reference to @settings.</doc>
+        <doc-deprecated xml:space="preserve">The #GtkSourceSearchContext:settings property will become a
+construct-only property in a future version. Create a new
+#GtkSourceSearchContext instead, or change the #GtkSourceSearchSettings
+properties. When the #GtkSourceSearchContext:settings property will become
+construct-only, it will be possible to simplify some code that needed to
+listen to the notify::settings signal.</doc-deprecated>
         <return-value transfer-ownership="none">
           <type name="none" c:type="void"/>
         </return-value>
@@ -9939,7 +10833,11 @@ gtk_text_iter_ends_word().</doc>
               version="3.10">
         <doc xml:space="preserve">Enables or disables whether to search by regular expressions.
 If enabled, the #GtkSourceSearchSettings:search-text property contains the
-pattern of the regular expression.</doc>
+pattern of the regular expression.
+
+#GtkSourceSearchContext uses #GRegex when regex search is enabled. See the
+[Regular expression syntax](https://developer.gnome.org/glib/stable/glib-regex-syntax.html)
+page in the GLib reference manual.</doc>
         <return-value transfer-ownership="none">
           <type name="none" c:type="void"/>
         </return-value>
@@ -10135,6 +11033,324 @@ non-whitespace character when the HOME/END keys are pressed.</doc>
         <doc xml:space="preserve">remove duplicates</doc>
       </member>
     </bitfield>
+    <class name="SpaceDrawer"
+           c:symbol-prefix="space_drawer"
+           c:type="GtkSourceSpaceDrawer"
+           parent="GObject.Object"
+           glib:type-name="GtkSourceSpaceDrawer"
+           glib:get-type="gtk_source_space_drawer_get_type"
+           glib:type-struct="SpaceDrawerClass">
+      <constructor name="new"
+                   c:identifier="gtk_source_space_drawer_new"
+                   version="3.24">
+        <doc xml:space="preserve">Creates a new #GtkSourceSpaceDrawer object. Useful for storing space drawing
+settings independently of a #GtkSourceView.</doc>
+        <return-value transfer-ownership="full">
+          <doc xml:space="preserve">a new #GtkSourceSpaceDrawer.</doc>
+          <type name="SpaceDrawer" c:type="GtkSourceSpaceDrawer*"/>
+        </return-value>
+      </constructor>
+      <method name="bind_matrix_setting"
+              c:identifier="gtk_source_space_drawer_bind_matrix_setting"
+              version="3.24">
+        <doc xml:space="preserve">Binds the #GtkSourceSpaceDrawer:matrix property to a #GSettings key.
+
+The #GSettings key must be of the same type as the
+#GtkSourceSpaceDrawer:matrix property, that is, `"au"`.
+
+The g_settings_bind() function cannot be used, because the default GIO
+mapping functions don't support #GVariant properties (maybe it will be
+supported by a future GIO version, in which case this function can be
+deprecated).</doc>
+        <return-value transfer-ownership="none">
+          <type name="none" c:type="void"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="drawer" transfer-ownership="none">
+            <doc xml:space="preserve">a #GtkSourceSpaceDrawer object.</doc>
+            <type name="SpaceDrawer" c:type="GtkSourceSpaceDrawer*"/>
+          </instance-parameter>
+          <parameter name="settings" transfer-ownership="none">
+            <doc xml:space="preserve">a #GSettings object.</doc>
+            <type name="Gio.Settings" c:type="GSettings*"/>
+          </parameter>
+          <parameter name="key" transfer-ownership="none">
+            <doc xml:space="preserve">the @settings key to bind.</doc>
+            <type name="utf8" c:type="const gchar*"/>
+          </parameter>
+          <parameter name="flags" transfer-ownership="none">
+            <doc xml:space="preserve">flags for the binding.</doc>
+            <type name="Gio.SettingsBindFlags" c:type="GSettingsBindFlags"/>
+          </parameter>
+        </parameters>
+      </method>
+      <method name="get_enable_matrix"
+              c:identifier="gtk_source_space_drawer_get_enable_matrix"
+              version="3.24">
+        <return-value transfer-ownership="none">
+          <doc xml:space="preserve">whether the #GtkSourceSpaceDrawer:matrix property is enabled.</doc>
+          <type name="gboolean" c:type="gboolean"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="drawer" transfer-ownership="none">
+            <doc xml:space="preserve">a #GtkSourceSpaceDrawer.</doc>
+            <type name="SpaceDrawer" c:type="GtkSourceSpaceDrawer*"/>
+          </instance-parameter>
+        </parameters>
+      </method>
+      <method name="get_matrix"
+              c:identifier="gtk_source_space_drawer_get_matrix"
+              version="3.24">
+        <doc xml:space="preserve">Gets the value of the #GtkSourceSpaceDrawer:matrix property, as a #GVariant.
+An empty array can be returned in case the matrix is a zero matrix.
+
+The gtk_source_space_drawer_get_types_for_locations() function may be more
+convenient to use.</doc>
+        <return-value transfer-ownership="full">
+          <doc xml:space="preserve">the #GtkSourceSpaceDrawer:matrix value as a new floating #GVariant
+  instance.</doc>
+          <type name="GLib.Variant" c:type="GVariant*"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="drawer" transfer-ownership="none">
+            <doc xml:space="preserve">a #GtkSourceSpaceDrawer.</doc>
+            <type name="SpaceDrawer" c:type="GtkSourceSpaceDrawer*"/>
+          </instance-parameter>
+        </parameters>
+      </method>
+      <method name="get_types_for_locations"
+              c:identifier="gtk_source_space_drawer_get_types_for_locations"
+              version="3.24">
+        <doc xml:space="preserve">If only one location is specified, this function returns what kind of
+white spaces are drawn at that location. The value is retrieved from the
+#GtkSourceSpaceDrawer:matrix property.
+
+If several locations are specified, this function returns the logical AND for
+those locations. Which means that if a certain kind of white space is present
+in the return value, then that kind of white space is drawn at all the
+specified @locations.</doc>
+        <return-value transfer-ownership="none">
+          <doc xml:space="preserve">a combination of #GtkSourceSpaceTypeFlags.</doc>
+          <type name="SpaceTypeFlags" c:type="GtkSourceSpaceTypeFlags"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="drawer" transfer-ownership="none">
+            <doc xml:space="preserve">a #GtkSourceSpaceDrawer.</doc>
+            <type name="SpaceDrawer" c:type="GtkSourceSpaceDrawer*"/>
+          </instance-parameter>
+          <parameter name="locations" transfer-ownership="none">
+            <doc xml:space="preserve">one or several #GtkSourceSpaceLocationFlags.</doc>
+            <type name="SpaceLocationFlags"
+                  c:type="GtkSourceSpaceLocationFlags"/>
+          </parameter>
+        </parameters>
+      </method>
+      <method name="set_enable_matrix"
+              c:identifier="gtk_source_space_drawer_set_enable_matrix"
+              version="3.24">
+        <doc xml:space="preserve">Sets whether the #GtkSourceSpaceDrawer:matrix property is enabled.</doc>
+        <return-value transfer-ownership="none">
+          <type name="none" c:type="void"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="drawer" transfer-ownership="none">
+            <doc xml:space="preserve">a #GtkSourceSpaceDrawer.</doc>
+            <type name="SpaceDrawer" c:type="GtkSourceSpaceDrawer*"/>
+          </instance-parameter>
+          <parameter name="enable_matrix" transfer-ownership="none">
+            <doc xml:space="preserve">the new value.</doc>
+            <type name="gboolean" c:type="gboolean"/>
+          </parameter>
+        </parameters>
+      </method>
+      <method name="set_matrix"
+              c:identifier="gtk_source_space_drawer_set_matrix"
+              version="3.24">
+        <doc xml:space="preserve">Sets a new value to the #GtkSourceSpaceDrawer:matrix property, as a
+#GVariant. If @matrix is %NULL, then an empty array is set.
+
+If @matrix is floating, it is consumed.
+
+The gtk_source_space_drawer_set_types_for_locations() function may be more
+convenient to use.</doc>
+        <return-value transfer-ownership="none">
+          <type name="none" c:type="void"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="drawer" transfer-ownership="none">
+            <doc xml:space="preserve">a #GtkSourceSpaceDrawer.</doc>
+            <type name="SpaceDrawer" c:type="GtkSourceSpaceDrawer*"/>
+          </instance-parameter>
+          <parameter name="matrix"
+                     transfer-ownership="none"
+                     nullable="1"
+                     allow-none="1">
+            <doc xml:space="preserve">the new matrix value, or %NULL.</doc>
+            <type name="GLib.Variant" c:type="GVariant*"/>
+          </parameter>
+        </parameters>
+      </method>
+      <method name="set_types_for_locations"
+              c:identifier="gtk_source_space_drawer_set_types_for_locations"
+              version="3.24">
+        <doc xml:space="preserve">Modifies the #GtkSourceSpaceDrawer:matrix property at the specified
+@locations.</doc>
+        <return-value transfer-ownership="none">
+          <type name="none" c:type="void"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="drawer" transfer-ownership="none">
+            <doc xml:space="preserve">a #GtkSourceSpaceDrawer.</doc>
+            <type name="SpaceDrawer" c:type="GtkSourceSpaceDrawer*"/>
+          </instance-parameter>
+          <parameter name="locations" transfer-ownership="none">
+            <doc xml:space="preserve">one or several #GtkSourceSpaceLocationFlags.</doc>
+            <type name="SpaceLocationFlags"
+                  c:type="GtkSourceSpaceLocationFlags"/>
+          </parameter>
+          <parameter name="types" transfer-ownership="none">
+            <doc xml:space="preserve">a combination of #GtkSourceSpaceTypeFlags.</doc>
+            <type name="SpaceTypeFlags" c:type="GtkSourceSpaceTypeFlags"/>
+          </parameter>
+        </parameters>
+      </method>
+      <property name="enable-matrix"
+                version="3.24"
+                writable="1"
+                construct="1"
+                transfer-ownership="none">
+        <doc xml:space="preserve">Whether the #GtkSourceSpaceDrawer:matrix property is enabled.</doc>
+        <type name="gboolean" c:type="gboolean"/>
+      </property>
+      <property name="matrix"
+                version="3.24"
+                writable="1"
+                construct="1"
+                transfer-ownership="none">
+        <doc xml:space="preserve">The :matrix property is a #GVariant property to specify where and
+what kind of white spaces to draw.
+
+The #GVariant is of type `"au"`, an array of unsigned integers. Each
+integer is a combination of #GtkSourceSpaceTypeFlags. There is one
+integer for each #GtkSourceSpaceLocationFlags, in the same order as
+they are defined in the enum (%GTK_SOURCE_SPACE_LOCATION_NONE and
+%GTK_SOURCE_SPACE_LOCATION_ALL are not taken into account).
+
+If the array is shorter than the number of locations, then the value
+for the missing locations will be %GTK_SOURCE_SPACE_TYPE_NONE.
+
+By default, %GTK_SOURCE_SPACE_TYPE_ALL is set for all locations.</doc>
+        <type name="GLib.Variant"/>
+      </property>
+      <field name="parent">
+        <type name="GObject.Object" c:type="GObject"/>
+      </field>
+      <field name="priv">
+        <type name="SpaceDrawerPrivate" c:type="GtkSourceSpaceDrawerPrivate*"/>
+      </field>
+    </class>
+    <record name="SpaceDrawerClass"
+            c:type="GtkSourceSpaceDrawerClass"
+            glib:is-gtype-struct-for="SpaceDrawer">
+      <field name="parent_class">
+        <type name="GObject.ObjectClass" c:type="GObjectClass"/>
+      </field>
+      <field name="padding">
+        <array zero-terminated="0" c:type="gpointer" fixed-size="20">
+          <type name="gpointer" c:type="gpointer"/>
+        </array>
+      </field>
+    </record>
+    <record name="SpaceDrawerPrivate"
+            c:type="GtkSourceSpaceDrawerPrivate"
+            disguised="1">
+    </record>
+    <bitfield name="SpaceLocationFlags"
+              version="3.24"
+              glib:type-name="GtkSourceSpaceLocationFlags"
+              glib:get-type="gtk_source_space_location_flags_get_type"
+              c:type="GtkSourceSpaceLocationFlags">
+      <doc xml:space="preserve">#GtkSourceSpaceLocationFlags contains flags for white space locations.
+
+If a line contains only white spaces (no text), the white spaces match both
+%GTK_SOURCE_SPACE_LOCATION_LEADING and %GTK_SOURCE_SPACE_LOCATION_TRAILING.</doc>
+      <member name="none"
+              value="0"
+              c:identifier="GTK_SOURCE_SPACE_LOCATION_NONE"
+              glib:nick="none">
+        <doc xml:space="preserve">No flags.</doc>
+      </member>
+      <member name="leading"
+              value="1"
+              c:identifier="GTK_SOURCE_SPACE_LOCATION_LEADING"
+              glib:nick="leading">
+        <doc xml:space="preserve">Leading white spaces on a line, i.e. the
+  indentation.</doc>
+      </member>
+      <member name="inside_text"
+              value="2"
+              c:identifier="GTK_SOURCE_SPACE_LOCATION_INSIDE_TEXT"
+              glib:nick="inside-text">
+        <doc xml:space="preserve">White spaces inside a line of text.</doc>
+      </member>
+      <member name="trailing"
+              value="4"
+              c:identifier="GTK_SOURCE_SPACE_LOCATION_TRAILING"
+              glib:nick="trailing">
+        <doc xml:space="preserve">Trailing white spaces on a line.</doc>
+      </member>
+      <member name="all"
+              value="7"
+              c:identifier="GTK_SOURCE_SPACE_LOCATION_ALL"
+              glib:nick="all">
+        <doc xml:space="preserve">White spaces anywhere.</doc>
+      </member>
+    </bitfield>
+    <bitfield name="SpaceTypeFlags"
+              version="3.24"
+              glib:type-name="GtkSourceSpaceTypeFlags"
+              glib:get-type="gtk_source_space_type_flags_get_type"
+              c:type="GtkSourceSpaceTypeFlags">
+      <doc xml:space="preserve">#GtkSourceSpaceTypeFlags contains flags for white space types.</doc>
+      <member name="none"
+              value="0"
+              c:identifier="GTK_SOURCE_SPACE_TYPE_NONE"
+              glib:nick="none">
+        <doc xml:space="preserve">No flags.</doc>
+      </member>
+      <member name="space"
+              value="1"
+              c:identifier="GTK_SOURCE_SPACE_TYPE_SPACE"
+              glib:nick="space">
+        <doc xml:space="preserve">Space character.</doc>
+      </member>
+      <member name="tab"
+              value="2"
+              c:identifier="GTK_SOURCE_SPACE_TYPE_TAB"
+              glib:nick="tab">
+        <doc xml:space="preserve">Tab character.</doc>
+      </member>
+      <member name="newline"
+              value="4"
+              c:identifier="GTK_SOURCE_SPACE_TYPE_NEWLINE"
+              glib:nick="newline">
+        <doc xml:space="preserve">Line break character. If the
+  #GtkSourceBuffer:implicit-trailing-newline property is %TRUE,
+  #GtkSourceSpaceDrawer also draws a line break at the end of the buffer.</doc>
+      </member>
+      <member name="nbsp"
+              value="8"
+              c:identifier="GTK_SOURCE_SPACE_TYPE_NBSP"
+              glib:nick="nbsp">
+        <doc xml:space="preserve">Non-breaking space character.</doc>
+      </member>
+      <member name="all"
+              value="15"
+              c:identifier="GTK_SOURCE_SPACE_TYPE_ALL"
+              glib:nick="all">
+        <doc xml:space="preserve">All white spaces.</doc>
+      </member>
+    </bitfield>
     <class name="Style"
            c:symbol-prefix="style"
            c:type="GtkSourceStyle"
@@ -10142,6 +11358,33 @@ non-whitespace character when the HOME/END keys are pressed.</doc>
            glib:type-name="GtkSourceStyle"
            glib:get-type="gtk_source_style_get_type"
            glib:type-struct="StyleClass">
+      <method name="apply"
+              c:identifier="gtk_source_style_apply"
+              version="3.22">
+        <doc xml:space="preserve">This function modifies the #GtkTextTag properties that are related to the
+#GtkSourceStyle properties. Other #GtkTextTag properties are left untouched.
+
+If @style is non-%NULL, applies @style to @tag.
+
+If @style is %NULL, the related *-set properties of #GtkTextTag are set to
+%FALSE.</doc>
+        <return-value transfer-ownership="none">
+          <type name="none" c:type="void"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="style"
+                              transfer-ownership="none"
+                              nullable="1"
+                              allow-none="1">
+            <doc xml:space="preserve">a #GtkSourceStyle to apply, or %NULL.</doc>
+            <type name="Style" c:type="const GtkSourceStyle*"/>
+          </instance-parameter>
+          <parameter name="tag" transfer-ownership="none">
+            <doc xml:space="preserve">a #GtkTextTag to apply styles to.</doc>
+            <type name="Gtk.TextTag" c:type="GtkTextTag*"/>
+          </parameter>
+        </parameters>
+      </method>
       <method name="copy" c:identifier="gtk_source_style_copy" version="2.0">
         <doc xml:space="preserve">Creates a copy of @style, that is a new #GtkSourceStyle instance which
 has the same attributes set.</doc>
@@ -10885,8 +12128,8 @@ use.</doc>
                 version="3.20"
                 writable="1"
                 transfer-ownership="none">
-        <doc xml:space="preserve">Whether to draw spaces. This property takes precedence over the value
-defined by the GtkSourceView's #GtkSourceView:draw-spaces property
+        <doc xml:space="preserve">Whether to draw white spaces. This property takes precedence over the value
+defined by the GtkSourceSpaceDrawer's #GtkSourceSpaceDrawer:matrix property
 (only where the tag is applied).
 
 Setting this property also changes #GtkSourceTag:draw-spaces-set to
@@ -11298,9 +12541,14 @@ if there are undo operations available.</doc>
       <implements name="Gtk.Buildable"/>
       <implements name="Gtk.Scrollable"/>
       <constructor name="new" c:identifier="gtk_source_view_new">
-        <doc xml:space="preserve">Creates a new #GtkSourceView. An empty default #GtkSourceBuffer will be
-created for you and can be retrieved with gtk_text_view_get_buffer(). If you
-want to specify your own buffer, consider gtk_source_view_new_with_buffer().</doc>
+        <doc xml:space="preserve">Creates a new #GtkSourceView.
+
+By default, an empty #GtkSourceBuffer will be lazily created and can be
+retrieved with gtk_text_view_get_buffer().
+
+If you want to specify your own buffer, either override the
+#GtkTextViewClass create_buffer factory method, or use
+gtk_source_view_new_with_buffer().</doc>
         <return-value transfer-ownership="none">
           <doc xml:space="preserve">a new #GtkSourceView.</doc>
           <type name="Gtk.Widget" c:type="GtkWidget*"/>
@@ -11429,10 +12677,11 @@ the background pattern should be displayed for this @view.</doc>
       </method>
       <method name="get_completion"
               c:identifier="gtk_source_view_get_completion">
-        <doc xml:space="preserve">Gets the #GtkSourceCompletion associated with @view.</doc>
+        <doc xml:space="preserve">Gets the #GtkSourceCompletion associated with @view. The returned object is
+guaranteed to be the same for the lifetime of @view. Each #GtkSourceView
+object has a different #GtkSourceCompletion.</doc>
         <return-value transfer-ownership="none">
-          <doc xml:space="preserve">
-the #GtkSourceCompletion associated with @view.</doc>
+          <doc xml:space="preserve">the #GtkSourceCompletion associated with @view.</doc>
           <type name="Completion" c:type="GtkSourceCompletion*"/>
         </return-value>
         <parameters>
@@ -11443,9 +12692,13 @@ the #GtkSourceCompletion associated with @view.</doc>
         </parameters>
       </method>
       <method name="get_draw_spaces"
-              c:identifier="gtk_source_view_get_draw_spaces">
+              c:identifier="gtk_source_view_get_draw_spaces"
+              deprecated="1"
+              deprecated-version="3.24">
         <doc xml:space="preserve">Returns the #GtkSourceDrawSpacesFlags specifying if and how spaces
 should be displayed for this @view.</doc>
+        <doc-deprecated xml:space="preserve">Use gtk_source_space_drawer_get_types_for_locations()
+instead.</doc-deprecated>
         <return-value transfer-ownership="none">
           <doc xml:space="preserve">the #GtkSourceDrawSpacesFlags, 0 if no spaces should be drawn.</doc>
           <type name="DrawSpacesFlags" c:type="GtkSourceDrawSpacesFlags"/>
@@ -11649,6 +12902,23 @@ how the cursor will move when HOME and END keys are pressed.</doc>
           </instance-parameter>
         </parameters>
       </method>
+      <method name="get_space_drawer"
+              c:identifier="gtk_source_view_get_space_drawer"
+              version="3.24">
+        <doc xml:space="preserve">Gets the #GtkSourceSpaceDrawer associated with @view. The returned object is
+guaranteed to be the same for the lifetime of @view. Each #GtkSourceView
+object has a different #GtkSourceSpaceDrawer.</doc>
+        <return-value transfer-ownership="none">
+          <doc xml:space="preserve">the #GtkSourceSpaceDrawer associated with @view.</doc>
+          <type name="SpaceDrawer" c:type="GtkSourceSpaceDrawer*"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="view" transfer-ownership="none">
+            <doc xml:space="preserve">a #GtkSourceView.</doc>
+            <type name="View" c:type="GtkSourceView*"/>
+          </instance-parameter>
+        </parameters>
+      </method>
       <method name="get_tab_width"
               c:identifier="gtk_source_view_get_tab_width">
         <doc xml:space="preserve">Returns the width of tabulation in characters.</doc>
@@ -11747,12 +13017,16 @@ on the context.</doc>
         </parameters>
       </method>
       <method name="set_draw_spaces"
-              c:identifier="gtk_source_view_set_draw_spaces">
+              c:identifier="gtk_source_view_set_draw_spaces"
+              deprecated="1"
+              deprecated-version="3.24">
         <doc xml:space="preserve">Set if and how the spaces should be visualized. Specifying @flags as 0 will
 disable display of spaces.
 
 For a finer-grained method, there is also the GtkSourceTag's
 #GtkSourceTag:draw-spaces property.</doc>
+        <doc-deprecated xml:space="preserve">Use gtk_source_space_drawer_set_types_for_locations()
+instead.</doc-deprecated>
         <return-value transfer-ownership="none">
           <type name="none" c:type="void"/>
         </return-value>
@@ -12054,12 +13328,16 @@ specified lines.</doc>
       </property>
       <property name="draw-spaces"
                 version="2.4"
+                deprecated="1"
+                deprecated-version="3.24"
                 writable="1"
                 transfer-ownership="none">
         <doc xml:space="preserve">Set if and how the spaces should be visualized.
 
 For a finer-grained method, there is also the GtkSourceTag's
 #GtkSourceTag:draw-spaces property.</doc>
+        <doc-deprecated xml:space="preserve">Use the #GtkSourceSpaceDrawer:matrix property
+instead.</doc-deprecated>
         <type name="DrawSpacesFlags"/>
       </property>
       <property name="highlight-current-line"
@@ -12114,6 +13392,10 @@ For a finer-grained method, there is also the GtkSourceTag's
                 transfer-ownership="none">
         <doc xml:space="preserve">Set the behavior of the HOME and END keys.</doc>
         <type name="SmartHomeEndType"/>
+      </property>
+      <property name="space-drawer" version="3.24" transfer-ownership="none">
+        <doc xml:space="preserve">The #GtkSourceSpaceDrawer object associated with the view.</doc>
+        <type name="SpaceDrawer"/>
       </property>
       <property name="tab-width" writable="1" transfer-ownership="none">
         <doc xml:space="preserve">Width of a tab character expressed in number of spaces.</doc>
@@ -12178,18 +13460,23 @@ determine on which line the activation took place.</doc>
 when the user initiates moving a line. The default binding key
 is Alt+Up/Down arrow. And moves the currently selected lines,
 or the current line by @count. For the moment, only
-@count of -1 or 1 is valid.</doc>
+@count of -1 or 1 is valid.
+
+The @copy parameter is deprecated, it has never been used by
+GtkSourceView (the value is always %FALSE) and was buggy.</doc>
         <return-value transfer-ownership="none">
           <type name="none" c:type="void"/>
         </return-value>
         <parameters>
           <parameter name="copy" transfer-ownership="none">
-            <doc xml:space="preserve">%TRUE if the line should be copied,
-       %FALSE if it should be moved</doc>
+            <doc xml:space="preserve">%TRUE if the line should be copied, %FALSE if it should be
+  moved. This parameter is deprecated and will be removed in a later
+  version, it should be always %FALSE.</doc>
             <type name="gboolean" c:type="gboolean"/>
           </parameter>
           <parameter name="count" transfer-ownership="none">
-            <doc xml:space="preserve">the number of lines to move over.</doc>
+            <doc xml:space="preserve">the number of lines to move over. Only 1 and -1 are
+  supported.</doc>
             <type name="gint" c:type="gint"/>
           </parameter>
         </parameters>
@@ -12477,7 +13764,7 @@ if not found.</doc>
     <function name="utils_escape_search_text"
               c:identifier="gtk_source_utils_escape_search_text"
               version="3.10">
-      <doc xml:space="preserve">Use this function to escape the following characters: \n, \r, \t and \.
+      <doc xml:space="preserve">Use this function to escape the following characters: `\n`, `\r`, `\t` and `\`.
 
 For a regular expression search, use g_regex_escape_string() instead.
 
@@ -12508,7 +13795,7 @@ may be modified.
               c:identifier="gtk_source_utils_unescape_search_text"
               version="3.10">
       <doc xml:space="preserve">Use this function before gtk_source_search_settings_set_search_text(), to
-unescape the following sequences of characters: \n, \r, \t and \\.
+unescape the following sequences of characters: `\n`, `\r`, `\t` and `\\`.
 The purpose is to easily write those characters in a search entry.
 
 Note that unescaping the search text is not needed for regular expression
