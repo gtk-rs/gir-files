@@ -28,4 +28,5 @@ replace_problematic_lines('PangoCairo-1.0.gir',
 replace_problematic_lines('PangoCairo-1.0.gir',
                           {'<type c:type="PangoFcFontMap"/>': '<type name="FcFontMap" c:type="PangoFcFontMap"/>'})
 replace_problematic_lines('cairo-1.0.gir',
-                          {'glib:type-name="cairo_font_type_t"': 'glib:type-name="FontType"'})
+                          {'glib:type-name="cairo_font_type_t"': 'glib:type-name="FontType"',
+                           '<enumeration name="FontType" c:type="cairo_font_type_t"': '<enumeration name="FontType" c:type="enums::FontType"'})
