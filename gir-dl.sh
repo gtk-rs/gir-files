@@ -1,7 +1,5 @@
-#!/bin/sh
-
-set -e
-set -u
+#!/bin/bash
+set -e -u -o pipefail
 
 MIRRORS="$1"
 if [ $# -lt 2 ]; then
