@@ -149,7 +149,11 @@ is greater than one, the #GArray wrapper is preserved but the size
 of @array will be set to zero.
 
 If array elements contain dynamically-allocated memory, they should
-be freed separately.</doc>
+be freed separately.
+
+This function is not thread-safe. If using a #GArray from multiple
+threads, use only the atomic g_array_ref() and g_array_unref()
+functions.</doc>
         <return-value transfer-ownership="full">
           <doc xml:space="preserve">the element data if @free_segment is %FALSE, otherwise
     %NULL. The element data should be freed using g_free().</doc>
@@ -278,7 +282,7 @@ the new elements.</doc>
                 version="2.22"
                 introspectable="0">
         <doc xml:space="preserve">Atomically increments the reference count of @array by one.
-This function is MT-safe and may be called from any thread.</doc>
+This function is thread-safe and may be called from any thread.</doc>
         <return-value>
           <doc xml:space="preserve">The passed in #GArray</doc>
           <array name="GLib.Array" c:type="GArray*">
@@ -523,7 +527,7 @@ This did not actually work, so any such code should be removed.</doc>
                 introspectable="0">
         <doc xml:space="preserve">Atomically decrements the reference count of @array by one. If the
 reference count drops to 0, all memory allocated by the array is
-released. This function is MT-safe and may be called from any
+released. This function is thread-safe and may be called from any
 thread.</doc>
         <return-value transfer-ownership="none">
           <type name="none" c:type="void"/>
@@ -8922,6 +8926,8 @@ The default encoding for #GIOChannel is UTF-8. If your application
 is reading output from a command using via pipe, you may need to set
 the encoding to the encoding of the current locale (see
 g_get_charset()) with the g_io_channel_set_encoding() function.
+By default, the fd passed will not be closed when the final reference
+to the #GIOChannel data structure is dropped.
 
 If you want to read raw binary data without interpretation, then
 call the g_io_channel_set_encoding() function with %NULL for the
@@ -9027,8 +9033,7 @@ will be closed when @channel receives its final unref and is
 destroyed. The default value of this is %TRUE for channels created
 by g_io_channel_new_file (), and %FALSE for all other channels.</doc>
         <return-value transfer-ownership="none">
-          <doc xml:space="preserve">Whether the channel will be closed on the final unref of
-              the GIOChannel data structure.</doc>
+          <doc xml:space="preserve">%TRUE if the channel will be closed, %FALSE otherwise.</doc>
           <type name="gboolean" c:type="gboolean"/>
         </return-value>
         <parameters>
@@ -9438,8 +9443,12 @@ The default state of the channel is buffered.</doc>
       </method>
       <method name="set_close_on_unref"
               c:identifier="g_io_channel_set_close_on_unref">
-        <doc xml:space="preserve">Setting this flag to %TRUE for a channel you have already closed
-can cause problems.</doc>
+        <doc xml:space="preserve">Whether to close the channel on the final unref of the #GIOChannel
+data structure. The default value of this is %TRUE for channels
+created by g_io_channel_new_file (), and %FALSE for all other channels.
+
+Setting this flag to %TRUE for a channel you have already closed
+can cause problems when the final reference to the #GIOChannel is dropped.</doc>
         <return-value transfer-ownership="none">
           <type name="none" c:type="void"/>
         </return-value>
@@ -9450,9 +9459,7 @@ can cause problems.</doc>
           </instance-parameter>
           <parameter name="do_close" transfer-ownership="none">
             <doc xml:space="preserve">Whether to close the channel on the final unref of
-           the GIOChannel data structure. The default value of
-           this is %TRUE for channels created by g_io_channel_new_file (),
-           and %FALSE for all other channels.</doc>
+           the GIOChannel data structure.</doc>
             <type name="gboolean" c:type="gboolean"/>
           </parameter>
         </parameters>
@@ -10018,6 +10025,11 @@ in a generic way.</doc>
         <doc xml:space="preserve">Resource temporarily unavailable.</doc>
       </member>
     </enumeration>
+    <constant name="KEY_FILE_DESKTOP_ACTION_GROUP_PREFIX"
+              value="Desktop Action"
+              c:type="G_KEY_FILE_DESKTOP_ACTION_GROUP_PREFIX">
+      <type name="utf8" c:type="gchar*"/>
+    </constant>
     <constant name="KEY_FILE_DESKTOP_GROUP"
               value="Desktop Entry"
               c:type="G_KEY_FILE_DESKTOP_GROUP"
@@ -11799,8 +11811,7 @@ See #G_BYTE_ORDER.</doc>
     <constant name="LOG_DOMAIN" value="0" c:type="G_LOG_DOMAIN">
       <doc xml:space="preserve">Defines the log domain.
 
-For applications, this is typically left as the default %NULL
-(or "") domain. Libraries should define this so that any messages
+Libraries should define this so that any messages
 which they log can be differentiated from messages from other
 libraries and application code. But be careful not to define
 it in any public header files.
@@ -11808,7 +11819,11 @@ it in any public header files.
 For example, GTK+ uses this in its Makefile.am:
 |[
 AM_CPPFLAGS = -DG_LOG_DOMAIN=\"Gtk\"
-]|</doc>
+]|
+
+Applications can choose to leave it as the default %NULL (or "")
+domain. However, defining the domain offers the same advantages as
+above.</doc>
       <type name="gchar" c:type="gchar"/>
     </constant>
     <constant name="LOG_FATAL_MASK" value="0" c:type="G_LOG_FATAL_MASK">
@@ -12938,7 +12953,7 @@ linked against at application run time.</doc>
       <doc xml:space="preserve">The maximum value which can be held in a #guint8.</doc>
       <type name="guint8" c:type="guint8"/>
     </constant>
-    <constant name="MICRO_VERSION" value="4" c:type="GLIB_MICRO_VERSION">
+    <constant name="MICRO_VERSION" value="1" c:type="GLIB_MICRO_VERSION">
       <doc xml:space="preserve">The micro version number of the GLib library.
 
 Like #gtk_micro_version, but from the headers used at
@@ -12965,7 +12980,7 @@ linked against at application run time.</doc>
       <doc xml:space="preserve">The minimum value which can be held in a #gint8.</doc>
       <type name="gint8" c:type="gint8"/>
     </constant>
-    <constant name="MINOR_VERSION" value="53" c:type="GLIB_MINOR_VERSION">
+    <constant name="MINOR_VERSION" value="54" c:type="GLIB_MINOR_VERSION">
       <doc xml:space="preserve">The minor version number of the GLib library.
 
 Like #gtk_minor_version, but from the headers used at
@@ -17567,7 +17582,11 @@ size of @array will be set to zero.
 
 If array contents point to dynamically-allocated memory, they should
 be freed separately if @free_seg is %TRUE and no #GDestroyNotify
-function has been set for @array.</doc>
+function has been set for @array.
+
+This function is not thread-safe. If using a #GPtrArray from multiple
+threads, use only the atomic g_ptr_array_ref() and g_ptr_array_unref()
+functions.</doc>
         <return-value transfer-ownership="none" nullable="1">
           <doc xml:space="preserve">the pointer array if @free_seg is %FALSE, otherwise %NULL.
     The pointer array should be freed using g_free().</doc>
@@ -17985,7 +18004,7 @@ This is guaranteed to be a stable sort since version 2.32.</doc>
         <doc xml:space="preserve">Atomically decrements the reference count of @array by one. If the
 reference count drops to 0, the effect is the same as calling
 g_ptr_array_free() with @free_segment set to %TRUE. This function
-is MT-safe and may be called from any thread.</doc>
+is thread-safe and may be called from any thread.</doc>
         <return-value transfer-ownership="none">
           <type name="none" c:type="void"/>
         </return-value>
@@ -22600,12 +22619,9 @@ g_io_channel_seek_position() operation.</doc>
     <record name="Sequence" c:type="GSequence" disguised="1">
       <doc xml:space="preserve">The #GSequence struct is an opaque data type representing a
 [sequence][glib-Sequences] data type.</doc>
-      <method name="append"
-              c:identifier="g_sequence_append"
-              version="2.14"
-              introspectable="0">
+      <method name="append" c:identifier="g_sequence_append" version="2.14">
         <doc xml:space="preserve">Adds a new item to the end of @seq.</doc>
-        <return-value>
+        <return-value transfer-ownership="none">
           <doc xml:space="preserve">an iterator pointing to the new item</doc>
           <type name="SequenceIter" c:type="GSequenceIter*"/>
         </return-value>
@@ -22666,10 +22682,9 @@ in @seq.</doc>
       </method>
       <method name="get_begin_iter"
               c:identifier="g_sequence_get_begin_iter"
-              version="2.14"
-              introspectable="0">
+              version="2.14">
         <doc xml:space="preserve">Returns the begin iterator for @seq.</doc>
-        <return-value>
+        <return-value transfer-ownership="none">
           <doc xml:space="preserve">the begin iterator for @seq.</doc>
           <type name="SequenceIter" c:type="GSequenceIter*"/>
         </return-value>
@@ -22682,10 +22697,9 @@ in @seq.</doc>
       </method>
       <method name="get_end_iter"
               c:identifier="g_sequence_get_end_iter"
-              version="2.14"
-              introspectable="0">
+              version="2.14">
         <doc xml:space="preserve">Returns the end iterator for @seg</doc>
-        <return-value>
+        <return-value transfer-ownership="none">
           <doc xml:space="preserve">the end iterator for @seq</doc>
           <type name="SequenceIter" c:type="GSequenceIter*"/>
         </return-value>
@@ -22698,11 +22712,10 @@ in @seq.</doc>
       </method>
       <method name="get_iter_at_pos"
               c:identifier="g_sequence_get_iter_at_pos"
-              version="2.14"
-              introspectable="0">
+              version="2.14">
         <doc xml:space="preserve">Returns the iterator at position @pos. If @pos is negative or larger
 than the number of items in @seq, the end iterator is returned.</doc>
-        <return-value>
+        <return-value transfer-ownership="none">
           <doc xml:space="preserve">The #GSequenceIter at position @pos</doc>
           <type name="SequenceIter" c:type="GSequenceIter*"/>
         </return-value>
@@ -22746,7 +22759,7 @@ otherwise the new position of @data is undefined.
 It should return 0 if the items are equal, a negative value
 if the first item comes before the second, and a positive value
 if the second  item comes before the first.</doc>
-        <return-value>
+        <return-value transfer-ownership="none">
           <doc xml:space="preserve">a #GSequenceIter pointing to the new item.</doc>
           <type name="SequenceIter" c:type="GSequenceIter*"/>
         </return-value>
@@ -22792,7 +22805,7 @@ It is called with two iterators pointing into @seq. It should
 return 0 if the iterators are equal, a negative value if the
 first iterator comes before the second, and a positive value
 if the second iterator comes before the first.</doc>
-        <return-value>
+        <return-value transfer-ownership="none">
           <doc xml:space="preserve">a #GSequenceIter pointing to the new item</doc>
           <type name="SequenceIter" c:type="GSequenceIter*"/>
         </return-value>
@@ -22861,7 +22874,7 @@ unsorted.  Use g_sequence_insert_sorted() or
 g_sequence_insert_sorted_iter() to add data to your sequence or, if
 you want to add a large amount of data, call g_sequence_sort() after
 doing unsorted insertions.</doc>
-        <return-value>
+        <return-value transfer-ownership="none" nullable="1">
           <doc xml:space="preserve">an #GSequenceIter pointing to the position of the
     first item found equal to @data according to @cmp_func and
     @cmp_data, or %NULL if no such item exists</doc>
@@ -22909,7 +22922,7 @@ unsorted.  Use g_sequence_insert_sorted() or
 g_sequence_insert_sorted_iter() to add data to your sequence or, if
 you want to add a large amount of data, call g_sequence_sort() after
 doing unsorted insertions.</doc>
-        <return-value>
+        <return-value transfer-ownership="none" nullable="1">
           <doc xml:space="preserve">an #GSequenceIter pointing to the position of
     the first item found equal to @data according to @cmp_func
     and @cmp_data, or %NULL if no such item exists</doc>
@@ -22941,12 +22954,9 @@ doing unsorted insertions.</doc>
           </parameter>
         </parameters>
       </method>
-      <method name="prepend"
-              c:identifier="g_sequence_prepend"
-              version="2.14"
-              introspectable="0">
+      <method name="prepend" c:identifier="g_sequence_prepend" version="2.14">
         <doc xml:space="preserve">Adds a new item to the front of @seq</doc>
-        <return-value>
+        <return-value transfer-ownership="none">
           <doc xml:space="preserve">an iterator pointing to the new item</doc>
           <type name="SequenceIter" c:type="GSequenceIter*"/>
         </return-value>
@@ -22984,7 +22994,7 @@ unsorted.  Use g_sequence_insert_sorted() or
 g_sequence_insert_sorted_iter() to add data to your sequence or, if
 you want to add a large amount of data, call g_sequence_sort() after
 doing unsorted insertions.</doc>
-        <return-value>
+        <return-value transfer-ownership="none">
           <doc xml:space="preserve">an #GSequenceIter pointing to the position where @data
     would have been inserted according to @cmp_func and @cmp_data</doc>
           <type name="SequenceIter" c:type="GSequenceIter*"/>
@@ -23034,7 +23044,7 @@ unsorted.  Use g_sequence_insert_sorted() or
 g_sequence_insert_sorted_iter() to add data to your sequence or, if
 you want to add a large amount of data, call g_sequence_sort() after
 doing unsorted insertions.</doc>
-        <return-value>
+        <return-value transfer-ownership="none">
           <doc xml:space="preserve">a #GSequenceIter pointing to the position in @seq
     where @data would have been inserted according to @iter_cmp
     and @cmp_data</doc>
@@ -23176,10 +23186,9 @@ iterator comes before the first.</doc>
       </function>
       <function name="insert_before"
                 c:identifier="g_sequence_insert_before"
-                version="2.14"
-                introspectable="0">
+                version="2.14">
         <doc xml:space="preserve">Inserts a new item just before the item pointed to by @iter.</doc>
-        <return-value>
+        <return-value transfer-ownership="none">
           <doc xml:space="preserve">an iterator pointing to the new item</doc>
           <type name="SequenceIter" c:type="GSequenceIter*"/>
         </return-value>
@@ -23253,7 +23262,7 @@ the (@begin, @end) range, the range does not move.</doc>
         <doc xml:space="preserve">Creates a new GSequence. The @data_destroy function, if non-%NULL will
 be called on all items when the sequence is destroyed and on items that
 are removed from the sequence.</doc>
-        <return-value>
+        <return-value transfer-ownership="full">
           <doc xml:space="preserve">a new #GSequence</doc>
           <type name="Sequence" c:type="GSequence*"/>
         </return-value>
@@ -23270,15 +23279,14 @@ are removed from the sequence.</doc>
       </function>
       <function name="range_get_midpoint"
                 c:identifier="g_sequence_range_get_midpoint"
-                version="2.14"
-                introspectable="0">
+                version="2.14">
         <doc xml:space="preserve">Finds an iterator somewhere in the range (@begin, @end). This
 iterator will be close to the middle of the range, but is not
 guaranteed to be exactly in the middle.
 
 The @begin and @end iterators must both point to the same sequence
 and @begin must come before or be equal to @end in the sequence.</doc>
-        <return-value>
+        <return-value transfer-ownership="none">
           <doc xml:space="preserve">a #GSequenceIter pointing somewhere in the
    (@begin, @end) range</doc>
           <type name="SequenceIter" c:type="GSequenceIter*"/>
@@ -23481,10 +23489,9 @@ The @a and @b iterators must point into the same sequence.</doc>
       </method>
       <method name="get_sequence"
               c:identifier="g_sequence_iter_get_sequence"
-              version="2.14"
-              introspectable="0">
+              version="2.14">
         <doc xml:space="preserve">Returns the #GSequence that @iter points into.</doc>
-        <return-value>
+        <return-value transfer-ownership="none">
           <doc xml:space="preserve">the #GSequence that @iter points into</doc>
           <type name="Sequence" c:type="GSequence*"/>
         </return-value>
@@ -23525,15 +23532,12 @@ The @a and @b iterators must point into the same sequence.</doc>
           </instance-parameter>
         </parameters>
       </method>
-      <method name="move"
-              c:identifier="g_sequence_iter_move"
-              version="2.14"
-              introspectable="0">
+      <method name="move" c:identifier="g_sequence_iter_move" version="2.14">
         <doc xml:space="preserve">Returns the #GSequenceIter which is @delta positions away from @iter.
 If @iter is closer than -@delta positions to the beginning of the sequence,
 the begin iterator is returned. If @iter is closer than @delta positions
 to the end of the sequence, the end iterator is returned.</doc>
-        <return-value>
+        <return-value transfer-ownership="none">
           <doc xml:space="preserve">a #GSequenceIter which is @delta positions away from @iter</doc>
           <type name="SequenceIter" c:type="GSequenceIter*"/>
         </return-value>
@@ -23549,13 +23553,10 @@ to the end of the sequence, the end iterator is returned.</doc>
           </parameter>
         </parameters>
       </method>
-      <method name="next"
-              c:identifier="g_sequence_iter_next"
-              version="2.14"
-              introspectable="0">
+      <method name="next" c:identifier="g_sequence_iter_next" version="2.14">
         <doc xml:space="preserve">Returns an iterator pointing to the next position after @iter.
 If @iter is the end iterator, the end iterator is returned.</doc>
-        <return-value>
+        <return-value transfer-ownership="none">
           <doc xml:space="preserve">a #GSequenceIter pointing to the next position after @iter</doc>
           <type name="SequenceIter" c:type="GSequenceIter*"/>
         </return-value>
@@ -23566,13 +23567,10 @@ If @iter is the end iterator, the end iterator is returned.</doc>
           </instance-parameter>
         </parameters>
       </method>
-      <method name="prev"
-              c:identifier="g_sequence_iter_prev"
-              version="2.14"
-              introspectable="0">
+      <method name="prev" c:identifier="g_sequence_iter_prev" version="2.14">
         <doc xml:space="preserve">Returns an iterator pointing to the previous position before @iter.
 If @iter is the begin iterator, the begin iterator is returned.</doc>
-        <return-value>
+        <return-value transfer-ownership="none">
           <doc xml:space="preserve">a #GSequenceIter pointing to the previous position
     before @iter</doc>
           <type name="SequenceIter" c:type="GSequenceIter*"/>
@@ -29372,7 +29370,7 @@ child.
 
 To put the entire example together, for our dictionary mapping
 strings to variants (with two entries, as given above), we are
-using 91 bytes of memory for type information, 29 byes of memory
+using 91 bytes of memory for type information, 29 bytes of memory
 for the serialised data, 16 bytes for buffer management and 24
 bytes for the #GVariant instance, or a total of 160 bytes, plus
 malloc overhead.  If we were to use g_variant_get_child_value() to
@@ -32032,7 +32030,7 @@ It typically only makes sense to do this on a stack-allocated
 #GVariantBuilder if you want to abort building the value part-way
 through.  This function need not be called if you call
 g_variant_builder_end() and it also doesn't need to be called on
-builders allocated with g_variant_builder_new (see
+builders allocated with g_variant_builder_new() (see
 g_variant_builder_unref() for that).
 
 This function leaves the #GVariantBuilder structure set to all-zeros.
@@ -38356,9 +38354,11 @@ similar cases.</doc>
       <doc xml:space="preserve">Gets the name of the program. This name should not be localized,
 in contrast to g_get_application_name().
 
-If you are using GDK or GTK+ the program name is set in gdk_init(),
-which is called by gtk_init(). The program name is found by taking
-the last component of @argv[0].</doc>
+If you are using #GApplication the program name is set in
+g_application_run(). In case of GDK or GTK+ it is set in
+gdk_init(), which is called by gtk_init() and the
+#GtkApplication::startup handler. The program name is found by
+taking the last component of @argv[0].</doc>
       <return-value transfer-ownership="none">
         <doc xml:space="preserve">the name of the program. The returned string belongs
     to GLib and must not be modified or freed.</doc>
@@ -38404,12 +38404,15 @@ in the
 [XDG Base Directory Specification](http://www.freedesktop.org/Standards/basedir-spec).
 In this case the list of directories retrieved will be `XDG_CONFIG_DIRS`.
 
-On Windows is the directory that contains application data for all users.
-A typical path is C:\Documents and Settings\All Users\Application Data.
-This folder is used for application data that is not user specific.
-For example, an application can store a spell-check dictionary, a database
-of clip art, or a log file in the CSIDL_COMMON_APPDATA folder.
-This information will not roam and is available to anyone using the computer.</doc>
+On Windows it follows XDG Base Directory Specification if `XDG_CONFIG_DIRS` is defined.
+If `XDG_CONFIG_DIRS` is undefined, the directory that contains application
+data for all users is used instead. A typical path is
+`C:\Documents and Settings\All Users\Application Data`.
+This folder is used for application data
+that is not user specific. For example, an application can store
+a spell-check dictionary, a database of clip art, or a log file in the
+CSIDL_COMMON_APPDATA folder. This information will not roam and is available
+to anyone using the computer.</doc>
       <return-value transfer-ownership="none">
         <doc xml:space="preserve">
     a %NULL-terminated array of strings owned by GLib that must not be
@@ -38428,9 +38431,11 @@ system-wide application data.
 On UNIX platforms this is determined using the mechanisms described
 in the
 [XDG Base Directory Specification](http://www.freedesktop.org/Standards/basedir-spec)
-In this case the list of directories retrieved will be XDG_DATA_DIRS.
+In this case the list of directories retrieved will be `XDG_DATA_DIRS`.
 
-On Windows the first elements in the list are the Application Data
+On Windows it follows XDG Base Directory Specification if `XDG_DATA_DIRS` is defined.
+If `XDG_DATA_DIRS` is undefined,
+the first elements in the list are the Application Data
 and Documents folders for All Users. (These can be determined only
 on Windows 2000 or later and are not present in the list on other
 Windows versions.) See documentation for CSIDL_COMMON_APPDATA and
@@ -38489,12 +38494,13 @@ data specific to particular user.
 On UNIX platforms this is determined using the mechanisms described
 in the
 [XDG Base Directory Specification](http://www.freedesktop.org/Standards/basedir-spec).
-In this case the directory retrieved will be XDG_CACHE_HOME.
+In this case the directory retrieved will be `XDG_CACHE_HOME`.
 
-On Windows is the directory that serves as a common repository for
-temporary Internet files. A typical path is
-C:\Documents and Settings\username\Local Settings\Temporary Internet Files.
-See documentation for CSIDL_INTERNET_CACHE.</doc>
+On Windows it follows XDG Base Directory Specification if `XDG_CACHE_HOME` is defined.
+If `XDG_CACHE_HOME` is undefined, the directory that serves as a common
+repository for temporary Internet files is used instead. A typical path is
+`C:\Documents and Settings\username\Local Settings\Temporary Internet Files`.
+See the [documentation for `CSIDL_INTERNET_CACHE`](https://msdn.microsoft.com/en-us/library/windows/desktop/bb762494%28v=vs.85%29.aspx#csidl_internet_cache).</doc>
       <return-value transfer-ownership="none">
         <doc xml:space="preserve">a string owned by GLib that must not be modified
               or freed.</doc>
@@ -38512,10 +38518,12 @@ in the
 [XDG Base Directory Specification](http://www.freedesktop.org/Standards/basedir-spec).
 In this case the directory retrieved will be `XDG_CONFIG_HOME`.
 
-On Windows this is the folder to use for local (as opposed to
-roaming) application data. See documentation for
-CSIDL_LOCAL_APPDATA. Note that on Windows it thus is the same as
-what g_get_user_data_dir() returns.</doc>
+On Windows it follows XDG Base Directory Specification if `XDG_CONFIG_HOME` is defined.
+If `XDG_CONFIG_HOME` is undefined, the folder to use for local (as opposed
+to roaming) application data is used instead. See the
+[documentation for `CSIDL_LOCAL_APPDATA`](https://msdn.microsoft.com/en-us/library/windows/desktop/bb762494%28v=vs.85%29.aspx#csidl_local_appdata).
+Note that in this case on Windows it will be  the same
+as what g_get_user_data_dir() returns.</doc>
       <return-value transfer-ownership="none">
         <doc xml:space="preserve">a string owned by GLib that must not be modified
               or freed.</doc>
@@ -38533,10 +38541,12 @@ in the
 [XDG Base Directory Specification](http://www.freedesktop.org/Standards/basedir-spec).
 In this case the directory retrieved will be `XDG_DATA_HOME`.
 
-On Windows this is the folder to use for local (as opposed to
-roaming) application data. See documentation for
-CSIDL_LOCAL_APPDATA. Note that on Windows it thus is the same as
-what g_get_user_config_dir() returns.</doc>
+On Windows it follows XDG Base Directory Specification if `XDG_DATA_HOME`
+is defined. If `XDG_DATA_HOME` is undefined, the folder to use for local (as
+opposed to roaming) application data is used instead. See the
+[documentation for `CSIDL_LOCAL_APPDATA`](https://msdn.microsoft.com/en-us/library/windows/desktop/bb762494%28v=vs.85%29.aspx#csidl_local_appdata).
+Note that in this case on Windows it will be the same
+as what g_get_user_config_dir() returns.</doc>
       <return-value transfer-ownership="none">
         <doc xml:space="preserve">a string owned by GLib that must not be modified
               or freed.</doc>
@@ -38559,18 +38569,13 @@ consistent on a machine. On Windows, it is always UTF-8.</doc>
       <doc xml:space="preserve">Returns a directory that is unique to the current user on the local
 system.
 
-On UNIX platforms this is determined using the mechanisms described
+This is determined using the mechanisms described
 in the
 [XDG Base Directory Specification](http://www.freedesktop.org/Standards/basedir-spec).
 This is the directory
 specified in the `XDG_RUNTIME_DIR` environment variable.
 In the case that this variable is not set, we return the value of
-g_get_user_cache_dir(), after verifying that it exists.
-
-On Windows this is the folder to use for local (as opposed to
-roaming) application data. See documentation for
-CSIDL_LOCAL_APPDATA.  Note that on Windows it thus is the same as
-what g_get_user_config_dir() returns.</doc>
+g_get_user_cache_dir(), after verifying that it exists.</doc>
       <return-value transfer-ownership="none">
         <doc xml:space="preserve">a string owned by GLib that must not be
     modified or freed.</doc>
@@ -40112,7 +40117,10 @@ There can only be one writer function. It is an error to set more than one.</doc
       <doc xml:space="preserve">Log a message with structured data. The message will be passed through to
 the log writer set by the application using g_log_set_writer_func(). If the
 message is fatal (i.e. its log level is %G_LOG_LEVEL_ERROR), the program will
-be aborted at the end of this function.
+be aborted at the end of this function. If the log writer returns
+%G_LOG_WRITER_UNHANDLED (failure), no other fallback writers will be tried.
+See the documentation for #GLogWriterFunc for information on chaining
+writers.
 
 The structured data is provided as key–value pairs, where keys are UTF-8
 strings, and values are arbitrary pointers — typically pointing to UTF-8
@@ -40371,7 +40379,13 @@ UTF-8.</doc>
               version="2.50">
       <doc xml:space="preserve">Check whether the given @output_fd file descriptor is a connection to the
 systemd journal, or something else (like a log file or `stdout` or
-`stderr`).</doc>
+`stderr`).
+
+Invalid file descriptors are accepted and return %FALSE, which allows for
+the following construct without needing any additional error handling:
+|[&lt;!-- language="C" --&gt;
+  is_journald = g_log_writer_is_journald (fileno (stderr));
+]|</doc>
       <return-value transfer-ownership="none">
         <doc xml:space="preserve">%TRUE if @output_fd points to the journal, %FALSE otherwise</doc>
         <type name="gboolean" c:type="gboolean"/>
@@ -42397,6 +42411,29 @@ on your system.</doc>
         </parameter>
       </parameters>
     </function>
+    <function name="sequence_insert_before"
+              c:identifier="g_sequence_insert_before"
+              moved-to="Sequence.insert_before"
+              version="2.14">
+      <doc xml:space="preserve">Inserts a new item just before the item pointed to by @iter.</doc>
+      <return-value transfer-ownership="none">
+        <doc xml:space="preserve">an iterator pointing to the new item</doc>
+        <type name="SequenceIter" c:type="GSequenceIter*"/>
+      </return-value>
+      <parameters>
+        <parameter name="iter" transfer-ownership="none">
+          <doc xml:space="preserve">a #GSequenceIter</doc>
+          <type name="SequenceIter" c:type="GSequenceIter*"/>
+        </parameter>
+        <parameter name="data"
+                   transfer-ownership="none"
+                   nullable="1"
+                   allow-none="1">
+          <doc xml:space="preserve">the data for the new item</doc>
+          <type name="gpointer" c:type="gpointer"/>
+        </parameter>
+      </parameters>
+    </function>
     <function name="sequence_move"
               c:identifier="g_sequence_move"
               moved-to="Sequence.move"
@@ -42440,6 +42477,32 @@ the (@begin, @end) range, the range does not move.</doc>
           <doc xml:space="preserve">a #GSequenceIter</doc>
           <type name="SequenceIter" c:type="GSequenceIter*"/>
         </parameter>
+        <parameter name="begin" transfer-ownership="none">
+          <doc xml:space="preserve">a #GSequenceIter</doc>
+          <type name="SequenceIter" c:type="GSequenceIter*"/>
+        </parameter>
+        <parameter name="end" transfer-ownership="none">
+          <doc xml:space="preserve">a #GSequenceIter</doc>
+          <type name="SequenceIter" c:type="GSequenceIter*"/>
+        </parameter>
+      </parameters>
+    </function>
+    <function name="sequence_range_get_midpoint"
+              c:identifier="g_sequence_range_get_midpoint"
+              moved-to="Sequence.range_get_midpoint"
+              version="2.14">
+      <doc xml:space="preserve">Finds an iterator somewhere in the range (@begin, @end). This
+iterator will be close to the middle of the range, but is not
+guaranteed to be exactly in the middle.
+
+The @begin and @end iterators must both point to the same sequence
+and @begin must come before or be equal to @end in the sequence.</doc>
+      <return-value transfer-ownership="none">
+        <doc xml:space="preserve">a #GSequenceIter pointing somewhere in the
+   (@begin, @end) range</doc>
+        <type name="SequenceIter" c:type="GSequenceIter*"/>
+      </return-value>
+      <parameters>
         <parameter name="begin" transfer-ownership="none">
           <doc xml:space="preserve">a #GSequenceIter</doc>
           <type name="SequenceIter" c:type="GSequenceIter*"/>
@@ -42631,6 +42694,12 @@ that could include printf() escape sequences.</doc>
     <function name="set_prgname" c:identifier="g_set_prgname">
       <doc xml:space="preserve">Sets the name of the program. This name should not be localized,
 in contrast to g_set_application_name().
+
+If you are using #GApplication the program name is set in
+g_application_run(). In case of GDK or GTK+ it is set in
+gdk_init(), which is called by gtk_init() and the
+#GtkApplication::startup handler. The program name is found by
+taking the last component of @argv[0].
 
 Note that for thread-safety reasons this function can only be called once.</doc>
       <return-value transfer-ownership="none">
@@ -43173,10 +43242,10 @@ simply calls the g_spawn_async_with_pipes() without any pipes.
 You should call g_spawn_close_pid() on the returned child process
 reference when you don't need it any more.
 
-If you are writing a GTK+ application, and the program you are
-spawning is a graphical application, too, then you may want to
-use gdk_spawn_on_screen() instead to ensure that the spawned program
-opens its windows on the right screen.
+If you are writing a GTK+ application, and the program you are spawning is a
+graphical application too, then to ensure that the spawned program opens its
+windows on the right screen, you may want to use #GdkAppLaunchContext,
+#GAppLaunchcontext, or set the %DISPLAY environment variable.
 
 Note that the returned @child_pid on Windows is a handle to the child
 process and not its identifier. Process handles and process identifiers
@@ -43388,10 +43457,10 @@ and @standard_error will not be filled with valid values.
 If @child_pid is not %NULL and an error does not occur then the returned
 process reference must be closed using g_spawn_close_pid().
 
-If you are writing a GTK+ application, and the program you
-are spawning is a graphical application, too, then you may
-want to use gdk_spawn_on_screen_with_pipes() instead to ensure that
-the spawned program opens its windows on the right screen.</doc>
+If you are writing a GTK+ application, and the program you are spawning is a
+graphical application too, then to ensure that the spawned program opens its
+windows on the right screen, you may want to use #GdkAppLaunchContext,
+#GAppLaunchcontext, or set the %DISPLAY environment variable.</doc>
       <return-value transfer-ownership="none">
         <doc xml:space="preserve">%TRUE on success, %FALSE if an error was set</doc>
         <type name="gboolean" c:type="gboolean"/>
@@ -44336,7 +44405,17 @@ the lifetime of the process.
 
 Note that the string may be translated according to the current locale.
 
-The value of %errno will not be changed by this function.</doc>
+The value of %errno will not be changed by this function. However, it may
+be changed by intermediate function calls, so you should save its value
+as soon as the call returns:
+|[
+  int saved_errno;
+
+  ret = read (blah);
+  saved_errno = errno;
+
+  g_strerror (saved_errno);
+]|</doc>
       <return-value transfer-ownership="none">
         <doc xml:space="preserve">a UTF-8 string describing the error code. If the error code
     is unknown, it returns a string like "unknown error (&lt;code&gt;)".</doc>
@@ -48225,9 +48304,15 @@ Note that this function depends on the [current locale][setlocale].</doc>
 
 @p does not have to be at the beginning of a UTF-8 character. No check
 is made to see if the character found is actually valid other than
-it starts with an appropriate byte.</doc>
-      <return-value transfer-ownership="full">
-        <doc xml:space="preserve">a pointer to the found character or %NULL</doc>
+it starts with an appropriate byte.
+
+If @end is %NULL, the return value will never be %NULL: if the end of the
+string is reached, a pointer to the terminating nul byte is returned. If
+@end is non-%NULL, the return value will be %NULL if the end of the string
+is reached.</doc>
+      <return-value transfer-ownership="full" nullable="1">
+        <doc xml:space="preserve">a pointer to the found character or %NULL if @end is
+   set and is reached</doc>
         <type name="utf8" c:type="gchar*"/>
       </return-value>
       <parameters>
@@ -48291,7 +48376,11 @@ instead.</doc>
       <doc xml:space="preserve">Convert a sequence of bytes encoded as UTF-8 to a Unicode character.
 This function checks for incomplete characters, for invalid characters
 such as characters that are out of the range of Unicode, and for
-overlong encodings of valid characters.</doc>
+overlong encodings of valid characters.
+
+Note that g_utf8_get_char_validated() returns (gunichar)-2 if
+@max_len is positive and any of the bytes in the first UTF-8 character
+sequence are nul.</doc>
       <return-value transfer-ownership="none">
         <doc xml:space="preserve">the resulting character. If @p points to a partial
     sequence at the end of a string that could begin a valid

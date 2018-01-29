@@ -2255,6 +2255,20 @@ soup_auth_domain_set_generic_auth_callback()</doc>
           </parameter>
         </parameters>
       </virtual-method>
+      <method name="clear_cached_credentials"
+              c:identifier="soup_auth_manager_clear_cached_credentials"
+              version="2.58">
+        <doc xml:space="preserve">Clear all credentials cached by @manager</doc>
+        <return-value transfer-ownership="none">
+          <type name="none" c:type="void"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="manager" transfer-ownership="none">
+            <doc xml:space="preserve">a #SoupAuthManager</doc>
+            <type name="AuthManager" c:type="SoupAuthManager*"/>
+          </instance-parameter>
+        </parameters>
+      </method>
       <method name="use_auth"
               c:identifier="soup_auth_manager_use_auth"
               version="2.42">
@@ -2745,8 +2759,14 @@ and soup_cookie_set_max_age().</doc>
           <type name="Cache" c:type="SoupCache*"/>
         </return-value>
         <parameters>
-          <parameter name="cache_dir" transfer-ownership="none">
-            <doc xml:space="preserve">the directory to store the cached data, or %NULL to use the default one</doc>
+          <parameter name="cache_dir"
+                     transfer-ownership="none"
+                     nullable="1"
+                     allow-none="1">
+            <doc xml:space="preserve">the directory to store the cached data, or %NULL
+  to use the default one. Note that since the cache isn't safe to access for
+  multiple processes at once, and the default directory isn't namespaced by
+  process, clients are strongly discouraged from passing %NULL.</doc>
             <type name="utf8" c:type="const char*"/>
           </parameter>
           <parameter name="cache_type" transfer-ownership="none">
@@ -6045,7 +6065,7 @@ verification errors on #SoupMessage:tls-certificate.)</doc>
       <type name="gint" c:type="gint"/>
     </constant>
     <constant name="MICRO_VERSION"
-              value="1"
+              value="3"
               c:type="SOUP_MICRO_VERSION"
               version="2.42">
       <doc xml:space="preserve">Like soup_get_micro_version(), but from the headers used at
@@ -6054,7 +6074,7 @@ against at application run time.</doc>
       <type name="gint" c:type="gint"/>
     </constant>
     <constant name="MINOR_VERSION"
-              value="56"
+              value="60"
               c:type="SOUP_MINOR_VERSION"
               version="2.42">
       <doc xml:space="preserve">Like soup_get_minor_version(), but from the headers used at
@@ -7902,6 +7922,18 @@ behavior.</doc>
   eventually created for this message, it will be dropped when the
   message finishes. Since 2.50</doc>
       </member>
+      <member name="do_not_use_auth_cache"
+              value="512"
+              c:identifier="SOUP_MESSAGE_DO_NOT_USE_AUTH_CACHE"
+              glib:nick="do-not-use-auth-cache">
+        <doc xml:space="preserve">The #SoupAuthManager should not use
+  the credentials cache for this message, neither to use cached credentials
+  to automatically authenticate this message nor to cache the credentials
+  after the message is successfully authenticated. This applies to both server
+  and proxy authentication. Note that #SoupSession::authenticate signal will
+  be emitted, if you want to disable authentication for a message use
+  soup_message_disable_feature() passing #SOUP_TYPE_AUTH_MANAGER instead. Since 2.58</doc>
+      </member>
     </bitfield>
     <record name="MessageHeaders"
             c:type="SoupMessageHeaders"
@@ -8156,17 +8188,28 @@ containing a byte range which could be parsed, %FALSE otherwise.</doc>
             <doc xml:space="preserve">a #SoupMessageHeaders</doc>
             <type name="MessageHeaders" c:type="SoupMessageHeaders*"/>
           </instance-parameter>
-          <parameter name="start" transfer-ownership="none">
+          <parameter name="start"
+                     direction="out"
+                     caller-allocates="0"
+                     transfer-ownership="full">
             <doc xml:space="preserve">return value for the start of the range</doc>
             <type name="gint64" c:type="goffset*"/>
           </parameter>
-          <parameter name="end" transfer-ownership="none">
+          <parameter name="end"
+                     direction="out"
+                     caller-allocates="0"
+                     transfer-ownership="full">
             <doc xml:space="preserve">return value for the end of the range</doc>
             <type name="gint64" c:type="goffset*"/>
           </parameter>
-          <parameter name="total_length" transfer-ownership="none">
-            <doc xml:space="preserve">return value for the total length of the resource,
-or %NULL if you don't care.</doc>
+          <parameter name="total_length"
+                     direction="out"
+                     caller-allocates="0"
+                     transfer-ownership="full"
+                     optional="1"
+                     allow-none="1">
+            <doc xml:space="preserve">return value for the total length of the
+resource, or %NULL if you don't care.</doc>
             <type name="gint64" c:type="goffset*"/>
           </parameter>
         </parameters>
@@ -13413,13 +13456,13 @@ it will then be sent and asynchronously processed normally
 If the server returns "101 Switching Protocols", then @msg's status
 code and response headers will be updated, and then the WebSocket
 handshake will be completed. On success,
-soup_websocket_connect_finish() will return a new
+soup_session_websocket_connect_finish() will return a new
 #SoupWebsocketConnection. On failure it will return a #GError.
 
 If the server returns a status other than "101 Switching
 Protocols", then @msg will contain the complete response headers
 and body from the server's response, and
-soup_websocket_connect_finish() will return
+soup_session_websocket_connect_finish() will return
 %SOUP_WEBSOCKET_ERROR_NOT_WEBSOCKET.</doc>
         <return-value transfer-ownership="none">
           <type name="none" c:type="void"/>
@@ -13481,7 +13524,7 @@ soup_websocket_connect_finish() will return
               throws="1">
         <doc xml:space="preserve">Gets the #SoupWebsocketConnection response to a
 soup_session_websocket_connect_async() call and (if successful),
-returns a #SoupWebsockConnection that can be used to communicate
+returns a #SoupWebsocketConnection that can be used to communicate
 with the server.</doc>
         <return-value transfer-ownership="full">
           <doc xml:space="preserve">a new #SoupWebsocketConnection, or
@@ -16888,6 +16931,20 @@ protocol.</doc>
           </parameter>
         </parameters>
       </virtual-method>
+      <virtual-method name="pong">
+        <return-value transfer-ownership="none">
+          <type name="none" c:type="void"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="self" transfer-ownership="none">
+            <type name="WebsocketConnection"
+                  c:type="SoupWebsocketConnection*"/>
+          </instance-parameter>
+          <parameter name="message" transfer-ownership="none">
+            <type name="GLib.Bytes" c:type="GBytes*"/>
+          </parameter>
+        </parameters>
+      </virtual-method>
       <method name="close"
               c:identifier="soup_websocket_connection_close"
               version="2.50">
@@ -16986,6 +17043,22 @@ the main loop is run, so copy it if you need to keep it around.</doc>
         <return-value transfer-ownership="none">
           <doc xml:space="preserve">the WebSocket's I/O stream.</doc>
           <type name="Gio.IOStream" c:type="GIOStream*"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="self" transfer-ownership="none">
+            <doc xml:space="preserve">the WebSocket</doc>
+            <type name="WebsocketConnection"
+                  c:type="SoupWebsocketConnection*"/>
+          </instance-parameter>
+        </parameters>
+      </method>
+      <method name="get_keepalive_interval"
+              c:identifier="soup_websocket_connection_get_keepalive_interval"
+              version="2.58">
+        <doc xml:space="preserve">Gets the keepalive interval in seconds or 0 if disabled.</doc>
+        <return-value transfer-ownership="none">
+          <doc xml:space="preserve">the keepalive interval.</doc>
+          <type name="guint" c:type="guint"/>
         </return-value>
         <parameters>
           <instance-parameter name="self" transfer-ownership="none">
@@ -17128,6 +17201,26 @@ is run.</doc>
           </parameter>
         </parameters>
       </method>
+      <method name="set_keepalive_interval"
+              c:identifier="soup_websocket_connection_set_keepalive_interval"
+              version="2.58">
+        <doc xml:space="preserve">Sets the interval in seconds on when to send a ping message which will serve
+as a keepalive message. If set to 0 the keepalive message is disabled.</doc>
+        <return-value transfer-ownership="none">
+          <type name="none" c:type="void"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="self" transfer-ownership="none">
+            <doc xml:space="preserve">the WebSocket</doc>
+            <type name="WebsocketConnection"
+                  c:type="SoupWebsocketConnection*"/>
+          </instance-parameter>
+          <parameter name="interval" transfer-ownership="none">
+            <doc xml:space="preserve">the interval to send a ping message or 0 to disable it</doc>
+            <type name="guint" c:type="guint"/>
+          </parameter>
+        </parameters>
+      </method>
       <method name="set_max_incoming_payload_size"
               c:identifier="soup_websocket_connection_set_max_incoming_payload_size"
               version="2.56">
@@ -17167,6 +17260,16 @@ over.
 
 The input and output streams must be pollable streams.</doc>
         <type name="Gio.IOStream"/>
+      </property>
+      <property name="keepalive-interval"
+                version="2.58"
+                writable="1"
+                construct="1"
+                transfer-ownership="none">
+        <doc xml:space="preserve">Interval in seconds on when to send a ping message which will
+serve as a keepalive message. If set to 0 the keepalive message is
+disabled.</doc>
+        <type name="guint" c:type="guint"/>
       </property>
       <property name="max-incoming-payload-size"
                 version="2.56"
@@ -17267,6 +17370,23 @@ the length count.</doc>
           </parameter>
         </parameters>
       </glib:signal>
+      <glib:signal name="pong" when="first" version="2.60">
+        <doc xml:space="preserve">Emitted when we receive a Pong frame (solicited or
+unsolicited) from the peer.
+
+As a convenience, the @message data will always be
+NUL-terminated, but the NUL byte will not be included in
+the length count.</doc>
+        <return-value transfer-ownership="none">
+          <type name="none" c:type="void"/>
+        </return-value>
+        <parameters>
+          <parameter name="message" transfer-ownership="none">
+            <doc xml:space="preserve">the application data (if any)</doc>
+            <type name="GLib.Bytes"/>
+          </parameter>
+        </parameters>
+      </glib:signal>
     </class>
     <record name="WebsocketConnectionClass"
             c:type="SoupWebsocketConnectionClass"
@@ -17333,6 +17453,22 @@ the length count.</doc>
             <parameter name="self" transfer-ownership="none">
               <type name="WebsocketConnection"
                     c:type="SoupWebsocketConnection*"/>
+            </parameter>
+          </parameters>
+        </callback>
+      </field>
+      <field name="pong">
+        <callback name="pong">
+          <return-value transfer-ownership="none">
+            <type name="none" c:type="void"/>
+          </return-value>
+          <parameters>
+            <parameter name="self" transfer-ownership="none">
+              <type name="WebsocketConnection"
+                    c:type="SoupWebsocketConnection*"/>
+            </parameter>
+            <parameter name="message" transfer-ownership="none">
+              <type name="GLib.Bytes" c:type="GBytes*"/>
             </parameter>
           </parameters>
         </callback>
