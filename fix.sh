@@ -21,3 +21,11 @@ xmlstarlet ed -P \
 	-u '//*[@c:type="cairo_font_type_t"]/@c:type' -v enums::FontType \
 	cairo-1.0.gir > tmp
 mv tmp cairo-1.0.gir
+
+# gir uses error domain to find quark function corresponding to given error enum,
+# but in this case it happens to be named differently, i.e., as g_option_error_quark.
+xmlstarlet ed -P \
+	-u '//*[@glib:error-domain="g-option-context-error-quark"]/@glib:error-domain' -v g-option-error-quark \
+	GLib-2.0.gir > tmp
+mv tmp GLib-2.0.gir
+
