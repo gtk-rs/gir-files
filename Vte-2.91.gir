@@ -125,17 +125,37 @@ keys.</doc>
         <doc xml:space="preserve">Send terminal's "erase" setting.</doc>
       </member>
     </enumeration>
+    <enumeration name="Format"
+                 version="0.50"
+                 glib:type-name="VteFormat"
+                 glib:get-type="vte_format_get_type"
+                 c:type="VteFormat">
+      <doc xml:space="preserve">An enumeratio type that can be used to specify the format the selection
+should be copied to the clipboard in.</doc>
+      <member name="text"
+              value="1"
+              c:identifier="VTE_FORMAT_TEXT"
+              glib:nick="text">
+        <doc xml:space="preserve">Export as plain text</doc>
+      </member>
+      <member name="html"
+              value="2"
+              c:identifier="VTE_FORMAT_HTML"
+              glib:nick="html">
+        <doc xml:space="preserve">Export as HTML formatted text</doc>
+      </member>
+    </enumeration>
     <constant name="MAJOR_VERSION" value="0" c:type="VTE_MAJOR_VERSION">
       <doc xml:space="preserve">The major version number of the VTE library
 (e.g. in version 3.1.4 this is 3).</doc>
       <type name="gint" c:type="gint"/>
     </constant>
-    <constant name="MICRO_VERSION" value="3" c:type="VTE_MICRO_VERSION">
+    <constant name="MICRO_VERSION" value="2" c:type="VTE_MICRO_VERSION">
       <doc xml:space="preserve">The micro version number of the VTE library
 (e.g. in version 3.1.4 this is 4).</doc>
       <type name="gint" c:type="gint"/>
     </constant>
-    <constant name="MINOR_VERSION" value="48" c:type="VTE_MINOR_VERSION">
+    <constant name="MINOR_VERSION" value="50" c:type="VTE_MINOR_VERSION">
       <doc xml:space="preserve">The minor version number of the VTE library
 (e.g. in version 3.1.4 this is 1).</doc>
       <type name="gint" c:type="gint"/>
@@ -773,9 +793,14 @@ a cell has to be selected or not.</doc>
           </instance-parameter>
         </parameters>
       </virtual-method>
-      <virtual-method name="copy_clipboard" invoker="copy_clipboard">
+      <virtual-method name="copy_clipboard"
+                      invoker="copy_clipboard"
+                      deprecated="1"
+                      deprecated-version="0.50">
         <doc xml:space="preserve">Places the selected text in the terminal in the #GDK_SELECTION_CLIPBOARD
 selection.</doc>
+        <doc-deprecated xml:space="preserve">Use vte_terminal_copy_clipboard_format() with %VTE_FORMAT_TEXT
+  instead.</doc-deprecated>
         <return-value transfer-ownership="none">
           <type name="none" c:type="void"/>
         </return-value>
@@ -1026,9 +1051,14 @@ user presses Shift+Insert.</doc>
           </instance-parameter>
         </parameters>
       </virtual-method>
-      <method name="copy_clipboard" c:identifier="vte_terminal_copy_clipboard">
+      <method name="copy_clipboard"
+              c:identifier="vte_terminal_copy_clipboard"
+              deprecated="1"
+              deprecated-version="0.50">
         <doc xml:space="preserve">Places the selected text in the terminal in the #GDK_SELECTION_CLIPBOARD
 selection.</doc>
+        <doc-deprecated xml:space="preserve">Use vte_terminal_copy_clipboard_format() with %VTE_FORMAT_TEXT
+  instead.</doc-deprecated>
         <return-value transfer-ownership="none">
           <type name="none" c:type="void"/>
         </return-value>
@@ -1037,6 +1067,32 @@ selection.</doc>
             <doc xml:space="preserve">a #VteTerminal</doc>
             <type name="Terminal" c:type="VteTerminal*"/>
           </instance-parameter>
+        </parameters>
+      </method>
+      <method name="copy_clipboard_format"
+              c:identifier="vte_terminal_copy_clipboard_format"
+              version="0.50">
+        <doc xml:space="preserve">Places the selected text in the terminal in the #GDK_SELECTION_CLIPBOARD
+selection in the form specified by @format.
+
+For all formats, the selection data (see #GtkSelectionData) will include the
+text targets (see gtk_target_list_add_text_targets() and
+gtk_selection_data_targets_includes_text()). For %VTE_FORMAT_HTML,
+the selection will also include the "text/html" target, which when requested,
+returns the HTML data in UTF-16 with a U+FEFF BYTE ORDER MARK character at
+the start.</doc>
+        <return-value transfer-ownership="none">
+          <type name="none" c:type="void"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="terminal" transfer-ownership="none">
+            <doc xml:space="preserve">a #VteTerminal</doc>
+            <type name="Terminal" c:type="VteTerminal*"/>
+          </instance-parameter>
+          <parameter name="format" transfer-ownership="none">
+            <doc xml:space="preserve">a #VteFormat</doc>
+            <type name="Format" c:type="VteFormat"/>
+          </parameter>
         </parameters>
       </method>
       <method name="copy_primary" c:identifier="vte_terminal_copy_primary">
@@ -1222,6 +1278,21 @@ at the keyboard.</doc>
 repainting text with a one-pixel offset.</doc>
         <return-value transfer-ownership="none">
           <doc xml:space="preserve">%TRUE if bolding is enabled, %FALSE if not</doc>
+          <type name="gboolean" c:type="gboolean"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="terminal" transfer-ownership="none">
+            <doc xml:space="preserve">a #VteTerminal</doc>
+            <type name="Terminal" c:type="VteTerminal*"/>
+          </instance-parameter>
+        </parameters>
+      </method>
+      <method name="get_allow_hyperlink"
+              c:identifier="vte_terminal_get_allow_hyperlink"
+              version="0.50">
+        <doc xml:space="preserve">Checks whether or not hyperlinks (OSC 8 escape sequence) are allowed.</doc>
+        <return-value transfer-ownership="none">
+          <doc xml:space="preserve">%TRUE if hyperlinks are enabled, %FALSE if not</doc>
           <type name="gboolean" c:type="gboolean"/>
         </return-value>
         <parameters>
@@ -1742,6 +1813,30 @@ If %NULL, a built-in set is used.</doc>
           </instance-parameter>
         </parameters>
       </method>
+      <method name="hyperlink_check_event"
+              c:identifier="vte_terminal_hyperlink_check_event"
+              version="0.50">
+        <doc xml:space="preserve">Returns a nonempty string: the target of the explicit hyperlink (printed using the OSC 8
+escape sequence) at the position of the event, or %NULL.
+
+Proper use of the escape sequence should result in URI-encoded URIs with a proper scheme
+like "http://", "https://", "file://", "mailto:" etc. This is, however, not enforced by VTE.
+The caller must tolerate the returned string potentially not being a valid URI.</doc>
+        <return-value transfer-ownership="full">
+          <doc xml:space="preserve">a newly allocated string containing the target of the hyperlink</doc>
+          <type name="utf8" c:type="char*"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="terminal" transfer-ownership="none">
+            <doc xml:space="preserve">a #VteTerminal</doc>
+            <type name="Terminal" c:type="VteTerminal*"/>
+          </instance-parameter>
+          <parameter name="event" transfer-ownership="none">
+            <doc xml:space="preserve">a #GdkEvent</doc>
+            <type name="Gdk.Event" c:type="GdkEvent*"/>
+          </parameter>
+        </parameters>
+      </method>
       <method name="match_add_gregex"
               c:identifier="vte_terminal_match_add_gregex"
               deprecated="1"
@@ -2230,6 +2325,24 @@ offset.</doc>
           </instance-parameter>
           <parameter name="allow_bold" transfer-ownership="none">
             <doc xml:space="preserve">%TRUE if the terminal should attempt to draw bold text</doc>
+            <type name="gboolean" c:type="gboolean"/>
+          </parameter>
+        </parameters>
+      </method>
+      <method name="set_allow_hyperlink"
+              c:identifier="vte_terminal_set_allow_hyperlink"
+              version="0.50">
+        <doc xml:space="preserve">Controls whether or not hyperlinks (OSC 8 escape sequence) are allowed.</doc>
+        <return-value transfer-ownership="none">
+          <type name="none" c:type="void"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="terminal" transfer-ownership="none">
+            <doc xml:space="preserve">a #VteTerminal</doc>
+            <type name="Terminal" c:type="VteTerminal*"/>
+          </instance-parameter>
+          <parameter name="allow_hyperlink" transfer-ownership="none">
+            <doc xml:space="preserve">%TRUE if the terminal should allow hyperlinks</doc>
             <type name="gboolean" c:type="gboolean"/>
           </parameter>
         </parameters>
@@ -3117,6 +3230,13 @@ This may happen either by using a bold font variant, or by
 repainting text with a different offset.</doc>
         <type name="gboolean" c:type="gboolean"/>
       </property>
+      <property name="allow-hyperlink"
+                version="0.50"
+                writable="1"
+                transfer-ownership="none">
+        <doc xml:space="preserve">Controls whether or not hyperlinks (OSC 8 escape sequence) are recognized and displayed.</doc>
+        <type name="gboolean" c:type="gboolean"/>
+      </property>
       <property name="audible-bell" writable="1" transfer-ownership="none">
         <doc xml:space="preserve">Controls whether or not the terminal will beep when the child outputs the
 "bl" sequence.</doc>
@@ -3182,6 +3302,12 @@ and columns.</doc>
       <property name="font-scale" writable="1" transfer-ownership="none">
         <doc xml:space="preserve">The terminal's font scale.</doc>
         <type name="gdouble" c:type="gdouble"/>
+      </property>
+      <property name="hyperlink-hover-uri"
+                version="0.50"
+                transfer-ownership="none">
+        <doc xml:space="preserve">The currently hovered hyperlink URI, or %NULL if unset.</doc>
+        <type name="utf8" c:type="gchar*"/>
       </property>
       <property name="icon-title" transfer-ownership="none">
         <doc xml:space="preserve">The terminal's so-called icon title, or %NULL if no icon title has been set.</doc>
@@ -3366,6 +3492,30 @@ always) emitted with a #VteTerminal::child-exited signal.</doc>
         <return-value transfer-ownership="none">
           <type name="none" c:type="void"/>
         </return-value>
+      </glib:signal>
+      <glib:signal name="hyperlink-hover-uri-changed"
+                   when="last"
+                   version="0.50">
+        <doc xml:space="preserve">Emitted when the hovered hyperlink changes.
+
+@uri and @bbox are owned by VTE, must not be modified, and might
+change after the signal handlers returns.
+
+The signal is not re-emitted when the bounding box changes for the
+same hyperlink. This might change in a future VTE version without notice.</doc>
+        <return-value transfer-ownership="none">
+          <type name="none" c:type="void"/>
+        </return-value>
+        <parameters>
+          <parameter name="uri" transfer-ownership="none">
+            <doc xml:space="preserve">the nonempty target URI under the mouse, or NULL</doc>
+            <type name="utf8" c:type="gchar*"/>
+          </parameter>
+          <parameter name="bbox" transfer-ownership="none">
+            <doc xml:space="preserve">the bounding box of the hyperlink anchor text, or NULL</doc>
+            <type name="Gdk.Rectangle"/>
+          </parameter>
+        </parameters>
       </glib:signal>
       <glib:signal name="icon-title-changed" when="last">
         <doc xml:space="preserve">Emitted when the terminal's %icon_title field is modified.</doc>
