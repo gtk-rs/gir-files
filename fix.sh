@@ -29,3 +29,9 @@ xmlstarlet ed -P \
 	GLib-2.0.gir > tmp
 mv tmp GLib-2.0.gir
 
+# GdkEventTouchpadPinch and GdkEventTouchpadSwipe contains phase field,
+# it type enum TouchpadGesturePhase but if takes only one byte.
+xmlstarlet ed -P \
+	-i '//_:field[@name="phase"]/_:type[@name="TouchpadGesturePhase"]' -t attr -n 'c:type' -v 'gint8' \
+	Gdk-3.0.gir > tmp
+mv tmp Gdk-3.0.gir
