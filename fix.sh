@@ -46,5 +46,7 @@ xmlstarlet ed -P -L \
 	Gtk-3.0.gir
 
 xmlstarlet ed -P -L \
+	-i '//_:namespace' -t elem -n c:include \
+	-a '$prev' -t attr -n name -v gobject/gvaluecollector.h \
 	GObject-2.0.gir
 	
