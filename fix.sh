@@ -30,3 +30,9 @@ xmlstarlet ed -P -L \
 xmlstarlet ed -P -L \
 	-i '//_:field[@name="phase"]/_:type[@name="TouchpadGesturePhase"]' -t attr -n 'c:type' -v 'gint8' \
 	Gdk-3.0.gir
+
+xmlstarlet ed -P -L \
+	GdkPixbuf-2.0.gir
+
+xmlstarlet ed -P -L \
+	Gtk-3.0.gir
