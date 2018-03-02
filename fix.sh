@@ -23,6 +23,8 @@ xmlstarlet ed -P -L \
 # but in this case it happens to be named differently, i.e., as g_option_error_quark.
 xmlstarlet ed -P -L \
 	-u '//*[@glib:error-domain="g-option-context-error-quark"]/@glib:error-domain' -v g-option-error-quark \
+	-i '//_:namespace' -t elem -n c:include \
+	-a '$prev' -t attr -n name -v glib-object.h \
 	GLib-2.0.gir
 
 # GdkEventTouchpadPinch and GdkEventTouchpadSwipe contains phase field,
@@ -32,7 +34,13 @@ xmlstarlet ed -P -L \
 	Gdk-3.0.gir
 
 xmlstarlet ed -P -L \
+	-i '//_:namespace' -t elem -n c:include \
+	-a '$prev' -t attr -n name -v gdk-pixbuf/gdk-pixdata.h \
 	GdkPixbuf-2.0.gir
 
 xmlstarlet ed -P -L \
+	-i '//_:namespace' -t elem -n c:include \
+	-a '$prev' -t attr -n name -v gtk/gtk.h \
+	-i '//_:namespace' -t elem -n c:include \
+	-a '$prev' -t attr -n name -v gtk/gtk-a11y.h \
 	Gtk-3.0.gir
