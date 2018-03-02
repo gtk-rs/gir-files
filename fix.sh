@@ -2,6 +2,8 @@
 set -x -e
 
 xmlstarlet ed -P -L \
+	-i '//_:namespace' -t elem -n c:include \
+	-a '$prev' -t attr -n name -v pango/pango-modules.h \
 	Pango-1.0.gir
 
 # Remove all fields from FcFontMap. Its' parent_instance field is broken and we don't need the type anyway.
