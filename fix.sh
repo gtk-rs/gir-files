@@ -44,3 +44,7 @@ xmlstarlet ed -P -L \
 	-i '//_:namespace' -t elem -n c:include \
 	-a '$prev' -t attr -n name -v gtk/gtk-a11y.h \
 	Gtk-3.0.gir
+
+xmlstarlet ed -P -L \
+	GObject-2.0.gir
+	
