@@ -1,6 +1,9 @@
 #!/bin/bash
 set -x -e
 
+xmlstarlet ed -P -L \
+	Pango-1.0.gir
+
 # Remove all fields from FcFontMap. Its' parent_instance field is broken and we don't need the type anyway.
 # Replace cairo_font_type_t with enums::FontType as well.
 xmlstarlet ed -P -L \
