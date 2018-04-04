@@ -30,3 +30,8 @@ xmlstarlet ed -P -L \
 xmlstarlet ed -P -L \
 	-i '//_:field[@name="phase"]/_:type[@name="TouchpadGesturePhase"]' -t attr -n 'c:type' -v 'gint8' \
 	Gdk-3.0.gir
+
+# Transfer-ownership in GtkGLArea constructor is incorrect.
+xmlstarlet ed -P -L \
+	-u '//_:constructor[@c:identifier="gtk_gl_area_new"]/_:return-value/@transfer-ownership' -v none \
+	Gtk-3.0.gir
