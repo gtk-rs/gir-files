@@ -2108,7 +2108,7 @@ and there aren&#x2019;t other means to get a meaningful #GdkDevice to operate on
         <doc xml:space="preserve">Gets the #GdkDisplay associated to @device_manager.</doc>
         <return-value transfer-ownership="none" nullable="1">
           <doc xml:space="preserve">the #GdkDisplay to which
-         @device_manager is associated to, or #NULL. This memory is
+         @device_manager is associated to, or %NULL. This memory is
          owned by GDK and must not be freed or unreferenced.</doc>
           <type name="Display" c:type="GdkDisplay*"/>
         </return-value>
@@ -5223,7 +5223,7 @@ events, so different sequences may be distinguished.</doc>
       <member name="tablet_pad_mask" value="33554432" c:identifier="GDK_TABLET_PAD_MASK" glib:nick="tablet-pad-mask">
         <doc xml:space="preserve">receive tablet pad events. Since 3.22</doc>
       </member>
-      <member name="all_events_mask" value="16777214" c:identifier="GDK_ALL_EVENTS_MASK" glib:nick="all-events-mask">
+      <member name="all_events_mask" value="67108862" c:identifier="GDK_ALL_EVENTS_MASK" glib:nick="all-events-mask">
         <doc xml:space="preserve">the combination of all the above event masks.</doc>
       </member>
     </bitfield>
@@ -5707,7 +5707,7 @@ gdk_event_get_source_device() to get the slave device.</doc>
       </field>
       <field name="phase" writable="1">
         <doc xml:space="preserve">the current phase of the gesture</doc>
-        <type name="TouchpadGesturePhase" c:type="gint8"/>
+        <type name="gint8" c:type="gint8"/>
       </field>
       <field name="n_fingers" writable="1">
         <doc xml:space="preserve">The number of fingers triggering the pinch</doc>
@@ -5776,7 +5776,7 @@ gdk_event_get_source_device() to get the slave device.</doc>
       </field>
       <field name="phase" writable="1">
         <doc xml:space="preserve">the current phase of the gesture</doc>
-        <type name="TouchpadGesturePhase" c:type="gint8"/>
+        <type name="gint8" c:type="gint8"/>
       </field>
       <field name="n_fingers" writable="1">
         <doc xml:space="preserve">The number of fingers triggering the swipe</doc>
@@ -6170,7 +6170,7 @@ gdk_frame_clock_begin_updating().</doc>
         <return-value transfer-ownership="full" nullable="1">
           <doc xml:space="preserve">the #GdkFrameTimings for the frame currently
  being processed, or even no frame is being processed, for the
- previous frame. Before any frames have been procesed, returns
+ previous frame. Before any frames have been processed, returns
  %NULL.</doc>
           <type name="FrameTimings" c:type="GdkFrameTimings*"/>
         </return-value>
@@ -6254,13 +6254,13 @@ interval after the last presentation time, and later than @base_time.</doc>
             <doc xml:space="preserve">base time for determining a presentaton time</doc>
             <type name="gint64" c:type="gint64"/>
           </parameter>
-          <parameter name="refresh_interval_return" transfer-ownership="none">
-            <doc xml:space="preserve">a location to store the determined refresh
- interval, or %NULL. A default refresh interval of 1/60th of
- a second will be stored if no history is present.</doc>
+          <parameter name="refresh_interval_return" direction="out" caller-allocates="0" transfer-ownership="full" optional="1" allow-none="1">
+            <doc xml:space="preserve">a location to store the
+determined refresh interval, or %NULL. A default refresh interval of
+1/60th of a second will be stored if no history is present.</doc>
             <type name="gint64" c:type="gint64*"/>
           </parameter>
-          <parameter name="presentation_time_return" transfer-ownership="none">
+          <parameter name="presentation_time_return" direction="out" caller-allocates="0" transfer-ownership="full">
             <doc xml:space="preserve">a location to store the next
  candidate presentation time after the given base time.
  0 will be will be stored if no history is present.</doc>
@@ -6908,7 +6908,7 @@ OpenGL ES API, extensions, or shaders.</doc>
         <type name="Display"/>
       </property>
       <property name="shared-context" version="3.16" writable="1" construct-only="1" transfer-ownership="none">
-        <doc xml:space="preserve">The #GdkGLContext that this context is sharing data with, or #NULL</doc>
+        <doc xml:space="preserve">The #GdkGLContext that this context is sharing data with, or %NULL</doc>
         <type name="GLContext"/>
       </property>
       <property name="window" version="3.16" writable="1" construct-only="1" transfer-ownership="none">
@@ -13984,8 +13984,9 @@ to a keyval. This translation has two phases. The first phase is
 to determine the effective keyboard group and level for the keyboard
 state; the second phase is to look up the keycode/group/level triplet
 in the keymap and see what keyval it corresponds to.</doc>
-      <function name="get_default" c:identifier="gdk_keymap_get_default">
+      <function name="get_default" c:identifier="gdk_keymap_get_default" deprecated="1" deprecated-version="3.22">
         <doc xml:space="preserve">Returns the #GdkKeymap attached to the default display.</doc>
+        <doc-deprecated xml:space="preserve">Use gdk_keymap_get_for_display() instead</doc-deprecated>
         <return-value transfer-ownership="none">
           <doc xml:space="preserve">the #GdkKeymap attached to the default display.</doc>
           <type name="Keymap" c:type="GdkKeymap*"/>
@@ -14567,8 +14568,8 @@ be set.</doc>
     <class name="Monitor" c:symbol-prefix="monitor" c:type="GdkMonitor" parent="GObject.Object" glib:type-name="GdkMonitor" glib:get-type="gdk_monitor_get_type" glib:type-struct="MonitorClass">
       <doc xml:space="preserve">GdkMonitor objects represent the individual outputs that are
 associated with a #GdkDisplay. GdkDisplay has APIs to enumerate
-monitors with gdk_display_get_monitors() and to find particular
-monitors with gdk_display_get_primary_monitor() or
+monitors with gdk_display_get_n_monitors() and gdk_display_get_monitor(), and
+to find particular monitors with gdk_display_get_primary_monitor() or
 gdk_display_get_monitor_at_window().
 
 GdkMonitor was introduced in GTK+ 3.22 and supersedes earlier
@@ -14874,7 +14875,7 @@ using gdk_property_change().</doc>
     </enumeration>
     <record name="RGBA" c:type="GdkRGBA" glib:type-name="GdkRGBA" glib:get-type="gdk_rgba_get_type" c:symbol-prefix="rgba">
       <doc xml:space="preserve">A #GdkRGBA is used to represent a (possibly translucent)
-color, in a way that is compatible with cairos notion of color.</doc>
+color, in a way that is compatible with cairo&#x2019;s notion of color.</doc>
       <field name="red" writable="1">
         <doc xml:space="preserve">The intensity of the red channel from 0.0 to 1.0 inclusive</doc>
         <type name="gdouble" c:type="gdouble"/>

@@ -2633,8 +2633,8 @@ but used automatically by GLib when specifying a %NULL marshaller.</doc>
       <function name="new" c:identifier="g_cclosure_new" introspectable="0">
         <doc xml:space="preserve">Creates a new closure which invokes @callback_func with @user_data as
 the last parameter.</doc>
-        <return-value transfer-ownership="full">
-          <doc xml:space="preserve">a new #GCClosure</doc>
+        <return-value transfer-ownership="none">
+          <doc xml:space="preserve">a floating reference to a new #GCClosure</doc>
           <type name="Closure" c:type="GClosure*"/>
         </return-value>
         <parameters>
@@ -2711,8 +2711,8 @@ after the object is is freed.</doc>
                 introspectable="0">
         <doc xml:space="preserve">Creates a new closure which invokes @callback_func with @user_data as
 the first parameter.</doc>
-        <return-value transfer-ownership="full">
-          <doc xml:space="preserve">a new #GCClosure</doc>
+        <return-value transfer-ownership="none">
+          <doc xml:space="preserve">a floating reference to a new #GCClosure</doc>
           <type name="Closure" c:type="GClosure*"/>
         </return-value>
         <parameters>
@@ -2903,8 +2903,8 @@ In the case of C programs, a closure usually just holds a pointer
 to a function and maybe a data argument, and the marshaller
 converts between #GValue and native C types. The GObject
 library provides the #GCClosure type for this purpose. Bindings for
-other languages need marshallers which convert between #GValue&lt;!--
---&gt;s and suitable representations in the runtime of the language in
+other languages need marshallers which convert between #GValues
+and suitable representations in the runtime of the language in
 order to use functions written in that languages as callbacks.
 
 Within GObject, closures play an important role in the
@@ -3059,8 +3059,8 @@ MyClosure *my_closure_new (gpointer data)
   return my_closure;
 }
 ]|</doc>
-        <return-value transfer-ownership="full">
-          <doc xml:space="preserve">a newly allocated #GClosure</doc>
+        <return-value transfer-ownership="none">
+          <doc xml:space="preserve">a floating reference to a new #GClosure</doc>
           <type name="Closure" c:type="GClosure*"/>
         </return-value>
         <parameters>
@@ -4084,7 +4084,9 @@ interface property.
 This function is meant to be called from the interface's default
 vtable initialization function (the @class_init member of
 #GTypeInfo.) It must not be called after after @class_init has
-been called for any object types implementing this interface.</doc>
+been called for any object types implementing this interface.
+
+If @pspec is a floating reference, it will be consumed.</doc>
         <return-value transfer-ownership="none">
           <type name="none" c:type="void"/>
         </return-value>
@@ -4462,9 +4464,13 @@ g_object_bind_property_with_closures() instead.</doc>
     or %NULL</doc>
             <type name="gpointer" c:type="gpointer"/>
           </parameter>
-          <parameter name="notify" transfer-ownership="none" scope="async">
-            <doc xml:space="preserve">function to be called when disposing the binding, to free the
-    resources used by the transformation functions</doc>
+          <parameter name="notify"
+                     transfer-ownership="none"
+                     nullable="1"
+                     allow-none="1"
+                     scope="async">
+            <doc xml:space="preserve">a function to call when disposing the binding, to free
+    resources used by the transformation functions, or %NULL if not required</doc>
             <type name="GLib.DestroyNotify" c:type="GDestroyNotify"/>
           </parameter>
         </parameters>
@@ -4781,7 +4787,8 @@ of three properties: an integer, a string and an object:
       <method name="get_data" c:identifier="g_object_get_data">
         <doc xml:space="preserve">Gets a named field from the objects table of associations (see g_object_set_data()).</doc>
         <return-value transfer-ownership="none" nullable="1">
-          <doc xml:space="preserve">the data if found, or %NULL if no such data exists.</doc>
+          <doc xml:space="preserve">the data if found,
+         or %NULL if no such data exists.</doc>
           <type name="gpointer" c:type="gpointer"/>
         </return-value>
         <parameters>
@@ -4997,7 +5004,12 @@ and then notify a change on the "foo" property with:
         </parameters>
       </method>
       <method name="ref" c:identifier="g_object_ref">
-        <doc xml:space="preserve">Increases the reference count of @object.</doc>
+        <doc xml:space="preserve">Increases the reference count of @object.
+
+Since GLib 2.56, if `GLIB_VERSION_MAX_ALLOWED` is 2.56 or greater, the type
+of @object will be propagated to the return type (using the GCC typeof()
+extension), so any casting the caller needs to do on the return type must be
+explicit.</doc>
         <return-value transfer-ownership="none">
           <doc xml:space="preserve">the same @object</doc>
           <type name="Object" c:type="gpointer"/>
@@ -5017,7 +5029,10 @@ In other words, if the object is floating, then this call "assumes
 ownership" of the floating reference, converting it to a normal
 reference by clearing the floating flag while leaving the reference
 count unchanged.  If the object is not floating, then this call
-adds a new normal reference increasing the reference count by one.</doc>
+adds a new normal reference increasing the reference count by one.
+
+Since GLib 2.56, the type of @object will be propagated to the return type
+under the same conditions as for g_object_ref().</doc>
         <return-value transfer-ownership="none">
           <doc xml:space="preserve">@object</doc>
           <type name="Object" c:type="gpointer"/>
@@ -5084,7 +5099,8 @@ to match the one used with g_object_add_weak_pointer().</doc>
       </method>
       <method name="replace_data"
               c:identifier="g_object_replace_data"
-              version="2.34">
+              version="2.34"
+              introspectable="0">
         <doc xml:space="preserve">Compares the user data for the key @key on @object with
 @oldval, and if they are the same, replaces @oldval with
 @newval.
@@ -5095,7 +5111,7 @@ operation, for user data on an object.
 If the previous value was replaced then ownership of the
 old value (@oldval) is passed to the caller, including
 the registered destroy notify for it (passed out in @old_destroy).
-Its up to the caller to free this as he wishes, which may
+It’s up to the caller to free this as needed, which may
 or may not include using @old_destroy as sometimes replacement
 should not destroy the object in the normal way.</doc>
         <return-value transfer-ownership="none">
@@ -5135,8 +5151,10 @@ should not destroy the object in the normal way.</doc>
             <type name="GLib.DestroyNotify" c:type="GDestroyNotify"/>
           </parameter>
           <parameter name="old_destroy"
+                     direction="out"
+                     caller-allocates="0"
                      transfer-ownership="none"
-                     nullable="1"
+                     optional="1"
                      allow-none="1"
                      scope="async">
             <doc xml:space="preserve">destroy notify for the existing value</doc>
@@ -5146,7 +5164,8 @@ should not destroy the object in the normal way.</doc>
       </method>
       <method name="replace_qdata"
               c:identifier="g_object_replace_qdata"
-              version="2.34">
+              version="2.34"
+              introspectable="0">
         <doc xml:space="preserve">Compares the user data for the key @quark on @object with
 @oldval, and if they are the same, replaces @oldval with
 @newval.
@@ -5157,7 +5176,7 @@ operation, for user data on an object.
 If the previous value was replaced then ownership of the
 old value (@oldval) is passed to the caller, including
 the registered destroy notify for it (passed out in @old_destroy).
-Its up to the caller to free this as he wishes, which may
+It’s up to the caller to free this as needed, which may
 or may not include using @old_destroy as sometimes replacement
 should not destroy the object in the normal way.</doc>
         <return-value transfer-ownership="none">
@@ -5197,8 +5216,10 @@ should not destroy the object in the normal way.</doc>
             <type name="GLib.DestroyNotify" c:type="GDestroyNotify"/>
           </parameter>
           <parameter name="old_destroy"
+                     direction="out"
+                     caller-allocates="0"
                      transfer-ownership="none"
-                     nullable="1"
+                     optional="1"
                      allow-none="1"
                      scope="async">
             <doc xml:space="preserve">destroy notify for the existing value</doc>
@@ -5300,7 +5321,11 @@ Note that the @destroy callback is not called if @data is %NULL.</doc>
             <doc xml:space="preserve">data to associate with that key</doc>
             <type name="gpointer" c:type="gpointer"/>
           </parameter>
-          <parameter name="destroy" transfer-ownership="none" scope="async">
+          <parameter name="destroy"
+                     transfer-ownership="none"
+                     nullable="1"
+                     allow-none="1"
+                     scope="async">
             <doc xml:space="preserve">function to call when the association is destroyed</doc>
             <type name="GLib.DestroyNotify" c:type="GDestroyNotify"/>
           </parameter>
@@ -5385,7 +5410,11 @@ with the same @quark.</doc>
             <doc xml:space="preserve">An opaque user data pointer</doc>
             <type name="gpointer" c:type="gpointer"/>
           </parameter>
-          <parameter name="destroy" transfer-ownership="none" scope="async">
+          <parameter name="destroy"
+                     transfer-ownership="none"
+                     nullable="1"
+                     allow-none="1"
+                     scope="async">
             <doc xml:space="preserve">Function to invoke with @data as argument, when @data
           needs to be freed</doc>
             <type name="GLib.DestroyNotify" c:type="GDestroyNotify"/>
@@ -5453,7 +5482,8 @@ properties are passed in.</doc>
         <doc xml:space="preserve">Remove a specified datum from the object's data associations,
 without invoking the association's destroy handler.</doc>
         <return-value transfer-ownership="full" nullable="1">
-          <doc xml:space="preserve">the data if found, or %NULL if no such data exists.</doc>
+          <doc xml:space="preserve">the data if found, or %NULL
+         if no such data exists.</doc>
           <type name="gpointer" c:type="gpointer"/>
         </return-value>
         <parameters>
@@ -5687,9 +5717,8 @@ detail strings for the notify signal.</doc>
             glib:is-gtype-struct-for="Object">
       <doc xml:space="preserve">The class structure for the GObject type.
 
-&lt;example&gt;
-&lt;title&gt;Implementing singletons using a constructor&lt;/title&gt;
-&lt;programlisting&gt;
+|[&lt;!-- language="C" --&gt;
+// Example of implementing a singleton using a constructor.
 static MySingleton *the_singleton = NULL;
 
 static GObject*
@@ -5711,7 +5740,7 @@ my_singleton_constructor (GType                  type,
 
   return object;
 }
-&lt;/programlisting&gt;&lt;/example&gt;</doc>
+]|</doc>
       <field name="g_type_class">
         <doc xml:space="preserve">the parent class</doc>
         <type name="TypeClass" c:type="GTypeClass"/>
@@ -6136,7 +6165,7 @@ a #GObjectClass.</doc>
       <type name="gint" c:type="gint"/>
     </constant>
     <constant name="PARAM_STATIC_STRINGS"
-              value="0"
+              value="224"
               c:type="G_PARAM_STATIC_STRINGS">
       <doc xml:space="preserve">#GParamFlags value alias for %G_PARAM_STATIC_NAME | %G_PARAM_STATIC_NICK | %G_PARAM_STATIC_BLURB.
 
@@ -6353,7 +6382,7 @@ e.g. a tooltip. The @nick and @blurb should ideally be localized.</doc>
               version="2.38">
         <doc xml:space="preserve">Gets the default value of @pspec as a pointer to a #GValue.
 
-The #GValue will remain value for the life of @pspec.</doc>
+The #GValue will remain valid for the life of @pspec.</doc>
         <return-value transfer-ownership="none">
           <doc xml:space="preserve">a pointer to a #GValue which must not be modified</doc>
           <type name="Value" c:type="const GValue*"/>
@@ -8413,12 +8442,18 @@ in the given type plugin. If the interface was already registered
 for the type in this plugin, nothing will be done.
 
 As long as any instances of the type exist, the type plugin will
-not be unloaded.</doc>
+not be unloaded.
+
+Since 2.56 if @module is %NULL this will call g_type_add_interface_static()
+instead. This can be used when making a static build of the module.</doc>
         <return-value transfer-ownership="none">
           <type name="none" c:type="void"/>
         </return-value>
         <parameters>
-          <instance-parameter name="module" transfer-ownership="none">
+          <instance-parameter name="module"
+                              transfer-ownership="none"
+                              nullable="1"
+                              allow-none="1">
             <doc xml:space="preserve">a #GTypeModule</doc>
             <type name="TypeModule" c:type="GTypeModule*"/>
           </instance-parameter>
@@ -8445,13 +8480,19 @@ the #GType identifier for the type is returned, otherwise the type
 is newly registered, and the resulting #GType identifier returned.
 
 As long as any instances of the type exist, the type plugin will
-not be unloaded.</doc>
+not be unloaded.
+
+Since 2.56 if @module is %NULL this will call g_type_register_static()
+instead. This can be used when making a static build of the module.</doc>
         <return-value transfer-ownership="none">
           <doc xml:space="preserve">the new or existing type ID</doc>
           <type name="GType" c:type="GType"/>
         </return-value>
         <parameters>
-          <instance-parameter name="module" transfer-ownership="none">
+          <instance-parameter name="module"
+                              transfer-ownership="none"
+                              nullable="1"
+                              allow-none="1">
             <doc xml:space="preserve">a #GTypeModule</doc>
             <type name="TypeModule" c:type="GTypeModule*"/>
           </instance-parameter>
@@ -8477,13 +8518,19 @@ the #GType identifier for the type is returned, otherwise the type
 is newly registered, and the resulting #GType identifier returned.
 
 As long as any instances of the type exist, the type plugin will
-not be unloaded.</doc>
+not be unloaded.
+
+Since 2.56 if @module is %NULL this will call g_type_register_static()
+instead. This can be used when making a static build of the module.</doc>
         <return-value transfer-ownership="none">
           <doc xml:space="preserve">the new or existing type ID</doc>
           <type name="GType" c:type="GType"/>
         </return-value>
         <parameters>
-          <instance-parameter name="module" transfer-ownership="none">
+          <instance-parameter name="module"
+                              transfer-ownership="none"
+                              nullable="1"
+                              allow-none="1">
             <doc xml:space="preserve">a #GTypeModule</doc>
             <type name="TypeModule" c:type="GTypeModule*"/>
           </instance-parameter>
@@ -8511,13 +8558,19 @@ then reloaded, and reinitialized), @module and @parent_type must
 be the same as they were previously.
 
 As long as any instances of the type exist, the type plugin will
-not be unloaded.</doc>
+not be unloaded.
+
+Since 2.56 if @module is %NULL this will call g_type_register_static()
+instead. This can be used when making a static build of the module.</doc>
         <return-value transfer-ownership="none">
           <doc xml:space="preserve">the new or existing type ID</doc>
           <type name="GType" c:type="GType"/>
         </return-value>
         <parameters>
-          <instance-parameter name="module" transfer-ownership="none">
+          <instance-parameter name="module"
+                              transfer-ownership="none"
+                              nullable="1"
+                              allow-none="1">
             <doc xml:space="preserve">a #GTypeModule</doc>
             <type name="TypeModule" c:type="GTypeModule*"/>
           </instance-parameter>
@@ -9243,10 +9296,11 @@ reference count.</doc>
       <method name="dup_variant"
               c:identifier="g_value_dup_variant"
               version="2.26">
-        <doc xml:space="preserve">Get the contents of a variant #GValue, increasing its refcount.</doc>
-        <return-value transfer-ownership="full">
-          <doc xml:space="preserve">variant contents of @value, should be unrefed using
-  g_variant_unref() when no longer needed</doc>
+        <doc xml:space="preserve">Get the contents of a variant #GValue, increasing its refcount. The returned
+#GVariant is never floating.</doc>
+        <return-value transfer-ownership="full" nullable="1">
+          <doc xml:space="preserve">variant contents of @value (may be %NULL);
+   should be unreffed using g_variant_unref() when no longer needed</doc>
           <type name="GLib.Variant" c:type="GVariant*"/>
         </return-value>
         <parameters>
@@ -9541,8 +9595,8 @@ Get the contents of a %G_TYPE_CHAR #GValue.</doc>
               c:identifier="g_value_get_variant"
               version="2.26">
         <doc xml:space="preserve">Get the contents of a variant #GValue.</doc>
-        <return-value transfer-ownership="full">
-          <doc xml:space="preserve">variant contents of @value</doc>
+        <return-value transfer-ownership="full" nullable="1">
+          <doc xml:space="preserve">variant contents of @value (may be %NULL)</doc>
           <type name="GLib.Variant" c:type="GVariant*"/>
         </return-value>
         <parameters>
@@ -10463,6 +10517,7 @@ contents.</doc>
       </method>
       <method name="free"
               c:identifier="g_value_array_free"
+              introspectable="0"
               deprecated="1"
               deprecated-version="2.32">
         <doc xml:space="preserve">Free a #GValueArray including its contents.</doc>
@@ -10641,7 +10696,9 @@ C qsort() function.</doc>
     </record>
     <callback name="ValueTransform" c:type="GValueTransform">
       <doc xml:space="preserve">The type of value transformation functions which can be registered with
-g_value_register_transform_func().</doc>
+g_value_register_transform_func().
+
+@dest_value will be initialized to the correct destination type.</doc>
       <return-value transfer-ownership="none">
         <type name="none" c:type="void"/>
       </return-value>
@@ -11980,8 +12037,8 @@ but used automatically by GLib when specifying a %NULL marshaller.</doc>
               introspectable="0">
       <doc xml:space="preserve">Creates a new closure which invokes @callback_func with @user_data as
 the last parameter.</doc>
-      <return-value transfer-ownership="full">
-        <doc xml:space="preserve">a new #GCClosure</doc>
+      <return-value transfer-ownership="none">
+        <doc xml:space="preserve">a floating reference to a new #GCClosure</doc>
         <type name="Closure" c:type="GClosure*"/>
       </return-value>
       <parameters>
@@ -12061,8 +12118,8 @@ after the object is is freed.</doc>
               introspectable="0">
       <doc xml:space="preserve">Creates a new closure which invokes @callback_func with @user_data as
 the first parameter.</doc>
-      <return-value transfer-ownership="full">
-        <doc xml:space="preserve">a new #GCClosure</doc>
+      <return-value transfer-ownership="none">
+        <doc xml:space="preserve">a floating reference to a new #GCClosure</doc>
         <type name="Closure" c:type="GClosure*"/>
       </return-value>
       <parameters>
@@ -14785,8 +14842,8 @@ signal id for you.</doc>
       <doc xml:space="preserve">Creates a new closure which invokes the function found at the offset
 @struct_offset in the class structure of the interface or classed type
 identified by @itype.</doc>
-      <return-value transfer-ownership="full">
-        <doc xml:space="preserve">a new #GCClosure</doc>
+      <return-value transfer-ownership="none">
+        <doc xml:space="preserve">a floating reference to a new #GCClosure</doc>
         <type name="Closure" c:type="GClosure*"/>
       </return-value>
       <parameters>
@@ -15110,7 +15167,7 @@ G_TYPE_CHECK_INSTANCE() macro.</doc>
       </return-value>
       <parameters>
         <parameter name="value" transfer-ownership="none">
-          <type name="Value" c:type="GValue*"/>
+          <type name="Value" c:type="const GValue*"/>
         </parameter>
       </parameters>
     </function>
@@ -15121,7 +15178,7 @@ G_TYPE_CHECK_INSTANCE() macro.</doc>
       </return-value>
       <parameters>
         <parameter name="value" transfer-ownership="none">
-          <type name="Value" c:type="GValue*"/>
+          <type name="Value" c:type="const GValue*"/>
         </parameter>
         <parameter name="type" transfer-ownership="none">
           <type name="GType" c:type="GType"/>

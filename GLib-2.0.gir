@@ -348,7 +348,8 @@ from a #GArray.  The following elements are moved to close the gap.</doc>
 
 The @clear_func will be called when an element in the array
 data segment is removed and when the array is freed and data
-segment is deallocated as well.
+segment is deallocated as well. @clear_func will be passed a
+pointer to the element to clear, rather than the element itself.
 
 Note that in contrast with other uses of #GDestroyNotify
 functions, @clear_func is expected to clear the contents of
@@ -1580,8 +1581,11 @@ structure.  If the object cannot be created then @error is set to a
             <type name="BookmarkFile" c:type="GBookmarkFile*"/>
           </instance-parameter>
           <parameter name="data" transfer-ownership="none">
-            <doc xml:space="preserve">desktop bookmarks loaded in memory</doc>
-            <type name="utf8" c:type="const gchar*"/>
+            <doc xml:space="preserve">desktop bookmarks
+   loaded in memory</doc>
+            <array length="1" zero-terminated="0" c:type="gchar*">
+              <type name="guint8"/>
+            </array>
           </parameter>
           <parameter name="length" transfer-ownership="none">
             <doc xml:space="preserve">the length of @data in bytes</doc>
@@ -1606,9 +1610,9 @@ set to either a #GFileError or #GBookmarkFileError.</doc>
           </instance-parameter>
           <parameter name="file" transfer-ownership="none">
             <doc xml:space="preserve">a relative path to a filename to open and parse</doc>
-            <type name="filename" c:type="gchar*"/>
+            <type name="filename" c:type="const gchar*"/>
           </parameter>
-          <parameter name="full_path" transfer-ownership="none" nullable="1" allow-none="1">
+          <parameter name="full_path" direction="out" caller-allocates="0" transfer-ownership="full" optional="1" allow-none="1">
             <doc xml:space="preserve">return location for a string
    containing the full path of the file, or %NULL</doc>
             <type name="filename" c:type="gchar**"/>
@@ -1631,7 +1635,7 @@ or #GBookmarkFileError.</doc>
           <parameter name="filename" transfer-ownership="none">
             <doc xml:space="preserve">the path of a filename to load, in the
     GLib file name encoding</doc>
-            <type name="filename" c:type="gchar*"/>
+            <type name="filename" c:type="const gchar*"/>
           </parameter>
         </parameters>
       </method>
@@ -1858,8 +1862,11 @@ If @uri cannot be found then an item for it is created.</doc>
             <type name="utf8" c:type="const gchar*"/>
           </parameter>
           <parameter name="groups" transfer-ownership="none" nullable="1" allow-none="1">
-            <doc xml:space="preserve">an array of group names, or %NULL to remove all groups</doc>
-            <type name="utf8" c:type="const gchar**"/>
+            <doc xml:space="preserve">an array of
+   group names, or %NULL to remove all groups</doc>
+            <array length="2" zero-terminated="0" c:type="gchar**">
+              <type name="utf8"/>
+            </array>
           </parameter>
           <parameter name="length" transfer-ownership="none">
             <doc xml:space="preserve">number of group name values in @groups</doc>
@@ -2022,9 +2029,11 @@ does not affect the "modified" time.</doc>
       <method name="to_data" c:identifier="g_bookmark_file_to_data" version="2.12" throws="1">
         <doc xml:space="preserve">This function outputs @bookmark as a string.</doc>
         <return-value transfer-ownership="full">
-          <doc xml:space="preserve">a newly allocated string holding
-  the contents of the #GBookmarkFile</doc>
-          <type name="utf8" c:type="gchar*"/>
+          <doc xml:space="preserve">
+  a newly allocated string holding the contents of the #GBookmarkFile</doc>
+          <array length="0" zero-terminated="0" c:type="gchar*">
+            <type name="guint8"/>
+          </array>
         </return-value>
         <parameters>
           <instance-parameter name="bookmark" transfer-ownership="none">
@@ -2051,7 +2060,7 @@ guaranteed to be atomic by using g_file_set_contents() internally.</doc>
           </instance-parameter>
           <parameter name="filename" transfer-ownership="none">
             <doc xml:space="preserve">path of the output file</doc>
-            <type name="filename" c:type="gchar*"/>
+            <type name="filename" c:type="const gchar*"/>
           </parameter>
         </parameters>
       </method>
@@ -2497,7 +2506,7 @@ is 0.</doc>
         <parameters>
           <parameter name="data" transfer-ownership="full" nullable="1" allow-none="1">
             <doc xml:space="preserve">
-          the data to be used for the bytes</doc>
+       the data to be used for the bytes</doc>
             <array length="1" zero-terminated="0" c:type="gconstpointer">
               <type name="guint8"/>
             </array>
@@ -2528,7 +2537,7 @@ g_bytes_new_with_free_func().
         <parameters>
           <parameter name="data" transfer-ownership="full" nullable="1" allow-none="1">
             <doc xml:space="preserve">
-          the data to be used for the bytes</doc>
+       the data to be used for the bytes</doc>
             <array length="1" zero-terminated="0" c:type="gpointer">
               <type name="guint8"/>
             </array>
@@ -2556,7 +2565,7 @@ been called to indicate that the bytes is no longer in use.
         <parameters>
           <parameter name="data" transfer-ownership="none" nullable="1" allow-none="1">
             <doc xml:space="preserve">
-          the data to be used for the bytes</doc>
+       the data to be used for the bytes</doc>
             <array length="1" zero-terminated="0" c:type="gconstpointer">
               <type name="guint8"/>
             </array>
@@ -2678,7 +2687,13 @@ parameter, when using non-%NULL #GBytes pointers as keys in a #GHashTable.</doc>
 @length may not be longer than the size of @bytes.
 
 A reference to @bytes will be held by the newly created #GBytes until
-the byte data is no longer needed.</doc>
+the byte data is no longer needed.
+
+Since 2.56, if @offset is 0 and @length matches the size of @bytes, then
+@bytes will be returned with the reference count incremented by 1. If @bytes
+is a slice of another #GBytes, then the resulting #GBytes will reference
+the same #GBytes instead of @bytes. This allows consumers to simplify the
+usage of #GBytes when asynchronously writing to streams.</doc>
         <return-value transfer-ownership="full">
           <doc xml:space="preserve">a new #GBytes</doc>
           <type name="Bytes" c:type="GBytes*"/>
@@ -2713,7 +2728,7 @@ the byte data is no longer needed.</doc>
       </method>
       <method name="unref" c:identifier="g_bytes_unref" version="2.32">
         <doc xml:space="preserve">Releases a reference on @bytes.  This may result in the bytes being
-freed.</doc>
+freed. If @bytes is %NULL, it will return immediately.</doc>
         <return-value transfer-ownership="none">
           <type name="none" c:type="void"/>
         </return-value>
@@ -2986,6 +3001,21 @@ for g_spawn_check_exit_status().</doc>
         <parameter name="user_data" transfer-ownership="none" nullable="1" allow-none="1" closure="2">
           <doc xml:space="preserve">user data passed to g_child_watch_add()</doc>
           <type name="gpointer" c:type="gpointer"/>
+        </parameter>
+      </parameters>
+    </callback>
+    <callback name="ClearHandleFunc" c:type="GClearHandleFunc" version="2.56">
+      <doc xml:space="preserve">Specifies the type of function passed to g_clear_handle_id().
+The implementation is expected to free the resource identified
+by @handle_id; for instance, if @handle_id is a #GSource ID,
+g_source_remove() can be used.</doc>
+      <return-value transfer-ownership="none">
+        <type name="none" c:type="void"/>
+      </return-value>
+      <parameters>
+        <parameter name="handle_id" transfer-ownership="none">
+          <doc xml:space="preserve">the handle ID to clear</doc>
+          <type name="guint" c:type="guint"/>
         </parameter>
       </parameters>
     </callback>
@@ -3284,7 +3314,9 @@ time of more than 5 seconds).</doc>
     sets is not supported.</doc>
       </member>
       <member name="illegal_sequence" value="1" c:identifier="G_CONVERT_ERROR_ILLEGAL_SEQUENCE">
-        <doc xml:space="preserve">Invalid byte sequence in conversion input.</doc>
+        <doc xml:space="preserve">Invalid byte sequence in conversion input;
+   or the character sequence could not be represented in the target
+   character set.</doc>
       </member>
       <member name="failed" value="2" c:identifier="G_CONVERT_ERROR_FAILED">
         <doc xml:space="preserve">Conversion failed for some reason.</doc>
@@ -3300,6 +3332,11 @@ time of more than 5 seconds).</doc>
       </member>
       <member name="no_memory" value="6" c:identifier="G_CONVERT_ERROR_NO_MEMORY">
         <doc xml:space="preserve">No memory available. Since: 2.40</doc>
+      </member>
+      <member name="embedded_nul" value="7" c:identifier="G_CONVERT_ERROR_EMBEDDED_NUL">
+        <doc xml:space="preserve">An embedded NUL character is present in
+    conversion output where a NUL-terminated string is expected.
+    Since: 2.56</doc>
       </member>
     </enumeration>
     <callback name="CopyFunc" c:type="GCopyFunc" version="2.4">
@@ -3338,12 +3375,12 @@ flags &amp; ~G_DATALIST_FLAGS_MASK != 0 is an error.</doc>
       <doc xml:space="preserve">Represents an invalid year.</doc>
       <type name="gint" c:type="gint"/>
     </constant>
-    <constant name="DIR_SEPARATOR" value="92" c:type="G_DIR_SEPARATOR">
+    <constant name="DIR_SEPARATOR" value="47" c:type="G_DIR_SEPARATOR">
       <doc xml:space="preserve">The directory separator character.
 This is '/' on UNIX machines and '\' under Windows.</doc>
       <type name="gint" c:type="gint"/>
     </constant>
-    <constant name="DIR_SEPARATOR_S" value="\" c:type="G_DIR_SEPARATOR_S">
+    <constant name="DIR_SEPARATOR_S" value="/" c:type="G_DIR_SEPARATOR_S">
       <doc xml:space="preserve">The directory separator as a string.
 This is "/" on UNIX machines and "\" under Windows.</doc>
       <type name="utf8" c:type="gchar*"/>
@@ -3578,6 +3615,21 @@ Both dates must be valid.</doc>
             <doc xml:space="preserve">second date to compare</doc>
             <type name="Date" c:type="const GDate*"/>
           </parameter>
+        </parameters>
+      </method>
+      <method name="copy" c:identifier="g_date_copy" version="2.56">
+        <doc xml:space="preserve">Copies a GDate to a newly-allocated GDate. If the input was invalid
+(as determined by g_date_valid()), the invalid state will be copied
+as is into the new object.</doc>
+        <return-value transfer-ownership="full">
+          <doc xml:space="preserve">a newly-allocated #GDate initialized from @date</doc>
+          <type name="Date" c:type="GDate*"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="date" transfer-ownership="none">
+            <doc xml:space="preserve">a #GDate to copy</doc>
+            <type name="Date" c:type="const GDate*"/>
+          </instance-parameter>
         </parameters>
       </method>
       <method name="days_between" c:identifier="g_date_days_between">
@@ -4380,6 +4432,58 @@ when you are done with it.</doc>
           </parameter>
         </parameters>
       </constructor>
+      <constructor name="new_from_iso8601" c:identifier="g_date_time_new_from_iso8601" version="2.56">
+        <doc xml:space="preserve">Creates a #GDateTime corresponding to the given
+[ISO 8601 formatted string](https://en.wikipedia.org/wiki/ISO_8601)
+@text. ISO 8601 strings of the form &lt;date&gt;&lt;sep&gt;&lt;time&gt;&lt;tz&gt; are supported.
+
+&lt;sep&gt; is the separator and can be either 'T', 't' or ' '.
+
+&lt;date&gt; is in the form:
+
+- `YYYY-MM-DD` - Year/month/day, e.g. 2016-08-24.
+- `YYYYMMDD` - Same as above without dividers.
+- `YYYY-DDD` - Ordinal day where DDD is from 001 to 366, e.g. 2016-237.
+- `YYYYDDD` - Same as above without dividers.
+- `YYYY-Www-D` - Week day where ww is from 01 to 52 and D from 1-7,
+  e.g. 2016-W34-3.
+- `YYYYWwwD` - Same as above without dividers.
+
+&lt;time&gt; is in the form:
+
+- `hh:mm:ss(.sss)` - Hours, minutes, seconds (subseconds), e.g. 22:10:42.123.
+- `hhmmss(.sss)` - Same as above without dividers.
+
+&lt;tz&gt; is an optional timezone suffix of the form:
+
+- `Z` - UTC.
+- `+hh:mm` or `-hh:mm` - Offset from UTC in hours and minutes, e.g. +12:00.
+- `+hh` or `-hh` - Offset from UTC in hours, e.g. +12.
+
+If the timezone is not provided in @text it must be provided in @default_tz
+(this field is otherwise ignored).
+
+This call can fail (returning %NULL) if @text is not a valid ISO 8601
+formatted string.
+
+You should release the return value by calling g_date_time_unref()
+when you are done with it.</doc>
+        <return-value transfer-ownership="full" nullable="1">
+          <doc xml:space="preserve">a new #GDateTime, or %NULL</doc>
+          <type name="DateTime" c:type="GDateTime*"/>
+        </return-value>
+        <parameters>
+          <parameter name="text" transfer-ownership="none">
+            <doc xml:space="preserve">an ISO 8601 formatted time string.</doc>
+            <type name="utf8" c:type="const gchar*"/>
+          </parameter>
+          <parameter name="default_tz" transfer-ownership="none" nullable="1" allow-none="1">
+            <doc xml:space="preserve">a #GTimeZone to use if the text doesn't contain a
+                         timezone, or %NULL.</doc>
+            <type name="TimeZone" c:type="GTimeZone*"/>
+          </parameter>
+        </parameters>
+      </constructor>
       <constructor name="new_from_timeval_local" c:identifier="g_date_time_new_from_timeval_local" version="2.26">
         <doc xml:space="preserve">Creates a #GDateTime corresponding to the given #GTimeVal @tv in the
 local time zone.
@@ -4704,7 +4808,12 @@ Add negative values to subtract minutes.</doc>
       </method>
       <method name="add_months" c:identifier="g_date_time_add_months" version="2.26">
         <doc xml:space="preserve">Creates a copy of @datetime and adds the specified number of months to the
-copy. Add negative values to subtract months.</doc>
+copy. Add negative values to subtract months.
+
+The day of the month of the resulting #GDateTime is clamped to the number
+of days in the updated calendar month. For example, if adding 1 month to
+31st January 2018, the result would be 28th February 2018. In 2020 (a leap
+year), the result would be 29th February.</doc>
         <return-value transfer-ownership="full">
           <doc xml:space="preserve">the newly created #GDateTime which should be freed with
   g_date_time_unref().</doc>
@@ -4761,7 +4870,10 @@ copy. Add negative values to subtract weeks.</doc>
       </method>
       <method name="add_years" c:identifier="g_date_time_add_years" version="2.26">
         <doc xml:space="preserve">Creates a copy of @datetime and adds the specified number of years to the
-copy. Add negative values to subtract years.</doc>
+copy. Add negative values to subtract years.
+
+As with g_date_time_add_months(), if the resulting date would be 29th
+February on a non-leap year, the day will be clamped to 28th February.</doc>
         <return-value transfer-ownership="full">
           <doc xml:space="preserve">the newly created #GDateTime which should be freed with
   g_date_time_unref().</doc>
@@ -4884,10 +4996,19 @@ conversions:
 - -: Do not pad a numeric result. This overrides the default padding
   for the specifier.
 - 0: Pad a numeric result with zeros. This overrides the default padding
-  for the specifier.</doc>
+  for the specifier.
+
+Additionally, when O is used with B, b, or h, it produces the alternative
+form of a month name. The alternative form should be used when the month
+name is used without a day number (e.g., standalone). It is required in
+some languages (Baltic, Slavic, Greek, and more) due to their grammatical
+rules. For other languages there is no difference. \%OB is a GNU and BSD
+strftime() extension expected to be added to the future POSIX specification,
+\%Ob and \%Oh are GNU strftime() extensions. Since: 2.56</doc>
         <return-value transfer-ownership="full">
           <doc xml:space="preserve">a newly allocated string formatted to the requested format
-    or %NULL in the case that there was an error. The string
+    or %NULL in the case that there was an error (such as a format specifier
+    not being supported in the current locale). The string
     should be freed with g_free().</doc>
           <type name="utf8" c:type="gchar*"/>
         </return-value>
@@ -5459,7 +5580,7 @@ filenames, the returned name is in UTF-8.</doc>
           <doc xml:space="preserve">The entry's name or %NULL if there are no
   more entries. The return value is owned by GLib and
   must not be modified or freed.</doc>
-          <type name="filename" c:type="gchar*"/>
+          <type name="filename" c:type="const gchar*"/>
         </return-value>
         <parameters>
           <instance-parameter name="dir" transfer-ownership="none">
@@ -5504,7 +5625,7 @@ modified, and might thus be a read-only literal string.</doc>
           <parameter name="tmpl" transfer-ownership="none" nullable="1" allow-none="1">
             <doc xml:space="preserve">Template for directory name,
     as in g_mkdtemp(), basename only, or %NULL for a default template</doc>
-            <type name="filename" c:type="gchar*"/>
+            <type name="filename" c:type="const gchar*"/>
           </parameter>
         </parameters>
       </function>
@@ -5570,7 +5691,8 @@ object.</doc>
           <type name="gpointer" c:type="gpointer"/>
         </parameter>
         <parameter name="user_data" transfer-ownership="none" nullable="1" allow-none="1" closure="1">
-          <doc xml:space="preserve">user data that was specified in g_datalist_id_dup_data()</doc>
+          <doc xml:space="preserve">user data that was specified in
+            g_datalist_id_dup_data()</doc>
           <type name="gpointer" c:type="gpointer"/>
         </parameter>
       </parameters>
@@ -5961,6 +6083,10 @@ as appropriate for a given platform. IEEE floats and doubles are supported
     a strong "power of 2" basis, like RAM sizes or RAID stripe sizes.
     Network and storage sizes should be reported in the normal SI units.</doc>
       </member>
+      <member name="bits" value="4" c:identifier="G_FORMAT_SIZE_BITS">
+        <doc xml:space="preserve">set the size as a quantity in bits, rather than
+    bytes, and return units in bits. For example, &#x2018;Mb&#x2019; rather than &#x2018;MB&#x2019;.</doc>
+      </member>
     </bitfield>
     <callback name="FreeFunc" c:type="GFreeFunc">
       <doc xml:space="preserve">Declares a type of function which takes an arbitrary
@@ -6210,7 +6336,7 @@ and #gchar* respectively.
 g_direct_hash() is also the appropriate hash function for keys
 of the form `GINT_TO_POINTER (n)` (or similar macros).
 
-&lt;!-- FIXME: Need more here. --&gt; A good hash functions should produce
+A good hash functions should produce
 hash values that are evenly distributed over a fairly large range.
 The modulus is taken with the hash table size (a prime number) to
 find the 'bucket' to place each key into. The function should also
@@ -6251,7 +6377,11 @@ key and the value.
 
 When a hash table only ever contains keys that have themselves as the
 corresponding value it is able to be stored more efficiently.  See
-the discussion in the section description.</doc>
+the discussion in the section description.
+
+Starting from GLib 2.40, this function returns a boolean value to
+indicate whether the newly added value was already in the hash table
+or not.</doc>
         <return-value transfer-ownership="none">
           <doc xml:space="preserve">%TRUE if the key did not exist yet</doc>
           <type name="gboolean" c:type="gboolean"/>
@@ -6539,7 +6669,11 @@ value is replaced with the new value. If you supplied a
 @value_destroy_func when creating the #GHashTable, the old
 value is freed using that function. If you supplied a
 @key_destroy_func when creating the #GHashTable, the passed
-key is freed using that function.</doc>
+key is freed using that function.
+
+Starting from GLib 2.40, this function returns a boolean value to
+indicate whether the newly added value was already in the hash table
+or not.</doc>
         <return-value transfer-ownership="none">
           <doc xml:space="preserve">%TRUE if the key did not exist yet</doc>
           <type name="gboolean" c:type="gboolean"/>
@@ -6770,7 +6904,11 @@ already exists in the #GHashTable, it gets replaced by the
 new key. If you supplied a @value_destroy_func when creating
 the #GHashTable, the old value is freed using that function.
 If you supplied a @key_destroy_func when creating the
-#GHashTable, the old key is freed using that function.</doc>
+#GHashTable, the old key is freed using that function.
+
+Starting from GLib 2.40, this function returns a boolean value to
+indicate whether the newly added value was already in the hash table
+or not.</doc>
         <return-value transfer-ownership="none">
           <doc xml:space="preserve">%TRUE if the key did not exist yet</doc>
           <type name="gboolean" c:type="gboolean"/>
@@ -7843,16 +7981,23 @@ function returns %FALSE.</doc>
         </parameter>
       </parameters>
     </callback>
-    <record name="IConv" c:type="GIConv" disguised="1">
+    <record name="IConv" c:type="GIConv" disguised="1" introspectable="0">
       <doc xml:space="preserve">The GIConv struct wraps an iconv() conversion descriptor. It contains
 private data and should only be accessed using the following functions.</doc>
-      <method name="" c:identifier="g_iconv" moved-to="iconv">
+      <method name="" c:identifier="g_iconv" moved-to="iconv" introspectable="0">
         <doc xml:space="preserve">Same as the standard UNIX routine iconv(), but
 may be implemented via libiconv on UNIX flavors that lack
 a native implementation.
 
 GLib provides g_convert() and g_locale_to_utf8() which are likely
-more convenient than the raw iconv wrappers.</doc>
+more convenient than the raw iconv wrappers.
+
+Note that the behaviour of iconv() for characters which are valid in the
+input character set, but which have no representation in the output character
+set, is implementation defined. This function may return success (with a
+positive number of non-reversible conversions as replacement characters were
+used), or it may return -1 and set an error such as %EILSEQ, in such a
+situation.</doc>
         <return-value transfer-ownership="none">
           <doc xml:space="preserve">count of non-reversible conversions, or -1 on error</doc>
           <type name="gsize" c:type="gsize"/>
@@ -7880,7 +8025,7 @@ more convenient than the raw iconv wrappers.</doc>
           </parameter>
         </parameters>
       </method>
-      <method name="close" c:identifier="g_iconv_close">
+      <method name="close" c:identifier="g_iconv_close" introspectable="0">
         <doc xml:space="preserve">Same as the standard UNIX routine iconv_close(), but
 may be implemented via libiconv on UNIX flavors that lack
 a native implementation. Should be called to clean up
@@ -7945,10 +8090,10 @@ functions.</doc>
       <field name="encoding" readable="0" private="1">
         <type name="utf8" c:type="gchar*"/>
       </field>
-      <field name="read_cd" readable="0" private="1">
+      <field name="read_cd" introspectable="0" readable="0" private="1">
         <type name="IConv" c:type="GIConv"/>
       </field>
-      <field name="write_cd" readable="0" private="1">
+      <field name="write_cd" introspectable="0" readable="0" private="1">
         <type name="IConv" c:type="GIConv"/>
       </field>
       <field name="line_term" readable="0" private="1">
@@ -8011,7 +8156,7 @@ access the channel after it is closed).</doc>
         <parameters>
           <parameter name="filename" transfer-ownership="none">
             <doc xml:space="preserve">A string containing the name of a file</doc>
-            <type name="filename" c:type="gchar*"/>
+            <type name="filename" c:type="const gchar*"/>
           </parameter>
           <parameter name="mode" transfer-ownership="none">
             <doc xml:space="preserve">One of "r", "w", "a", "r+", "w+", "a+". These have
@@ -9509,10 +9654,48 @@ be found, %NULL is returned and @error is set to
           </parameter>
         </parameters>
       </method>
+      <method name="get_locale_for_key" c:identifier="g_key_file_get_locale_for_key" version="2.56">
+        <doc xml:space="preserve">Returns the actual locale which the result of
+g_key_file_get_locale_string() or g_key_file_get_locale_string_list()
+came from.
+
+If calling g_key_file_get_locale_string() or
+g_key_file_get_locale_string_list() with exactly the same @key_file,
+@group_name, @key and @locale, the result of those functions will
+have originally been tagged with the locale that is the result of
+this function.</doc>
+        <return-value transfer-ownership="full" nullable="1">
+          <doc xml:space="preserve">the locale from the file, or %NULL if the key was not
+  found or the entry in the file was was untranslated</doc>
+          <type name="utf8" c:type="gchar*"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="key_file" transfer-ownership="none">
+            <doc xml:space="preserve">a #GKeyFile</doc>
+            <type name="KeyFile" c:type="GKeyFile*"/>
+          </instance-parameter>
+          <parameter name="group_name" transfer-ownership="none">
+            <doc xml:space="preserve">a group name</doc>
+            <type name="utf8" c:type="const gchar*"/>
+          </parameter>
+          <parameter name="key" transfer-ownership="none">
+            <doc xml:space="preserve">a key</doc>
+            <type name="utf8" c:type="const gchar*"/>
+          </parameter>
+          <parameter name="locale" transfer-ownership="none" nullable="1" allow-none="1">
+            <doc xml:space="preserve">a locale identifier or %NULL</doc>
+            <type name="utf8" c:type="const gchar*"/>
+          </parameter>
+        </parameters>
+      </method>
       <method name="get_locale_string" c:identifier="g_key_file_get_locale_string" version="2.6" throws="1">
         <doc xml:space="preserve">Returns the value associated with @key under @group_name
 translated in the given @locale if available.  If @locale is
 %NULL then the current locale is assumed.
+
+If @locale is to be non-%NULL, or if the current locale will change over
+the lifetime of the #GKeyFile, it must be loaded with
+%G_KEY_FILE_KEEP_TRANSLATIONS in order to load strings for all locales.
 
 If @key cannot be found then %NULL is returned and @error is set
 to #G_KEY_FILE_ERROR_KEY_NOT_FOUND. If the value associated
@@ -9546,6 +9729,10 @@ be found then the untranslated value is returned.</doc>
         <doc xml:space="preserve">Returns the values associated with @key under @group_name
 translated in the given @locale if available.  If @locale is
 %NULL then the current locale is assumed.
+
+If @locale is to be non-%NULL, or if the current locale will change over
+the lifetime of the #GKeyFile, it must be loaded with
+%G_KEY_FILE_KEEP_TRANSLATIONS in order to load strings for all locales.
 
 If @key cannot be found then %NULL is returned and @error is set
 to #G_KEY_FILE_ERROR_KEY_NOT_FOUND. If the values associated
@@ -9825,7 +10012,7 @@ set to either a #GFileError or #GKeyFileError.</doc>
           </instance-parameter>
           <parameter name="file" transfer-ownership="none">
             <doc xml:space="preserve">a relative path to a filename to open and parse</doc>
-            <type name="filename" c:type="gchar*"/>
+            <type name="filename" c:type="const gchar*"/>
           </parameter>
           <parameter name="full_path" direction="out" caller-allocates="0" transfer-ownership="full" optional="1" allow-none="1">
             <doc xml:space="preserve">return location for a string containing the full path
@@ -9859,7 +10046,7 @@ file, a %G_FILE_ERROR is returned. If there is a problem parsing the file, a
           </instance-parameter>
           <parameter name="file" transfer-ownership="none">
             <doc xml:space="preserve">a relative path to a filename to open and parse</doc>
-            <type name="filename" c:type="gchar*"/>
+            <type name="filename" c:type="const gchar*"/>
           </parameter>
           <parameter name="search_dirs" transfer-ownership="none">
             <doc xml:space="preserve">%NULL-terminated array of directories to search</doc>
@@ -9898,7 +10085,7 @@ This function will never return a %G_KEY_FILE_ERROR_NOT_FOUND error. If the
           </instance-parameter>
           <parameter name="file" transfer-ownership="none">
             <doc xml:space="preserve">the path of a filename to load, in the GLib filename encoding</doc>
-            <type name="filename" c:type="gchar*"/>
+            <type name="filename" c:type="const gchar*"/>
           </parameter>
           <parameter name="flags" transfer-ownership="none">
             <doc xml:space="preserve">flags from #GKeyFileFlags</doc>
@@ -10525,24 +10712,32 @@ See #G_BYTE_ORDER.</doc>
       <type name="gdouble" c:type="gdouble"/>
     </constant>
     <constant name="LOG_DOMAIN" value="0" c:type="G_LOG_DOMAIN">
-      <doc xml:space="preserve">Defines the log domain.
+      <doc xml:space="preserve">Defines the log domain. See [Log Domains](#log-domains).
 
 Libraries should define this so that any messages
 which they log can be differentiated from messages from other
 libraries and application code. But be careful not to define
 it in any public header files.
 
-For example, GTK+ uses this in its Makefile.am:
+Log domains must be unique, and it is recommended that they are the
+application or library name, optionally followed by a hyphen and a sub-domain
+name. For example, `bloatpad` or `bloatpad-io`.
+
+If undefined, it defaults to the default %NULL (or `""`) log domain; this is
+not advisable, as it cannot be filtered against using the `G_MESSAGES_DEBUG`
+environment variable.
+
+For example, GTK+ uses this in its `Makefile.am`:
 |[
 AM_CPPFLAGS = -DG_LOG_DOMAIN=\"Gtk\"
 ]|
 
-Applications can choose to leave it as the default %NULL (or "")
+Applications can choose to leave it as the default %NULL (or `""`)
 domain. However, defining the domain offers the same advantages as
 above.</doc>
       <type name="gchar" c:type="gchar"/>
     </constant>
-    <constant name="LOG_FATAL_MASK" value="0" c:type="G_LOG_FATAL_MASK">
+    <constant name="LOG_FATAL_MASK" value="5" c:type="G_LOG_FATAL_MASK">
       <doc xml:space="preserve">GLib log levels that are considered fatal by default.
 
 This is not used if structured logging is enabled; see
@@ -10822,7 +11017,10 @@ given user data.</doc>
         </parameters>
       </function>
       <function name="foreach" c:identifier="g_list_foreach" introspectable="0">
-        <doc xml:space="preserve">Calls a function for each element of a #GList.</doc>
+        <doc xml:space="preserve">Calls a function for each element of a #GList.
+
+It is safe for @func to remove the element from @list, but it must
+not modify any part of the list after that element.</doc>
         <return-value transfer-ownership="none">
           <type name="none" c:type="void"/>
         </return-value>
@@ -10881,7 +11079,10 @@ It is usually used after g_list_remove_link().</doc>
       </function>
       <function name="free_full" c:identifier="g_list_free_full" version="2.28" introspectable="0">
         <doc xml:space="preserve">Convenience method, which frees all the memory used by a #GList,
-and calls @free_func on every element's data.</doc>
+and calls @free_func on every element's data.
+
+@free_func must not modify the list (eg, by removing the freed
+element from it).</doc>
         <return-value transfer-ownership="none">
           <type name="none" c:type="void"/>
         </return-value>
@@ -11582,7 +11783,7 @@ linked against at application run time.</doc>
       <doc xml:space="preserve">The minimum value which can be held in a #gint8.</doc>
       <type name="gint8" c:type="gint8"/>
     </constant>
-    <constant name="MINOR_VERSION" value="54" c:type="GLIB_MINOR_VERSION">
+    <constant name="MINOR_VERSION" value="56" c:type="GLIB_MINOR_VERSION">
       <doc xml:space="preserve">The minor version number of the GLib library.
 
 Like #gtk_minor_version, but from the headers used at
@@ -11825,7 +12026,7 @@ loop (and may prevent this call from returning).</doc>
 invocation of @function.
 
 This function is the same as g_main_context_invoke() except that it
-lets you specify the priority incase @function ends up being
+lets you specify the priority in case @function ends up being
 scheduled as an idle and also lets you give a #GDestroyNotify for @data.
 
 @notify should not assume that it is called from any particular
@@ -12358,7 +12559,7 @@ to the #GFileError value #G_FILE_ERROR_INVAL.</doc>
           <parameter name="filename" transfer-ownership="none">
             <doc xml:space="preserve">The path of the file to load, in the GLib
     filename encoding</doc>
-            <type name="filename" c:type="gchar*"/>
+            <type name="filename" c:type="const gchar*"/>
           </parameter>
           <parameter name="writable" transfer-ownership="none">
             <doc xml:space="preserve">whether the mapping should be writable</doc>
@@ -13744,8 +13945,9 @@ the second 1, and so on.</doc>
         </parameters>
       </method>
       <method name="children_foreach" c:identifier="g_node_children_foreach" introspectable="0">
-        <doc xml:space="preserve">Calls a function for each of the children of a #GNode.
-Note that it doesn't descend beneath the child nodes.</doc>
+        <doc xml:space="preserve">Calls a function for each of the children of a #GNode. Note that it
+doesn't descend beneath the child nodes. @func must not do anything
+that would modify the structure of the tree.</doc>
         <return-value transfer-ownership="none">
           <type name="none" c:type="void"/>
         </return-value>
@@ -14122,7 +14324,8 @@ too big, %NULL is returned.</doc>
       <method name="traverse" c:identifier="g_node_traverse" introspectable="0">
         <doc xml:space="preserve">Traverses a tree starting at the given root #GNode.
 It calls the given function for each node visited.
-The traversal can be halted at any point by returning %TRUE from @func.</doc>
+The traversal can be halted at any point by returning %TRUE from @func.
+@func must not do anything that would modify the structure of the tree.</doc>
         <return-value transfer-ownership="none">
           <type name="none" c:type="void"/>
         </return-value>
@@ -14604,7 +14807,7 @@ See g_option_context_set_strict_posix() for more information.</doc>
         </return-value>
         <parameters>
           <instance-parameter name="context" transfer-ownership="none">
-            <doc xml:space="preserve">a #GoptionContext</doc>
+            <doc xml:space="preserve">a #GOptionContext</doc>
             <type name="OptionContext" c:type="GOptionContext*"/>
           </instance-parameter>
         </parameters>
@@ -14814,7 +15017,7 @@ parsing).</doc>
         </return-value>
         <parameters>
           <instance-parameter name="context" transfer-ownership="none">
-            <doc xml:space="preserve">a #GoptionContext</doc>
+            <doc xml:space="preserve">a #GOptionContext</doc>
             <type name="OptionContext" c:type="GOptionContext*"/>
           </instance-parameter>
           <parameter name="strict_posix" transfer-ownership="none">
@@ -15639,7 +15842,8 @@ equality is used.</doc>
         </parameters>
       </function>
       <function name="foreach" c:identifier="g_ptr_array_foreach" version="2.4" introspectable="0">
-        <doc xml:space="preserve">Calls a function for each element of a #GPtrArray.</doc>
+        <doc xml:space="preserve">Calls a function for each element of a #GPtrArray. @func must not
+add elements to or remove elements from the array.</doc>
         <return-value transfer-ownership="none">
           <type name="none" c:type="void"/>
         </return-value>
@@ -16163,7 +16367,10 @@ first argument and the given user data as the second argument.</doc>
       </method>
       <method name="foreach" c:identifier="g_queue_foreach" version="2.4" introspectable="0">
         <doc xml:space="preserve">Calls @func for each element in the queue passing @user_data to the
-function.</doc>
+function.
+
+It is safe for @func to remove the element from @queue, but it must
+not modify any part of the queue after that element.</doc>
         <return-value transfer-ownership="none">
           <type name="none" c:type="void"/>
         </return-value>
@@ -16201,7 +16408,10 @@ either use g_queue_free_full() or free them manually first.</doc>
       </method>
       <method name="free_full" c:identifier="g_queue_free_full" version="2.32">
         <doc xml:space="preserve">Convenience method, which frees all the memory used by a #GQueue,
-and calls the specified destroy function on every element's data.</doc>
+and calls the specified destroy function on every element's data.
+
+@free_func should not modify the queue (eg, by removing the freed
+element from it).</doc>
         <return-value transfer-ownership="none">
           <type name="none" c:type="void"/>
         </return-value>
@@ -16908,7 +17118,8 @@ the write lock on @rw_lock or blocks waiting for it, the current
 thread will block. Read locks can be taken recursively.
 
 It is implementation-defined how many threads are allowed to
-hold read locks on the same lock simultaneously.</doc>
+hold read locks on the same lock simultaneously. If the limit is hit,
+or if a deadlock is detected, a critical warning will be emitted.</doc>
         <return-value transfer-ownership="none">
           <type name="none" c:type="void"/>
         </return-value>
@@ -17793,7 +18004,7 @@ number-th captured subexpression of the match, '\g&lt;name&gt;' refers
 to the captured subexpression with the given name. '\0' refers
 to the complete match, but '\0' followed by a number is the octal
 representation of a character. To include a literal '\' in the
-replacement, write '\\'.
+replacement, write '\\\\'.
 
 There are also escapes that changes the case of the following text:
 
@@ -18269,7 +18480,7 @@ it using g_strfreev()</doc>
     setting.</doc>
       </member>
       <member name="dotall" value="4" c:identifier="G_REGEX_DOTALL">
-        <doc xml:space="preserve">A dot metacharater (".") in the pattern matches all
+        <doc xml:space="preserve">A dot metacharacter (".") in the pattern matches all
     characters, including newlines. Without it, newlines are excluded.
     This option can be changed within a pattern by a ("?s") option setting.</doc>
       </member>
@@ -18286,7 +18497,7 @@ it using g_strfreev()</doc>
     it is constrained to match only at the first matching point in the
     string that is being searched. This effect can also be achieved by
     appropriate constructs in the pattern itself such as the "^"
-    metacharater.</doc>
+    metacharacter.</doc>
       </member>
       <member name="dollar_endonly" value="32" c:identifier="G_REGEX_DOLLAR_ENDONLY">
         <doc xml:space="preserve">A dollar metacharacter ("$") in the pattern
@@ -18606,7 +18817,7 @@ to g_regex_replace_eval(), and it should append the replacement to
     it is constrained to match only at the first matching point in the
     string that is being searched. This effect can also be achieved by
     appropriate constructs in the pattern itself such as the "^"
-    metacharater.</doc>
+    metacharacter.</doc>
       </member>
       <member name="notbol" value="128" c:identifier="G_REGEX_MATCH_NOTBOL">
         <doc xml:space="preserve">Specifies that first character of the string is
@@ -18691,12 +18902,12 @@ to g_regex_replace_eval(), and it should append the replacement to
     patterns this can only happen for pattern containing "\K". Since: 2.34</doc>
       </member>
     </bitfield>
-    <constant name="SEARCHPATH_SEPARATOR" value="59" c:type="G_SEARCHPATH_SEPARATOR">
+    <constant name="SEARCHPATH_SEPARATOR" value="58" c:type="G_SEARCHPATH_SEPARATOR">
       <doc xml:space="preserve">The search path separator character.
 This is ':' on UNIX machines and ';' under Windows.</doc>
       <type name="gint" c:type="gint"/>
     </constant>
-    <constant name="SEARCHPATH_SEPARATOR_S" value=";" c:type="G_SEARCHPATH_SEPARATOR_S">
+    <constant name="SEARCHPATH_SEPARATOR_S" value=":" c:type="G_SEARCHPATH_SEPARATOR_S">
       <doc xml:space="preserve">The search path separator as a string.
 This is ":" on UNIX machines and ";" under Windows.</doc>
       <type name="utf8" c:type="gchar*"/>
@@ -18956,7 +19167,10 @@ given user data.</doc>
         </parameters>
       </function>
       <function name="foreach" c:identifier="g_slist_foreach" introspectable="0">
-        <doc xml:space="preserve">Calls a function for each element of a #GSList.</doc>
+        <doc xml:space="preserve">Calls a function for each element of a #GSList.
+
+It is safe for @func to remove the element from @list, but it must
+not modify any part of the list after that element.</doc>
         <return-value transfer-ownership="none">
           <type name="none" c:type="void"/>
         </return-value>
@@ -19013,7 +19227,10 @@ It is usually used after g_slist_remove_link().</doc>
       </function>
       <function name="free_full" c:identifier="g_slist_free_full" version="2.28" introspectable="0">
         <doc xml:space="preserve">Convenience method, which frees all the memory used by a #GSList, and
-calls the specified destroy function on every element's data.</doc>
+calls the specified destroy function on every element's data.
+
+@free_func must not modify the list (eg, by removing the freed
+element from it).</doc>
         <return-value transfer-ownership="none">
           <type name="none" c:type="void"/>
         </return-value>
@@ -19398,7 +19615,8 @@ such as the doubly-linked #GList.</doc>
         </parameters>
       </function>
       <function name="sort" c:identifier="g_slist_sort" introspectable="0">
-        <doc xml:space="preserve">Sorts a #GSList using the given comparison function.</doc>
+        <doc xml:space="preserve">Sorts a #GSList using the given comparison function. The algorithm
+used is a stable sort.</doc>
         <return-value>
           <doc xml:space="preserve">the start of the sorted #GSList</doc>
           <type name="GLib.SList" c:type="GSList*">
@@ -20194,7 +20412,7 @@ g_io_channel_seek_position() operation.</doc>
       </method>
       <method name="foreach" c:identifier="g_sequence_foreach" version="2.14" introspectable="0">
         <doc xml:space="preserve">Calls @func for each item in the sequence passing @user_data
-to the function.</doc>
+to the function. @func must not modify the sequence itself.</doc>
         <return-value transfer-ownership="none">
           <type name="none" c:type="void"/>
         </return-value>
@@ -20294,7 +20512,11 @@ otherwise the new position of @data is undefined.
 @cmp_func is called with two items of the @seq and @user_data.
 It should return 0 if the items are equal, a negative value
 if the first item comes before the second, and a positive value
-if the second  item comes before the first.</doc>
+if the second  item comes before the first.
+
+Note that when adding a large amount of data to a #GSequence,
+it is more efficient to do unsorted insertions and then call
+g_sequence_sort() or g_sequence_sort_iter().</doc>
         <return-value transfer-ownership="none">
           <doc xml:space="preserve">a #GSequenceIter pointing to the new item.</doc>
           <type name="SequenceIter" c:type="GSequenceIter*"/>
@@ -20331,7 +20553,11 @@ positive value if the second iterator comes before the first.
 It is called with two iterators pointing into @seq. It should
 return 0 if the iterators are equal, a negative value if the
 first iterator comes before the second, and a positive value
-if the second iterator comes before the first.</doc>
+if the second iterator comes before the first.
+
+Note that when adding a large amount of data to a #GSequence,
+it is more efficient to do unsorted insertions and then call
+g_sequence_sort() or g_sequence_sort_iter().</doc>
         <return-value transfer-ownership="none">
           <doc xml:space="preserve">a #GSequenceIter pointing to the new item</doc>
           <type name="SequenceIter" c:type="GSequenceIter*"/>
@@ -20385,10 +20611,7 @@ the first item comes before the second, and a positive value if
 the second item comes before the first.
 
 This function will fail if the data contained in the sequence is
-unsorted.  Use g_sequence_insert_sorted() or
-g_sequence_insert_sorted_iter() to add data to your sequence or, if
-you want to add a large amount of data, call g_sequence_sort() after
-doing unsorted insertions.</doc>
+unsorted.</doc>
         <return-value transfer-ownership="none" nullable="1">
           <doc xml:space="preserve">an #GSequenceIter pointing to the position of the
     first item found equal to @data according to @cmp_func and
@@ -20424,10 +20647,7 @@ if the first iterator comes before the second, and a positive
 value if the second iterator comes before the first.
 
 This function will fail if the data contained in the sequence is
-unsorted.  Use g_sequence_insert_sorted() or
-g_sequence_insert_sorted_iter() to add data to your sequence or, if
-you want to add a large amount of data, call g_sequence_sort() after
-doing unsorted insertions.</doc>
+unsorted.</doc>
         <return-value transfer-ownership="none" nullable="1">
           <doc xml:space="preserve">an #GSequenceIter pointing to the position of
     the first item found equal to @data according to @cmp_func
@@ -20483,10 +20703,7 @@ If you are simply searching for an existing element of the sequence,
 consider using g_sequence_lookup().
 
 This function will fail if the data contained in the sequence is
-unsorted.  Use g_sequence_insert_sorted() or
-g_sequence_insert_sorted_iter() to add data to your sequence or, if
-you want to add a large amount of data, call g_sequence_sort() after
-doing unsorted insertions.</doc>
+unsorted.</doc>
         <return-value transfer-ownership="none">
           <doc xml:space="preserve">an #GSequenceIter pointing to the position where @data
     would have been inserted according to @cmp_func and @cmp_data</doc>
@@ -20524,10 +20741,7 @@ If you are simply searching for an existing element of the sequence,
 consider using g_sequence_lookup_iter().
 
 This function will fail if the data contained in the sequence is
-unsorted.  Use g_sequence_insert_sorted() or
-g_sequence_insert_sorted_iter() to add data to your sequence or, if
-you want to add a large amount of data, call g_sequence_sort() after
-doing unsorted insertions.</doc>
+unsorted.</doc>
         <return-value transfer-ownership="none">
           <doc xml:space="preserve">a #GSequenceIter pointing to the position in @seq
     where @data would have been inserted according to @iter_cmp
@@ -20606,7 +20820,8 @@ iterator comes before the first.</doc>
       </method>
       <function name="foreach_range" c:identifier="g_sequence_foreach_range" version="2.14" introspectable="0">
         <doc xml:space="preserve">Calls @func for each item in the range (@begin, @end) passing
-@user_data to the function.</doc>
+@user_data to the function. @func must not modify the sequence
+itself.</doc>
         <return-value transfer-ownership="none">
           <type name="none" c:type="void"/>
         </return-value>
@@ -21754,7 +21969,7 @@ so yourself, from the source dispatch function.
 Note that if you have a pair of sources where the ready time of one
 suggests that it will be delivered first but the priority for the
 other suggests that it would be delivered first, and the ready time
-for both sources is reached during the same main context iteration
+for both sources is reached during the same main context iteration,
 then the order of dispatch is undefined.
 
 It is a no-op to call this function on a #GSource which has already been
@@ -21792,16 +22007,14 @@ memory will be destroyed.</doc>
         </parameters>
       </method>
       <function name="remove" c:identifier="g_source_remove">
-        <doc xml:space="preserve">Removes the source with the given id from the default main context.
+        <doc xml:space="preserve">Removes the source with the given ID from the default main context. You must
+use g_source_destroy() for sources added to a non-default main context.
 
-The id of a #GSource is given by g_source_get_id(), or will be
+The ID of a #GSource is given by g_source_get_id(), or will be
 returned by the functions g_source_attach(), g_idle_add(),
 g_idle_add_full(), g_timeout_add(), g_timeout_add_full(),
 g_child_watch_add(), g_child_watch_add_full(), g_io_add_watch(), and
 g_io_add_watch_full().
-
-See also g_source_destroy(). You must use g_source_destroy() for sources
-added to a non-default main context.
 
 It is a programmer error to attempt to remove a non-existent source.
 
@@ -23252,6 +23465,16 @@ zero then @fixture will be equal to @user_data.</doc>
       <member name="stop_suite" value="11" c:identifier="G_TEST_LOG_STOP_SUITE">
       </member>
     </enumeration>
+    <enumeration name="TestResult" c:type="GTestResult">
+      <member name="success" value="0" c:identifier="G_TEST_RUN_SUCCESS">
+      </member>
+      <member name="skipped" value="1" c:identifier="G_TEST_RUN_SKIPPED">
+      </member>
+      <member name="failure" value="2" c:identifier="G_TEST_RUN_FAILURE">
+      </member>
+      <member name="incomplete" value="3" c:identifier="G_TEST_RUN_INCOMPLETE">
+      </member>
+    </enumeration>
     <bitfield name="TestSubprocessFlags" c:type="GTestSubprocessFlags">
       <doc xml:space="preserve">Flags to pass to g_test_trap_subprocess() to control input and output.
 
@@ -23315,7 +23538,7 @@ not show stdout and stderr.</doc>
 These flags determine what traps to set.</doc>
       <doc-deprecated xml:space="preserve">#GTestTrapFlags is used only with g_test_trap_fork(),
 which is deprecated. g_test_trap_subprocess() uses
-#GTestTrapSubprocessFlags.</doc-deprecated>
+#GTestSubprocessFlags.</doc-deprecated>
       <member name="silence_stdout" value="128" c:identifier="G_TEST_TRAP_SILENCE_STDOUT">
         <doc xml:space="preserve">Redirect stdout of the test child to
     `/dev/null` so it cannot be observed on the console during test
@@ -25636,19 +25859,19 @@ See [Unicode Standard Annex #24: Script names](http://www.unicode.org/reports/tr
         <doc xml:space="preserve">Osage. Since: 2.50</doc>
       </member>
       <member name="tangut" value="137" c:identifier="G_UNICODE_SCRIPT_TANGUT">
-        <doc xml:space="preserve">Tangut. Since: 2.50
-@G_UNICODE_SCRIPT_MASARAM_GONDI,        Masaram Gondi. Since: 2.54
-@G_UNICODE_SCRIPT_NUSHU,                Nushu. Since: 2.54
-@G_UNICODE_SCRIPT_SOYOMBO,              Soyombo. Since: 2.54
-@G_UNICODE_SCRIPT_ZANABAZAR_SQUARE      Zanabazar Square. Since: 2.54</doc>
+        <doc xml:space="preserve">Tangut. Since: 2.50</doc>
       </member>
       <member name="masaram_gondi" value="138" c:identifier="G_UNICODE_SCRIPT_MASARAM_GONDI">
+        <doc xml:space="preserve">Masaram Gondi. Since: 2.54</doc>
       </member>
       <member name="nushu" value="139" c:identifier="G_UNICODE_SCRIPT_NUSHU">
+        <doc xml:space="preserve">Nushu. Since: 2.54</doc>
       </member>
       <member name="soyombo" value="140" c:identifier="G_UNICODE_SCRIPT_SOYOMBO">
+        <doc xml:space="preserve">Soyombo. Since: 2.54</doc>
       </member>
       <member name="zanabazar_square" value="141" c:identifier="G_UNICODE_SCRIPT_ZANABAZAR_SQUARE">
+        <doc xml:space="preserve">Zanabazar Square. Since: 2.54</doc>
       </member>
     </enumeration>
     <enumeration name="UnicodeType" c:type="GUnicodeType">
@@ -26090,7 +26313,7 @@ const gchar *some_strings[] = { "a", "b", "c", NULL };
 GVariant *new_variant;
 
 new_variant = g_variant_new ("(t^as)",
-                             /&lt;!-- --&gt;* This cast is required. *&lt;!-- --&gt;/
+                             // This cast is required.
                              (guint64) some_flags,
                              some_strings);
 ]|</doc>
@@ -27477,7 +27700,14 @@ If @value is found not to be in normal form then a new trusted
 
 It makes sense to call this function if you've received #GVariant
 data from untrusted sources and you want to ensure your serialised
-output is definitely in normal form.</doc>
+output is definitely in normal form.
+
+If @value is already in normal form, a new reference will be returned
+(which will be floating if @value is floating). If it is not in normal form,
+the newly created #GVariant will be returned with a single non-floating
+reference. Typically, g_variant_take_ref() should be called on the return
+value from this function to guarantee ownership of a single non-floating
+reference to it.</doc>
         <return-value transfer-ownership="full">
           <doc xml:space="preserve">a trusted #GVariant</doc>
           <type name="Variant" c:type="GVariant*"/>
@@ -30222,7 +30452,7 @@ See your C library manual for more details about access().</doc>
         <parameter name="filename" transfer-ownership="none">
           <doc xml:space="preserve">a pathname in the GLib file name encoding
     (UTF-8 on Windows)</doc>
-          <type name="filename" c:type="gchar*"/>
+          <type name="filename" c:type="const gchar*"/>
         </parameter>
         <parameter name="mode" transfer-ownership="none">
           <doc xml:space="preserve">as in access()</doc>
@@ -31304,7 +31534,7 @@ by overwriting the input data.</doc>
         </parameter>
       </parameters>
     </function>
-    <function name="base64_decode_step" c:identifier="g_base64_decode_step" version="2.12">
+    <function name="base64_decode_step" c:identifier="g_base64_decode_step" version="2.12" introspectable="0">
       <doc xml:space="preserve">Incrementally decode a sequence of binary data from its Base-64 stringified
 representation. By calling this function multiple times you can convert
 data in chunks to avoid having to have the full encoded data in memory.
@@ -31328,7 +31558,7 @@ state).</doc>
           <doc xml:space="preserve">max length of @in data to decode</doc>
           <type name="gsize" c:type="gsize"/>
         </parameter>
-        <parameter name="out" direction="out" caller-allocates="0" transfer-ownership="full">
+        <parameter name="out" direction="out" caller-allocates="1" transfer-ownership="none">
           <doc xml:space="preserve">output buffer</doc>
           <array zero-terminated="0" c:type="guchar*">
             <type name="guint8"/>
@@ -31465,12 +31695,12 @@ string.</doc>
       <return-value transfer-ownership="none">
         <doc xml:space="preserve">the name of the file without any leading
     directory components</doc>
-        <type name="filename" c:type="gchar*"/>
+        <type name="filename" c:type="const gchar*"/>
       </return-value>
       <parameters>
         <parameter name="file_name" transfer-ownership="none">
           <doc xml:space="preserve">the name of the file</doc>
-          <type name="filename" c:type="gchar*"/>
+          <type name="filename" c:type="const gchar*"/>
         </parameter>
       </parameters>
     </function>
@@ -31638,11 +31868,30 @@ be a relative path.</doc>
       <parameters>
         <parameter name="first_element" transfer-ownership="none">
           <doc xml:space="preserve">the first element in the path</doc>
-          <type name="filename" c:type="gchar*"/>
+          <type name="filename" c:type="const gchar*"/>
         </parameter>
         <parameter name="..." transfer-ownership="none">
           <doc xml:space="preserve">remaining elements in path, terminated by %NULL</doc>
           <varargs/>
+        </parameter>
+      </parameters>
+    </function>
+    <function name="build_filename_valist" c:identifier="g_build_filename_valist" version="2.56" introspectable="0">
+      <doc xml:space="preserve">Behaves exactly like g_build_filename(), but takes the path elements
+as a va_list. This function is mainly meant for language bindings.</doc>
+      <return-value transfer-ownership="full">
+        <doc xml:space="preserve">a newly-allocated string that must be freed
+    with g_free().</doc>
+        <type name="filename" c:type="gchar*"/>
+      </return-value>
+      <parameters>
+        <parameter name="first_element" transfer-ownership="none">
+          <doc xml:space="preserve">the first element in the path</doc>
+          <type name="filename" c:type="const gchar*"/>
+        </parameter>
+        <parameter name="args" transfer-ownership="none">
+          <doc xml:space="preserve">va_list of remaining elements in path</doc>
+          <type name="va_list" c:type="va_list*"/>
         </parameter>
       </parameters>
     </function>
@@ -31700,11 +31949,11 @@ of the separator are ignored.</doc>
       <parameters>
         <parameter name="separator" transfer-ownership="none">
           <doc xml:space="preserve">a string used to separator the elements of the path.</doc>
-          <type name="filename" c:type="gchar*"/>
+          <type name="filename" c:type="const gchar*"/>
         </parameter>
         <parameter name="first_element" transfer-ownership="none">
           <doc xml:space="preserve">the first element in the path</doc>
-          <type name="filename" c:type="gchar*"/>
+          <type name="filename" c:type="const gchar*"/>
         </parameter>
         <parameter name="..." transfer-ownership="none">
           <doc xml:space="preserve">remaining elements in path, terminated by %NULL</doc>
@@ -31842,7 +32091,7 @@ See your C library manual for more details about chdir().</doc>
         <parameter name="path" transfer-ownership="none">
           <doc xml:space="preserve">a pathname in the GLib file name encoding
     (UTF-8 on Windows)</doc>
-          <type name="filename" c:type="gchar*"/>
+          <type name="filename" c:type="const gchar*"/>
         </parameter>
       </parameters>
     </function>
@@ -31911,6 +32160,8 @@ source is still active. Typically, you will want to call
 g_spawn_close_pid() in the callback function for the source.
 
 GLib supports only a single callback per process id.
+On POSIX platforms, the same restrictions mentioned for
+g_child_watch_source_new() apply to this function.
 
 This internally creates a main loop source using
 g_child_watch_source_new() and attaches it to the main loop context
@@ -31955,6 +32206,8 @@ is still active.  Typically, you should invoke g_spawn_close_pid()
 in the callback function for the source.
 
 GLib supports only a single callback per process id.
+On POSIX platforms, the same restrictions mentioned for
+g_child_watch_source_new() apply to this function.
 
 This internally creates a main loop source using
 g_child_watch_source_new() and attaches it to the main loop context
@@ -32004,14 +32257,24 @@ Note that on platforms where #GPid must be explicitly closed
 source is still active. Typically, you will want to call
 g_spawn_close_pid() in the callback function for the source.
 
-Note further that using g_child_watch_source_new() is not
-compatible with calling `waitpid` with a nonpositive first
-argument in the application. Calling waitpid() for individual
-pids will still work fine.
+On POSIX platforms, the following restrictions apply to this API
+due to limitations in POSIX process interfaces:
 
-Similarly, on POSIX platforms, the @pid passed to this function must
-be greater than 0 (i.e. this function must wait for a specific child,
-and cannot wait for one of many children by using a nonpositive argument).</doc>
+* @pid must be a child of this process
+* @pid must be positive
+* the application must not call `waitpid` with a non-positive
+  first argument, for instance in another thread
+* the application must not wait for @pid to exit by any other
+  mechanism, including `waitpid(pid, ...)` or a second child-watch
+  source for the same @pid
+* the application must not ignore SIGCHILD
+
+If any of those conditions are not met, this and related APIs will
+not work correctly. This can often be diagnosed via a GLib warning
+stating that `ECHILD` was received by `waitpid`.
+
+Calling `waitpid` for specific processes other than @pid remains a
+valid thing to do.</doc>
       <return-value transfer-ownership="full">
         <doc xml:space="preserve">the newly-created child watch source</doc>
         <type name="Source" c:type="GSource*"/>
@@ -32030,6 +32293,31 @@ calls g_error_free() on *@err and sets *@err to %NULL.</doc>
       <return-value transfer-ownership="none">
         <type name="none" c:type="void"/>
       </return-value>
+    </function>
+    <function name="clear_handle_id" c:identifier="g_clear_handle_id" version="2.56" introspectable="0">
+      <doc xml:space="preserve">Clears a numeric handler, such as a #GSource ID.
+
+@tag_ptr must be a valid pointer to the variable holding the handler.
+
+If the ID is zero then this function does nothing.
+Otherwise, clear_func() is called with the ID as a parameter, and the tag is
+set to zero.
+
+A macro is also included that allows this function to be used without
+pointer casts.</doc>
+      <return-value transfer-ownership="none">
+        <type name="none" c:type="void"/>
+      </return-value>
+      <parameters>
+        <parameter name="tag_ptr" transfer-ownership="none">
+          <doc xml:space="preserve">a pointer to the handler ID</doc>
+          <type name="guint" c:type="guint*"/>
+        </parameter>
+        <parameter name="clear_func" transfer-ownership="none">
+          <doc xml:space="preserve">the function to call to clear the handler</doc>
+          <type name="ClearHandleFunc" c:type="GClearHandleFunc"/>
+        </parameter>
+      </parameters>
     </function>
     <function name="clear_pointer" c:identifier="g_clear_pointer" version="2.34" introspectable="0">
       <doc xml:space="preserve">Clears a reference to a variable.
@@ -32253,7 +32541,7 @@ The hexadecimal string returned will be in lower case.</doc>
       <doc xml:space="preserve">Converts a string from one character set to another.
 
 Note that you should use g_iconv() for streaming conversions.
-Despite the fact that @byes_read can return information about partial
+Despite the fact that @bytes_read can return information about partial
 characters, the g_convert_... functions are not generally suitable
 for streaming. If the underlying converter maintains internal state,
 then this won't be preserved across successive calls to g_convert(),
@@ -32265,15 +32553,21 @@ could combine with the base character.)
 Using extensions such as "//TRANSLIT" may not work (or may not work
 well) on many platforms.  Consider using g_str_to_ascii() instead.</doc>
       <return-value transfer-ownership="full">
-        <doc xml:space="preserve">If the conversion was successful, a newly allocated
-              nul-terminated string, which must be freed with
-              g_free(). Otherwise %NULL and @error will be set.</doc>
-        <type name="utf8" c:type="gchar*"/>
+        <doc xml:space="preserve">
+         If the conversion was successful, a newly allocated buffer
+         containing the converted string, which must be freed with g_free().
+         Otherwise %NULL and @error will be set.</doc>
+        <array length="5" zero-terminated="0" c:type="gchar*">
+          <type name="guint8"/>
+        </array>
       </return-value>
       <parameters>
         <parameter name="str" transfer-ownership="none">
-          <doc xml:space="preserve">the string to convert</doc>
-          <type name="utf8" c:type="const gchar*"/>
+          <doc xml:space="preserve">
+                the string to convert.</doc>
+          <array length="1" zero-terminated="0" c:type="gchar*">
+            <type name="guint8"/>
+          </array>
         </parameter>
         <parameter name="len" transfer-ownership="none">
           <doc xml:space="preserve">the length of the string in bytes, or -1 if the string is
@@ -32290,20 +32584,20 @@ well) on many platforms.  Consider using g_str_to_ascii() instead.</doc>
           <doc xml:space="preserve">character set of @str.</doc>
           <type name="utf8" c:type="const gchar*"/>
         </parameter>
-        <parameter name="bytes_read" direction="out" caller-allocates="0" transfer-ownership="full">
-          <doc xml:space="preserve">location to store the number of bytes in the
-                input string that were successfully converted, or %NULL.
+        <parameter name="bytes_read" direction="out" caller-allocates="0" transfer-ownership="full" optional="1" allow-none="1">
+          <doc xml:space="preserve">location to store the number of bytes in
+                the input string that were successfully converted, or %NULL.
                 Even if the conversion was successful, this may be
                 less than @len if there were partial characters
                 at the end of the input. If the error
                 #G_CONVERT_ERROR_ILLEGAL_SEQUENCE occurs, the value
-                stored will the byte offset after the last valid
+                stored will be the byte offset after the last valid
                 input sequence.</doc>
           <type name="gsize" c:type="gsize*"/>
         </parameter>
-        <parameter name="bytes_written" direction="out" caller-allocates="0" transfer-ownership="full">
-          <doc xml:space="preserve">the number of bytes stored in the output buffer (not
-                including the terminating nul).</doc>
+        <parameter name="bytes_written" direction="out" caller-allocates="0" transfer-ownership="full" optional="1" allow-none="1">
+          <doc xml:space="preserve">the number of bytes stored in
+                the output buffer (not including the terminating nul).</doc>
           <type name="gsize" c:type="gsize*"/>
         </parameter>
       </parameters>
@@ -32323,7 +32617,7 @@ to @to_codeset in their iconv() functions,
 in which case GLib will simply return that approximate conversion.
 
 Note that you should use g_iconv() for streaming conversions.
-Despite the fact that @byes_read can return information about partial
+Despite the fact that @bytes_read can return information about partial
 characters, the g_convert_... functions are not generally suitable
 for streaming. If the underlying converter maintains internal state,
 then this won't be preserved across successive calls to g_convert(),
@@ -32332,15 +32626,21 @@ this is the GNU C converter for CP1255 which does not emit a base
 character until it knows that the next character is not a mark that
 could combine with the base character.)</doc>
       <return-value transfer-ownership="full">
-        <doc xml:space="preserve">If the conversion was successful, a newly allocated
-              nul-terminated string, which must be freed with
-              g_free(). Otherwise %NULL and @error will be set.</doc>
-        <type name="utf8" c:type="gchar*"/>
+        <doc xml:space="preserve">
+         If the conversion was successful, a newly allocated buffer
+         containing the converted string, which must be freed with g_free().
+         Otherwise %NULL and @error will be set.</doc>
+        <array length="6" zero-terminated="0" c:type="gchar*">
+          <type name="guint8"/>
+        </array>
       </return-value>
       <parameters>
         <parameter name="str" transfer-ownership="none">
-          <doc xml:space="preserve">the string to convert</doc>
-          <type name="utf8" c:type="const gchar*"/>
+          <doc xml:space="preserve">
+               the string to convert.</doc>
+          <array length="1" zero-terminated="0" c:type="gchar*">
+            <type name="guint8"/>
+          </array>
         </parameter>
         <parameter name="len" transfer-ownership="none">
           <doc xml:space="preserve">the length of the string in bytes, or -1 if the string is
@@ -32358,50 +32658,64 @@ could combine with the base character.)</doc>
           <type name="utf8" c:type="const gchar*"/>
         </parameter>
         <parameter name="fallback" transfer-ownership="none">
-          <doc xml:space="preserve">UTF-8 string to use in place of character not
+          <doc xml:space="preserve">UTF-8 string to use in place of characters not
                present in the target encoding. (The string must be
                representable in the target encoding).
-                  If %NULL, characters not in the target encoding will
-                  be represented as Unicode escapes \uxxxx or \Uxxxxyyyy.</doc>
+               If %NULL, characters not in the target encoding will
+               be represented as Unicode escapes \uxxxx or \Uxxxxyyyy.</doc>
           <type name="utf8" c:type="const gchar*"/>
         </parameter>
-        <parameter name="bytes_read" transfer-ownership="none">
-          <doc xml:space="preserve">location to store the number of bytes in the
-               input string that were successfully converted, or %NULL.
+        <parameter name="bytes_read" direction="out" caller-allocates="0" transfer-ownership="full" optional="1" allow-none="1">
+          <doc xml:space="preserve">location to store the number of bytes in
+               the input string that were successfully converted, or %NULL.
                Even if the conversion was successful, this may be
                less than @len if there were partial characters
                at the end of the input.</doc>
           <type name="gsize" c:type="gsize*"/>
         </parameter>
-        <parameter name="bytes_written" transfer-ownership="none">
-          <doc xml:space="preserve">the number of bytes stored in the output buffer (not
-               including the terminating nul).</doc>
+        <parameter name="bytes_written" direction="out" caller-allocates="0" transfer-ownership="full" optional="1" allow-none="1">
+          <doc xml:space="preserve">the number of bytes stored in
+                the output buffer (not including the terminating nul).</doc>
           <type name="gsize" c:type="gsize*"/>
         </parameter>
       </parameters>
     </function>
-    <function name="convert_with_iconv" c:identifier="g_convert_with_iconv" throws="1">
+    <function name="convert_with_iconv" c:identifier="g_convert_with_iconv" introspectable="0" throws="1">
       <doc xml:space="preserve">Converts a string from one character set to another.
 
 Note that you should use g_iconv() for streaming conversions.
-Despite the fact that @byes_read can return information about partial
+Despite the fact that @bytes_read can return information about partial
 characters, the g_convert_... functions are not generally suitable
 for streaming. If the underlying converter maintains internal state,
 then this won't be preserved across successive calls to g_convert(),
 g_convert_with_iconv() or g_convert_with_fallback(). (An example of
 this is the GNU C converter for CP1255 which does not emit a base
 character until it knows that the next character is not a mark that
-could combine with the base character.)</doc>
+could combine with the base character.)
+
+Characters which are valid in the input character set, but which have no
+representation in the output character set will result in a
+%G_CONVERT_ERROR_ILLEGAL_SEQUENCE error. This is in contrast to the iconv()
+specification, which leaves this behaviour implementation defined. Note that
+this is the same error code as is returned for an invalid byte sequence in
+the input character set. To get defined behaviour for conversion of
+unrepresentable characters, use g_convert_with_fallback().</doc>
       <return-value transfer-ownership="full">
-        <doc xml:space="preserve">If the conversion was successful, a newly allocated
-              nul-terminated string, which must be freed with
+        <doc xml:space="preserve">
+              If the conversion was successful, a newly allocated buffer
+              containing the converted string, which must be freed with
               g_free(). Otherwise %NULL and @error will be set.</doc>
-        <type name="utf8" c:type="gchar*"/>
+        <array length="4" zero-terminated="0" c:type="gchar*">
+          <type name="guint8"/>
+        </array>
       </return-value>
       <parameters>
         <parameter name="str" transfer-ownership="none">
-          <doc xml:space="preserve">the string to convert</doc>
-          <type name="utf8" c:type="const gchar*"/>
+          <doc xml:space="preserve">
+                the string to convert.</doc>
+          <array length="1" zero-terminated="0" c:type="gchar*">
+            <type name="guint8"/>
+          </array>
         </parameter>
         <parameter name="len" transfer-ownership="none">
           <doc xml:space="preserve">the length of the string in bytes, or -1 if the string is
@@ -32414,25 +32728,25 @@ could combine with the base character.)</doc>
           <doc xml:space="preserve">conversion descriptor from g_iconv_open()</doc>
           <type name="IConv" c:type="GIConv"/>
         </parameter>
-        <parameter name="bytes_read" transfer-ownership="none">
-          <doc xml:space="preserve">location to store the number of bytes in the
-                input string that were successfully converted, or %NULL.
+        <parameter name="bytes_read" direction="out" caller-allocates="0" transfer-ownership="full" optional="1" allow-none="1">
+          <doc xml:space="preserve">location to store the number of bytes in
+                the input string that were successfully converted, or %NULL.
                 Even if the conversion was successful, this may be
                 less than @len if there were partial characters
                 at the end of the input. If the error
                 #G_CONVERT_ERROR_ILLEGAL_SEQUENCE occurs, the value
-                stored will the byte offset after the last valid
+                stored will be the byte offset after the last valid
                 input sequence.</doc>
           <type name="gsize" c:type="gsize*"/>
         </parameter>
-        <parameter name="bytes_written" transfer-ownership="none">
-          <doc xml:space="preserve">the number of bytes stored in the output buffer (not
-                including the terminating nul).</doc>
+        <parameter name="bytes_written" direction="out" caller-allocates="0" transfer-ownership="full" optional="1" allow-none="1">
+          <doc xml:space="preserve">the number of bytes stored in
+                the output buffer (not including the terminating nul).</doc>
           <type name="gsize" c:type="gsize*"/>
         </parameter>
       </parameters>
     </function>
-    <function name="datalist_clear" c:identifier="g_datalist_clear">
+    <function name="datalist_clear" c:identifier="g_datalist_clear" introspectable="0">
       <doc xml:space="preserve">Frees all the data elements of the datalist.
 The data elements' destroy functions are called
 if they have been set.</doc>
@@ -32446,13 +32760,17 @@ if they have been set.</doc>
         </parameter>
       </parameters>
     </function>
-    <function name="datalist_foreach" c:identifier="g_datalist_foreach" introspectable="0">
+    <function name="datalist_foreach" c:identifier="g_datalist_foreach">
       <doc xml:space="preserve">Calls the given function for each data element of the datalist. The
 function is called with each data element's #GQuark id and data,
 together with the given @user_data parameter. Note that this
 function is NOT thread-safe. So unless @datalist can be protected
 from any modifications during invocation of this function, it should
-not be called.</doc>
+not be called.
+
+@func can make changes to @datalist, but the iteration will not
+reflect changes made during the g_datalist_foreach() call, other
+than skipping over elements that are removed.</doc>
       <return-value transfer-ownership="none">
         <type name="none" c:type="void"/>
       </return-value>
@@ -32461,7 +32779,7 @@ not be called.</doc>
           <doc xml:space="preserve">a datalist.</doc>
           <type name="Data" c:type="GData**"/>
         </parameter>
-        <parameter name="func" transfer-ownership="none" closure="2">
+        <parameter name="func" transfer-ownership="none" scope="call" closure="2">
           <doc xml:space="preserve">the function to call for each data element.</doc>
           <type name="DataForeachFunc" c:type="GDataForeachFunc"/>
         </parameter>
@@ -32475,7 +32793,8 @@ not be called.</doc>
       <doc xml:space="preserve">Gets a data element, using its string identifier. This is slower than
 g_datalist_id_get_data() because it compares strings.</doc>
       <return-value transfer-ownership="none" nullable="1">
-        <doc xml:space="preserve">the data element, or %NULL if it is not found.</doc>
+        <doc xml:space="preserve">the data element, or %NULL if it
+         is not found.</doc>
         <type name="gpointer" c:type="gpointer"/>
       </return-value>
       <parameters>
@@ -32532,7 +32851,7 @@ threads are using the same datalist and the same key.</doc>
           <doc xml:space="preserve">the #GQuark identifying a data element</doc>
           <type name="Quark" c:type="GQuark"/>
         </parameter>
-        <parameter name="dup_func" transfer-ownership="none" nullable="1" allow-none="1" closure="3">
+        <parameter name="dup_func" transfer-ownership="none" nullable="1" allow-none="1" scope="call" closure="3">
           <doc xml:space="preserve">function to duplicate the old value</doc>
           <type name="DuplicateFunc" c:type="GDuplicateFunc"/>
         </parameter>
@@ -32545,7 +32864,8 @@ threads are using the same datalist and the same key.</doc>
     <function name="datalist_id_get_data" c:identifier="g_datalist_id_get_data">
       <doc xml:space="preserve">Retrieves the data element corresponding to @key_id.</doc>
       <return-value transfer-ownership="none" nullable="1">
-        <doc xml:space="preserve">the data element, or %NULL if it is not found.</doc>
+        <doc xml:space="preserve">the data element, or %NULL if
+         it is not found.</doc>
         <type name="gpointer" c:type="gpointer"/>
       </return-value>
       <parameters>
@@ -32559,11 +32879,12 @@ threads are using the same datalist and the same key.</doc>
         </parameter>
       </parameters>
     </function>
-    <function name="datalist_id_remove_no_notify" c:identifier="g_datalist_id_remove_no_notify">
+    <function name="datalist_id_remove_no_notify" c:identifier="g_datalist_id_remove_no_notify" introspectable="0">
       <doc xml:space="preserve">Removes an element, without calling its destroy notification
 function.</doc>
       <return-value transfer-ownership="none" nullable="1">
-        <doc xml:space="preserve">the data previously stored at @key_id, or %NULL if none.</doc>
+        <doc xml:space="preserve">the data previously stored at @key_id,
+         or %NULL if none.</doc>
         <type name="gpointer" c:type="gpointer"/>
       </return-value>
       <parameters>
@@ -32577,7 +32898,7 @@ function.</doc>
         </parameter>
       </parameters>
     </function>
-    <function name="datalist_id_replace_data" c:identifier="g_datalist_id_replace_data" version="2.34">
+    <function name="datalist_id_replace_data" c:identifier="g_datalist_id_replace_data" version="2.34" introspectable="0">
       <doc xml:space="preserve">Compares the member that is associated with @key_id in
 @datalist to @oldval, and if they are the same, replace
 @oldval with @newval.
@@ -32587,7 +32908,7 @@ operation, for a member of @datalist.
 
 If the previous value was replaced then ownership of the
 old value (@oldval) is passed to the caller, including
-the registred destroy notify for it (passed out in @old_destroy).
+the registered destroy notify for it (passed out in @old_destroy).
 Its up to the caller to free this as he wishes, which may
 or may not include using @old_destroy as sometimes replacement
 should not destroy the object in the normal way.</doc>
@@ -32617,13 +32938,13 @@ should not destroy the object in the normal way.</doc>
           <doc xml:space="preserve">destroy notify for the new value</doc>
           <type name="DestroyNotify" c:type="GDestroyNotify"/>
         </parameter>
-        <parameter name="old_destroy" transfer-ownership="none" nullable="1" allow-none="1" scope="async">
+        <parameter name="old_destroy" direction="out" caller-allocates="0" transfer-ownership="none" optional="1" allow-none="1" scope="async">
           <doc xml:space="preserve">destroy notify for the existing value</doc>
           <type name="DestroyNotify" c:type="GDestroyNotify*"/>
         </parameter>
       </parameters>
     </function>
-    <function name="datalist_id_set_data_full" c:identifier="g_datalist_id_set_data_full">
+    <function name="datalist_id_set_data_full" c:identifier="g_datalist_id_set_data_full" introspectable="0">
       <doc xml:space="preserve">Sets the data corresponding to the given #GQuark id, and the
 function to be called when the element is removed from the datalist.
 Any previous data with the same key is removed, and its destroy
@@ -32645,7 +32966,7 @@ function is called.</doc>
        corresponding to @key_id.</doc>
           <type name="gpointer" c:type="gpointer"/>
         </parameter>
-        <parameter name="destroy_func" transfer-ownership="none" scope="async">
+        <parameter name="destroy_func" transfer-ownership="none" nullable="1" allow-none="1" scope="async">
           <doc xml:space="preserve">the function to call when the data element is
                removed. This function will be called with the data
                element and can be used to free any memory allocated
@@ -32655,7 +32976,7 @@ function is called.</doc>
         </parameter>
       </parameters>
     </function>
-    <function name="datalist_init" c:identifier="g_datalist_init">
+    <function name="datalist_init" c:identifier="g_datalist_init" introspectable="0">
       <doc xml:space="preserve">Resets the datalist to %NULL. It does not free any memory or call
 any destroy functions.</doc>
       <return-value transfer-ownership="none">
@@ -32726,11 +33047,15 @@ destroy functions set for data elements.</doc>
         </parameter>
       </parameters>
     </function>
-    <function name="dataset_foreach" c:identifier="g_dataset_foreach" introspectable="0">
+    <function name="dataset_foreach" c:identifier="g_dataset_foreach">
       <doc xml:space="preserve">Calls the given function for each data element which is associated
 with the given location. Note that this function is NOT thread-safe.
-So unless @datalist can be protected from any modifications during
-invocation of this function, it should not be called.</doc>
+So unless @dataset_location can be protected from any modifications
+during invocation of this function, it should not be called.
+
+@func can make changes to the dataset, but the iteration will not
+reflect changes made during the g_dataset_foreach() call, other
+than skipping over elements that are removed.</doc>
       <return-value transfer-ownership="none">
         <type name="none" c:type="void"/>
       </return-value>
@@ -32739,7 +33064,7 @@ invocation of this function, it should not be called.</doc>
           <doc xml:space="preserve">the location identifying the dataset.</doc>
           <type name="gpointer" c:type="gconstpointer"/>
         </parameter>
-        <parameter name="func" transfer-ownership="none" closure="2">
+        <parameter name="func" transfer-ownership="none" scope="call" closure="2">
           <doc xml:space="preserve">the function to call for each data element.</doc>
           <type name="DataForeachFunc" c:type="GDataForeachFunc"/>
         </parameter>
@@ -32752,8 +33077,8 @@ invocation of this function, it should not be called.</doc>
     <function name="dataset_id_get_data" c:identifier="g_dataset_id_get_data">
       <doc xml:space="preserve">Gets the data element corresponding to a #GQuark.</doc>
       <return-value transfer-ownership="none" nullable="1">
-        <doc xml:space="preserve">the data element corresponding to the #GQuark, or %NULL if
-         it is not found.</doc>
+        <doc xml:space="preserve">the data element corresponding to
+         the #GQuark, or %NULL if it is not found.</doc>
         <type name="gpointer" c:type="gpointer"/>
       </return-value>
       <parameters>
@@ -32767,11 +33092,12 @@ invocation of this function, it should not be called.</doc>
         </parameter>
       </parameters>
     </function>
-    <function name="dataset_id_remove_no_notify" c:identifier="g_dataset_id_remove_no_notify">
+    <function name="dataset_id_remove_no_notify" c:identifier="g_dataset_id_remove_no_notify" introspectable="0">
       <doc xml:space="preserve">Removes an element, without calling its destroy notification
 function.</doc>
       <return-value transfer-ownership="none" nullable="1">
-        <doc xml:space="preserve">the data previously stored at @key_id, or %NULL if none.</doc>
+        <doc xml:space="preserve">the data previously stored at @key_id,
+         or %NULL if none.</doc>
         <type name="gpointer" c:type="gpointer"/>
       </return-value>
       <parameters>
@@ -32785,7 +33111,7 @@ function.</doc>
         </parameter>
       </parameters>
     </function>
-    <function name="dataset_id_set_data_full" c:identifier="g_dataset_id_set_data_full">
+    <function name="dataset_id_set_data_full" c:identifier="g_dataset_id_set_data_full" introspectable="0">
       <doc xml:space="preserve">Sets the data element associated with the given #GQuark id, and also
 the function to call when the data element is destroyed. Any
 previous data with the same key is removed, and its destroy function
@@ -33168,7 +33494,7 @@ modified, and might thus be a read-only literal string.</doc>
         <parameter name="tmpl" transfer-ownership="none" nullable="1" allow-none="1">
           <doc xml:space="preserve">Template for directory name,
     as in g_mkdtemp(), basename only, or %NULL for a default template</doc>
-          <type name="filename" c:type="gchar*"/>
+          <type name="filename" c:type="const gchar*"/>
         </parameter>
       </parameters>
     </function>
@@ -33356,20 +33682,20 @@ provided list @envp.</doc>
     the environment variable is not set in @envp. The returned
     string is owned by @envp, and will be freed if @variable is
     set or unset again.</doc>
-        <type name="utf8" c:type="const gchar*"/>
+        <type name="filename" c:type="const gchar*"/>
       </return-value>
       <parameters>
         <parameter name="envp" transfer-ownership="none" nullable="1" allow-none="1">
-          <doc xml:space="preserve">an environment
-    list (eg, as returned from g_get_environ()), or %NULL
+          <doc xml:space="preserve">
+    an environment list (eg, as returned from g_get_environ()), or %NULL
     for an empty environment list</doc>
           <array c:type="gchar**">
-            <type name="utf8" c:type="gchar*"/>
+            <type name="filename"/>
           </array>
         </parameter>
         <parameter name="variable" transfer-ownership="none">
           <doc xml:space="preserve">the environment variable to get</doc>
-          <type name="utf8" c:type="const gchar*"/>
+          <type name="filename" c:type="const gchar*"/>
         </parameter>
       </parameters>
     </function>
@@ -33377,29 +33703,30 @@ provided list @envp.</doc>
       <doc xml:space="preserve">Sets the environment variable @variable in the provided list
 @envp to @value.</doc>
       <return-value transfer-ownership="full">
-        <doc xml:space="preserve">the
-    updated environment list. Free it using g_strfreev().</doc>
+        <doc xml:space="preserve">
+    the updated environment list. Free it using g_strfreev().</doc>
         <array c:type="gchar**">
-          <type name="utf8"/>
+          <type name="filename"/>
         </array>
       </return-value>
       <parameters>
         <parameter name="envp" transfer-ownership="full" nullable="1" allow-none="1">
-          <doc xml:space="preserve">an
-    environment list that can be freed using g_strfreev() (e.g., as
+          <doc xml:space="preserve">
+    an environment list that can be freed using g_strfreev() (e.g., as
     returned from g_get_environ()), or %NULL for an empty
     environment list</doc>
           <array c:type="gchar**">
-            <type name="utf8" c:type="gchar*"/>
+            <type name="filename"/>
           </array>
         </parameter>
         <parameter name="variable" transfer-ownership="none">
-          <doc xml:space="preserve">the environment variable to set, must not contain '='</doc>
-          <type name="utf8" c:type="const gchar*"/>
+          <doc xml:space="preserve">the environment variable to set, must not
+    contain '='</doc>
+          <type name="filename" c:type="const gchar*"/>
         </parameter>
         <parameter name="value" transfer-ownership="none">
           <doc xml:space="preserve">the value for to set the variable to</doc>
-          <type name="utf8" c:type="const gchar*"/>
+          <type name="filename" c:type="const gchar*"/>
         </parameter>
         <parameter name="overwrite" transfer-ownership="none">
           <doc xml:space="preserve">whether to change the variable if it already exists</doc>
@@ -33411,24 +33738,25 @@ provided list @envp.</doc>
       <doc xml:space="preserve">Removes the environment variable @variable from the provided
 environment @envp.</doc>
       <return-value transfer-ownership="full">
-        <doc xml:space="preserve">the
-    updated environment list. Free it using g_strfreev().</doc>
+        <doc xml:space="preserve">
+    the updated environment list. Free it using g_strfreev().</doc>
         <array c:type="gchar**">
-          <type name="utf8"/>
+          <type name="filename"/>
         </array>
       </return-value>
       <parameters>
         <parameter name="envp" transfer-ownership="full" nullable="1" allow-none="1">
-          <doc xml:space="preserve">an environment
-    list that can be freed using g_strfreev() (e.g., as returned from g_get_environ()),
-    or %NULL for an empty environment list</doc>
+          <doc xml:space="preserve">
+    an environment list that can be freed using g_strfreev() (e.g., as
+    returned from g_get_environ()), or %NULL for an empty environment list</doc>
           <array c:type="gchar**">
-            <type name="utf8" c:type="gchar*"/>
+            <type name="filename"/>
           </array>
         </parameter>
         <parameter name="variable" transfer-ownership="none">
-          <doc xml:space="preserve">the environment variable to remove, must not contain '='</doc>
-          <type name="utf8" c:type="const gchar*"/>
+          <doc xml:space="preserve">the environment variable to remove, must not
+    contain '='</doc>
+          <type name="filename" c:type="const gchar*"/>
         </parameter>
       </parameters>
     </function>
@@ -33475,7 +33803,7 @@ codes are those in the #GFileError enumeration. In the error case,
       <parameters>
         <parameter name="filename" transfer-ownership="none">
           <doc xml:space="preserve">name of a file to read contents from, in the GLib file name encoding</doc>
-          <type name="filename" c:type="gchar*"/>
+          <type name="filename" c:type="const gchar*"/>
         </parameter>
         <parameter name="contents" direction="out" caller-allocates="0" transfer-ownership="full">
           <doc xml:space="preserve">location to store an allocated string, use g_free() to free
@@ -33518,7 +33846,7 @@ name encoding.</doc>
         <parameter name="tmpl" transfer-ownership="none" nullable="1" allow-none="1">
           <doc xml:space="preserve">Template for file name, as in
     g_mkstemp(), basename only, or %NULL for a default template</doc>
-          <type name="filename" c:type="gchar*"/>
+          <type name="filename" c:type="const gchar*"/>
         </parameter>
         <parameter name="name_used" direction="out" caller-allocates="0" transfer-ownership="full">
           <doc xml:space="preserve">location to store actual name used,
@@ -33539,7 +33867,7 @@ for filenames. Use g_filename_to_utf8() to convert it to UTF-8.</doc>
       <parameters>
         <parameter name="filename" transfer-ownership="none">
           <doc xml:space="preserve">the symbolic link</doc>
-          <type name="filename" c:type="gchar*"/>
+          <type name="filename" c:type="const gchar*"/>
         </parameter>
       </parameters>
     </function>
@@ -33577,7 +33905,7 @@ to 7 characters to @filename.</doc>
         <parameter name="filename" transfer-ownership="none">
           <doc xml:space="preserve">name of a file to write @contents to, in the GLib file name
   encoding</doc>
-          <type name="filename" c:type="gchar*"/>
+          <type name="filename" c:type="const gchar*"/>
         </parameter>
         <parameter name="contents" transfer-ownership="none">
           <doc xml:space="preserve">string to write to the file</doc>
@@ -33641,7 +33969,7 @@ extensions and those listed in the `PATHEXT` environment variable.</doc>
         <parameter name="filename" transfer-ownership="none">
           <doc xml:space="preserve">a filename to test in the
     GLib file name encoding</doc>
-          <type name="filename" c:type="gchar*"/>
+          <type name="filename" c:type="const gchar*"/>
         </parameter>
         <parameter name="test" transfer-ownership="none">
           <doc xml:space="preserve">bitfield of #GFileTest flags</doc>
@@ -33675,7 +34003,7 @@ whole path, as it allows translation.</doc>
         <parameter name="filename" transfer-ownership="none">
           <doc xml:space="preserve">an absolute pathname in the
     GLib file name encoding</doc>
-          <type name="filename" c:type="gchar*"/>
+          <type name="filename" c:type="const gchar*"/>
         </parameter>
       </parameters>
     </function>
@@ -33704,7 +34032,7 @@ translation of filenames.</doc>
         <parameter name="filename" transfer-ownership="none">
           <doc xml:space="preserve">a pathname hopefully in the
     GLib file name encoding</doc>
-          <type name="filename" c:type="gchar*"/>
+          <type name="filename" c:type="const gchar*"/>
         </parameter>
       </parameters>
     </function>
@@ -33733,13 +34061,17 @@ encoding used for filenames.</doc>
       <doc xml:space="preserve">Converts a string from UTF-8 to the encoding GLib uses for
 filenames. Note that on Windows GLib uses UTF-8 for filenames;
 on other platforms, this function indirectly depends on the
-[current locale][setlocale].</doc>
+[current locale][setlocale].
+
+The input string shall not contain nul characters even if the @len
+argument is positive. A nul character found inside the string will result
+in error %G_CONVERT_ERROR_ILLEGAL_SEQUENCE. If the filename encoding is
+not UTF-8 and the conversion output contains a nul character, the error
+%G_CONVERT_ERROR_EMBEDDED_NUL is set and the function returns %NULL.</doc>
       <return-value transfer-ownership="full">
         <doc xml:space="preserve">
               The converted string, or %NULL on an error.</doc>
-        <array length="3" zero-terminated="0" c:type="gchar*">
-          <type name="guint8"/>
-        </array>
+        <type name="filename" c:type="gchar*"/>
       </return-value>
       <parameters>
         <parameter name="utf8string" transfer-ownership="none">
@@ -33757,14 +34089,14 @@ on other platforms, this function indirectly depends on the
                 Even if the conversion was successful, this may be
                 less than @len if there were partial characters
                 at the end of the input. If the error
-                #G_CONVERT_ERROR_ILLEGAL_SEQUENCE occurs, the value
-                stored will the byte offset after the last valid
+                %G_CONVERT_ERROR_ILLEGAL_SEQUENCE occurs, the value
+                stored will be the byte offset after the last valid
                 input sequence.</doc>
           <type name="gsize" c:type="gsize*"/>
         </parameter>
-        <parameter name="bytes_written" direction="out" caller-allocates="0" transfer-ownership="full">
-          <doc xml:space="preserve">the number of bytes stored in the output buffer (not
-                including the terminating nul).</doc>
+        <parameter name="bytes_written" direction="out" caller-allocates="0" transfer-ownership="full" optional="1" allow-none="1">
+          <doc xml:space="preserve">the number of bytes stored in
+                the output buffer (not including the terminating nul).</doc>
           <type name="gsize" c:type="gsize*"/>
         </parameter>
       </parameters>
@@ -33782,7 +34114,7 @@ component following Section 3.3. of RFC 2396.</doc>
           <doc xml:space="preserve">an absolute filename specified in the GLib file
     name encoding, which is the on-disk file name bytes on Unix, and UTF-8
     on Windows</doc>
-          <type name="filename" c:type="gchar*"/>
+          <type name="filename" c:type="const gchar*"/>
         </parameter>
         <parameter name="hostname" transfer-ownership="none" nullable="1" allow-none="1">
           <doc xml:space="preserve">A UTF-8 encoded hostname, or %NULL for none.</doc>
@@ -33794,7 +34126,15 @@ component following Section 3.3. of RFC 2396.</doc>
       <doc xml:space="preserve">Converts a string which is in the encoding used by GLib for
 filenames into a UTF-8 string. Note that on Windows GLib uses UTF-8
 for filenames; on other platforms, this function indirectly depends on
-the [current locale][setlocale].</doc>
+the [current locale][setlocale].
+
+The input string shall not contain nul characters even if the @len
+argument is positive. A nul character found inside the string will result
+in error %G_CONVERT_ERROR_ILLEGAL_SEQUENCE.
+If the source encoding is not UTF-8 and the conversion output contains a
+nul character, the error %G_CONVERT_ERROR_EMBEDDED_NUL is set and the
+function returns %NULL. Use g_convert() to produce output that
+may contain embedded nul characters.</doc>
       <return-value transfer-ownership="full">
         <doc xml:space="preserve">The converted string, or %NULL on an error.</doc>
         <type name="utf8" c:type="gchar*"/>
@@ -33802,7 +34142,7 @@ the [current locale][setlocale].</doc>
       <parameters>
         <parameter name="opsysstring" transfer-ownership="none">
           <doc xml:space="preserve">a string in the encoding for filenames</doc>
-          <type name="filename" c:type="gchar*"/>
+          <type name="filename" c:type="const gchar*"/>
         </parameter>
         <parameter name="len" transfer-ownership="none">
           <doc xml:space="preserve">the length of the string, or -1 if the string is
@@ -33817,8 +34157,8 @@ the [current locale][setlocale].</doc>
                 Even if the conversion was successful, this may be
                 less than @len if there were partial characters
                 at the end of the input. If the error
-                #G_CONVERT_ERROR_ILLEGAL_SEQUENCE occurs, the value
-                stored will the byte offset after the last valid
+                %G_CONVERT_ERROR_ILLEGAL_SEQUENCE occurs, the value
+                stored will be the byte offset after the last valid
                 input sequence.</doc>
           <type name="gsize" c:type="gsize*"/>
         </parameter>
@@ -33855,7 +34195,7 @@ including the type suffix.</doc>
       <parameters>
         <parameter name="program" transfer-ownership="none">
           <doc xml:space="preserve">a program name in the GLib file name encoding</doc>
-          <type name="filename" c:type="gchar*"/>
+          <type name="filename" c:type="const gchar*"/>
         </parameter>
       </parameters>
     </function>
@@ -33930,7 +34270,9 @@ that modify the output. See #GFormatSizeFlags.</doc>
     </function>
     <function name="fprintf" c:identifier="g_fprintf" version="2.2" introspectable="0">
       <doc xml:space="preserve">An implementation of the standard fprintf() function which supports
-positional parameters, as specified in the Single Unix Specification.</doc>
+positional parameters, as specified in the Single Unix Specification.
+
+`glib/gprintf.h` must be explicitly included in order to use this function.</doc>
       <return-value transfer-ownership="none">
         <doc xml:space="preserve">the number of bytes printed.</doc>
         <type name="gint" c:type="gint"/>
@@ -33943,7 +34285,7 @@ positional parameters, as specified in the Single Unix Specification.</doc>
         <parameter name="format" transfer-ownership="none">
           <doc xml:space="preserve">a standard printf() format string, but notice
          [string precision pitfalls][string-precision]</doc>
-          <type name="utf8" c:type="gchar*"/>
+          <type name="utf8" c:type="const gchar*"/>
         </parameter>
         <parameter name="..." transfer-ownership="none">
           <doc xml:space="preserve">the arguments to insert in the output.</doc>
@@ -33990,6 +34332,10 @@ so-called system default ANSI code-page. That is the character set
 used by the "narrow" versions of C library and Win32 functions that
 handle file names. It might be different from the character set
 used by the C library's current locale.
+
+On Linux, the character set is found by consulting nl_langinfo() if
+available. If not, the environment variables `LC_ALL`, `LC_CTYPE`, `LANG`
+and `CHARSET` are queried in order.
 
 The return value is %TRUE if the locale's encoding is UTF-8, in that
 case you can perhaps avoid calling g_convert().
@@ -34058,10 +34404,10 @@ except portable.
 The return value is freshly allocated and it should be freed with
 g_strfreev() when it is no longer needed.</doc>
       <return-value transfer-ownership="full">
-        <doc xml:space="preserve">the list of
-    environment variables</doc>
+        <doc xml:space="preserve">
+    the list of environment variables</doc>
         <array c:type="gchar**">
-          <type name="utf8"/>
+          <type name="filename"/>
         </array>
       </return-value>
     </function>
@@ -34096,7 +34442,6 @@ on a system might be in any random encoding or just gibberish.</doc>
       </return-value>
       <parameters>
         <parameter name="charsets" transfer-ownership="none">
-          <doc xml:space="preserve">return location for the %NULL-terminated list of encoding names</doc>
           <type name="utf8" c:type="const gchar***"/>
         </parameter>
       </parameters>
@@ -34124,7 +34469,7 @@ should either directly check the `HOME` environment variable yourself
 or unset it before calling any functions in GLib.</doc>
       <return-value transfer-ownership="none">
         <doc xml:space="preserve">the current user's home directory</doc>
-        <type name="filename" c:type="gchar*"/>
+        <type name="filename" c:type="const gchar*"/>
       </return-value>
     </function>
     <function name="get_host_name" c:identifier="g_get_host_name" version="2.8">
@@ -34139,7 +34484,9 @@ of the machine is changed while an application is running, the
 return value from this function does not change. The returned
 string is owned by GLib and should not be modified or freed. If no
 name can be determined, a default fixed string "localhost" is
-returned.</doc>
+returned.
+
+The encoding of the returned string is UTF-8.</doc>
       <return-value transfer-ownership="none">
         <doc xml:space="preserve">the host name of the machine.</doc>
         <type name="utf8" c:type="const gchar*"/>
@@ -34240,7 +34587,7 @@ real user name cannot be determined, the string "Unknown" is
 returned.</doc>
       <return-value transfer-ownership="none">
         <doc xml:space="preserve">the user's real name.</doc>
-        <type name="filename" c:type="gchar*"/>
+        <type name="filename" c:type="const gchar*"/>
       </return-value>
     </function>
     <function name="get_real_time" c:identifier="g_get_real_time" version="2.28">
@@ -34343,7 +34690,7 @@ it is always UTF-8. The return value is never %NULL or the empty
 string.</doc>
       <return-value transfer-ownership="none">
         <doc xml:space="preserve">the directory to use for temporary files.</doc>
-        <type name="filename" c:type="gchar*"/>
+        <type name="filename" c:type="const gchar*"/>
       </return-value>
     </function>
     <function name="get_user_cache_dir" c:identifier="g_get_user_cache_dir" version="2.6">
@@ -34363,7 +34710,7 @@ See the [documentation for `CSIDL_INTERNET_CACHE`](https://msdn.microsoft.com/en
       <return-value transfer-ownership="none">
         <doc xml:space="preserve">a string owned by GLib that must not be modified
               or freed.</doc>
-        <type name="filename" c:type="gchar*"/>
+        <type name="filename" c:type="const gchar*"/>
       </return-value>
     </function>
     <function name="get_user_config_dir" c:identifier="g_get_user_config_dir" version="2.6">
@@ -34384,7 +34731,7 @@ as what g_get_user_data_dir() returns.</doc>
       <return-value transfer-ownership="none">
         <doc xml:space="preserve">a string owned by GLib that must not be modified
               or freed.</doc>
-        <type name="filename" c:type="gchar*"/>
+        <type name="filename" c:type="const gchar*"/>
       </return-value>
     </function>
     <function name="get_user_data_dir" c:identifier="g_get_user_data_dir" version="2.6">
@@ -34405,7 +34752,7 @@ as what g_get_user_config_dir() returns.</doc>
       <return-value transfer-ownership="none">
         <doc xml:space="preserve">a string owned by GLib that must not be modified
               or freed.</doc>
-        <type name="filename" c:type="gchar*"/>
+        <type name="filename" c:type="const gchar*"/>
       </return-value>
     </function>
     <function name="get_user_name" c:identifier="g_get_user_name">
@@ -34415,7 +34762,7 @@ encoding, or something else, and there is no guarantee that it is even
 consistent on a machine. On Windows, it is always UTF-8.</doc>
       <return-value transfer-ownership="none">
         <doc xml:space="preserve">the user name of the current user.</doc>
-        <type name="filename" c:type="gchar*"/>
+        <type name="filename" c:type="const gchar*"/>
       </return-value>
     </function>
     <function name="get_user_runtime_dir" c:identifier="g_get_user_runtime_dir" version="2.28">
@@ -34432,7 +34779,7 @@ g_get_user_cache_dir(), after verifying that it exists.</doc>
       <return-value transfer-ownership="none">
         <doc xml:space="preserve">a string owned by GLib that must not be
     modified or freed.</doc>
-        <type name="filename" c:type="gchar*"/>
+        <type name="filename" c:type="const gchar*"/>
       </return-value>
     </function>
     <function name="get_user_special_dir" c:identifier="g_get_user_special_dir" version="2.14">
@@ -34450,7 +34797,7 @@ will not reflect any change once the special directories are loaded.</doc>
         <doc xml:space="preserve">the path to the specified special directory, or
   %NULL if the logical id was not found. The returned string is owned by
   GLib and should not be modified or freed.</doc>
-        <type name="filename" c:type="gchar*"/>
+        <type name="filename" c:type="const gchar*"/>
       </return-value>
       <parameters>
         <parameter name="directory" transfer-ownership="none">
@@ -34472,12 +34819,12 @@ references to other environment variables, they are expanded.</doc>
     the environment variable is not found. The returned string
     may be overwritten by the next call to g_getenv(), g_setenv()
     or g_unsetenv().</doc>
-        <type name="utf8" c:type="const gchar*"/>
+        <type name="filename" c:type="const gchar*"/>
       </return-value>
       <parameters>
         <parameter name="variable" transfer-ownership="none">
           <doc xml:space="preserve">the environment variable to get</doc>
-          <type name="utf8" c:type="const gchar*"/>
+          <type name="filename" c:type="const gchar*"/>
         </parameter>
       </parameters>
     </function>
@@ -34488,7 +34835,11 @@ key and the value.
 
 When a hash table only ever contains keys that have themselves as the
 corresponding value it is able to be stored more efficiently.  See
-the discussion in the section description.</doc>
+the discussion in the section description.
+
+Starting from GLib 2.40, this function returns a boolean value to
+indicate whether the newly added value was already in the hash table
+or not.</doc>
       <return-value transfer-ownership="none">
         <doc xml:space="preserve">%TRUE if the key did not exist yet</doc>
         <type name="gboolean" c:type="gboolean"/>
@@ -34555,7 +34906,11 @@ value is replaced with the new value. If you supplied a
 @value_destroy_func when creating the #GHashTable, the old
 value is freed using that function. If you supplied a
 @key_destroy_func when creating the #GHashTable, the passed
-key is freed using that function.</doc>
+key is freed using that function.
+
+Starting from GLib 2.40, this function returns a boolean value to
+indicate whether the newly added value was already in the hash table
+or not.</doc>
       <return-value transfer-ownership="none">
         <doc xml:space="preserve">%TRUE if the key did not exist yet</doc>
         <type name="gboolean" c:type="gboolean"/>
@@ -34689,7 +35044,11 @@ already exists in the #GHashTable, it gets replaced by the
 new key. If you supplied a @value_destroy_func when creating
 the #GHashTable, the old value is freed using that function.
 If you supplied a @key_destroy_func when creating the
-#GHashTable, the old key is freed using that function.</doc>
+#GHashTable, the old key is freed using that function.
+
+Starting from GLib 2.40, this function returns a boolean value to
+indicate whether the newly added value was already in the hash table
+or not.</doc>
       <return-value transfer-ownership="none">
         <doc xml:space="preserve">%TRUE if the key did not exist yet</doc>
         <type name="gboolean" c:type="gboolean"/>
@@ -34978,13 +35337,20 @@ the canonical presentation form will be entirely ASCII.</doc>
         </parameter>
       </parameters>
     </function>
-    <function name="iconv" c:identifier="g_iconv">
+    <function name="iconv" c:identifier="g_iconv" introspectable="0">
       <doc xml:space="preserve">Same as the standard UNIX routine iconv(), but
 may be implemented via libiconv on UNIX flavors that lack
 a native implementation.
 
 GLib provides g_convert() and g_locale_to_utf8() which are likely
-more convenient than the raw iconv wrappers.</doc>
+more convenient than the raw iconv wrappers.
+
+Note that the behaviour of iconv() for characters which are valid in the
+input character set, but which have no representation in the output character
+set, is implementation defined. This function may return success (with a
+positive number of non-reversible conversions as replacement characters were
+used), or it may return -1 and set an error such as %EILSEQ, in such a
+situation.</doc>
       <return-value transfer-ownership="none">
         <doc xml:space="preserve">count of non-reversible conversions, or -1 on error</doc>
         <type name="gsize" c:type="gsize"/>
@@ -35009,6 +35375,29 @@ more convenient than the raw iconv wrappers.</doc>
         <parameter name="outbytes_left" transfer-ownership="none">
           <doc xml:space="preserve">inout parameter, bytes available to fill in @outbuf</doc>
           <type name="gsize" c:type="gsize*"/>
+        </parameter>
+      </parameters>
+    </function>
+    <function name="iconv_open" c:identifier="g_iconv_open" moved-to="IConv.open" introspectable="0">
+      <doc xml:space="preserve">Same as the standard UNIX routine iconv_open(), but
+may be implemented via libiconv on UNIX flavors that lack
+a native implementation.
+
+GLib provides g_convert() and g_locale_to_utf8() which are likely
+more convenient than the raw iconv wrappers.</doc>
+      <return-value>
+        <doc xml:space="preserve">a "conversion descriptor", or (GIConv)-1 if
+ opening the converter failed.</doc>
+        <type name="IConv" c:type="GIConv"/>
+      </return-value>
+      <parameters>
+        <parameter name="to_codeset" transfer-ownership="none">
+          <doc xml:space="preserve">destination codeset</doc>
+          <type name="utf8" c:type="const gchar*"/>
+        </parameter>
+        <parameter name="from_codeset" transfer-ownership="none">
+          <doc xml:space="preserve">source codeset</doc>
+          <type name="utf8" c:type="const gchar*"/>
         </parameter>
       </parameters>
     </function>
@@ -35343,10 +35732,11 @@ array are in system codepage encoding, while in most of the typical
 use cases for environment variables in GLib-using programs you want
 the UTF-8 encoding that this function and g_getenv() provide.</doc>
       <return-value transfer-ownership="full">
-        <doc xml:space="preserve">a %NULL-terminated
-    list of strings which must be freed with g_strfreev().</doc>
+        <doc xml:space="preserve">
+    a %NULL-terminated list of strings which must be freed with
+    g_strfreev().</doc>
         <array c:type="gchar**">
-          <type name="utf8"/>
+          <type name="filename"/>
         </array>
       </return-value>
     </function>
@@ -35354,11 +35744,19 @@ the UTF-8 encoding that this function and g_getenv() provide.</doc>
       <doc xml:space="preserve">Converts a string from UTF-8 to the encoding used for strings by
 the C runtime (usually the same as that used by the operating
 system) in the [current locale][setlocale]. On Windows this means
-the system codepage.</doc>
+the system codepage.
+
+The input string shall not contain nul characters even if the @len
+argument is positive. A nul character found inside the string will result
+in error %G_CONVERT_ERROR_ILLEGAL_SEQUENCE. Use g_convert() to convert
+input that may contain embedded nul characters.</doc>
       <return-value transfer-ownership="full">
-        <doc xml:space="preserve">A newly-allocated buffer containing the converted string,
-              or %NULL on an error, and error will be set.</doc>
-        <type name="utf8" c:type="gchar*"/>
+        <doc xml:space="preserve">
+         A newly-allocated buffer containing the converted string,
+         or %NULL on an error, and error will be set.</doc>
+        <array length="3" zero-terminated="0" c:type="gchar*">
+          <type name="guint8"/>
+        </array>
       </return-value>
       <parameters>
         <parameter name="utf8string" transfer-ownership="none">
@@ -35367,9 +35765,7 @@ the system codepage.</doc>
         </parameter>
         <parameter name="len" transfer-ownership="none">
           <doc xml:space="preserve">the length of the string, or -1 if the string is
-                nul-terminated (Note that some encodings may allow nul
-                bytes to occur inside strings. In that case, using -1
-                for the @len parameter is unsafe)</doc>
+                nul-terminated.</doc>
           <type name="gssize" c:type="gssize"/>
         </parameter>
         <parameter name="bytes_read" direction="out" caller-allocates="0" transfer-ownership="full" optional="1" allow-none="1">
@@ -35378,8 +35774,8 @@ the system codepage.</doc>
                 Even if the conversion was successful, this may be
                 less than @len if there were partial characters
                 at the end of the input. If the error
-                #G_CONVERT_ERROR_ILLEGAL_SEQUENCE occurs, the value
-                stored will the byte offset after the last valid
+                %G_CONVERT_ERROR_ILLEGAL_SEQUENCE occurs, the value
+                stored will be the byte offset after the last valid
                 input sequence.</doc>
           <type name="gsize" c:type="gsize*"/>
         </parameter>
@@ -35393,17 +35789,27 @@ the system codepage.</doc>
     <function name="locale_to_utf8" c:identifier="g_locale_to_utf8" throws="1">
       <doc xml:space="preserve">Converts a string which is in the encoding used for strings by
 the C runtime (usually the same as that used by the operating
-system) in the [current locale][setlocale] into a UTF-8 string.</doc>
+system) in the [current locale][setlocale] into a UTF-8 string.
+
+If the source encoding is not UTF-8 and the conversion output contains a
+nul character, the error %G_CONVERT_ERROR_EMBEDDED_NUL is set and the
+function returns %NULL.
+If the source encoding is UTF-8, an embedded nul character is treated with
+the %G_CONVERT_ERROR_ILLEGAL_SEQUENCE error for backward compatibility with
+earlier versions of this library. Use g_convert() to produce output that
+may contain embedded nul characters.</doc>
       <return-value transfer-ownership="full">
-        <doc xml:space="preserve">A newly-allocated buffer containing the converted string,
-              or %NULL on an error, and error will be set.</doc>
+        <doc xml:space="preserve">The converted string, or %NULL on an error.</doc>
         <type name="utf8" c:type="gchar*"/>
       </return-value>
       <parameters>
         <parameter name="opsysstring" transfer-ownership="none">
-          <doc xml:space="preserve">a string in the encoding of the current locale. On Windows
+          <doc xml:space="preserve">a string in the
+                encoding of the current locale. On Windows
                 this means the system codepage.</doc>
-          <type name="utf8" c:type="const gchar*"/>
+          <array length="1" zero-terminated="0" c:type="gchar*">
+            <type name="guint8"/>
+          </array>
         </parameter>
         <parameter name="len" transfer-ownership="none">
           <doc xml:space="preserve">the length of the string, or -1 if the string is
@@ -35418,8 +35824,8 @@ system) in the [current locale][setlocale] into a UTF-8 string.</doc>
                 Even if the conversion was successful, this may be
                 less than @len if there were partial characters
                 at the end of the input. If the error
-                #G_CONVERT_ERROR_ILLEGAL_SEQUENCE occurs, the value
-                stored will the byte offset after the last valid
+                %G_CONVERT_ERROR_ILLEGAL_SEQUENCE occurs, the value
+                stored will be the byte offset after the last valid
                 input sequence.</doc>
           <type name="gsize" c:type="gsize*"/>
         </parameter>
@@ -35670,7 +36076,7 @@ g_log_set_handler ("GLib", G_LOG_LEVEL_MASK | G_LOG_FLAG_FATAL
       </parameters>
     </function>
     <function name="log_set_handler_full" c:identifier="g_log_set_handler_full" shadows="log_set_handler" version="2.46">
-      <doc xml:space="preserve">Like g_log_sets_handler(), but takes a destroy notify for the @user_data.
+      <doc xml:space="preserve">Like g_log_set_handler(), but takes a destroy notify for the @user_data.
 
 This has no effect if structured logging is enabled; see
 [Using Structured Logging][using-structured-logging].</doc>
@@ -35863,6 +36269,34 @@ This assumes that @log_level is already present in @fields (typically as the
         <parameter name="n_fields" transfer-ownership="none">
           <doc xml:space="preserve">number of elements in the @fields array</doc>
           <type name="gsize" c:type="gsize"/>
+        </parameter>
+      </parameters>
+    </function>
+    <function name="log_structured_standard" c:identifier="g_log_structured_standard" introspectable="0">
+      <return-value transfer-ownership="none">
+        <type name="none" c:type="void"/>
+      </return-value>
+      <parameters>
+        <parameter name="log_domain" transfer-ownership="none">
+          <type name="utf8" c:type="const gchar*"/>
+        </parameter>
+        <parameter name="log_level" transfer-ownership="none">
+          <type name="LogLevelFlags" c:type="GLogLevelFlags"/>
+        </parameter>
+        <parameter name="file" transfer-ownership="none">
+          <type name="utf8" c:type="const gchar*"/>
+        </parameter>
+        <parameter name="line" transfer-ownership="none">
+          <type name="utf8" c:type="const gchar*"/>
+        </parameter>
+        <parameter name="func" transfer-ownership="none">
+          <type name="utf8" c:type="const gchar*"/>
+        </parameter>
+        <parameter name="message_format" transfer-ownership="none">
+          <type name="utf8" c:type="const gchar*"/>
+        </parameter>
+        <parameter name="..." transfer-ownership="none">
+          <varargs/>
         </parameter>
       </parameters>
     </function>
@@ -36537,7 +36971,8 @@ profiling these days which can be used instead.</doc>
 However, its use was incompatible with the use of global constructors
 in GLib and GIO, because those use the GLib allocators before main is
 reached. Therefore this function is now deprecated and is just a stub.</doc>
-      <doc-deprecated xml:space="preserve">Use other memory profiling tools instead</doc-deprecated>
+      <doc-deprecated xml:space="preserve">This function now does nothing. Use other memory
+profiling tools instead</doc-deprecated>
       <return-value transfer-ownership="none">
         <type name="none" c:type="void"/>
       </return-value>
@@ -36578,7 +37013,7 @@ created. Returns -1 if an error occurred, with errno set.</doc>
       <parameters>
         <parameter name="pathname" transfer-ownership="none">
           <doc xml:space="preserve">a pathname in the GLib file name encoding</doc>
-          <type name="filename" c:type="gchar*"/>
+          <type name="filename" c:type="const gchar*"/>
         </parameter>
         <parameter name="mode" transfer-ownership="none">
           <doc xml:space="preserve">permissions to use for newly created directories</doc>
@@ -36914,7 +37349,7 @@ separator is returned. If @file_name is empty, it gets ".".</doc>
       <parameters>
         <parameter name="file_name" transfer-ownership="none">
           <doc xml:space="preserve">the name of the file</doc>
-          <type name="filename" c:type="gchar*"/>
+          <type name="filename" c:type="const gchar*"/>
         </parameter>
       </parameters>
     </function>
@@ -36930,7 +37365,7 @@ The returned string should be freed when no longer needed.</doc>
       <parameters>
         <parameter name="file_name" transfer-ownership="none">
           <doc xml:space="preserve">the name of the file</doc>
-          <type name="filename" c:type="gchar*"/>
+          <type name="filename" c:type="const gchar*"/>
         </parameter>
       </parameters>
     </function>
@@ -36946,7 +37381,7 @@ current directory introduce vagueness. This function interprets as
 an absolute file name one that either begins with a directory
 separator such as "\Users\tml" or begins with the root on a drive,
 for example "C:\Windows". The first case also includes UNC paths
-such as "\\myserver\docs\foo". In all cases, either slashes or
+such as "\\\\myserver\docs\foo". In all cases, either slashes or
 backslashes are accepted.
 
 Note that a file name relative to the current drive root does not
@@ -36966,7 +37401,7 @@ Windows-specific code.</doc>
       <parameters>
         <parameter name="file_name" transfer-ownership="none">
           <doc xml:space="preserve">a file name</doc>
-          <type name="filename" c:type="gchar*"/>
+          <type name="filename" c:type="const gchar*"/>
         </parameter>
       </parameters>
     </function>
@@ -36977,12 +37412,12 @@ is not an absolute path it returns %NULL.</doc>
       <return-value transfer-ownership="none" nullable="1">
         <doc xml:space="preserve">a pointer into @file_name after the
     root component</doc>
-        <type name="filename" c:type="gchar*"/>
+        <type name="filename" c:type="const gchar*"/>
       </return-value>
       <parameters>
         <parameter name="file_name" transfer-ownership="none">
           <doc xml:space="preserve">a file name</doc>
-          <type name="filename" c:type="gchar*"/>
+          <type name="filename" c:type="const gchar*"/>
         </parameter>
       </parameters>
     </function>
@@ -37136,9 +37571,9 @@ directly if you need to block until a file descriptor is ready, but
 don't want to run the full main loop.
 
 Each element of @fds is a #GPollFD describing a single file
-descriptor to poll. The %fd field indicates the file descriptor,
-and the %events field indicates the events to poll for. On return,
-the %revents fields will be filled with the events that actually
+descriptor to poll. The @fd field indicates the file descriptor,
+and the @events field indicates the events to poll for. On return,
+the @revents fields will be filled with the events that actually
 occurred.
 
 On POSIX systems, the file descriptors in @fds can be any sort of
@@ -37147,7 +37582,7 @@ Windows. If you need to use g_poll() in code that has to run on
 Windows, the easiest solution is to construct all of your
 #GPollFDs with g_io_channel_win32_make_pollfd().</doc>
       <return-value transfer-ownership="none">
-        <doc xml:space="preserve">the number of entries in @fds whose %revents fields
+        <doc xml:space="preserve">the number of entries in @fds whose @revents fields
 were filled in, or 0 if the operation timed out, or -1 on error or
 if the call was interrupted.</doc>
         <type name="gint" c:type="gint"/>
@@ -37173,8 +37608,7 @@ error message. If @err is %NULL (ie: no error variable) then do
 nothing.
 
 If *@err is %NULL (ie: an error variable is present but there is no
-error condition) then also do nothing. Whether or not it makes sense
-to take advantage of this feature is up to you.</doc>
+error condition) then also do nothing.</doc>
       <return-value transfer-ownership="none">
         <type name="none" c:type="void"/>
       </return-value>
@@ -37247,7 +37681,9 @@ positional parameters, as specified in the Single Unix Specification.
 
 As with the standard printf(), this does not automatically append a trailing
 new-line character to the message, so typically @format should end with its
-own new-line character.</doc>
+own new-line character.
+
+`glib/gprintf.h` must be explicitly included in order to use this function.</doc>
       <return-value transfer-ownership="none">
         <doc xml:space="preserve">the number of bytes printed.</doc>
         <type name="gint" c:type="gint"/>
@@ -37256,7 +37692,7 @@ own new-line character.</doc>
         <parameter name="format" transfer-ownership="none">
           <doc xml:space="preserve">a standard printf() format string, but notice
          [string precision pitfalls][string-precision]</doc>
-          <type name="utf8" c:type="gchar*"/>
+          <type name="utf8" c:type="const gchar*"/>
         </parameter>
         <parameter name="..." transfer-ownership="none">
           <doc xml:space="preserve">the arguments to insert in the output.</doc>
@@ -37816,7 +38252,7 @@ on your system.</doc>
         <parameter name="filename" transfer-ownership="none">
           <doc xml:space="preserve">a pathname in the GLib file name encoding
     (UTF-8 on Windows)</doc>
-          <type name="filename" c:type="gchar*"/>
+          <type name="filename" c:type="const gchar*"/>
         </parameter>
       </parameters>
     </function>
@@ -38154,12 +38590,13 @@ array directly to execvpe(), g_spawn_async(), or the like.</doc>
       </return-value>
       <parameters>
         <parameter name="variable" transfer-ownership="none">
-          <doc xml:space="preserve">the environment variable to set, must not contain '='.</doc>
-          <type name="utf8" c:type="const gchar*"/>
+          <doc xml:space="preserve">the environment variable to set, must not
+    contain '='.</doc>
+          <type name="filename" c:type="const gchar*"/>
         </parameter>
         <parameter name="value" transfer-ownership="none">
           <doc xml:space="preserve">the value for to set the variable to.</doc>
-          <type name="utf8" c:type="const gchar*"/>
+          <type name="filename" c:type="const gchar*"/>
         </parameter>
         <parameter name="overwrite" transfer-ownership="none">
           <doc xml:space="preserve">whether to change the variable if it already exists.</doc>
@@ -38189,17 +38626,17 @@ domain. Free the returned vector with g_strfreev().</doc>
       <parameters>
         <parameter name="command_line" transfer-ownership="none">
           <doc xml:space="preserve">command line to parse</doc>
-          <type name="utf8" c:type="const gchar*"/>
+          <type name="filename" c:type="const gchar*"/>
         </parameter>
         <parameter name="argcp" direction="out" caller-allocates="0" transfer-ownership="full" optional="1" allow-none="1">
           <doc xml:space="preserve">return location for number of args</doc>
           <type name="gint" c:type="gint*"/>
         </parameter>
         <parameter name="argvp" direction="out" caller-allocates="0" transfer-ownership="full" optional="1" allow-none="1">
-          <doc xml:space="preserve">return
-  location for array of args</doc>
+          <doc xml:space="preserve">
+  return location for array of args</doc>
           <array length="1" zero-terminated="1" c:type="gchar***">
-            <type name="utf8" c:type="gchar**"/>
+            <type name="filename"/>
           </array>
         </parameter>
       </parameters>
@@ -38213,12 +38650,12 @@ quoting style used is undefined (single or double quotes may be
 used).</doc>
       <return-value transfer-ownership="full">
         <doc xml:space="preserve">quoted string</doc>
-        <type name="utf8" c:type="gchar*"/>
+        <type name="filename" c:type="gchar*"/>
       </return-value>
       <parameters>
         <parameter name="unquoted_string" transfer-ownership="none">
           <doc xml:space="preserve">a literal string</doc>
-          <type name="utf8" c:type="const gchar*"/>
+          <type name="filename" c:type="const gchar*"/>
         </parameter>
       </parameters>
     </function>
@@ -38246,18 +38683,18 @@ be escaped with backslash. Otherwise double quotes preserve things
 literally.</doc>
       <return-value transfer-ownership="full">
         <doc xml:space="preserve">an unquoted string</doc>
-        <type name="utf8" c:type="gchar*"/>
+        <type name="filename" c:type="gchar*"/>
       </return-value>
       <parameters>
         <parameter name="quoted_string" transfer-ownership="none">
           <doc xml:space="preserve">shell-quoted string</doc>
-          <type name="utf8" c:type="const gchar*"/>
+          <type name="filename" c:type="const gchar*"/>
         </parameter>
       </parameters>
     </function>
     <function name="slice_alloc" c:identifier="g_slice_alloc" version="2.10">
       <doc xml:space="preserve">Allocates a block of memory from the slice allocator.
-The block adress handed out can be expected to be aligned
+The block address handed out can be expected to be aligned
 to at least 1 * sizeof (void*),
 though in general slices are 2 * sizeof (void*) bytes aligned,
 if a malloc() fallback implementation is used instead,
@@ -38444,7 +38881,7 @@ the Single Unix Specification.</doc>
         <parameter name="format" transfer-ownership="none">
           <doc xml:space="preserve">a standard printf() format string, but notice
          [string precision pitfalls][string-precision]</doc>
-          <type name="utf8" c:type="gchar*"/>
+          <type name="utf8" c:type="const gchar*"/>
         </parameter>
         <parameter name="..." transfer-ownership="none">
           <doc xml:space="preserve">the arguments to insert in the output.</doc>
@@ -38453,16 +38890,14 @@ the Single Unix Specification.</doc>
       </parameters>
     </function>
     <function name="source_remove" c:identifier="g_source_remove" moved-to="Source.remove">
-      <doc xml:space="preserve">Removes the source with the given id from the default main context.
+      <doc xml:space="preserve">Removes the source with the given ID from the default main context. You must
+use g_source_destroy() for sources added to a non-default main context.
 
-The id of a #GSource is given by g_source_get_id(), or will be
+The ID of a #GSource is given by g_source_get_id(), or will be
 returned by the functions g_source_attach(), g_idle_add(),
 g_idle_add_full(), g_timeout_add(), g_timeout_add_full(),
 g_child_watch_add(), g_child_watch_add_full(), g_io_add_watch(), and
 g_io_add_watch_full().
-
-See also g_source_destroy(). You must use g_source_destroy() for sources
-added to a non-default main context.
 
 It is a programmer error to attempt to remove a non-existent source.
 
@@ -38579,7 +39014,7 @@ reference when you don't need it any more.
 If you are writing a GTK+ application, and the program you are spawning is a
 graphical application too, then to ensure that the spawned program opens its
 windows on the right screen, you may want to use #GdkAppLaunchContext,
-#GAppLaunchcontext, or set the %DISPLAY environment variable.
+#GAppLaunchContext, or set the %DISPLAY environment variable.
 
 Note that the returned @child_pid on Windows is a handle to the child
 process and not its identifier. Process handles and process identifiers
@@ -38590,19 +39025,22 @@ are different concepts on Windows.</doc>
       </return-value>
       <parameters>
         <parameter name="working_directory" transfer-ownership="none" nullable="1" allow-none="1">
-          <doc xml:space="preserve">child's current working directory, or %NULL to inherit parent's</doc>
-          <type name="filename" c:type="gchar*"/>
+          <doc xml:space="preserve">child's current working
+    directory, or %NULL to inherit parent's</doc>
+          <type name="filename" c:type="const gchar*"/>
         </parameter>
         <parameter name="argv" transfer-ownership="none">
-          <doc xml:space="preserve">child's argument vector</doc>
+          <doc xml:space="preserve">
+    child's argument vector</doc>
           <array c:type="gchar**">
-            <type name="utf8" c:type="gchar*"/>
+            <type name="filename"/>
           </array>
         </parameter>
         <parameter name="envp" transfer-ownership="none" nullable="1" allow-none="1">
-          <doc xml:space="preserve">child's environment, or %NULL to inherit parent's</doc>
+          <doc xml:space="preserve">
+    child's environment, or %NULL to inherit parent's</doc>
           <array c:type="gchar**">
-            <type name="utf8" c:type="gchar*"/>
+            <type name="filename"/>
           </array>
         </parameter>
         <parameter name="flags" transfer-ownership="none">
@@ -38709,7 +39147,7 @@ will be discarded, instead of going to the same location as the parent's
 standard error. If you use this flag, @standard_error must be %NULL.
 %G_SPAWN_CHILD_INHERITS_STDIN means that the child will inherit the parent's
 standard input (by default, the child's standard input is attached to
-/dev/null). If you use this flag, @standard_input must be %NULL.
+`/dev/null`). If you use this flag, @standard_input must be %NULL.
 %G_SPAWN_FILE_AND_ARGV_ZERO means that the first element of @argv is
 the file to execute, while the remaining elements are the actual
 argument vector to pass to the file. Normally g_spawn_async_with_pipes()
@@ -38746,8 +39184,8 @@ The caller of g_spawn_async_with_pipes() must close these file descriptors
 when they are no longer in use. If these parameters are %NULL, the
 corresponding pipe won't be created.
 
-If @standard_input is NULL, the child's standard input is attached to
-/dev/null unless %G_SPAWN_CHILD_INHERITS_STDIN is set.
+If @standard_input is %NULL, the child's standard input is attached to
+`/dev/null` unless %G_SPAWN_CHILD_INHERITS_STDIN is set.
 
 If @standard_error is NULL, the child's standard error goes to the same
 location as the parent's standard error unless %G_SPAWN_STDERR_TO_DEV_NULL
@@ -38773,26 +39211,30 @@ process reference must be closed using g_spawn_close_pid().
 If you are writing a GTK+ application, and the program you are spawning is a
 graphical application too, then to ensure that the spawned program opens its
 windows on the right screen, you may want to use #GdkAppLaunchContext,
-#GAppLaunchcontext, or set the %DISPLAY environment variable.</doc>
+#GAppLaunchContext, or set the %DISPLAY environment variable.</doc>
       <return-value transfer-ownership="none">
         <doc xml:space="preserve">%TRUE on success, %FALSE if an error was set</doc>
         <type name="gboolean" c:type="gboolean"/>
       </return-value>
       <parameters>
         <parameter name="working_directory" transfer-ownership="none" nullable="1" allow-none="1">
-          <doc xml:space="preserve">child's current working directory, or %NULL to inherit parent's, in the GLib file name encoding</doc>
-          <type name="filename" c:type="gchar*"/>
+          <doc xml:space="preserve">child's current working
+    directory, or %NULL to inherit parent's, in the GLib file name encoding</doc>
+          <type name="filename" c:type="const gchar*"/>
         </parameter>
         <parameter name="argv" transfer-ownership="none">
-          <doc xml:space="preserve">child's argument vector, in the GLib file name encoding</doc>
+          <doc xml:space="preserve">child's argument
+    vector, in the GLib file name encoding</doc>
           <array c:type="gchar**">
-            <type name="utf8" c:type="gchar*"/>
+            <type name="filename"/>
           </array>
         </parameter>
         <parameter name="envp" transfer-ownership="none" nullable="1" allow-none="1">
-          <doc xml:space="preserve">child's environment, or %NULL to inherit parent's, in the GLib file name encoding</doc>
+          <doc xml:space="preserve">
+    child's environment, or %NULL to inherit parent's, in the GLib file
+    name encoding</doc>
           <array c:type="gchar**">
-            <type name="utf8" c:type="gchar*"/>
+            <type name="filename"/>
           </array>
         </parameter>
         <parameter name="flags" transfer-ownership="none">
@@ -38906,7 +39348,7 @@ The same concerns on Windows apply as for g_spawn_command_line_sync().</doc>
       <parameters>
         <parameter name="command_line" transfer-ownership="none">
           <doc xml:space="preserve">a command line</doc>
-          <type name="utf8" c:type="const gchar*"/>
+          <type name="filename" c:type="const gchar*"/>
         </parameter>
       </parameters>
     </function>
@@ -38940,7 +39382,7 @@ separator. You need to enclose such paths with single quotes, like
       <parameters>
         <parameter name="command_line" transfer-ownership="none">
           <doc xml:space="preserve">a command line</doc>
-          <type name="utf8" c:type="const gchar*"/>
+          <type name="filename" c:type="const gchar*"/>
         </parameter>
         <parameter name="standard_output" direction="out" caller-allocates="0" transfer-ownership="full" optional="1" allow-none="1">
           <doc xml:space="preserve">return location for child output</doc>
@@ -38981,7 +39423,8 @@ If @exit_status is non-%NULL, the platform-specific exit status of
 the child is stored there; see the documentation of
 g_spawn_check_exit_status() for how to use and interpret this.
 Note that it is invalid to pass %G_SPAWN_DO_NOT_REAP_CHILD in
-@flags.
+@flags, and on POSIX platforms, the same restrictions as for
+g_child_watch_source_new() apply.
 
 If an error occurs, no data is returned in @standard_output,
 @standard_error, or @exit_status.
@@ -38995,19 +39438,22 @@ how these functions work on Windows.</doc>
       </return-value>
       <parameters>
         <parameter name="working_directory" transfer-ownership="none" nullable="1" allow-none="1">
-          <doc xml:space="preserve">child's current working directory, or %NULL to inherit parent's</doc>
-          <type name="filename" c:type="gchar*"/>
+          <doc xml:space="preserve">child's current working
+    directory, or %NULL to inherit parent's</doc>
+          <type name="filename" c:type="const gchar*"/>
         </parameter>
         <parameter name="argv" transfer-ownership="none">
-          <doc xml:space="preserve">child's argument vector</doc>
+          <doc xml:space="preserve">
+    child's argument vector</doc>
           <array c:type="gchar**">
-            <type name="utf8" c:type="gchar*"/>
+            <type name="filename"/>
           </array>
         </parameter>
         <parameter name="envp" transfer-ownership="none" nullable="1" allow-none="1">
-          <doc xml:space="preserve">child's environment, or %NULL to inherit parent's</doc>
+          <doc xml:space="preserve">
+    child's environment, or %NULL to inherit parent's</doc>
           <array c:type="gchar**">
-            <type name="utf8" c:type="gchar*"/>
+            <type name="filename"/>
           </array>
         </parameter>
         <parameter name="flags" transfer-ownership="none">
@@ -39047,6 +39493,8 @@ positional parameters, as specified in the Single Unix Specification.
 Note that it is usually better to use g_snprintf(), to avoid the
 risk of buffer overflow.
 
+`glib/gprintf.h` must be explicitly included in order to use this function.
+
 See also g_strdup_printf().</doc>
       <return-value transfer-ownership="none">
         <doc xml:space="preserve">the number of bytes printed.</doc>
@@ -39062,7 +39510,7 @@ See also g_strdup_printf().</doc>
         <parameter name="format" transfer-ownership="none">
           <doc xml:space="preserve">a standard printf() format string, but notice
          [string precision pitfalls][string-precision]</doc>
-          <type name="utf8" c:type="gchar*"/>
+          <type name="utf8" c:type="const gchar*"/>
         </parameter>
         <parameter name="..." transfer-ownership="none">
           <doc xml:space="preserve">the arguments to insert in the output.</doc>
@@ -39206,11 +39654,11 @@ your corpus and build an index on the returned folded tokens, then
 call g_str_tokenize_and_fold() on the search term and
 perform lookups into that index.
 
-As some examples, searching for "fred" would match the potential hit
-"Smith, Fred" and also "Fr&#xE9;d&#xE9;ric".  Searching for "Fr&#xE9;d" would match
-"Fr&#xE9;d&#xE9;ric" but not "Frederic" (due to the one-directional nature of
-accent matching).  Searching "fo" would match "Foo" and "Bar Foo
-Baz", but not "SFO" (because no word as "fo" as a prefix).</doc>
+As some examples, searching for &#x2018;fred&#x2019; would match the potential hit
+&#x2018;Smith, Fred&#x2019; and also &#x2018;Fr&#xE9;d&#xE9;ric&#x2019;.  Searching for &#x2018;Fr&#xE9;d&#x2019; would match
+&#x2018;Fr&#xE9;d&#xE9;ric&#x2019; but not &#x2018;Frederic&#x2019; (due to the one-directional nature of
+accent matching).  Searching &#x2018;fo&#x2019; would match &#x2018;Foo&#x2019; and &#x2018;Bar Foo
+Baz&#x2019;, but not &#x2018;SFO&#x2019; (because no word has &#x2018;fo&#x2019; as a prefix).</doc>
       <return-value transfer-ownership="none">
         <doc xml:space="preserve">%TRUE if @potential_hit is a hit</doc>
         <type name="gboolean" c:type="gboolean"/>
@@ -40545,7 +40993,7 @@ This is approximately the same as calling g_test_build_filename("."),
 but you don't need to free the return value.</doc>
       <return-value transfer-ownership="none">
         <doc xml:space="preserve">the path of the directory, owned by GLib</doc>
-        <type name="filename" c:type="gchar*"/>
+        <type name="filename" c:type="const gchar*"/>
       </return-value>
       <parameters>
         <parameter name="file_type" transfer-ownership="none">
@@ -40632,15 +41080,16 @@ So far, the following arguments are understood:
   be skipped (ie, a test whose name contains "/subprocess").
 - `-m {perf|slow|thorough|quick|undefined|no-undefined}`: Execute tests according to these test modes:
 
-  `perf`: Performance tests, may take long and report results.
+  `perf`: Performance tests, may take long and report results (off by default).
 
-  `slow`, `thorough`: Slow and thorough tests, may take quite long and maximize coverage.
+  `slow`, `thorough`: Slow and thorough tests, may take quite long and maximize coverage
+  (off by default).
 
-  `quick`: Quick tests, should run really quickly and give good coverage.
+  `quick`: Quick tests, should run really quickly and give good coverage (the default).
 
   `undefined`: Tests for undefined behaviour, may provoke programming errors
   under g_test_trap_subprocess() or g_test_expect_message() to check
-  that appropriate assertions or warnings are given
+  that appropriate assertions or warnings are given (the default).
 
   `no-undefined`: Avoid tests for undefined behaviour
 
@@ -40915,7 +41364,6 @@ The test suites to be executed are filtered according to
 test path arguments (`-p testpath` and `-s testpath`) as parsed by
 g_test_init(). See the g_test_run() documentation for more
 information on the order that tests are run in.
-
 
 g_test_run_suite() or g_test_run() may only be called once
 in a program.</doc>
@@ -42513,7 +42961,7 @@ The source will never close the fd -- you must do it yourself.</doc>
           <type name="IOCondition" c:type="GIOCondition"/>
         </parameter>
         <parameter name="function" transfer-ownership="none" closure="3">
-          <doc xml:space="preserve">a #GPollFDFunc</doc>
+          <doc xml:space="preserve">a #GUnixFDSourceFunc</doc>
           <type name="UnixFDSourceFunc" c:type="GUnixFDSourceFunc"/>
         </parameter>
         <parameter name="user_data" transfer-ownership="none" nullable="1" allow-none="1">
@@ -42731,7 +43179,7 @@ are open to some process, or mapped into memory.</doc>
         <parameter name="filename" transfer-ownership="none">
           <doc xml:space="preserve">a pathname in the GLib file name encoding
     (UTF-8 on Windows)</doc>
-          <type name="filename" c:type="gchar*"/>
+          <type name="filename" c:type="const gchar*"/>
         </parameter>
       </parameters>
     </function>
@@ -42758,8 +43206,9 @@ array directly to execvpe(), g_spawn_async(), or the like.</doc>
       </return-value>
       <parameters>
         <parameter name="variable" transfer-ownership="none">
-          <doc xml:space="preserve">the environment variable to remove, must not contain '='</doc>
-          <type name="utf8" c:type="const gchar*"/>
+          <doc xml:space="preserve">the environment variable to remove, must
+    not contain '='</doc>
+          <type name="filename" c:type="const gchar*"/>
         </parameter>
       </parameters>
     </function>
@@ -43397,7 +43846,10 @@ middle of a character, the last (partial) character is not counted.</doc>
       <doc xml:space="preserve">Like the standard C strncpy() function, but copies a given number
 of characters instead of a given number of bytes. The @src string
 must be valid UTF-8 encoded text. (Use g_utf8_validate() on all
-text before trying to use UTF-8 utility functions with it.)</doc>
+text before trying to use UTF-8 utility functions with it.)
+
+Note you must ensure @dest is at least 4 * @n to fit the
+largest possible UTF-8 characters</doc>
       <return-value transfer-ownership="full">
         <doc xml:space="preserve">@dest</doc>
         <type name="utf8" c:type="gchar*"/>
@@ -43900,7 +44352,9 @@ see g_variant_type_string_is_valid().</doc>
 positional parameters, as specified in the Single Unix Specification.
 This function is similar to g_vsprintf(), except that it allocates a
 string to hold the output, instead of putting the output in a buffer
-you allocate in advance.</doc>
+you allocate in advance.
+
+`glib/gprintf.h` must be explicitly included in order to use this function.</doc>
       <return-value transfer-ownership="none">
         <doc xml:space="preserve">the number of bytes printed.</doc>
         <type name="gint" c:type="gint"/>
@@ -43913,7 +44367,7 @@ you allocate in advance.</doc>
         <parameter name="format" transfer-ownership="none">
           <doc xml:space="preserve">a standard printf() format string, but notice
          [string precision pitfalls][string-precision]</doc>
-          <type name="utf8" c:type="gchar*"/>
+          <type name="utf8" c:type="const gchar*"/>
         </parameter>
         <parameter name="args" transfer-ownership="none">
           <doc xml:space="preserve">the list of arguments to insert in the output.</doc>
@@ -43923,7 +44377,9 @@ you allocate in advance.</doc>
     </function>
     <function name="vfprintf" c:identifier="g_vfprintf" version="2.2" introspectable="0">
       <doc xml:space="preserve">An implementation of the standard fprintf() function which supports
-positional parameters, as specified in the Single Unix Specification.</doc>
+positional parameters, as specified in the Single Unix Specification.
+
+`glib/gprintf.h` must be explicitly included in order to use this function.</doc>
       <return-value transfer-ownership="none">
         <doc xml:space="preserve">the number of bytes printed.</doc>
         <type name="gint" c:type="gint"/>
@@ -43936,7 +44392,7 @@ positional parameters, as specified in the Single Unix Specification.</doc>
         <parameter name="format" transfer-ownership="none">
           <doc xml:space="preserve">a standard printf() format string, but notice
          [string precision pitfalls][string-precision]</doc>
-          <type name="utf8" c:type="gchar*"/>
+          <type name="utf8" c:type="const gchar*"/>
         </parameter>
         <parameter name="args" transfer-ownership="none">
           <doc xml:space="preserve">the list of arguments to insert in the output.</doc>
@@ -43946,7 +44402,9 @@ positional parameters, as specified in the Single Unix Specification.</doc>
     </function>
     <function name="vprintf" c:identifier="g_vprintf" version="2.2" introspectable="0">
       <doc xml:space="preserve">An implementation of the standard vprintf() function which supports
-positional parameters, as specified in the Single Unix Specification.</doc>
+positional parameters, as specified in the Single Unix Specification.
+
+`glib/gprintf.h` must be explicitly included in order to use this function.</doc>
       <return-value transfer-ownership="none">
         <doc xml:space="preserve">the number of bytes printed.</doc>
         <type name="gint" c:type="gint"/>
@@ -43955,7 +44413,7 @@ positional parameters, as specified in the Single Unix Specification.</doc>
         <parameter name="format" transfer-ownership="none">
           <doc xml:space="preserve">a standard printf() format string, but notice
          [string precision pitfalls][string-precision]</doc>
-          <type name="utf8" c:type="gchar*"/>
+          <type name="utf8" c:type="const gchar*"/>
         </parameter>
         <parameter name="args" transfer-ownership="none">
           <doc xml:space="preserve">the list of arguments to insert in the output.</doc>
@@ -43999,7 +44457,7 @@ the Single Unix Specification.</doc>
         <parameter name="format" transfer-ownership="none">
           <doc xml:space="preserve">a standard printf() format string, but notice
          string precision pitfalls][string-precision]</doc>
-          <type name="utf8" c:type="gchar*"/>
+          <type name="utf8" c:type="const gchar*"/>
         </parameter>
         <parameter name="args" transfer-ownership="none">
           <doc xml:space="preserve">the list of arguments to insert in the output.</doc>
@@ -44009,7 +44467,9 @@ the Single Unix Specification.</doc>
     </function>
     <function name="vsprintf" c:identifier="g_vsprintf" version="2.2" introspectable="0">
       <doc xml:space="preserve">An implementation of the standard vsprintf() function which supports
-positional parameters, as specified in the Single Unix Specification.</doc>
+positional parameters, as specified in the Single Unix Specification.
+
+`glib/gprintf.h` must be explicitly included in order to use this function.</doc>
       <return-value transfer-ownership="none">
         <doc xml:space="preserve">the number of bytes printed.</doc>
         <type name="gint" c:type="gint"/>
@@ -44022,7 +44482,7 @@ positional parameters, as specified in the Single Unix Specification.</doc>
         <parameter name="format" transfer-ownership="none">
           <doc xml:space="preserve">a standard printf() format string, but notice
          [string precision pitfalls][string-precision]</doc>
-          <type name="utf8" c:type="gchar*"/>
+          <type name="utf8" c:type="const gchar*"/>
         </parameter>
         <parameter name="args" transfer-ownership="none">
           <doc xml:space="preserve">the list of arguments to insert in the output.</doc>
