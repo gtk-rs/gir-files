@@ -1990,6 +1990,70 @@ submenu of @item is removed.</doc>
            glib:type-name="WebKitCookieManager"
            glib:get-type="webkit_cookie_manager_get_type"
            glib:type-struct="CookieManagerClass">
+      <method name="add_cookie"
+              c:identifier="webkit_cookie_manager_add_cookie"
+              version="2.20">
+        <doc xml:space="preserve">Asynchronously add a #SoupCookie to the underlying storage.
+
+When the operation is finished, @callback will be called. You can then call
+webkit_cookie_manager_add_cookie_finish() to get the result of the operation.</doc>
+        <return-value transfer-ownership="none">
+          <type name="none" c:type="void"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="cookie_manager" transfer-ownership="none">
+            <doc xml:space="preserve">a #WebKitCookieManager</doc>
+            <type name="CookieManager" c:type="WebKitCookieManager*"/>
+          </instance-parameter>
+          <parameter name="cookie" transfer-ownership="none">
+            <doc xml:space="preserve">the #SoupCookie to be added</doc>
+            <type name="Soup.Cookie" c:type="SoupCookie*"/>
+          </parameter>
+          <parameter name="cancellable"
+                     transfer-ownership="none"
+                     nullable="1"
+                     allow-none="1">
+            <doc xml:space="preserve">a #GCancellable or %NULL to ignore</doc>
+            <type name="Gio.Cancellable" c:type="GCancellable*"/>
+          </parameter>
+          <parameter name="callback"
+                     transfer-ownership="none"
+                     nullable="1"
+                     allow-none="1"
+                     scope="async"
+                     closure="3">
+            <doc xml:space="preserve">a #GAsyncReadyCallback to call when the request is satisfied</doc>
+            <type name="Gio.AsyncReadyCallback" c:type="GAsyncReadyCallback"/>
+          </parameter>
+          <parameter name="user_data"
+                     transfer-ownership="none"
+                     nullable="1"
+                     allow-none="1">
+            <doc xml:space="preserve">the data to pass to callback function</doc>
+            <type name="gpointer" c:type="gpointer"/>
+          </parameter>
+        </parameters>
+      </method>
+      <method name="add_cookie_finish"
+              c:identifier="webkit_cookie_manager_add_cookie_finish"
+              version="2.20"
+              throws="1">
+        <doc xml:space="preserve">Finish an asynchronous operation started with webkit_cookie_manager_add_cookie().</doc>
+        <return-value transfer-ownership="none">
+          <doc xml:space="preserve">%TRUE if the cookie was added or %FALSE in case of error.</doc>
+          <type name="gboolean" c:type="gboolean"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="cookie_manager" transfer-ownership="none">
+            <doc xml:space="preserve">a #WebKitCookieManager</doc>
+            <type name="CookieManager" c:type="WebKitCookieManager*"/>
+          </instance-parameter>
+          <parameter name="result" transfer-ownership="none">
+            <doc xml:space="preserve">a #GAsyncResult</doc>
+            <type name="Gio.AsyncResult" c:type="GAsyncResult*"/>
+          </parameter>
+        </parameters>
+      </method>
       <method name="delete_all_cookies"
               c:identifier="webkit_cookie_manager_delete_all_cookies"
               deprecated="1"
@@ -2004,6 +2068,70 @@ submenu of @item is removed.</doc>
             <doc xml:space="preserve">a #WebKitCookieManager</doc>
             <type name="CookieManager" c:type="WebKitCookieManager*"/>
           </instance-parameter>
+        </parameters>
+      </method>
+      <method name="delete_cookie"
+              c:identifier="webkit_cookie_manager_delete_cookie"
+              version="2.20">
+        <doc xml:space="preserve">Asynchronously delete a #SoupCookie from the current session.
+
+When the operation is finished, @callback will be called. You can then call
+webkit_cookie_manager_delete_cookie_finish() to get the result of the operation.</doc>
+        <return-value transfer-ownership="none">
+          <type name="none" c:type="void"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="cookie_manager" transfer-ownership="none">
+            <doc xml:space="preserve">a #WebKitCookieManager</doc>
+            <type name="CookieManager" c:type="WebKitCookieManager*"/>
+          </instance-parameter>
+          <parameter name="cookie" transfer-ownership="none">
+            <doc xml:space="preserve">the #SoupCookie to be deleted</doc>
+            <type name="Soup.Cookie" c:type="SoupCookie*"/>
+          </parameter>
+          <parameter name="cancellable"
+                     transfer-ownership="none"
+                     nullable="1"
+                     allow-none="1">
+            <doc xml:space="preserve">a #GCancellable or %NULL to ignore</doc>
+            <type name="Gio.Cancellable" c:type="GCancellable*"/>
+          </parameter>
+          <parameter name="callback"
+                     transfer-ownership="none"
+                     nullable="1"
+                     allow-none="1"
+                     scope="async"
+                     closure="3">
+            <doc xml:space="preserve">a #GAsyncReadyCallback to call when the request is satisfied</doc>
+            <type name="Gio.AsyncReadyCallback" c:type="GAsyncReadyCallback"/>
+          </parameter>
+          <parameter name="user_data"
+                     transfer-ownership="none"
+                     nullable="1"
+                     allow-none="1">
+            <doc xml:space="preserve">the data to pass to callback function</doc>
+            <type name="gpointer" c:type="gpointer"/>
+          </parameter>
+        </parameters>
+      </method>
+      <method name="delete_cookie_finish"
+              c:identifier="webkit_cookie_manager_delete_cookie_finish"
+              version="2.20"
+              throws="1">
+        <doc xml:space="preserve">Finish an asynchronous operation started with webkit_cookie_manager_delete_cookie().</doc>
+        <return-value transfer-ownership="none">
+          <doc xml:space="preserve">%TRUE if the cookie was deleted or %FALSE in case of error.</doc>
+          <type name="gboolean" c:type="gboolean"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="cookie_manager" transfer-ownership="none">
+            <doc xml:space="preserve">a #WebKitCookieManager</doc>
+            <type name="CookieManager" c:type="WebKitCookieManager*"/>
+          </instance-parameter>
+          <parameter name="result" transfer-ownership="none">
+            <doc xml:space="preserve">a #GAsyncResult</doc>
+            <type name="Gio.AsyncResult" c:type="GAsyncResult*"/>
+          </parameter>
         </parameters>
       </method>
       <method name="delete_cookies_for_domain"
@@ -2072,6 +2200,75 @@ webkit_cookie_manager_get_accept_policy_finish() to get the result of the operat
         <return-value transfer-ownership="none">
           <doc xml:space="preserve">the cookie acceptance policy of @cookie_manager as a #WebKitCookieAcceptPolicy.</doc>
           <type name="CookieAcceptPolicy" c:type="WebKitCookieAcceptPolicy"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="cookie_manager" transfer-ownership="none">
+            <doc xml:space="preserve">a #WebKitCookieManager</doc>
+            <type name="CookieManager" c:type="WebKitCookieManager*"/>
+          </instance-parameter>
+          <parameter name="result" transfer-ownership="none">
+            <doc xml:space="preserve">a #GAsyncResult</doc>
+            <type name="Gio.AsyncResult" c:type="GAsyncResult*"/>
+          </parameter>
+        </parameters>
+      </method>
+      <method name="get_cookies"
+              c:identifier="webkit_cookie_manager_get_cookies"
+              version="2.20">
+        <doc xml:space="preserve">Asynchronously get a list of #SoupCookie from @cookie_manager associated with @uri, which
+must be either an HTTP or an HTTPS URL.
+
+When the operation is finished, @callback will be called. You can then call
+webkit_cookie_manager_get_cookies_finish() to get the result of the operation.</doc>
+        <return-value transfer-ownership="none">
+          <type name="none" c:type="void"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="cookie_manager" transfer-ownership="none">
+            <doc xml:space="preserve">a #WebKitCookieManager</doc>
+            <type name="CookieManager" c:type="WebKitCookieManager*"/>
+          </instance-parameter>
+          <parameter name="uri" transfer-ownership="none">
+            <doc xml:space="preserve">the URI associated to the cookies to be retrieved</doc>
+            <type name="utf8" c:type="const gchar*"/>
+          </parameter>
+          <parameter name="cancellable"
+                     transfer-ownership="none"
+                     nullable="1"
+                     allow-none="1">
+            <doc xml:space="preserve">a #GCancellable or %NULL to ignore</doc>
+            <type name="Gio.Cancellable" c:type="GCancellable*"/>
+          </parameter>
+          <parameter name="callback"
+                     transfer-ownership="none"
+                     nullable="1"
+                     allow-none="1"
+                     scope="async"
+                     closure="3">
+            <doc xml:space="preserve">a #GAsyncReadyCallback to call when the request is satisfied</doc>
+            <type name="Gio.AsyncReadyCallback" c:type="GAsyncReadyCallback"/>
+          </parameter>
+          <parameter name="user_data"
+                     transfer-ownership="none"
+                     nullable="1"
+                     allow-none="1">
+            <doc xml:space="preserve">the data to pass to callback function</doc>
+            <type name="gpointer" c:type="gpointer"/>
+          </parameter>
+        </parameters>
+      </method>
+      <method name="get_cookies_finish"
+              c:identifier="webkit_cookie_manager_get_cookies_finish"
+              version="2.20"
+              throws="1">
+        <doc xml:space="preserve">Finish an asynchronous operation started with webkit_cookie_manager_get_cookies().
+The return value is a #GSList of #SoupCookie instances which should be released
+with g_list_free_full() and soup_cookie_free().</doc>
+        <return-value transfer-ownership="full">
+          <doc xml:space="preserve">A #GList of #SoupCookie instances.</doc>
+          <type name="GLib.List" c:type="GList*">
+            <type name="Soup.Cookie"/>
+          </type>
         </return-value>
         <parameters>
           <instance-parameter name="cookie_manager" transfer-ownership="none">
@@ -2911,6 +3108,81 @@ present throughout the selection.</doc>
         <return-value transfer-ownership="none">
           <doc xml:space="preserve">a bitmask of #WebKitEditorTypingAttributes flags</doc>
           <type name="guint" c:type="guint"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="editor_state" transfer-ownership="none">
+            <doc xml:space="preserve">a #WebKitEditorState</doc>
+            <type name="EditorState" c:type="WebKitEditorState*"/>
+          </instance-parameter>
+        </parameters>
+      </method>
+      <method name="is_copy_available"
+              c:identifier="webkit_editor_state_is_copy_available"
+              version="2.20">
+        <doc xml:space="preserve">Gets whether a copy command can be issued.</doc>
+        <return-value transfer-ownership="none">
+          <doc xml:space="preserve">%TRUE if copy is currently available</doc>
+          <type name="gboolean" c:type="gboolean"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="editor_state" transfer-ownership="none">
+            <doc xml:space="preserve">a #WebKitEditorState</doc>
+            <type name="EditorState" c:type="WebKitEditorState*"/>
+          </instance-parameter>
+        </parameters>
+      </method>
+      <method name="is_cut_available"
+              c:identifier="webkit_editor_state_is_cut_available"
+              version="2.20">
+        <doc xml:space="preserve">Gets whether a cut command can be issued.</doc>
+        <return-value transfer-ownership="none">
+          <doc xml:space="preserve">%TRUE if cut is currently available</doc>
+          <type name="gboolean" c:type="gboolean"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="editor_state" transfer-ownership="none">
+            <doc xml:space="preserve">a #WebKitEditorState</doc>
+            <type name="EditorState" c:type="WebKitEditorState*"/>
+          </instance-parameter>
+        </parameters>
+      </method>
+      <method name="is_paste_available"
+              c:identifier="webkit_editor_state_is_paste_available"
+              version="2.20">
+        <doc xml:space="preserve">Gets whether a paste command can be issued.</doc>
+        <return-value transfer-ownership="none">
+          <doc xml:space="preserve">%TRUE if paste is currently available</doc>
+          <type name="gboolean" c:type="gboolean"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="editor_state" transfer-ownership="none">
+            <doc xml:space="preserve">a #WebKitEditorState</doc>
+            <type name="EditorState" c:type="WebKitEditorState*"/>
+          </instance-parameter>
+        </parameters>
+      </method>
+      <method name="is_redo_available"
+              c:identifier="webkit_editor_state_is_redo_available"
+              version="2.20">
+        <doc xml:space="preserve">Gets whether a redo command can be issued.</doc>
+        <return-value transfer-ownership="none">
+          <doc xml:space="preserve">%TRUE if redo is currently available</doc>
+          <type name="gboolean" c:type="gboolean"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="editor_state" transfer-ownership="none">
+            <doc xml:space="preserve">a #WebKitEditorState</doc>
+            <type name="EditorState" c:type="WebKitEditorState*"/>
+          </instance-parameter>
+        </parameters>
+      </method>
+      <method name="is_undo_available"
+              c:identifier="webkit_editor_state_is_undo_available"
+              version="2.20">
+        <doc xml:space="preserve">Gets whether an undo command can be issued.</doc>
+        <return-value transfer-ownership="none">
+          <doc xml:space="preserve">%TRUE if undo is currently available</doc>
+          <type name="gboolean" c:type="gboolean"/>
         </return-value>
         <parameters>
           <instance-parameter name="editor_state" transfer-ownership="none">
@@ -3790,12 +4062,17 @@ webkit_find_controller_search_previous().</doc>
            glib:get-type="webkit_form_submission_request_get_type"
            glib:type-struct="FormSubmissionRequestClass">
       <method name="get_text_fields"
-              c:identifier="webkit_form_submission_request_get_text_fields">
+              c:identifier="webkit_form_submission_request_get_text_fields"
+              deprecated="1"
+              deprecated-version="2.20.">
         <doc xml:space="preserve">Get a #GHashTable with the values of the text fields contained in the form
-associated to @request.</doc>
-        <return-value transfer-ownership="none">
-          <doc xml:space="preserve">a #GHashTable with the form text fields, or %NULL if the
-   form doesn't contain text fields.</doc>
+associated to @request. Note that fields will be missing if the form
+contains multiple text input elements with the same name, so this
+function does not reliably return all text fields.</doc>
+        <doc-deprecated xml:space="preserve">Use webkit_form_submission_request_list_text_fields() instead.</doc-deprecated>
+        <return-value transfer-ownership="none" nullable="1">
+          <doc xml:space="preserve">a #GHashTable with the form
+   text fields, or %NULL if the form doesn't contain text fields.</doc>
           <type name="GLib.HashTable" c:type="GHashTable*">
             <type name="gpointer" c:type="gpointer"/>
             <type name="gpointer" c:type="gpointer"/>
@@ -3807,6 +4084,51 @@ associated to @request.</doc>
             <type name="FormSubmissionRequest"
                   c:type="WebKitFormSubmissionRequest*"/>
           </instance-parameter>
+        </parameters>
+      </method>
+      <method name="list_text_fields"
+              c:identifier="webkit_form_submission_request_list_text_fields"
+              version="2.20">
+        <doc xml:space="preserve">Get lists with the names and values of the text fields contained in
+the form associated to @request. Note that names and values may be
+%NULL.
+
+If this function returns %FALSE, then both @field_names and
+@field_values will be empty.</doc>
+        <return-value transfer-ownership="none">
+          <doc xml:space="preserve">%TRUE if the form contains text fields, or %FALSE otherwise</doc>
+          <type name="gboolean" c:type="gboolean"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="request" transfer-ownership="none">
+            <doc xml:space="preserve">a #WebKitFormSubmissionRequest</doc>
+            <type name="FormSubmissionRequest"
+                  c:type="WebKitFormSubmissionRequest*"/>
+          </instance-parameter>
+          <parameter name="field_names"
+                     direction="out"
+                     caller-allocates="0"
+                     transfer-ownership="none"
+                     optional="1"
+                     allow-none="1">
+            <doc xml:space="preserve">
+   names of the text fields in the form</doc>
+            <array name="GLib.PtrArray" c:type="GPtrArray**">
+              <type name="utf8"/>
+            </array>
+          </parameter>
+          <parameter name="field_values"
+                     direction="out"
+                     caller-allocates="0"
+                     transfer-ownership="none"
+                     optional="1"
+                     allow-none="1">
+            <doc xml:space="preserve">
+   values of the text fields in the form</doc>
+            <array name="GLib.PtrArray" c:type="GPtrArray**">
+              <type name="utf8"/>
+            </array>
+          </parameter>
         </parameters>
       </method>
       <method name="submit"
@@ -4511,13 +4833,13 @@ application compile time, rather than from the library linked
 against at application run time.</doc>
       <type name="gint" c:type="gint"/>
     </constant>
-    <constant name="MICRO_VERSION" value="4" c:type="WEBKIT_MICRO_VERSION">
+    <constant name="MICRO_VERSION" value="1" c:type="WEBKIT_MICRO_VERSION">
       <doc xml:space="preserve">Like webkit_get_micro_version(), but from the headers used at
 application compile time, rather than from the library linked
 against at application run time.</doc>
       <type name="gint" c:type="gint"/>
     </constant>
-    <constant name="MINOR_VERSION" value="18" c:type="WEBKIT_MINOR_VERSION">
+    <constant name="MINOR_VERSION" value="20" c:type="WEBKIT_MINOR_VERSION">
       <doc xml:space="preserve">Like webkit_get_minor_version(), but from the headers used at
 application compile time, rather than from the library linked
 against at application run time.</doc>
@@ -4690,6 +5012,21 @@ the navigation was not started by a mouse event.</doc>
         <return-value transfer-ownership="none">
           <doc xml:space="preserve">a #WebKitURIRequest</doc>
           <type name="URIRequest" c:type="WebKitURIRequest*"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="navigation" transfer-ownership="none">
+            <doc xml:space="preserve">a #WebKitNavigationAction</doc>
+            <type name="NavigationAction" c:type="WebKitNavigationAction*"/>
+          </instance-parameter>
+        </parameters>
+      </method>
+      <method name="is_redirect"
+              c:identifier="webkit_navigation_action_is_redirect"
+              version="2.20">
+        <doc xml:space="preserve">Returns whether the @navigation was redirected.</doc>
+        <return-value transfer-ownership="none">
+          <doc xml:space="preserve">%TRUE if the original navigation was redirected, %FALSE otherwise.</doc>
+          <type name="gboolean" c:type="gboolean"/>
         </return-value>
         <parameters>
           <instance-parameter name="navigation" transfer-ownership="none">
@@ -7354,6 +7691,42 @@ be manually attached to a #WebKitWebView.</doc>
           </parameter>
         </parameters>
       </constructor>
+      <function name="font_size_to_pixels"
+                c:identifier="webkit_settings_font_size_to_pixels"
+                version="2.20">
+        <doc xml:space="preserve">Convert @points to the equivalent value in pixels, based on the current
+screen DPI. Applications can use this function to convert font size values
+in points to font size values in pixels when setting the font size properties
+of #WebKitSettings.</doc>
+        <return-value transfer-ownership="none">
+          <doc xml:space="preserve">the equivalent font size in pixels.</doc>
+          <type name="guint32" c:type="guint32"/>
+        </return-value>
+        <parameters>
+          <parameter name="points" transfer-ownership="none">
+            <doc xml:space="preserve">the font size in points to convert to pixels</doc>
+            <type name="guint32" c:type="guint32"/>
+          </parameter>
+        </parameters>
+      </function>
+      <function name="font_size_to_points"
+                c:identifier="webkit_settings_font_size_to_points"
+                version="2.20">
+        <doc xml:space="preserve">Convert @pixels to the equivalent value in points, based on the current
+screen DPI. Applications can use this function to convert font size values
+in pixels to font size values in points when getting the font size properties
+of #WebKitSettings.</doc>
+        <return-value transfer-ownership="none">
+          <doc xml:space="preserve">the equivalent font size in points.</doc>
+          <type name="guint32" c:type="guint32"/>
+        </return-value>
+        <parameters>
+          <parameter name="pixels" transfer-ownership="none">
+            <doc xml:space="preserve">the font size in pixels to convert to points</doc>
+            <type name="guint32" c:type="guint32"/>
+          </parameter>
+        </parameters>
+      </function>
       <method name="get_allow_file_access_from_file_urls"
               c:identifier="webkit_settings_get_allow_file_access_from_file_urls"
               version="2.10">
@@ -7455,7 +7828,7 @@ be manually attached to a #WebKitWebView.</doc>
               c:identifier="webkit_settings_get_default_font_size">
         <doc xml:space="preserve">Gets the #WebKitSettings:default-font-size property.</doc>
         <return-value transfer-ownership="none">
-          <doc xml:space="preserve">The default font size.</doc>
+          <doc xml:space="preserve">The default font size, in pixels.</doc>
           <type name="guint32" c:type="guint32"/>
         </return-value>
         <parameters>
@@ -7469,7 +7842,7 @@ be manually attached to a #WebKitWebView.</doc>
               c:identifier="webkit_settings_get_default_monospace_font_size">
         <doc xml:space="preserve">Gets the #WebKitSettings:default-monospace-font-size property.</doc>
         <return-value transfer-ownership="none">
-          <doc xml:space="preserve">Default monospace font size.</doc>
+          <doc xml:space="preserve">Default monospace font size, in pixels.</doc>
           <type name="guint32" c:type="guint32"/>
         </return-value>
         <parameters>
@@ -7541,6 +7914,21 @@ be manually attached to a #WebKitWebView.</doc>
         <doc xml:space="preserve">Get the #WebKitSettings:enable-dns-prefetching property.</doc>
         <return-value transfer-ownership="none">
           <doc xml:space="preserve">%TRUE If DNS prefetching is enabled or %FALSE otherwise.</doc>
+          <type name="gboolean" c:type="gboolean"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="settings" transfer-ownership="none">
+            <doc xml:space="preserve">a #WebKitSettings</doc>
+            <type name="Settings" c:type="WebKitSettings*"/>
+          </instance-parameter>
+        </parameters>
+      </method>
+      <method name="get_enable_encrypted_media"
+              c:identifier="webkit_settings_get_enable_encrypted_media"
+              version="2.20">
+        <doc xml:space="preserve">Get the #WebKitSettings:enable-encrypted-media property.</doc>
+        <return-value transfer-ownership="none">
+          <doc xml:space="preserve">%TRUE if EncryptedMedia support is enabled or %FALSE otherwise.</doc>
           <type name="gboolean" c:type="gboolean"/>
         </return-value>
         <parameters>
@@ -7972,7 +8360,7 @@ otherwise.</doc>
               c:identifier="webkit_settings_get_minimum_font_size">
         <doc xml:space="preserve">Gets the #WebKitSettings:minimum-font-size property.</doc>
         <return-value transfer-ownership="none">
-          <doc xml:space="preserve">Minimum font size.</doc>
+          <doc xml:space="preserve">Minimum font size, in pixels.</doc>
           <type name="guint32" c:type="guint32"/>
         </return-value>
         <parameters>
@@ -8308,6 +8696,24 @@ otherwise.</doc>
       <method name="set_enable_dns_prefetching"
               c:identifier="webkit_settings_set_enable_dns_prefetching">
         <doc xml:space="preserve">Set the #WebKitSettings:enable-dns-prefetching property.</doc>
+        <return-value transfer-ownership="none">
+          <type name="none" c:type="void"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="settings" transfer-ownership="none">
+            <doc xml:space="preserve">a #WebKitSettings</doc>
+            <type name="Settings" c:type="WebKitSettings*"/>
+          </instance-parameter>
+          <parameter name="enabled" transfer-ownership="none">
+            <doc xml:space="preserve">Value to be set</doc>
+            <type name="gboolean" c:type="gboolean"/>
+          </parameter>
+        </parameters>
+      </method>
+      <method name="set_enable_encrypted_media"
+              c:identifier="webkit_settings_set_enable_encrypted_media"
+              version="2.20">
+        <doc xml:space="preserve">Set the #WebKitSettings:enable-encrypted-media property.</doc>
         <return-value transfer-ownership="none">
           <type name="none" c:type="void"/>
         </return-value>
@@ -8836,7 +9242,7 @@ otherwise.</doc>
             <type name="Settings" c:type="WebKitSettings*"/>
           </instance-parameter>
           <parameter name="font_size" transfer-ownership="none">
-            <doc xml:space="preserve">minimum font size to be set in points</doc>
+            <doc xml:space="preserve">minimum font size to be set in pixels</doc>
             <type name="guint32" c:type="guint32"/>
           </parameter>
         </parameters>
@@ -9115,6 +9521,19 @@ using hardware accelerated drawing operations.</doc>
                 transfer-ownership="none">
         <doc xml:space="preserve">Determines whether or not to prefetch domain names. DNS prefetching attempts
 to resolve domain names before a user tries to follow a link.</doc>
+        <type name="gboolean" c:type="gboolean"/>
+      </property>
+      <property name="enable-encrypted-media"
+                version="2.20"
+                writable="1"
+                construct="1"
+                transfer-ownership="none">
+        <doc xml:space="preserve">Enable or disable support for Encrypted Media API on pages.
+EncryptedMedia is an experimental JavaScript API for playing encrypted media in HTML.
+This property will only work as intended if the EncryptedMedia feature is enabled at build time
+with the ENABLE_ENCRYPTED_MEDIA flag.
+
+See https://www.w3.org/TR/encrypted-media/</doc>
         <type name="gboolean" c:type="gboolean"/>
       </property>
       <property name="enable-frame-flattening"
@@ -9413,7 +9832,7 @@ load the media.</doc>
                 writable="1"
                 construct="1"
                 transfer-ownership="none">
-        <doc xml:space="preserve">The minimum font size in points used to display text. This setting
+        <doc xml:space="preserve">The minimum font size in pixels used to display text. This setting
 controls the absolute smallest size. Values other than 0 can
 potentially break page layouts.</doc>
         <type name="guint" c:type="guint"/>
@@ -11963,6 +12382,25 @@ signal and simply return %TRUE</doc>
             c:type="WebKitWebInspectorPrivate"
             disguised="1">
     </record>
+    <enumeration name="WebProcessTerminationReason"
+                 version="2.20"
+                 glib:type-name="WebKitWebProcessTerminationReason"
+                 glib:get-type="webkit_web_process_termination_reason_get_type"
+                 c:type="WebKitWebProcessTerminationReason">
+      <doc xml:space="preserve">Enum values used to specify the reason why the web process terminated abnormally.</doc>
+      <member name="crashed"
+              value="0"
+              c:identifier="WEBKIT_WEB_PROCESS_CRASHED"
+              glib:nick="crashed">
+        <doc xml:space="preserve">the web process crashed.</doc>
+      </member>
+      <member name="exceeded_memory_limit"
+              value="1"
+              c:identifier="WEBKIT_WEB_PROCESS_EXCEEDED_MEMORY_LIMIT"
+              glib:nick="exceeded-memory-limit">
+        <doc xml:space="preserve">the web process exceeded the memory limit.</doc>
+      </member>
+    </enumeration>
     <class name="WebResource"
            c:symbol-prefix="web_resource"
            c:type="WebKitWebResource"
@@ -12656,6 +13094,20 @@ in the view by the user content manager.</doc>
           <instance-parameter name="web_view" transfer-ownership="none">
             <type name="WebView" c:type="WebKitWebView*"/>
           </instance-parameter>
+        </parameters>
+      </virtual-method>
+      <virtual-method name="web_process_terminated">
+        <return-value transfer-ownership="none">
+          <type name="none" c:type="void"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="web_view" transfer-ownership="none">
+            <type name="WebView" c:type="WebKitWebView*"/>
+          </instance-parameter>
+          <parameter name="reason" transfer-ownership="none">
+            <type name="WebProcessTerminationReason"
+                  c:type="WebKitWebProcessTerminationReason"/>
+          </parameter>
         </parameters>
       </virtual-method>
       <method name="can_execute_editing_command"
@@ -14904,13 +15356,30 @@ form has not been submitted, webkit_form_submission_request_submit() will be cal
           </parameter>
         </parameters>
       </glib:signal>
-      <glib:signal name="web-process-crashed" when="last">
+      <glib:signal name="web-process-crashed"
+                   when="last"
+                   deprecated="1"
+                   deprecated-version="2.20">
         <doc xml:space="preserve">This signal is emitted when the web process crashes.</doc>
+        <doc-deprecated xml:space="preserve">Use WebKitWebView::web-process-terminated instead.</doc-deprecated>
         <return-value transfer-ownership="none">
           <doc xml:space="preserve">%TRUE to stop other handlers from being invoked for the event.
    %FALSE to propagate the event further.</doc>
           <type name="gboolean" c:type="gboolean"/>
         </return-value>
+      </glib:signal>
+      <glib:signal name="web-process-terminated" when="last" version="2.20">
+        <doc xml:space="preserve">This signal is emitted when the web process terminates abnormally due
+to @reason.</doc>
+        <return-value transfer-ownership="none">
+          <type name="none" c:type="void"/>
+        </return-value>
+        <parameters>
+          <parameter name="reason" transfer-ownership="none">
+            <doc xml:space="preserve">the a #WebKitWebProcessTerminationReason</doc>
+            <type name="WebProcessTerminationReason"/>
+          </parameter>
+        </parameters>
       </glib:signal>
     </class>
     <class name="WebViewBase"
@@ -15366,6 +15835,22 @@ form has not been submitted, webkit_form_submission_request_submit() will be cal
           </parameters>
         </callback>
       </field>
+      <field name="web_process_terminated">
+        <callback name="web_process_terminated">
+          <return-value transfer-ownership="none">
+            <type name="none" c:type="void"/>
+          </return-value>
+          <parameters>
+            <parameter name="web_view" transfer-ownership="none">
+              <type name="WebView" c:type="WebKitWebView*"/>
+            </parameter>
+            <parameter name="reason" transfer-ownership="none">
+              <type name="WebProcessTerminationReason"
+                    c:type="WebKitWebProcessTerminationReason"/>
+            </parameter>
+          </parameters>
+        </callback>
+      </field>
       <field name="_webkit_reserved0" introspectable="0">
         <callback name="_webkit_reserved0">
           <return-value transfer-ownership="none">
@@ -15375,13 +15860,6 @@ form has not been submitted, webkit_form_submission_request_submit() will be cal
       </field>
       <field name="_webkit_reserved1" introspectable="0">
         <callback name="_webkit_reserved1">
-          <return-value transfer-ownership="none">
-            <type name="none" c:type="void"/>
-          </return-value>
-        </callback>
-      </field>
-      <field name="_webkit_reserved2" introspectable="0">
-        <callback name="_webkit_reserved2">
           <return-value transfer-ownership="none">
             <type name="none" c:type="void"/>
           </return-value>
