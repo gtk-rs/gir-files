@@ -25,13 +25,8 @@ xmlstarlet ed -P -L \
 	-u '//*[@glib:error-domain="g-option-context-error-quark"]/@glib:error-domain' -v g-option-error-quark \
 	GLib-2.0.gir
 
-# GdkEventTouchpadPinch and GdkEventTouchpadSwipe contains phase field,
-# it type enum TouchpadGesturePhase but if takes only one byte.
 xmlstarlet ed -P -L \
-	-i '//_:field[@name="phase"]/_:type[@name="TouchpadGesturePhase"]' -t attr -n 'c:type' -v 'gint8' \
 	Gdk-3.0.gir
 
-# Transfer-ownership in GtkGLArea constructor is incorrect.
 xmlstarlet ed -P -L \
-	-u '//_:constructor[@c:identifier="gtk_gl_area_new"]/_:return-value/@transfer-ownership' -v none \
 	Gtk-3.0.gir
