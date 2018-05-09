@@ -459,7 +459,7 @@ web view or a new one created and added to a new tab or window.</doc>
     <class name="BackForwardList" c:symbol-prefix="back_forward_list" c:type="WebKitBackForwardList" parent="GObject.Object" glib:type-name="WebKitBackForwardList" glib:get-type="webkit_back_forward_list_get_type" glib:type-struct="BackForwardListClass">
       <method name="get_back_item" c:identifier="webkit_back_forward_list_get_back_item">
         <doc xml:space="preserve">Returns the item that precedes the current item.</doc>
-        <return-value transfer-ownership="none">
+        <return-value transfer-ownership="none" nullable="1">
           <doc xml:space="preserve">the #WebKitBackForwardListItem
    preceding the current item or %NULL.</doc>
           <type name="BackForwardListItem" c:type="WebKitBackForwardListItem*"/>
@@ -507,7 +507,7 @@ web view or a new one created and added to a new tab or window.</doc>
       </method>
       <method name="get_current_item" c:identifier="webkit_back_forward_list_get_current_item">
         <doc xml:space="preserve">Returns the current item in @back_forward_list.</doc>
-        <return-value transfer-ownership="none">
+        <return-value transfer-ownership="none" nullable="1">
           <doc xml:space="preserve">a #WebKitBackForwardListItem
    or %NULL if @back_forward_list is empty.</doc>
           <type name="BackForwardListItem" c:type="WebKitBackForwardListItem*"/>
@@ -521,7 +521,7 @@ web view or a new one created and added to a new tab or window.</doc>
       </method>
       <method name="get_forward_item" c:identifier="webkit_back_forward_list_get_forward_item">
         <doc xml:space="preserve">Returns the item that follows the current item.</doc>
-        <return-value transfer-ownership="none">
+        <return-value transfer-ownership="none" nullable="1">
           <doc xml:space="preserve">the #WebKitBackForwardListItem
    following the current item or %NULL.</doc>
           <type name="BackForwardListItem" c:type="WebKitBackForwardListItem*"/>
@@ -581,9 +581,9 @@ web view or a new one created and added to a new tab or window.</doc>
       </method>
       <method name="get_nth_item" c:identifier="webkit_back_forward_list_get_nth_item">
         <doc xml:space="preserve">Returns the item at a given index relative to the current item.</doc>
-        <return-value transfer-ownership="none">
+        <return-value transfer-ownership="none" nullable="1">
           <doc xml:space="preserve">the #WebKitBackForwardListItem
-   located at the specified index relative to the current item.</doc>
+   located at the specified index relative to the current item or %NULL.</doc>
           <type name="BackForwardListItem" c:type="WebKitBackForwardListItem*"/>
         </return-value>
         <parameters>
@@ -3880,7 +3880,7 @@ application compile time, rather than from the library linked
 against at application run time.</doc>
       <type name="gint" c:type="gint"/>
     </constant>
-    <constant name="MICRO_VERSION" value="1" c:type="WEBKIT_MICRO_VERSION">
+    <constant name="MICRO_VERSION" value="2" c:type="WEBKIT_MICRO_VERSION">
       <doc xml:space="preserve">Like webkit_get_micro_version(), but from the headers used at
 application compile time, rather than from the library linked
 against at application run time.</doc>
@@ -4338,7 +4338,9 @@ contains only "192.168.1.1", then a connection to "example.com" will use the pro
           </parameter>
           <parameter name="ignore_hosts" transfer-ownership="none" nullable="1" allow-none="1">
             <doc xml:space="preserve">an optional list of hosts/IP addresses to not use a proxy for.</doc>
-            <type name="utf8" c:type="const gchar* const*"/>
+            <array c:type="gchar**">
+              <type name="utf8" c:type="gchar*"/>
+            </array>
           </parameter>
         </parameters>
       </constructor>
