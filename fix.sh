@@ -10,7 +10,7 @@ xmlstarlet ed -P -L \
 
 # Remove Int32 alias because it misses c:type, it not like anyone actually cares about it.
 xmlstarlet ed -P -L \
-	-d '//_:alias[@name="Int32"]'
+	-d '//_:alias[@name="Int32"]' \
 	freetype2-2.0.gir
 
 # Change FontType glib:type to FontType.
