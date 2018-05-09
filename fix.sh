@@ -10,7 +10,8 @@ xmlstarlet ed -P -L \
 
 # Remove Int32 alias because it misses c:type, it not like anyone actually cares about it.
 xmlstarlet ed -P -L \
-	-d '//_:alias[@name="Int32"]' freetype2-2.0.gir
+	-d '//_:alias[@name="Int32"]' \
+	freetype2-2.0.gir
 
 # Change FontType glib:type to FontType.
 # Replace cairo_font_type_t with enums::FontType as well.
@@ -24,9 +25,3 @@ xmlstarlet ed -P -L \
 xmlstarlet ed -P -L \
 	-u '//*[@glib:error-domain="g-option-context-error-quark"]/@glib:error-domain' -v g-option-error-quark \
 	GLib-2.0.gir
-
-xmlstarlet ed -P -L \
-	Gdk-3.0.gir
-
-xmlstarlet ed -P -L \
-	Gtk-3.0.gir
