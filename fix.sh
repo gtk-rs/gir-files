@@ -57,3 +57,15 @@ xmlstarlet ed -P -L \
 xmlstarlet ed -P -L \
 	-u '//_:class[@name="Binding"]/_:method[@name="unbind"]//_:instance-parameter[@name="binding"]/@transfer-ownership' -v "full" \
 	GObject-2.0.gir
+
+# incorrect type
+xmlstarlet ed -P -L \
+	-d '//_:function[@name="property_change"]/_:parameters/_:parameter[@name="data"]/_:type' \
+	-s '//_:function[@name="property_change"]/_:parameters/_:parameter[@name="data"]' -t 'elem' -n 'array' -v '' \
+	-i '//_:function[@name="property_change"]/_:parameters/_:parameter[@name="data"]/array' -t 'attr' -n 'length' -v '6' \
+	-i '//_:function[@name="property_change"]/_:parameters/_:parameter[@name="data"]/array' -t 'attr' -n 'zero-terminated' -v '0' \
+	-i '//_:function[@name="property_change"]/_:parameters/_:parameter[@name="data"]/array' -t 'attr' -n 'c:type' -v 'const guint8*' \
+	-s '//_:function[@name="property_change"]/_:parameters/_:parameter[@name="data"]/array' -t 'elem' -n 'type' \
+	-i '//_:function[@name="property_change"]/_:parameters/_:parameter[@name="data"]/array/type' -t 'attr' -n 'name' -v 'guint8' \
+	-i '//_:function[@name="property_change"]/_:parameters/_:parameter[@name="data"]/array/type' -t 'attr' -n 'c:type' -v 'guint8' \
+	Gdk-3.0.gir
