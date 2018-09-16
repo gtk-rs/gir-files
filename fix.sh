@@ -57,3 +57,10 @@ xmlstarlet ed -P -L \
 xmlstarlet ed -P -L \
 	-u '//_:class[@name="Binding"]/_:method[@name="unbind"]//_:instance-parameter[@name="binding"]/@transfer-ownership' -v "full" \
 	GObject-2.0.gir
+
+# fix wrong "full" transfer ownership
+xmlstarlet ed -P -L \
+	-u '//_:method[@c:identifier="gdk_frame_clock_get_current_timings"]/_:return-value/@transfer-ownership' -v "none" \
+	-u '//_:method[@c:identifier="gdk_frame_clock_get_timings"]/_:return-value/@transfer-ownership' -v "none" \
+	Gdk-3.0.gir
+
