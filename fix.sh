@@ -26,6 +26,11 @@ xmlstarlet ed -P -L \
 	-u '//*[@glib:error-domain="g-option-context-error-quark"]/@glib:error-domain' -v g-option-error-quark \
 	GLib-2.0.gir
 
+# GtkIconSize usage
+xmlstarlet ed -P -L \
+	-u '//_:type[@c:type="GtkIconSize"]/@name' -v "IconSize" \
+	-u '//_:type[@c:type="GtkIconSize*"]/@name' -v "IconSize" \
+	Gtk-3.0.gir
 
 # incorrect GIR due to gobject-introspection GitLab issue #189
 xmlstarlet ed -P -L \
