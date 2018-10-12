@@ -69,3 +69,8 @@ xmlstarlet ed -P -L \
 	-u '//_:method[@c:identifier="gdk_frame_clock_get_timings"]/_:return-value/@transfer-ownership' -v "none" \
 	Gdk-3.0.gir
 
+# replace "gint" response_id parameters with "ResponseType"
+xmlstarlet ed -P -L \
+	-u '//_:parameter[@name="response_id"]/_:type[@name="gint"]/@c:type' -v "GtkResponseType" \
+	-u '//_:parameter[@name="response_id"]/_:type[@name="gint"]/@name' -v "ResponseType" \
+	Gtk-3.0.gir
