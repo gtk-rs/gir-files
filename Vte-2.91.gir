@@ -91,12 +91,12 @@ should be copied to the clipboard in.</doc>
 (e.g. in version 3.1.4 this is 3).</doc>
       <type name="gint" c:type="gint"/>
     </constant>
-    <constant name="MICRO_VERSION" value="1" c:type="VTE_MICRO_VERSION">
+    <constant name="MICRO_VERSION" value="2" c:type="VTE_MICRO_VERSION">
       <doc xml:space="preserve">The micro version number of the VTE library
 (e.g. in version 3.1.4 this is 4).</doc>
       <type name="gint" c:type="gint"/>
     </constant>
-    <constant name="MINOR_VERSION" value="52" c:type="VTE_MINOR_VERSION">
+    <constant name="MINOR_VERSION" value="54" c:type="VTE_MINOR_VERSION">
       <doc xml:space="preserve">The minor version number of the VTE library
 (e.g. in version 3.1.4 this is 1).</doc>
       <type name="gint" c:type="gint"/>
@@ -516,6 +516,12 @@ a cell has to be selected or not.</doc>
         </parameter>
       </parameters>
     </callback>
+    <constant name="TEST_FLAGS_ALL" value="18446744073709551615" c:type="VTE_TEST_FLAGS_ALL">
+      <type name="guint64" c:type="guint64"/>
+    </constant>
+    <constant name="TEST_FLAGS_NONE" value="0" c:type="VTE_TEST_FLAGS_NONE">
+      <type name="guint64" c:type="guint64"/>
+    </constant>
     <class name="Terminal" c:symbol-prefix="terminal" c:type="VteTerminal" parent="Gtk.Widget" glib:type-name="VteTerminal" glib:get-type="vte_terminal_get_type" glib:type-struct="TerminalClass">
       <implements name="Atk.ImplementorIface"/>
       <implements name="Gtk.Buildable"/>
@@ -725,8 +731,7 @@ selection.</doc>
       </virtual-method>
       <virtual-method name="paste_clipboard" invoker="paste_clipboard">
         <doc xml:space="preserve">Sends the contents of the #GDK_SELECTION_CLIPBOARD selection to the
-terminal's child.  If necessary, the data is converted from UTF-8 to the
-terminal's current encoding. It's called on paste menu item, or when
+terminal's child. It's called on paste menu item, or when
 user presses Shift+Insert.</doc>
         <return-value transfer-ownership="none">
           <type name="none" c:type="void"/>
@@ -992,9 +997,9 @@ to mess with your users.</doc>
             <doc xml:space="preserve">a #VteTerminal</doc>
             <type name="Terminal" c:type="VteTerminal*"/>
           </instance-parameter>
-          <parameter name="data" transfer-ownership="none">
+          <parameter name="data" transfer-ownership="none" nullable="1" allow-none="1">
             <doc xml:space="preserve">a string in the terminal's current encoding</doc>
-            <array length="1" zero-terminated="0" c:type="char*">
+            <array length="1" zero-terminated="0" c:type="const char*">
               <type name="guint8"/>
             </array>
           </parameter>
@@ -1015,9 +1020,11 @@ at the keyboard.</doc>
             <doc xml:space="preserve">a #VteTerminal</doc>
             <type name="Terminal" c:type="VteTerminal*"/>
           </instance-parameter>
-          <parameter name="text" transfer-ownership="none">
+          <parameter name="text" transfer-ownership="none" nullable="1" allow-none="1">
             <doc xml:space="preserve">data to send to the child</doc>
-            <type name="utf8" c:type="const char*"/>
+            <array length="1" zero-terminated="0" c:type="const char*">
+              <type name="gchar"/>
+            </array>
           </parameter>
           <parameter name="length" transfer-ownership="none">
             <doc xml:space="preserve">length of @text in bytes, or -1 if @text is NUL-terminated</doc>
@@ -1035,9 +1042,11 @@ at the keyboard.</doc>
             <doc xml:space="preserve">a #VteTerminal</doc>
             <type name="Terminal" c:type="VteTerminal*"/>
           </instance-parameter>
-          <parameter name="data" transfer-ownership="none">
+          <parameter name="data" transfer-ownership="none" nullable="1" allow-none="1">
             <doc xml:space="preserve">data to send to the child</doc>
-            <type name="guint8" c:type="const guint8*"/>
+            <array length="1" zero-terminated="0" c:type="const guint8*">
+              <type name="guint8"/>
+            </array>
           </parameter>
           <parameter name="length" transfer-ownership="none">
             <doc xml:space="preserve">length of @data</doc>
@@ -1157,8 +1166,10 @@ because the return value takes cell-width-scale into account.</doc>
         </parameters>
       </method>
       <method name="get_cjk_ambiguous_width" c:identifier="vte_terminal_get_cjk_ambiguous_width">
-        <doc xml:space="preserve">Returns whether ambiguous-width characters are narrow or wide when using
-the UTF-8 encoding (vte_terminal_set_encoding()).</doc>
+        <doc xml:space="preserve">Returns whether ambiguous-width characters are narrow or wide.
+(Note that when using a non-UTF-8 encoding set via vte_terminal_set_encoding(),
+the width of ambiguous-width characters is fixed and determined by the encoding
+itself.)</doc>
         <return-value transfer-ownership="none">
           <doc xml:space="preserve">1 if ambiguous-width characters are narrow, or 2 if they are wide</doc>
           <type name="gint" c:type="int"/>
@@ -1168,6 +1179,31 @@ the UTF-8 encoding (vte_terminal_set_encoding()).</doc>
             <doc xml:space="preserve">a #VteTerminal</doc>
             <type name="Terminal" c:type="VteTerminal*"/>
           </instance-parameter>
+        </parameters>
+      </method>
+      <method name="get_color_background_for_draw" c:identifier="vte_terminal_get_color_background_for_draw" version="0.54">
+        <doc xml:space="preserve">Returns the background colour, as used by @terminal when
+drawing the background, which may be different from
+the color set by vte_terminal_set_color_background().
+
+Note: you must only call this function while handling the
+GtkWidget::draw signal.
+
+This function is rarely useful. One use for it is if you disable
+drawing the background (see vte_terminal_set_clear_background())
+and then need to draw the background yourself.</doc>
+        <return-value transfer-ownership="none">
+          <type name="none" c:type="void"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="terminal" transfer-ownership="none">
+            <doc xml:space="preserve">a #VteTerminal</doc>
+            <type name="Terminal" c:type="VteTerminal*"/>
+          </instance-parameter>
+          <parameter name="color" direction="out" caller-allocates="1" transfer-ownership="none">
+            <doc xml:space="preserve">a location to store a #GdbRGBA color</doc>
+            <type name="Gdk.RGBA" c:type="GdkRGBA*"/>
+          </parameter>
         </parameters>
       </method>
       <method name="get_column_count" c:identifier="vte_terminal_get_column_count">
@@ -1183,7 +1219,7 @@ the UTF-8 encoding (vte_terminal_set_encoding()).</doc>
         </parameters>
       </method>
       <method name="get_current_directory_uri" c:identifier="vte_terminal_get_current_directory_uri">
-        <return-value transfer-ownership="none">
+        <return-value transfer-ownership="none" nullable="1">
           <doc xml:space="preserve">the URI of the current directory of the
   process running in the terminal, or %NULL</doc>
           <type name="utf8" c:type="const char*"/>
@@ -1196,7 +1232,7 @@ the UTF-8 encoding (vte_terminal_set_encoding()).</doc>
         </parameters>
       </method>
       <method name="get_current_file_uri" c:identifier="vte_terminal_get_current_file_uri">
-        <return-value transfer-ownership="none">
+        <return-value transfer-ownership="none" nullable="1">
           <doc xml:space="preserve">the URI of the current file the
   process running in the terminal is operating on, or %NULL if
   not set</doc>
@@ -1256,10 +1292,11 @@ coordinate is absolute.</doc>
           </instance-parameter>
         </parameters>
       </method>
-      <method name="get_encoding" c:identifier="vte_terminal_get_encoding">
+      <method name="get_encoding" c:identifier="vte_terminal_get_encoding" deprecated="1" deprecated-version="0.54">
         <doc xml:space="preserve">Determines the name of the encoding in which the terminal expects data to be
-encoded.</doc>
-        <return-value transfer-ownership="none">
+encoded, or %NULL if UTF-8 is in use.</doc>
+        <doc-deprecated xml:space="preserve">Support for non-UTF-8 is deprecated.</doc-deprecated>
+        <return-value transfer-ownership="none" nullable="1">
           <doc xml:space="preserve">the current encoding for the terminal</doc>
           <type name="utf8" c:type="const char*"/>
         </return-value>
@@ -1344,9 +1381,9 @@ is different from determining if the terminal is the owner of any
           </instance-parameter>
         </parameters>
       </method>
-      <method name="get_icon_title" c:identifier="vte_terminal_get_icon_title">
-        <return-value transfer-ownership="none">
-          <doc xml:space="preserve">the icon title</doc>
+      <method name="get_icon_title" c:identifier="vte_terminal_get_icon_title" deprecated="1" deprecated-version="0.54">
+        <return-value transfer-ownership="none" nullable="1">
+          <doc xml:space="preserve">%NULL</doc>
           <type name="utf8" c:type="const char*"/>
         </return-value>
         <parameters>
@@ -1589,8 +1626,8 @@ contents of the buffer using this function.</doc>
         </parameters>
       </method>
       <method name="get_window_title" c:identifier="vte_terminal_get_window_title">
-        <return-value transfer-ownership="none">
-          <doc xml:space="preserve">the window title</doc>
+        <return-value transfer-ownership="none" nullable="1">
+          <doc xml:space="preserve">the window title, or %NULL</doc>
           <type name="utf8" c:type="const char*"/>
         </return-value>
         <parameters>
@@ -1606,7 +1643,7 @@ when doing word-wise selection, in addition to the default which only
 considers alphanumeric characters part of a word.
 
 If %NULL, a built-in set is used.</doc>
-        <return-value transfer-ownership="none">
+        <return-value transfer-ownership="none" nullable="1">
           <doc xml:space="preserve">a string, or %NULL</doc>
           <type name="utf8" c:type="const char*"/>
         </return-value>
@@ -1784,7 +1821,7 @@ when the user moves the mouse cursor.</doc>
       <method name="match_set_cursor" c:identifier="vte_terminal_match_set_cursor" deprecated="1" deprecated-version="0.40">
         <doc xml:space="preserve">Sets which cursor the terminal will use if the pointer is over the pattern
 specified by @tag.  The terminal keeps a reference to @cursor.</doc>
-        <doc-deprecated xml:space="preserve">Use vte_terminal_match_set_cursor_type() or vte_terminal_match_set_cursor_named() instead.</doc-deprecated>
+        <doc-deprecated xml:space="preserve">Use vte_terminal_match_set_cursor_name() instead.</doc-deprecated>
         <return-value transfer-ownership="none">
           <type name="none" c:type="void"/>
         </return-value>
@@ -1825,9 +1862,10 @@ specified by @tag.</doc>
           </parameter>
         </parameters>
       </method>
-      <method name="match_set_cursor_type" c:identifier="vte_terminal_match_set_cursor_type">
+      <method name="match_set_cursor_type" c:identifier="vte_terminal_match_set_cursor_type" deprecated="1" deprecated-version="0.54">
         <doc xml:space="preserve">Sets which cursor the terminal will use if the pointer is over the pattern
 specified by @tag.</doc>
+        <doc-deprecated xml:space="preserve">Use vte_terminal_match_set_cursor_name() instead.</doc-deprecated>
         <return-value transfer-ownership="none">
           <type name="none" c:type="void"/>
         </return-value>
@@ -1848,8 +1886,7 @@ specified by @tag.</doc>
       </method>
       <method name="paste_clipboard" c:identifier="vte_terminal_paste_clipboard">
         <doc xml:space="preserve">Sends the contents of the #GDK_SELECTION_CLIPBOARD selection to the
-terminal's child.  If necessary, the data is converted from UTF-8 to the
-terminal's current encoding. It's called on paste menu item, or when
+terminal's child. It's called on paste menu item, or when
 user presses Shift+Insert.</doc>
         <return-value transfer-ownership="none">
           <type name="none" c:type="void"/>
@@ -1863,8 +1900,7 @@ user presses Shift+Insert.</doc>
       </method>
       <method name="paste_primary" c:identifier="vte_terminal_paste_primary">
         <doc xml:space="preserve">Sends the contents of the #GDK_SELECTION_PRIMARY selection to the terminal's
-child.  If necessary, the data is converted from UTF-8 to the terminal's
-current encoding.  The terminal will call also paste the
+child. The terminal will call also paste the
 #GDK_SELECTION_PRIMARY selection when the user clicks with the the second
 mouse button.</doc>
         <return-value transfer-ownership="none">
@@ -2185,9 +2221,10 @@ Valid values go from 1.0 (default) to 2.0.</doc>
         </parameters>
       </method>
       <method name="set_cjk_ambiguous_width" c:identifier="vte_terminal_set_cjk_ambiguous_width">
-        <doc xml:space="preserve">This setting controls whether ambiguous-width characters are narrow or wide
-when using the UTF-8 encoding (vte_terminal_set_encoding()). In all other encodings,
-the width of ambiguous-width characters is fixed.</doc>
+        <doc xml:space="preserve">This setting controls whether ambiguous-width characters are narrow or wide.
+(Note that when using a non-UTF-8 encoding set via vte_terminal_set_encoding(),
+the width of ambiguous-width characters is fixed and determined by the encoding
+itself.)</doc>
         <return-value transfer-ownership="none">
           <type name="none" c:type="void"/>
         </return-value>
@@ -2374,7 +2411,7 @@ greater than 0, the new background color is taken from @palette[0].</doc>
           </parameter>
           <parameter name="palette" transfer-ownership="none" nullable="1" allow-none="1">
             <doc xml:space="preserve">the color palette</doc>
-            <array length="3" zero-terminated="0" c:type="GdkRGBA*">
+            <array length="3" zero-terminated="0" c:type="const GdkRGBA*">
               <type name="Gdk.RGBA"/>
             </array>
           </parameter>
@@ -2447,10 +2484,15 @@ presses the delete key.</doc>
           </parameter>
         </parameters>
       </method>
-      <method name="set_encoding" c:identifier="vte_terminal_set_encoding" throws="1">
+      <method name="set_encoding" c:identifier="vte_terminal_set_encoding" deprecated="1" deprecated-version="0.54" throws="1">
         <doc xml:space="preserve">Changes the encoding the terminal will expect data from the child to
 be encoded with.  For certain terminal types, applications executing in the
-terminal can change the encoding. If @codeset is %NULL, it uses "UTF-8".</doc>
+terminal can change the encoding. If @codeset is %NULL, it uses "UTF-8".
+
+Note: Support for non-UTF-8 is deprecated and may get removed altogether.
+Instead of this function, you should use a wrapper like luit(1) when
+spawning the child process.</doc>
+        <doc-deprecated xml:space="preserve">Support for non-UTF-8 is deprecated.</doc-deprecated>
         <return-value transfer-ownership="none">
           <doc xml:space="preserve">%TRUE if the encoding could be changed to the specified one,
  or %FALSE with @error set to %G_CONVERT_ERROR_NO_CONVERSION.</doc>
@@ -2982,9 +3024,10 @@ or if SGR 1 only enables bold and leaves the color intact.</doc>
         <type name="gdouble" c:type="gdouble"/>
       </property>
       <property name="cjk-ambiguous-width" writable="1" transfer-ownership="none">
-        <doc xml:space="preserve">This setting controls whether ambiguous-width characters are narrow or wide
-when using the UTF-8 encoding (vte_terminal_set_encoding()). In all other encodings,
-the width of ambiguous-width characters is fixed.
+        <doc xml:space="preserve">This setting controls whether ambiguous-width characters are narrow or wide.
+(Note that when using a non-UTF-8 encoding set via vte_terminal_set_encoding(),
+the width of ambiguous-width characters is fixed and determined by the encoding
+itself.)
 
 This setting only takes effect the next time the terminal is reset, either
 via escape sequence or with vte_terminal_reset().</doc>
@@ -3012,11 +3055,13 @@ will use the #GtkSettings::gtk-cursor-blink setting.</doc>
 when the user presses the delete key.</doc>
         <type name="EraseBinding"/>
       </property>
-      <property name="encoding" writable="1" transfer-ownership="none">
+      <property name="encoding" deprecated="1" deprecated-version="0.54" writable="1" transfer-ownership="none">
         <doc xml:space="preserve">Controls the encoding the terminal will expect data from the child to
 be encoded with.  For certain terminal types, applications executing in the
 terminal can change the encoding.  The default is defined by the
 application's locale settings.</doc>
+        <doc-deprecated xml:space="preserve">Instead of using this, you should use a tool like
+  luit(1) when support for non-UTF-8 is required</doc-deprecated>
         <type name="utf8" c:type="gchar*"/>
       </property>
       <property name="font-desc" writable="1" transfer-ownership="none">
@@ -3035,8 +3080,8 @@ and columns.</doc>
         <doc xml:space="preserve">The currently hovered hyperlink URI, or %NULL if unset.</doc>
         <type name="utf8" c:type="gchar*"/>
       </property>
-      <property name="icon-title" transfer-ownership="none">
-        <doc xml:space="preserve">The terminal's so-called icon title, or %NULL if no icon title has been set.</doc>
+      <property name="icon-title" deprecated="1" deprecated-version="0.54" transfer-ownership="none">
+        <doc-deprecated xml:space="preserve">This property is always %NULL.</doc-deprecated>
         <type name="utf8" c:type="gchar*"/>
       </property>
       <property name="input-enabled" writable="1" transfer-ownership="none">
@@ -3206,9 +3251,9 @@ primarily by #VteTerminalAccessible.</doc>
         </return-value>
       </glib:signal>
       <glib:signal name="encoding-changed" when="last">
-        <doc xml:space="preserve">Emitted whenever the terminal's current encoding has changed, either
-as a result of receiving a control sequence which toggled between the
-local and UTF-8 encodings, or at the parent application's request.</doc>
+        <doc xml:space="preserve">Emitted whenever the terminal's current encoding has changed.
+
+Note: support for non-UTF-8 is deprecated.</doc>
         <return-value transfer-ownership="none">
           <type name="none" c:type="void"/>
         </return-value>
@@ -3243,8 +3288,8 @@ same hyperlink. This might change in a future VTE version without notice.</doc>
           </parameter>
         </parameters>
       </glib:signal>
-      <glib:signal name="icon-title-changed" when="last">
-        <doc xml:space="preserve">Emitted when the terminal's %icon_title field is modified.</doc>
+      <glib:signal name="icon-title-changed" when="last" deprecated="1" deprecated-version="0.54">
+        <doc-deprecated xml:space="preserve">This signal is never emitted.</doc-deprecated>
         <return-value transfer-ownership="none">
           <type name="none" c:type="void"/>
         </return-value>
@@ -3873,6 +3918,19 @@ enumeration. See #GError for more information on error domains.</doc>
       <return-value transfer-ownership="none">
         <type name="GLib.Quark" c:type="GQuark"/>
       </return-value>
+    </function>
+    <function name="set_test_flags" c:identifier="vte_set_test_flags" version="0.54" introspectable="0">
+      <doc xml:space="preserve">Sets test flags. This function is only useful for implementing
+unit tests for vte itself; it is a no-op in non-debug builds.</doc>
+      <return-value transfer-ownership="none">
+        <type name="none" c:type="void"/>
+      </return-value>
+      <parameters>
+        <parameter name="flags" transfer-ownership="none">
+          <doc xml:space="preserve">flags</doc>
+          <type name="guint64" c:type="guint64"/>
+        </parameter>
+      </parameters>
     </function>
   </namespace>
 </repository>

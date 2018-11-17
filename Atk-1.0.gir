@@ -527,7 +527,7 @@ A string name/value pair representing a generic attribute.</doc>
         </parameters>
       </function>
     </record>
-    <constant name="BINARY_AGE" value="22811" c:type="ATK_BINARY_AGE" version="2.7.4">
+    <constant name="BINARY_AGE" value="23010" c:type="ATK_BINARY_AGE" version="2.7.4">
       <doc xml:space="preserve">Like atk_get_binary_age(), but from the headers used at
 application compile time, rather than from the library linked
 against at application run time.</doc>
@@ -797,6 +797,54 @@ from @component</doc>
           </parameter>
         </parameters>
       </virtual-method>
+      <virtual-method name="scroll_to" invoker="scroll_to" version="2.30">
+        <doc xml:space="preserve">Makes @component visible on the screen by scrolling all necessary parents.
+
+Contrary to atk_component_set_position, this does not actually move
+@component in its parent, this only makes the parents scroll so that the
+object shows up on the screen, given its current position within the parents.</doc>
+        <return-value transfer-ownership="none">
+          <doc xml:space="preserve">whether scrolling was successful.</doc>
+          <type name="gboolean" c:type="gboolean"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="component" transfer-ownership="none">
+            <doc xml:space="preserve">an #AtkComponent</doc>
+            <type name="Component" c:type="AtkComponent*"/>
+          </instance-parameter>
+          <parameter name="type" transfer-ownership="none">
+            <doc xml:space="preserve">specify where the object should be made visible.</doc>
+            <type name="ScrollType" c:type="AtkScrollType"/>
+          </parameter>
+        </parameters>
+      </virtual-method>
+      <virtual-method name="scroll_to_point" invoker="scroll_to_point" version="2.30">
+        <doc xml:space="preserve">Makes an object visible on the screen at a given position by scrolling all
+necessary parents.</doc>
+        <return-value transfer-ownership="none">
+          <doc xml:space="preserve">whether scrolling was successful.</doc>
+          <type name="gboolean" c:type="gboolean"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="component" transfer-ownership="none">
+            <doc xml:space="preserve">an #AtkComponent</doc>
+            <type name="Component" c:type="AtkComponent*"/>
+          </instance-parameter>
+          <parameter name="coords" transfer-ownership="none">
+            <doc xml:space="preserve">specify whether coordinates are relative to the screen or to the
+parent object.</doc>
+            <type name="CoordType" c:type="AtkCoordType"/>
+          </parameter>
+          <parameter name="x" transfer-ownership="none">
+            <doc xml:space="preserve">x-position where to scroll to</doc>
+            <type name="gint" c:type="gint"/>
+          </parameter>
+          <parameter name="y" transfer-ownership="none">
+            <doc xml:space="preserve">y-position where to scroll to</doc>
+            <type name="gint" c:type="gint"/>
+          </parameter>
+        </parameters>
+      </virtual-method>
       <virtual-method name="set_extents" invoker="set_extents">
         <doc xml:space="preserve">Sets the extents of @component.</doc>
         <return-value transfer-ownership="none">
@@ -832,7 +880,10 @@ or to the components top level window</doc>
         </parameters>
       </virtual-method>
       <virtual-method name="set_position" invoker="set_position">
-        <doc xml:space="preserve">Sets the postition of @component.</doc>
+        <doc xml:space="preserve">Sets the position of @component.
+
+Contrary to atk_component_scroll_to, this does not trigger any scrolling,
+this just moves @component in its parent.</doc>
         <return-value transfer-ownership="none">
           <doc xml:space="preserve">%TRUE or %FALSE whether or not the position was set or not</doc>
           <type name="gboolean" c:type="gboolean"/>
@@ -852,7 +903,7 @@ or to the components top level window</doc>
           </parameter>
           <parameter name="coord_type" transfer-ownership="none">
             <doc xml:space="preserve">specifies whether the coordinates are relative to the screen
-or to the components top level window</doc>
+or to the component's top level window</doc>
             <type name="CoordType" c:type="AtkCoordType"/>
           </parameter>
         </parameters>
@@ -1118,6 +1169,54 @@ from @component</doc>
           </parameter>
         </parameters>
       </method>
+      <method name="scroll_to" c:identifier="atk_component_scroll_to" version="2.30">
+        <doc xml:space="preserve">Makes @component visible on the screen by scrolling all necessary parents.
+
+Contrary to atk_component_set_position, this does not actually move
+@component in its parent, this only makes the parents scroll so that the
+object shows up on the screen, given its current position within the parents.</doc>
+        <return-value transfer-ownership="none">
+          <doc xml:space="preserve">whether scrolling was successful.</doc>
+          <type name="gboolean" c:type="gboolean"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="component" transfer-ownership="none">
+            <doc xml:space="preserve">an #AtkComponent</doc>
+            <type name="Component" c:type="AtkComponent*"/>
+          </instance-parameter>
+          <parameter name="type" transfer-ownership="none">
+            <doc xml:space="preserve">specify where the object should be made visible.</doc>
+            <type name="ScrollType" c:type="AtkScrollType"/>
+          </parameter>
+        </parameters>
+      </method>
+      <method name="scroll_to_point" c:identifier="atk_component_scroll_to_point" version="2.30">
+        <doc xml:space="preserve">Makes an object visible on the screen at a given position by scrolling all
+necessary parents.</doc>
+        <return-value transfer-ownership="none">
+          <doc xml:space="preserve">whether scrolling was successful.</doc>
+          <type name="gboolean" c:type="gboolean"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="component" transfer-ownership="none">
+            <doc xml:space="preserve">an #AtkComponent</doc>
+            <type name="Component" c:type="AtkComponent*"/>
+          </instance-parameter>
+          <parameter name="coords" transfer-ownership="none">
+            <doc xml:space="preserve">specify whether coordinates are relative to the screen or to the
+parent object.</doc>
+            <type name="CoordType" c:type="AtkCoordType"/>
+          </parameter>
+          <parameter name="x" transfer-ownership="none">
+            <doc xml:space="preserve">x-position where to scroll to</doc>
+            <type name="gint" c:type="gint"/>
+          </parameter>
+          <parameter name="y" transfer-ownership="none">
+            <doc xml:space="preserve">y-position where to scroll to</doc>
+            <type name="gint" c:type="gint"/>
+          </parameter>
+        </parameters>
+      </method>
       <method name="set_extents" c:identifier="atk_component_set_extents">
         <doc xml:space="preserve">Sets the extents of @component.</doc>
         <return-value transfer-ownership="none">
@@ -1153,7 +1252,10 @@ or to the components top level window</doc>
         </parameters>
       </method>
       <method name="set_position" c:identifier="atk_component_set_position">
-        <doc xml:space="preserve">Sets the postition of @component.</doc>
+        <doc xml:space="preserve">Sets the position of @component.
+
+Contrary to atk_component_scroll_to, this does not trigger any scrolling,
+this just moves @component in its parent.</doc>
         <return-value transfer-ownership="none">
           <doc xml:space="preserve">%TRUE or %FALSE whether or not the position was set or not</doc>
           <type name="gboolean" c:type="gboolean"/>
@@ -1173,7 +1275,7 @@ or to the components top level window</doc>
           </parameter>
           <parameter name="coord_type" transfer-ownership="none">
             <doc xml:space="preserve">specifies whether the coordinates are relative to the screen
-or to the components top level window</doc>
+or to the component's top level window</doc>
             <type name="CoordType" c:type="AtkCoordType"/>
           </parameter>
         </parameters>
@@ -1461,7 +1563,7 @@ or to the components top level window</doc>
             </parameter>
             <parameter name="coord_type" transfer-ownership="none">
               <doc xml:space="preserve">specifies whether the coordinates are relative to the screen
-or to the components top level window</doc>
+or to the component's top level window</doc>
               <type name="CoordType" c:type="AtkCoordType"/>
             </parameter>
           </parameters>
@@ -1548,6 +1650,51 @@ container.</doc>
           </parameters>
         </callback>
       </field>
+      <field name="scroll_to">
+        <callback name="scroll_to">
+          <return-value transfer-ownership="none">
+            <doc xml:space="preserve">whether scrolling was successful.</doc>
+            <type name="gboolean" c:type="gboolean"/>
+          </return-value>
+          <parameters>
+            <parameter name="component" transfer-ownership="none">
+              <doc xml:space="preserve">an #AtkComponent</doc>
+              <type name="Component" c:type="AtkComponent*"/>
+            </parameter>
+            <parameter name="type" transfer-ownership="none">
+              <doc xml:space="preserve">specify where the object should be made visible.</doc>
+              <type name="ScrollType" c:type="AtkScrollType"/>
+            </parameter>
+          </parameters>
+        </callback>
+      </field>
+      <field name="scroll_to_point">
+        <callback name="scroll_to_point">
+          <return-value transfer-ownership="none">
+            <doc xml:space="preserve">whether scrolling was successful.</doc>
+            <type name="gboolean" c:type="gboolean"/>
+          </return-value>
+          <parameters>
+            <parameter name="component" transfer-ownership="none">
+              <doc xml:space="preserve">an #AtkComponent</doc>
+              <type name="Component" c:type="AtkComponent*"/>
+            </parameter>
+            <parameter name="coords" transfer-ownership="none">
+              <doc xml:space="preserve">specify whether coordinates are relative to the screen or to the
+parent object.</doc>
+              <type name="CoordType" c:type="AtkCoordType"/>
+            </parameter>
+            <parameter name="x" transfer-ownership="none">
+              <doc xml:space="preserve">x-position where to scroll to</doc>
+              <type name="gint" c:type="gint"/>
+            </parameter>
+            <parameter name="y" transfer-ownership="none">
+              <doc xml:space="preserve">y-position where to scroll to</doc>
+              <type name="gint" c:type="gint"/>
+            </parameter>
+          </parameters>
+        </callback>
+      </field>
     </record>
     <enumeration name="CoordType" glib:type-name="AtkCoordType" glib:get-type="atk_coord_type_get_type" c:type="AtkCoordType">
       <doc xml:space="preserve">Specifies how xy coordinates are to be interpreted. Used by functions such
@@ -1558,6 +1705,10 @@ as atk_component_get_position() and atk_text_get_character_extents()</doc>
       <member name="window" value="1" c:identifier="ATK_XY_WINDOW" glib:nick="window">
         <doc xml:space="preserve">specifies xy coordinates relative to the widget's
 top-level window</doc>
+      </member>
+      <member name="parent" value="2" c:identifier="ATK_XY_PARENT" glib:nick="parent">
+        <doc xml:space="preserve">specifies xy coordinates relative to the widget's
+immediate parent. Since: 2.30</doc>
       </member>
     </enumeration>
     <interface name="Document" c:symbol-prefix="document" c:type="AtkDocument" glib:type-name="AtkDocument" glib:get-type="atk_document_get_type" glib:type-struct="DocumentIface">
@@ -1599,35 +1750,57 @@ instance of the DOM.</doc-deprecated>
           </instance-parameter>
         </parameters>
       </virtual-method>
-      <virtual-method name="get_document_attribute_value">
-        <return-value transfer-ownership="none">
+      <virtual-method name="get_document_attribute_value" invoker="get_attribute_value" version="1.12">
+        <return-value transfer-ownership="none" nullable="1">
+          <doc xml:space="preserve">a string value associated with the named
+   attribute for this document, or NULL if a value for
+   #attribute_name has not been specified for this document.</doc>
           <type name="utf8" c:type="const gchar*"/>
         </return-value>
         <parameters>
           <instance-parameter name="document" transfer-ownership="none">
+            <doc xml:space="preserve">a #GObject instance that implements AtkDocumentIface</doc>
             <type name="Document" c:type="AtkDocument*"/>
           </instance-parameter>
           <parameter name="attribute_name" transfer-ownership="none">
+            <doc xml:space="preserve">a character string representing the name of the attribute
+           whose value is being queried.</doc>
             <type name="utf8" c:type="const gchar*"/>
           </parameter>
         </parameters>
       </virtual-method>
-      <virtual-method name="get_document_attributes" introspectable="0">
-        <return-value>
+      <virtual-method name="get_document_attributes" invoker="get_attributes" version="1.12">
+        <doc xml:space="preserve">Gets an AtkAttributeSet which describes document-wide
+         attributes as name-value pairs.</doc>
+        <return-value transfer-ownership="none">
+          <doc xml:space="preserve">An AtkAttributeSet containing the explicitly
+         set name-value-pair attributes associated with this document
+         as a whole.</doc>
           <type name="AttributeSet" c:type="AtkAttributeSet*"/>
         </return-value>
         <parameters>
           <instance-parameter name="document" transfer-ownership="none">
+            <doc xml:space="preserve">a #GObject instance that implements AtkDocumentIface</doc>
             <type name="Document" c:type="AtkDocument*"/>
           </instance-parameter>
         </parameters>
       </virtual-method>
-      <virtual-method name="get_document_locale">
+      <virtual-method name="get_document_locale" invoker="get_locale" deprecated="1" deprecated-version="2.7.90">
+        <doc xml:space="preserve">Gets a UTF-8 string indicating the POSIX-style LC_MESSAGES locale
+         of the content of this document instance.  Individual
+         text substrings or images within this document may have
+         a different locale, see atk_text_get_attributes and
+         atk_image_get_image_locale.</doc>
+        <doc-deprecated xml:space="preserve">Please use atk_object_get_object_locale() instead.</doc-deprecated>
         <return-value transfer-ownership="none">
+          <doc xml:space="preserve">a UTF-8 string indicating the POSIX-style LC_MESSAGES
+         locale of the document content as a whole, or NULL if
+         the document content does not specify a locale.</doc>
           <type name="utf8" c:type="const gchar*"/>
         </return-value>
         <parameters>
           <instance-parameter name="document" transfer-ownership="none">
+            <doc xml:space="preserve">a #GObject instance that implements AtkDocumentIface</doc>
             <type name="Document" c:type="AtkDocument*"/>
           </instance-parameter>
         </parameters>
@@ -1660,18 +1833,25 @@ know by the implementor or irrelevant.</doc>
           </instance-parameter>
         </parameters>
       </virtual-method>
-      <virtual-method name="set_document_attribute">
+      <virtual-method name="set_document_attribute" invoker="set_attribute_value" version="1.12">
         <return-value transfer-ownership="none">
+          <doc xml:space="preserve">TRUE if #value is successfully associated with #attribute_name
+         for this document, FALSE otherwise (e.g. if the document does not
+         allow the attribute to be modified).</doc>
           <type name="gboolean" c:type="gboolean"/>
         </return-value>
         <parameters>
           <instance-parameter name="document" transfer-ownership="none">
+            <doc xml:space="preserve">a #GObject instance that implements AtkDocumentIface</doc>
             <type name="Document" c:type="AtkDocument*"/>
           </instance-parameter>
           <parameter name="attribute_name" transfer-ownership="none">
+            <doc xml:space="preserve">a character string representing the name of the attribute
+           whose value is being set.</doc>
             <type name="utf8" c:type="const gchar*"/>
           </parameter>
           <parameter name="attribute_value" transfer-ownership="none">
+            <doc xml:space="preserve">a string value to be associated with #attribute_name.</doc>
             <type name="utf8" c:type="const gchar*"/>
           </parameter>
         </parameters>
@@ -1899,22 +2079,30 @@ interrogating ATK for the latest document content.</doc>
       <field name="get_document_locale">
         <callback name="get_document_locale">
           <return-value transfer-ownership="none">
+            <doc xml:space="preserve">a UTF-8 string indicating the POSIX-style LC_MESSAGES
+         locale of the document content as a whole, or NULL if
+         the document content does not specify a locale.</doc>
             <type name="utf8" c:type="const gchar*"/>
           </return-value>
           <parameters>
             <parameter name="document" transfer-ownership="none">
+              <doc xml:space="preserve">a #GObject instance that implements AtkDocumentIface</doc>
               <type name="Document" c:type="AtkDocument*"/>
             </parameter>
           </parameters>
         </callback>
       </field>
-      <field name="get_document_attributes" introspectable="0">
-        <callback name="get_document_attributes" introspectable="0">
-          <return-value>
+      <field name="get_document_attributes">
+        <callback name="get_document_attributes">
+          <return-value transfer-ownership="none">
+            <doc xml:space="preserve">An AtkAttributeSet containing the explicitly
+         set name-value-pair attributes associated with this document
+         as a whole.</doc>
             <type name="AttributeSet" c:type="AtkAttributeSet*"/>
           </return-value>
           <parameters>
             <parameter name="document" transfer-ownership="none">
+              <doc xml:space="preserve">a #GObject instance that implements AtkDocumentIface</doc>
               <type name="Document" c:type="AtkDocument*"/>
             </parameter>
           </parameters>
@@ -1922,14 +2110,20 @@ interrogating ATK for the latest document content.</doc>
       </field>
       <field name="get_document_attribute_value">
         <callback name="get_document_attribute_value">
-          <return-value transfer-ownership="none">
+          <return-value transfer-ownership="none" nullable="1">
+            <doc xml:space="preserve">a string value associated with the named
+   attribute for this document, or NULL if a value for
+   #attribute_name has not been specified for this document.</doc>
             <type name="utf8" c:type="const gchar*"/>
           </return-value>
           <parameters>
             <parameter name="document" transfer-ownership="none">
+              <doc xml:space="preserve">a #GObject instance that implements AtkDocumentIface</doc>
               <type name="Document" c:type="AtkDocument*"/>
             </parameter>
             <parameter name="attribute_name" transfer-ownership="none">
+              <doc xml:space="preserve">a character string representing the name of the attribute
+           whose value is being queried.</doc>
               <type name="utf8" c:type="const gchar*"/>
             </parameter>
           </parameters>
@@ -1938,16 +2132,23 @@ interrogating ATK for the latest document content.</doc>
       <field name="set_document_attribute">
         <callback name="set_document_attribute">
           <return-value transfer-ownership="none">
+            <doc xml:space="preserve">TRUE if #value is successfully associated with #attribute_name
+         for this document, FALSE otherwise (e.g. if the document does not
+         allow the attribute to be modified).</doc>
             <type name="gboolean" c:type="gboolean"/>
           </return-value>
           <parameters>
             <parameter name="document" transfer-ownership="none">
+              <doc xml:space="preserve">a #GObject instance that implements AtkDocumentIface</doc>
               <type name="Document" c:type="AtkDocument*"/>
             </parameter>
             <parameter name="attribute_name" transfer-ownership="none">
+              <doc xml:space="preserve">a character string representing the name of the attribute
+           whose value is being set.</doc>
               <type name="utf8" c:type="const gchar*"/>
             </parameter>
             <parameter name="attribute_value" transfer-ownership="none">
+              <doc xml:space="preserve">a string value to be associated with #attribute_name.</doc>
               <type name="utf8" c:type="const gchar*"/>
             </parameter>
           </parameters>
@@ -3733,13 +3934,13 @@ application compile time, rather than from the library linked
 against at application run time.</doc>
       <type name="gint" c:type="gint"/>
     </constant>
-    <constant name="MICRO_VERSION" value="1" c:type="ATK_MICRO_VERSION" version="2.7.4">
+    <constant name="MICRO_VERSION" value="0" c:type="ATK_MICRO_VERSION" version="2.7.4">
       <doc xml:space="preserve">Like atk_get_micro_version(), but from the headers used at
 application compile time, rather than from the library linked
 against at application run time.</doc>
       <type name="gint" c:type="gint"/>
     </constant>
-    <constant name="MINOR_VERSION" value="28" c:type="ATK_MINOR_VERSION" version="2.7.4">
+    <constant name="MINOR_VERSION" value="30" c:type="ATK_MINOR_VERSION" version="2.7.4">
       <doc xml:space="preserve">Like atk_get_minor_version(), but from the headers used at
 application compile time, rather than from the library linked
 against at application run time.</doc>
@@ -4787,7 +4988,7 @@ a empty value you can use "".</doc>
         <type name="Object"/>
       </property>
       <property name="accessible-role" writable="1" transfer-ownership="none">
-        <type name="gint" c:type="gint"/>
+        <type name="Role"/>
       </property>
       <property name="accessible-table-caption" deprecated="1" writable="1" transfer-ownership="none">
         <doc xml:space="preserve">Table caption.</doc>
@@ -4861,9 +5062,9 @@ signal when the cell in the table which has focus changes.</doc>
           <type name="none" c:type="void"/>
         </return-value>
         <parameters>
-          <parameter name="arg1" transfer-ownership="none" nullable="1" allow-none="1">
+          <parameter name="arg1" transfer-ownership="none">
             <doc xml:space="preserve">the newly focused object.</doc>
-            <type name="gpointer" c:type="gpointer"/>
+            <type name="Object" c:type="gpointer"/>
           </parameter>
         </parameters>
       </glib:signal>
@@ -4881,12 +5082,12 @@ removed form an object. It supports two details: "add" and
 when the child is added/removed or irrelevant.</doc>
             <type name="guint" c:type="guint"/>
           </parameter>
-          <parameter name="arg2" transfer-ownership="none" nullable="1" allow-none="1">
+          <parameter name="arg2" transfer-ownership="none">
             <doc xml:space="preserve">A gpointer to the child AtkObject which was added or
 removed. If the child was removed, it is possible that it is not
 available for the implementor. In that case this pointer can be
 NULL.</doc>
-            <type name="gpointer" c:type="gpointer"/>
+            <type name="Object" c:type="gpointer"/>
           </parameter>
         </parameters>
       </glib:signal>
@@ -4923,10 +5124,10 @@ notify doesn't support emission hooks.</doc>
           <type name="none" c:type="void"/>
         </return-value>
         <parameters>
-          <parameter name="arg1" transfer-ownership="none" nullable="1" allow-none="1">
-            <doc xml:space="preserve">an #AtkPropertyValues containing the new value of the
-  property which changed.</doc>
-            <type name="gpointer" c:type="gpointer"/>
+          <parameter name="arg1" transfer-ownership="none">
+            <doc xml:space="preserve">an #AtkPropertyValues containing the new
+value of the property which changed.</doc>
+            <type name="PropertyValues" c:type="gpointer"/>
           </parameter>
         </parameters>
       </glib:signal>
@@ -6725,6 +6926,38 @@ properly. ATK_ROLE_INVALID in case of error.</doc>
           </parameter>
         </parameters>
       </function>
+    </enumeration>
+    <enumeration name="ScrollType" version="2.30" glib:type-name="AtkScrollType" glib:get-type="atk_scroll_type_get_type" c:type="AtkScrollType">
+      <doc xml:space="preserve">Specifies where an object should be placed on the screen when using scroll_to.</doc>
+      <member name="top_left" value="0" c:identifier="ATK_SCROLL_TOP_LEFT" glib:nick="top-left">
+        <doc xml:space="preserve">Scroll the object vertically and horizontally to the top
+left corner of the window.</doc>
+      </member>
+      <member name="bottom_right" value="1" c:identifier="ATK_SCROLL_BOTTOM_RIGHT" glib:nick="bottom-right">
+        <doc xml:space="preserve">Scroll the object vertically and horizontally to the
+bottom right corner of the window.</doc>
+      </member>
+      <member name="top_edge" value="2" c:identifier="ATK_SCROLL_TOP_EDGE" glib:nick="top-edge">
+        <doc xml:space="preserve">Scroll the object vertically to the top edge of the
+ window.</doc>
+      </member>
+      <member name="bottom_edge" value="3" c:identifier="ATK_SCROLL_BOTTOM_EDGE" glib:nick="bottom-edge">
+        <doc xml:space="preserve">Scroll the object vertically to the bottom edge of
+the window.</doc>
+      </member>
+      <member name="left_edge" value="4" c:identifier="ATK_SCROLL_LEFT_EDGE" glib:nick="left-edge">
+        <doc xml:space="preserve">Scroll the object vertically and horizontally to the
+left edge of the window.</doc>
+      </member>
+      <member name="right_edge" value="5" c:identifier="ATK_SCROLL_RIGHT_EDGE" glib:nick="right-edge">
+        <doc xml:space="preserve">Scroll the object vertically and horizontally to the
+right edge of the window.</doc>
+      </member>
+      <member name="anywhere" value="6" c:identifier="ATK_SCROLL_ANYWHERE" glib:nick="anywhere">
+        <doc xml:space="preserve">Scroll the object vertically and horizontally so that
+as much as possible of the object becomes visible. The exact placement is
+determined by the application.</doc>
+      </member>
     </enumeration>
     <interface name="Selection" c:symbol-prefix="selection" c:type="AtkSelection" glib:type-name="AtkSelection" glib:get-type="atk_selection_get_type" glib:type-struct="SelectionIface">
       <doc xml:space="preserve">#AtkSelection should be implemented by UI components with children
@@ -10411,7 +10644,7 @@ and is NULL terminated.</doc>
             <type name="Text" c:type="AtkText*"/>
           </instance-parameter>
           <parameter name="start_offset" transfer-ownership="none">
-            <doc xml:space="preserve">the start position of the selected region</doc>
+            <doc xml:space="preserve">the starting character offset of the selected region</doc>
             <type name="gint" c:type="gint"/>
           </parameter>
           <parameter name="end_offset" transfer-ownership="none">
@@ -10420,32 +10653,42 @@ and is NULL terminated.</doc>
           </parameter>
         </parameters>
       </virtual-method>
-      <virtual-method name="get_bounded_ranges">
+      <virtual-method name="get_bounded_ranges" invoker="get_bounded_ranges" version="1.3">
+        <doc xml:space="preserve">Get the ranges of text in the specified bounding box.</doc>
         <return-value transfer-ownership="full">
-          <type name="TextRange" c:type="AtkTextRange**"/>
+          <doc xml:space="preserve">Array of AtkTextRange. The last
+         element of the array returned by this function will be NULL.</doc>
+          <array c:type="AtkTextRange**">
+            <type name="TextRange" c:type="AtkTextRange*"/>
+          </array>
         </return-value>
         <parameters>
           <instance-parameter name="text" transfer-ownership="none">
+            <doc xml:space="preserve">an #AtkText</doc>
             <type name="Text" c:type="AtkText*"/>
           </instance-parameter>
           <parameter name="rect" transfer-ownership="none">
+            <doc xml:space="preserve">An AtkTextRectangle giving the dimensions of the bounding box.</doc>
             <type name="TextRectangle" c:type="AtkTextRectangle*"/>
           </parameter>
           <parameter name="coord_type" transfer-ownership="none">
+            <doc xml:space="preserve">Specify whether coordinates are relative to the screen or widget window.</doc>
             <type name="CoordType" c:type="AtkCoordType"/>
           </parameter>
           <parameter name="x_clip_type" transfer-ownership="none">
+            <doc xml:space="preserve">Specify the horizontal clip type.</doc>
             <type name="TextClipType" c:type="AtkTextClipType"/>
           </parameter>
           <parameter name="y_clip_type" transfer-ownership="none">
+            <doc xml:space="preserve">Specify the vertical clip type.</doc>
             <type name="TextClipType" c:type="AtkTextClipType"/>
           </parameter>
         </parameters>
       </virtual-method>
       <virtual-method name="get_caret_offset" invoker="get_caret_offset">
-        <doc xml:space="preserve">Gets the offset position of the caret (cursor).</doc>
+        <doc xml:space="preserve">Gets the offset of the position of the caret (cursor).</doc>
         <return-value transfer-ownership="none">
-          <doc xml:space="preserve">the offset position of the caret (cursor).</doc>
+          <doc xml:space="preserve">the character offset of position of the caret (cursor).</doc>
           <type name="gint" c:type="gint"/>
         </return-value>
         <parameters>
@@ -10467,7 +10710,7 @@ and is NULL terminated.</doc>
             <type name="Text" c:type="AtkText*"/>
           </instance-parameter>
           <parameter name="offset" transfer-ownership="none">
-            <doc xml:space="preserve">position</doc>
+            <doc xml:space="preserve">a character offset within @text</doc>
             <type name="gint" c:type="gint"/>
           </parameter>
         </parameters>
@@ -10501,11 +10744,11 @@ and is NULL terminated.</doc>
             <type name="gint" c:type="gint"/>
           </parameter>
           <parameter name="x" direction="out" caller-allocates="0" transfer-ownership="full" optional="1" allow-none="1">
-            <doc xml:space="preserve">Pointer for the x cordinate of the bounding box</doc>
+            <doc xml:space="preserve">Pointer for the x coordinate of the bounding box</doc>
             <type name="gint" c:type="gint*"/>
           </parameter>
           <parameter name="y" direction="out" caller-allocates="0" transfer-ownership="full" optional="1" allow-none="1">
-            <doc xml:space="preserve">Pointer for the y cordinate of the bounding box</doc>
+            <doc xml:space="preserve">Pointer for the y coordinate of the bounding box</doc>
             <type name="gint" c:type="gint*"/>
           </parameter>
           <parameter name="width" direction="out" caller-allocates="0" transfer-ownership="full" optional="1" allow-none="1">
@@ -10633,7 +10876,7 @@ to atk_attribute_set_free().</doc>
             <type name="Text" c:type="AtkText*"/>
           </instance-parameter>
           <parameter name="offset" transfer-ownership="none">
-            <doc xml:space="preserve">the offset at which to get the attributes, -1 means the offset of
+            <doc xml:space="preserve">the character offset at which to get the attributes, -1 means the offset of
 the character to be inserted at the caret location.</doc>
             <type name="gint" c:type="gint"/>
           </parameter>
@@ -10668,12 +10911,12 @@ moving or deleting a selected region can change the numbering.</doc>
             <type name="gint" c:type="gint"/>
           </parameter>
           <parameter name="start_offset" direction="out" caller-allocates="0" transfer-ownership="full">
-            <doc xml:space="preserve">passes back the start position of the selected region</doc>
+            <doc xml:space="preserve">passes back the starting character offset of the selected region</doc>
             <type name="gint" c:type="gint*"/>
           </parameter>
           <parameter name="end_offset" direction="out" caller-allocates="0" transfer-ownership="full">
-            <doc xml:space="preserve">passes back the end position of (e.g. offset immediately past)
-the selected region</doc>
+            <doc xml:space="preserve">passes back the ending character offset (offset immediately past)
+of the selected region</doc>
             <type name="gint" c:type="gint*"/>
           </parameter>
         </parameters>
@@ -10730,7 +10973,7 @@ of the following paragraph after the offset.</doc>
             <type name="TextGranularity" c:type="AtkTextGranularity"/>
           </parameter>
           <parameter name="start_offset" direction="out" caller-allocates="0" transfer-ownership="full">
-            <doc xml:space="preserve">the start offset of the returned string, or -1
+            <doc xml:space="preserve">the starting character offset of the returned string, or -1
                if an error has occurred (e.g. invalid offset, not implemented)</doc>
             <type name="gint" c:type="gint*"/>
           </parameter>
@@ -10754,11 +10997,11 @@ of the following paragraph after the offset.</doc>
             <type name="Text" c:type="AtkText*"/>
           </instance-parameter>
           <parameter name="start_offset" transfer-ownership="none">
-            <doc xml:space="preserve">start position</doc>
+            <doc xml:space="preserve">a starting character offset within @text</doc>
             <type name="gint" c:type="gint"/>
           </parameter>
           <parameter name="end_offset" transfer-ownership="none">
-            <doc xml:space="preserve">end position, or -1 for the end of the string.</doc>
+            <doc xml:space="preserve">an ending character offset within @text, or -1 for the end of the string.</doc>
             <type name="gint" c:type="gint"/>
           </parameter>
         </parameters>
@@ -10785,7 +11028,7 @@ of the following paragraph after the offset.</doc>
             <type name="TextBoundary" c:type="AtkTextBoundary"/>
           </parameter>
           <parameter name="start_offset" direction="out" caller-allocates="0" transfer-ownership="full">
-            <doc xml:space="preserve">the start offset of the returned string</doc>
+            <doc xml:space="preserve">the starting character offset of the returned string</doc>
             <type name="gint" c:type="gint*"/>
           </parameter>
           <parameter name="end_offset" direction="out" caller-allocates="0" transfer-ownership="full">
@@ -10841,7 +11084,7 @@ start after the offset.</doc>
             <type name="TextBoundary" c:type="AtkTextBoundary"/>
           </parameter>
           <parameter name="start_offset" direction="out" caller-allocates="0" transfer-ownership="full">
-            <doc xml:space="preserve">the start offset of the returned string</doc>
+            <doc xml:space="preserve">the starting character offset of the returned string</doc>
             <type name="gint" c:type="gint*"/>
           </parameter>
           <parameter name="end_offset" direction="out" caller-allocates="0" transfer-ownership="full">
@@ -10873,7 +11116,7 @@ start after the offset.</doc>
             <type name="TextBoundary" c:type="AtkTextBoundary"/>
           </parameter>
           <parameter name="start_offset" direction="out" caller-allocates="0" transfer-ownership="full">
-            <doc xml:space="preserve">the start offset of the returned string</doc>
+            <doc xml:space="preserve">the starting character offset of the returned string</doc>
             <type name="gint" c:type="gint*"/>
           </parameter>
           <parameter name="end_offset" direction="out" caller-allocates="0" transfer-ownership="full">
@@ -10916,7 +11159,7 @@ moving or deleting a selected region can change the numbering.</doc>
             <type name="Text" c:type="AtkText*"/>
           </instance-parameter>
           <parameter name="offset" transfer-ownership="none">
-            <doc xml:space="preserve">position</doc>
+            <doc xml:space="preserve">the character offset of the new caret position</doc>
             <type name="gint" c:type="gint"/>
           </parameter>
         </parameters>
@@ -10941,7 +11184,7 @@ moving or deleting a selected region can change the numbering.</doc>
             <type name="gint" c:type="gint"/>
           </parameter>
           <parameter name="start_offset" transfer-ownership="none">
-            <doc xml:space="preserve">the new start position of the selection</doc>
+            <doc xml:space="preserve">the new starting character offset of the selection</doc>
             <type name="gint" c:type="gint"/>
           </parameter>
           <parameter name="end_offset" transfer-ownership="none">
@@ -11012,7 +11255,7 @@ the selection</doc>
             <type name="Text" c:type="AtkText*"/>
           </instance-parameter>
           <parameter name="start_offset" transfer-ownership="none">
-            <doc xml:space="preserve">the start position of the selected region</doc>
+            <doc xml:space="preserve">the starting character offset of the selected region</doc>
             <type name="gint" c:type="gint"/>
           </parameter>
           <parameter name="end_offset" transfer-ownership="none">
@@ -11054,9 +11297,9 @@ the selection</doc>
         </parameters>
       </method>
       <method name="get_caret_offset" c:identifier="atk_text_get_caret_offset">
-        <doc xml:space="preserve">Gets the offset position of the caret (cursor).</doc>
+        <doc xml:space="preserve">Gets the offset of the position of the caret (cursor).</doc>
         <return-value transfer-ownership="none">
-          <doc xml:space="preserve">the offset position of the caret (cursor).</doc>
+          <doc xml:space="preserve">the character offset of position of the caret (cursor).</doc>
           <type name="gint" c:type="gint"/>
         </return-value>
         <parameters>
@@ -11078,7 +11321,7 @@ the selection</doc>
             <type name="Text" c:type="AtkText*"/>
           </instance-parameter>
           <parameter name="offset" transfer-ownership="none">
-            <doc xml:space="preserve">position</doc>
+            <doc xml:space="preserve">a character offset within @text</doc>
             <type name="gint" c:type="gint"/>
           </parameter>
         </parameters>
@@ -11112,11 +11355,11 @@ the selection</doc>
             <type name="gint" c:type="gint"/>
           </parameter>
           <parameter name="x" direction="out" caller-allocates="0" transfer-ownership="full" optional="1" allow-none="1">
-            <doc xml:space="preserve">Pointer for the x cordinate of the bounding box</doc>
+            <doc xml:space="preserve">Pointer for the x coordinate of the bounding box</doc>
             <type name="gint" c:type="gint*"/>
           </parameter>
           <parameter name="y" direction="out" caller-allocates="0" transfer-ownership="full" optional="1" allow-none="1">
-            <doc xml:space="preserve">Pointer for the y cordinate of the bounding box</doc>
+            <doc xml:space="preserve">Pointer for the y coordinate of the bounding box</doc>
             <type name="gint" c:type="gint*"/>
           </parameter>
           <parameter name="width" direction="out" caller-allocates="0" transfer-ownership="full" optional="1" allow-none="1">
@@ -11244,7 +11487,7 @@ to atk_attribute_set_free().</doc>
             <type name="Text" c:type="AtkText*"/>
           </instance-parameter>
           <parameter name="offset" transfer-ownership="none">
-            <doc xml:space="preserve">the offset at which to get the attributes, -1 means the offset of
+            <doc xml:space="preserve">the character offset at which to get the attributes, -1 means the offset of
 the character to be inserted at the caret location.</doc>
             <type name="gint" c:type="gint"/>
           </parameter>
@@ -11279,12 +11522,12 @@ moving or deleting a selected region can change the numbering.</doc>
             <type name="gint" c:type="gint"/>
           </parameter>
           <parameter name="start_offset" direction="out" caller-allocates="0" transfer-ownership="full">
-            <doc xml:space="preserve">passes back the start position of the selected region</doc>
+            <doc xml:space="preserve">passes back the starting character offset of the selected region</doc>
             <type name="gint" c:type="gint*"/>
           </parameter>
           <parameter name="end_offset" direction="out" caller-allocates="0" transfer-ownership="full">
-            <doc xml:space="preserve">passes back the end position of (e.g. offset immediately past)
-the selected region</doc>
+            <doc xml:space="preserve">passes back the ending character offset (offset immediately past)
+of the selected region</doc>
             <type name="gint" c:type="gint*"/>
           </parameter>
         </parameters>
@@ -11341,7 +11584,7 @@ of the following paragraph after the offset.</doc>
             <type name="TextGranularity" c:type="AtkTextGranularity"/>
           </parameter>
           <parameter name="start_offset" direction="out" caller-allocates="0" transfer-ownership="full">
-            <doc xml:space="preserve">the start offset of the returned string, or -1
+            <doc xml:space="preserve">the starting character offset of the returned string, or -1
                if an error has occurred (e.g. invalid offset, not implemented)</doc>
             <type name="gint" c:type="gint*"/>
           </parameter>
@@ -11365,11 +11608,11 @@ of the following paragraph after the offset.</doc>
             <type name="Text" c:type="AtkText*"/>
           </instance-parameter>
           <parameter name="start_offset" transfer-ownership="none">
-            <doc xml:space="preserve">start position</doc>
+            <doc xml:space="preserve">a starting character offset within @text</doc>
             <type name="gint" c:type="gint"/>
           </parameter>
           <parameter name="end_offset" transfer-ownership="none">
-            <doc xml:space="preserve">end position, or -1 for the end of the string.</doc>
+            <doc xml:space="preserve">an ending character offset within @text, or -1 for the end of the string.</doc>
             <type name="gint" c:type="gint"/>
           </parameter>
         </parameters>
@@ -11396,7 +11639,7 @@ of the following paragraph after the offset.</doc>
             <type name="TextBoundary" c:type="AtkTextBoundary"/>
           </parameter>
           <parameter name="start_offset" direction="out" caller-allocates="0" transfer-ownership="full">
-            <doc xml:space="preserve">the start offset of the returned string</doc>
+            <doc xml:space="preserve">the starting character offset of the returned string</doc>
             <type name="gint" c:type="gint*"/>
           </parameter>
           <parameter name="end_offset" direction="out" caller-allocates="0" transfer-ownership="full">
@@ -11452,7 +11695,7 @@ start after the offset.</doc>
             <type name="TextBoundary" c:type="AtkTextBoundary"/>
           </parameter>
           <parameter name="start_offset" direction="out" caller-allocates="0" transfer-ownership="full">
-            <doc xml:space="preserve">the start offset of the returned string</doc>
+            <doc xml:space="preserve">the starting character offset of the returned string</doc>
             <type name="gint" c:type="gint*"/>
           </parameter>
           <parameter name="end_offset" direction="out" caller-allocates="0" transfer-ownership="full">
@@ -11484,7 +11727,7 @@ start after the offset.</doc>
             <type name="TextBoundary" c:type="AtkTextBoundary"/>
           </parameter>
           <parameter name="start_offset" direction="out" caller-allocates="0" transfer-ownership="full">
-            <doc xml:space="preserve">the start offset of the returned string</doc>
+            <doc xml:space="preserve">the starting character offset of the returned string</doc>
             <type name="gint" c:type="gint*"/>
           </parameter>
           <parameter name="end_offset" direction="out" caller-allocates="0" transfer-ownership="full">
@@ -11527,7 +11770,7 @@ moving or deleting a selected region can change the numbering.</doc>
             <type name="Text" c:type="AtkText*"/>
           </instance-parameter>
           <parameter name="offset" transfer-ownership="none">
-            <doc xml:space="preserve">position</doc>
+            <doc xml:space="preserve">the character offset of the new caret position</doc>
             <type name="gint" c:type="gint"/>
           </parameter>
         </parameters>
@@ -11552,7 +11795,7 @@ moving or deleting a selected region can change the numbering.</doc>
             <type name="gint" c:type="gint"/>
           </parameter>
           <parameter name="start_offset" transfer-ownership="none">
-            <doc xml:space="preserve">the new start position of the selection</doc>
+            <doc xml:space="preserve">the new starting character offset of the selection</doc>
             <type name="gint" c:type="gint"/>
           </parameter>
           <parameter name="end_offset" transfer-ownership="none">
@@ -11903,11 +12146,11 @@ the following one, if present.</doc>
               <type name="Text" c:type="AtkText*"/>
             </parameter>
             <parameter name="start_offset" transfer-ownership="none">
-              <doc xml:space="preserve">start position</doc>
+              <doc xml:space="preserve">a starting character offset within @text</doc>
               <type name="gint" c:type="gint"/>
             </parameter>
             <parameter name="end_offset" transfer-ownership="none">
-              <doc xml:space="preserve">end position, or -1 for the end of the string.</doc>
+              <doc xml:space="preserve">an ending character offset within @text, or -1 for the end of the string.</doc>
               <type name="gint" c:type="gint"/>
             </parameter>
           </parameters>
@@ -11934,7 +12177,7 @@ the following one, if present.</doc>
               <type name="TextBoundary" c:type="AtkTextBoundary"/>
             </parameter>
             <parameter name="start_offset" direction="out" caller-allocates="0" transfer-ownership="full">
-              <doc xml:space="preserve">the start offset of the returned string</doc>
+              <doc xml:space="preserve">the starting character offset of the returned string</doc>
               <type name="gint" c:type="gint*"/>
             </parameter>
             <parameter name="end_offset" direction="out" caller-allocates="0" transfer-ownership="full">
@@ -11966,7 +12209,7 @@ the following one, if present.</doc>
               <type name="TextBoundary" c:type="AtkTextBoundary"/>
             </parameter>
             <parameter name="start_offset" direction="out" caller-allocates="0" transfer-ownership="full">
-              <doc xml:space="preserve">the start offset of the returned string</doc>
+              <doc xml:space="preserve">the starting character offset of the returned string</doc>
               <type name="gint" c:type="gint*"/>
             </parameter>
             <parameter name="end_offset" direction="out" caller-allocates="0" transfer-ownership="full">
@@ -11989,7 +12232,7 @@ the following one, if present.</doc>
               <type name="Text" c:type="AtkText*"/>
             </parameter>
             <parameter name="offset" transfer-ownership="none">
-              <doc xml:space="preserve">position</doc>
+              <doc xml:space="preserve">a character offset within @text</doc>
               <type name="gint" c:type="gint"/>
             </parameter>
           </parameters>
@@ -12016,7 +12259,7 @@ the following one, if present.</doc>
               <type name="TextBoundary" c:type="AtkTextBoundary"/>
             </parameter>
             <parameter name="start_offset" direction="out" caller-allocates="0" transfer-ownership="full">
-              <doc xml:space="preserve">the start offset of the returned string</doc>
+              <doc xml:space="preserve">the starting character offset of the returned string</doc>
               <type name="gint" c:type="gint*"/>
             </parameter>
             <parameter name="end_offset" direction="out" caller-allocates="0" transfer-ownership="full">
@@ -12030,7 +12273,7 @@ the following one, if present.</doc>
       <field name="get_caret_offset">
         <callback name="get_caret_offset">
           <return-value transfer-ownership="none">
-            <doc xml:space="preserve">the offset position of the caret (cursor).</doc>
+            <doc xml:space="preserve">the character offset of position of the caret (cursor).</doc>
             <type name="gint" c:type="gint"/>
           </return-value>
           <parameters>
@@ -12055,7 +12298,7 @@ to atk_attribute_set_free().</doc>
               <type name="Text" c:type="AtkText*"/>
             </parameter>
             <parameter name="offset" transfer-ownership="none">
-              <doc xml:space="preserve">the offset at which to get the attributes, -1 means the offset of
+              <doc xml:space="preserve">the character offset at which to get the attributes, -1 means the offset of
 the character to be inserted at the caret location.</doc>
               <type name="gint" c:type="gint"/>
             </parameter>
@@ -12101,11 +12344,11 @@ a call to atk_attribute_set_free().</doc>
               <type name="gint" c:type="gint"/>
             </parameter>
             <parameter name="x" direction="out" caller-allocates="0" transfer-ownership="full" optional="1" allow-none="1">
-              <doc xml:space="preserve">Pointer for the x cordinate of the bounding box</doc>
+              <doc xml:space="preserve">Pointer for the x coordinate of the bounding box</doc>
               <type name="gint" c:type="gint*"/>
             </parameter>
             <parameter name="y" direction="out" caller-allocates="0" transfer-ownership="full" optional="1" allow-none="1">
-              <doc xml:space="preserve">Pointer for the y cordinate of the bounding box</doc>
+              <doc xml:space="preserve">Pointer for the y coordinate of the bounding box</doc>
               <type name="gint" c:type="gint*"/>
             </parameter>
             <parameter name="width" direction="out" caller-allocates="0" transfer-ownership="full" optional="1" allow-none="1">
@@ -12201,12 +12444,12 @@ moving or deleting a selected region can change the numbering.</doc>
               <type name="gint" c:type="gint"/>
             </parameter>
             <parameter name="start_offset" direction="out" caller-allocates="0" transfer-ownership="full">
-              <doc xml:space="preserve">passes back the start position of the selected region</doc>
+              <doc xml:space="preserve">passes back the starting character offset of the selected region</doc>
               <type name="gint" c:type="gint*"/>
             </parameter>
             <parameter name="end_offset" direction="out" caller-allocates="0" transfer-ownership="full">
-              <doc xml:space="preserve">passes back the end position of (e.g. offset immediately past)
-the selected region</doc>
+              <doc xml:space="preserve">passes back the ending character offset (offset immediately past)
+of the selected region</doc>
               <type name="gint" c:type="gint*"/>
             </parameter>
           </parameters>
@@ -12224,7 +12467,7 @@ the selected region</doc>
               <type name="Text" c:type="AtkText*"/>
             </parameter>
             <parameter name="start_offset" transfer-ownership="none">
-              <doc xml:space="preserve">the start position of the selected region</doc>
+              <doc xml:space="preserve">the starting character offset of the selected region</doc>
               <type name="gint" c:type="gint"/>
             </parameter>
             <parameter name="end_offset" transfer-ownership="none">
@@ -12276,7 +12519,7 @@ moving or deleting a selected region can change the numbering.</doc>
               <type name="gint" c:type="gint"/>
             </parameter>
             <parameter name="start_offset" transfer-ownership="none">
-              <doc xml:space="preserve">the new start position of the selection</doc>
+              <doc xml:space="preserve">the new starting character offset of the selection</doc>
               <type name="gint" c:type="gint"/>
             </parameter>
             <parameter name="end_offset" transfer-ownership="none">
@@ -12299,7 +12542,7 @@ the selection</doc>
               <type name="Text" c:type="AtkText*"/>
             </parameter>
             <parameter name="offset" transfer-ownership="none">
-              <doc xml:space="preserve">position</doc>
+              <doc xml:space="preserve">the character offset of the new caret position</doc>
               <type name="gint" c:type="gint"/>
             </parameter>
           </parameters>
@@ -12396,22 +12639,31 @@ the selection</doc>
       <field name="get_bounded_ranges">
         <callback name="get_bounded_ranges">
           <return-value transfer-ownership="full">
-            <type name="TextRange" c:type="AtkTextRange**"/>
+            <doc xml:space="preserve">Array of AtkTextRange. The last
+         element of the array returned by this function will be NULL.</doc>
+            <array c:type="AtkTextRange**">
+              <type name="TextRange" c:type="AtkTextRange*"/>
+            </array>
           </return-value>
           <parameters>
             <parameter name="text" transfer-ownership="none">
+              <doc xml:space="preserve">an #AtkText</doc>
               <type name="Text" c:type="AtkText*"/>
             </parameter>
             <parameter name="rect" transfer-ownership="none">
+              <doc xml:space="preserve">An AtkTextRectangle giving the dimensions of the bounding box.</doc>
               <type name="TextRectangle" c:type="AtkTextRectangle*"/>
             </parameter>
             <parameter name="coord_type" transfer-ownership="none">
+              <doc xml:space="preserve">Specify whether coordinates are relative to the screen or widget window.</doc>
               <type name="CoordType" c:type="AtkCoordType"/>
             </parameter>
             <parameter name="x_clip_type" transfer-ownership="none">
+              <doc xml:space="preserve">Specify the horizontal clip type.</doc>
               <type name="TextClipType" c:type="AtkTextClipType"/>
             </parameter>
             <parameter name="y_clip_type" transfer-ownership="none">
+              <doc xml:space="preserve">Specify the vertical clip type.</doc>
               <type name="TextClipType" c:type="AtkTextClipType"/>
             </parameter>
           </parameters>
@@ -12440,7 +12692,7 @@ the selection</doc>
               <type name="TextGranularity" c:type="AtkTextGranularity"/>
             </parameter>
             <parameter name="start_offset" direction="out" caller-allocates="0" transfer-ownership="full">
-              <doc xml:space="preserve">the start offset of the returned string, or -1
+              <doc xml:space="preserve">the starting character offset of the returned string, or -1
                if an error has occurred (e.g. invalid offset, not implemented)</doc>
               <type name="gint" c:type="gint*"/>
             </parameter>
