@@ -9,6 +9,7 @@ VER="bionic"
 ./gir-dl.sh https://packages.ubuntu.com/$VER/amd64/libgdk-pixbuf2.0-dev/download
 ./gir-dl.sh https://packages.ubuntu.com/$VER/amd64/libgtk-3-dev/download
 ./gir-dl.sh https://packages.ubuntu.com/$VER/amd64/libgtksourceview-3.0-dev/download
+./gir-dl.sh https://packages.ubuntu.com/$VER/amd64/libibus-1.0-dev/download
 ./gir-dl.sh https://packages.ubuntu.com/$VER/amd64/libsecret-1-dev/download
 ./gir-dl.sh https://packages.ubuntu.com/$VER/amd64/libvte-2.91-dev/download
 ./gir-dl.sh https://packages.ubuntu.com/$VER/amd64/libjavascriptcoregtk-4.0-dev/download security.ubuntu.com/ubuntu
