@@ -2,6 +2,7 @@
 set -e -u -o pipefail
 
 MIRRORS="$1"
+echo $MIRRORS
 if [ $# -lt 2 ]; then
   MIRROR="mirrors.kernel.org"
 else

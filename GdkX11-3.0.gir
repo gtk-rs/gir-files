@@ -239,7 +239,7 @@ for the corresponding #GtkSetting).</doc>
             <doc xml:space="preserve">a #GdkDisplay</doc>
             <type name="X11Display" c:type="GdkDisplay*"/>
           </instance-parameter>
-          <parameter name="theme" transfer-ownership="none">
+          <parameter name="theme" transfer-ownership="none" nullable="1" allow-none="1">
             <doc xml:space="preserve">the name of the cursor theme to use, or %NULL to unset
         a previously set value</doc>
             <type name="utf8" c:type="const gchar*"/>
@@ -1027,6 +1027,15 @@ line option or the `DISPLAY` environment variable.</doc>
         <type name="xlib.Display" c:type="Display*"/>
       </return-value>
     </function>
+    <function name="x11_get_parent_relative_pattern" c:identifier="gdk_x11_get_parent_relative_pattern" version="3.24.2" deprecated="1" deprecated-version="3.24">
+      <doc xml:space="preserve">Used with gdk_window_set_background_pattern() to inherit background from
+parent window. Useful for imitating transparency when compositing is not
+available. Otherwise behaves like a transparent pattern.</doc>
+      <doc-deprecated xml:space="preserve">Don't use this function</doc-deprecated>
+      <return-value transfer-ownership="full">
+        <type name="cairo.Pattern" c:type="cairo_pattern_t*"/>
+      </return-value>
+    </function>
     <function name="x11_get_server_time" c:identifier="gdk_x11_get_server_time">
       <doc xml:space="preserve">Routine to get the current X server time stamp.</doc>
       <return-value transfer-ownership="none">
@@ -1180,9 +1189,9 @@ session management and the Inter-Client Communication Conventions Manual</doc>
         <type name="none" c:type="void"/>
       </return-value>
       <parameters>
-        <parameter name="sm_client_id" transfer-ownership="none">
-          <doc xml:space="preserve">the client id assigned by the session manager when the
-   connection was opened, or %NULL to remove the property.</doc>
+        <parameter name="sm_client_id" transfer-ownership="none" nullable="1" allow-none="1">
+          <doc xml:space="preserve">the client id assigned by the session manager
+   when the connection was opened, or %NULL to remove the property.</doc>
           <type name="utf8" c:type="const gchar*"/>
         </parameter>
       </parameters>

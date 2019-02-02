@@ -2804,7 +2804,7 @@ user to select multiple files at once or only one.</doc>
 is defined or %NULL otherwise, meaning that any MIME type should be
 accepted. This array and its contents are owned by WebKit and
 should not be modified or freed.</doc>
-          <array c:type="gchar**">
+          <array c:type="const gchar* const*">
             <type name="utf8"/>
           </array>
         </return-value>
@@ -2869,7 +2869,7 @@ extra action, like pre-selecting the files from a previous request.</doc>
 associated with the request or %NULL otherwise. This array and its
 contents are owned by WebKit and should not be modified or
 freed.</doc>
-          <array c:type="gchar**">
+          <array c:type="const gchar* const*">
             <type name="utf8"/>
           </array>
         </return-value>
@@ -2894,7 +2894,7 @@ request.</doc>
           <parameter name="files" transfer-ownership="none">
             <doc xml:space="preserve">a
 %NULL-terminated array of strings, containing paths to local files.</doc>
-            <array c:type="gchar**">
+            <array c:type="const gchar* const*">
               <type name="utf8" c:type="gchar*"/>
             </array>
           </parameter>
@@ -3792,12 +3792,13 @@ from an untrusted source.</doc>
       </function>
     </enumeration>
     <record name="JavascriptResult" c:type="WebKitJavascriptResult" glib:type-name="WebKitJavascriptResult" glib:get-type="webkit_javascript_result_get_type" c:symbol-prefix="javascript_result">
-      <method name="get_global_context" c:identifier="webkit_javascript_result_get_global_context">
+      <method name="get_global_context" c:identifier="webkit_javascript_result_get_global_context" introspectable="0" deprecated="1" deprecated-version="2.22">
         <doc xml:space="preserve">Get the global Javascript context that should be used with the
 &lt;function&gt;JSValueRef&lt;/function&gt; returned by webkit_javascript_result_get_value().</doc>
-        <return-value transfer-ownership="full">
+        <doc-deprecated xml:space="preserve">Use jsc_value_get_context() instead.</doc-deprecated>
+        <return-value>
           <doc xml:space="preserve">the &lt;function&gt;JSGlobalContextRef&lt;/function&gt; for the #WebKitJavascriptResult</doc>
-          <type name="JavaScriptCore.GlobalContext" c:type="JSGlobalContextRef"/>
+          <type c:type="JSGlobalContextRef"/>
         </return-value>
         <parameters>
           <instance-parameter name="js_result" transfer-ownership="none">
@@ -3806,12 +3807,26 @@ from an untrusted source.</doc>
           </instance-parameter>
         </parameters>
       </method>
-      <method name="get_value" c:identifier="webkit_javascript_result_get_value">
+      <method name="get_js_value" c:identifier="webkit_javascript_result_get_js_value" version="2.22">
+        <doc xml:space="preserve">Get the #JSCValue of @js_result.</doc>
+        <return-value transfer-ownership="none">
+          <doc xml:space="preserve">the #JSCValue of the #WebKitJavascriptResult</doc>
+          <type name="JavaScriptCore.Value" c:type="JSCValue*"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="js_result" transfer-ownership="none">
+            <doc xml:space="preserve">a #WebKitJavascriptResult</doc>
+            <type name="JavascriptResult" c:type="WebKitJavascriptResult*"/>
+          </instance-parameter>
+        </parameters>
+      </method>
+      <method name="get_value" c:identifier="webkit_javascript_result_get_value" introspectable="0" deprecated="1" deprecated-version="2.22">
         <doc xml:space="preserve">Get the value of @js_result. You should use the &lt;function&gt;JSGlobalContextRef&lt;/function&gt;
 returned by webkit_javascript_result_get_global_context() to use the &lt;function&gt;JSValueRef&lt;/function&gt;.</doc>
-        <return-value transfer-ownership="full">
+        <doc-deprecated xml:space="preserve">Use webkit_javascript_result_get_js_value() instead.</doc-deprecated>
+        <return-value>
           <doc xml:space="preserve">the &lt;function&gt;JSValueRef&lt;/function&gt; of the #WebKitJavascriptResult</doc>
-          <type name="JavaScriptCore.Value" c:type="JSValueRef"/>
+          <type c:type="JSValueRef"/>
         </return-value>
         <parameters>
           <instance-parameter name="js_result" transfer-ownership="none">
@@ -3880,13 +3895,13 @@ application compile time, rather than from the library linked
 against at application run time.</doc>
       <type name="gint" c:type="gint"/>
     </constant>
-    <constant name="MICRO_VERSION" value="2" c:type="WEBKIT_MICRO_VERSION">
+    <constant name="MICRO_VERSION" value="5" c:type="WEBKIT_MICRO_VERSION">
       <doc xml:space="preserve">Like webkit_get_micro_version(), but from the headers used at
 application compile time, rather than from the library linked
 against at application run time.</doc>
       <type name="gint" c:type="gint"/>
     </constant>
-    <constant name="MINOR_VERSION" value="20" c:type="WEBKIT_MINOR_VERSION">
+    <constant name="MINOR_VERSION" value="22" c:type="WEBKIT_MINOR_VERSION">
       <doc xml:space="preserve">Like webkit_get_minor_version(), but from the headers used at
 application compile time, rather than from the library linked
 against at application run time.</doc>
@@ -3911,7 +3926,7 @@ MIME type of @info</doc>
         <return-value transfer-ownership="none">
           <doc xml:space="preserve">a
     %NULL-terminated array of strings</doc>
-          <array c:type="gchar**">
+          <array c:type="const gchar* const*">
             <type name="utf8"/>
           </array>
         </return-value>
@@ -4338,7 +4353,7 @@ contains only "192.168.1.1", then a connection to "example.com" will use the pro
           </parameter>
           <parameter name="ignore_hosts" transfer-ownership="none" nullable="1" allow-none="1">
             <doc xml:space="preserve">an optional list of hosts/IP addresses to not use a proxy for.</doc>
-            <array c:type="gchar**">
+            <array c:type="const gchar* const*">
               <type name="utf8" c:type="gchar*"/>
             </array>
           </parameter>
@@ -6550,6 +6565,19 @@ of #WebKitSettings.</doc>
           </instance-parameter>
         </parameters>
       </method>
+      <method name="get_enable_media_capabilities" c:identifier="webkit_settings_get_enable_media_capabilities" version="2.22">
+        <doc xml:space="preserve">Get the #WebKitSettings:enable-media-capabilities property.</doc>
+        <return-value transfer-ownership="none">
+          <doc xml:space="preserve">%TRUE if MediaCapabilities support is enabled or %FALSE otherwise.</doc>
+          <type name="gboolean" c:type="gboolean"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="settings" transfer-ownership="none">
+            <doc xml:space="preserve">a #WebKitSettings</doc>
+            <type name="Settings" c:type="WebKitSettings*"/>
+          </instance-parameter>
+        </parameters>
+      </method>
       <method name="get_enable_media_stream" c:identifier="webkit_settings_get_enable_media_stream" version="2.4">
         <doc xml:space="preserve">Get the #WebKitSettings:enable-media-stream property.</doc>
         <return-value transfer-ownership="none">
@@ -7297,6 +7325,22 @@ otherwise.</doc>
           </parameter>
         </parameters>
       </method>
+      <method name="set_enable_media_capabilities" c:identifier="webkit_settings_set_enable_media_capabilities" version="2.22">
+        <doc xml:space="preserve">Set the #WebKitSettings:enable-media-capabilities property.</doc>
+        <return-value transfer-ownership="none">
+          <type name="none" c:type="void"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="settings" transfer-ownership="none">
+            <doc xml:space="preserve">a #WebKitSettings</doc>
+            <type name="Settings" c:type="WebKitSettings*"/>
+          </instance-parameter>
+          <parameter name="enabled" transfer-ownership="none">
+            <doc xml:space="preserve">Value to be set</doc>
+            <type name="gboolean" c:type="gboolean"/>
+          </parameter>
+        </parameters>
+      </method>
       <method name="set_enable_media_stream" c:identifier="webkit_settings_set_enable_media_stream" version="2.4">
         <doc xml:space="preserve">Set the #WebKitSettings:enable-media-stream property.</doc>
         <return-value transfer-ownership="none">
@@ -7932,6 +7976,17 @@ http://www.whatwg.org/specs/web-apps/current-work/multipage/links.html#hyperlink
       </property>
       <property name="enable-javascript" writable="1" construct="1" transfer-ownership="none">
         <doc xml:space="preserve">Determines whether or not JavaScript executes within a page.</doc>
+        <type name="gboolean" c:type="gboolean"/>
+      </property>
+      <property name="enable-media-capabilities" version="2.22" writable="1" construct="1" transfer-ownership="none">
+        <doc xml:space="preserve">Enable or disable support for MediaCapabilities on pages. This
+specification intends to provide APIs to allow websites to make an optimal
+decision when picking media content for the user. The APIs will expose
+information about the decoding and encoding capabilities for a given format
+but also output capabilities to find the best match based on the device&#x2019;s
+display.
+
+See also https://wicg.github.io/media-capabilities/</doc>
         <type name="gboolean" c:type="gboolean"/>
       </property>
       <property name="enable-media-stream" version="2.4" writable="1" construct="1" transfer-ownership="none">
@@ -8733,6 +8788,31 @@ name has been already registered before.</doc>
           </parameter>
         </parameters>
       </method>
+      <method name="register_script_message_handler_in_world" c:identifier="webkit_user_content_manager_register_script_message_handler_in_world" version="2.22">
+        <doc xml:space="preserve">Registers a new user script message handler in script world with name @world_name.
+See webkit_user_content_manager_register_script_message_handler() for full description.
+
+Registering a script message handler will fail if the requested
+name has been already registered before.</doc>
+        <return-value transfer-ownership="none">
+          <doc xml:space="preserve">%TRUE if message handler was registered successfully, or %FALSE otherwise.</doc>
+          <type name="gboolean" c:type="gboolean"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="manager" transfer-ownership="none">
+            <doc xml:space="preserve">A #WebKitUserContentManager</doc>
+            <type name="UserContentManager" c:type="WebKitUserContentManager*"/>
+          </instance-parameter>
+          <parameter name="name" transfer-ownership="none">
+            <doc xml:space="preserve">Name of the script message channel</doc>
+            <type name="utf8" c:type="const gchar*"/>
+          </parameter>
+          <parameter name="world_name" transfer-ownership="none">
+            <doc xml:space="preserve">the name of a #WebKitScriptWorld</doc>
+            <type name="utf8" c:type="const gchar*"/>
+          </parameter>
+        </parameters>
+      </method>
       <method name="remove_all_scripts" c:identifier="webkit_user_content_manager_remove_all_scripts" version="2.6">
         <doc xml:space="preserve">Removes all user scripts from the given #WebKitUserContentManager</doc>
         <return-value transfer-ownership="none">
@@ -8761,11 +8841,11 @@ name has been already registered before.</doc>
         <doc xml:space="preserve">Unregisters a previously registered message handler.
 
 Note that this does *not* disconnect handlers for the
-#WebKitUserContentManager::script-message-received signal,
+#WebKitUserContentManager::script-message-received signal;
 they will be kept connected, but the signal will not be emitted
 unless the handler name is registered again.
 
-See also webkit_user_content_manager_register_script_message_handler()</doc>
+See also webkit_user_content_manager_register_script_message_handler().</doc>
         <return-value transfer-ownership="none">
           <type name="none" c:type="void"/>
         </return-value>
@@ -8776,6 +8856,33 @@ See also webkit_user_content_manager_register_script_message_handler()</doc>
           </instance-parameter>
           <parameter name="name" transfer-ownership="none">
             <doc xml:space="preserve">Name of the script message channel</doc>
+            <type name="utf8" c:type="const gchar*"/>
+          </parameter>
+        </parameters>
+      </method>
+      <method name="unregister_script_message_handler_in_world" c:identifier="webkit_user_content_manager_unregister_script_message_handler_in_world" version="2.22">
+        <doc xml:space="preserve">Unregisters a previously registered message handler in script world with name @world_name.
+
+Note that this does *not* disconnect handlers for the
+#WebKitUserContentManager::script-message-received signal;
+they will be kept connected, but the signal will not be emitted
+unless the handler name is registered again.
+
+See also webkit_user_content_manager_register_script_message_handler_in_world().</doc>
+        <return-value transfer-ownership="none">
+          <type name="none" c:type="void"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="manager" transfer-ownership="none">
+            <doc xml:space="preserve">A #WebKitUserContentManager</doc>
+            <type name="UserContentManager" c:type="WebKitUserContentManager*"/>
+          </instance-parameter>
+          <parameter name="name" transfer-ownership="none">
+            <doc xml:space="preserve">Name of the script message channel</doc>
+            <type name="utf8" c:type="const gchar*"/>
+          </parameter>
+          <parameter name="world_name" transfer-ownership="none">
+            <doc xml:space="preserve">the name of a #WebKitScriptWorld</doc>
             <type name="utf8" c:type="const gchar*"/>
           </parameter>
         </parameters>
@@ -8915,13 +9022,51 @@ represent zero or more other characters.</doc>
           </parameter>
           <parameter name="whitelist" transfer-ownership="none" nullable="1" allow-none="1">
             <doc xml:space="preserve">A whitelist of URI patterns or %NULL</doc>
-            <array c:type="gchar**">
+            <array c:type="const gchar* const*">
               <type name="utf8" c:type="gchar*"/>
             </array>
           </parameter>
           <parameter name="blacklist" transfer-ownership="none" nullable="1" allow-none="1">
             <doc xml:space="preserve">A blacklist of URI patterns or %NULL</doc>
-            <array c:type="gchar**">
+            <array c:type="const gchar* const*">
+              <type name="utf8" c:type="gchar*"/>
+            </array>
+          </parameter>
+        </parameters>
+      </constructor>
+      <constructor name="new_for_world" c:identifier="webkit_user_script_new_for_world" version="2.22">
+        <doc xml:space="preserve">Creates a new user script for script world with name @world_name.
+See webkit_user_script_new() for a full description.</doc>
+        <return-value transfer-ownership="full">
+          <doc xml:space="preserve">A new #WebKitUserScript</doc>
+          <type name="UserScript" c:type="WebKitUserScript*"/>
+        </return-value>
+        <parameters>
+          <parameter name="source" transfer-ownership="none">
+            <doc xml:space="preserve">Source code of the user script.</doc>
+            <type name="utf8" c:type="const gchar*"/>
+          </parameter>
+          <parameter name="injected_frames" transfer-ownership="none">
+            <doc xml:space="preserve">A #WebKitUserContentInjectedFrames value</doc>
+            <type name="UserContentInjectedFrames" c:type="WebKitUserContentInjectedFrames"/>
+          </parameter>
+          <parameter name="injection_time" transfer-ownership="none">
+            <doc xml:space="preserve">A #WebKitUserScriptInjectionTime value</doc>
+            <type name="UserScriptInjectionTime" c:type="WebKitUserScriptInjectionTime"/>
+          </parameter>
+          <parameter name="world_name" transfer-ownership="none">
+            <doc xml:space="preserve">the name of a #WebKitScriptWorld</doc>
+            <type name="utf8" c:type="const gchar*"/>
+          </parameter>
+          <parameter name="whitelist" transfer-ownership="none" nullable="1" allow-none="1">
+            <doc xml:space="preserve">A whitelist of URI patterns or %NULL</doc>
+            <array c:type="const gchar* const*">
+              <type name="utf8" c:type="gchar*"/>
+            </array>
+          </parameter>
+          <parameter name="blacklist" transfer-ownership="none" nullable="1" allow-none="1">
+            <doc xml:space="preserve">A blacklist of URI patterns or %NULL</doc>
+            <array c:type="const gchar* const*">
               <type name="utf8" c:type="gchar*"/>
             </array>
           </parameter>
@@ -9008,13 +9153,51 @@ represent zero or more other characters.</doc>
           </parameter>
           <parameter name="whitelist" transfer-ownership="none" nullable="1" allow-none="1">
             <doc xml:space="preserve">A whitelist of URI patterns or %NULL</doc>
-            <array c:type="gchar**">
+            <array c:type="const gchar* const*">
               <type name="utf8" c:type="gchar*"/>
             </array>
           </parameter>
           <parameter name="blacklist" transfer-ownership="none" nullable="1" allow-none="1">
             <doc xml:space="preserve">A blacklist of URI patterns or %NULL</doc>
-            <array c:type="gchar**">
+            <array c:type="const gchar* const*">
+              <type name="utf8" c:type="gchar*"/>
+            </array>
+          </parameter>
+        </parameters>
+      </constructor>
+      <constructor name="new_for_world" c:identifier="webkit_user_style_sheet_new_for_world" version="2.22">
+        <doc xml:space="preserve">Creates a new user style sheet for script world with name @world_name.
+See webkit_user_style_sheet_new() for a full description.</doc>
+        <return-value transfer-ownership="full">
+          <doc xml:space="preserve">A new #WebKitUserStyleSheet</doc>
+          <type name="UserStyleSheet" c:type="WebKitUserStyleSheet*"/>
+        </return-value>
+        <parameters>
+          <parameter name="source" transfer-ownership="none">
+            <doc xml:space="preserve">Source code of the user style sheet.</doc>
+            <type name="utf8" c:type="const gchar*"/>
+          </parameter>
+          <parameter name="injected_frames" transfer-ownership="none">
+            <doc xml:space="preserve">A #WebKitUserContentInjectedFrames value</doc>
+            <type name="UserContentInjectedFrames" c:type="WebKitUserContentInjectedFrames"/>
+          </parameter>
+          <parameter name="level" transfer-ownership="none">
+            <doc xml:space="preserve">A #WebKitUserStyleLevel</doc>
+            <type name="UserStyleLevel" c:type="WebKitUserStyleLevel"/>
+          </parameter>
+          <parameter name="world_name" transfer-ownership="none">
+            <doc xml:space="preserve">the name of a #WebKitScriptWorld</doc>
+            <type name="utf8" c:type="const gchar*"/>
+          </parameter>
+          <parameter name="whitelist" transfer-ownership="none" nullable="1" allow-none="1">
+            <doc xml:space="preserve">A whitelist of URI patterns or %NULL</doc>
+            <array c:type="const gchar* const*">
+              <type name="utf8" c:type="gchar*"/>
+            </array>
+          </parameter>
+          <parameter name="blacklist" transfer-ownership="none" nullable="1" allow-none="1">
+            <doc xml:space="preserve">A blacklist of URI patterns or %NULL</doc>
+            <array c:type="const gchar* const*">
               <type name="utf8" c:type="gchar*"/>
             </array>
           </parameter>
@@ -9351,7 +9534,7 @@ details on the format of the languages in the list.</doc>
         <return-value transfer-ownership="none">
           <doc xml:space="preserve">A %NULL-terminated
    array of languages if available, or %NULL otherwise.</doc>
-          <array c:type="gchar**">
+          <array c:type="const gchar* const*">
             <type name="utf8"/>
           </array>
         </return-value>
@@ -9713,7 +9896,7 @@ the #WebKitWebContext.</doc>
           </instance-parameter>
           <parameter name="languages" transfer-ownership="none" nullable="1" allow-none="1">
             <doc xml:space="preserve">a %NULL-terminated list of language identifiers</doc>
-            <array c:type="gchar**">
+            <array c:type="const gchar* const*">
               <type name="utf8"/>
             </array>
           </parameter>
@@ -9791,7 +9974,7 @@ in WebKit.</doc>
           </instance-parameter>
           <parameter name="languages" transfer-ownership="none">
             <doc xml:space="preserve">a %NULL-terminated list of spell checking languages</doc>
-            <array c:type="gchar**">
+            <array c:type="const gchar* const*">
               <type name="utf8" c:type="gchar*"/>
             </array>
           </parameter>
@@ -11233,13 +11416,14 @@ this particular #WebKitWebView.</doc>
           </instance-parameter>
         </parameters>
       </method>
-      <method name="get_javascript_global_context" c:identifier="webkit_web_view_get_javascript_global_context">
+      <method name="get_javascript_global_context" c:identifier="webkit_web_view_get_javascript_global_context" introspectable="0" deprecated="1" deprecated-version="2.22">
         <doc xml:space="preserve">Get the global JavaScript context used by @web_view to deserialize the
 result values of scripts executed with webkit_web_view_run_javascript().</doc>
-        <return-value transfer-ownership="full">
+        <doc-deprecated xml:space="preserve">Use jsc_value_get_context() instead.</doc-deprecated>
+        <return-value>
           <doc xml:space="preserve">the &lt;function&gt;JSGlobalContextRef&lt;/function&gt; used by @web_view to deserialize
    the result values of scripts.</doc>
-          <type name="JavaScriptCore.GlobalContext" c:type="JSGlobalContextRef"/>
+          <type c:type="JSGlobalContextRef"/>
         </return-value>
         <parameters>
           <instance-parameter name="web_view" transfer-ownership="none">
@@ -11889,8 +12073,7 @@ web_view_javascript_finished (GObject      *object,
                               gpointer      user_data)
 {
     WebKitJavascriptResult *js_result;
-    JSValueRef              value;
-    JSGlobalContextRef      context;
+    JSCValue               *value;
     GError                 *error = NULL;
 
     js_result = webkit_web_view_run_javascript_finish (WEBKIT_WEB_VIEW (object), result, &amp;error);
@@ -11900,19 +12083,17 @@ web_view_javascript_finished (GObject      *object,
         return;
     }
 
-    context = webkit_javascript_result_get_global_context (js_result);
-    value = webkit_javascript_result_get_value (js_result);
-    if (JSValueIsString (context, value)) {
-        JSStringRef js_str_value;
-        gchar      *str_value;
-        gsize       str_length;
+    value = webkit_javascript_result_get_js_value (js_result);
+    if (jsc_value_is_string (value)) {
+        JSCException *exception;
+        gchar        *str_value;
 
-        js_str_value = JSValueToStringCopy (context, value, NULL);
-        str_length = JSStringGetMaximumUTF8CStringSize (js_str_value);
-        str_value = (gchar *)g_malloc (str_length);
-        JSStringGetUTF8CString (js_str_value, str_value, str_length);
-        JSStringRelease (js_str_value);
-        g_print ("Script result: %s\n", str_value);
+        str_value = jsc_value_to_string (value);
+        exception = jsc_context_get_exception (jsc_value_get_context (value));
+        if (exception)
+            g_warning ("Error running javascript: %s", jsc_exception_get_message (exception));
+        else
+            g_print ("Script result: %s\n", str_value);
         g_free (str_value);
     } else {
         g_warning ("Error running javascript: unexpected return value");
@@ -11984,6 +12165,60 @@ of the operation.</doc>
         <doc xml:space="preserve">Finish an asynchronous operation started with webkit_web_view_run_javascript_from_gresource().
 
 Check webkit_web_view_run_javascript_finish() for a usage example.</doc>
+        <return-value transfer-ownership="full">
+          <doc xml:space="preserve">a #WebKitJavascriptResult with the result of the last executed statement in @script
+   or %NULL in case of error</doc>
+          <type name="JavascriptResult" c:type="WebKitJavascriptResult*"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="web_view" transfer-ownership="none">
+            <doc xml:space="preserve">a #WebKitWebView</doc>
+            <type name="WebView" c:type="WebKitWebView*"/>
+          </instance-parameter>
+          <parameter name="result" transfer-ownership="none">
+            <doc xml:space="preserve">a #GAsyncResult</doc>
+            <type name="Gio.AsyncResult" c:type="GAsyncResult*"/>
+          </parameter>
+        </parameters>
+      </method>
+      <method name="run_javascript_in_world" c:identifier="webkit_web_view_run_javascript_in_world" version="2.22">
+        <doc xml:space="preserve">Asynchronously run @script in the script world with name @world_name of the current page context in @web_view.
+If WebKitSettings:enable-javascript is FALSE, this method will do nothing.
+
+When the operation is finished, @callback will be called. You can then call
+webkit_web_view_run_javascript_in_world_finish() to get the result of the operation.</doc>
+        <return-value transfer-ownership="none">
+          <type name="none" c:type="void"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="web_view" transfer-ownership="none">
+            <doc xml:space="preserve">a #WebKitWebView</doc>
+            <type name="WebView" c:type="WebKitWebView*"/>
+          </instance-parameter>
+          <parameter name="script" transfer-ownership="none">
+            <doc xml:space="preserve">the script to run</doc>
+            <type name="utf8" c:type="const gchar*"/>
+          </parameter>
+          <parameter name="world_name" transfer-ownership="none">
+            <doc xml:space="preserve">the name of a #WebKitScriptWorld</doc>
+            <type name="utf8" c:type="const gchar*"/>
+          </parameter>
+          <parameter name="cancellable" transfer-ownership="none" nullable="1" allow-none="1">
+            <doc xml:space="preserve">a #GCancellable or %NULL to ignore</doc>
+            <type name="Gio.Cancellable" c:type="GCancellable*"/>
+          </parameter>
+          <parameter name="callback" transfer-ownership="none" nullable="1" allow-none="1" scope="async" closure="4">
+            <doc xml:space="preserve">a #GAsyncReadyCallback to call when the script finished</doc>
+            <type name="Gio.AsyncReadyCallback" c:type="GAsyncReadyCallback"/>
+          </parameter>
+          <parameter name="user_data" transfer-ownership="none" nullable="1" allow-none="1">
+            <doc xml:space="preserve">the data to pass to callback function</doc>
+            <type name="gpointer" c:type="gpointer"/>
+          </parameter>
+        </parameters>
+      </method>
+      <method name="run_javascript_in_world_finish" c:identifier="webkit_web_view_run_javascript_in_world_finish" version="2.22" throws="1">
+        <doc xml:space="preserve">Finish an asynchronous operation started with webkit_web_view_run_javascript_in_world().</doc>
         <return-value transfer-ownership="full">
           <doc xml:space="preserve">a #WebKitJavascriptResult with the result of the last executed statement in @script
    or %NULL in case of error</doc>

@@ -1,11 +1,6 @@
 #!/bin/bash
 set -x -e
 
-# Remove all fields from FcFontMap. Its' parent_instance field is broken and we don't need the type anyway.
-xmlstarlet ed -P -L \
-	-d '//_:class[@name="FcFontMap"]/_:field' \
-	PangoCairo-1.0.gir
-
 # Remove Int32 alias because it misses c:type, it not like anyone actually cares about it.
 xmlstarlet ed -P -L \
 	-d '//_:alias[@name="Int32"]' \
