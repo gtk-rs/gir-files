@@ -63,8 +63,12 @@ xmlstarlet ed -P -L \
 
 # fill in type for JSGlobalContextRef
 xmlstarlet ed -P -L \
-	-i '//_:type[@c:type="JSGlobalContextRef"]' --type attr -n "name" -v "JavaScriptCore.GlobalContext" \
+	-i '//_:type[not(@name) and @c:type="JSGlobalContextRef"]' -t 'attr' -n 'name' -v "JavaScriptCore.GlobalContext" \
 	WebKit2WebExtension-4.0.gir
 
+xmlstarlet ed -P -L \
+	-i '//_:type[not(@name) and @c:type="JSGlobalContextRef"]' -t 'attr' -n 'name' -v "JavaScriptCore.GlobalContext" \
+	-i '//_:type[not(@name) and @c:type="JSValueRef"]' -t 'attr' -n 'name' -v "JavaScriptCore.Value" \
+	WebKit2-4.0.gir
 
 
