@@ -60,3 +60,11 @@ xmlstarlet ed -P -L \
 	-u '//_:parameter[@name="response_id"]/_:type[@name="gint"]/@c:type' -v "GtkResponseType" \
 	-u '//_:parameter[@name="response_id"]/_:type[@name="gint"]/@name' -v "ResponseType" \
 	Gtk-3.0.gir
+
+# fill in type for JSGlobalContextRef
+xmlstarlet ed -P -L \
+	-i '//_:type[@c:type="JSGlobalContextRef"]' --type attr -n "name" -v "JavaScriptCore.GlobalContext" \
+	WebKit2WebExtension-4.0.gir
+
+
+
