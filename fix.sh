@@ -61,14 +61,14 @@ xmlstarlet ed -P -L \
 	-u '//_:parameter[@name="response_id"]/_:type[@name="gint"]/@name' -v "ResponseType" \
 	Gtk-3.0.gir
 
-# fill in type for JSGlobalContextRef
+# fill in types from JavaScriptCore
 xmlstarlet ed -P -L \
-	-i '//_:type[not(@name) and @c:type="JSGlobalContextRef"]' -t 'attr' -n 'name' -v "JavaScriptCore.GlobalContext" \
+	-i '//_:type[not(@name) and @c:type="JSGlobalContextRef"]' -t 'attr' -n 'name' -v "JavaScriptCore.GlobalContextRef" \
+	-i '//_:type[not(@name) and @c:type="JSValueRef"]' -t 'attr' -n 'name' -v "JavaScriptCore.ValueRef" \
+    -i '//_:type[not(@name) and @c:type="JSCValue*"]' -t 'attr' -n 'name' -v "JavaScriptCore.Value" \
+	WebKit2WebExtension-4.0.gir WebKit2-4.0.gir
+
+xmlstarlet ed -P -L \
+	-u '//_:constant[@name="DOM_NODE_FILTER_SHOW_ALL"]/_:type/@name' -v "guint" \
+	-u '//_:constant[@name="DOM_NODE_FILTER_SHOW_ALL"]/_:type/@c:type' -v "guint" \
 	WebKit2WebExtension-4.0.gir
-
-xmlstarlet ed -P -L \
-	-i '//_:type[not(@name) and @c:type="JSGlobalContextRef"]' -t 'attr' -n 'name' -v "JavaScriptCore.GlobalContext" \
-	-i '//_:type[not(@name) and @c:type="JSValueRef"]' -t 'attr' -n 'name' -v "JavaScriptCore.Value" \
-	WebKit2-4.0.gir
-
-
