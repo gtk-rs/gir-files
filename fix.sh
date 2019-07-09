@@ -61,11 +61,13 @@ xmlstarlet ed -P -L \
 	-u '//_:parameter[@name="response_id"]/_:type[@name="gint"]/@name' -v "ResponseType" \
 	Gtk-3.0.gir
 
+xmlstarlet tr JavaScriptCore-4.0.xsl JavaScriptCore-4.0.gir | xmlstarlet fo > JavaScriptCore-4.0.gir.tmp
+mv JavaScriptCore-4.0.gir.tmp JavaScriptCore-4.0.gir
+
 # fill in types from JavaScriptCore
 xmlstarlet ed -P -L \
 	-i '//_:type[not(@name) and @c:type="JSGlobalContextRef"]' -t 'attr' -n 'name' -v "JavaScriptCore.GlobalContextRef" \
 	-i '//_:type[not(@name) and @c:type="JSValueRef"]' -t 'attr' -n 'name' -v "JavaScriptCore.ValueRef" \
-    -i '//_:type[not(@name) and @c:type="JSCValue*"]' -t 'attr' -n 'name' -v "JavaScriptCore.Value" \
 	WebKit2WebExtension-4.0.gir WebKit2-4.0.gir
 
 xmlstarlet ed -P -L \
