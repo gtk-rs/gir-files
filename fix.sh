@@ -59,7 +59,7 @@ xmlstarlet ed -P -L \
 xmlstarlet ed -P -L \
 	-u '//_:parameter[@name="response_id"]/_:type[@name="gint"]/@c:type' -v "GtkResponseType" \
 	-u '//_:parameter[@name="response_id"]/_:type[@name="gint"]/@name' -v "ResponseType" \
-	Gtk-3.0.gir
+	Gtk-3.0.gir Gtk-4.0.gir
 
 xmlstarlet tr JavaScriptCore-4.0.xsl JavaScriptCore-4.0.gir | xmlstarlet fo > JavaScriptCore-4.0.gir.tmp
 mv JavaScriptCore-4.0.gir.tmp JavaScriptCore-4.0.gir
@@ -74,3 +74,14 @@ xmlstarlet ed -P -L \
 	-u '//_:constant[@name="DOM_NODE_FILTER_SHOW_ALL"]/_:type/@name' -v "guint" \
 	-u '//_:constant[@name="DOM_NODE_FILTER_SHOW_ALL"]/_:type/@c:type' -v "guint" \
 	WebKit2WebExtension-4.0.gir
+
+# remove source-position from gtk 4.0
+xmlstarlet ed -P -L \
+	-d '//_:source-position' \
+	Gdk-4.0.gir GdkX11-4.0.gir Graphene-1.0.gir Gsk-4.0.gir Gtk-4.0.gir
+
+# fix cyclic dependency on gtk 4.0
+xmlstarlet ed -P -L \
+	-u '//_:callback[@name="ParseErrorFunc"]/_:parameters/_:parameter[@name="section"]/_:type[@c:type="const GtkCssSection*"]/@c:type' -v "gconstpointer" \
+	-a '//_:callback[@name="ParseErrorFunc"]/_:parameters/_:parameter[@name="section"]/_:type[@c:type="gconstpointer"]' -type attr -n "name" -v "gconstpointer" \
+	Gsk-4.0.gir
