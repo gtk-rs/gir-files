@@ -61,6 +61,11 @@ xmlstarlet ed -P -L \
 	-u '//_:parameter[@name="response_id"]/_:type[@name="gint"]/@name' -v "ResponseType" \
 	Gtk-3.0.gir Gtk-4.0.gir
 
+# fix wrong "full" transfer ownership
+xmlstarlet ed -P -L \
+	-u '//_:constructor[@c:identifier="gtk_shortcut_label_new"]/_:return-value/@transfer-ownership' -v "none" \
+	Gtk-3.0.gir Gtk-4.0.gir
+
 xmlstarlet tr JavaScriptCore-4.0.xsl JavaScriptCore-4.0.gir | xmlstarlet fo > JavaScriptCore-4.0.gir.tmp
 mv JavaScriptCore-4.0.gir.tmp JavaScriptCore-4.0.gir
 
