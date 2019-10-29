@@ -349,6 +349,48 @@ and/or use gtk-doc annotations.  -->
         </parameters>
       </method>
     </record>
+    <function-macro name="CHECK_VERSION" c:identifier="JSC_CHECK_VERSION" introspectable="0">
+      <source-position filename="obj-x86_64-linux-gnu/DerivedSources/JavaScriptCore/javascriptcoregtk/jsc/JSCVersion.h" line="67"/>
+      <parameters>
+        <parameter name="major">
+          <doc xml:space="preserve" filename="obj-x86_64-linux-gnu/DerivedSources/JavaScriptCore/javascriptcoregtk/jsc/JSCVersion.h" line="60">major version (e.g. 1 for version 1.2.5)</doc>
+        </parameter>
+        <parameter name="minor">
+          <doc xml:space="preserve" filename="obj-x86_64-linux-gnu/DerivedSources/JavaScriptCore/javascriptcoregtk/jsc/JSCVersion.h" line="61">minor version (e.g. 2 for version 1.2.5)</doc>
+        </parameter>
+        <parameter name="micro">
+          <doc xml:space="preserve" filename="obj-x86_64-linux-gnu/DerivedSources/JavaScriptCore/javascriptcoregtk/jsc/JSCVersion.h" line="62">micro version (e.g. 5 for version 1.2.5)</doc>
+        </parameter>
+      </parameters>
+    </function-macro>
+    <function-macro name="CLASS" c:identifier="JSC_CLASS" introspectable="0">
+      <source-position filename="Source/JavaScriptCore/API/glib/JSCClass.h" line="34"/>
+      <parameters>
+        <parameter name="obj">
+        </parameter>
+      </parameters>
+    </function-macro>
+    <function-macro name="CONTEXT" c:identifier="JSC_CONTEXT" introspectable="0">
+      <source-position filename="Source/JavaScriptCore/API/glib/JSCContext.h" line="37"/>
+      <parameters>
+        <parameter name="obj">
+        </parameter>
+      </parameters>
+    </function-macro>
+    <function-macro name="CONTEXT_CLASS" c:identifier="JSC_CONTEXT_CLASS" introspectable="0">
+      <source-position filename="Source/JavaScriptCore/API/glib/JSCContext.h" line="39"/>
+      <parameters>
+        <parameter name="klass">
+        </parameter>
+      </parameters>
+    </function-macro>
+    <function-macro name="CONTEXT_GET_CLASS" c:identifier="JSC_CONTEXT_GET_CLASS" introspectable="0">
+      <source-position filename="Source/JavaScriptCore/API/glib/JSCContext.h" line="41"/>
+      <parameters>
+        <parameter name="obj">
+        </parameter>
+      </parameters>
+    </function-macro>
     <enumeration name="CheckSyntaxMode" c:type="JSCCheckSyntaxMode">
       <doc xml:space="preserve" filename="Source/JavaScriptCore/API/glib/JSCContext.cpp" line="896">Enum values to specify a mode to check for syntax errors in jsc_context_check_syntax().</doc>
       <source-position filename="Source/JavaScriptCore/API/glib/JSCContext.h" line="54"/>
@@ -384,7 +426,7 @@ and/or use gtk-doc annotations.  -->
     <class name="Class" c:symbol-prefix="class" c:type="JSCClass" parent="GObject.Object" glib:type-name="JSCClass" glib:get-type="jsc_class_get_type" glib:type-struct="ClassClass">
       <source-position filename="Source/JavaScriptCore/API/glib/JSCClass.h" line="38"/>
       <method name="add_constructor" c:identifier="jsc_class_add_constructor" shadowed-by="add_constructorv" introspectable="0">
-        <doc xml:space="preserve" filename="Source/JavaScriptCore/API/glib/JSCClass.cpp" line="579">Add a constructor to @jsc_class. If @name is %NULL, the class name will be used. When &lt;function&gt;new&lt;/function&gt;
+        <doc xml:space="preserve" filename="Source/JavaScriptCore/API/glib/JSCClass.cpp" line="575">Add a constructor to @jsc_class. If @name is %NULL, the class name will be used. When &lt;function&gt;new&lt;/function&gt;
 is used with the constructor or jsc_value_constructor_call() is called, @callback is invoked receiving the
 parameters and @user_data as the last parameter. When the constructor object is cleared in the #JSCClass context,
 @destroy_notify is called with @user_data as parameter.
@@ -396,46 +438,46 @@ Note that the value returned by @callback is adopted by @jsc_class, and the #GDe
 jsc_context_register_class() is responsible for disposing of it.</doc>
         <source-position filename="Source/JavaScriptCore/API/glib/JSCClass.h" line="88"/>
         <return-value transfer-ownership="full">
-          <doc xml:space="preserve" filename="Source/JavaScriptCore/API/glib/JSCClass.cpp" line="601">a #JSCValue representing the class constructor.</doc>
+          <doc xml:space="preserve" filename="Source/JavaScriptCore/API/glib/JSCClass.cpp" line="597">a #JSCValue representing the class constructor.</doc>
           <type name="Value" c:type="JSCValue*"/>
         </return-value>
         <parameters>
           <instance-parameter name="jsc_class" transfer-ownership="none">
-            <doc xml:space="preserve" filename="Source/JavaScriptCore/API/glib/JSCClass.cpp" line="581">a #JSCClass</doc>
+            <doc xml:space="preserve" filename="Source/JavaScriptCore/API/glib/JSCClass.cpp" line="577">a #JSCClass</doc>
             <type name="Class" c:type="JSCClass*"/>
           </instance-parameter>
           <parameter name="name" transfer-ownership="none" nullable="1" allow-none="1">
-            <doc xml:space="preserve" filename="Source/JavaScriptCore/API/glib/JSCClass.cpp" line="582">the constructor name or %NULL</doc>
+            <doc xml:space="preserve" filename="Source/JavaScriptCore/API/glib/JSCClass.cpp" line="578">the constructor name or %NULL</doc>
             <type name="utf8" c:type="const char*"/>
           </parameter>
           <parameter name="callback" transfer-ownership="none" scope="notified" closure="2" destroy="3">
-            <doc xml:space="preserve" filename="Source/JavaScriptCore/API/glib/JSCClass.cpp" line="583">a #GCallback to be called to create an instance of @jsc_class</doc>
+            <doc xml:space="preserve" filename="Source/JavaScriptCore/API/glib/JSCClass.cpp" line="579">a #GCallback to be called to create an instance of @jsc_class</doc>
             <type name="GObject.Callback" c:type="GCallback"/>
           </parameter>
           <parameter name="user_data" transfer-ownership="none" nullable="1" allow-none="1">
-            <doc xml:space="preserve" filename="Source/JavaScriptCore/API/glib/JSCClass.cpp" line="584">user data to pass to @callback</doc>
+            <doc xml:space="preserve" filename="Source/JavaScriptCore/API/glib/JSCClass.cpp" line="580">user data to pass to @callback</doc>
             <type name="gpointer" c:type="gpointer"/>
           </parameter>
           <parameter name="destroy_notify" transfer-ownership="none" nullable="1" allow-none="1" scope="async">
-            <doc xml:space="preserve" filename="Source/JavaScriptCore/API/glib/JSCClass.cpp" line="585">destroy notifier for @user_data</doc>
+            <doc xml:space="preserve" filename="Source/JavaScriptCore/API/glib/JSCClass.cpp" line="581">destroy notifier for @user_data</doc>
             <type name="GLib.DestroyNotify" c:type="GDestroyNotify"/>
           </parameter>
           <parameter name="return_type" transfer-ownership="none">
-            <doc xml:space="preserve" filename="Source/JavaScriptCore/API/glib/JSCClass.cpp" line="586">the #GType of the constructor return value</doc>
+            <doc xml:space="preserve" filename="Source/JavaScriptCore/API/glib/JSCClass.cpp" line="582">the #GType of the constructor return value</doc>
             <type name="GType" c:type="GType"/>
           </parameter>
           <parameter name="n_params" transfer-ownership="none">
-            <doc xml:space="preserve" filename="Source/JavaScriptCore/API/glib/JSCClass.cpp" line="587">the number of parameter types to follow or 0 if constructor doesn't receive parameters.</doc>
+            <doc xml:space="preserve" filename="Source/JavaScriptCore/API/glib/JSCClass.cpp" line="583">the number of parameter types to follow or 0 if constructor doesn't receive parameters.</doc>
             <type name="guint" c:type="guint"/>
           </parameter>
           <parameter name="..." transfer-ownership="none">
-            <doc xml:space="preserve" filename="Source/JavaScriptCore/API/glib/JSCClass.cpp" line="588">a list of #GType&lt;!-- --&gt;s, one for each parameter.</doc>
+            <doc xml:space="preserve" filename="Source/JavaScriptCore/API/glib/JSCClass.cpp" line="584">a list of #GType&lt;!-- --&gt;s, one for each parameter.</doc>
             <varargs/>
           </parameter>
         </parameters>
       </method>
       <method name="add_constructor_variadic" c:identifier="jsc_class_add_constructor_variadic">
-        <doc xml:space="preserve" filename="Source/JavaScriptCore/API/glib/JSCClass.cpp" line="674">Add a constructor to @jsc_class. If @name is %NULL, the class name will be used. When &lt;function&gt;new&lt;/function&gt;
+        <doc xml:space="preserve" filename="Source/JavaScriptCore/API/glib/JSCClass.cpp" line="670">Add a constructor to @jsc_class. If @name is %NULL, the class name will be used. When &lt;function&gt;new&lt;/function&gt;
 is used with the constructor or jsc_value_constructor_call() is called, @callback is invoked receiving
 a #GPtrArray of #JSCValue&lt;!-- --&gt;s as arguments and @user_data as the last parameter. When the constructor object
 is cleared in the #JSCClass context, @destroy_notify is called with @user_data as parameter.
@@ -447,38 +489,38 @@ Note that the value returned by @callback is adopted by @jsc_class, and the #GDe
 jsc_context_register_class() is responsible for disposing of it.</doc>
         <source-position filename="Source/JavaScriptCore/API/glib/JSCClass.h" line="108"/>
         <return-value transfer-ownership="full">
-          <doc xml:space="preserve" filename="Source/JavaScriptCore/API/glib/JSCClass.cpp" line="694">a #JSCValue representing the class constructor.</doc>
+          <doc xml:space="preserve" filename="Source/JavaScriptCore/API/glib/JSCClass.cpp" line="690">a #JSCValue representing the class constructor.</doc>
           <type name="Value" c:type="JSCValue*"/>
         </return-value>
         <parameters>
           <instance-parameter name="jsc_class" transfer-ownership="none">
-            <doc xml:space="preserve" filename="Source/JavaScriptCore/API/glib/JSCClass.cpp" line="676">a #JSCClass</doc>
+            <doc xml:space="preserve" filename="Source/JavaScriptCore/API/glib/JSCClass.cpp" line="672">a #JSCClass</doc>
             <type name="Class" c:type="JSCClass*"/>
           </instance-parameter>
           <parameter name="name" transfer-ownership="none" nullable="1" allow-none="1">
-            <doc xml:space="preserve" filename="Source/JavaScriptCore/API/glib/JSCClass.cpp" line="677">the constructor name or %NULL</doc>
+            <doc xml:space="preserve" filename="Source/JavaScriptCore/API/glib/JSCClass.cpp" line="673">the constructor name or %NULL</doc>
             <type name="utf8" c:type="const char*"/>
           </parameter>
           <parameter name="callback" transfer-ownership="none" scope="notified" closure="2" destroy="3">
-            <doc xml:space="preserve" filename="Source/JavaScriptCore/API/glib/JSCClass.cpp" line="678">a #GCallback to be called to create an instance of @jsc_class</doc>
+            <doc xml:space="preserve" filename="Source/JavaScriptCore/API/glib/JSCClass.cpp" line="674">a #GCallback to be called to create an instance of @jsc_class</doc>
             <type name="Constructor" c:type="JSCConstructor"/>
           </parameter>
           <parameter name="user_data" transfer-ownership="none" nullable="1" allow-none="1">
-            <doc xml:space="preserve" filename="Source/JavaScriptCore/API/glib/JSCClass.cpp" line="679">user data to pass to @callback</doc>
+            <doc xml:space="preserve" filename="Source/JavaScriptCore/API/glib/JSCClass.cpp" line="675">user data to pass to @callback</doc>
             <type name="gpointer" c:type="gpointer"/>
           </parameter>
           <parameter name="destroy_notify" transfer-ownership="none" nullable="1" allow-none="1" scope="async">
-            <doc xml:space="preserve" filename="Source/JavaScriptCore/API/glib/JSCClass.cpp" line="680">destroy notifier for @user_data</doc>
+            <doc xml:space="preserve" filename="Source/JavaScriptCore/API/glib/JSCClass.cpp" line="676">destroy notifier for @user_data</doc>
             <type name="GLib.DestroyNotify" c:type="GDestroyNotify"/>
           </parameter>
           <parameter name="return_type" transfer-ownership="none">
-            <doc xml:space="preserve" filename="Source/JavaScriptCore/API/glib/JSCClass.cpp" line="681">the #GType of the constructor return value</doc>
+            <doc xml:space="preserve" filename="Source/JavaScriptCore/API/glib/JSCClass.cpp" line="677">the #GType of the constructor return value</doc>
             <type name="GType" c:type="GType"/>
           </parameter>
         </parameters>
       </method>
       <method name="add_constructorv" c:identifier="jsc_class_add_constructorv" shadows="add_constructor">
-        <doc xml:space="preserve" filename="Source/JavaScriptCore/API/glib/JSCClass.cpp" line="628">Add a constructor to @jsc_class. If @name is %NULL, the class name will be used. When &lt;function&gt;new&lt;/function&gt;
+        <doc xml:space="preserve" filename="Source/JavaScriptCore/API/glib/JSCClass.cpp" line="624">Add a constructor to @jsc_class. If @name is %NULL, the class name will be used. When &lt;function&gt;new&lt;/function&gt;
 is used with the constructor or jsc_value_constructor_call() is called, @callback is invoked receiving the
 parameters and @user_data as the last parameter. When the constructor object is cleared in the #JSCClass context,
 @destroy_notify is called with @user_data as parameter.
@@ -490,40 +532,40 @@ Note that the value returned by @callback is adopted by @jsc_class, and the #GDe
 jsc_context_register_class() is responsible for disposing of it.</doc>
         <source-position filename="Source/JavaScriptCore/API/glib/JSCClass.h" line="98"/>
         <return-value transfer-ownership="full">
-          <doc xml:space="preserve" filename="Source/JavaScriptCore/API/glib/JSCClass.cpp" line="650">a #JSCValue representing the class constructor.</doc>
+          <doc xml:space="preserve" filename="Source/JavaScriptCore/API/glib/JSCClass.cpp" line="646">a #JSCValue representing the class constructor.</doc>
           <type name="Value" c:type="JSCValue*"/>
         </return-value>
         <parameters>
           <instance-parameter name="jsc_class" transfer-ownership="none">
-            <doc xml:space="preserve" filename="Source/JavaScriptCore/API/glib/JSCClass.cpp" line="630">a #JSCClass</doc>
+            <doc xml:space="preserve" filename="Source/JavaScriptCore/API/glib/JSCClass.cpp" line="626">a #JSCClass</doc>
             <type name="Class" c:type="JSCClass*"/>
           </instance-parameter>
           <parameter name="name" transfer-ownership="none" nullable="1" allow-none="1">
-            <doc xml:space="preserve" filename="Source/JavaScriptCore/API/glib/JSCClass.cpp" line="631">the constructor name or %NULL</doc>
+            <doc xml:space="preserve" filename="Source/JavaScriptCore/API/glib/JSCClass.cpp" line="627">the constructor name or %NULL</doc>
             <type name="utf8" c:type="const char*"/>
           </parameter>
           <parameter name="callback" transfer-ownership="none" scope="notified" closure="2" destroy="3">
-            <doc xml:space="preserve" filename="Source/JavaScriptCore/API/glib/JSCClass.cpp" line="632">a #GCallback to be called to create an instance of @jsc_class</doc>
+            <doc xml:space="preserve" filename="Source/JavaScriptCore/API/glib/JSCClass.cpp" line="628">a #GCallback to be called to create an instance of @jsc_class</doc>
             <type name="GObject.Callback" c:type="GCallback"/>
           </parameter>
           <parameter name="user_data" transfer-ownership="none" nullable="1" allow-none="1">
-            <doc xml:space="preserve" filename="Source/JavaScriptCore/API/glib/JSCClass.cpp" line="633">user data to pass to @callback</doc>
+            <doc xml:space="preserve" filename="Source/JavaScriptCore/API/glib/JSCClass.cpp" line="629">user data to pass to @callback</doc>
             <type name="gpointer" c:type="gpointer"/>
           </parameter>
           <parameter name="destroy_notify" transfer-ownership="none" nullable="1" allow-none="1" scope="async">
-            <doc xml:space="preserve" filename="Source/JavaScriptCore/API/glib/JSCClass.cpp" line="634">destroy notifier for @user_data</doc>
+            <doc xml:space="preserve" filename="Source/JavaScriptCore/API/glib/JSCClass.cpp" line="630">destroy notifier for @user_data</doc>
             <type name="GLib.DestroyNotify" c:type="GDestroyNotify"/>
           </parameter>
           <parameter name="return_type" transfer-ownership="none">
-            <doc xml:space="preserve" filename="Source/JavaScriptCore/API/glib/JSCClass.cpp" line="635">the #GType of the constructor return value</doc>
+            <doc xml:space="preserve" filename="Source/JavaScriptCore/API/glib/JSCClass.cpp" line="631">the #GType of the constructor return value</doc>
             <type name="GType" c:type="GType"/>
           </parameter>
           <parameter name="n_parameters" transfer-ownership="none">
-            <doc xml:space="preserve" filename="Source/JavaScriptCore/API/glib/JSCClass.cpp" line="636">the number of parameters</doc>
+            <doc xml:space="preserve" filename="Source/JavaScriptCore/API/glib/JSCClass.cpp" line="632">the number of parameters</doc>
             <type name="guint" c:type="guint"/>
           </parameter>
           <parameter name="parameter_types" transfer-ownership="none" nullable="1" allow-none="1">
-            <doc xml:space="preserve" filename="Source/JavaScriptCore/API/glib/JSCClass.cpp" line="637">a list of #GType&lt;!-- --&gt;s, one for each parameter, or %NULL</doc>
+            <doc xml:space="preserve" filename="Source/JavaScriptCore/API/glib/JSCClass.cpp" line="633">a list of #GType&lt;!-- --&gt;s, one for each parameter, or %NULL</doc>
             <array length="5" zero-terminated="0" c:type="GType*">
               <type name="GType"/>
             </array>
@@ -531,7 +573,7 @@ jsc_context_register_class() is responsible for disposing of it.</doc>
         </parameters>
       </method>
       <method name="add_method" c:identifier="jsc_class_add_method" shadowed-by="add_methodv" introspectable="0">
-        <doc xml:space="preserve" filename="Source/JavaScriptCore/API/glib/JSCClass.cpp" line="725">Add method with @name to @jsc_class. When the method is called by JavaScript or jsc_value_object_invoke_method(),
+        <doc xml:space="preserve" filename="Source/JavaScriptCore/API/glib/JSCClass.cpp" line="722">Add method with @name to @jsc_class. When the method is called by JavaScript or jsc_value_object_invoke_method(),
 @callback is called receiving the class instance as first parameter, followed by the method parameters and then
 @user_data as last parameter. When the method is cleared in the #JSCClass context, @destroy_notify is called with
 @user_data as parameter.
@@ -546,41 +588,41 @@ with jsc_value_new_object() that receives the copy as the instance parameter.</d
         </return-value>
         <parameters>
           <instance-parameter name="jsc_class" transfer-ownership="none">
-            <doc xml:space="preserve" filename="Source/JavaScriptCore/API/glib/JSCClass.cpp" line="727">a #JSCClass</doc>
+            <doc xml:space="preserve" filename="Source/JavaScriptCore/API/glib/JSCClass.cpp" line="724">a #JSCClass</doc>
             <type name="Class" c:type="JSCClass*"/>
           </instance-parameter>
           <parameter name="name" transfer-ownership="none">
-            <doc xml:space="preserve" filename="Source/JavaScriptCore/API/glib/JSCClass.cpp" line="728">the method name</doc>
+            <doc xml:space="preserve" filename="Source/JavaScriptCore/API/glib/JSCClass.cpp" line="725">the method name</doc>
             <type name="utf8" c:type="const char*"/>
           </parameter>
           <parameter name="callback" transfer-ownership="none" scope="notified" closure="2" destroy="3">
-            <doc xml:space="preserve" filename="Source/JavaScriptCore/API/glib/JSCClass.cpp" line="729">a #GCallback to be called to invoke method @name of @jsc_class</doc>
+            <doc xml:space="preserve" filename="Source/JavaScriptCore/API/glib/JSCClass.cpp" line="726">a #GCallback to be called to invoke method @name of @jsc_class</doc>
             <type name="GObject.Callback" c:type="GCallback"/>
           </parameter>
           <parameter name="user_data" transfer-ownership="none" nullable="1" allow-none="1">
-            <doc xml:space="preserve" filename="Source/JavaScriptCore/API/glib/JSCClass.cpp" line="730">user data to pass to @callback</doc>
+            <doc xml:space="preserve" filename="Source/JavaScriptCore/API/glib/JSCClass.cpp" line="727">user data to pass to @callback</doc>
             <type name="gpointer" c:type="gpointer"/>
           </parameter>
           <parameter name="destroy_notify" transfer-ownership="none" nullable="1" allow-none="1" scope="async">
-            <doc xml:space="preserve" filename="Source/JavaScriptCore/API/glib/JSCClass.cpp" line="731">destroy notifier for @user_data</doc>
+            <doc xml:space="preserve" filename="Source/JavaScriptCore/API/glib/JSCClass.cpp" line="728">destroy notifier for @user_data</doc>
             <type name="GLib.DestroyNotify" c:type="GDestroyNotify"/>
           </parameter>
           <parameter name="return_type" transfer-ownership="none">
-            <doc xml:space="preserve" filename="Source/JavaScriptCore/API/glib/JSCClass.cpp" line="732">the #GType of the method return value, or %G_TYPE_NONE if the method is void.</doc>
+            <doc xml:space="preserve" filename="Source/JavaScriptCore/API/glib/JSCClass.cpp" line="729">the #GType of the method return value, or %G_TYPE_NONE if the method is void.</doc>
             <type name="GType" c:type="GType"/>
           </parameter>
           <parameter name="n_params" transfer-ownership="none">
-            <doc xml:space="preserve" filename="Source/JavaScriptCore/API/glib/JSCClass.cpp" line="733">the number of parameter types to follow or 0 if the method doesn't receive parameters.</doc>
+            <doc xml:space="preserve" filename="Source/JavaScriptCore/API/glib/JSCClass.cpp" line="730">the number of parameter types to follow or 0 if the method doesn't receive parameters.</doc>
             <type name="guint" c:type="guint"/>
           </parameter>
           <parameter name="..." transfer-ownership="none">
-            <doc xml:space="preserve" filename="Source/JavaScriptCore/API/glib/JSCClass.cpp" line="734">a list of #GType&lt;!-- --&gt;s, one for each parameter.</doc>
+            <doc xml:space="preserve" filename="Source/JavaScriptCore/API/glib/JSCClass.cpp" line="731">a list of #GType&lt;!-- --&gt;s, one for each parameter.</doc>
             <varargs/>
           </parameter>
         </parameters>
       </method>
       <method name="add_method_variadic" c:identifier="jsc_class_add_method_variadic">
-        <doc xml:space="preserve" filename="Source/JavaScriptCore/API/glib/JSCClass.cpp" line="805">Add method with @name to @jsc_class. When the method is called by JavaScript or jsc_value_object_invoke_method(),
+        <doc xml:space="preserve" filename="Source/JavaScriptCore/API/glib/JSCClass.cpp" line="802">Add method with @name to @jsc_class. When the method is called by JavaScript or jsc_value_object_invoke_method(),
 @callback is called receiving the class instance as first parameter, followed by a #GPtrArray of #JSCValue&lt;!-- --&gt;s
 with the method arguments and then @user_data as last parameter. When the method is cleared in the #JSCClass context,
 @destroy_notify is called with @user_data as parameter.
@@ -595,33 +637,33 @@ with jsc_value_new_object() that receives the copy as the instance parameter.</d
         </return-value>
         <parameters>
           <instance-parameter name="jsc_class" transfer-ownership="none">
-            <doc xml:space="preserve" filename="Source/JavaScriptCore/API/glib/JSCClass.cpp" line="807">a #JSCClass</doc>
+            <doc xml:space="preserve" filename="Source/JavaScriptCore/API/glib/JSCClass.cpp" line="804">a #JSCClass</doc>
             <type name="Class" c:type="JSCClass*"/>
           </instance-parameter>
           <parameter name="name" transfer-ownership="none">
-            <doc xml:space="preserve" filename="Source/JavaScriptCore/API/glib/JSCClass.cpp" line="808">the method name</doc>
+            <doc xml:space="preserve" filename="Source/JavaScriptCore/API/glib/JSCClass.cpp" line="805">the method name</doc>
             <type name="utf8" c:type="const char*"/>
           </parameter>
           <parameter name="callback" transfer-ownership="none" scope="notified" closure="2" destroy="3">
-            <doc xml:space="preserve" filename="Source/JavaScriptCore/API/glib/JSCClass.cpp" line="809">a #GCallback to be called to invoke method @name of @jsc_class</doc>
+            <doc xml:space="preserve" filename="Source/JavaScriptCore/API/glib/JSCClass.cpp" line="806">a #GCallback to be called to invoke method @name of @jsc_class</doc>
             <type name="ClassVariadicFunction" c:type="JSCClassVariadicFunction"/>
           </parameter>
           <parameter name="user_data" transfer-ownership="none" nullable="1" allow-none="1">
-            <doc xml:space="preserve" filename="Source/JavaScriptCore/API/glib/JSCClass.cpp" line="810">user data to pass to @callback</doc>
+            <doc xml:space="preserve" filename="Source/JavaScriptCore/API/glib/JSCClass.cpp" line="807">user data to pass to @callback</doc>
             <type name="gpointer" c:type="gpointer"/>
           </parameter>
           <parameter name="destroy_notify" transfer-ownership="none" nullable="1" allow-none="1" scope="async">
-            <doc xml:space="preserve" filename="Source/JavaScriptCore/API/glib/JSCClass.cpp" line="811">destroy notifier for @user_data</doc>
+            <doc xml:space="preserve" filename="Source/JavaScriptCore/API/glib/JSCClass.cpp" line="808">destroy notifier for @user_data</doc>
             <type name="GLib.DestroyNotify" c:type="GDestroyNotify"/>
           </parameter>
           <parameter name="return_type" transfer-ownership="none">
-            <doc xml:space="preserve" filename="Source/JavaScriptCore/API/glib/JSCClass.cpp" line="812">the #GType of the method return value, or %G_TYPE_NONE if the method is void.</doc>
+            <doc xml:space="preserve" filename="Source/JavaScriptCore/API/glib/JSCClass.cpp" line="809">the #GType of the method return value, or %G_TYPE_NONE if the method is void.</doc>
             <type name="GType" c:type="GType"/>
           </parameter>
         </parameters>
       </method>
       <method name="add_methodv" c:identifier="jsc_class_add_methodv" shadows="add_method">
-        <doc xml:space="preserve" filename="Source/JavaScriptCore/API/glib/JSCClass.cpp" line="766">Add method with @name to @jsc_class. When the method is called by JavaScript or jsc_value_object_invoke_method(),
+        <doc xml:space="preserve" filename="Source/JavaScriptCore/API/glib/JSCClass.cpp" line="763">Add method with @name to @jsc_class. When the method is called by JavaScript or jsc_value_object_invoke_method(),
 @callback is called receiving the class instance as first parameter, followed by the method parameters and then
 @user_data as last parameter. When the method is cleared in the #JSCClass context, @destroy_notify is called with
 @user_data as parameter.
@@ -636,35 +678,35 @@ with jsc_value_new_object() that receives the copy as the instance parameter.</d
         </return-value>
         <parameters>
           <instance-parameter name="jsc_class" transfer-ownership="none">
-            <doc xml:space="preserve" filename="Source/JavaScriptCore/API/glib/JSCClass.cpp" line="768">a #JSCClass</doc>
+            <doc xml:space="preserve" filename="Source/JavaScriptCore/API/glib/JSCClass.cpp" line="765">a #JSCClass</doc>
             <type name="Class" c:type="JSCClass*"/>
           </instance-parameter>
           <parameter name="name" transfer-ownership="none">
-            <doc xml:space="preserve" filename="Source/JavaScriptCore/API/glib/JSCClass.cpp" line="769">the method name</doc>
+            <doc xml:space="preserve" filename="Source/JavaScriptCore/API/glib/JSCClass.cpp" line="766">the method name</doc>
             <type name="utf8" c:type="const char*"/>
           </parameter>
           <parameter name="callback" transfer-ownership="none" scope="notified" closure="2" destroy="3">
-            <doc xml:space="preserve" filename="Source/JavaScriptCore/API/glib/JSCClass.cpp" line="770">a #GCallback to be called to invoke method @name of @jsc_class</doc>
+            <doc xml:space="preserve" filename="Source/JavaScriptCore/API/glib/JSCClass.cpp" line="767">a #GCallback to be called to invoke method @name of @jsc_class</doc>
             <type name="GObject.Callback" c:type="GCallback"/>
           </parameter>
           <parameter name="user_data" transfer-ownership="none" nullable="1" allow-none="1">
-            <doc xml:space="preserve" filename="Source/JavaScriptCore/API/glib/JSCClass.cpp" line="771">user data to pass to @callback</doc>
+            <doc xml:space="preserve" filename="Source/JavaScriptCore/API/glib/JSCClass.cpp" line="768">user data to pass to @callback</doc>
             <type name="gpointer" c:type="gpointer"/>
           </parameter>
           <parameter name="destroy_notify" transfer-ownership="none" nullable="1" allow-none="1" scope="async">
-            <doc xml:space="preserve" filename="Source/JavaScriptCore/API/glib/JSCClass.cpp" line="772">destroy notifier for @user_data</doc>
+            <doc xml:space="preserve" filename="Source/JavaScriptCore/API/glib/JSCClass.cpp" line="769">destroy notifier for @user_data</doc>
             <type name="GLib.DestroyNotify" c:type="GDestroyNotify"/>
           </parameter>
           <parameter name="return_type" transfer-ownership="none">
-            <doc xml:space="preserve" filename="Source/JavaScriptCore/API/glib/JSCClass.cpp" line="773">the #GType of the method return value, or %G_TYPE_NONE if the method is void.</doc>
+            <doc xml:space="preserve" filename="Source/JavaScriptCore/API/glib/JSCClass.cpp" line="770">the #GType of the method return value, or %G_TYPE_NONE if the method is void.</doc>
             <type name="GType" c:type="GType"/>
           </parameter>
           <parameter name="n_parameters" transfer-ownership="none">
-            <doc xml:space="preserve" filename="Source/JavaScriptCore/API/glib/JSCClass.cpp" line="774">the number of parameter types to follow or 0 if the method doesn't receive parameters.</doc>
+            <doc xml:space="preserve" filename="Source/JavaScriptCore/API/glib/JSCClass.cpp" line="771">the number of parameter types to follow or 0 if the method doesn't receive parameters.</doc>
             <type name="guint" c:type="guint"/>
           </parameter>
           <parameter name="parameter_types" transfer-ownership="none" nullable="1" allow-none="1">
-            <doc xml:space="preserve" filename="Source/JavaScriptCore/API/glib/JSCClass.cpp" line="775">a list of #GType&lt;!-- --&gt;s, one for each parameter, or %NULL</doc>
+            <doc xml:space="preserve" filename="Source/JavaScriptCore/API/glib/JSCClass.cpp" line="772">a list of #GType&lt;!-- --&gt;s, one for each parameter, or %NULL</doc>
             <array length="5" zero-terminated="0" c:type="GType*">
               <type name="GType"/>
             </array>
@@ -672,7 +714,7 @@ with jsc_value_new_object() that receives the copy as the instance parameter.</d
         </parameters>
       </method>
       <method name="add_property" c:identifier="jsc_class_add_property">
-        <doc xml:space="preserve" filename="Source/JavaScriptCore/API/glib/JSCClass.cpp" line="834">Add a property with @name to @jsc_class. When the property value needs to be getted, @getter is called
+        <doc xml:space="preserve" filename="Source/JavaScriptCore/API/glib/JSCClass.cpp" line="831">Add a property with @name to @jsc_class. When the property value needs to be getted, @getter is called
 receiving the the class instance as first parameter and @user_data as last parameter. When the property
 value needs to be set, @setter is called receiving the the class instance as first parameter, followed
 by the value to be set and then @user_data as the last parameter. When the property is cleared in the
@@ -688,73 +730,73 @@ with jsc_value_new_object() that receives the copy as the instance parameter.</d
         </return-value>
         <parameters>
           <instance-parameter name="jsc_class" transfer-ownership="none">
-            <doc xml:space="preserve" filename="Source/JavaScriptCore/API/glib/JSCClass.cpp" line="836">a #JSCClass</doc>
+            <doc xml:space="preserve" filename="Source/JavaScriptCore/API/glib/JSCClass.cpp" line="833">a #JSCClass</doc>
             <type name="Class" c:type="JSCClass*"/>
           </instance-parameter>
           <parameter name="name" transfer-ownership="none">
-            <doc xml:space="preserve" filename="Source/JavaScriptCore/API/glib/JSCClass.cpp" line="837">the property name</doc>
+            <doc xml:space="preserve" filename="Source/JavaScriptCore/API/glib/JSCClass.cpp" line="834">the property name</doc>
             <type name="utf8" c:type="const char*"/>
           </parameter>
           <parameter name="property_type" transfer-ownership="none">
-            <doc xml:space="preserve" filename="Source/JavaScriptCore/API/glib/JSCClass.cpp" line="838">the #GType of the property value</doc>
+            <doc xml:space="preserve" filename="Source/JavaScriptCore/API/glib/JSCClass.cpp" line="835">the #GType of the property value</doc>
             <type name="GType" c:type="GType"/>
           </parameter>
-          <parameter name="getter" transfer-ownership="none" nullable="1" allow-none="1" destroy="5" scope="notified" closure="4">
-            <doc xml:space="preserve" filename="Source/JavaScriptCore/API/glib/JSCClass.cpp" line="839">a #GCallback to be called to get the property value</doc>
+          <parameter name="getter" transfer-ownership="none" nullable="1" allow-none="1" scope="notified" closure="4" destroy="5">
+            <doc xml:space="preserve" filename="Source/JavaScriptCore/API/glib/JSCClass.cpp" line="836">a #GCallback to be called to get the property value</doc>
             <type name="PropertyGetter" c:type="JSCPropertyGetter"/>
           </parameter>
           <parameter name="setter" transfer-ownership="none" nullable="1" allow-none="1" scope="notified" closure="4" destroy="5">
-            <doc xml:space="preserve" filename="Source/JavaScriptCore/API/glib/JSCClass.cpp" line="840">a #GCallback to be called to set the property value</doc>
+            <doc xml:space="preserve" filename="Source/JavaScriptCore/API/glib/JSCClass.cpp" line="837">a #GCallback to be called to set the property value</doc>
             <type name="PropertySetter" c:type="JSCPropertySetter"/>
           </parameter>
           <parameter name="user_data" transfer-ownership="none" nullable="1" allow-none="1">
-            <doc xml:space="preserve" filename="Source/JavaScriptCore/API/glib/JSCClass.cpp" line="841">user data to pass to @getter and @setter</doc>
+            <doc xml:space="preserve" filename="Source/JavaScriptCore/API/glib/JSCClass.cpp" line="838">user data to pass to @getter and @setter</doc>
             <type name="gpointer" c:type="gpointer"/>
           </parameter>
           <parameter name="destroy_notify" transfer-ownership="none" nullable="1" allow-none="1" scope="async">
-            <doc xml:space="preserve" filename="Source/JavaScriptCore/API/glib/JSCClass.cpp" line="842">destroy notifier for @user_data</doc>
+            <doc xml:space="preserve" filename="Source/JavaScriptCore/API/glib/JSCClass.cpp" line="839">destroy notifier for @user_data</doc>
             <type name="GLib.DestroyNotify" c:type="GDestroyNotify"/>
           </parameter>
         </parameters>
       </method>
       <method name="get_name" c:identifier="jsc_class_get_name">
-        <doc xml:space="preserve" filename="Source/JavaScriptCore/API/glib/JSCClass.cpp" line="525">Get the class name of @jsc_class</doc>
+        <doc xml:space="preserve" filename="Source/JavaScriptCore/API/glib/JSCClass.cpp" line="521">Get the class name of @jsc_class</doc>
         <source-position filename="Source/JavaScriptCore/API/glib/JSCClass.h" line="82"/>
         <return-value transfer-ownership="none">
-          <doc xml:space="preserve" filename="Source/JavaScriptCore/API/glib/JSCClass.cpp" line="531">the name of @jsc_class</doc>
+          <doc xml:space="preserve" filename="Source/JavaScriptCore/API/glib/JSCClass.cpp" line="527">the name of @jsc_class</doc>
           <type name="utf8" c:type="const char*"/>
         </return-value>
         <parameters>
           <instance-parameter name="jsc_class" transfer-ownership="none">
-            <doc xml:space="preserve" filename="Source/JavaScriptCore/API/glib/JSCClass.cpp" line="527">a @JSCClass</doc>
+            <doc xml:space="preserve" filename="Source/JavaScriptCore/API/glib/JSCClass.cpp" line="523">a @JSCClass</doc>
             <type name="Class" c:type="JSCClass*"/>
           </instance-parameter>
         </parameters>
       </method>
       <method name="get_parent" c:identifier="jsc_class_get_parent">
-        <doc xml:space="preserve" filename="Source/JavaScriptCore/API/glib/JSCClass.cpp" line="540">Get the parent class of @jsc_class</doc>
+        <doc xml:space="preserve" filename="Source/JavaScriptCore/API/glib/JSCClass.cpp" line="536">Get the parent class of @jsc_class</doc>
         <source-position filename="Source/JavaScriptCore/API/glib/JSCClass.h" line="85"/>
         <return-value transfer-ownership="none">
-          <doc xml:space="preserve" filename="Source/JavaScriptCore/API/glib/JSCClass.cpp" line="546">the parent class of @jsc_class</doc>
+          <doc xml:space="preserve" filename="Source/JavaScriptCore/API/glib/JSCClass.cpp" line="542">the parent class of @jsc_class</doc>
           <type name="Class" c:type="JSCClass*"/>
         </return-value>
         <parameters>
           <instance-parameter name="jsc_class" transfer-ownership="none">
-            <doc xml:space="preserve" filename="Source/JavaScriptCore/API/glib/JSCClass.cpp" line="542">a @JSCClass</doc>
+            <doc xml:space="preserve" filename="Source/JavaScriptCore/API/glib/JSCClass.cpp" line="538">a @JSCClass</doc>
             <type name="Class" c:type="JSCClass*"/>
           </instance-parameter>
         </parameters>
       </method>
-      <property name="context" writable="1" construct-only="1" transfer-ownership="none">
-        <doc xml:space="preserve" filename="Source/JavaScriptCore/API/glib/JSCClass.cpp" line="338">The #JSCContext in which the class was registered.</doc>
+      <property name="context" readable="0" writable="1" construct-only="1" transfer-ownership="none">
+        <doc xml:space="preserve" filename="Source/JavaScriptCore/API/glib/JSCClass.cpp" line="334">The #JSCContext in which the class was registered.</doc>
         <type name="Context"/>
       </property>
       <property name="name" writable="1" construct-only="1" transfer-ownership="none">
-        <doc xml:space="preserve" filename="Source/JavaScriptCore/API/glib/JSCClass.cpp" line="352">The name of the class.</doc>
+        <doc xml:space="preserve" filename="Source/JavaScriptCore/API/glib/JSCClass.cpp" line="348">The name of the class.</doc>
         <type name="utf8" c:type="gchar*"/>
       </property>
       <property name="parent" writable="1" construct-only="1" transfer-ownership="none">
-        <doc xml:space="preserve" filename="Source/JavaScriptCore/API/glib/JSCClass.cpp" line="366">The parent class or %NULL in case of final classes.</doc>
+        <doc xml:space="preserve" filename="Source/JavaScriptCore/API/glib/JSCClass.cpp" line="362">The parent class or %NULL in case of final classes.</doc>
         <type name="Class"/>
       </property>
     </class>
@@ -762,38 +804,38 @@ with jsc_value_new_object() that receives the copy as the instance parameter.</d
       <source-position filename="Source/JavaScriptCore/API/glib/JSCClass.h" line="38"/>
     </record>
     <callback name="ClassDeletePropertyFunction" c:type="JSCClassDeletePropertyFunction">
-      <doc xml:space="preserve" filename="Source/JavaScriptCore/API/glib/JSCClass.cpp" line="423">The type of delete_property in #JSCClassVTable. This is only required when you need to handle
+      <doc xml:space="preserve" filename="Source/JavaScriptCore/API/glib/JSCClass.cpp" line="419">The type of delete_property in #JSCClassVTable. This is only required when you need to handle
 external properties not added to the prototype.</doc>
       <source-position filename="Source/JavaScriptCore/API/glib/JSCClass.h" line="55"/>
       <return-value transfer-ownership="none">
-        <doc xml:space="preserve" filename="Source/JavaScriptCore/API/glib/JSCClass.cpp" line="433">%TRUE if handled or %FALSE to to forward the request to the parent class or prototype chain.</doc>
+        <doc xml:space="preserve" filename="Source/JavaScriptCore/API/glib/JSCClass.cpp" line="429">%TRUE if handled or %FALSE to to forward the request to the parent class or prototype chain.</doc>
         <type name="gboolean" c:type="gboolean"/>
       </return-value>
       <parameters>
         <parameter name="jsc_class" transfer-ownership="none">
-          <doc xml:space="preserve" filename="Source/JavaScriptCore/API/glib/JSCClass.cpp" line="425">a #JSCClass</doc>
+          <doc xml:space="preserve" filename="Source/JavaScriptCore/API/glib/JSCClass.cpp" line="421">a #JSCClass</doc>
           <type name="Class" c:type="JSCClass*"/>
         </parameter>
         <parameter name="context" transfer-ownership="none">
-          <doc xml:space="preserve" filename="Source/JavaScriptCore/API/glib/JSCClass.cpp" line="426">a #JSCContext</doc>
+          <doc xml:space="preserve" filename="Source/JavaScriptCore/API/glib/JSCClass.cpp" line="422">a #JSCContext</doc>
           <type name="Context" c:type="JSCContext*"/>
         </parameter>
         <parameter name="instance" transfer-ownership="none" nullable="1" allow-none="1">
-          <doc xml:space="preserve" filename="Source/JavaScriptCore/API/glib/JSCClass.cpp" line="427">the @jsc_class instance</doc>
+          <doc xml:space="preserve" filename="Source/JavaScriptCore/API/glib/JSCClass.cpp" line="423">the @jsc_class instance</doc>
           <type name="gpointer" c:type="gpointer"/>
         </parameter>
         <parameter name="name" transfer-ownership="none">
-          <doc xml:space="preserve" filename="Source/JavaScriptCore/API/glib/JSCClass.cpp" line="428">the property name</doc>
+          <doc xml:space="preserve" filename="Source/JavaScriptCore/API/glib/JSCClass.cpp" line="424">the property name</doc>
           <type name="utf8" c:type="const char*"/>
         </parameter>
       </parameters>
     </callback>
     <callback name="ClassEnumeratePropertiesFunction" c:type="JSCClassEnumeratePropertiesFunction">
-      <doc xml:space="preserve" filename="Source/JavaScriptCore/API/glib/JSCClass.cpp" line="436">The type of enumerate_properties in #JSCClassVTable. This is only required when you need to handle
+      <doc xml:space="preserve" filename="Source/JavaScriptCore/API/glib/JSCClass.cpp" line="432">The type of enumerate_properties in #JSCClassVTable. This is only required when you need to handle
 external properties not added to the prototype.</doc>
       <source-position filename="Source/JavaScriptCore/API/glib/JSCClass.h" line="59"/>
       <return-value transfer-ownership="full" nullable="1">
-        <doc xml:space="preserve" filename="Source/JavaScriptCore/API/glib/JSCClass.cpp" line="445">a %NULL-terminated array of strings
+        <doc xml:space="preserve" filename="Source/JavaScriptCore/API/glib/JSCClass.cpp" line="441">a %NULL-terminated array of strings
    containing the property names, or %NULL if @instance doesn't have enumerable properties.</doc>
         <array c:type="gchar**">
           <type name="utf8"/>
@@ -801,129 +843,129 @@ external properties not added to the prototype.</doc>
       </return-value>
       <parameters>
         <parameter name="jsc_class" transfer-ownership="none">
-          <doc xml:space="preserve" filename="Source/JavaScriptCore/API/glib/JSCClass.cpp" line="438">a #JSCClass</doc>
+          <doc xml:space="preserve" filename="Source/JavaScriptCore/API/glib/JSCClass.cpp" line="434">a #JSCClass</doc>
           <type name="Class" c:type="JSCClass*"/>
         </parameter>
         <parameter name="context" transfer-ownership="none">
-          <doc xml:space="preserve" filename="Source/JavaScriptCore/API/glib/JSCClass.cpp" line="439">a #JSCContext</doc>
+          <doc xml:space="preserve" filename="Source/JavaScriptCore/API/glib/JSCClass.cpp" line="435">a #JSCContext</doc>
           <type name="Context" c:type="JSCContext*"/>
         </parameter>
         <parameter name="instance" transfer-ownership="none" nullable="1" allow-none="1">
-          <doc xml:space="preserve" filename="Source/JavaScriptCore/API/glib/JSCClass.cpp" line="440">the @jsc_class instance</doc>
+          <doc xml:space="preserve" filename="Source/JavaScriptCore/API/glib/JSCClass.cpp" line="436">the @jsc_class instance</doc>
           <type name="gpointer" c:type="gpointer"/>
         </parameter>
       </parameters>
     </callback>
     <callback name="ClassGetPropertyFunction" c:type="JSCClassGetPropertyFunction">
-      <doc xml:space="preserve" filename="Source/JavaScriptCore/API/glib/JSCClass.cpp" line="381">The type of get_property in #JSCClassVTable. This is only required when you need to handle
+      <doc xml:space="preserve" filename="Source/JavaScriptCore/API/glib/JSCClass.cpp" line="377">The type of get_property in #JSCClassVTable. This is only required when you need to handle
 external properties not added to the prototype.</doc>
       <source-position filename="Source/JavaScriptCore/API/glib/JSCClass.h" line="42"/>
       <return-value transfer-ownership="full" nullable="1">
-        <doc xml:space="preserve" filename="Source/JavaScriptCore/API/glib/JSCClass.cpp" line="391">a #JSCValue or %NULL to forward the request to
+        <doc xml:space="preserve" filename="Source/JavaScriptCore/API/glib/JSCClass.cpp" line="387">a #JSCValue or %NULL to forward the request to
    the parent class or prototype chain</doc>
         <type name="Value" c:type="JSCValue*"/>
       </return-value>
       <parameters>
         <parameter name="jsc_class" transfer-ownership="none">
-          <doc xml:space="preserve" filename="Source/JavaScriptCore/API/glib/JSCClass.cpp" line="383">a #JSCClass</doc>
+          <doc xml:space="preserve" filename="Source/JavaScriptCore/API/glib/JSCClass.cpp" line="379">a #JSCClass</doc>
           <type name="Class" c:type="JSCClass*"/>
         </parameter>
         <parameter name="context" transfer-ownership="none">
-          <doc xml:space="preserve" filename="Source/JavaScriptCore/API/glib/JSCClass.cpp" line="384">a #JSCContext</doc>
+          <doc xml:space="preserve" filename="Source/JavaScriptCore/API/glib/JSCClass.cpp" line="380">a #JSCContext</doc>
           <type name="Context" c:type="JSCContext*"/>
         </parameter>
         <parameter name="instance" transfer-ownership="none" nullable="1" allow-none="1">
-          <doc xml:space="preserve" filename="Source/JavaScriptCore/API/glib/JSCClass.cpp" line="385">the @jsc_class instance</doc>
+          <doc xml:space="preserve" filename="Source/JavaScriptCore/API/glib/JSCClass.cpp" line="381">the @jsc_class instance</doc>
           <type name="gpointer" c:type="gpointer"/>
         </parameter>
         <parameter name="name" transfer-ownership="none">
-          <doc xml:space="preserve" filename="Source/JavaScriptCore/API/glib/JSCClass.cpp" line="386">the property name</doc>
+          <doc xml:space="preserve" filename="Source/JavaScriptCore/API/glib/JSCClass.cpp" line="382">the property name</doc>
           <type name="utf8" c:type="const char*"/>
         </parameter>
       </parameters>
     </callback>
     <callback name="ClassHasPropertyFunction" c:type="JSCClassHasPropertyFunction">
-      <doc xml:space="preserve" filename="Source/JavaScriptCore/API/glib/JSCClass.cpp" line="409">The type of has_property in #JSCClassVTable. This is only required when you need to handle
+      <doc xml:space="preserve" filename="Source/JavaScriptCore/API/glib/JSCClass.cpp" line="405">The type of has_property in #JSCClassVTable. This is only required when you need to handle
 external properties not added to the prototype.</doc>
       <source-position filename="Source/JavaScriptCore/API/glib/JSCClass.h" line="51"/>
       <return-value transfer-ownership="none">
-        <doc xml:space="preserve" filename="Source/JavaScriptCore/API/glib/JSCClass.cpp" line="419">%TRUE if @instance has a property with @name or %FALSE to forward the request
+        <doc xml:space="preserve" filename="Source/JavaScriptCore/API/glib/JSCClass.cpp" line="415">%TRUE if @instance has a property with @name or %FALSE to forward the request
    to the parent class or prototype chain.</doc>
         <type name="gboolean" c:type="gboolean"/>
       </return-value>
       <parameters>
         <parameter name="jsc_class" transfer-ownership="none">
-          <doc xml:space="preserve" filename="Source/JavaScriptCore/API/glib/JSCClass.cpp" line="411">a #JSCClass</doc>
+          <doc xml:space="preserve" filename="Source/JavaScriptCore/API/glib/JSCClass.cpp" line="407">a #JSCClass</doc>
           <type name="Class" c:type="JSCClass*"/>
         </parameter>
         <parameter name="context" transfer-ownership="none">
-          <doc xml:space="preserve" filename="Source/JavaScriptCore/API/glib/JSCClass.cpp" line="412">a #JSCContext</doc>
+          <doc xml:space="preserve" filename="Source/JavaScriptCore/API/glib/JSCClass.cpp" line="408">a #JSCContext</doc>
           <type name="Context" c:type="JSCContext*"/>
         </parameter>
         <parameter name="instance" transfer-ownership="none" nullable="1" allow-none="1">
-          <doc xml:space="preserve" filename="Source/JavaScriptCore/API/glib/JSCClass.cpp" line="413">the @jsc_class instance</doc>
+          <doc xml:space="preserve" filename="Source/JavaScriptCore/API/glib/JSCClass.cpp" line="409">the @jsc_class instance</doc>
           <type name="gpointer" c:type="gpointer"/>
         </parameter>
         <parameter name="name" transfer-ownership="none">
-          <doc xml:space="preserve" filename="Source/JavaScriptCore/API/glib/JSCClass.cpp" line="414">the property name</doc>
+          <doc xml:space="preserve" filename="Source/JavaScriptCore/API/glib/JSCClass.cpp" line="410">the property name</doc>
           <type name="utf8" c:type="const char*"/>
         </parameter>
       </parameters>
     </callback>
     <callback name="ClassSetPropertyFunction" c:type="JSCClassSetPropertyFunction">
-      <doc xml:space="preserve" filename="Source/JavaScriptCore/API/glib/JSCClass.cpp" line="395">The type of set_property in #JSCClassVTable. This is only required when you need to handle
+      <doc xml:space="preserve" filename="Source/JavaScriptCore/API/glib/JSCClass.cpp" line="391">The type of set_property in #JSCClassVTable. This is only required when you need to handle
 external properties not added to the prototype.</doc>
       <source-position filename="Source/JavaScriptCore/API/glib/JSCClass.h" line="46"/>
       <return-value transfer-ownership="none">
-        <doc xml:space="preserve" filename="Source/JavaScriptCore/API/glib/JSCClass.cpp" line="406">%TRUE if handled or %FALSE to forward the request to the parent class or prototype chain.</doc>
+        <doc xml:space="preserve" filename="Source/JavaScriptCore/API/glib/JSCClass.cpp" line="402">%TRUE if handled or %FALSE to forward the request to the parent class or prototype chain.</doc>
         <type name="gboolean" c:type="gboolean"/>
       </return-value>
       <parameters>
         <parameter name="jsc_class" transfer-ownership="none">
-          <doc xml:space="preserve" filename="Source/JavaScriptCore/API/glib/JSCClass.cpp" line="397">a #JSCClass</doc>
+          <doc xml:space="preserve" filename="Source/JavaScriptCore/API/glib/JSCClass.cpp" line="393">a #JSCClass</doc>
           <type name="Class" c:type="JSCClass*"/>
         </parameter>
         <parameter name="context" transfer-ownership="none">
-          <doc xml:space="preserve" filename="Source/JavaScriptCore/API/glib/JSCClass.cpp" line="398">a #JSCContext</doc>
+          <doc xml:space="preserve" filename="Source/JavaScriptCore/API/glib/JSCClass.cpp" line="394">a #JSCContext</doc>
           <type name="Context" c:type="JSCContext*"/>
         </parameter>
         <parameter name="instance" transfer-ownership="none" nullable="1" allow-none="1">
-          <doc xml:space="preserve" filename="Source/JavaScriptCore/API/glib/JSCClass.cpp" line="399">the @jsc_class instance</doc>
+          <doc xml:space="preserve" filename="Source/JavaScriptCore/API/glib/JSCClass.cpp" line="395">the @jsc_class instance</doc>
           <type name="gpointer" c:type="gpointer"/>
         </parameter>
         <parameter name="name" transfer-ownership="none">
-          <doc xml:space="preserve" filename="Source/JavaScriptCore/API/glib/JSCClass.cpp" line="400">the property name</doc>
+          <doc xml:space="preserve" filename="Source/JavaScriptCore/API/glib/JSCClass.cpp" line="396">the property name</doc>
           <type name="utf8" c:type="const char*"/>
         </parameter>
         <parameter name="value" transfer-ownership="none">
-          <doc xml:space="preserve" filename="Source/JavaScriptCore/API/glib/JSCClass.cpp" line="401">the #JSCValue to set</doc>
+          <doc xml:space="preserve" filename="Source/JavaScriptCore/API/glib/JSCClass.cpp" line="397">the #JSCValue to set</doc>
           <type name="Value" c:type="JSCValue*"/>
         </parameter>
       </parameters>
     </callback>
     <record name="ClassVTable" c:type="JSCClassVTable">
-      <doc xml:space="preserve" filename="Source/JavaScriptCore/API/glib/JSCClass.cpp" line="449">Virtual table for a JSCClass. This can be optionally used when registering a #JSCClass in a #JSCContext
+      <doc xml:space="preserve" filename="Source/JavaScriptCore/API/glib/JSCClass.cpp" line="445">Virtual table for a JSCClass. This can be optionally used when registering a #JSCClass in a #JSCContext
 to provide a custom implementation for the class. All virtual functions are optional and can be set to
 %NULL to fallback to the default implementation.</doc>
       <source-position filename="Source/JavaScriptCore/API/glib/JSCClass.h" line="76"/>
       <field name="get_property" writable="1">
-        <doc xml:space="preserve" filename="Source/JavaScriptCore/API/glib/JSCClass.cpp" line="451">a #JSCClassGetPropertyFunction for getting a property.</doc>
+        <doc xml:space="preserve" filename="Source/JavaScriptCore/API/glib/JSCClass.cpp" line="447">a #JSCClassGetPropertyFunction for getting a property.</doc>
         <type name="ClassGetPropertyFunction" c:type="JSCClassGetPropertyFunction"/>
       </field>
       <field name="set_property" writable="1">
-        <doc xml:space="preserve" filename="Source/JavaScriptCore/API/glib/JSCClass.cpp" line="452">a #JSCClassSetPropertyFunction for setting a property.</doc>
+        <doc xml:space="preserve" filename="Source/JavaScriptCore/API/glib/JSCClass.cpp" line="448">a #JSCClassSetPropertyFunction for setting a property.</doc>
         <type name="ClassSetPropertyFunction" c:type="JSCClassSetPropertyFunction"/>
       </field>
       <field name="has_property" writable="1">
-        <doc xml:space="preserve" filename="Source/JavaScriptCore/API/glib/JSCClass.cpp" line="453">a #JSCClassHasPropertyFunction for querying a property.</doc>
+        <doc xml:space="preserve" filename="Source/JavaScriptCore/API/glib/JSCClass.cpp" line="449">a #JSCClassHasPropertyFunction for querying a property.</doc>
         <type name="ClassHasPropertyFunction" c:type="JSCClassHasPropertyFunction"/>
       </field>
       <field name="delete_property" writable="1">
-        <doc xml:space="preserve" filename="Source/JavaScriptCore/API/glib/JSCClass.cpp" line="454">a #JSCClassDeletePropertyFunction for deleting a property.</doc>
+        <doc xml:space="preserve" filename="Source/JavaScriptCore/API/glib/JSCClass.cpp" line="450">a #JSCClassDeletePropertyFunction for deleting a property.</doc>
         <type name="ClassDeletePropertyFunction" c:type="JSCClassDeletePropertyFunction"/>
       </field>
       <field name="enumerate_properties" writable="1">
-        <doc xml:space="preserve" filename="Source/JavaScriptCore/API/glib/JSCClass.cpp" line="455">a #JSCClassEnumeratePropertiesFunction for enumerating properties.</doc>
+        <doc xml:space="preserve" filename="Source/JavaScriptCore/API/glib/JSCClass.cpp" line="451">a #JSCClassEnumeratePropertiesFunction for enumerating properties.</doc>
         <type name="ClassEnumeratePropertiesFunction" c:type="JSCClassEnumeratePropertiesFunction"/>
       </field>
       <field name="_jsc_reserved0" introspectable="0">
@@ -1468,6 +1510,34 @@ The created #JSCException can be retrieved with jsc_context_get_exception().</do
     <record name="ContextPrivate" c:type="JSCContextPrivate" disguised="1">
       <source-position filename="Source/JavaScriptCore/API/glib/JSCContext.h" line="45"/>
     </record>
+    <function-macro name="DEPRECATED_FOR" c:identifier="JSC_DEPRECATED_FOR" introspectable="0">
+      <source-position filename="Source/JavaScriptCore/API/glib/JSCDefines.h" line="46"/>
+      <parameters>
+        <parameter name="f">
+        </parameter>
+      </parameters>
+    </function-macro>
+    <function-macro name="EXCEPTION" c:identifier="JSC_EXCEPTION" introspectable="0">
+      <source-position filename="Source/JavaScriptCore/API/glib/JSCException.h" line="33"/>
+      <parameters>
+        <parameter name="obj">
+        </parameter>
+      </parameters>
+    </function-macro>
+    <function-macro name="EXCEPTION_CLASS" c:identifier="JSC_EXCEPTION_CLASS" introspectable="0">
+      <source-position filename="Source/JavaScriptCore/API/glib/JSCException.h" line="35"/>
+      <parameters>
+        <parameter name="klass">
+        </parameter>
+      </parameters>
+    </function-macro>
+    <function-macro name="EXCEPTION_GET_CLASS" c:identifier="JSC_EXCEPTION_GET_CLASS" introspectable="0">
+      <source-position filename="Source/JavaScriptCore/API/glib/JSCException.h" line="37"/>
+      <parameters>
+        <parameter name="obj">
+        </parameter>
+      </parameters>
+    </function-macro>
     <class name="Exception" c:symbol-prefix="exception" c:type="JSCException" parent="GObject.Object" glib:type-name="JSCException" glib:get-type="jsc_exception_get_type" glib:type-struct="ExceptionClass">
       <source-position filename="Source/JavaScriptCore/API/glib/JSCException.h" line="59"/>
       <constructor name="new" c:identifier="jsc_exception_new">
@@ -1794,6 +1864,83 @@ source URI, line, column and backtrace, and formatted to be printed.</doc>
     <record name="ExceptionPrivate" c:type="JSCExceptionPrivate" disguised="1">
       <source-position filename="Source/JavaScriptCore/API/glib/JSCException.h" line="41"/>
     </record>
+    <function-macro name="IS_CLASS" c:identifier="JSC_IS_CLASS" introspectable="0">
+      <source-position filename="Source/JavaScriptCore/API/glib/JSCClass.h" line="35"/>
+      <parameters>
+        <parameter name="obj">
+        </parameter>
+      </parameters>
+    </function-macro>
+    <function-macro name="IS_CONTEXT" c:identifier="JSC_IS_CONTEXT" introspectable="0">
+      <source-position filename="Source/JavaScriptCore/API/glib/JSCContext.h" line="38"/>
+      <parameters>
+        <parameter name="obj">
+        </parameter>
+      </parameters>
+    </function-macro>
+    <function-macro name="IS_CONTEXT_CLASS" c:identifier="JSC_IS_CONTEXT_CLASS" introspectable="0">
+      <source-position filename="Source/JavaScriptCore/API/glib/JSCContext.h" line="40"/>
+      <parameters>
+        <parameter name="klass">
+        </parameter>
+      </parameters>
+    </function-macro>
+    <function-macro name="IS_EXCEPTION" c:identifier="JSC_IS_EXCEPTION" introspectable="0">
+      <source-position filename="Source/JavaScriptCore/API/glib/JSCException.h" line="34"/>
+      <parameters>
+        <parameter name="obj">
+        </parameter>
+      </parameters>
+    </function-macro>
+    <function-macro name="IS_EXCEPTION_CLASS" c:identifier="JSC_IS_EXCEPTION_CLASS" introspectable="0">
+      <source-position filename="Source/JavaScriptCore/API/glib/JSCException.h" line="36"/>
+      <parameters>
+        <parameter name="klass">
+        </parameter>
+      </parameters>
+    </function-macro>
+    <function-macro name="IS_VALUE" c:identifier="JSC_IS_VALUE" introspectable="0">
+      <source-position filename="Source/JavaScriptCore/API/glib/JSCValue.h" line="34"/>
+      <parameters>
+        <parameter name="obj">
+        </parameter>
+      </parameters>
+    </function-macro>
+    <function-macro name="IS_VALUE_CLASS" c:identifier="JSC_IS_VALUE_CLASS" introspectable="0">
+      <source-position filename="Source/JavaScriptCore/API/glib/JSCValue.h" line="36"/>
+      <parameters>
+        <parameter name="klass">
+        </parameter>
+      </parameters>
+    </function-macro>
+    <function-macro name="IS_VIRTUAL_MACHINE" c:identifier="JSC_IS_VIRTUAL_MACHINE" introspectable="0">
+      <source-position filename="Source/JavaScriptCore/API/glib/JSCVirtualMachine.h" line="35"/>
+      <parameters>
+        <parameter name="obj">
+        </parameter>
+      </parameters>
+    </function-macro>
+    <function-macro name="IS_VIRTUAL_MACHINE_CLASS" c:identifier="JSC_IS_VIRTUAL_MACHINE_CLASS" introspectable="0">
+      <source-position filename="Source/JavaScriptCore/API/glib/JSCVirtualMachine.h" line="37"/>
+      <parameters>
+        <parameter name="klass">
+        </parameter>
+      </parameters>
+    </function-macro>
+    <function-macro name="IS_WEAK_VALUE" c:identifier="JSC_IS_WEAK_VALUE" introspectable="0">
+      <source-position filename="Source/JavaScriptCore/API/glib/JSCWeakValue.h" line="35"/>
+      <parameters>
+        <parameter name="obj">
+        </parameter>
+      </parameters>
+    </function-macro>
+    <function-macro name="IS_WEAK_VALUE_CLASS" c:identifier="JSC_IS_WEAK_VALUE_CLASS" introspectable="0">
+      <source-position filename="Source/JavaScriptCore/API/glib/JSCWeakValue.h" line="37"/>
+      <parameters>
+        <parameter name="klass">
+        </parameter>
+      </parameters>
+    </function-macro>
     <constant name="MAJOR_VERSION" value="2" c:type="JSC_MAJOR_VERSION">
       <doc xml:space="preserve" filename="obj-x86_64-linux-gnu/DerivedSources/JavaScriptCore/javascriptcoregtk/jsc/JSCVersion.h" line="31">Like jsc_get_major_version(), but from the headers used at
 application compile time, rather than from the library linked
@@ -1801,14 +1948,14 @@ against at application run time.</doc>
       <source-position filename="obj-x86_64-linux-gnu/DerivedSources/JavaScriptCore/javascriptcoregtk/jsc/JSCVersion.h" line="38"/>
       <type name="gint" c:type="gint"/>
     </constant>
-    <constant name="MICRO_VERSION" value="2" c:type="JSC_MICRO_VERSION">
+    <constant name="MICRO_VERSION" value="1" c:type="JSC_MICRO_VERSION">
       <doc xml:space="preserve" filename="obj-x86_64-linux-gnu/DerivedSources/JavaScriptCore/javascriptcoregtk/jsc/JSCVersion.h" line="49">Like jsc_get_micro_version(), but from the headers used at
 application compile time, rather than from the library linked
 against at application run time.</doc>
       <source-position filename="obj-x86_64-linux-gnu/DerivedSources/JavaScriptCore/javascriptcoregtk/jsc/JSCVersion.h" line="56"/>
       <type name="gint" c:type="gint"/>
     </constant>
-    <constant name="MINOR_VERSION" value="24" c:type="JSC_MINOR_VERSION">
+    <constant name="MINOR_VERSION" value="26" c:type="JSC_MINOR_VERSION">
       <doc xml:space="preserve" filename="obj-x86_64-linux-gnu/DerivedSources/JavaScriptCore/javascriptcoregtk/jsc/JSCVersion.h" line="40">Like jsc_get_minor_version(), but from the headers used at
 application compile time, rather than from the library linked
 against at application run time.</doc>
@@ -1896,6 +2043,48 @@ Not that @description string is not localized.</doc>
         </parameter>
       </parameters>
     </callback>
+    <function-macro name="VALUE" c:identifier="JSC_VALUE" introspectable="0">
+      <source-position filename="Source/JavaScriptCore/API/glib/JSCValue.h" line="33"/>
+      <parameters>
+        <parameter name="obj">
+        </parameter>
+      </parameters>
+    </function-macro>
+    <function-macro name="VALUE_CLASS" c:identifier="JSC_VALUE_CLASS" introspectable="0">
+      <source-position filename="Source/JavaScriptCore/API/glib/JSCValue.h" line="35"/>
+      <parameters>
+        <parameter name="klass">
+        </parameter>
+      </parameters>
+    </function-macro>
+    <function-macro name="VALUE_GET_CLASS" c:identifier="JSC_VALUE_GET_CLASS" introspectable="0">
+      <source-position filename="Source/JavaScriptCore/API/glib/JSCValue.h" line="37"/>
+      <parameters>
+        <parameter name="obj">
+        </parameter>
+      </parameters>
+    </function-macro>
+    <function-macro name="VIRTUAL_MACHINE" c:identifier="JSC_VIRTUAL_MACHINE" introspectable="0">
+      <source-position filename="Source/JavaScriptCore/API/glib/JSCVirtualMachine.h" line="34"/>
+      <parameters>
+        <parameter name="obj">
+        </parameter>
+      </parameters>
+    </function-macro>
+    <function-macro name="VIRTUAL_MACHINE_CLASS" c:identifier="JSC_VIRTUAL_MACHINE_CLASS" introspectable="0">
+      <source-position filename="Source/JavaScriptCore/API/glib/JSCVirtualMachine.h" line="36"/>
+      <parameters>
+        <parameter name="klass">
+        </parameter>
+      </parameters>
+    </function-macro>
+    <function-macro name="VIRTUAL_MACHINE_GET_CLASS" c:identifier="JSC_VIRTUAL_MACHINE_GET_CLASS" introspectable="0">
+      <source-position filename="Source/JavaScriptCore/API/glib/JSCVirtualMachine.h" line="38"/>
+      <parameters>
+        <parameter name="obj">
+        </parameter>
+      </parameters>
+    </function-macro>
     <class name="Value" c:symbol-prefix="value" c:type="JSCValue" parent="GObject.Object" glib:type-name="JSCValue" glib:get-type="jsc_value_get_type" glib:type-struct="ValueClass">
       <source-position filename="Source/JavaScriptCore/API/glib/JSCValue.h" line="66"/>
       <constructor name="new_array" c:identifier="jsc_value_new_array" introspectable="0">
@@ -2507,7 +2696,7 @@ with jsc_value_new_object() that receives the copy as instance parameter.</doc>
             <doc xml:space="preserve" filename="Source/JavaScriptCore/API/glib/JSCValue.cpp" line="1076">the #GType of the property</doc>
             <type name="GType" c:type="GType"/>
           </parameter>
-          <parameter name="getter" transfer-ownership="none" nullable="1" allow-none="1" destroy="6" scope="notified" closure="5">
+          <parameter name="getter" transfer-ownership="none" nullable="1" allow-none="1" scope="notified" closure="5" destroy="6">
             <doc xml:space="preserve" filename="Source/JavaScriptCore/API/glib/JSCValue.cpp" line="1077">a #GCallback to be called to get the property value</doc>
             <type name="Getter" c:type="JSCGetter"/>
           </parameter>
@@ -2969,6 +3158,27 @@ jsc_value_object_define_property_accessor().</doc>
     <record name="VirtualMachinePrivate" c:type="JSCVirtualMachinePrivate" disguised="1">
       <source-position filename="Source/JavaScriptCore/API/glib/JSCVirtualMachine.h" line="42"/>
     </record>
+    <function-macro name="WEAK_VALUE" c:identifier="JSC_WEAK_VALUE" introspectable="0">
+      <source-position filename="Source/JavaScriptCore/API/glib/JSCWeakValue.h" line="34"/>
+      <parameters>
+        <parameter name="obj">
+        </parameter>
+      </parameters>
+    </function-macro>
+    <function-macro name="WEAK_VALUE_CLASS" c:identifier="JSC_WEAK_VALUE_CLASS" introspectable="0">
+      <source-position filename="Source/JavaScriptCore/API/glib/JSCWeakValue.h" line="36"/>
+      <parameters>
+        <parameter name="klass">
+        </parameter>
+      </parameters>
+    </function-macro>
+    <function-macro name="WEAK_VALUE_GET_CLASS" c:identifier="JSC_WEAK_VALUE_GET_CLASS" introspectable="0">
+      <source-position filename="Source/JavaScriptCore/API/glib/JSCWeakValue.h" line="38"/>
+      <parameters>
+        <parameter name="obj">
+        </parameter>
+      </parameters>
+    </function-macro>
     <class name="WeakValue" c:symbol-prefix="weak_value" c:type="JSCWeakValue" parent="GObject.Object" glib:type-name="JSCWeakValue" glib:get-type="jsc_weak_value_get_type" glib:type-struct="WeakValueClass">
       <source-position filename="Source/JavaScriptCore/API/glib/JSCWeakValue.h" line="58"/>
       <constructor name="new" c:identifier="jsc_weak_value_new">
