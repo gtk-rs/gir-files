@@ -1,0 +1,13 @@
+dist: xenial
+language: rust
+addons:
+  apt:
+    packages:
+    - libgtk-3-dev
+    - libssh2-1-dev
+script:
+  - git clone https://github.com/gtk-rs/gir
+  - git clone https://github.com/gtk-rs/sys
+  - cd gir && cargo build --release && cd ..
+  - ./gir/target/release/gir -c sys/conf/gir-gtk.toml -m sys -o sys/gtk-sys/ -d .
+  - ./gir/target/release/gir -c sys/conf/gir-gtk4.toml -m sys -o sys/gtk4-sys/ -d .
