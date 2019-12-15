@@ -90,3 +90,11 @@ xmlstarlet ed -P -L \
 	-u '//_:callback[@name="ParseErrorFunc"]/_:parameters/_:parameter[@name="section"]/_:type[@c:type="const GtkCssSection*"]/@c:type' -v "gconstpointer" \
 	-a '//_:callback[@name="ParseErrorFunc"]/_:parameters/_:parameter[@name="section"]/_:type[not(@name) and @c:type="gconstpointer"]' -type attr -n "name" -v "gconstpointer" \
 	Gsk-4.0.gir
+
+# fix missing "c:type"
+xmlstarlet ed -P -L \
+	-i '//_:record[@name="TextAppearance"]/_:union/_:field[@name="rgba"]/_:array[@fixed-size="2"]' -t 'attr' -n 'c:type' -v 'guint8' \
+	-i '//_:class[@name="RcStyle"]/_:field[@name="bg_pixmap_name"]/_:array[@fixed-size="5"]' -t 'attr' -n 'c:type' -v 'gchar' \
+	-i '//_:class[@name="Style"]/_:field[@name="background"]/_:array[@fixed-size="5"]' -t 'attr' -n 'c:type' -v 'cairo_pattern_t' \
+	Gtk-3.0.gir
+
