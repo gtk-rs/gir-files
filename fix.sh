@@ -66,6 +66,18 @@ xmlstarlet ed -P -L \
 	-u '//_:constructor[@c:identifier="gtk_shortcut_label_new"]/_:return-value/@transfer-ownership' -v "none" \
 	Gtk-3.0.gir Gtk-4.0.gir
 
+# add out annotation for functions returning GValue
+xmlstarlet ed -P -L \
+	-a '//_:method[@c:identifier="gtk_style_context_get_style_property"]//_:parameter[@name="value" and not(@direction)]' -type attr -n "direction" -v "out" \
+	-a '//_:method[@c:identifier="gtk_style_context_get_style_property"]//_:parameter[@name="value" and not(@caller-allocates)]' -type attr -n "caller-allocates" -v "1" \
+	-a '//_:method[@c:identifier="gtk_cell_area_cell_get_property"]//_:parameter[@name="value" and not(@direction)]' -type attr -n "direction" -v "out" \
+	-a '//_:method[@c:identifier="gtk_cell_area_cell_get_property"]//_:parameter[@name="value" and not(@caller-allocates)]' -type attr -n "caller-allocates" -v "1" \
+	-a '//_:method[@c:identifier="gtk_container_child_get_property"]//_:parameter[@name="value" and not(@direction)]' -type attr -n "direction" -v "out" \
+	-a '//_:method[@c:identifier="gtk_container_child_get_property"]//_:parameter[@name="value" and not(@caller-allocates)]' -type attr -n "caller-allocates" -v "1" \
+	-a '//_:method[@c:identifier="gtk_widget_style_get_property"]//_:parameter[@name="value" and not(@direction)]' -type attr -n "direction" -v "out" \
+	-a '//_:method[@c:identifier="gtk_widget_style_get_property"]//_:parameter[@name="value" and not(@caller-allocates)]' -type attr -n "caller-allocates" -v "1" \
+	Gtk-3.0.gir
+
 xmlstarlet tr JavaScriptCore-4.0.xsl JavaScriptCore-4.0.gir | xmlstarlet fo > JavaScriptCore-4.0.gir.tmp
 mv JavaScriptCore-4.0.gir.tmp JavaScriptCore-4.0.gir
 
