@@ -1,7 +1,7 @@
 #!/bin/sh
 set -e
 
-VER="eoan"
+VER="focal"
 
 ./gir-dl.sh https://packages.ubuntu.com/$VER/amd64/libatk1.0-dev/download
 ./gir-dl.sh https://packages.ubuntu.com/$VER/amd64/libgirepository1.0-dev/download
