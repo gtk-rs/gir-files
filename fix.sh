@@ -3,7 +3,7 @@ set -x -e
 
 # Remove Int32 alias because it misses c:type, it not like anyone actually cares about it.
 xmlstarlet ed -P -L \
-	-d '//_:alias[@name="Int32"]' \
+	-d '///_:alias[@name="Int32"]' \
 	freetype2-2.0.gir
 
 # gir uses error domain to find quark function corresponding to given error enum,
@@ -83,8 +83,8 @@ mv JavaScriptCore-4.0.gir.tmp JavaScriptCore-4.0.gir
 
 # fill in types from JavaScriptCore
 xmlstarlet ed -P -L \
-	-i '//_:type[not(@name) and @c:type="JSGlobalContextRef"]' -t 'attr' -n 'name' -v "JavaScriptCore.GlobalContextRef" \
-	-i '//_:type[not(@name) and @c:type="JSValueRef"]' -t 'attr' -n 'name' -v "JavaScriptCore.ValueRef" \
+	-i '///_:type[not(@name) and @c:type="JSGlobalContextRef"]' -t 'attr' -n 'name' -v "JavaScriptCore.GlobalContextRef" \
+	-i '///_:type[not(@name) and @c:type="JSValueRef"]' -t 'attr' -n 'name' -v "JavaScriptCore.ValueRef" \
 	WebKit2WebExtension-4.0.gir WebKit2-4.0.gir
 
 xmlstarlet ed -P -L \
@@ -92,13 +92,13 @@ xmlstarlet ed -P -L \
 	-u '//_:constant[@name="DOM_NODE_FILTER_SHOW_ALL"]/_:type/@c:type' -v "guint" \
 	WebKit2WebExtension-4.0.gir
 
-# remove source-position from gtk 4.0
-xmlstarlet ed -P -L \
-	-d '//_:source-position' \
-	Gdk-4.0.gir GdkX11-4.0.gir Graphene-1.0.gir Gsk-4.0.gir Gtk-4.0.gir
-
 # fix cyclic dependency on gtk 4.0
 xmlstarlet ed -P -L \
 	-u '//_:callback[@name="ParseErrorFunc"]/_:parameters/_:parameter[@name="section"]/_:type[@c:type="const GtkCssSection*"]/@c:type' -v "gconstpointer" \
 	-a '//_:callback[@name="ParseErrorFunc"]/_:parameters/_:parameter[@name="section"]/_:type[not(@name) and @c:type="gconstpointer"]' -type attr -n "name" -v "gconstpointer" \
 	Gsk-4.0.gir
+
+# fix unpublished Pango.ShowFlags  gtk 4.0
+xmlstarlet ed -P -L \
+	-u '//_:type[@name="Pango.ShowFlags"]'/@name -v "guint" \
+	Gtk-4.0.gir
