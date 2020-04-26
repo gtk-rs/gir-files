@@ -97,3 +97,8 @@ xmlstarlet ed -P -L \
 	-u '//_:callback[@name="ParseErrorFunc"]/_:parameters/_:parameter[@name="section"]/_:type[@c:type="const GtkCssSection*"]/@c:type' -v "gconstpointer" \
 	-a '//_:callback[@name="ParseErrorFunc"]/_:parameters/_:parameter[@name="section"]/_:type[not(@name) and @c:type="gconstpointer"]' -type attr -n "name" -v "gconstpointer" \
 	Gsk-4.0.gir
+
+# fix unpublished Pango.ShowFlags  gtk 4.0
+xmlstarlet ed -P -L \
+	-u '//_:type[@name="Pango.ShowFlags"]'/@name -v "guint" \
+	Gtk-4.0.gir
