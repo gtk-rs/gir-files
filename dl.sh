@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 set -e
 
 VER="eoan"
@@ -19,3 +19,4 @@ VER="eoan"
 ./gir-dl.sh https://packages.debian.org/experimental/amd64/libgtk-4-dev/download http.us.debian.org
 
 ./reformat.sh
+./fix.sh
