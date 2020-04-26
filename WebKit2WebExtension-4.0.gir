@@ -27566,7 +27566,7 @@ in other web processes may.</doc>
         
         <return-value transfer-ownership="none">
           <doc xml:space="preserve">the JavaScript context of @frame for @world</doc>
-          <type c:type="JSGlobalContextRef" name="JavaScriptCore.GlobalContextRef"/>
+          <type c:type="JSGlobalContextRef"/>
         </return-value>
         <parameters>
           <instance-parameter name="frame" transfer-ownership="none">
@@ -27586,7 +27586,7 @@ between the WebKit and JavaScriptCore APIs.</doc>
         
         <return-value transfer-ownership="none">
           <doc xml:space="preserve">the global JavaScript context of @frame</doc>
-          <type c:type="JSGlobalContextRef" name="JavaScriptCore.GlobalContextRef"/>
+          <type c:type="JSGlobalContextRef"/>
         </return-value>
         <parameters>
           <instance-parameter name="frame" transfer-ownership="none">
@@ -28120,6 +28120,20 @@ is present in #WebKitHitTestResult:context</doc>
       </parameters>
     </function-macro>
     <function-macro name="IS_URI_RESPONSE_CLASS" c:identifier="WEBKIT_IS_URI_RESPONSE_CLASS" introspectable="0">
+      
+      <parameters>
+        <parameter name="klass">
+        </parameter>
+      </parameters>
+    </function-macro>
+    <function-macro name="IS_USER_MESSAGE" c:identifier="WEBKIT_IS_USER_MESSAGE" introspectable="0">
+      
+      <parameters>
+        <parameter name="obj">
+        </parameter>
+      </parameters>
+    </function-macro>
+    <function-macro name="IS_USER_MESSAGE_CLASS" c:identifier="WEBKIT_IS_USER_MESSAGE_CLASS" introspectable="0">
       
       <parameters>
         <parameter name="klass">
@@ -28665,6 +28679,204 @@ present.</doc>
         </parameter>
       </parameters>
     </function-macro>
+    <function-macro name="USER_MESSAGE" c:identifier="WEBKIT_USER_MESSAGE" introspectable="0">
+      
+      <parameters>
+        <parameter name="obj">
+        </parameter>
+      </parameters>
+    </function-macro>
+    <function-macro name="USER_MESSAGE_CLASS" c:identifier="WEBKIT_USER_MESSAGE_CLASS" introspectable="0">
+      
+      <parameters>
+        <parameter name="klass">
+        </parameter>
+      </parameters>
+    </function-macro>
+    <function-macro name="USER_MESSAGE_GET_CLASS" c:identifier="WEBKIT_USER_MESSAGE_GET_CLASS" introspectable="0">
+      
+      <parameters>
+        <parameter name="obj">
+        </parameter>
+      </parameters>
+    </function-macro>
+    <class name="UserMessage" c:symbol-prefix="user_message" c:type="WebKitUserMessage" parent="GObject.InitiallyUnowned" glib:type-name="WebKitUserMessage" glib:get-type="webkit_user_message_get_type" glib:type-struct="UserMessageClass">
+      
+      <constructor name="new" c:identifier="webkit_user_message_new" version="2.28">
+        <doc xml:space="preserve">Create a new #WebKitUserMessage with @name.</doc>
+        
+        <return-value transfer-ownership="none">
+          <doc xml:space="preserve">the newly created #WebKitUserMessage object.</doc>
+          <type name="UserMessage" c:type="WebKitUserMessage*"/>
+        </return-value>
+        <parameters>
+          <parameter name="name" transfer-ownership="none">
+            <doc xml:space="preserve">the message name</doc>
+            <type name="utf8" c:type="const char*"/>
+          </parameter>
+          <parameter name="parameters" transfer-ownership="none" nullable="1" allow-none="1">
+            <doc xml:space="preserve">the message parameters as a #GVariant, or %NULL</doc>
+            <type name="GLib.Variant" c:type="GVariant*"/>
+          </parameter>
+        </parameters>
+      </constructor>
+      <constructor name="new_with_fd_list" c:identifier="webkit_user_message_new_with_fd_list" version="2.28">
+        <doc xml:space="preserve">Create a new #WebKitUserMessage including also a list of UNIX file descriptors to be sent.</doc>
+        
+        <return-value transfer-ownership="none">
+          <doc xml:space="preserve">the newly created #WebKitUserMessage object.</doc>
+          <type name="UserMessage" c:type="WebKitUserMessage*"/>
+        </return-value>
+        <parameters>
+          <parameter name="name" transfer-ownership="none">
+            <doc xml:space="preserve">the message name</doc>
+            <type name="utf8" c:type="const char*"/>
+          </parameter>
+          <parameter name="parameters" transfer-ownership="none" nullable="1" allow-none="1">
+            <doc xml:space="preserve">the message parameters as a #GVariant</doc>
+            <type name="GLib.Variant" c:type="GVariant*"/>
+          </parameter>
+          <parameter name="fd_list" transfer-ownership="none" nullable="1" allow-none="1">
+            <doc xml:space="preserve">the message file descriptors</doc>
+            <type name="Gio.UnixFDList" c:type="GUnixFDList*"/>
+          </parameter>
+        </parameters>
+      </constructor>
+      <function name="error_quark" c:identifier="webkit_user_message_error_quark">
+        <return-value transfer-ownership="none">
+          <type name="GLib.Quark" c:type="GQuark"/>
+        </return-value>
+      </function>
+      <method name="get_fd_list" c:identifier="webkit_user_message_get_fd_list" version="2.28">
+        <doc xml:space="preserve">Get the @message list of file descritpor</doc>
+        
+        <return-value transfer-ownership="none">
+          <doc xml:space="preserve">the message list of file descriptors</doc>
+          <type name="Gio.UnixFDList" c:type="GUnixFDList*"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="message" transfer-ownership="none">
+            <doc xml:space="preserve">a #WebKitUserMessage</doc>
+            <type name="UserMessage" c:type="WebKitUserMessage*"/>
+          </instance-parameter>
+        </parameters>
+      </method>
+      <method name="get_name" c:identifier="webkit_user_message_get_name" version="2.28">
+        <doc xml:space="preserve">Get the @message name</doc>
+        
+        <return-value transfer-ownership="none">
+          <doc xml:space="preserve">the message name</doc>
+          <type name="utf8" c:type="const char*"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="message" transfer-ownership="none">
+            <doc xml:space="preserve">a #WebKitUserMessage</doc>
+            <type name="UserMessage" c:type="WebKitUserMessage*"/>
+          </instance-parameter>
+        </parameters>
+      </method>
+      <method name="get_parameters" c:identifier="webkit_user_message_get_parameters" version="2.28">
+        <doc xml:space="preserve">Get the @message parameters</doc>
+        
+        <return-value transfer-ownership="none">
+          <doc xml:space="preserve">the message parameters</doc>
+          <type name="GLib.Variant" c:type="GVariant*"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="message" transfer-ownership="none">
+            <doc xml:space="preserve">a #WebKitUserMessage</doc>
+            <type name="UserMessage" c:type="WebKitUserMessage*"/>
+          </instance-parameter>
+        </parameters>
+      </method>
+      <method name="send_reply" c:identifier="webkit_user_message_send_reply" version="2.28">
+        <doc xml:space="preserve">Send a reply to @message. If @reply is floating, it's consumed.
+You can only send a reply to a #WebKitUserMessage that has been
+received.</doc>
+        
+        <return-value transfer-ownership="none">
+          <type name="none" c:type="void"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="message" transfer-ownership="none">
+            <doc xml:space="preserve">a #WebKitUserMessage</doc>
+            <type name="UserMessage" c:type="WebKitUserMessage*"/>
+          </instance-parameter>
+          <parameter name="reply" transfer-ownership="none">
+            <doc xml:space="preserve">a #WebKitUserMessage to send as reply</doc>
+            <type name="UserMessage" c:type="WebKitUserMessage*"/>
+          </parameter>
+        </parameters>
+      </method>
+      <property name="fd-list" version="2.28" writable="1" construct-only="1" transfer-ownership="none">
+        <doc xml:space="preserve">The UNIX file descriptors of the user message.</doc>
+        <type name="Gio.UnixFDList"/>
+      </property>
+      <property name="name" version="2.28" writable="1" construct-only="1" transfer-ownership="none">
+        <doc xml:space="preserve">The name of the user message.</doc>
+        <type name="utf8" c:type="gchar*"/>
+      </property>
+      <property name="parameters" version="2.28" writable="1" construct-only="1" transfer-ownership="none">
+        <doc xml:space="preserve">The parameters of the user message as a #GVariant, or %NULL
+if the message doesn't include parameters. Note that only complete types are
+allowed.</doc>
+        <type name="GLib.Variant"/>
+      </property>
+      <field name="parent">
+        <type name="GObject.InitiallyUnowned" c:type="GInitiallyUnowned"/>
+      </field>
+      <field name="priv">
+        <type name="UserMessagePrivate" c:type="WebKitUserMessagePrivate*"/>
+      </field>
+    </class>
+    <record name="UserMessageClass" c:type="WebKitUserMessageClass" glib:is-gtype-struct-for="UserMessage">
+      
+      <field name="parent_class">
+        <type name="GObject.InitiallyUnownedClass" c:type="GInitiallyUnownedClass"/>
+      </field>
+      <field name="_webkit_reserved0" introspectable="0">
+        <callback name="_webkit_reserved0">
+          
+          <return-value transfer-ownership="none">
+            <type name="none" c:type="void"/>
+          </return-value>
+        </callback>
+      </field>
+      <field name="_webkit_reserved1" introspectable="0">
+        <callback name="_webkit_reserved1">
+          
+          <return-value transfer-ownership="none">
+            <type name="none" c:type="void"/>
+          </return-value>
+        </callback>
+      </field>
+      <field name="_webkit_reserved2" introspectable="0">
+        <callback name="_webkit_reserved2">
+          
+          <return-value transfer-ownership="none">
+            <type name="none" c:type="void"/>
+          </return-value>
+        </callback>
+      </field>
+      <field name="_webkit_reserved3" introspectable="0">
+        <callback name="_webkit_reserved3">
+          
+          <return-value transfer-ownership="none">
+            <type name="none" c:type="void"/>
+          </return-value>
+        </callback>
+      </field>
+    </record>
+    <enumeration name="UserMessageError" version="2.28" c:type="WebKitUserMessageError">
+      <doc xml:space="preserve">Enum values used to denote errors happening when sending user messages.</doc>
+      
+      <member name="user_message_unhandled_message" value="0" c:identifier="WEBKIT_USER_MESSAGE_UNHANDLED_MESSAGE">
+        <doc xml:space="preserve">The message was not handled by the receiver.</doc>
+      </member>
+    </enumeration>
+    <record name="UserMessagePrivate" c:type="WebKitUserMessagePrivate" disguised="1">
+      
+    </record>
     <function-macro name="WEB_EDITOR" c:identifier="WEBKIT_WEB_EDITOR" introspectable="0">
       
       <parameters>
@@ -28811,6 +29023,57 @@ selection.</doc>
           </parameter>
         </parameters>
       </method>
+      <method name="send_message_to_context" c:identifier="webkit_web_extension_send_message_to_context" version="2.28">
+        <doc xml:space="preserve">Send @message to the #WebKitWebContext corresponding to @extension. If @message is floating, it's consumed.
+
+If you don't expect any reply, or you simply want to ignore it, you can pass %NULL as @calback.
+When the operation is finished, @callback will be called. You can then call
+webkit_web_extension_send_message_to_context_finish() to get the message reply.</doc>
+        
+        <return-value transfer-ownership="none">
+          <type name="none" c:type="void"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="extension" transfer-ownership="none">
+            <doc xml:space="preserve">a #WebKitWebExtension</doc>
+            <type name="WebExtension" c:type="WebKitWebExtension*"/>
+          </instance-parameter>
+          <parameter name="message" transfer-ownership="none">
+            <doc xml:space="preserve">a #WebKitUserMessage</doc>
+            <type name="UserMessage" c:type="WebKitUserMessage*"/>
+          </parameter>
+          <parameter name="cancellable" transfer-ownership="none" nullable="1" allow-none="1">
+            <doc xml:space="preserve">a #GCancellable or %NULL to ignore</doc>
+            <type name="Gio.Cancellable" c:type="GCancellable*"/>
+          </parameter>
+          <parameter name="callback" transfer-ownership="none" nullable="1" allow-none="1" scope="async" closure="3">
+            <doc xml:space="preserve">(nullable): A #GAsyncReadyCallback to call when the request is satisfied or %NULL</doc>
+            <type name="Gio.AsyncReadyCallback" c:type="GAsyncReadyCallback"/>
+          </parameter>
+          <parameter name="user_data" transfer-ownership="none" nullable="1" allow-none="1">
+            <doc xml:space="preserve">the data to pass to callback function</doc>
+            <type name="gpointer" c:type="gpointer"/>
+          </parameter>
+        </parameters>
+      </method>
+      <method name="send_message_to_context_finish" c:identifier="webkit_web_extension_send_message_to_context_finish" version="2.28" throws="1">
+        <doc xml:space="preserve">Finish an asynchronous operation started with webkit_web_extension_send_message_to_context().</doc>
+        
+        <return-value transfer-ownership="full">
+          <doc xml:space="preserve">a #WebKitUserMessage with the reply or %NULL in case of error.</doc>
+          <type name="UserMessage" c:type="WebKitUserMessage*"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="extension" transfer-ownership="none">
+            <doc xml:space="preserve">a #WebKitWebExtension</doc>
+            <type name="WebExtension" c:type="WebKitWebExtension*"/>
+          </instance-parameter>
+          <parameter name="result" transfer-ownership="none">
+            <doc xml:space="preserve">a #GAsyncResult</doc>
+            <type name="Gio.AsyncResult" c:type="GAsyncResult*"/>
+          </parameter>
+        </parameters>
+      </method>
       <field name="parent">
         <type name="GObject.Object" c:type="GObject"/>
       </field>
@@ -28827,6 +29090,21 @@ the Web Process.</doc>
           <parameter name="web_page" transfer-ownership="none">
             <doc xml:space="preserve">the #WebKitWebPage created</doc>
             <type name="WebPage"/>
+          </parameter>
+        </parameters>
+      </glib:signal>
+      <glib:signal name="user-message-received" when="last" version="2.28">
+        <doc xml:space="preserve">This signal is emitted when a #WebKitUserMessage is received from the
+#WebKitWebContext corresponding to @extension. Messages sent by #WebKitWebContext
+are always broadcasted to all #WebKitWebExtension&lt;!-- --&gt;s and they can't be
+replied to. Calling webkit_user_message_send_reply() will do nothing.</doc>
+        <return-value transfer-ownership="none">
+          <type name="none" c:type="void"/>
+        </return-value>
+        <parameters>
+          <parameter name="message" transfer-ownership="none">
+            <doc xml:space="preserve">the #WebKitUserMessage received</doc>
+            <type name="UserMessage"/>
           </parameter>
         </parameters>
       </glib:signal>
@@ -29019,6 +29297,57 @@ signal of @web_page.</doc>
           </instance-parameter>
         </parameters>
       </method>
+      <method name="send_message_to_view" c:identifier="webkit_web_page_send_message_to_view" version="2.28">
+        <doc xml:space="preserve">Send @message to the #WebKitWebView corresponding to @web_page. If @message is floating, it's consumed.
+
+If you don't expect any reply, or you simply want to ignore it, you can pass %NULL as @callback.
+When the operation is finished, @callback will be called. You can then call
+webkit_web_page_send_message_to_view_finish() to get the message reply.</doc>
+        
+        <return-value transfer-ownership="none">
+          <type name="none" c:type="void"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="web_page" transfer-ownership="none">
+            <doc xml:space="preserve">a #WebKitWebPage</doc>
+            <type name="WebPage" c:type="WebKitWebPage*"/>
+          </instance-parameter>
+          <parameter name="message" transfer-ownership="none">
+            <doc xml:space="preserve">a #WebKitUserMessage</doc>
+            <type name="UserMessage" c:type="WebKitUserMessage*"/>
+          </parameter>
+          <parameter name="cancellable" transfer-ownership="none" nullable="1" allow-none="1">
+            <doc xml:space="preserve">a #GCancellable or %NULL to ignore</doc>
+            <type name="Gio.Cancellable" c:type="GCancellable*"/>
+          </parameter>
+          <parameter name="callback" transfer-ownership="none" nullable="1" allow-none="1" scope="async" closure="3">
+            <doc xml:space="preserve">(nullable): A #GAsyncReadyCallback to call when the request is satisfied or %NULL</doc>
+            <type name="Gio.AsyncReadyCallback" c:type="GAsyncReadyCallback"/>
+          </parameter>
+          <parameter name="user_data" transfer-ownership="none" nullable="1" allow-none="1">
+            <doc xml:space="preserve">the data to pass to callback function</doc>
+            <type name="gpointer" c:type="gpointer"/>
+          </parameter>
+        </parameters>
+      </method>
+      <method name="send_message_to_view_finish" c:identifier="webkit_web_page_send_message_to_view_finish" version="2.28" throws="1">
+        <doc xml:space="preserve">Finish an asynchronous operation started with webkit_web_page_send_message_to_view().</doc>
+        
+        <return-value transfer-ownership="full">
+          <doc xml:space="preserve">a #WebKitUserMessage with the reply or %NULL in case of error.</doc>
+          <type name="UserMessage" c:type="WebKitUserMessage*"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="web_page" transfer-ownership="none">
+            <doc xml:space="preserve">a #WebKitWebPage</doc>
+            <type name="WebPage" c:type="WebKitWebPage*"/>
+          </instance-parameter>
+          <parameter name="result" transfer-ownership="none">
+            <doc xml:space="preserve">a #GAsyncResult</doc>
+            <type name="Gio.AsyncResult" c:type="GAsyncResult*"/>
+          </parameter>
+        </parameters>
+      </method>
       <property name="uri" transfer-ownership="none">
         <doc xml:space="preserve">The current active URI of the #WebKitWebPage.</doc>
         <type name="utf8" c:type="gchar*"/>
@@ -29157,6 +29486,26 @@ is sent over the network.</doc>
           <parameter name="redirected_response" transfer-ownership="none">
             <doc xml:space="preserve">a #WebKitURIResponse, or %NULL</doc>
             <type name="URIResponse"/>
+          </parameter>
+        </parameters>
+      </glib:signal>
+      <glib:signal name="user-message-received" when="last" version="2.28">
+        <doc xml:space="preserve">This signal is emitted when a #WebKitUserMessage is received from the
+#WebKitWebView corresponding to @web_page. You can reply to the message
+using webkit_user_message_send_reply().
+
+You can handle the user message asynchronously by calling g_object_ref() on
+@message and returning %TRUE. If the last reference of @message is removed
+and the message has been replied, the operation in the #WebKitWebView will
+finish with error %WEBKIT_USER_MESSAGE_UNHANDLED_MESSAGE.</doc>
+        <return-value transfer-ownership="none">
+          <doc xml:space="preserve">%TRUE if the message was handled, or %FALSE otherwise.</doc>
+          <type name="gboolean" c:type="gboolean"/>
+        </return-value>
+        <parameters>
+          <parameter name="message" transfer-ownership="none">
+            <doc xml:space="preserve">the #WebKitUserMessage received</doc>
+            <type name="UserMessage"/>
           </parameter>
         </parameters>
       </glib:signal>

@@ -418,6 +418,15 @@ dialog in case of page load failure for example.</doc>
         <doc xml:space="preserve">Authentication scheme unknown.</doc>
       </member>
     </enumeration>
+    <enumeration name="AutomationBrowsingContextPresentation" version="2.28" glib:type-name="WebKitAutomationBrowsingContextPresentation" glib:get-type="webkit_automation_browsing_context_presentation_get_type" c:type="WebKitAutomationBrowsingContextPresentation">
+      <doc xml:space="preserve">Enum values used for determining the automation browsing context presentation.</doc>
+      <member name="window" value="0" c:identifier="WEBKIT_AUTOMATION_BROWSING_CONTEXT_PRESENTATION_WINDOW" glib:nick="window">
+        <doc xml:space="preserve">a window</doc>
+      </member>
+      <member name="tab" value="1" c:identifier="WEBKIT_AUTOMATION_BROWSING_CONTEXT_PRESENTATION_TAB" glib:nick="tab">
+        <doc xml:space="preserve">a tab</doc>
+      </member>
+    </enumeration>
     <class name="AutomationSession" c:symbol-prefix="automation_session" c:type="WebKitAutomationSession" parent="GObject.Object" glib:type-name="WebKitAutomationSession" glib:get-type="webkit_automation_session_get_type" glib:type-struct="AutomationSessionClass">
       
       <method name="get_application_info" c:identifier="webkit_automation_session_get_application_info" version="2.18">
@@ -480,12 +489,19 @@ after the automation session has been fully created, so this must be called in t
       <field name="priv">
         <type name="AutomationSessionPrivate" c:type="WebKitAutomationSessionPrivate*"/>
       </field>
-      <glib:signal name="create-web-view" when="last" version="2.18">
+      <glib:signal name="create-web-view" when="last" detailed="1" version="2.18">
         <doc xml:space="preserve">This signal is emitted when the automation client requests a new
 browsing context to interact with it. The callback handler should
 return a #WebKitWebView created with #WebKitWebView:is-controlled-by-automation
-construct property enabled. The returned #WebKitWebView could be an existing
-web view or a new one created and added to a new tab or window.</doc>
+construct property enabled and #WebKitWebView:automation-presentation-type construct
+property set if needed.
+
+If the signal is emitted with "tab" detail, the returned #WebKitWebView should be
+a new web view added to a new tab of the current browsing context window.
+If the signal is emitted with "window" detail, the returned #WebKitWebView should be
+a new web view added to a new window.
+When creating a new web view and there's an active browsing context, the new window
+or tab shouldn't be focused.</doc>
         <return-value transfer-ownership="none">
           <doc xml:space="preserve">a #WebKitWebView widget.</doc>
           <type name="WebView"/>
@@ -4683,6 +4699,27 @@ is present in #WebKitHitTestResult:context</doc>
     <record name="HitTestResultPrivate" c:type="WebKitHitTestResultPrivate" disguised="1">
       
     </record>
+    <function-macro name="INPUT_METHOD_CONTEXT" c:identifier="WEBKIT_INPUT_METHOD_CONTEXT" introspectable="0">
+      
+      <parameters>
+        <parameter name="obj">
+        </parameter>
+      </parameters>
+    </function-macro>
+    <function-macro name="INPUT_METHOD_CONTEXT_CLASS" c:identifier="WEBKIT_INPUT_METHOD_CONTEXT_CLASS" introspectable="0">
+      
+      <parameters>
+        <parameter name="klass">
+        </parameter>
+      </parameters>
+    </function-macro>
+    <function-macro name="INPUT_METHOD_CONTEXT_GET_CLASS" c:identifier="WEBKIT_INPUT_METHOD_CONTEXT_GET_CLASS" introspectable="0">
+      
+      <parameters>
+        <parameter name="obj">
+        </parameter>
+      </parameters>
+    </function-macro>
     <function-macro name="INSTALL_MISSING_MEDIA_PLUGINS_PERMISSION_REQUEST" c:identifier="WEBKIT_INSTALL_MISSING_MEDIA_PLUGINS_PERMISSION_REQUEST" introspectable="0">
       
       <parameters>
@@ -4956,6 +4993,20 @@ is present in #WebKitHitTestResult:context</doc>
         </parameter>
       </parameters>
     </function-macro>
+    <function-macro name="IS_INPUT_METHOD_CONTEXT" c:identifier="WEBKIT_IS_INPUT_METHOD_CONTEXT" introspectable="0">
+      
+      <parameters>
+        <parameter name="obj">
+        </parameter>
+      </parameters>
+    </function-macro>
+    <function-macro name="IS_INPUT_METHOD_CONTEXT_CLASS" c:identifier="WEBKIT_IS_INPUT_METHOD_CONTEXT_CLASS" introspectable="0">
+      
+      <parameters>
+        <parameter name="klass">
+        </parameter>
+      </parameters>
+    </function-macro>
     <function-macro name="IS_INSTALL_MISSING_MEDIA_PLUGINS_PERMISSION_REQUEST" c:identifier="WEBKIT_IS_INSTALL_MISSING_MEDIA_PLUGINS_PERMISSION_REQUEST" introspectable="0">
       
       <parameters>
@@ -5041,6 +5092,20 @@ is present in #WebKitHitTestResult:context</doc>
       </parameters>
     </function-macro>
     <function-macro name="IS_PLUGIN_CLASS" c:identifier="WEBKIT_IS_PLUGIN_CLASS" introspectable="0">
+      
+      <parameters>
+        <parameter name="klass">
+        </parameter>
+      </parameters>
+    </function-macro>
+    <function-macro name="IS_POINTER_LOCK_PERMISSION_REQUEST" c:identifier="WEBKIT_IS_POINTER_LOCK_PERMISSION_REQUEST" introspectable="0">
+      
+      <parameters>
+        <parameter name="obj">
+        </parameter>
+      </parameters>
+    </function-macro>
+    <function-macro name="IS_POINTER_LOCK_PERMISSION_REQUEST_CLASS" c:identifier="WEBKIT_IS_POINTER_LOCK_PERMISSION_REQUEST_CLASS" introspectable="0">
       
       <parameters>
         <parameter name="klass">
@@ -5215,6 +5280,20 @@ is present in #WebKitHitTestResult:context</doc>
         </parameter>
       </parameters>
     </function-macro>
+    <function-macro name="IS_USER_MESSAGE" c:identifier="WEBKIT_IS_USER_MESSAGE" introspectable="0">
+      
+      <parameters>
+        <parameter name="obj">
+        </parameter>
+      </parameters>
+    </function-macro>
+    <function-macro name="IS_USER_MESSAGE_CLASS" c:identifier="WEBKIT_IS_USER_MESSAGE_CLASS" introspectable="0">
+      
+      <parameters>
+        <parameter name="klass">
+        </parameter>
+      </parameters>
+    </function-macro>
     <function-macro name="IS_WEBSITE_DATA_MANAGER" c:identifier="WEBKIT_IS_WEBSITE_DATA_MANAGER" introspectable="0">
       
       <parameters>
@@ -5313,6 +5392,947 @@ is present in #WebKitHitTestResult:context</doc>
         </parameter>
       </parameters>
     </function-macro>
+    <bitfield name="InputHints" version="2.28" glib:type-name="WebKitInputHints" glib:get-type="webkit_input_hints_get_type" c:type="WebKitInputHints">
+      <doc xml:space="preserve">Enum values used to describe hints that might be taken into account by input methods.</doc>
+      <member name="none" value="0" c:identifier="WEBKIT_INPUT_HINT_NONE" glib:nick="none">
+        <doc xml:space="preserve">No special behavior suggested</doc>
+      </member>
+      <member name="spellcheck" value="1" c:identifier="WEBKIT_INPUT_HINT_SPELLCHECK" glib:nick="spellcheck">
+        <doc xml:space="preserve">Suggest spell checking</doc>
+      </member>
+      <member name="lowercase" value="2" c:identifier="WEBKIT_INPUT_HINT_LOWERCASE" glib:nick="lowercase">
+        <doc xml:space="preserve">Suggest to not autocapitlize</doc>
+      </member>
+      <member name="uppercase_chars" value="4" c:identifier="WEBKIT_INPUT_HINT_UPPERCASE_CHARS" glib:nick="uppercase-chars">
+        <doc xml:space="preserve">Suggest to capitalize all text</doc>
+      </member>
+      <member name="uppercase_words" value="8" c:identifier="WEBKIT_INPUT_HINT_UPPERCASE_WORDS" glib:nick="uppercase-words">
+        <doc xml:space="preserve">Suggest to capitalize the first character of each word</doc>
+      </member>
+      <member name="uppercase_sentences" value="16" c:identifier="WEBKIT_INPUT_HINT_UPPERCASE_SENTENCES" glib:nick="uppercase-sentences">
+        <doc xml:space="preserve">Suggest to capitalize the first word of each sentence</doc>
+      </member>
+      <member name="inhibit_osk" value="32" c:identifier="WEBKIT_INPUT_HINT_INHIBIT_OSK" glib:nick="inhibit-osk">
+        <doc xml:space="preserve">Suggest to not show an onscreen keyboard</doc>
+      </member>
+    </bitfield>
+    <class name="InputMethodContext" c:symbol-prefix="input_method_context" c:type="WebKitInputMethodContext" parent="GObject.Object" abstract="1" glib:type-name="WebKitInputMethodContext" glib:get-type="webkit_input_method_context_get_type" glib:type-struct="InputMethodContextClass">
+      
+      <virtual-method name="committed">
+        
+        <return-value transfer-ownership="none">
+          <type name="none" c:type="void"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="context" transfer-ownership="none">
+            <type name="InputMethodContext" c:type="WebKitInputMethodContext*"/>
+          </instance-parameter>
+          <parameter name="text" transfer-ownership="none">
+            <type name="utf8" c:type="const char*"/>
+          </parameter>
+        </parameters>
+      </virtual-method>
+      <virtual-method name="delete_surrounding">
+        
+        <return-value transfer-ownership="none">
+          <type name="none" c:type="void"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="context" transfer-ownership="none">
+            <type name="InputMethodContext" c:type="WebKitInputMethodContext*"/>
+          </instance-parameter>
+          <parameter name="offset" transfer-ownership="none">
+            <type name="gint" c:type="int"/>
+          </parameter>
+          <parameter name="n_chars" transfer-ownership="none">
+            <type name="guint" c:type="guint"/>
+          </parameter>
+        </parameters>
+      </virtual-method>
+      <virtual-method name="filter_key_event" invoker="filter_key_event" version="2.28">
+        <doc xml:space="preserve">Allow @key_event to be handled by the input method. If %TRUE is returned, then no further processing should be
+done for the key event.</doc>
+        
+        <return-value transfer-ownership="none">
+          <doc xml:space="preserve">%TRUE if the key event was handled, or %FALSE otherwise</doc>
+          <type name="gboolean" c:type="gboolean"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="context" transfer-ownership="none">
+            <doc xml:space="preserve">a #WebKitInputMethodContext</doc>
+            <type name="InputMethodContext" c:type="WebKitInputMethodContext*"/>
+          </instance-parameter>
+          <parameter name="key_event" transfer-ownership="none">
+            <doc xml:space="preserve">the key event to filter</doc>
+            <type name="Gdk.EventKey" c:type="GdkEventKey*"/>
+          </parameter>
+        </parameters>
+      </virtual-method>
+      <virtual-method name="get_preedit" invoker="get_preedit" version="2.28">
+        <doc xml:space="preserve">Get the current preedit string for the @context, and a list of WebKitInputMethodUnderline to apply to the string.
+The string will be displayed inserted at @cursor_offset.</doc>
+        
+        <return-value transfer-ownership="none">
+          <type name="none" c:type="void"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="context" transfer-ownership="none">
+            <doc xml:space="preserve">a #WebKitInputMethodContext</doc>
+            <type name="InputMethodContext" c:type="WebKitInputMethodContext*"/>
+          </instance-parameter>
+          <parameter name="text" direction="out" caller-allocates="0" transfer-ownership="full" nullable="1">
+            <doc xml:space="preserve">location to store the preedit string</doc>
+            <type name="utf8" c:type="gchar**"/>
+          </parameter>
+          <parameter name="underlines" direction="out" caller-allocates="0" transfer-ownership="full" nullable="1">
+            <doc xml:space="preserve">location to store the underlines as a #GList of #WebKitInputMethodUnderline</doc>
+            <type name="GLib.List" c:type="GList**">
+              <type name="InputMethodUnderline"/>
+            </type>
+          </parameter>
+          <parameter name="cursor_offset" direction="out" caller-allocates="0" transfer-ownership="full" nullable="1">
+            <doc xml:space="preserve">location to store the position of cursor in preedit string</doc>
+            <type name="guint" c:type="guint*"/>
+          </parameter>
+        </parameters>
+      </virtual-method>
+      <virtual-method name="notify_cursor_area" invoker="notify_cursor_area" version="2.28">
+        <doc xml:space="preserve">Notify @context that cursor area changed in input associated.</doc>
+        
+        <return-value transfer-ownership="none">
+          <type name="none" c:type="void"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="context" transfer-ownership="none">
+            <doc xml:space="preserve">a #WebKitInputMethodContext</doc>
+            <type name="InputMethodContext" c:type="WebKitInputMethodContext*"/>
+          </instance-parameter>
+          <parameter name="x" transfer-ownership="none">
+            <doc xml:space="preserve">the x coordinate of cursor location</doc>
+            <type name="gint" c:type="int"/>
+          </parameter>
+          <parameter name="y" transfer-ownership="none">
+            <doc xml:space="preserve">the y coordinate of cursor location</doc>
+            <type name="gint" c:type="int"/>
+          </parameter>
+          <parameter name="width" transfer-ownership="none">
+            <doc xml:space="preserve">the width of cursor area</doc>
+            <type name="gint" c:type="int"/>
+          </parameter>
+          <parameter name="height" transfer-ownership="none">
+            <doc xml:space="preserve">the height of cursor area</doc>
+            <type name="gint" c:type="int"/>
+          </parameter>
+        </parameters>
+      </virtual-method>
+      <virtual-method name="notify_focus_in" invoker="notify_focus_in" version="2.28">
+        <doc xml:space="preserve">Notify @context that input associated has gained focus.</doc>
+        
+        <return-value transfer-ownership="none">
+          <type name="none" c:type="void"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="context" transfer-ownership="none">
+            <doc xml:space="preserve">a #WebKitInputMethodContext</doc>
+            <type name="InputMethodContext" c:type="WebKitInputMethodContext*"/>
+          </instance-parameter>
+        </parameters>
+      </virtual-method>
+      <virtual-method name="notify_focus_out" invoker="notify_focus_out" version="2.28">
+        <doc xml:space="preserve">Notify @context that input associated has lost focus.</doc>
+        
+        <return-value transfer-ownership="none">
+          <type name="none" c:type="void"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="context" transfer-ownership="none">
+            <doc xml:space="preserve">a #WebKitInputMethodContext</doc>
+            <type name="InputMethodContext" c:type="WebKitInputMethodContext*"/>
+          </instance-parameter>
+        </parameters>
+      </virtual-method>
+      <virtual-method name="notify_surrounding" invoker="notify_surrounding" version="2.28">
+        <doc xml:space="preserve">Notify @context that the context surrounding the cursor has changed.
+If there's no selection @selection_index is the same as @cursor_index.</doc>
+        
+        <return-value transfer-ownership="none">
+          <type name="none" c:type="void"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="context" transfer-ownership="none">
+            <doc xml:space="preserve">a #WebKitInputMethodContext</doc>
+            <type name="InputMethodContext" c:type="WebKitInputMethodContext*"/>
+          </instance-parameter>
+          <parameter name="text" transfer-ownership="none">
+            <doc xml:space="preserve">text surrounding the insertion point</doc>
+            <type name="utf8" c:type="const gchar*"/>
+          </parameter>
+          <parameter name="length" transfer-ownership="none">
+            <doc xml:space="preserve">the length of @text, or -1 if @text is nul-terminated</doc>
+            <type name="guint" c:type="guint"/>
+          </parameter>
+          <parameter name="cursor_index" transfer-ownership="none">
+            <doc xml:space="preserve">the byte index of the insertion cursor within @text.</doc>
+            <type name="guint" c:type="guint"/>
+          </parameter>
+          <parameter name="selection_index" transfer-ownership="none">
+            <doc xml:space="preserve">the byte index of the selection cursor within @text.</doc>
+            <type name="guint" c:type="guint"/>
+          </parameter>
+        </parameters>
+      </virtual-method>
+      <virtual-method name="preedit_changed">
+        
+        <return-value transfer-ownership="none">
+          <type name="none" c:type="void"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="context" transfer-ownership="none">
+            <type name="InputMethodContext" c:type="WebKitInputMethodContext*"/>
+          </instance-parameter>
+        </parameters>
+      </virtual-method>
+      <virtual-method name="preedit_finished">
+        
+        <return-value transfer-ownership="none">
+          <type name="none" c:type="void"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="context" transfer-ownership="none">
+            <type name="InputMethodContext" c:type="WebKitInputMethodContext*"/>
+          </instance-parameter>
+        </parameters>
+      </virtual-method>
+      <virtual-method name="preedit_started">
+        
+        <return-value transfer-ownership="none">
+          <type name="none" c:type="void"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="context" transfer-ownership="none">
+            <type name="InputMethodContext" c:type="WebKitInputMethodContext*"/>
+          </instance-parameter>
+        </parameters>
+      </virtual-method>
+      <virtual-method name="reset" invoker="reset" version="2.28">
+        <doc xml:space="preserve">Reset the @context. This will typically cause the input to clear the preedit state.</doc>
+        
+        <return-value transfer-ownership="none">
+          <type name="none" c:type="void"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="context" transfer-ownership="none">
+            <doc xml:space="preserve">a #WebKitInputMethodContext</doc>
+            <type name="InputMethodContext" c:type="WebKitInputMethodContext*"/>
+          </instance-parameter>
+        </parameters>
+      </virtual-method>
+      <virtual-method name="set_enable_preedit" invoker="set_enable_preedit" version="2.28">
+        <doc xml:space="preserve">Set whether @context should enable preedit to display feedback.</doc>
+        
+        <return-value transfer-ownership="none">
+          <type name="none" c:type="void"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="context" transfer-ownership="none">
+            <doc xml:space="preserve">a #WebKitInputMethodContext</doc>
+            <type name="InputMethodContext" c:type="WebKitInputMethodContext*"/>
+          </instance-parameter>
+          <parameter name="enabled" transfer-ownership="none">
+            <doc xml:space="preserve">whether to enable preedit</doc>
+            <type name="gboolean" c:type="gboolean"/>
+          </parameter>
+        </parameters>
+      </virtual-method>
+      <method name="filter_key_event" c:identifier="webkit_input_method_context_filter_key_event" version="2.28">
+        <doc xml:space="preserve">Allow @key_event to be handled by the input method. If %TRUE is returned, then no further processing should be
+done for the key event.</doc>
+        
+        <return-value transfer-ownership="none">
+          <doc xml:space="preserve">%TRUE if the key event was handled, or %FALSE otherwise</doc>
+          <type name="gboolean" c:type="gboolean"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="context" transfer-ownership="none">
+            <doc xml:space="preserve">a #WebKitInputMethodContext</doc>
+            <type name="InputMethodContext" c:type="WebKitInputMethodContext*"/>
+          </instance-parameter>
+          <parameter name="key_event" transfer-ownership="none">
+            <doc xml:space="preserve">the key event to filter</doc>
+            <type name="Gdk.EventKey" c:type="GdkEventKey*"/>
+          </parameter>
+        </parameters>
+      </method>
+      <method name="get_input_hints" c:identifier="webkit_input_method_context_get_input_hints" version="2.28">
+        <doc xml:space="preserve">Get the value of the #WebKitInputMethodContext:input-hints property.</doc>
+        
+        <return-value transfer-ownership="none">
+          <doc xml:space="preserve">the #WebKitInputHints of the input associated with @context</doc>
+          <type name="InputHints" c:type="WebKitInputHints"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="context" transfer-ownership="none">
+            <doc xml:space="preserve">a #WebKitInputMethodContext</doc>
+            <type name="InputMethodContext" c:type="WebKitInputMethodContext*"/>
+          </instance-parameter>
+        </parameters>
+      </method>
+      <method name="get_input_purpose" c:identifier="webkit_input_method_context_get_input_purpose" version="2.28">
+        <doc xml:space="preserve">Get the value of the #WebKitInputMethodContext:input-purpose property.</doc>
+        
+        <return-value transfer-ownership="none">
+          <doc xml:space="preserve">the #WebKitInputPurpose of the input associated with @context</doc>
+          <type name="InputPurpose" c:type="WebKitInputPurpose"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="context" transfer-ownership="none">
+            <doc xml:space="preserve">a #WebKitInputMethodContext</doc>
+            <type name="InputMethodContext" c:type="WebKitInputMethodContext*"/>
+          </instance-parameter>
+        </parameters>
+      </method>
+      <method name="get_preedit" c:identifier="webkit_input_method_context_get_preedit" version="2.28">
+        <doc xml:space="preserve">Get the current preedit string for the @context, and a list of WebKitInputMethodUnderline to apply to the string.
+The string will be displayed inserted at @cursor_offset.</doc>
+        
+        <return-value transfer-ownership="none">
+          <type name="none" c:type="void"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="context" transfer-ownership="none">
+            <doc xml:space="preserve">a #WebKitInputMethodContext</doc>
+            <type name="InputMethodContext" c:type="WebKitInputMethodContext*"/>
+          </instance-parameter>
+          <parameter name="text" direction="out" caller-allocates="0" transfer-ownership="full" nullable="1">
+            <doc xml:space="preserve">location to store the preedit string</doc>
+            <type name="utf8" c:type="char**"/>
+          </parameter>
+          <parameter name="underlines" direction="out" caller-allocates="0" transfer-ownership="full" nullable="1">
+            <doc xml:space="preserve">location to store the underlines as a #GList of #WebKitInputMethodUnderline</doc>
+            <type name="GLib.List" c:type="GList**">
+              <type name="InputMethodUnderline"/>
+            </type>
+          </parameter>
+          <parameter name="cursor_offset" direction="out" caller-allocates="0" transfer-ownership="full" nullable="1">
+            <doc xml:space="preserve">location to store the position of cursor in preedit string</doc>
+            <type name="guint" c:type="guint*"/>
+          </parameter>
+        </parameters>
+      </method>
+      <method name="notify_cursor_area" c:identifier="webkit_input_method_context_notify_cursor_area" version="2.28">
+        <doc xml:space="preserve">Notify @context that cursor area changed in input associated.</doc>
+        
+        <return-value transfer-ownership="none">
+          <type name="none" c:type="void"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="context" transfer-ownership="none">
+            <doc xml:space="preserve">a #WebKitInputMethodContext</doc>
+            <type name="InputMethodContext" c:type="WebKitInputMethodContext*"/>
+          </instance-parameter>
+          <parameter name="x" transfer-ownership="none">
+            <doc xml:space="preserve">the x coordinate of cursor location</doc>
+            <type name="gint" c:type="int"/>
+          </parameter>
+          <parameter name="y" transfer-ownership="none">
+            <doc xml:space="preserve">the y coordinate of cursor location</doc>
+            <type name="gint" c:type="int"/>
+          </parameter>
+          <parameter name="width" transfer-ownership="none">
+            <doc xml:space="preserve">the width of cursor area</doc>
+            <type name="gint" c:type="int"/>
+          </parameter>
+          <parameter name="height" transfer-ownership="none">
+            <doc xml:space="preserve">the height of cursor area</doc>
+            <type name="gint" c:type="int"/>
+          </parameter>
+        </parameters>
+      </method>
+      <method name="notify_focus_in" c:identifier="webkit_input_method_context_notify_focus_in" version="2.28">
+        <doc xml:space="preserve">Notify @context that input associated has gained focus.</doc>
+        
+        <return-value transfer-ownership="none">
+          <type name="none" c:type="void"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="context" transfer-ownership="none">
+            <doc xml:space="preserve">a #WebKitInputMethodContext</doc>
+            <type name="InputMethodContext" c:type="WebKitInputMethodContext*"/>
+          </instance-parameter>
+        </parameters>
+      </method>
+      <method name="notify_focus_out" c:identifier="webkit_input_method_context_notify_focus_out" version="2.28">
+        <doc xml:space="preserve">Notify @context that input associated has lost focus.</doc>
+        
+        <return-value transfer-ownership="none">
+          <type name="none" c:type="void"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="context" transfer-ownership="none">
+            <doc xml:space="preserve">a #WebKitInputMethodContext</doc>
+            <type name="InputMethodContext" c:type="WebKitInputMethodContext*"/>
+          </instance-parameter>
+        </parameters>
+      </method>
+      <method name="notify_surrounding" c:identifier="webkit_input_method_context_notify_surrounding" version="2.28">
+        <doc xml:space="preserve">Notify @context that the context surrounding the cursor has changed.
+If there's no selection @selection_index is the same as @cursor_index.</doc>
+        
+        <return-value transfer-ownership="none">
+          <type name="none" c:type="void"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="context" transfer-ownership="none">
+            <doc xml:space="preserve">a #WebKitInputMethodContext</doc>
+            <type name="InputMethodContext" c:type="WebKitInputMethodContext*"/>
+          </instance-parameter>
+          <parameter name="text" transfer-ownership="none">
+            <doc xml:space="preserve">text surrounding the insertion point</doc>
+            <type name="utf8" c:type="const gchar*"/>
+          </parameter>
+          <parameter name="length" transfer-ownership="none">
+            <doc xml:space="preserve">the length of @text, or -1 if @text is nul-terminated</doc>
+            <type name="gint" c:type="int"/>
+          </parameter>
+          <parameter name="cursor_index" transfer-ownership="none">
+            <doc xml:space="preserve">the byte index of the insertion cursor within @text.</doc>
+            <type name="guint" c:type="guint"/>
+          </parameter>
+          <parameter name="selection_index" transfer-ownership="none">
+            <doc xml:space="preserve">the byte index of the selection cursor within @text.</doc>
+            <type name="guint" c:type="guint"/>
+          </parameter>
+        </parameters>
+      </method>
+      <method name="reset" c:identifier="webkit_input_method_context_reset" version="2.28">
+        <doc xml:space="preserve">Reset the @context. This will typically cause the input to clear the preedit state.</doc>
+        
+        <return-value transfer-ownership="none">
+          <type name="none" c:type="void"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="context" transfer-ownership="none">
+            <doc xml:space="preserve">a #WebKitInputMethodContext</doc>
+            <type name="InputMethodContext" c:type="WebKitInputMethodContext*"/>
+          </instance-parameter>
+        </parameters>
+      </method>
+      <method name="set_enable_preedit" c:identifier="webkit_input_method_context_set_enable_preedit" version="2.28">
+        <doc xml:space="preserve">Set whether @context should enable preedit to display feedback.</doc>
+        
+        <return-value transfer-ownership="none">
+          <type name="none" c:type="void"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="context" transfer-ownership="none">
+            <doc xml:space="preserve">a #WebKitInputMethodContext</doc>
+            <type name="InputMethodContext" c:type="WebKitInputMethodContext*"/>
+          </instance-parameter>
+          <parameter name="enabled" transfer-ownership="none">
+            <doc xml:space="preserve">whether to enable preedit</doc>
+            <type name="gboolean" c:type="gboolean"/>
+          </parameter>
+        </parameters>
+      </method>
+      <method name="set_input_hints" c:identifier="webkit_input_method_context_set_input_hints">
+        
+        <return-value transfer-ownership="none">
+          <type name="none" c:type="void"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="context" transfer-ownership="none">
+            <type name="InputMethodContext" c:type="WebKitInputMethodContext*"/>
+          </instance-parameter>
+          <parameter name="hints" transfer-ownership="none">
+            <type name="InputHints" c:type="WebKitInputHints"/>
+          </parameter>
+        </parameters>
+      </method>
+      <method name="set_input_purpose" c:identifier="webkit_input_method_context_set_input_purpose" version="2.28">
+        <doc xml:space="preserve">Set the value of the #WebKitInputMethodContext:input-purpose property.</doc>
+        
+        <return-value transfer-ownership="none">
+          <type name="none" c:type="void"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="context" transfer-ownership="none">
+            <doc xml:space="preserve">a #WebKitInputMethodContext</doc>
+            <type name="InputMethodContext" c:type="WebKitInputMethodContext*"/>
+          </instance-parameter>
+          <parameter name="purpose" transfer-ownership="none">
+            <doc xml:space="preserve">a #WebKitInputPurpose</doc>
+            <type name="InputPurpose" c:type="WebKitInputPurpose"/>
+          </parameter>
+        </parameters>
+      </method>
+      <property name="input-hints" writable="1" transfer-ownership="none">
+        <type name="InputHints"/>
+      </property>
+      <property name="input-purpose" writable="1" transfer-ownership="none">
+        <type name="InputPurpose"/>
+      </property>
+      <field name="parent">
+        <type name="GObject.Object" c:type="GObject"/>
+      </field>
+      <field name="priv" readable="0" private="1">
+        <type name="InputMethodContextPrivate" c:type="WebKitInputMethodContextPrivate*"/>
+      </field>
+      <glib:signal name="committed" when="last" version="2.28">
+        <doc xml:space="preserve">Emitted when a complete input sequence has been entered by the user.
+This can be a single character immediately after a key press or the
+final result of preediting.</doc>
+        <return-value transfer-ownership="none">
+          <type name="none" c:type="void"/>
+        </return-value>
+        <parameters>
+          <parameter name="text" transfer-ownership="none">
+            <doc xml:space="preserve">the string result</doc>
+            <type name="utf8" c:type="gchar*"/>
+          </parameter>
+        </parameters>
+      </glib:signal>
+      <glib:signal name="delete-surrounding" when="last" version="2.28">
+        <doc xml:space="preserve">Emitted when the input method wants to delete the context surrounding the cursor.
+If @offset is a negative value, it means a position before the cursor.</doc>
+        <return-value transfer-ownership="none">
+          <type name="none" c:type="void"/>
+        </return-value>
+        <parameters>
+          <parameter name="offset" transfer-ownership="none">
+            <doc xml:space="preserve">the character offset from the cursor position of the text to be deleted.</doc>
+            <type name="gint" c:type="gint"/>
+          </parameter>
+          <parameter name="n_chars" transfer-ownership="none">
+            <doc xml:space="preserve">the number of characters to be deleted</doc>
+            <type name="guint" c:type="guint"/>
+          </parameter>
+        </parameters>
+      </glib:signal>
+      <glib:signal name="preedit-changed" when="last" version="2.28">
+        <doc xml:space="preserve">Emitted whenever the preedit sequence currently being entered has changed.
+It is also emitted at the end of a preedit sequence, in which case
+webkit_input_method_context_get_preedit() returns the empty string.</doc>
+        <return-value transfer-ownership="none">
+          <type name="none" c:type="void"/>
+        </return-value>
+      </glib:signal>
+      <glib:signal name="preedit-finished" when="last" version="2.28">
+        <doc xml:space="preserve">Emitted when a preediting sequence has been completed or canceled.</doc>
+        <return-value transfer-ownership="none">
+          <type name="none" c:type="void"/>
+        </return-value>
+      </glib:signal>
+      <glib:signal name="preedit-started" when="last" version="2.28">
+        <doc xml:space="preserve">Emitted when a new preediting sequence starts.</doc>
+        <return-value transfer-ownership="none">
+          <type name="none" c:type="void"/>
+        </return-value>
+      </glib:signal>
+    </class>
+    <record name="InputMethodContextClass" c:type="WebKitInputMethodContextClass" glib:is-gtype-struct-for="InputMethodContext" version="2.28">
+      
+      <field name="parent_class">
+        <type name="GObject.ObjectClass" c:type="GObjectClass"/>
+      </field>
+      <field name="preedit_started">
+        <callback name="preedit_started">
+          
+          <return-value transfer-ownership="none">
+            <type name="none" c:type="void"/>
+          </return-value>
+          <parameters>
+            <parameter name="context" transfer-ownership="none">
+              <type name="InputMethodContext" c:type="WebKitInputMethodContext*"/>
+            </parameter>
+          </parameters>
+        </callback>
+      </field>
+      <field name="preedit_changed">
+        <callback name="preedit_changed">
+          
+          <return-value transfer-ownership="none">
+            <type name="none" c:type="void"/>
+          </return-value>
+          <parameters>
+            <parameter name="context" transfer-ownership="none">
+              <type name="InputMethodContext" c:type="WebKitInputMethodContext*"/>
+            </parameter>
+          </parameters>
+        </callback>
+      </field>
+      <field name="preedit_finished">
+        <callback name="preedit_finished">
+          
+          <return-value transfer-ownership="none">
+            <type name="none" c:type="void"/>
+          </return-value>
+          <parameters>
+            <parameter name="context" transfer-ownership="none">
+              <type name="InputMethodContext" c:type="WebKitInputMethodContext*"/>
+            </parameter>
+          </parameters>
+        </callback>
+      </field>
+      <field name="committed">
+        <callback name="committed">
+          
+          <return-value transfer-ownership="none">
+            <type name="none" c:type="void"/>
+          </return-value>
+          <parameters>
+            <parameter name="context" transfer-ownership="none">
+              <type name="InputMethodContext" c:type="WebKitInputMethodContext*"/>
+            </parameter>
+            <parameter name="text" transfer-ownership="none">
+              <type name="utf8" c:type="const char*"/>
+            </parameter>
+          </parameters>
+        </callback>
+      </field>
+      <field name="delete_surrounding">
+        <callback name="delete_surrounding">
+          
+          <return-value transfer-ownership="none">
+            <type name="none" c:type="void"/>
+          </return-value>
+          <parameters>
+            <parameter name="context" transfer-ownership="none">
+              <type name="InputMethodContext" c:type="WebKitInputMethodContext*"/>
+            </parameter>
+            <parameter name="offset" transfer-ownership="none">
+              <type name="gint" c:type="int"/>
+            </parameter>
+            <parameter name="n_chars" transfer-ownership="none">
+              <type name="guint" c:type="guint"/>
+            </parameter>
+          </parameters>
+        </callback>
+      </field>
+      <field name="set_enable_preedit">
+        <callback name="set_enable_preedit">
+          
+          <return-value transfer-ownership="none">
+            <type name="none" c:type="void"/>
+          </return-value>
+          <parameters>
+            <parameter name="context" transfer-ownership="none">
+              <doc xml:space="preserve">a #WebKitInputMethodContext</doc>
+              <type name="InputMethodContext" c:type="WebKitInputMethodContext*"/>
+            </parameter>
+            <parameter name="enabled" transfer-ownership="none">
+              <doc xml:space="preserve">whether to enable preedit</doc>
+              <type name="gboolean" c:type="gboolean"/>
+            </parameter>
+          </parameters>
+        </callback>
+      </field>
+      <field name="get_preedit">
+        <callback name="get_preedit">
+          
+          <return-value transfer-ownership="none">
+            <type name="none" c:type="void"/>
+          </return-value>
+          <parameters>
+            <parameter name="context" transfer-ownership="none">
+              <doc xml:space="preserve">a #WebKitInputMethodContext</doc>
+              <type name="InputMethodContext" c:type="WebKitInputMethodContext*"/>
+            </parameter>
+            <parameter name="text" direction="out" caller-allocates="0" transfer-ownership="full" nullable="1">
+              <doc xml:space="preserve">location to store the preedit string</doc>
+              <type name="utf8" c:type="gchar**"/>
+            </parameter>
+            <parameter name="underlines" direction="out" caller-allocates="0" transfer-ownership="full" nullable="1">
+              <doc xml:space="preserve">location to store the underlines as a #GList of #WebKitInputMethodUnderline</doc>
+              <type name="GLib.List" c:type="GList**">
+                <type name="InputMethodUnderline"/>
+              </type>
+            </parameter>
+            <parameter name="cursor_offset" direction="out" caller-allocates="0" transfer-ownership="full" nullable="1">
+              <doc xml:space="preserve">location to store the position of cursor in preedit string</doc>
+              <type name="guint" c:type="guint*"/>
+            </parameter>
+          </parameters>
+        </callback>
+      </field>
+      <field name="filter_key_event">
+        <callback name="filter_key_event">
+          
+          <return-value transfer-ownership="none">
+            <doc xml:space="preserve">%TRUE if the key event was handled, or %FALSE otherwise</doc>
+            <type name="gboolean" c:type="gboolean"/>
+          </return-value>
+          <parameters>
+            <parameter name="context" transfer-ownership="none">
+              <doc xml:space="preserve">a #WebKitInputMethodContext</doc>
+              <type name="InputMethodContext" c:type="WebKitInputMethodContext*"/>
+            </parameter>
+            <parameter name="key_event" transfer-ownership="none">
+              <doc xml:space="preserve">the key event to filter</doc>
+              <type name="Gdk.EventKey" c:type="GdkEventKey*"/>
+            </parameter>
+          </parameters>
+        </callback>
+      </field>
+      <field name="notify_focus_in">
+        <callback name="notify_focus_in">
+          
+          <return-value transfer-ownership="none">
+            <type name="none" c:type="void"/>
+          </return-value>
+          <parameters>
+            <parameter name="context" transfer-ownership="none">
+              <doc xml:space="preserve">a #WebKitInputMethodContext</doc>
+              <type name="InputMethodContext" c:type="WebKitInputMethodContext*"/>
+            </parameter>
+          </parameters>
+        </callback>
+      </field>
+      <field name="notify_focus_out">
+        <callback name="notify_focus_out">
+          
+          <return-value transfer-ownership="none">
+            <type name="none" c:type="void"/>
+          </return-value>
+          <parameters>
+            <parameter name="context" transfer-ownership="none">
+              <doc xml:space="preserve">a #WebKitInputMethodContext</doc>
+              <type name="InputMethodContext" c:type="WebKitInputMethodContext*"/>
+            </parameter>
+          </parameters>
+        </callback>
+      </field>
+      <field name="notify_cursor_area">
+        <callback name="notify_cursor_area">
+          
+          <return-value transfer-ownership="none">
+            <type name="none" c:type="void"/>
+          </return-value>
+          <parameters>
+            <parameter name="context" transfer-ownership="none">
+              <doc xml:space="preserve">a #WebKitInputMethodContext</doc>
+              <type name="InputMethodContext" c:type="WebKitInputMethodContext*"/>
+            </parameter>
+            <parameter name="x" transfer-ownership="none">
+              <doc xml:space="preserve">the x coordinate of cursor location</doc>
+              <type name="gint" c:type="int"/>
+            </parameter>
+            <parameter name="y" transfer-ownership="none">
+              <doc xml:space="preserve">the y coordinate of cursor location</doc>
+              <type name="gint" c:type="int"/>
+            </parameter>
+            <parameter name="width" transfer-ownership="none">
+              <doc xml:space="preserve">the width of cursor area</doc>
+              <type name="gint" c:type="int"/>
+            </parameter>
+            <parameter name="height" transfer-ownership="none">
+              <doc xml:space="preserve">the height of cursor area</doc>
+              <type name="gint" c:type="int"/>
+            </parameter>
+          </parameters>
+        </callback>
+      </field>
+      <field name="notify_surrounding">
+        <callback name="notify_surrounding">
+          
+          <return-value transfer-ownership="none">
+            <type name="none" c:type="void"/>
+          </return-value>
+          <parameters>
+            <parameter name="context" transfer-ownership="none">
+              <doc xml:space="preserve">a #WebKitInputMethodContext</doc>
+              <type name="InputMethodContext" c:type="WebKitInputMethodContext*"/>
+            </parameter>
+            <parameter name="text" transfer-ownership="none">
+              <doc xml:space="preserve">text surrounding the insertion point</doc>
+              <type name="utf8" c:type="const gchar*"/>
+            </parameter>
+            <parameter name="length" transfer-ownership="none">
+              <doc xml:space="preserve">the length of @text, or -1 if @text is nul-terminated</doc>
+              <type name="guint" c:type="guint"/>
+            </parameter>
+            <parameter name="cursor_index" transfer-ownership="none">
+              <doc xml:space="preserve">the byte index of the insertion cursor within @text.</doc>
+              <type name="guint" c:type="guint"/>
+            </parameter>
+            <parameter name="selection_index" transfer-ownership="none">
+              <doc xml:space="preserve">the byte index of the selection cursor within @text.</doc>
+              <type name="guint" c:type="guint"/>
+            </parameter>
+          </parameters>
+        </callback>
+      </field>
+      <field name="reset">
+        <callback name="reset">
+          
+          <return-value transfer-ownership="none">
+            <type name="none" c:type="void"/>
+          </return-value>
+          <parameters>
+            <parameter name="context" transfer-ownership="none">
+              <doc xml:space="preserve">a #WebKitInputMethodContext</doc>
+              <type name="InputMethodContext" c:type="WebKitInputMethodContext*"/>
+            </parameter>
+          </parameters>
+        </callback>
+      </field>
+      <field name="_webkit_reserved0" introspectable="0">
+        <callback name="_webkit_reserved0">
+          
+          <return-value transfer-ownership="none">
+            <type name="none" c:type="void"/>
+          </return-value>
+        </callback>
+      </field>
+      <field name="_webkit_reserved1" introspectable="0">
+        <callback name="_webkit_reserved1">
+          
+          <return-value transfer-ownership="none">
+            <type name="none" c:type="void"/>
+          </return-value>
+        </callback>
+      </field>
+      <field name="_webkit_reserved2" introspectable="0">
+        <callback name="_webkit_reserved2">
+          
+          <return-value transfer-ownership="none">
+            <type name="none" c:type="void"/>
+          </return-value>
+        </callback>
+      </field>
+      <field name="_webkit_reserved3" introspectable="0">
+        <callback name="_webkit_reserved3">
+          
+          <return-value transfer-ownership="none">
+            <type name="none" c:type="void"/>
+          </return-value>
+        </callback>
+      </field>
+      <field name="_webkit_reserved4" introspectable="0">
+        <callback name="_webkit_reserved4">
+          
+          <return-value transfer-ownership="none">
+            <type name="none" c:type="void"/>
+          </return-value>
+        </callback>
+      </field>
+      <field name="_webkit_reserved5" introspectable="0">
+        <callback name="_webkit_reserved5">
+          
+          <return-value transfer-ownership="none">
+            <type name="none" c:type="void"/>
+          </return-value>
+        </callback>
+      </field>
+      <field name="_webkit_reserved6" introspectable="0">
+        <callback name="_webkit_reserved6">
+          
+          <return-value transfer-ownership="none">
+            <type name="none" c:type="void"/>
+          </return-value>
+        </callback>
+      </field>
+      <field name="_webkit_reserved7" introspectable="0">
+        <callback name="_webkit_reserved7">
+          
+          <return-value transfer-ownership="none">
+            <type name="none" c:type="void"/>
+          </return-value>
+        </callback>
+      </field>
+    </record>
+    <record name="InputMethodContextPrivate" c:type="WebKitInputMethodContextPrivate" disguised="1">
+      
+    </record>
+    <record name="InputMethodUnderline" c:type="WebKitInputMethodUnderline" glib:type-name="WebKitInputMethodUnderline" glib:get-type="webkit_input_method_underline_get_type" c:symbol-prefix="input_method_underline">
+      
+      <constructor name="new" c:identifier="webkit_input_method_underline_new" version="2.28">
+        <doc xml:space="preserve">Create a new #WebKitInputMethodUnderline for the given range in preedit string</doc>
+        
+        <return-value transfer-ownership="full">
+          <doc xml:space="preserve">A newly created #WebKitInputMethodUnderline</doc>
+          <type name="InputMethodUnderline" c:type="WebKitInputMethodUnderline*"/>
+        </return-value>
+        <parameters>
+          <parameter name="start_offset" transfer-ownership="none">
+            <doc xml:space="preserve">the start offset in preedit string</doc>
+            <type name="guint" c:type="guint"/>
+          </parameter>
+          <parameter name="end_offset" transfer-ownership="none">
+            <doc xml:space="preserve">the end offset in preedit string</doc>
+            <type name="guint" c:type="guint"/>
+          </parameter>
+        </parameters>
+      </constructor>
+      <method name="copy" c:identifier="webkit_input_method_underline_copy" version="2.28">
+        <doc xml:space="preserve">Make a copy of the #WebKitInputMethodUnderline.</doc>
+        
+        <return-value transfer-ownership="full">
+          <doc xml:space="preserve">A copy of passed in #WebKitInputMethodUnderline</doc>
+          <type name="InputMethodUnderline" c:type="WebKitInputMethodUnderline*"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="underline" transfer-ownership="none">
+            <doc xml:space="preserve">a #WebKitInputMethodUnderline</doc>
+            <type name="InputMethodUnderline" c:type="WebKitInputMethodUnderline*"/>
+          </instance-parameter>
+        </parameters>
+      </method>
+      <method name="free" c:identifier="webkit_input_method_underline_free" version="2.28">
+        <doc xml:space="preserve">Free the #WebKitInputMethodUnderline.</doc>
+        
+        <return-value transfer-ownership="none">
+          <type name="none" c:type="void"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="underline" transfer-ownership="none">
+            <doc xml:space="preserve">A #WebKitInputMethodUnderline</doc>
+            <type name="InputMethodUnderline" c:type="WebKitInputMethodUnderline*"/>
+          </instance-parameter>
+        </parameters>
+      </method>
+      <method name="set_color" c:identifier="webkit_input_method_underline_set_color" version="2.28">
+        <doc xml:space="preserve">Set the color of the underline. If @rgba is %NULL the foreground text color will be used
+for the underline too.</doc>
+        
+        <return-value transfer-ownership="none">
+          <type name="none" c:type="void"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="underline" transfer-ownership="none">
+            <doc xml:space="preserve">a #WebKitInputMethodUnderline</doc>
+            <type name="InputMethodUnderline" c:type="WebKitInputMethodUnderline*"/>
+          </instance-parameter>
+          <parameter name="rgba" transfer-ownership="none" nullable="1" allow-none="1">
+            <doc xml:space="preserve">a #GdkRGBA or %NULL</doc>
+            <type name="Gdk.RGBA" c:type="const GdkRGBA*"/>
+          </parameter>
+        </parameters>
+      </method>
+    </record>
+    <enumeration name="InputPurpose" version="2.28" glib:type-name="WebKitInputPurpose" glib:get-type="webkit_input_purpose_get_type" c:type="WebKitInputPurpose">
+      <doc xml:space="preserve">Enum values used to describe the primary purpose of the active editable element.</doc>
+      <member name="free_form" value="0" c:identifier="WEBKIT_INPUT_PURPOSE_FREE_FORM" glib:nick="free-form">
+        <doc xml:space="preserve">Editable element expects any characters</doc>
+      </member>
+      <member name="digits" value="1" c:identifier="WEBKIT_INPUT_PURPOSE_DIGITS" glib:nick="digits">
+        <doc xml:space="preserve">Editable element expects digits</doc>
+      </member>
+      <member name="number" value="2" c:identifier="WEBKIT_INPUT_PURPOSE_NUMBER" glib:nick="number">
+        <doc xml:space="preserve">Editable element expects a number</doc>
+      </member>
+      <member name="phone" value="3" c:identifier="WEBKIT_INPUT_PURPOSE_PHONE" glib:nick="phone">
+        <doc xml:space="preserve">Editable element expects a telephone</doc>
+      </member>
+      <member name="url" value="4" c:identifier="WEBKIT_INPUT_PURPOSE_URL" glib:nick="url">
+        <doc xml:space="preserve">Editable element expects a URL</doc>
+      </member>
+      <member name="email" value="5" c:identifier="WEBKIT_INPUT_PURPOSE_EMAIL" glib:nick="email">
+        <doc xml:space="preserve">Editable element expects an email</doc>
+      </member>
+      <member name="password" value="6" c:identifier="WEBKIT_INPUT_PURPOSE_PASSWORD" glib:nick="password">
+        <doc xml:space="preserve">Editable element expects a password</doc>
+      </member>
+    </enumeration>
     <enumeration name="InsecureContentEvent" glib:type-name="WebKitInsecureContentEvent" glib:get-type="webkit_insecure_content_event_get_type" c:type="WebKitInsecureContentEvent">
       <doc xml:space="preserve">Enum values used to denote the different events which can trigger
 the detection of insecure content.</doc>
@@ -5412,7 +6432,7 @@ from an untrusted source.</doc>
         
         <return-value>
           <doc xml:space="preserve">the &lt;function&gt;JSGlobalContextRef&lt;/function&gt; for the #WebKitJavascriptResult</doc>
-          <type c:type="JSGlobalContextRef" name="JavaScriptCore.GlobalContextRef"/>
+          <type c:type="JSGlobalContextRef"/>
         </return-value>
         <parameters>
           <instance-parameter name="js_result" transfer-ownership="none">
@@ -5442,7 +6462,7 @@ returned by webkit_javascript_result_get_global_context() to use the &lt;functio
         
         <return-value>
           <doc xml:space="preserve">the &lt;function&gt;JSValueRef&lt;/function&gt; of the #WebKitJavascriptResult</doc>
-          <type c:type="JSValueRef" name="JavaScriptCore.ValueRef"/>
+          <type c:type="JSValueRef"/>
         </return-value>
         <parameters>
           <instance-parameter name="js_result" transfer-ownership="none">
@@ -5521,7 +6541,7 @@ against at application run time.</doc>
       
       <type name="gint" c:type="gint"/>
     </constant>
-    <constant name="MINOR_VERSION" value="26" c:type="WEBKIT_MINOR_VERSION">
+    <constant name="MINOR_VERSION" value="28" c:type="WEBKIT_MINOR_VERSION">
       <doc xml:space="preserve">Like webkit_get_minor_version(), but from the headers used at
 application compile time, rather than from the library linked
 against at application run time.</doc>
@@ -6645,6 +7665,27 @@ element is detached from the current page.</doc>
         </parameter>
       </parameters>
     </function-macro>
+    <function-macro name="POINTER_LOCK_PERMISSION_REQUEST" c:identifier="WEBKIT_POINTER_LOCK_PERMISSION_REQUEST" introspectable="0">
+      
+      <parameters>
+        <parameter name="obj">
+        </parameter>
+      </parameters>
+    </function-macro>
+    <function-macro name="POINTER_LOCK_PERMISSION_REQUEST_CLASS" c:identifier="WEBKIT_POINTER_LOCK_PERMISSION_REQUEST_CLASS" introspectable="0">
+      
+      <parameters>
+        <parameter name="klass">
+        </parameter>
+      </parameters>
+    </function-macro>
+    <function-macro name="POINTER_LOCK_PERMISSION_REQUEST_GET_CLASS" c:identifier="WEBKIT_POINTER_LOCK_PERMISSION_REQUEST_GET_CLASS" introspectable="0">
+      
+      <parameters>
+        <parameter name="obj">
+        </parameter>
+      </parameters>
+    </function-macro>
     <function-macro name="POLICY_DECISION" c:identifier="WEBKIT_POLICY_DECISION" introspectable="0">
       
       <parameters>
@@ -6927,6 +7968,57 @@ as a list of #WebKitMimeInfo.</doc>
       </function>
     </enumeration>
     <record name="PluginPrivate" c:type="WebKitPluginPrivate" disguised="1">
+      
+    </record>
+    <class name="PointerLockPermissionRequest" c:symbol-prefix="pointer_lock_permission_request" c:type="WebKitPointerLockPermissionRequest" parent="GObject.Object" glib:type-name="WebKitPointerLockPermissionRequest" glib:get-type="webkit_pointer_lock_permission_request_get_type" glib:type-struct="PointerLockPermissionRequestClass">
+      
+      <implements name="PermissionRequest"/>
+      <field name="parent">
+        <type name="GObject.Object" c:type="GObject"/>
+      </field>
+      <field name="priv" readable="0" private="1">
+        <type name="PointerLockPermissionRequestPrivate" c:type="WebKitPointerLockPermissionRequestPrivate*"/>
+      </field>
+    </class>
+    <record name="PointerLockPermissionRequestClass" c:type="WebKitPointerLockPermissionRequestClass" glib:is-gtype-struct-for="PointerLockPermissionRequest">
+      
+      <field name="parent_class">
+        <type name="GObject.ObjectClass" c:type="GObjectClass"/>
+      </field>
+      <field name="_webkit_reserved0" introspectable="0">
+        <callback name="_webkit_reserved0">
+          
+          <return-value transfer-ownership="none">
+            <type name="none" c:type="void"/>
+          </return-value>
+        </callback>
+      </field>
+      <field name="_webkit_reserved1" introspectable="0">
+        <callback name="_webkit_reserved1">
+          
+          <return-value transfer-ownership="none">
+            <type name="none" c:type="void"/>
+          </return-value>
+        </callback>
+      </field>
+      <field name="_webkit_reserved2" introspectable="0">
+        <callback name="_webkit_reserved2">
+          
+          <return-value transfer-ownership="none">
+            <type name="none" c:type="void"/>
+          </return-value>
+        </callback>
+      </field>
+      <field name="_webkit_reserved3" introspectable="0">
+        <callback name="_webkit_reserved3">
+          
+          <return-value transfer-ownership="none">
+            <type name="none" c:type="void"/>
+          </return-value>
+        </callback>
+      </field>
+    </record>
+    <record name="PointerLockPermissionRequestPrivate" c:type="WebKitPointerLockPermissionRequestPrivate" disguised="1">
       
     </record>
     <class name="PolicyDecision" c:symbol-prefix="policy_decision" c:type="WebKitPolicyDecision" parent="GObject.Object" abstract="1" glib:type-name="WebKitPolicyDecision" glib:get-type="webkit_policy_decision_get_type" glib:type-struct="PolicyDecisionClass">
@@ -8408,6 +9500,21 @@ of #WebKitSettings.</doc>
           </instance-parameter>
         </parameters>
       </method>
+      <method name="get_allow_top_navigation_to_data_urls" c:identifier="webkit_settings_get_allow_top_navigation_to_data_urls" version="2.28">
+        <doc xml:space="preserve">Get the #WebKitSettings:allow-top-navigation-to-data-urls property.</doc>
+        
+        <return-value transfer-ownership="none">
+          <doc xml:space="preserve">%TRUE If navigation to data URLs from the top frame is allowed or %FALSE\
+otherwise.</doc>
+          <type name="gboolean" c:type="gboolean"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="settings" transfer-ownership="none">
+            <doc xml:space="preserve">a #WebKitSettings</doc>
+            <type name="Settings" c:type="WebKitSettings*"/>
+          </instance-parameter>
+        </parameters>
+      </method>
       <method name="get_allow_universal_access_from_file_urls" c:identifier="webkit_settings_get_allow_universal_access_from_file_urls" version="2.14">
         <doc xml:space="preserve">Get the #WebKitSettings:allow-universal-access-from-file-urls property.</doc>
         
@@ -9199,6 +10306,23 @@ otherwise.</doc>
       </method>
       <method name="set_allow_modal_dialogs" c:identifier="webkit_settings_set_allow_modal_dialogs">
         <doc xml:space="preserve">Set the #WebKitSettings:allow-modal-dialogs property.</doc>
+        
+        <return-value transfer-ownership="none">
+          <type name="none" c:type="void"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="settings" transfer-ownership="none">
+            <doc xml:space="preserve">a #WebKitSettings</doc>
+            <type name="Settings" c:type="WebKitSettings*"/>
+          </instance-parameter>
+          <parameter name="allowed" transfer-ownership="none">
+            <doc xml:space="preserve">Value to be set</doc>
+            <type name="gboolean" c:type="gboolean"/>
+          </parameter>
+        </parameters>
+      </method>
+      <method name="set_allow_top_navigation_to_data_urls" c:identifier="webkit_settings_set_allow_top_navigation_to_data_urls" version="2.28">
+        <doc xml:space="preserve">Set the #WebKitSettings:allow-top-navigation-to-data-urls property.</doc>
         
         <return-value transfer-ownership="none">
           <type name="none" c:type="void"/>
@@ -10190,6 +11314,13 @@ new modal dialogs, so not even the #WebKitWebView::create
 signal will be emitted.</doc>
         <type name="gboolean" c:type="gboolean"/>
       </property>
+      <property name="allow-top-navigation-to-data-urls" version="2.28" writable="1" construct="1" transfer-ownership="none">
+        <doc xml:space="preserve">Whether or not the top frame is allowed to navigate to data URLs. It is encouraged to disable it
+due to the risk it poses when loading untrusted URLs, with data URLs being used in scamming
+and phishing attacks. In contrast, a scenario where it could be enabled could be an app that
+embeds a WebView and you have control of the pages being shown instead of a generic browser.</doc>
+        <type name="gboolean" c:type="gboolean"/>
+      </property>
       <property name="allow-universal-access-from-file-urls" version="2.14" writable="1" construct="1" transfer-ownership="none">
         <doc xml:space="preserve">Whether or not JavaScript running in the context of a file scheme URL
 should be allowed to access content from any origin.  By default, when
@@ -10417,17 +11548,14 @@ then pressing tab key will insert the tab character.</doc>
       </property>
       <property name="enable-webaudio" writable="1" construct="1" transfer-ownership="none">
         <doc xml:space="preserve">Enable or disable support for WebAudio on pages. WebAudio is an
-experimental proposal for allowing web pages to generate Audio
-WAVE data from JavaScript. The standard is currently a
-work-in-progress by the W3C Audio Working Group.
+API for processing and synthesizing audio in web applications
 
-See also https://dvcs.w3.org/hg/audio/raw-file/tip/webaudio/specification.html</doc>
+See also https://webaudio.github.io/web-audio-api</doc>
         <type name="gboolean" c:type="gboolean"/>
       </property>
       <property name="enable-webgl" writable="1" construct="1" transfer-ownership="none">
-        <doc xml:space="preserve">Enable or disable support for WebGL on pages. WebGL is an experimental
-proposal for allowing web pages to use OpenGL ES-like calls directly. The
-standard is currently a work-in-progress by the Khronos Group.</doc>
+        <doc xml:space="preserve">Enable or disable support for WebGL on pages. WebGL enables web
+content to use an API based on OpenGL ES 2.0.</doc>
         <type name="gboolean" c:type="gboolean"/>
       </property>
       <property name="enable-write-console-messages-to-stdout" version="2.2" writable="1" construct="1" transfer-ownership="none">
@@ -10447,8 +11575,8 @@ reflective XSS attacks on vulnerable web sites.</doc>
       <property name="hardware-acceleration-policy" version="2.16" writable="1" construct="1" transfer-ownership="none">
         <doc xml:space="preserve">The #WebKitHardwareAccelerationPolicy to decide how to enable and disable
 hardware acceleration. The default value %WEBKIT_HARDWARE_ACCELERATION_POLICY_ON_DEMAND
-enables the hardware acceleration when the web contents request it, disabling it again
-when no longer needed. It's possible to enforce hardware acceleration to be always enabled
+enables the hardware acceleration when the web contents request it.
+It's possible to enforce hardware acceleration to be always enabled
 by using %WEBKIT_HARDWARE_ACCELERATION_POLICY_ALWAYS. And it's also possible to disable it
 completely using %WEBKIT_HARDWARE_ACCELERATION_POLICY_NEVER. Note that disabling hardware
 acceleration might cause some websites to not render correctly or consume more CPU.
@@ -10941,7 +12069,7 @@ present.</doc>
             <doc xml:space="preserve">the length of the stream or -1 if not known</doc>
             <type name="gint64" c:type="gint64"/>
           </parameter>
-          <parameter name="mime_type" transfer-ownership="none" nullable="1" allow-none="1">
+          <parameter name="content_type" transfer-ownership="none" nullable="1" allow-none="1">
             <doc xml:space="preserve">the content type of the stream or %NULL if not known</doc>
             <type name="utf8" c:type="const gchar*"/>
           </parameter>
@@ -11206,6 +12334,27 @@ made for a user registered URI scheme.</doc>
       </parameters>
     </function-macro>
     <function-macro name="USER_MEDIA_PERMISSION_REQUEST_GET_CLASS" c:identifier="WEBKIT_USER_MEDIA_PERMISSION_REQUEST_GET_CLASS" introspectable="0">
+      
+      <parameters>
+        <parameter name="obj">
+        </parameter>
+      </parameters>
+    </function-macro>
+    <function-macro name="USER_MESSAGE" c:identifier="WEBKIT_USER_MESSAGE" introspectable="0">
+      
+      <parameters>
+        <parameter name="obj">
+        </parameter>
+      </parameters>
+    </function-macro>
+    <function-macro name="USER_MESSAGE_CLASS" c:identifier="WEBKIT_USER_MESSAGE_CLASS" introspectable="0">
+      
+      <parameters>
+        <parameter name="klass">
+        </parameter>
+      </parameters>
+    </function-macro>
+    <function-macro name="USER_MESSAGE_GET_CLASS" c:identifier="WEBKIT_USER_MESSAGE_GET_CLASS" introspectable="0">
       
       <parameters>
         <parameter name="obj">
@@ -12021,6 +13170,182 @@ webkit_user_content_manager_register_script_message_handler()</doc>
     <record name="UserMediaPermissionRequestPrivate" c:type="WebKitUserMediaPermissionRequestPrivate" disguised="1">
       
     </record>
+    <class name="UserMessage" c:symbol-prefix="user_message" c:type="WebKitUserMessage" parent="GObject.InitiallyUnowned" glib:type-name="WebKitUserMessage" glib:get-type="webkit_user_message_get_type" glib:type-struct="UserMessageClass">
+      
+      <constructor name="new" c:identifier="webkit_user_message_new" version="2.28">
+        <doc xml:space="preserve">Create a new #WebKitUserMessage with @name.</doc>
+        
+        <return-value transfer-ownership="none">
+          <doc xml:space="preserve">the newly created #WebKitUserMessage object.</doc>
+          <type name="UserMessage" c:type="WebKitUserMessage*"/>
+        </return-value>
+        <parameters>
+          <parameter name="name" transfer-ownership="none">
+            <doc xml:space="preserve">the message name</doc>
+            <type name="utf8" c:type="const char*"/>
+          </parameter>
+          <parameter name="parameters" transfer-ownership="none" nullable="1" allow-none="1">
+            <doc xml:space="preserve">the message parameters as a #GVariant, or %NULL</doc>
+            <type name="GLib.Variant" c:type="GVariant*"/>
+          </parameter>
+        </parameters>
+      </constructor>
+      <constructor name="new_with_fd_list" c:identifier="webkit_user_message_new_with_fd_list" version="2.28">
+        <doc xml:space="preserve">Create a new #WebKitUserMessage including also a list of UNIX file descriptors to be sent.</doc>
+        
+        <return-value transfer-ownership="none">
+          <doc xml:space="preserve">the newly created #WebKitUserMessage object.</doc>
+          <type name="UserMessage" c:type="WebKitUserMessage*"/>
+        </return-value>
+        <parameters>
+          <parameter name="name" transfer-ownership="none">
+            <doc xml:space="preserve">the message name</doc>
+            <type name="utf8" c:type="const char*"/>
+          </parameter>
+          <parameter name="parameters" transfer-ownership="none" nullable="1" allow-none="1">
+            <doc xml:space="preserve">the message parameters as a #GVariant</doc>
+            <type name="GLib.Variant" c:type="GVariant*"/>
+          </parameter>
+          <parameter name="fd_list" transfer-ownership="none" nullable="1" allow-none="1">
+            <doc xml:space="preserve">the message file descriptors</doc>
+            <type name="Gio.UnixFDList" c:type="GUnixFDList*"/>
+          </parameter>
+        </parameters>
+      </constructor>
+      <method name="get_fd_list" c:identifier="webkit_user_message_get_fd_list" version="2.28">
+        <doc xml:space="preserve">Get the @message list of file descritpor</doc>
+        
+        <return-value transfer-ownership="none">
+          <doc xml:space="preserve">the message list of file descriptors</doc>
+          <type name="Gio.UnixFDList" c:type="GUnixFDList*"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="message" transfer-ownership="none">
+            <doc xml:space="preserve">a #WebKitUserMessage</doc>
+            <type name="UserMessage" c:type="WebKitUserMessage*"/>
+          </instance-parameter>
+        </parameters>
+      </method>
+      <method name="get_name" c:identifier="webkit_user_message_get_name" version="2.28">
+        <doc xml:space="preserve">Get the @message name</doc>
+        
+        <return-value transfer-ownership="none">
+          <doc xml:space="preserve">the message name</doc>
+          <type name="utf8" c:type="const char*"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="message" transfer-ownership="none">
+            <doc xml:space="preserve">a #WebKitUserMessage</doc>
+            <type name="UserMessage" c:type="WebKitUserMessage*"/>
+          </instance-parameter>
+        </parameters>
+      </method>
+      <method name="get_parameters" c:identifier="webkit_user_message_get_parameters" version="2.28">
+        <doc xml:space="preserve">Get the @message parameters</doc>
+        
+        <return-value transfer-ownership="none">
+          <doc xml:space="preserve">the message parameters</doc>
+          <type name="GLib.Variant" c:type="GVariant*"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="message" transfer-ownership="none">
+            <doc xml:space="preserve">a #WebKitUserMessage</doc>
+            <type name="UserMessage" c:type="WebKitUserMessage*"/>
+          </instance-parameter>
+        </parameters>
+      </method>
+      <method name="send_reply" c:identifier="webkit_user_message_send_reply" version="2.28">
+        <doc xml:space="preserve">Send a reply to @message. If @reply is floating, it's consumed.
+You can only send a reply to a #WebKitUserMessage that has been
+received.</doc>
+        
+        <return-value transfer-ownership="none">
+          <type name="none" c:type="void"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="message" transfer-ownership="none">
+            <doc xml:space="preserve">a #WebKitUserMessage</doc>
+            <type name="UserMessage" c:type="WebKitUserMessage*"/>
+          </instance-parameter>
+          <parameter name="reply" transfer-ownership="none">
+            <doc xml:space="preserve">a #WebKitUserMessage to send as reply</doc>
+            <type name="UserMessage" c:type="WebKitUserMessage*"/>
+          </parameter>
+        </parameters>
+      </method>
+      <property name="fd-list" version="2.28" writable="1" construct-only="1" transfer-ownership="none">
+        <doc xml:space="preserve">The UNIX file descriptors of the user message.</doc>
+        <type name="Gio.UnixFDList"/>
+      </property>
+      <property name="name" version="2.28" writable="1" construct-only="1" transfer-ownership="none">
+        <doc xml:space="preserve">The name of the user message.</doc>
+        <type name="utf8" c:type="gchar*"/>
+      </property>
+      <property name="parameters" version="2.28" writable="1" construct-only="1" transfer-ownership="none">
+        <doc xml:space="preserve">The parameters of the user message as a #GVariant, or %NULL
+if the message doesn't include parameters. Note that only complete types are
+allowed.</doc>
+        <type name="GLib.Variant"/>
+      </property>
+      <field name="parent">
+        <type name="GObject.InitiallyUnowned" c:type="GInitiallyUnowned"/>
+      </field>
+      <field name="priv">
+        <type name="UserMessagePrivate" c:type="WebKitUserMessagePrivate*"/>
+      </field>
+    </class>
+    <record name="UserMessageClass" c:type="WebKitUserMessageClass" glib:is-gtype-struct-for="UserMessage">
+      
+      <field name="parent_class">
+        <type name="GObject.InitiallyUnownedClass" c:type="GInitiallyUnownedClass"/>
+      </field>
+      <field name="_webkit_reserved0" introspectable="0">
+        <callback name="_webkit_reserved0">
+          
+          <return-value transfer-ownership="none">
+            <type name="none" c:type="void"/>
+          </return-value>
+        </callback>
+      </field>
+      <field name="_webkit_reserved1" introspectable="0">
+        <callback name="_webkit_reserved1">
+          
+          <return-value transfer-ownership="none">
+            <type name="none" c:type="void"/>
+          </return-value>
+        </callback>
+      </field>
+      <field name="_webkit_reserved2" introspectable="0">
+        <callback name="_webkit_reserved2">
+          
+          <return-value transfer-ownership="none">
+            <type name="none" c:type="void"/>
+          </return-value>
+        </callback>
+      </field>
+      <field name="_webkit_reserved3" introspectable="0">
+        <callback name="_webkit_reserved3">
+          
+          <return-value transfer-ownership="none">
+            <type name="none" c:type="void"/>
+          </return-value>
+        </callback>
+      </field>
+    </record>
+    <enumeration name="UserMessageError" version="2.28" glib:type-name="WebKitUserMessageError" glib:get-type="webkit_user_message_error_get_type" c:type="WebKitUserMessageError" glib:error-domain="WebKitUserMessageError">
+      <doc xml:space="preserve">Enum values used to denote errors happening when sending user messages.</doc>
+      <member name="message" value="0" c:identifier="WEBKIT_USER_MESSAGE_UNHANDLED_MESSAGE" glib:nick="message">
+        <doc xml:space="preserve">The message was not handled by the receiver.</doc>
+      </member>
+      <function name="quark" c:identifier="webkit_user_message_error_quark">
+        <return-value transfer-ownership="none">
+          <type name="GLib.Quark" c:type="GQuark"/>
+        </return-value>
+      </function>
+    </enumeration>
+    <record name="UserMessagePrivate" c:type="WebKitUserMessagePrivate" disguised="1">
+      
+    </record>
     <record name="UserScript" c:type="WebKitUserScript" glib:type-name="WebKitUserScript" glib:get-type="webkit_user_script_get_type" c:symbol-prefix="user_script">
       
       <constructor name="new" c:identifier="webkit_user_script_new" version="2.6">
@@ -12510,6 +13835,20 @@ This is normally used to implement private instances.</doc>
           <instance-parameter name="context" transfer-ownership="none">
             <type name="WebContext" c:type="WebKitWebContext*"/>
           </instance-parameter>
+        </parameters>
+      </virtual-method>
+      <virtual-method name="user_message_received">
+        
+        <return-value transfer-ownership="none">
+          <type name="gboolean" c:type="gboolean"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="context" transfer-ownership="none">
+            <type name="WebContext" c:type="WebKitWebContext*"/>
+          </instance-parameter>
+          <parameter name="message" transfer-ownership="none">
+            <type name="UserMessage" c:type="WebKitUserMessage*"/>
+          </parameter>
         </parameters>
       </virtual-method>
       <method name="add_path_to_sandbox" c:identifier="webkit_web_context_add_path_to_sandbox" version="2.26">
@@ -13007,6 +14346,24 @@ about_uri_scheme_request_cb (WebKitURISchemeRequest *request,
           </parameter>
         </parameters>
       </method>
+      <method name="send_message_to_all_extensions" c:identifier="webkit_web_context_send_message_to_all_extensions" version="2.28">
+        <doc xml:space="preserve">Send @message to all #WebKitWebExtension&lt;!-- --&gt;s associated to @context.
+If @message is floating, it's consumed.</doc>
+        
+        <return-value transfer-ownership="none">
+          <type name="none" c:type="void"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="context" transfer-ownership="none">
+            <doc xml:space="preserve">the #WebKitWebContext</doc>
+            <type name="WebContext" c:type="WebKitWebContext*"/>
+          </instance-parameter>
+          <parameter name="message" transfer-ownership="none">
+            <doc xml:space="preserve">a #WebKitUserMessage</doc>
+            <type name="UserMessage" c:type="WebKitUserMessage*"/>
+          </parameter>
+        </parameters>
+      </method>
       <method name="set_additional_plugins_directory" c:identifier="webkit_web_context_set_additional_plugins_directory">
         <doc xml:space="preserve">Set an additional directory where WebKit will look for plugins.</doc>
         
@@ -13368,6 +14725,16 @@ This function is now deprecated and does nothing for security reasons.</doc>
         <doc-deprecated xml:space="preserve">Use #WebKitWebsiteDataManager:local-storage-directory instead.</doc-deprecated>
         <type name="utf8" c:type="gchar*"/>
       </property>
+      <property name="process-swap-on-cross-site-navigation-enabled" version="2.28" writable="1" construct-only="1" transfer-ownership="none">
+        <doc xml:space="preserve">Whether swap Web processes on cross-site navigations is enabled.
+
+When enabled, pages from each security origin will be handled by
+their own separate Web processes, which are started (and
+terminated) on demand as the user navigates across different
+domains. This is an important security measure which helps prevent
+websites stealing data from other visited pages.</doc>
+        <type name="gboolean" c:type="gboolean"/>
+      </property>
       <property name="website-data-manager" version="2.10" writable="1" construct-only="1" transfer-ownership="none">
         <doc xml:space="preserve">The #WebKitWebsiteDataManager associated with this context.</doc>
         <type name="WebsiteDataManager"/>
@@ -13425,6 +14792,24 @@ and webkit_web_context_set_web_extensions_directory().</doc>
         <return-value transfer-ownership="none">
           <type name="none" c:type="void"/>
         </return-value>
+      </glib:signal>
+      <glib:signal name="user-message-received" when="last" version="2.28">
+        <doc xml:space="preserve">This signal is emitted when a #WebKitUserMessage is received from a
+#WebKitWebExtension. You can reply to the message using
+webkit_user_message_send_reply().
+
+You can handle the user message asynchronously by calling g_object_ref() on
+@message and returning %TRUE.</doc>
+        <return-value transfer-ownership="none">
+          <doc xml:space="preserve">%TRUE if the message was handled, or %FALSE otherwise.</doc>
+          <type name="gboolean" c:type="gboolean"/>
+        </return-value>
+        <parameters>
+          <parameter name="message" transfer-ownership="none">
+            <doc xml:space="preserve">the #WebKitUserMessage received</doc>
+            <type name="UserMessage"/>
+          </parameter>
+        </parameters>
       </glib:signal>
     </class>
     <record name="WebContextClass" c:type="WebKitWebContextClass" glib:is-gtype-struct-for="WebContext">
@@ -13490,6 +14875,22 @@ and webkit_web_context_set_web_extensions_directory().</doc>
           </parameters>
         </callback>
       </field>
+      <field name="user_message_received">
+        <callback name="user_message_received">
+          
+          <return-value transfer-ownership="none">
+            <type name="gboolean" c:type="gboolean"/>
+          </return-value>
+          <parameters>
+            <parameter name="context" transfer-ownership="none">
+              <type name="WebContext" c:type="WebKitWebContext*"/>
+            </parameter>
+            <parameter name="message" transfer-ownership="none">
+              <type name="UserMessage" c:type="WebKitUserMessage*"/>
+            </parameter>
+          </parameters>
+        </callback>
+      </field>
       <field name="_webkit_reserved0" introspectable="0">
         <callback name="_webkit_reserved0">
           
@@ -13508,14 +14909,6 @@ and webkit_web_context_set_web_extensions_directory().</doc>
       </field>
       <field name="_webkit_reserved2" introspectable="0">
         <callback name="_webkit_reserved2">
-          
-          <return-value transfer-ownership="none">
-            <type name="none" c:type="void"/>
-          </return-value>
-        </callback>
-      </field>
-      <field name="_webkit_reserved3" introspectable="0">
-        <callback name="_webkit_reserved3">
           
           <return-value transfer-ownership="none">
             <type name="none" c:type="void"/>
@@ -14483,6 +15876,20 @@ in the view by the user content manager.</doc>
           </parameter>
         </parameters>
       </virtual-method>
+      <virtual-method name="user_message_received">
+        
+        <return-value transfer-ownership="none">
+          <type name="gboolean" c:type="gboolean"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="web_view" transfer-ownership="none">
+            <type name="WebView" c:type="WebKitWebView*"/>
+          </instance-parameter>
+          <parameter name="message" transfer-ownership="none">
+            <type name="UserMessage" c:type="WebKitUserMessage*"/>
+          </parameter>
+        </parameters>
+      </virtual-method>
       <virtual-method name="web_process_crashed">
         
         <return-value transfer-ownership="none">
@@ -14665,6 +16072,20 @@ it's possible to execute the command.</doc>
           </parameter>
         </parameters>
       </method>
+      <method name="get_automation_presentation_type" c:identifier="webkit_web_view_get_automation_presentation_type" version="2.28">
+        <doc xml:space="preserve">Get the presentation type of #WebKitWebView when created for automation.</doc>
+        
+        <return-value transfer-ownership="none">
+          <doc xml:space="preserve">a #WebKitAutomationBrowsingContextPresentation.</doc>
+          <type name="AutomationBrowsingContextPresentation" c:type="WebKitAutomationBrowsingContextPresentation"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="web_view" transfer-ownership="none">
+            <doc xml:space="preserve">a #WebKitWebView</doc>
+            <type name="WebView" c:type="WebKitWebView*"/>
+          </instance-parameter>
+        </parameters>
+      </method>
       <method name="get_back_forward_list" c:identifier="webkit_web_view_get_back_forward_list">
         <doc xml:space="preserve">Obtains the #WebKitBackForwardList associated with the given #WebKitWebView. The
 #WebKitBackForwardList is owned by the #WebKitWebView.</doc>
@@ -14792,6 +16213,20 @@ this particular #WebKitWebView.</doc>
           </instance-parameter>
         </parameters>
       </method>
+      <method name="get_input_method_context" c:identifier="webkit_web_view_get_input_method_context" version="2.28">
+        <doc xml:space="preserve">Get the #WebKitInputMethodContext currently in use by @web_view, or %NULL if no input method is being used.</doc>
+        
+        <return-value transfer-ownership="none" nullable="1">
+          <doc xml:space="preserve">a #WebKitInputMethodContext, or %NULL</doc>
+          <type name="InputMethodContext" c:type="WebKitInputMethodContext*"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="web_view" transfer-ownership="none">
+            <doc xml:space="preserve">a #WebKitWebView</doc>
+            <type name="WebView" c:type="WebKitWebView*"/>
+          </instance-parameter>
+        </parameters>
+      </method>
       <method name="get_inspector" c:identifier="webkit_web_view_get_inspector">
         <doc xml:space="preserve">Get the #WebKitWebInspector associated to @web_view</doc>
         
@@ -14814,7 +16249,7 @@ result values of scripts executed with webkit_web_view_run_javascript().</doc>
         <return-value>
           <doc xml:space="preserve">the &lt;function&gt;JSGlobalContextRef&lt;/function&gt; used by @web_view to deserialize
    the result values of scripts.</doc>
-          <type c:type="JSGlobalContextRef" name="JavaScriptCore.GlobalContextRef"/>
+          <type c:type="JSGlobalContextRef"/>
         </return-value>
         <parameters>
           <instance-parameter name="web_view" transfer-ownership="none">
@@ -15773,6 +17208,57 @@ operation.</doc>
           </parameter>
         </parameters>
       </method>
+      <method name="send_message_to_page" c:identifier="webkit_web_view_send_message_to_page" version="2.28">
+        <doc xml:space="preserve">Send @message to the #WebKitWebPage corresponding to @web_view. If @message is floating, it's consumed.
+
+If you don't expect any reply, or you simply want to ignore it, you can pass %NULL as @callback.
+When the operation is finished, @callback will be called. You can then call
+webkit_web_view_send_message_to_page_finish() to get the message reply.</doc>
+        
+        <return-value transfer-ownership="none">
+          <type name="none" c:type="void"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="web_view" transfer-ownership="none">
+            <doc xml:space="preserve">a #WebKitWebView</doc>
+            <type name="WebView" c:type="WebKitWebView*"/>
+          </instance-parameter>
+          <parameter name="message" transfer-ownership="none">
+            <doc xml:space="preserve">a #WebKitUserMessage</doc>
+            <type name="UserMessage" c:type="WebKitUserMessage*"/>
+          </parameter>
+          <parameter name="cancellable" transfer-ownership="none" nullable="1" allow-none="1">
+            <doc xml:space="preserve">a #GCancellable or %NULL to ignore</doc>
+            <type name="Gio.Cancellable" c:type="GCancellable*"/>
+          </parameter>
+          <parameter name="callback" transfer-ownership="none" nullable="1" allow-none="1" scope="async" closure="3">
+            <doc xml:space="preserve">(nullable): A #GAsyncReadyCallback to call when the request is satisfied or %NULL</doc>
+            <type name="Gio.AsyncReadyCallback" c:type="GAsyncReadyCallback"/>
+          </parameter>
+          <parameter name="user_data" transfer-ownership="none" nullable="1" allow-none="1">
+            <doc xml:space="preserve">the data to pass to callback function</doc>
+            <type name="gpointer" c:type="gpointer"/>
+          </parameter>
+        </parameters>
+      </method>
+      <method name="send_message_to_page_finish" c:identifier="webkit_web_view_send_message_to_page_finish" version="2.28" throws="1">
+        <doc xml:space="preserve">Finish an asynchronous operation started with webkit_web_view_send_message_to_page().</doc>
+        
+        <return-value transfer-ownership="full">
+          <doc xml:space="preserve">a #WebKitUserMessage with the reply or %NULL in case of error.</doc>
+          <type name="UserMessage" c:type="WebKitUserMessage*"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="web_view" transfer-ownership="none">
+            <doc xml:space="preserve">a #WebKitWebView</doc>
+            <type name="WebView" c:type="WebKitWebView*"/>
+          </instance-parameter>
+          <parameter name="result" transfer-ownership="none">
+            <doc xml:space="preserve">a #GAsyncResult</doc>
+            <type name="Gio.AsyncResult" c:type="GAsyncResult*"/>
+          </parameter>
+        </parameters>
+      </method>
       <method name="set_background_color" c:identifier="webkit_web_view_set_background_color" version="2.8">
         <doc xml:space="preserve">Sets the color that will be used to draw the @web_view background before
 the actual contents are rendered. Note that if the web page loaded in @web_view
@@ -15861,6 +17347,24 @@ of a #WebKitWebView editable without altering the document or DOM structure.</do
           </parameter>
         </parameters>
       </method>
+      <method name="set_input_method_context" c:identifier="webkit_web_view_set_input_method_context" version="2.28">
+        <doc xml:space="preserve">Set the #WebKitInputMethodContext to be used by @web_view, or %NULL to not use any input method.
+Note that the same #WebKitInputMethodContext can't be set on more than one #WebKitWebView at the same time.</doc>
+        
+        <return-value transfer-ownership="none">
+          <type name="none" c:type="void"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="web_view" transfer-ownership="none">
+            <doc xml:space="preserve">a #WebKitWebView</doc>
+            <type name="WebView" c:type="WebKitWebView*"/>
+          </instance-parameter>
+          <parameter name="context" transfer-ownership="none" nullable="1" allow-none="1">
+            <doc xml:space="preserve">the #WebKitInputMethodContext to set, or %NULL</doc>
+            <type name="InputMethodContext" c:type="WebKitInputMethodContext*"/>
+          </parameter>
+        </parameters>
+      </method>
       <method name="set_settings" c:identifier="webkit_web_view_set_settings">
         <doc xml:space="preserve">Sets the #WebKitSettings to be applied to @web_view. The
 existing #WebKitSettings of @web_view will be replaced by
@@ -15933,6 +17437,13 @@ the #WebKitWebView::close signal is emitted, otherwise nothing happens.</doc>
           </instance-parameter>
         </parameters>
       </method>
+      <property name="automation-presentation-type" version="2.28" writable="1" construct-only="1" transfer-ownership="none">
+        <doc xml:space="preserve">The #WebKitAutomationBrowsingContextPresentation of #WebKitWebView. This should only be used when
+creating a new #WebKitWebView as a response to #WebKitAutomationSession::create-web-view
+signal request. If the new WebView was added to a new tab of current browsing context window
+%WEBKIT_AUTOMATION_BROWSING_CONTEXT_PRESENTATION_TAB should be used.</doc>
+        <type name="AutomationBrowsingContextPresentation"/>
+      </property>
       <property name="editable" version="2.8" writable="1" transfer-ownership="none">
         <doc xml:space="preserve">Whether the pages loaded inside #WebKitWebView are editable. For more
 information see webkit_web_view_set_editable().</doc>
@@ -15984,6 +17495,10 @@ This property becomes %TRUE as soon as web content starts playing any
 kind of audio. When a page is no longer playing any kind of sound,
 the property is set back to %FALSE.</doc>
         <type name="gboolean" c:type="gboolean"/>
+      </property>
+      <property name="page-id" version="2.28" transfer-ownership="none">
+        <doc xml:space="preserve">The identifier of the #WebKitWebPage corresponding to the #WebKitWebView.</doc>
+        <type name="guint64" c:type="guint64"/>
       </property>
       <property name="related-view" version="2.4" readable="0" writable="1" construct-only="1" transfer-ownership="none">
         <doc xml:space="preserve">The related #WebKitWebView used when creating the view to share the
@@ -16144,10 +17659,8 @@ newly created #WebKitWebView.
 The #WebKitNavigationAction parameter contains information about the
 navigation action that triggered this signal.
 
-When using %WEBKIT_PROCESS_MODEL_MULTIPLE_SECONDARY_PROCESSES
-process model, the new #WebKitWebView should be related to
-@web_view to share the same web process, see webkit_web_view_new_with_related_view()
-for more details.
+The new #WebKitWebView must be related to @web_view, see
+webkit_web_view_new_with_related_view() for more details.
 
 The new #WebKitWebView should not be displayed to the user
 until the #WebKitWebView::ready-to-show signal is emitted.</doc>
@@ -16636,32 +18149,26 @@ support for it.</doc>
           </parameter>
         </parameters>
       </glib:signal>
-      <glib:signal name="show-option-menu" when="last" version="2.18">
+      <glib:signal name="show-option-menu" when="last" version="2.28">
         <doc xml:space="preserve">This signal is emitted when a select element in @web_view needs to display a
 dropdown menu. This signal can be used to show a custom menu, using @menu to get
 the details of all items that should be displayed. The area of the element in the
 #WebKitWebView is given as @rectangle parameter, it can be used to position the
-menu. If this was triggered by a user interaction, like a mouse click,
-@event parameter provides the #GdkEvent.
-To handle this signal asynchronously you should keep a ref of the @menu.
-
-The default signal handler will pop up a #GtkMenu.</doc>
+menu.
+To handle this signal asynchronously you should keep a ref of the @menu.</doc>
         <return-value transfer-ownership="none">
           <doc xml:space="preserve">%TRUE to stop other handlers from being invoked for the event.
   %FALSE to propagate the event further.</doc>
           <type name="gboolean" c:type="gboolean"/>
         </return-value>
         <parameters>
-          <parameter name="menu" transfer-ownership="none">
-            <doc xml:space="preserve">the #WebKitOptionMenu</doc>
+          <parameter name="object" transfer-ownership="none">
             <type name="OptionMenu"/>
           </parameter>
-          <parameter name="event" transfer-ownership="none">
-            <doc xml:space="preserve">the #GdkEvent that triggered the menu, or %NULL</doc>
+          <parameter name="p0" transfer-ownership="none">
             <type name="Gdk.Event"/>
           </parameter>
-          <parameter name="rectangle" transfer-ownership="none">
-            <doc xml:space="preserve">the option element area</doc>
+          <parameter name="p1" transfer-ownership="none">
             <type name="Gdk.Rectangle"/>
           </parameter>
         </parameters>
@@ -16685,6 +18192,26 @@ form has not been submitted, webkit_form_submission_request_submit() will be cal
           <parameter name="request" transfer-ownership="none">
             <doc xml:space="preserve">a #WebKitFormSubmissionRequest</doc>
             <type name="FormSubmissionRequest"/>
+          </parameter>
+        </parameters>
+      </glib:signal>
+      <glib:signal name="user-message-received" when="last" version="2.28">
+        <doc xml:space="preserve">This signal is emitted when a #WebKitUserMessage is received from the
+#WebKitWebPage corresponding to @web_view. You can reply to the message
+using webkit_user_message_send_reply().
+
+You can handle the user message asynchronously by calling g_object_ref() on
+@message and returning %TRUE. If the last reference of @message is removed
+and the message has not been replied to, the operation in the #WebKitWebPage will
+finish with error %WEBKIT_USER_MESSAGE_UNHANDLED_MESSAGE.</doc>
+        <return-value transfer-ownership="none">
+          <doc xml:space="preserve">%TRUE if the message was handled, or %FALSE otherwise.</doc>
+          <type name="gboolean" c:type="gboolean"/>
+        </return-value>
+        <parameters>
+          <parameter name="message" transfer-ownership="none">
+            <doc xml:space="preserve">the #WebKitUserMessage received</doc>
+            <type name="UserMessage"/>
           </parameter>
         </parameters>
       </glib:signal>
@@ -17193,16 +18720,24 @@ to @reason.</doc>
           </parameters>
         </callback>
       </field>
-      <field name="_webkit_reserved0" introspectable="0">
-        <callback name="_webkit_reserved0">
+      <field name="user_message_received">
+        <callback name="user_message_received">
           
           <return-value transfer-ownership="none">
-            <type name="none" c:type="void"/>
+            <type name="gboolean" c:type="gboolean"/>
           </return-value>
+          <parameters>
+            <parameter name="web_view" transfer-ownership="none">
+              <type name="WebView" c:type="WebKitWebView*"/>
+            </parameter>
+            <parameter name="message" transfer-ownership="none">
+              <type name="UserMessage" c:type="WebKitUserMessage*"/>
+            </parameter>
+          </parameters>
         </callback>
       </field>
-      <field name="_webkit_reserved1" introspectable="0">
-        <callback name="_webkit_reserved1">
+      <field name="_webkit_reserved0" introspectable="0">
+        <callback name="_webkit_reserved0">
           
           <return-value transfer-ownership="none">
             <type name="none" c:type="void"/>
@@ -18150,6 +19685,11 @@ URI may be in Punycode if the safety check fails.</doc>
           <type name="UserMediaPermissionRequest" c:type="WebKitUserMediaPermissionRequest*"/>
         </parameter>
       </parameters>
+    </function>
+    <function name="user_message_error_quark" c:identifier="webkit_user_message_error_quark" moved-to="UserMessageError.quark">
+      <return-value transfer-ownership="none">
+        <type name="GLib.Quark" c:type="GQuark"/>
+      </return-value>
     </function>
   </namespace>
 </repository>
