@@ -334,7 +334,10 @@ to it.</doc>
       </property>
       <property name="source-property" version="2.26" writable="1" construct-only="1" transfer-ownership="none">
         <doc xml:space="preserve">The name of the property of #GBinding:source that should be used
-as the source of the binding</doc>
+as the source of the binding.
+
+This should be in [canonical form][canonical-parameter-names] to get the
+best performance.</doc>
         <type name="utf8" c:type="gchar*"/>
       </property>
       <property name="target" version="2.26" writable="1" construct-only="1" transfer-ownership="none">
@@ -343,7 +346,10 @@ as the source of the binding</doc>
       </property>
       <property name="target-property" version="2.26" writable="1" construct-only="1" transfer-ownership="none">
         <doc xml:space="preserve">The name of the property of #GBinding:target that should be used
-as the target of the binding</doc>
+as the target of the binding.
+
+This should be in [canonical form][canonical-parameter-names] to get the
+best performance.</doc>
         <type name="utf8" c:type="gchar*"/>
       </property>
     </class>
@@ -4739,7 +4745,21 @@ to the #GObject implementation and should never be accessed directly.</doc>
         <doc xml:space="preserve">Creates a new instance of a #GObject subtype and sets its properties.
 
 Construction parameters (see #G_PARAM_CONSTRUCT, #G_PARAM_CONSTRUCT_ONLY)
-which are not explicitly specified are set to their default values.</doc>
+which are not explicitly specified are set to their default values.
+
+Note that in C, small integer types in variable argument lists are promoted
+up to #gint or #guint as appropriate, and read back accordingly. #gint is 32
+bits on every platform on which GLib is currently supported. This means that
+you can use C expressions of type #gint with g_object_new() and properties of
+type #gint or #guint or smaller. Specifically, you can use integer literals
+with these property types.
+
+When using property types of #gint64 or #guint64, you must ensure that the
+value that you provide is 64 bit. This means that you should use a cast or
+make use of the %G_GINT64_CONSTANT or %G_GUINT64_CONSTANT macros.
+
+Similarly, #gfloat is promoted to #gdouble, so you must ensure that the value
+you provide is a #gdouble, even for a property of type #gfloat.</doc>
         
         <return-value transfer-ownership="full">
           <doc xml:space="preserve">a new instance of
@@ -5328,7 +5348,7 @@ function pointers.</doc>
 
 The signal specs expected by this function have the form
 "modifier::signal_name", where modifier can be one of the following:
-* - signal: equivalent to g_signal_connect_data (..., NULL, 0)
+- signal: equivalent to g_signal_connect_data (..., NULL, 0)
 - object-signal, object_signal: equivalent to g_signal_connect_object (..., 0)
 - swapped-signal, swapped_signal: equivalent to g_signal_connect_data (..., NULL, G_CONNECT_SWAPPED)
 - swapped_object_signal, swapped-object-signal: equivalent to g_signal_connect_object (..., G_CONNECT_SWAPPED)
@@ -5529,20 +5549,22 @@ Here is an example of using g_object_get() to get the contents
 of three properties: an integer, a string and an object:
 |[&lt;!-- language="C" --&gt;
  gint intval;
+ guint64 uint64val;
  gchar *strval;
  GObject *objval;
 
  g_object_get (my_object,
                "int-property", &amp;intval,
+               "uint64-property", &amp;uint64val,
                "str-property", &amp;strval,
                "obj-property", &amp;objval,
                NULL);
 
- // Do something with intval, strval, objval
+ // Do something with intval, uint64val, strval, objval
 
  g_free (strval);
  g_object_unref (objval);
- ]|</doc>
+]|</doc>
         
         <return-value transfer-ownership="none">
           <type name="none" c:type="void"/>
@@ -5993,6 +6015,11 @@ This function should only be called from object system implementations.</doc>
       </method>
       <method name="set" c:identifier="g_object_set" introspectable="0">
         <doc xml:space="preserve">Sets properties on an object.
+
+The same caveats about passing integer literals as varargs apply as with
+g_object_new(). In particular, any integer literals set as the values for
+properties of type #gint64 or #guint64 must be 64 bits wide, using the
+%G_GINT64_CONSTANT or %G_GUINT64_CONSTANT macros.
 
 Note that the "notify" signals are queued and only emitted (in
 reverse order) after all properties have been set. See
@@ -7299,24 +7326,21 @@ required to specify parameters, such as e.g. #GObject properties.
 
 ## Parameter names # {#canonical-parameter-names}
 
-Parameter names need to start with a letter (a-z or A-Z).
-Subsequent characters can be letters, numbers or a '-'.
-All other characters are replaced by a '-' during construction.
-The result of this replacement is called the canonical name of
-the parameter.</doc>
+A property name consists of segments consisting of ASCII letters and
+digits, separated by either the `-` or `_` character. The first
+character of a property name must be a letter. These are the same rules as
+for signal naming (see g_signal_new()).
+
+When creating and looking up a #GParamSpec, either separator can be
+used, but they cannot be mixed. Using `-` is considerably more
+efficient, and is the &#x2018;canonical form&#x2019;. Using `_` is discouraged.</doc>
       
       <function name="internal" c:identifier="g_param_spec_internal" introspectable="0">
         <doc xml:space="preserve">Creates a new #GParamSpec instance.
 
-A property name consists of segments consisting of ASCII letters and
-digits, separated by either the '-' or '_' character. The first
-character of a property name must be a letter. Names which violate these
-rules lead to undefined behaviour.
-
-When creating and looking up a #GParamSpec, either separator can be
-used, but they cannot be mixed. Using '-' is considerably more
-efficient and in fact required when using property names as detail
-strings for signals.
+See [canonical parameter names][canonical-parameter-names] for details of
+the rules for @name. Names which violate these rules lead to undefined
+behaviour.
 
 Beyond the name, #GParamSpecs have two more descriptive
 strings associated with them, the @nick, which should be suitable
@@ -8566,7 +8590,7 @@ match signals by.</doc>
         <doc xml:space="preserve">The signal id must be equal.</doc>
       </member>
       <member name="detail" value="2" c:identifier="G_SIGNAL_MATCH_DETAIL">
-        <doc xml:space="preserve">The signal detail be equal.</doc>
+        <doc xml:space="preserve">The signal detail must be equal.</doc>
       </member>
       <member name="closure" value="4" c:identifier="G_SIGNAL_MATCH_CLOSURE">
         <doc xml:space="preserve">The closure must be the same.</doc>
@@ -8578,7 +8602,7 @@ match signals by.</doc>
         <doc xml:space="preserve">The closure data must be the same.</doc>
       </member>
       <member name="unblocked" value="32" c:identifier="G_SIGNAL_MATCH_UNBLOCKED">
-        <doc xml:space="preserve">Only unblocked signals may matched.</doc>
+        <doc xml:space="preserve">Only unblocked signals may be matched.</doc>
       </member>
     </bitfield>
     <record name="SignalQuery" c:type="GSignalQuery">
@@ -14591,7 +14615,7 @@ without modifications</doc>
         </parameter>
         <parameter name="value" transfer-ownership="none">
           <doc xml:space="preserve">a #GValue of correct type for @pspec</doc>
-          <type name="Value" c:type="GValue*"/>
+          <type name="Value" c:type="const GValue*"/>
         </parameter>
       </parameters>
     </function>
@@ -14607,7 +14631,8 @@ without modifications</doc>
           <type name="ParamSpec" c:type="GParamSpec*"/>
         </parameter>
         <parameter name="value" transfer-ownership="none">
-          <doc xml:space="preserve">a #GValue of correct type for @pspec</doc>
+          <doc xml:space="preserve">a #GValue of correct type for @pspec; since 2.64, you
+  can also pass an empty #GValue, initialized with %G_VALUE_INIT</doc>
           <type name="Value" c:type="GValue*"/>
         </parameter>
       </parameters>
@@ -15664,6 +15689,10 @@ somewhat faster than using the name each time.
 
 Also tries the ancestors of the given type.
 
+The type class passed as @itype must already have been instantiated (for
+example, using g_type_class_ref()) for this function to work, as signals are
+always installed during class initialization.
+
 See g_signal_new() for details on allowed signal names.</doc>
       
       <return-value transfer-ownership="none">
@@ -15701,12 +15730,14 @@ Two different signals may have the same name, if they have differing types.</doc
       <doc xml:space="preserve">Creates a new signal. (This is usually done in the class initializer.)
 
 A signal name consists of segments consisting of ASCII letters and
-digits, separated by either the '-' or '_' character. The first
+digits, separated by either the `-` or `_` character. The first
 character of a signal name must be a letter. Names which violate these
-rules lead to undefined behaviour of the GSignal system.
+rules lead to undefined behaviour. These are the same rules as for property
+naming (see g_param_spec_internal()).
 
 When registering a signal and looking up a signal, either separator can
-be used, but they cannot be mixed.
+be used, but they cannot be mixed. Using `-` is considerably more efficient.
+Using `_` is discouraged.
 
 If 0 is used for @class_offset subclasses cannot override the class handler
 in their class_init method by doing super_class-&gt;signal_handler = my_signal_handler.
@@ -16293,7 +16324,7 @@ G_TYPE_CLASS_GET_PRIVATE() macro.</doc>
       </return-value>
       <parameters>
         <parameter name="class_type" transfer-ownership="none">
-          <doc xml:space="preserve">GType of an classed type</doc>
+          <doc xml:space="preserve">GType of a classed type</doc>
           <type name="GType" c:type="GType"/>
         </parameter>
         <parameter name="private_size" transfer-ownership="none">
@@ -16343,7 +16374,7 @@ interfaces.</doc>
       </parameters>
     </function>
     <function name="type_add_interface_dynamic" c:identifier="g_type_add_interface_dynamic">
-      <doc xml:space="preserve">Adds the dynamic @interface_type to @instantiable_type. The information
+      <doc xml:space="preserve">Adds @interface_type to the dynamic @instantiable_type. The information
 contained in the #GTypePlugin structure pointed to by @plugin
 is used to manage the relationship.</doc>
       
@@ -16366,7 +16397,7 @@ is used to manage the relationship.</doc>
       </parameters>
     </function>
     <function name="type_add_interface_static" c:identifier="g_type_add_interface_static">
-      <doc xml:space="preserve">Adds the static @interface_type to @instantiable_type.
+      <doc xml:space="preserve">Adds @interface_type to the static @instantiable_type.
 The information contained in the #GInterfaceInfo structure
 pointed to by @info is used to manage the relationship.</doc>
       
@@ -16686,7 +16717,7 @@ vtable (the @class_finalize member of #GTypeInfo) will be called.</doc>
       <parameters>
         <parameter name="g_iface" transfer-ownership="none">
           <doc xml:space="preserve">the default vtable
-    structure for a interface, as returned by g_type_default_interface_ref()</doc>
+    structure for an interface, as returned by g_type_default_interface_ref()</doc>
           <type name="TypeInterface" c:type="gpointer"/>
         </parameter>
       </parameters>

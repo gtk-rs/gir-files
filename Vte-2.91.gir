@@ -141,13 +141,13 @@ should be copied to the clipboard in.</doc>
       
       <type name="gint" c:type="gint"/>
     </constant>
-    <constant name="MICRO_VERSION" value="2" c:type="VTE_MICRO_VERSION">
+    <constant name="MICRO_VERSION" value="1" c:type="VTE_MICRO_VERSION">
       <doc xml:space="preserve">The micro version number of the VTE library
 (e.g. in version 3.1.4 this is 4).</doc>
       
       <type name="gint" c:type="gint"/>
     </constant>
-    <constant name="MINOR_VERSION" value="58" c:type="VTE_MINOR_VERSION">
+    <constant name="MINOR_VERSION" value="60" c:type="VTE_MINOR_VERSION">
       <doc xml:space="preserve">The minor version number of the VTE library
 (e.g. in version 3.1.4 this is 1).</doc>
       
@@ -216,7 +216,13 @@ When using vte_terminal_spawn_sync() with a custom child setup
 function, vte_pty_child_setup() will be called before the supplied
 function; you must not call it again.
 
-Also, you MUST pass the %G_SPAWN_DO_NOT_REAP_CHILD flag.</doc>
+Also, you MUST pass the %G_SPAWN_DO_NOT_REAP_CHILD flag.
+
+Note that you should set the PTY's size using vte_pty_set_size() before
+spawning the child process, so that the child process has the correct
+size from the start instead of starting with a default size and then
+shortly afterwards receiving a SIGWINCH signal. You should prefer
+using vte_terminal_pty_new_sync() which does this automatically.</doc>
         
         <return-value transfer-ownership="full">
           <doc xml:space="preserve">a new #VtePty, or %NULL on error with @error filled in</doc>
@@ -263,7 +269,7 @@ Also, you MUST pass the %G_SPAWN_DO_NOT_REAP_CHILD flag.</doc>
         
         <return-value transfer-ownership="none">
           <doc xml:space="preserve">the file descriptor of the PTY master in @pty. The
-  file descriptor belongs to @pty and must not be closed of have
+  file descriptor belongs to @pty and must not be closed or have
   its flags changed</doc>
           <type name="gint" c:type="int"/>
         </return-value>
@@ -356,6 +362,14 @@ Note that all open file descriptors will be closed in the child. If you want
 to keep some file descriptor open for use in the child process, you need to
 use a child setup function that unsets the FD_CLOEXEC flag on that file
 descriptor.
+
+Beginning with 0.60, and on linux only, and unless %VTE_SPAWN_NO_SYSTEMD_SCOPE is
+passed in @spawn_flags, the newly created child process will be moved to its own
+systemd user scope; and if %VTE_SPAWN_REQUIRE_SYSTEMD_SCOPE is passed, and creation
+of the systemd user scope fails, the whole spawn will fail.
+You can override the options used for the systemd user scope by
+providing a systemd override file for 'vte-spawn-.scope' unit. See man:systemd.unit(5)
+for further information.
 
 See vte_pty_new(), g_spawn_async() and vte_terminal_watch_child() for more information.</doc>
         
@@ -609,6 +623,32 @@ any PCRE2 error values may occur.</doc>
       </function>
     </enumeration>
     <constant name="SPAWN_NO_PARENT_ENVV" value="33554432" c:type="VTE_SPAWN_NO_PARENT_ENVV">
+      <doc xml:space="preserve">Use this as a spawn flag (together with flags from #GSpawnFlags) in
+vte_pty_spawn_async().
+
+Normally, the spawned process inherits the environment from the parent
+process; when this flag is used, only the environment variables passed
+to vte_pty_spawn_async() etc. are passed to the child process.</doc>
+      
+      <type name="gint" c:type="gint"/>
+    </constant>
+    <constant name="SPAWN_NO_SYSTEMD_SCOPE" value="67108864" c:type="VTE_SPAWN_NO_SYSTEMD_SCOPE" version="0.60">
+      <doc xml:space="preserve">Use this as a spawn flag (together with flags from #GSpawnFlags) in
+vte_pty_spawn_async().
+
+Prevents vte_pty_spawn_async() etc. from moving the newly created child
+process to a systemd user scope.</doc>
+      
+      <type name="gint" c:type="gint"/>
+    </constant>
+    <constant name="SPAWN_REQUIRE_SYSTEMD_SCOPE" value="134217728" c:type="VTE_SPAWN_REQUIRE_SYSTEMD_SCOPE" version="0.60">
+      <doc xml:space="preserve">Use this as a spawn flag (together with flags from #GSpawnFlags) in
+vte_pty_spawn_async().
+
+Requires vte_pty_spawn_async() etc. to move the newly created child
+process to a systemd user scope; if that fails, the whole spawn fails.
+
+This is supported on Linux only.</doc>
       
       <type name="gint" c:type="gint"/>
     </constant>
@@ -1164,9 +1204,7 @@ text is stored in @matches at the position of the regex in @regexes; otherwise
         </parameters>
       </method>
       <method name="feed" c:identifier="vte_terminal_feed">
-        <doc xml:space="preserve">Interprets @data as if it were data received from a child process.  This
-can either be used to drive the terminal without a child process, or just
-to mess with your users.</doc>
+        <doc xml:space="preserve">Interprets @data as if it were data received from a child process.</doc>
         
         <return-value transfer-ownership="none">
           <type name="none" c:type="void"/>
@@ -1203,7 +1241,7 @@ at the keyboard.</doc>
           <parameter name="text" transfer-ownership="none" nullable="1" allow-none="1">
             <doc xml:space="preserve">data to send to the child</doc>
             <array length="1" zero-terminated="0" c:type="const char*">
-              <type name="gchar"/>
+              <type name="guint8"/>
             </array>
           </parameter>
           <parameter name="length" transfer-ownership="none">
@@ -1212,8 +1250,10 @@ at the keyboard.</doc>
           </parameter>
         </parameters>
       </method>
-      <method name="feed_child_binary" c:identifier="vte_terminal_feed_child_binary">
+      <method name="feed_child_binary" c:identifier="vte_terminal_feed_child_binary" deprecated="1" deprecated-version="0.60">
         <doc xml:space="preserve">Sends a block of binary data to the child.</doc>
+        <doc-deprecated xml:space="preserve">Don't send binary data. Use vte_terminal_feed_child() instead to send
+  UTF-8 text</doc-deprecated>
         
         <return-value transfer-ownership="none">
           <type name="none" c:type="void"/>
@@ -1235,10 +1275,10 @@ at the keyboard.</doc>
           </parameter>
         </parameters>
       </method>
-      <method name="get_allow_bold" c:identifier="vte_terminal_get_allow_bold">
+      <method name="get_allow_bold" c:identifier="vte_terminal_get_allow_bold" deprecated="1" deprecated-version="0.60">
         <doc xml:space="preserve">Checks whether or not the terminal will attempt to draw bold text,
-either by using a bold font variant or by repainting text with a different
-offset.</doc>
+by using a bold font variant.</doc>
+        <doc-deprecated xml:space="preserve">There's probably no reason for this feature to exist.</doc-deprecated>
         
         <return-value transfer-ownership="none">
           <doc xml:space="preserve">%TRUE if bolding is enabled, %FALSE if not</doc>
@@ -1917,8 +1957,9 @@ Proper use of the escape sequence should result in URI-encoded URIs with a prope
 like "http://", "https://", "file://", "mailto:" etc. This is, however, not enforced by VTE.
 The caller must tolerate the returned string potentially not being a valid URI.</doc>
         
-        <return-value transfer-ownership="full">
-          <doc xml:space="preserve">a newly allocated string containing the target of the hyperlink</doc>
+        <return-value transfer-ownership="full" nullable="1">
+          <doc xml:space="preserve">a newly allocated string containing the target of the hyperlink,
+ or %NULL</doc>
           <type name="utf8" c:type="char*"/>
         </return-value>
         <parameters>
@@ -1933,14 +1974,11 @@ The caller must tolerate the returned string potentially not being a valid URI.<
         </parameters>
       </method>
       <method name="match_add_gregex" c:identifier="vte_terminal_match_add_gregex" deprecated="1" deprecated-version="0.46">
-        <doc xml:space="preserve">Adds the regular expression @regex to the list of matching expressions.  When the
-user moves the mouse cursor over a section of displayed text which matches
-this expression, the text will be highlighted.</doc>
+        <doc xml:space="preserve">This function does nothing since version 0.60.</doc>
         <doc-deprecated xml:space="preserve">Use vte_terminal_match_add_regex() or vte_terminal_match_add_regex_full() instead.</doc-deprecated>
         
         <return-value transfer-ownership="none">
-          <doc xml:space="preserve">an integer associated with this expression, or -1 if @gregex could not be
-  transformed into a #VteRegex or @gflags were incompatible</doc>
+          <doc xml:space="preserve">-1</doc>
           <type name="gint" c:type="int"/>
         </return-value>
         <parameters>
@@ -1993,7 +2031,7 @@ vte_terminal_match_add(), then expressions are checked in the order in
 which they were added.</doc>
         <doc-deprecated xml:space="preserve">Use vte_terminal_match_check_event() instead.</doc-deprecated>
         
-        <return-value transfer-ownership="full">
+        <return-value transfer-ownership="full" nullable="1">
           <doc xml:space="preserve">a newly allocated string which matches one of the previously
   set regular expressions</doc>
           <type name="utf8" c:type="char*"/>
@@ -2027,9 +2065,9 @@ If more than one regular expression has been set with
 vte_terminal_match_add(), then expressions are checked in the order in
 which they were added.</doc>
         
-        <return-value transfer-ownership="full">
+        <return-value transfer-ownership="full" nullable="1">
           <doc xml:space="preserve">a newly allocated string which matches one of the previously
-  set regular expressions</doc>
+  set regular expressions, or %NULL if there is no match</doc>
           <type name="utf8" c:type="char*"/>
         </return-value>
         <parameters>
@@ -2181,8 +2219,9 @@ mouse button.</doc>
         </parameters>
       </method>
       <method name="pty_new_sync" c:identifier="vte_terminal_pty_new_sync" throws="1">
-        <doc xml:space="preserve">Creates a new #VtePty, and sets the emulation property
-from #VteTerminal:emulation.
+        <doc xml:space="preserve">Creates a new #VtePty, sets the emulation property
+from #VteTerminal:emulation, and sets the size using
+@terminal's size.
 
 See vte_pty_new() for more information.</doc>
         
@@ -2300,7 +2339,7 @@ vte_terminal_search_set_regex().</doc>
         </parameters>
       </method>
       <method name="search_set_gregex" c:identifier="vte_terminal_search_set_gregex" deprecated="1" deprecated-version="0.46">
-        <doc xml:space="preserve">Sets the #GRegex regex to search for. Unsets the search regex when passed %NULL.</doc>
+        <doc xml:space="preserve">This function does nothing since version 0.60.</doc>
         <doc-deprecated xml:space="preserve">use vte_terminal_search_set_regex() instead.</doc-deprecated>
         
         <return-value transfer-ownership="none">
@@ -2373,10 +2412,10 @@ terminal content when reaching its end.</doc>
           </instance-parameter>
         </parameters>
       </method>
-      <method name="set_allow_bold" c:identifier="vte_terminal_set_allow_bold">
+      <method name="set_allow_bold" c:identifier="vte_terminal_set_allow_bold" deprecated="1" deprecated-version="0.60">
         <doc xml:space="preserve">Controls whether or not the terminal will attempt to draw bold text,
-either by using a bold font variant or by repainting text with a different
-offset.</doc>
+by using a bold font variant.</doc>
+        <doc-deprecated xml:space="preserve">There's probably no reason for this feature to exist.</doc-deprecated>
         
         <return-value transfer-ownership="none">
           <type name="none" c:type="void"/>
@@ -2838,7 +2877,7 @@ spawning the child process.</doc>
             <type name="Terminal" c:type="VteTerminal*"/>
           </instance-parameter>
           <parameter name="codeset" transfer-ownership="none" nullable="1" allow-none="1">
-            <doc xml:space="preserve">a valid #GIConv target, or %NULL to use UTF-8</doc>
+            <doc xml:space="preserve">target charset, or %NULL to use UTF-8</doc>
             <type name="utf8" c:type="const char*"/>
           </parameter>
         </parameters>
@@ -3115,6 +3154,14 @@ watched via vte_terminal_watch_child().
 When the operation fails, @callback will be called with a -1 #GPid,
 and a non-%NULL #GError containing the error information.
 
+Beginning with 0.60, and on linux only, and unless %VTE_SPAWN_NO_SYSTEMD_SCOPE is
+passed in @spawn_flags, the newly created child process will be moved to its own
+systemd user scope; and if %VTE_SPAWN_REQUIRE_SYSTEMD_SCOPE is passed, and creation
+of the systemd user scope fails, the whole spawn will fail.
+You can override the options used for the systemd user scope by
+providing a systemd override file for 'vte-spawn-.scope' unit. See man:systemd.unit(5)
+for further information.
+
 Note that if @terminal has been destroyed before the operation is called,
 @callback will be called with a %NULL @terminal; you must not do anything
 in the callback besides freeing any resources associated with @user_data,
@@ -3341,10 +3388,10 @@ depending on scrollback history and @stream availability for writing.</doc>
           </parameter>
         </parameters>
       </method>
-      <property name="allow-bold" writable="1" transfer-ownership="none">
-        <doc xml:space="preserve">Controls whether or not the terminal will attempt to draw bold text.
-This may happen either by using a bold font variant, or by
-repainting text with a different offset.</doc>
+      <property name="allow-bold" deprecated="1" deprecated-version="0.60" writable="1" transfer-ownership="none">
+        <doc xml:space="preserve">Controls whether or not the terminal will attempt to draw bold text,
+by using a bold font variant.</doc>
+        <doc-deprecated xml:space="preserve">There's probably no reason for this feature to exist.</doc-deprecated>
         <type name="gboolean" c:type="gboolean"/>
       </property>
       <property name="allow-hyperlink" version="0.50" writable="1" transfer-ownership="none">
@@ -3550,8 +3597,7 @@ watched using vte_terminal_watch_child() has exited.</doc>
       </glib:signal>
       <glib:signal name="commit" when="last">
         <doc xml:space="preserve">Emitted whenever the terminal receives input from the user and
-prepares to send it to the child process.  The signal is emitted even
-when there is no child process.</doc>
+prepares to send it to the child process.</doc>
         <return-value transfer-ownership="none">
           <type name="none" c:type="void"/>
         </return-value>
@@ -3604,8 +3650,8 @@ primarily by #VteTerminalAccessible.</doc>
           <type name="none" c:type="void"/>
         </return-value>
       </glib:signal>
-      <glib:signal name="deiconify-window" when="last">
-        <doc xml:space="preserve">Emitted at the child application's request.</doc>
+      <glib:signal name="deiconify-window" when="last" deprecated="1" deprecated-version="0.60">
+        <doc xml:space="preserve">Never emitted.</doc>
         <return-value transfer-ownership="none">
           <type name="none" c:type="void"/>
         </return-value>
@@ -3654,8 +3700,8 @@ same hyperlink. This might change in a future VTE version without notice.</doc>
           <type name="none" c:type="void"/>
         </return-value>
       </glib:signal>
-      <glib:signal name="iconify-window" when="last">
-        <doc xml:space="preserve">Emitted at the child application's request.</doc>
+      <glib:signal name="iconify-window" when="last" deprecated="1" deprecated-version="0.60">
+        <doc xml:space="preserve">Never emitted.</doc>
         <return-value transfer-ownership="none">
           <type name="none" c:type="void"/>
         </return-value>
@@ -3666,20 +3712,20 @@ same hyperlink. This might change in a future VTE version without notice.</doc>
           <type name="none" c:type="void"/>
         </return-value>
       </glib:signal>
-      <glib:signal name="lower-window" when="last">
-        <doc xml:space="preserve">Emitted at the child application's request.</doc>
+      <glib:signal name="lower-window" when="last" deprecated="1" deprecated-version="0.60">
+        <doc xml:space="preserve">Never emitted.</doc>
         <return-value transfer-ownership="none">
           <type name="none" c:type="void"/>
         </return-value>
       </glib:signal>
-      <glib:signal name="maximize-window" when="last">
-        <doc xml:space="preserve">Emitted at the child application's request.</doc>
+      <glib:signal name="maximize-window" when="last" deprecated="1" deprecated-version="0.60">
+        <doc xml:space="preserve">Never emitted.</doc>
         <return-value transfer-ownership="none">
           <type name="none" c:type="void"/>
         </return-value>
       </glib:signal>
-      <glib:signal name="move-window" when="last">
-        <doc xml:space="preserve">Emitted at the child application's request.</doc>
+      <glib:signal name="move-window" when="last" deprecated="1" deprecated-version="0.60">
+        <doc xml:space="preserve">Never emitted.</doc>
         <return-value transfer-ownership="none">
           <type name="none" c:type="void"/>
         </return-value>
@@ -3700,14 +3746,14 @@ same hyperlink. This might change in a future VTE version without notice.</doc>
           <type name="none" c:type="void"/>
         </return-value>
       </glib:signal>
-      <glib:signal name="raise-window" when="last">
-        <doc xml:space="preserve">Emitted at the child application's request.</doc>
+      <glib:signal name="raise-window" when="last" deprecated="1" deprecated-version="0.60">
+        <doc xml:space="preserve">Never emitted.</doc>
         <return-value transfer-ownership="none">
           <type name="none" c:type="void"/>
         </return-value>
       </glib:signal>
-      <glib:signal name="refresh-window" when="last">
-        <doc xml:space="preserve">Emitted at the child application's request.</doc>
+      <glib:signal name="refresh-window" when="last" deprecated="1" deprecated-version="0.60">
+        <doc xml:space="preserve">Never emitted.</doc>
         <return-value transfer-ownership="none">
           <type name="none" c:type="void"/>
         </return-value>
@@ -3728,8 +3774,8 @@ same hyperlink. This might change in a future VTE version without notice.</doc>
           </parameter>
         </parameters>
       </glib:signal>
-      <glib:signal name="restore-window" when="last">
-        <doc xml:space="preserve">Emitted at the child application's request.</doc>
+      <glib:signal name="restore-window" when="last" deprecated="1" deprecated-version="0.60">
+        <doc xml:space="preserve">Never emitted.</doc>
         <return-value transfer-ownership="none">
           <type name="none" c:type="void"/>
         </return-value>
@@ -4251,6 +4297,46 @@ to an output stream.</doc>
         <doc xml:space="preserve">Write contents as UTF-8 text.  This is the default.</doc>
       </member>
     </enumeration>
+    <function name="get_encoding_supported" c:identifier="vte_get_encoding_supported" version="0.60" deprecated="1" deprecated-version="0.60">
+      <doc xml:space="preserve">Queries whether the legacy encoding @encoding is supported.
+
+If ICU support is not available, this function always returns %FALSE.
+
+Note that UTF-8 is always supported; you can select it by
+passing %NULL to vte_terminal_set_encoding().</doc>
+      
+      <return-value transfer-ownership="none">
+        <doc xml:space="preserve">%TRUE iff the legacy encoding @encoding is supported</doc>
+        <type name="gboolean" c:type="gboolean"/>
+      </return-value>
+      <parameters>
+        <parameter name="encoding" transfer-ownership="none">
+          <doc xml:space="preserve">the name of the legacy encoding</doc>
+          <type name="utf8" c:type="const char*"/>
+        </parameter>
+      </parameters>
+    </function>
+    <function name="get_encodings" c:identifier="vte_get_encodings" version="0.60" deprecated="1" deprecated-version="0.60">
+      <doc xml:space="preserve">Gets the list of supported legacy encodings.
+
+If ICU support is not available, this returns an empty vector.
+Note that UTF-8 is always supported; you can select it by
+passing %NULL to vte_terminal_set_encoding().</doc>
+      
+      <return-value transfer-ownership="full">
+        <doc xml:space="preserve">the list of supported encodings; free with
+  g_strfreev()</doc>
+        <array c:type="char**">
+          <type name="utf8"/>
+        </array>
+      </return-value>
+      <parameters>
+        <parameter name="include_aliases" transfer-ownership="none">
+          <doc xml:space="preserve">whether to include alias names</doc>
+          <type name="gboolean" c:type="gboolean"/>
+        </parameter>
+      </parameters>
+    </function>
     <function name="get_features" c:identifier="vte_get_features" version="0.40">
       <doc xml:space="preserve">Gets a list of features vte was compiled with.</doc>
       

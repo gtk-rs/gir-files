@@ -20,6 +20,20 @@ atk_document_get_attributes() and atk_object_get_attributes()</doc>
       
       <type name="guint64" c:type="guint64"/>
     </alias>
+    <function-macro name="ACTION" c:identifier="ATK_ACTION" introspectable="0">
+      
+      <parameters>
+        <parameter name="obj">
+        </parameter>
+      </parameters>
+    </function-macro>
+    <function-macro name="ACTION_GET_IFACE" c:identifier="ATK_ACTION_GET_IFACE" introspectable="0">
+      
+      <parameters>
+        <parameter name="obj">
+        </parameter>
+      </parameters>
+    </function-macro>
     <interface name="Action" c:symbol-prefix="action" c:type="AtkAction" glib:type-name="AtkAction" glib:get-type="atk_action_get_type" glib:type-struct="ActionIface">
       <doc xml:space="preserve">#AtkAction should be implemented by instances of #AtkObject classes
 with which the user can interact directly, i.e. buttons,
@@ -559,13 +573,43 @@ A string name/value pair representing a generic attribute.</doc>
         </parameters>
       </function>
     </record>
-    <constant name="BINARY_AGE" value="23313" c:type="ATK_BINARY_AGE" version="2.7.4">
+    <constant name="BINARY_AGE" value="23511" c:type="ATK_BINARY_AGE" version="2.7.4">
       <doc xml:space="preserve">Like atk_get_binary_age(), but from the headers used at
 application compile time, rather than from the library linked
 against at application run time.</doc>
       
       <type name="gint" c:type="gint"/>
     </constant>
+    <function-macro name="CHECK_VERSION" c:identifier="ATK_CHECK_VERSION" version="2.7.4" introspectable="0">
+      <doc xml:space="preserve">Returns %TRUE if the version of the ATK header files is the same as
+or newer than the passed-in version.</doc>
+      
+      <parameters>
+        <parameter name="major">
+          <doc xml:space="preserve">major version (e.g. 1 for version 1.2.5)</doc>
+        </parameter>
+        <parameter name="minor">
+          <doc xml:space="preserve">minor version (e.g. 2 for version 1.2.5)</doc>
+        </parameter>
+        <parameter name="micro">
+          <doc xml:space="preserve">micro version (e.g. 5 for version 1.2.5)</doc>
+        </parameter>
+      </parameters>
+    </function-macro>
+    <function-macro name="COMPONENT" c:identifier="ATK_COMPONENT" introspectable="0">
+      
+      <parameters>
+        <parameter name="obj">
+        </parameter>
+      </parameters>
+    </function-macro>
+    <function-macro name="COMPONENT_GET_IFACE" c:identifier="ATK_COMPONENT_GET_IFACE" introspectable="0">
+      
+      <parameters>
+        <parameter name="obj">
+        </parameter>
+      </parameters>
+    </function-macro>
     <interface name="Component" c:symbol-prefix="component" c:type="AtkComponent" glib:type-name="AtkComponent" glib:get-type="atk_component_get_type" glib:type-struct="ComponentIface">
       <doc xml:space="preserve">#AtkComponent should be implemented by most if not all UI elements
 with an actual on-screen presence, i.e. components which can be
@@ -664,7 +708,10 @@ or to the components top level window</doc>
         </parameters>
       </virtual-method>
       <virtual-method name="get_extents" invoker="get_extents">
-        <doc xml:space="preserve">Gets the rectangle which gives the extent of the @component.</doc>
+        <doc xml:space="preserve">Gets the rectangle which gives the extent of the @component.
+
+If the extent can not be obtained (e.g. a non-embedded plug or missing
+support), all of x, y, width, height are set to -1.</doc>
         
         <return-value transfer-ownership="none">
           <type name="none" c:type="void"/>
@@ -730,7 +777,10 @@ container.</doc>
       </virtual-method>
       <virtual-method name="get_position" invoker="get_position" deprecated="1">
         <doc xml:space="preserve">Gets the position of @component in the form of
-a point specifying @component's top-left corner.</doc>
+a point specifying @component's top-left corner.
+
+If the position can not be obtained (e.g. a non-embedded plug or missing
+support), x and y are set to -1.</doc>
         <doc-deprecated xml:space="preserve">Since 2.12. Use atk_component_get_extents() instead.</doc-deprecated>
         
         <return-value transfer-ownership="none">
@@ -757,7 +807,10 @@ or to the components top level window</doc>
         </parameters>
       </virtual-method>
       <virtual-method name="get_size" invoker="get_size" deprecated="1">
-        <doc xml:space="preserve">Gets the size of the @component in terms of width and height.</doc>
+        <doc xml:space="preserve">Gets the size of the @component in terms of width and height.
+
+If the size can not be obtained (e.g. a non-embedded plug or missing
+support), width and height are set to -1.</doc>
         <doc-deprecated xml:space="preserve">Since 2.12. Use atk_component_get_extents() instead.</doc-deprecated>
         
         <return-value transfer-ownership="none">
@@ -866,8 +919,8 @@ object shows up on the screen, given its current position within the parents.</d
         </parameters>
       </virtual-method>
       <virtual-method name="scroll_to_point" invoker="scroll_to_point" version="2.30">
-        <doc xml:space="preserve">Makes an object visible on the screen at a given position by scrolling all
-necessary parents.</doc>
+        <doc xml:space="preserve">Move the top-left of @component to a given position of the screen by
+scrolling all necessary parents.</doc>
         
         <return-value transfer-ownership="none">
           <doc xml:space="preserve">whether scrolling was successful.</doc>
@@ -1052,7 +1105,10 @@ or to the components top level window</doc>
         </parameters>
       </method>
       <method name="get_extents" c:identifier="atk_component_get_extents">
-        <doc xml:space="preserve">Gets the rectangle which gives the extent of the @component.</doc>
+        <doc xml:space="preserve">Gets the rectangle which gives the extent of the @component.
+
+If the extent can not be obtained (e.g. a non-embedded plug or missing
+support), all of x, y, width, height are set to -1.</doc>
         
         <return-value transfer-ownership="none">
           <type name="none" c:type="void"/>
@@ -1118,7 +1174,10 @@ container.</doc>
       </method>
       <method name="get_position" c:identifier="atk_component_get_position" deprecated="1">
         <doc xml:space="preserve">Gets the position of @component in the form of
-a point specifying @component's top-left corner.</doc>
+a point specifying @component's top-left corner.
+
+If the position can not be obtained (e.g. a non-embedded plug or missing
+support), x and y are set to -1.</doc>
         <doc-deprecated xml:space="preserve">Since 2.12. Use atk_component_get_extents() instead.</doc-deprecated>
         
         <return-value transfer-ownership="none">
@@ -1145,7 +1204,10 @@ or to the components top level window</doc>
         </parameters>
       </method>
       <method name="get_size" c:identifier="atk_component_get_size" deprecated="1">
-        <doc xml:space="preserve">Gets the size of the @component in terms of width and height.</doc>
+        <doc xml:space="preserve">Gets the size of the @component in terms of width and height.
+
+If the size can not be obtained (e.g. a non-embedded plug or missing
+support), width and height are set to -1.</doc>
         <doc-deprecated xml:space="preserve">Since 2.12. Use atk_component_get_extents() instead.</doc-deprecated>
         
         <return-value transfer-ownership="none">
@@ -1254,8 +1316,8 @@ object shows up on the screen, given its current position within the parents.</d
         </parameters>
       </method>
       <method name="scroll_to_point" c:identifier="atk_component_scroll_to_point" version="2.30">
-        <doc xml:space="preserve">Makes an object visible on the screen at a given position by scrolling all
-necessary parents.</doc>
+        <doc xml:space="preserve">Move the top-left of @component to a given position of the screen by
+scrolling all necessary parents.</doc>
         
         <return-value transfer-ownership="none">
           <doc xml:space="preserve">whether scrolling was successful.</doc>
@@ -1800,6 +1862,186 @@ top-level window</doc>
 immediate parent. Since: 2.30</doc>
       </member>
     </enumeration>
+    <function-macro name="DEFINE_ABSTRACT_TYPE" c:identifier="ATK_DEFINE_ABSTRACT_TYPE" version="1.22" introspectable="0">
+      <doc xml:space="preserve">A convenience macro for ATK type implementations.
+Similar to ATK_DEFINE_TYPE(), but defines an abstract type.</doc>
+      
+      <parameters>
+        <parameter name="TN">
+          <doc xml:space="preserve">The name of the new type, in Camel case.</doc>
+        </parameter>
+        <parameter name="t_n">
+          <doc xml:space="preserve">The name of the new type, in lowercase, with words separated by '_'.</doc>
+        </parameter>
+        <parameter name="T_P">
+          <doc xml:space="preserve">The #GType of the parent type.</doc>
+        </parameter>
+      </parameters>
+    </function-macro>
+    <function-macro name="DEFINE_ABSTRACT_TYPE_WITH_CODE" c:identifier="ATK_DEFINE_ABSTRACT_TYPE_WITH_CODE" version="1.22" introspectable="0">
+      <doc xml:space="preserve">A convenience macro for ATK type implementations.
+Similar to ATK_DEFINE_TYPE_WITH_CODE(), but defines an abstract type.</doc>
+      
+      <parameters>
+        <parameter name="TN">
+          <doc xml:space="preserve">The name of the new type, in Camel case.</doc>
+        </parameter>
+        <parameter name="t_n">
+          <doc xml:space="preserve">The name of the new type, in lowercase, with words separated by '_'.</doc>
+        </parameter>
+        <parameter name="T_P">
+          <doc xml:space="preserve">The #GType of the parent type.</doc>
+        </parameter>
+        <parameter name="_C_">
+          <doc xml:space="preserve">Custom code that gets inserted in the _get_type() function.</doc>
+        </parameter>
+      </parameters>
+    </function-macro>
+    <function-macro name="DEFINE_TYPE" c:identifier="ATK_DEFINE_TYPE" version="1.22" introspectable="0">
+      <doc xml:space="preserve">A convenience macro for type ATK implementations, which declares a class
+initialization function, an instance initialization function (see #GTypeInfo
+for information about these) and a static variable named
+@t_n _parent_class pointing to the parent class. Furthermore, it
+defines a _get_type() function.</doc>
+      
+      <parameters>
+        <parameter name="TN">
+          <doc xml:space="preserve">The name of the new type, in Camel case.</doc>
+        </parameter>
+        <parameter name="t_n">
+          <doc xml:space="preserve">The name of the new type, in lowercase, with words separated by '_'.</doc>
+        </parameter>
+        <parameter name="T_P">
+          <doc xml:space="preserve">The #GType of the parent type.</doc>
+        </parameter>
+      </parameters>
+    </function-macro>
+    <function-macro name="DEFINE_TYPE_EXTENDED" c:identifier="ATK_DEFINE_TYPE_EXTENDED" version="1.22" introspectable="0">
+      <doc xml:space="preserve">The most general convenience macro for ATK type implementations, on which
+ATK_DEFINE_TYPE(), etc are based.</doc>
+      
+      <parameters>
+        <parameter name="TN">
+          <doc xml:space="preserve">The name of the new type, in Camel case.</doc>
+        </parameter>
+        <parameter name="t_n">
+          <doc xml:space="preserve">The name of the new type, in lowercase, with words separated by '_'.</doc>
+        </parameter>
+        <parameter name="T_P">
+          <doc xml:space="preserve">The #GType of the parent type.</doc>
+        </parameter>
+        <parameter name="_f_">
+          <doc xml:space="preserve">#GTypeFlags to pass to g_type_register_static()</doc>
+        </parameter>
+        <parameter name="_C_">
+          <doc xml:space="preserve">Custom code that gets inserted in the _get_type() function.</doc>
+        </parameter>
+      </parameters>
+    </function-macro>
+    <function-macro name="DEFINE_TYPE_WITH_CODE" c:identifier="ATK_DEFINE_TYPE_WITH_CODE" version="1.22" introspectable="0">
+      <doc xml:space="preserve">A convenience macro for ATK type implementations.
+Similar to ATK_DEFINE_TYPE(), but allows you to insert custom code into the
+_get_type() function, e.g. interface implementations via G_IMPLEMENT_INTERFACE().</doc>
+      
+      <parameters>
+        <parameter name="TN">
+          <doc xml:space="preserve">The name of the new type, in Camel case.</doc>
+        </parameter>
+        <parameter name="t_n">
+          <doc xml:space="preserve">The name of the new type in lowercase, with words separated by '_'.</doc>
+        </parameter>
+        <parameter name="T_P">
+          <doc xml:space="preserve">The #GType of the parent type.</doc>
+        </parameter>
+        <parameter name="_C_">
+          <doc xml:space="preserve">Custom code that gets inserted in the _get_type() function.</doc>
+        </parameter>
+      </parameters>
+    </function-macro>
+    <function-macro name="DEPRECATED_FOR" c:identifier="ATK_DEPRECATED_FOR" introspectable="0">
+      
+      <parameters>
+        <parameter name="f">
+        </parameter>
+      </parameters>
+    </function-macro>
+    <function-macro name="DEPRECATED_IN_2_10_FOR" c:identifier="ATK_DEPRECATED_IN_2_10_FOR" introspectable="0">
+      
+      <parameters>
+        <parameter name="f">
+        </parameter>
+      </parameters>
+    </function-macro>
+    <function-macro name="DEPRECATED_IN_2_12_FOR" c:identifier="ATK_DEPRECATED_IN_2_12_FOR" introspectable="0">
+      
+      <parameters>
+        <parameter name="f">
+        </parameter>
+      </parameters>
+    </function-macro>
+    <function-macro name="DEPRECATED_IN_2_14_FOR" c:identifier="ATK_DEPRECATED_IN_2_14_FOR" introspectable="0">
+      
+      <parameters>
+        <parameter name="f">
+        </parameter>
+      </parameters>
+    </function-macro>
+    <function-macro name="DEPRECATED_IN_2_2_FOR" c:identifier="ATK_DEPRECATED_IN_2_2_FOR" introspectable="0">
+      
+      <parameters>
+        <parameter name="f">
+        </parameter>
+      </parameters>
+    </function-macro>
+    <function-macro name="DEPRECATED_IN_2_30_FOR" c:identifier="ATK_DEPRECATED_IN_2_30_FOR" introspectable="0">
+      
+      <parameters>
+        <parameter name="f">
+        </parameter>
+      </parameters>
+    </function-macro>
+    <function-macro name="DEPRECATED_IN_2_36_FOR" c:identifier="ATK_DEPRECATED_IN_2_36_FOR" introspectable="0">
+      
+      <parameters>
+        <parameter name="f">
+        </parameter>
+      </parameters>
+    </function-macro>
+    <function-macro name="DEPRECATED_IN_2_4_FOR" c:identifier="ATK_DEPRECATED_IN_2_4_FOR" introspectable="0">
+      
+      <parameters>
+        <parameter name="f">
+        </parameter>
+      </parameters>
+    </function-macro>
+    <function-macro name="DEPRECATED_IN_2_6_FOR" c:identifier="ATK_DEPRECATED_IN_2_6_FOR" introspectable="0">
+      
+      <parameters>
+        <parameter name="f">
+        </parameter>
+      </parameters>
+    </function-macro>
+    <function-macro name="DEPRECATED_IN_2_8_FOR" c:identifier="ATK_DEPRECATED_IN_2_8_FOR" introspectable="0">
+      
+      <parameters>
+        <parameter name="f">
+        </parameter>
+      </parameters>
+    </function-macro>
+    <function-macro name="DOCUMENT" c:identifier="ATK_DOCUMENT" introspectable="0">
+      
+      <parameters>
+        <parameter name="obj">
+        </parameter>
+      </parameters>
+    </function-macro>
+    <function-macro name="DOCUMENT_GET_IFACE" c:identifier="ATK_DOCUMENT_GET_IFACE" introspectable="0">
+      
+      <parameters>
+        <parameter name="obj">
+        </parameter>
+      </parameters>
+    </function-macro>
     <interface name="Document" c:symbol-prefix="document" c:type="AtkDocument" glib:type-name="AtkDocument" glib:get-type="atk_document_get_type" glib:type-struct="DocumentIface">
       <doc xml:space="preserve">The AtkDocument interface should be supported by any object whose
 content is a representation or view of a document.  The AtkDocument
@@ -2308,6 +2550,20 @@ interrogating ATK for the latest document content.</doc>
         </callback>
       </field>
     </record>
+    <function-macro name="EDITABLE_TEXT" c:identifier="ATK_EDITABLE_TEXT" introspectable="0">
+      
+      <parameters>
+        <parameter name="obj">
+        </parameter>
+      </parameters>
+    </function-macro>
+    <function-macro name="EDITABLE_TEXT_GET_IFACE" c:identifier="ATK_EDITABLE_TEXT_GET_IFACE" introspectable="0">
+      
+      <parameters>
+        <parameter name="obj">
+        </parameter>
+      </parameters>
+    </function-macro>
     <interface name="EditableText" c:symbol-prefix="editable_text" c:type="AtkEditableText" glib:type-name="AtkEditableText" glib:get-type="atk_editable_text_get_type" glib:type-struct="EditableTextIface">
       <doc xml:space="preserve">#AtkEditableText should be implemented by UI components which
 contain text which the user can edit, via the #AtkObject
@@ -2865,6 +3121,27 @@ in the future.</doc>
         </parameter>
       </parameters>
     </callback>
+    <function-macro name="GOBJECT_ACCESSIBLE" c:identifier="ATK_GOBJECT_ACCESSIBLE" introspectable="0">
+      
+      <parameters>
+        <parameter name="obj">
+        </parameter>
+      </parameters>
+    </function-macro>
+    <function-macro name="GOBJECT_ACCESSIBLE_CLASS" c:identifier="ATK_GOBJECT_ACCESSIBLE_CLASS" introspectable="0">
+      
+      <parameters>
+        <parameter name="klass">
+        </parameter>
+      </parameters>
+    </function-macro>
+    <function-macro name="GOBJECT_ACCESSIBLE_GET_CLASS" c:identifier="ATK_GOBJECT_ACCESSIBLE_GET_CLASS" introspectable="0">
+      
+      <parameters>
+        <parameter name="obj">
+        </parameter>
+      </parameters>
+    </function-macro>
     <class name="GObjectAccessible" c:symbol-prefix="gobject_accessible" c:type="AtkGObjectAccessible" parent="Object" glib:type-name="AtkGObjectAccessible" glib:get-type="atk_gobject_accessible_get_type" glib:type-struct="GObjectAccessibleClass">
       <doc xml:space="preserve">This object class is derived from AtkObject. It can be used as a
 basis for implementing accessible objects for GObjects which are
@@ -2917,6 +3194,55 @@ the accessible object</doc>
         <type name="Function" c:type="AtkFunction"/>
       </field>
     </record>
+    <function-macro name="HYPERLINK" c:identifier="ATK_HYPERLINK" introspectable="0">
+      
+      <parameters>
+        <parameter name="obj">
+        </parameter>
+      </parameters>
+    </function-macro>
+    <function-macro name="HYPERLINK_CLASS" c:identifier="ATK_HYPERLINK_CLASS" introspectable="0">
+      
+      <parameters>
+        <parameter name="klass">
+        </parameter>
+      </parameters>
+    </function-macro>
+    <function-macro name="HYPERLINK_GET_CLASS" c:identifier="ATK_HYPERLINK_GET_CLASS" introspectable="0">
+      
+      <parameters>
+        <parameter name="obj">
+        </parameter>
+      </parameters>
+    </function-macro>
+    <function-macro name="HYPERLINK_IMPL" c:identifier="ATK_HYPERLINK_IMPL" introspectable="0">
+      
+      <parameters>
+        <parameter name="obj">
+        </parameter>
+      </parameters>
+    </function-macro>
+    <function-macro name="HYPERLINK_IMPL_GET_IFACE" c:identifier="ATK_HYPERLINK_IMPL_GET_IFACE" introspectable="0">
+      
+      <parameters>
+        <parameter name="obj">
+        </parameter>
+      </parameters>
+    </function-macro>
+    <function-macro name="HYPERTEXT" c:identifier="ATK_HYPERTEXT" introspectable="0">
+      
+      <parameters>
+        <parameter name="obj">
+        </parameter>
+      </parameters>
+    </function-macro>
+    <function-macro name="HYPERTEXT_GET_IFACE" c:identifier="ATK_HYPERTEXT_GET_IFACE" introspectable="0">
+      
+      <parameters>
+        <parameter name="obj">
+        </parameter>
+      </parameters>
+    </function-macro>
     <class name="Hyperlink" c:symbol-prefix="hyperlink" c:type="AtkHyperlink" parent="GObject.Object" glib:type-name="AtkHyperlink" glib:get-type="atk_hyperlink_get_type" glib:type-struct="HyperlinkClass">
       <doc xml:space="preserve">An ATK object which encapsulates a link or set of links (for
 instance in the case of client-side image maps) in a hypertext
@@ -3690,6 +4016,34 @@ or -1 if there is no hyperlink associated with this character.</doc>
         </callback>
       </field>
     </record>
+    <function-macro name="IMAGE" c:identifier="ATK_IMAGE" introspectable="0">
+      
+      <parameters>
+        <parameter name="obj">
+        </parameter>
+      </parameters>
+    </function-macro>
+    <function-macro name="IMAGE_GET_IFACE" c:identifier="ATK_IMAGE_GET_IFACE" introspectable="0">
+      
+      <parameters>
+        <parameter name="obj">
+        </parameter>
+      </parameters>
+    </function-macro>
+    <function-macro name="IMPLEMENTOR" c:identifier="ATK_IMPLEMENTOR" introspectable="0">
+      
+      <parameters>
+        <parameter name="obj">
+        </parameter>
+      </parameters>
+    </function-macro>
+    <function-macro name="IMPLEMENTOR_GET_IFACE" c:identifier="ATK_IMPLEMENTOR_GET_IFACE" introspectable="0">
+      
+      <parameters>
+        <parameter name="obj">
+        </parameter>
+      </parameters>
+    </function-macro>
     <constant name="INTERFACE_AGE" value="1" c:type="ATK_INTERFACE_AGE" version="2.7.4">
       <doc xml:space="preserve">Like atk_get_interface_age(), but from the headers used at
 application compile time, rather than from the library linked
@@ -3697,6 +4051,307 @@ against at application run time.</doc>
       
       <type name="gint" c:type="gint"/>
     </constant>
+    <function-macro name="IS_ACTION" c:identifier="ATK_IS_ACTION" introspectable="0">
+      
+      <parameters>
+        <parameter name="obj">
+        </parameter>
+      </parameters>
+    </function-macro>
+    <function-macro name="IS_COMPONENT" c:identifier="ATK_IS_COMPONENT" introspectable="0">
+      
+      <parameters>
+        <parameter name="obj">
+        </parameter>
+      </parameters>
+    </function-macro>
+    <function-macro name="IS_DOCUMENT" c:identifier="ATK_IS_DOCUMENT" introspectable="0">
+      
+      <parameters>
+        <parameter name="obj">
+        </parameter>
+      </parameters>
+    </function-macro>
+    <function-macro name="IS_EDITABLE_TEXT" c:identifier="ATK_IS_EDITABLE_TEXT" introspectable="0">
+      
+      <parameters>
+        <parameter name="obj">
+        </parameter>
+      </parameters>
+    </function-macro>
+    <function-macro name="IS_GOBJECT_ACCESSIBLE" c:identifier="ATK_IS_GOBJECT_ACCESSIBLE" introspectable="0">
+      
+      <parameters>
+        <parameter name="obj">
+        </parameter>
+      </parameters>
+    </function-macro>
+    <function-macro name="IS_GOBJECT_ACCESSIBLE_CLASS" c:identifier="ATK_IS_GOBJECT_ACCESSIBLE_CLASS" introspectable="0">
+      
+      <parameters>
+        <parameter name="klass">
+        </parameter>
+      </parameters>
+    </function-macro>
+    <function-macro name="IS_HYPERLINK" c:identifier="ATK_IS_HYPERLINK" introspectable="0">
+      
+      <parameters>
+        <parameter name="obj">
+        </parameter>
+      </parameters>
+    </function-macro>
+    <function-macro name="IS_HYPERLINK_CLASS" c:identifier="ATK_IS_HYPERLINK_CLASS" introspectable="0">
+      
+      <parameters>
+        <parameter name="klass">
+        </parameter>
+      </parameters>
+    </function-macro>
+    <function-macro name="IS_HYPERLINK_IMPL" c:identifier="ATK_IS_HYPERLINK_IMPL" introspectable="0">
+      
+      <parameters>
+        <parameter name="obj">
+        </parameter>
+      </parameters>
+    </function-macro>
+    <function-macro name="IS_HYPERTEXT" c:identifier="ATK_IS_HYPERTEXT" introspectable="0">
+      
+      <parameters>
+        <parameter name="obj">
+        </parameter>
+      </parameters>
+    </function-macro>
+    <function-macro name="IS_IMAGE" c:identifier="ATK_IS_IMAGE" introspectable="0">
+      
+      <parameters>
+        <parameter name="obj">
+        </parameter>
+      </parameters>
+    </function-macro>
+    <function-macro name="IS_IMPLEMENTOR" c:identifier="ATK_IS_IMPLEMENTOR" introspectable="0">
+      
+      <parameters>
+        <parameter name="obj">
+        </parameter>
+      </parameters>
+    </function-macro>
+    <function-macro name="IS_MISC" c:identifier="ATK_IS_MISC" introspectable="0">
+      
+      <parameters>
+        <parameter name="obj">
+        </parameter>
+      </parameters>
+    </function-macro>
+    <function-macro name="IS_MISC_CLASS" c:identifier="ATK_IS_MISC_CLASS" introspectable="0">
+      
+      <parameters>
+        <parameter name="klass">
+        </parameter>
+      </parameters>
+    </function-macro>
+    <function-macro name="IS_NO_OP_OBJECT" c:identifier="ATK_IS_NO_OP_OBJECT" introspectable="0">
+      
+      <parameters>
+        <parameter name="obj">
+        </parameter>
+      </parameters>
+    </function-macro>
+    <function-macro name="IS_NO_OP_OBJECT_CLASS" c:identifier="ATK_IS_NO_OP_OBJECT_CLASS" introspectable="0">
+      
+      <parameters>
+        <parameter name="klass">
+        </parameter>
+      </parameters>
+    </function-macro>
+    <function-macro name="IS_NO_OP_OBJECT_FACTORY" c:identifier="ATK_IS_NO_OP_OBJECT_FACTORY" introspectable="0">
+      
+      <parameters>
+        <parameter name="obj">
+        </parameter>
+      </parameters>
+    </function-macro>
+    <function-macro name="IS_NO_OP_OBJECT_FACTORY_CLASS" c:identifier="ATK_IS_NO_OP_OBJECT_FACTORY_CLASS" introspectable="0">
+      
+      <parameters>
+        <parameter name="klass">
+        </parameter>
+      </parameters>
+    </function-macro>
+    <function-macro name="IS_OBJECT" c:identifier="ATK_IS_OBJECT" introspectable="0">
+      
+      <parameters>
+        <parameter name="obj">
+        </parameter>
+      </parameters>
+    </function-macro>
+    <function-macro name="IS_OBJECT_CLASS" c:identifier="ATK_IS_OBJECT_CLASS" introspectable="0">
+      
+      <parameters>
+        <parameter name="klass">
+        </parameter>
+      </parameters>
+    </function-macro>
+    <function-macro name="IS_OBJECT_FACTORY" c:identifier="ATK_IS_OBJECT_FACTORY" introspectable="0">
+      
+      <parameters>
+        <parameter name="obj">
+        </parameter>
+      </parameters>
+    </function-macro>
+    <function-macro name="IS_OBJECT_FACTORY_CLASS" c:identifier="ATK_IS_OBJECT_FACTORY_CLASS" introspectable="0">
+      
+      <parameters>
+        <parameter name="klass">
+        </parameter>
+      </parameters>
+    </function-macro>
+    <function-macro name="IS_PLUG" c:identifier="ATK_IS_PLUG" introspectable="0">
+      
+      <parameters>
+        <parameter name="obj">
+        </parameter>
+      </parameters>
+    </function-macro>
+    <function-macro name="IS_PLUG_CLASS" c:identifier="ATK_IS_PLUG_CLASS" introspectable="0">
+      
+      <parameters>
+        <parameter name="klass">
+        </parameter>
+      </parameters>
+    </function-macro>
+    <function-macro name="IS_REGISTRY" c:identifier="ATK_IS_REGISTRY" introspectable="0">
+      
+      <parameters>
+        <parameter name="obj">
+        </parameter>
+      </parameters>
+    </function-macro>
+    <function-macro name="IS_REGISTRY_CLASS" c:identifier="ATK_IS_REGISTRY_CLASS" introspectable="0">
+      
+      <parameters>
+        <parameter name="klass">
+        </parameter>
+      </parameters>
+    </function-macro>
+    <function-macro name="IS_RELATION" c:identifier="ATK_IS_RELATION" introspectable="0">
+      
+      <parameters>
+        <parameter name="obj">
+        </parameter>
+      </parameters>
+    </function-macro>
+    <function-macro name="IS_RELATION_CLASS" c:identifier="ATK_IS_RELATION_CLASS" introspectable="0">
+      
+      <parameters>
+        <parameter name="klass">
+        </parameter>
+      </parameters>
+    </function-macro>
+    <function-macro name="IS_RELATION_SET" c:identifier="ATK_IS_RELATION_SET" introspectable="0">
+      
+      <parameters>
+        <parameter name="obj">
+        </parameter>
+      </parameters>
+    </function-macro>
+    <function-macro name="IS_RELATION_SET_CLASS" c:identifier="ATK_IS_RELATION_SET_CLASS" introspectable="0">
+      
+      <parameters>
+        <parameter name="klass">
+        </parameter>
+      </parameters>
+    </function-macro>
+    <function-macro name="IS_SELECTION" c:identifier="ATK_IS_SELECTION" introspectable="0">
+      
+      <parameters>
+        <parameter name="obj">
+        </parameter>
+      </parameters>
+    </function-macro>
+    <function-macro name="IS_SOCKET" c:identifier="ATK_IS_SOCKET" introspectable="0">
+      
+      <parameters>
+        <parameter name="obj">
+        </parameter>
+      </parameters>
+    </function-macro>
+    <function-macro name="IS_SOCKET_CLASS" c:identifier="ATK_IS_SOCKET_CLASS" introspectable="0">
+      
+      <parameters>
+        <parameter name="klass">
+        </parameter>
+      </parameters>
+    </function-macro>
+    <function-macro name="IS_STATE_SET" c:identifier="ATK_IS_STATE_SET" introspectable="0">
+      
+      <parameters>
+        <parameter name="obj">
+        </parameter>
+      </parameters>
+    </function-macro>
+    <function-macro name="IS_STATE_SET_CLASS" c:identifier="ATK_IS_STATE_SET_CLASS" introspectable="0">
+      
+      <parameters>
+        <parameter name="klass">
+        </parameter>
+      </parameters>
+    </function-macro>
+    <function-macro name="IS_STREAMABLE_CONTENT" c:identifier="ATK_IS_STREAMABLE_CONTENT" introspectable="0">
+      
+      <parameters>
+        <parameter name="obj">
+        </parameter>
+      </parameters>
+    </function-macro>
+    <function-macro name="IS_TABLE" c:identifier="ATK_IS_TABLE" introspectable="0">
+      
+      <parameters>
+        <parameter name="obj">
+        </parameter>
+      </parameters>
+    </function-macro>
+    <function-macro name="IS_TABLE_CELL" c:identifier="ATK_IS_TABLE_CELL" introspectable="0">
+      
+      <parameters>
+        <parameter name="obj">
+        </parameter>
+      </parameters>
+    </function-macro>
+    <function-macro name="IS_TEXT" c:identifier="ATK_IS_TEXT" introspectable="0">
+      
+      <parameters>
+        <parameter name="obj">
+        </parameter>
+      </parameters>
+    </function-macro>
+    <function-macro name="IS_UTIL" c:identifier="ATK_IS_UTIL" introspectable="0">
+      
+      <parameters>
+        <parameter name="obj">
+        </parameter>
+      </parameters>
+    </function-macro>
+    <function-macro name="IS_UTIL_CLASS" c:identifier="ATK_IS_UTIL_CLASS" introspectable="0">
+      
+      <parameters>
+        <parameter name="klass">
+        </parameter>
+      </parameters>
+    </function-macro>
+    <function-macro name="IS_VALUE" c:identifier="ATK_IS_VALUE" introspectable="0">
+      
+      <parameters>
+        <parameter name="obj">
+        </parameter>
+      </parameters>
+    </function-macro>
+    <function-macro name="IS_WINDOW" c:identifier="ATK_IS_WINDOW" introspectable="0">
+      
+      <parameters>
+        <parameter name="obj">
+        </parameter>
+      </parameters>
+    </function-macro>
     <interface name="Image" c:symbol-prefix="image" c:type="AtkImage" glib:type-name="AtkImage" glib:get-type="atk_image_get_type" glib:type-struct="ImageIface">
       <doc xml:space="preserve">#AtkImage should be implemented by #AtkObject subtypes on behalf of
 components which display image/pixmap information onscreen, and
@@ -3744,7 +4399,10 @@ image.</doc>
       </virtual-method>
       <virtual-method name="get_image_position" invoker="get_image_position">
         <doc xml:space="preserve">Gets the position of the image in the form of a point specifying the
-images top-left corner.</doc>
+images top-left corner.
+
+If the position can not be obtained (e.g. missing support), x and y are set
+to -1.</doc>
         
         <return-value transfer-ownership="none">
           <type name="none" c:type="void"/>
@@ -3772,7 +4430,10 @@ or to the components top level window</doc>
       <virtual-method name="get_image_size" invoker="get_image_size">
         <doc xml:space="preserve">Get the width and height in pixels for the specified image.
 The values of @width and @height are returned as -1 if the
-values cannot be obtained (for instance, if the object is not onscreen).</doc>
+values cannot be obtained (for instance, if the object is not onscreen).
+
+If the size can not be obtained (e.g. missing support), x and y are set
+to -1.</doc>
         
         <return-value transfer-ownership="none">
           <type name="none" c:type="void"/>
@@ -3843,7 +4504,10 @@ not be completed.</doc>
       </method>
       <method name="get_image_position" c:identifier="atk_image_get_image_position">
         <doc xml:space="preserve">Gets the position of the image in the form of a point specifying the
-images top-left corner.</doc>
+images top-left corner.
+
+If the position can not be obtained (e.g. missing support), x and y are set
+to -1.</doc>
         
         <return-value transfer-ownership="none">
           <type name="none" c:type="void"/>
@@ -3871,7 +4535,10 @@ or to the components top level window</doc>
       <method name="get_image_size" c:identifier="atk_image_get_image_size">
         <doc xml:space="preserve">Get the width and height in pixels for the specified image.
 The values of @width and @height are returned as -1 if the
-values cannot be obtained (for instance, if the object is not onscreen).</doc>
+values cannot be obtained (for instance, if the object is not onscreen).
+
+If the size can not be obtained (e.g. missing support), x and y are set
+to -1.</doc>
         
         <return-value transfer-ownership="none">
           <type name="none" c:type="void"/>
@@ -4159,20 +4826,41 @@ against at application run time.</doc>
       
       <type name="gint" c:type="gint"/>
     </constant>
-    <constant name="MICRO_VERSION" value="3" c:type="ATK_MICRO_VERSION" version="2.7.4">
+    <constant name="MICRO_VERSION" value="1" c:type="ATK_MICRO_VERSION" version="2.7.4">
       <doc xml:space="preserve">Like atk_get_micro_version(), but from the headers used at
 application compile time, rather than from the library linked
 against at application run time.</doc>
       
       <type name="gint" c:type="gint"/>
     </constant>
-    <constant name="MINOR_VERSION" value="33" c:type="ATK_MINOR_VERSION" version="2.7.4">
+    <constant name="MINOR_VERSION" value="35" c:type="ATK_MINOR_VERSION" version="2.7.4">
       <doc xml:space="preserve">Like atk_get_minor_version(), but from the headers used at
 application compile time, rather than from the library linked
 against at application run time.</doc>
       
       <type name="gint" c:type="gint"/>
     </constant>
+    <function-macro name="MISC" c:identifier="ATK_MISC" introspectable="0">
+      
+      <parameters>
+        <parameter name="obj">
+        </parameter>
+      </parameters>
+    </function-macro>
+    <function-macro name="MISC_CLASS" c:identifier="ATK_MISC_CLASS" introspectable="0">
+      
+      <parameters>
+        <parameter name="klass">
+        </parameter>
+      </parameters>
+    </function-macro>
+    <function-macro name="MISC_GET_CLASS" c:identifier="ATK_MISC_GET_CLASS" introspectable="0">
+      
+      <parameters>
+        <parameter name="obj">
+        </parameter>
+      </parameters>
+    </function-macro>
     <class name="Misc" c:symbol-prefix="misc" c:type="AtkMisc" parent="GObject.Object" glib:type-name="AtkMisc" glib:get-type="atk_misc_get_type" glib:type-struct="MiscClass">
       <doc xml:space="preserve">A set of utility functions for thread locking. This interface and
 all his related methods are deprecated since 2.12.</doc>
@@ -4308,6 +4996,48 @@ be bracketed by atk_misc_threads_leave/atk_misc_threads_enter calls.
         </array>
       </field>
     </record>
+    <function-macro name="NO_OP_OBJECT" c:identifier="ATK_NO_OP_OBJECT" introspectable="0">
+      
+      <parameters>
+        <parameter name="obj">
+        </parameter>
+      </parameters>
+    </function-macro>
+    <function-macro name="NO_OP_OBJECT_CLASS" c:identifier="ATK_NO_OP_OBJECT_CLASS" introspectable="0">
+      
+      <parameters>
+        <parameter name="klass">
+        </parameter>
+      </parameters>
+    </function-macro>
+    <function-macro name="NO_OP_OBJECT_FACTORY" c:identifier="ATK_NO_OP_OBJECT_FACTORY" introspectable="0">
+      
+      <parameters>
+        <parameter name="obj">
+        </parameter>
+      </parameters>
+    </function-macro>
+    <function-macro name="NO_OP_OBJECT_FACTORY_CLASS" c:identifier="ATK_NO_OP_OBJECT_FACTORY_CLASS" introspectable="0">
+      
+      <parameters>
+        <parameter name="klass">
+        </parameter>
+      </parameters>
+    </function-macro>
+    <function-macro name="NO_OP_OBJECT_FACTORY_GET_CLASS" c:identifier="ATK_NO_OP_OBJECT_FACTORY_GET_CLASS" introspectable="0">
+      
+      <parameters>
+        <parameter name="obj">
+        </parameter>
+      </parameters>
+    </function-macro>
+    <function-macro name="NO_OP_OBJECT_GET_CLASS" c:identifier="ATK_NO_OP_OBJECT_GET_CLASS" introspectable="0">
+      
+      <parameters>
+        <parameter name="obj">
+        </parameter>
+      </parameters>
+    </function-macro>
     <class name="NoOpObject" c:symbol-prefix="no_op_object" c:type="AtkNoOpObject" parent="Object" glib:type-name="AtkNoOpObject" glib:get-type="atk_no_op_object_get_type" glib:type-struct="NoOpObjectClass">
       <doc xml:space="preserve">An AtkNoOpObject is an AtkObject which purports to implement all
 ATK interfaces. It is the type of AtkObject which is created if an
@@ -4375,6 +5105,48 @@ specified to create an accessible object of a particular type.</doc>
         <type name="ObjectFactoryClass" c:type="AtkObjectFactoryClass"/>
       </field>
     </record>
+    <function-macro name="OBJECT" c:identifier="ATK_OBJECT" introspectable="0">
+      
+      <parameters>
+        <parameter name="obj">
+        </parameter>
+      </parameters>
+    </function-macro>
+    <function-macro name="OBJECT_CLASS" c:identifier="ATK_OBJECT_CLASS" introspectable="0">
+      
+      <parameters>
+        <parameter name="klass">
+        </parameter>
+      </parameters>
+    </function-macro>
+    <function-macro name="OBJECT_FACTORY" c:identifier="ATK_OBJECT_FACTORY" introspectable="0">
+      
+      <parameters>
+        <parameter name="obj">
+        </parameter>
+      </parameters>
+    </function-macro>
+    <function-macro name="OBJECT_FACTORY_CLASS" c:identifier="ATK_OBJECT_FACTORY_CLASS" introspectable="0">
+      
+      <parameters>
+        <parameter name="klass">
+        </parameter>
+      </parameters>
+    </function-macro>
+    <function-macro name="OBJECT_FACTORY_GET_CLASS" c:identifier="ATK_OBJECT_FACTORY_GET_CLASS" introspectable="0">
+      
+      <parameters>
+        <parameter name="obj">
+        </parameter>
+      </parameters>
+    </function-macro>
+    <function-macro name="OBJECT_GET_CLASS" c:identifier="ATK_OBJECT_GET_CLASS" introspectable="0">
+      
+      <parameters>
+        <parameter name="obj">
+        </parameter>
+      </parameters>
+    </function-macro>
     <class name="Object" c:symbol-prefix="object" c:type="AtkObject" parent="GObject.Object" glib:type-name="AtkObject" glib:get-type="atk_object_get_type" glib:type-struct="ObjectClass">
       <doc xml:space="preserve">This class is the primary class for accessibility support via the
 Accessibility ToolKit (ATK).  Objects which are instances of
@@ -6055,6 +6827,27 @@ in object registries.</doc>
         <type name="Function" c:type="AtkFunction"/>
       </field>
     </record>
+    <function-macro name="PLUG" c:identifier="ATK_PLUG" introspectable="0">
+      
+      <parameters>
+        <parameter name="obj">
+        </parameter>
+      </parameters>
+    </function-macro>
+    <function-macro name="PLUG_CLASS" c:identifier="ATK_PLUG_CLASS" introspectable="0">
+      
+      <parameters>
+        <parameter name="klass">
+        </parameter>
+      </parameters>
+    </function-macro>
+    <function-macro name="PLUG_GET_CLASS" c:identifier="ATK_PLUG_GET_CLASS" introspectable="0">
+      
+      <parameters>
+        <parameter name="obj">
+        </parameter>
+      </parameters>
+    </function-macro>
     <class name="Plug" c:symbol-prefix="plug" c:type="AtkPlug" parent="Object" glib:type-name="AtkPlug" glib:get-type="atk_plug_get_type" glib:type-struct="PlugClass">
       <doc xml:space="preserve">See #AtkSocket</doc>
       
@@ -6097,6 +6890,31 @@ loaded) and pass the value to the process implementing the
             <doc xml:space="preserve">an #AtkPlug</doc>
             <type name="Plug" c:type="AtkPlug*"/>
           </instance-parameter>
+        </parameters>
+      </method>
+      <method name="set_child" c:identifier="atk_plug_set_child" version="2.35.0">
+        <doc xml:space="preserve">Sets @child as accessible child of @plug and @plug as accessible parent of
+@child. @child can be NULL.
+
+In some cases, one can not use the AtkPlug type directly as accessible
+object for the toplevel widget of the application. For instance in the gtk
+case, GtkPlugAccessible can not inherit both from GtkWindowAccessible and
+from AtkPlug. In such a case, one can create, in addition to the standard
+accessible object for the toplevel widget, an AtkPlug object, and make the
+former the child of the latter by calling atk_plug_set_child().</doc>
+        
+        <return-value transfer-ownership="none">
+          <type name="none" c:type="void"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="plug" transfer-ownership="none">
+            <doc xml:space="preserve">an #AtkPlug to be set as accessible parent of @child.</doc>
+            <type name="Plug" c:type="AtkPlug*"/>
+          </instance-parameter>
+          <parameter name="child" transfer-ownership="none">
+            <doc xml:space="preserve">an #AtkObject to be set as accessible child of @plug.</doc>
+            <type name="Object" c:type="AtkObject*"/>
+          </parameter>
         </parameters>
       </method>
       <field name="parent">
@@ -6160,6 +6978,69 @@ the previous value of the property, but is not used anymore.</doc>
         <type name="GObject.Value" c:type="GValue"/>
       </field>
     </record>
+    <function-macro name="REGISTRY" c:identifier="ATK_REGISTRY" introspectable="0">
+      
+      <parameters>
+        <parameter name="obj">
+        </parameter>
+      </parameters>
+    </function-macro>
+    <function-macro name="REGISTRY_CLASS" c:identifier="ATK_REGISTRY_CLASS" introspectable="0">
+      
+      <parameters>
+        <parameter name="klass">
+        </parameter>
+      </parameters>
+    </function-macro>
+    <function-macro name="REGISTRY_GET_CLASS" c:identifier="ATK_REGISTRY_GET_CLASS" introspectable="0">
+      
+      <parameters>
+        <parameter name="obj">
+        </parameter>
+      </parameters>
+    </function-macro>
+    <function-macro name="RELATION" c:identifier="ATK_RELATION" introspectable="0">
+      
+      <parameters>
+        <parameter name="obj">
+        </parameter>
+      </parameters>
+    </function-macro>
+    <function-macro name="RELATION_CLASS" c:identifier="ATK_RELATION_CLASS" introspectable="0">
+      
+      <parameters>
+        <parameter name="klass">
+        </parameter>
+      </parameters>
+    </function-macro>
+    <function-macro name="RELATION_GET_CLASS" c:identifier="ATK_RELATION_GET_CLASS" introspectable="0">
+      
+      <parameters>
+        <parameter name="obj">
+        </parameter>
+      </parameters>
+    </function-macro>
+    <function-macro name="RELATION_SET" c:identifier="ATK_RELATION_SET" introspectable="0">
+      
+      <parameters>
+        <parameter name="obj">
+        </parameter>
+      </parameters>
+    </function-macro>
+    <function-macro name="RELATION_SET_CLASS" c:identifier="ATK_RELATION_SET_CLASS" introspectable="0">
+      
+      <parameters>
+        <parameter name="klass">
+        </parameter>
+      </parameters>
+    </function-macro>
+    <function-macro name="RELATION_SET_GET_CLASS" c:identifier="ATK_RELATION_SET_GET_CLASS" introspectable="0">
+      
+      <parameters>
+        <parameter name="obj">
+        </parameter>
+      </parameters>
+    </function-macro>
     <record name="Range" c:type="AtkRange" glib:type-name="AtkRange" glib:get-type="atk_range_get_type" c:symbol-prefix="range">
       <doc xml:space="preserve">#AtkRange are used on #AtkValue, in order to represent the full
 range of a given component (for example an slider or a range
@@ -7350,31 +8231,101 @@ properly. ATK_ROLE_INVALID in case of error.</doc>
         </parameters>
       </function>
     </enumeration>
+    <function-macro name="SELECTION" c:identifier="ATK_SELECTION" introspectable="0">
+      
+      <parameters>
+        <parameter name="obj">
+        </parameter>
+      </parameters>
+    </function-macro>
+    <function-macro name="SELECTION_GET_IFACE" c:identifier="ATK_SELECTION_GET_IFACE" introspectable="0">
+      
+      <parameters>
+        <parameter name="obj">
+        </parameter>
+      </parameters>
+    </function-macro>
+    <function-macro name="SOCKET" c:identifier="ATK_SOCKET" introspectable="0">
+      
+      <parameters>
+        <parameter name="obj">
+        </parameter>
+      </parameters>
+    </function-macro>
+    <function-macro name="SOCKET_CLASS" c:identifier="ATK_SOCKET_CLASS" introspectable="0">
+      
+      <parameters>
+        <parameter name="klass">
+        </parameter>
+      </parameters>
+    </function-macro>
+    <function-macro name="SOCKET_GET_CLASS" c:identifier="ATK_SOCKET_GET_CLASS" introspectable="0">
+      
+      <parameters>
+        <parameter name="obj">
+        </parameter>
+      </parameters>
+    </function-macro>
+    <function-macro name="STATE_SET" c:identifier="ATK_STATE_SET" introspectable="0">
+      
+      <parameters>
+        <parameter name="obj">
+        </parameter>
+      </parameters>
+    </function-macro>
+    <function-macro name="STATE_SET_CLASS" c:identifier="ATK_STATE_SET_CLASS" introspectable="0">
+      
+      <parameters>
+        <parameter name="klass">
+        </parameter>
+      </parameters>
+    </function-macro>
+    <function-macro name="STATE_SET_GET_CLASS" c:identifier="ATK_STATE_SET_GET_CLASS" introspectable="0">
+      
+      <parameters>
+        <parameter name="obj">
+        </parameter>
+      </parameters>
+    </function-macro>
+    <function-macro name="STREAMABLE_CONTENT" c:identifier="ATK_STREAMABLE_CONTENT" introspectable="0">
+      
+      <parameters>
+        <parameter name="obj">
+        </parameter>
+      </parameters>
+    </function-macro>
+    <function-macro name="STREAMABLE_CONTENT_GET_IFACE" c:identifier="ATK_STREAMABLE_CONTENT_GET_IFACE" introspectable="0">
+      
+      <parameters>
+        <parameter name="obj">
+        </parameter>
+      </parameters>
+    </function-macro>
     <enumeration name="ScrollType" version="2.30" glib:type-name="AtkScrollType" glib:get-type="atk_scroll_type_get_type" c:type="AtkScrollType">
       <doc xml:space="preserve">Specifies where an object should be placed on the screen when using scroll_to.</doc>
       <member name="top_left" value="0" c:identifier="ATK_SCROLL_TOP_LEFT" glib:nick="top-left">
-        <doc xml:space="preserve">Scroll the object vertically and horizontally to the top
- left corner of the window.</doc>
+        <doc xml:space="preserve">Scroll the object vertically and horizontally to bring
+  its top left corner to the top left corner of the window.</doc>
       </member>
       <member name="bottom_right" value="1" c:identifier="ATK_SCROLL_BOTTOM_RIGHT" glib:nick="bottom-right">
-        <doc xml:space="preserve">Scroll the object vertically and horizontally to the
-  bottom right corner of the window.</doc>
+        <doc xml:space="preserve">Scroll the object vertically and horizontally to
+  bring its bottom right corner to the bottom right corner of the window.</doc>
       </member>
       <member name="top_edge" value="2" c:identifier="ATK_SCROLL_TOP_EDGE" glib:nick="top-edge">
-        <doc xml:space="preserve">Scroll the object vertically to the top edge of the
-  window.</doc>
+        <doc xml:space="preserve">Scroll the object vertically to bring its top edge to
+  the top edge of the window.</doc>
       </member>
       <member name="bottom_edge" value="3" c:identifier="ATK_SCROLL_BOTTOM_EDGE" glib:nick="bottom-edge">
-        <doc xml:space="preserve">Scroll the object vertically to the bottom edge of
-  the window.</doc>
+        <doc xml:space="preserve">Scroll the object vertically to bring its bottom
+  edge to the bottom edge of the window.</doc>
       </member>
       <member name="left_edge" value="4" c:identifier="ATK_SCROLL_LEFT_EDGE" glib:nick="left-edge">
-        <doc xml:space="preserve">Scroll the object vertically and horizontally to the
-  left edge of the window.</doc>
+        <doc xml:space="preserve">Scroll the object vertically and horizontally to bring
+  its left edge to the left edge of the window.</doc>
       </member>
       <member name="right_edge" value="5" c:identifier="ATK_SCROLL_RIGHT_EDGE" glib:nick="right-edge">
-        <doc xml:space="preserve">Scroll the object vertically and horizontally to the
-  right edge of the window.</doc>
+        <doc xml:space="preserve">Scroll the object vertically and horizontally to
+  bring its right edge to the right edge of the window.</doc>
       </member>
       <member name="anywhere" value="6" c:identifier="ATK_SCROLL_ANYWHERE" glib:nick="anywhere">
         <doc xml:space="preserve">Scroll the object vertically and horizontally so that
@@ -7886,7 +8837,7 @@ as needed.</doc>
           </instance-parameter>
           <parameter name="plug_id" transfer-ownership="none">
             <doc xml:space="preserve">the ID of an #AtkPlug</doc>
-            <type name="utf8" c:type="gchar*"/>
+            <type name="utf8" c:type="const gchar*"/>
           </parameter>
         </parameters>
       </virtual-method>
@@ -7912,7 +8863,7 @@ as needed.</doc>
           </instance-parameter>
           <parameter name="plug_id" transfer-ownership="none">
             <doc xml:space="preserve">the ID of an #AtkPlug</doc>
-            <type name="utf8" c:type="gchar*"/>
+            <type name="utf8" c:type="const gchar*"/>
           </parameter>
         </parameters>
       </method>
@@ -7955,7 +8906,7 @@ as needed.</doc>
             </parameter>
             <parameter name="plug_id" transfer-ownership="none">
               <doc xml:space="preserve">the ID of an #AtkPlug</doc>
-              <type name="utf8" c:type="gchar*"/>
+              <type name="utf8" c:type="const gchar*"/>
             </parameter>
           </parameters>
         </callback>
@@ -8703,6 +9654,48 @@ for the default mime type.</doc>
         <type name="Function" c:type="AtkFunction"/>
       </field>
     </record>
+    <function-macro name="TABLE" c:identifier="ATK_TABLE" introspectable="0">
+      
+      <parameters>
+        <parameter name="obj">
+        </parameter>
+      </parameters>
+    </function-macro>
+    <function-macro name="TABLE_CELL" c:identifier="ATK_TABLE_CELL" introspectable="0">
+      
+      <parameters>
+        <parameter name="obj">
+        </parameter>
+      </parameters>
+    </function-macro>
+    <function-macro name="TABLE_CELL_GET_IFACE" c:identifier="ATK_TABLE_CELL_GET_IFACE" introspectable="0">
+      
+      <parameters>
+        <parameter name="obj">
+        </parameter>
+      </parameters>
+    </function-macro>
+    <function-macro name="TABLE_GET_IFACE" c:identifier="ATK_TABLE_GET_IFACE" introspectable="0">
+      
+      <parameters>
+        <parameter name="obj">
+        </parameter>
+      </parameters>
+    </function-macro>
+    <function-macro name="TEXT" c:identifier="ATK_TEXT" introspectable="0">
+      
+      <parameters>
+        <parameter name="obj">
+        </parameter>
+      </parameters>
+    </function-macro>
+    <function-macro name="TEXT_GET_IFACE" c:identifier="ATK_TEXT_GET_IFACE" introspectable="0">
+      
+      <parameters>
+        <parameter name="obj">
+        </parameter>
+      </parameters>
+    </function-macro>
     <interface name="Table" c:symbol-prefix="table" c:type="AtkTable" glib:type-name="AtkTable" glib:get-type="atk_table_get_type" glib:type-struct="TableIface">
       <doc xml:space="preserve">#AtkTable should be implemented by components which present
 elements ordered via rows and columns.  It may also be used to
@@ -11362,7 +12355,10 @@ and is NULL terminated.</doc>
         </parameters>
       </virtual-method>
       <virtual-method name="get_character_extents" invoker="get_character_extents">
-        <doc xml:space="preserve">Get the bounding box containing the glyph representing the character at
+        <doc xml:space="preserve">If the extent can not be obtained (e.g. missing support), all of x, y, width,
+height are set to -1.
+
+Get the bounding box containing the glyph representing the character at
     a particular text offset.</doc>
         
         <return-value transfer-ownership="none">
@@ -11463,7 +12459,10 @@ widget window</doc>
         </parameters>
       </virtual-method>
       <virtual-method name="get_range_extents" invoker="get_range_extents" version="1.3">
-        <doc xml:space="preserve">Get the bounding box for text within the specified range.</doc>
+        <doc xml:space="preserve">Get the bounding box for text within the specified range.
+
+If the extents can not be obtained (e.g. or missing support), the rectangle
+fields are set to -1.</doc>
         
         <return-value transfer-ownership="none">
           <type name="none" c:type="void"/>
@@ -11797,11 +12796,7 @@ moving or deleting a selected region can change the numbering.</doc>
         </parameters>
       </virtual-method>
       <virtual-method name="scroll_substring_to" invoker="scroll_substring_to" version="2.32">
-        <doc xml:space="preserve">Makes @text visible on the screen by scrolling all necessary parents.
-
-Contrary to atk_text_set_position, this does not actually move
-@text in its parent, this only makes the parents scroll so that the
-object shows up on the screen, given its current position within the parents.</doc>
+        <doc xml:space="preserve">Makes a substring of @text visible on the screen by scrolling all necessary parents.</doc>
         
         <return-value transfer-ownership="none">
           <doc xml:space="preserve">whether scrolling was successful.</doc>
@@ -11813,11 +12808,11 @@ object shows up on the screen, given its current position within the parents.</d
             <type name="Text" c:type="AtkText*"/>
           </instance-parameter>
           <parameter name="start_offset" transfer-ownership="none">
-            <doc xml:space="preserve">start position</doc>
+            <doc xml:space="preserve">start offset in the @text</doc>
             <type name="gint" c:type="gint"/>
           </parameter>
           <parameter name="end_offset" transfer-ownership="none">
-            <doc xml:space="preserve">end position, or -1 for the end of the string.</doc>
+            <doc xml:space="preserve">end offset in the @text, or -1 for the end of the text.</doc>
             <type name="gint" c:type="gint"/>
           </parameter>
           <parameter name="type" transfer-ownership="none">
@@ -11827,8 +12822,8 @@ object shows up on the screen, given its current position within the parents.</d
         </parameters>
       </virtual-method>
       <virtual-method name="scroll_substring_to_point" invoker="scroll_substring_to_point" version="2.32">
-        <doc xml:space="preserve">Makes an object visible on the screen at a given position by scrolling all
-necessary parents.</doc>
+        <doc xml:space="preserve">Move the top-left of a substring of @text to a given position of the screen
+by scrolling all necessary parents.</doc>
         
         <return-value transfer-ownership="none">
           <doc xml:space="preserve">whether scrolling was successful.</doc>
@@ -11840,11 +12835,11 @@ necessary parents.</doc>
             <type name="Text" c:type="AtkText*"/>
           </instance-parameter>
           <parameter name="start_offset" transfer-ownership="none">
-            <doc xml:space="preserve">start position</doc>
+            <doc xml:space="preserve">start offset in the @text</doc>
             <type name="gint" c:type="gint"/>
           </parameter>
           <parameter name="end_offset" transfer-ownership="none">
-            <doc xml:space="preserve">end position, or -1 for the end of the string.</doc>
+            <doc xml:space="preserve">end offset in the @text, or -1 for the end of the text.</doc>
             <type name="gint" c:type="gint"/>
           </parameter>
           <parameter name="coords" transfer-ownership="none">
@@ -12068,7 +13063,10 @@ the selection</doc>
         </parameters>
       </method>
       <method name="get_character_extents" c:identifier="atk_text_get_character_extents">
-        <doc xml:space="preserve">Get the bounding box containing the glyph representing the character at
+        <doc xml:space="preserve">If the extent can not be obtained (e.g. missing support), all of x, y, width,
+height are set to -1.
+
+Get the bounding box containing the glyph representing the character at
     a particular text offset.</doc>
         
         <return-value transfer-ownership="none">
@@ -12169,7 +13167,10 @@ widget window</doc>
         </parameters>
       </method>
       <method name="get_range_extents" c:identifier="atk_text_get_range_extents" version="1.3">
-        <doc xml:space="preserve">Get the bounding box for text within the specified range.</doc>
+        <doc xml:space="preserve">Get the bounding box for text within the specified range.
+
+If the extents can not be obtained (e.g. or missing support), the rectangle
+fields are set to -1.</doc>
         
         <return-value transfer-ownership="none">
           <type name="none" c:type="void"/>
@@ -12503,11 +13504,7 @@ moving or deleting a selected region can change the numbering.</doc>
         </parameters>
       </method>
       <method name="scroll_substring_to" c:identifier="atk_text_scroll_substring_to" version="2.32">
-        <doc xml:space="preserve">Makes @text visible on the screen by scrolling all necessary parents.
-
-Contrary to atk_text_set_position, this does not actually move
-@text in its parent, this only makes the parents scroll so that the
-object shows up on the screen, given its current position within the parents.</doc>
+        <doc xml:space="preserve">Makes a substring of @text visible on the screen by scrolling all necessary parents.</doc>
         
         <return-value transfer-ownership="none">
           <doc xml:space="preserve">whether scrolling was successful.</doc>
@@ -12519,11 +13516,11 @@ object shows up on the screen, given its current position within the parents.</d
             <type name="Text" c:type="AtkText*"/>
           </instance-parameter>
           <parameter name="start_offset" transfer-ownership="none">
-            <doc xml:space="preserve">start position</doc>
+            <doc xml:space="preserve">start offset in the @text</doc>
             <type name="gint" c:type="gint"/>
           </parameter>
           <parameter name="end_offset" transfer-ownership="none">
-            <doc xml:space="preserve">end position, or -1 for the end of the string.</doc>
+            <doc xml:space="preserve">end offset in the @text, or -1 for the end of the text.</doc>
             <type name="gint" c:type="gint"/>
           </parameter>
           <parameter name="type" transfer-ownership="none">
@@ -12533,8 +13530,8 @@ object shows up on the screen, given its current position within the parents.</d
         </parameters>
       </method>
       <method name="scroll_substring_to_point" c:identifier="atk_text_scroll_substring_to_point" version="2.32">
-        <doc xml:space="preserve">Makes an object visible on the screen at a given position by scrolling all
-necessary parents.</doc>
+        <doc xml:space="preserve">Move the top-left of a substring of @text to a given position of the screen
+by scrolling all necessary parents.</doc>
         
         <return-value transfer-ownership="none">
           <doc xml:space="preserve">whether scrolling was successful.</doc>
@@ -12546,11 +13543,11 @@ necessary parents.</doc>
             <type name="Text" c:type="AtkText*"/>
           </instance-parameter>
           <parameter name="start_offset" transfer-ownership="none">
-            <doc xml:space="preserve">start position</doc>
+            <doc xml:space="preserve">start offset in the @text</doc>
             <type name="gint" c:type="gint"/>
           </parameter>
           <parameter name="end_offset" transfer-ownership="none">
-            <doc xml:space="preserve">end position, or -1 for the end of the string.</doc>
+            <doc xml:space="preserve">end offset in the @text, or -1 for the end of the text.</doc>
             <type name="gint" c:type="gint"/>
           </parameter>
           <parameter name="coords" transfer-ownership="none">
@@ -13563,11 +14560,11 @@ the selection</doc>
               <type name="Text" c:type="AtkText*"/>
             </parameter>
             <parameter name="start_offset" transfer-ownership="none">
-              <doc xml:space="preserve">start position</doc>
+              <doc xml:space="preserve">start offset in the @text</doc>
               <type name="gint" c:type="gint"/>
             </parameter>
             <parameter name="end_offset" transfer-ownership="none">
-              <doc xml:space="preserve">end position, or -1 for the end of the string.</doc>
+              <doc xml:space="preserve">end offset in the @text, or -1 for the end of the text.</doc>
               <type name="gint" c:type="gint"/>
             </parameter>
             <parameter name="type" transfer-ownership="none">
@@ -13590,11 +14587,11 @@ the selection</doc>
               <type name="Text" c:type="AtkText*"/>
             </parameter>
             <parameter name="start_offset" transfer-ownership="none">
-              <doc xml:space="preserve">start position</doc>
+              <doc xml:space="preserve">start offset in the @text</doc>
               <type name="gint" c:type="gint"/>
             </parameter>
             <parameter name="end_offset" transfer-ownership="none">
-              <doc xml:space="preserve">end position, or -1 for the end of the string.</doc>
+              <doc xml:space="preserve">end offset in the @text, or -1 for the end of the text.</doc>
               <type name="gint" c:type="gint"/>
             </parameter>
             <parameter name="coords" transfer-ownership="none">
@@ -13654,6 +14651,36 @@ parent object.</doc>
         <type name="gint" c:type="gint"/>
       </field>
     </record>
+    <function-macro name="UNAVAILABLE" c:identifier="ATK_UNAVAILABLE" introspectable="0">
+      
+      <parameters>
+        <parameter name="maj">
+        </parameter>
+        <parameter name="min">
+        </parameter>
+      </parameters>
+    </function-macro>
+    <function-macro name="UTIL" c:identifier="ATK_UTIL" introspectable="0">
+      
+      <parameters>
+        <parameter name="obj">
+        </parameter>
+      </parameters>
+    </function-macro>
+    <function-macro name="UTIL_CLASS" c:identifier="ATK_UTIL_CLASS" introspectable="0">
+      
+      <parameters>
+        <parameter name="klass">
+        </parameter>
+      </parameters>
+    </function-macro>
+    <function-macro name="UTIL_GET_CLASS" c:identifier="ATK_UTIL_GET_CLASS" introspectable="0">
+      
+      <parameters>
+        <parameter name="obj">
+        </parameter>
+      </parameters>
+    </function-macro>
     <class name="Util" c:symbol-prefix="util" c:type="AtkUtil" parent="GObject.Object" glib:type-name="AtkUtil" glib:get-type="atk_util_get_type" glib:type-struct="UtilClass">
       <doc xml:space="preserve">A set of ATK utility functions which are used to support event
 registration of various types, and obtaining the 'root' accessible
@@ -13752,6 +14779,20 @@ and toolkit version.</doc>
         </callback>
       </field>
     </record>
+    <function-macro name="VALUE" c:identifier="ATK_VALUE" introspectable="0">
+      
+      <parameters>
+        <parameter name="obj">
+        </parameter>
+      </parameters>
+    </function-macro>
+    <function-macro name="VALUE_GET_IFACE" c:identifier="ATK_VALUE_GET_IFACE" introspectable="0">
+      
+      <parameters>
+        <parameter name="obj">
+        </parameter>
+      </parameters>
+    </function-macro>
     <constant name="VERSION_MIN_REQUIRED" value="2" c:type="ATK_VERSION_MIN_REQUIRED" version="2.14">
       <doc xml:space="preserve">A macro that should be defined by the user prior to including
 the atk/atk.h header.
@@ -14596,6 +15637,20 @@ subrange, using atk_value_type_get_localized_name().</doc>
         </parameters>
       </function>
     </enumeration>
+    <function-macro name="WINDOW" c:identifier="ATK_WINDOW" introspectable="0">
+      
+      <parameters>
+        <parameter name="obj">
+        </parameter>
+      </parameters>
+    </function-macro>
+    <function-macro name="WINDOW_GET_IFACE" c:identifier="ATK_WINDOW_GET_IFACE" introspectable="0">
+      
+      <parameters>
+        <parameter name="obj">
+        </parameter>
+      </parameters>
+    </function-macro>
     <interface name="Window" c:symbol-prefix="window" c:type="AtkWindow" glib:type-name="AtkWindow" glib:get-type="atk_window_get_type" glib:type-struct="WindowIface">
       <doc xml:space="preserve">#AtkWindow should be implemented by the UI elements that represent
 a top-level window, such as the main window of an application or
