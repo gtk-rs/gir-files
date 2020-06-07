@@ -98,7 +98,14 @@ xmlstarlet ed -P -L \
 	-a '//_:callback[@name="ParseErrorFunc"]/_:parameters/_:parameter[@name="section"]/_:type[not(@name) and @c:type="gconstpointer"]' -type attr -n "name" -v "gconstpointer" \
 	Gsk-4.0.gir
 
-# fix unpublished Pango.ShowFlags  gtk 4.0
+# fix harfbuzz types on Pango
 xmlstarlet ed -P -L \
-	-u '//_:type[@name="Pango.ShowFlags"]'/@name -v "guint" \
-	Gtk-4.0.gir
+	-i '///_:type[not(@name) and @c:type="hb_font_t*"]' -t 'attr' -n 'name' -v "gconstpointer" \
+	-u '//_:type[@c:type="hb_font_t*"]/@c:type' -v "gconstpointer" \
+	-i '///_:array[not(@name) and @c:type="hb_feature_t*"]' -t 'attr' -n 'name' -v "gconstpointer" \
+	-r '///_:array[@c:type="hb_feature_t*"]' -v "type" \
+	-d '//_:type[@c:type="hb_feature_t*"]/*' \
+	-d '//_:type[@c:type="hb_feature_t*"]/@length' \
+	-d '//_:type[@c:type="hb_feature_t*"]/@zero-terminated' \
+	-u '//_:type[@c:type="hb_feature_t*"]/@c:type' -v "gconstpointer" \
+	Pango-1.0.gir
