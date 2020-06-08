@@ -19,6 +19,11 @@ allowed. The year is represented with four digits.</doc>
       
       <type name="guint16" c:type="guint16"/>
     </alias>
+    <alias name="MainContextPusher" c:type="GMainContextPusher">
+      <doc xml:space="preserve">Opaque type. See g_main_context_pusher_new() for details.</doc>
+      
+      <type name="none" c:type="void"/>
+    </alias>
     <alias name="MutexLocker" c:type="GMutexLocker">
       <doc xml:space="preserve">Opaque type. See g_mutex_locker_new() for details.</doc>
       
@@ -658,6 +663,45 @@ This did not actually work, so any such code should be removed.</doc>
           <parameter name="user_data" transfer-ownership="none" nullable="1" allow-none="1">
             <doc xml:space="preserve">data to pass to @compare_func</doc>
             <type name="gpointer" c:type="gpointer"/>
+          </parameter>
+        </parameters>
+      </function>
+      <function name="steal" c:identifier="g_array_steal" version="2.64" introspectable="0">
+        <doc xml:space="preserve">Frees the data in the array and resets the size to zero, while
+the underlying array is preserved for use elsewhere and returned
+to the caller.
+
+If the array was created with the @zero_terminate property
+set to %TRUE, the returned data is zero terminated too.
+
+If array elements contain dynamically-allocated memory,
+the array elements should also be freed by the caller.
+
+A short example of use:
+|[&lt;!-- language="C" --&gt;
+...
+gpointer data;
+gsize data_len;
+data = g_array_steal (some_array, &amp;data_len);
+...
+]|</doc>
+        
+        <return-value transfer-ownership="full" nullable="1">
+          <doc xml:space="preserve">the element data, which should be
+    freed using g_free().</doc>
+          <type name="gpointer" c:type="gpointer"/>
+        </return-value>
+        <parameters>
+          <parameter name="array" transfer-ownership="none">
+            <doc xml:space="preserve">a #GArray.</doc>
+            <array name="GLib.Array" c:type="GArray*">
+              <type name="gpointer" c:type="gpointer"/>
+            </array>
+          </parameter>
+          <parameter name="len" direction="out" caller-allocates="1" transfer-ownership="none" optional="1" allow-none="1">
+            <doc xml:space="preserve">pointer to retrieve the number of
+   elements of the original array</doc>
+            <type name="gsize" c:type="gsize*"/>
           </parameter>
         </parameters>
       </function>
@@ -2702,6 +2746,30 @@ user data argument.</doc>
           </parameter>
         </parameters>
       </function>
+      <function name="steal" c:identifier="g_byte_array_steal" version="2.64">
+        <doc xml:space="preserve">Frees the data in the array and resets the size to zero, while
+the underlying array is preserved for use elsewhere and returned
+to the caller.</doc>
+        
+        <return-value transfer-ownership="full">
+          <doc xml:space="preserve">the element data, which should be
+    freed using g_free().</doc>
+          <type name="guint8" c:type="guint8*"/>
+        </return-value>
+        <parameters>
+          <parameter name="array" transfer-ownership="none">
+            <doc xml:space="preserve">a #GByteArray.</doc>
+            <array name="GLib.ByteArray" c:type="GByteArray*">
+              <type name="guint8" c:type="guint8"/>
+            </array>
+          </parameter>
+          <parameter name="len" direction="out" caller-allocates="1" transfer-ownership="none" optional="1" allow-none="1">
+            <doc xml:space="preserve">pointer to retrieve the number of
+   elements of the original array</doc>
+            <type name="gsize" c:type="gsize*"/>
+          </parameter>
+        </parameters>
+      </function>
       <function name="unref" c:identifier="g_byte_array_unref" version="2.22">
         <doc xml:space="preserve">Atomically decrements the reference count of @array by one. If the
 reference count drops to 0, all memory allocated by the array is
@@ -3211,7 +3279,7 @@ no longer be updated with g_checksum_update().</doc>
         </parameters>
       </method>
       <method name="get_string" c:identifier="g_checksum_get_string" version="2.16">
-        <doc xml:space="preserve">Gets the digest as an hexadecimal string.
+        <doc xml:space="preserve">Gets the digest as a hexadecimal string.
 
 Once this function has been called the #GChecksum can no longer be
 updated with g_checksum_update().
@@ -3962,6 +4030,13 @@ in the macro, so you shouldn't use double quotes.</doc>
         </parameter>
       </parameters>
     </function-macro>
+    <function-macro name="DEPRECATED_ENUMERATOR_IN_2_64_FOR" c:identifier="GLIB_DEPRECATED_ENUMERATOR_IN_2_64_FOR" introspectable="0">
+      
+      <parameters>
+        <parameter name="f">
+        </parameter>
+      </parameters>
+    </function-macro>
     <function-macro name="DEPRECATED_FOR" c:identifier="G_DEPRECATED_FOR" version="2.32" introspectable="0">
       <doc xml:space="preserve">This macro is similar to %G_GNUC_DEPRECATED_FOR, and can be used to mark
 functions declarations as deprecated. Unlike %G_GNUC_DEPRECATED_FOR, it
@@ -4112,6 +4187,13 @@ int my_mistake (void);
         </parameter>
       </parameters>
     </function-macro>
+    <function-macro name="DEPRECATED_IN_2_64_FOR" c:identifier="GLIB_DEPRECATED_IN_2_64_FOR" introspectable="0">
+      
+      <parameters>
+        <parameter name="f">
+        </parameter>
+      </parameters>
+    </function-macro>
     <function-macro name="DEPRECATED_MACRO_FOR" c:identifier="GLIB_DEPRECATED_MACRO_FOR" introspectable="0">
       
       <parameters>
@@ -4252,6 +4334,13 @@ int my_mistake (void);
         </parameter>
       </parameters>
     </function-macro>
+    <function-macro name="DEPRECATED_MACRO_IN_2_64_FOR" c:identifier="GLIB_DEPRECATED_MACRO_IN_2_64_FOR" introspectable="0">
+      
+      <parameters>
+        <parameter name="f">
+        </parameter>
+      </parameters>
+    </function-macro>
     <function-macro name="DEPRECATED_TYPE_FOR" c:identifier="GLIB_DEPRECATED_TYPE_FOR" introspectable="0">
       
       <parameters>
@@ -4386,6 +4475,13 @@ int my_mistake (void);
       </parameters>
     </function-macro>
     <function-macro name="DEPRECATED_TYPE_IN_2_62_FOR" c:identifier="GLIB_DEPRECATED_TYPE_IN_2_62_FOR" introspectable="0">
+      
+      <parameters>
+        <parameter name="f">
+        </parameter>
+      </parameters>
+    </function-macro>
+    <function-macro name="DEPRECATED_TYPE_IN_2_64_FOR" c:identifier="GLIB_DEPRECATED_TYPE_IN_2_64_FOR" introspectable="0">
       
       <parameters>
         <parameter name="f">
@@ -5515,9 +5611,17 @@ when you are done with it.</doc>
       <constructor name="new_from_iso8601" c:identifier="g_date_time_new_from_iso8601" version="2.56">
         <doc xml:space="preserve">Creates a #GDateTime corresponding to the given
 [ISO 8601 formatted string](https://en.wikipedia.org/wiki/ISO_8601)
-@text. ISO 8601 strings of the form &lt;date&gt;&lt;sep&gt;&lt;time&gt;&lt;tz&gt; are supported.
+@text. ISO 8601 strings of the form &lt;date&gt;&lt;sep&gt;&lt;time&gt;&lt;tz&gt; are supported, with
+some extensions from [RFC 3339](https://tools.ietf.org/html/rfc3339) as
+mentioned below.
 
-&lt;sep&gt; is the separator and can be either 'T', 't' or ' '.
+Note that as #GDateTime "is oblivious to leap seconds", leap seconds information
+in an ISO-8601 string will be ignored, so a `23:59:60` time would be parsed as
+`23:59:59`.
+
+&lt;sep&gt; is the separator and can be either 'T', 't' or ' '. The latter two
+separators are an extension from
+[RFC 3339](https://tools.ietf.org/html/rfc3339#section-5.6).
 
 &lt;date&gt; is in the form:
 
@@ -7460,7 +7564,7 @@ See the [GNU C documentation](https://gcc.gnu.org/onlinedocs/gcc/Common-Function
       </parameters>
     </function-macro>
     <function-macro name="GNUC_CHECK_VERSION" c:identifier="G_GNUC_CHECK_VERSION" version="2.42" introspectable="0">
-      <doc xml:space="preserve">Expands to a a check for a compiler with __GNUC__ defined and a version
+      <doc xml:space="preserve">Expands to a check for a compiler with __GNUC__ defined and a version
 greater than or equal to the major and minor numbers provided. For example,
 the following would only match on compilers such as GCC 4.8 or newer.
 
@@ -7891,6 +7995,10 @@ following functions.</doc>
 is equivalent to calling g_hash_table_replace() with @key as both the
 key and the value.
 
+In particular, this means that if @key already exists in the hash table, then
+the old copy of @key in the hash table is freed and @key replaces it in the
+table.
+
 When a hash table only ever contains keys that have themselves as the
 corresponding value it is able to be stored more efficiently.  See
 the discussion in the section description.
@@ -7911,7 +8019,7 @@ or not.</doc>
               <type name="gpointer" c:type="gpointer"/>
             </type>
           </parameter>
-          <parameter name="key" transfer-ownership="none" nullable="1" allow-none="1">
+          <parameter name="key" transfer-ownership="full" nullable="1" allow-none="1">
             <doc xml:space="preserve">a key to insert</doc>
             <type name="gpointer" c:type="gpointer"/>
           </parameter>
@@ -8005,6 +8113,9 @@ pair, and the given @user_data parameter.  The hash table may not
 be modified while iterating over it (you can't add/remove
 items). To remove all items matching a predicate, use
 g_hash_table_foreach_remove().
+
+The order in which g_hash_table_foreach() iterates over the keys/values in
+the hash table is not defined.
 
 See g_hash_table_find() for performance caveats for linear
 order searches in contrast to g_hash_table_lookup().</doc>
@@ -8586,7 +8697,10 @@ This function is MT-safe and may be called from any thread.</doc>
       <doc xml:space="preserve">A GHashTableIter structure represents an iterator that can be used
 to iterate over the elements of a #GHashTable. GHashTableIter
 structures are typically allocated on the stack and then initialized
-with g_hash_table_iter_init().</doc>
+with g_hash_table_iter_init().
+
+The iteration order of a #GHashTableIter over the keys/values in a hash
+table is not defined.</doc>
       
       <field name="dummy1" readable="0" private="1">
         <type name="gpointer" c:type="gpointer"/>
@@ -8627,6 +8741,10 @@ with g_hash_table_iter_init().</doc>
         <doc xml:space="preserve">Initializes a key/value pair iterator and associates it with
 @hash_table. Modifying the hash table after calling this function
 invalidates the returned iterator.
+
+The iteration order of a #GHashTableIter over the keys/values in a hash
+table is not defined.
+
 |[&lt;!-- language="C" --&gt;
 GHashTableIter iter;
 gpointer key, value;
@@ -8800,7 +8918,7 @@ no longer be updated with g_checksum_update().</doc>
         </parameters>
       </method>
       <method name="get_string" c:identifier="g_hmac_get_string" version="2.30">
-        <doc xml:space="preserve">Gets the HMAC as an hexadecimal string.
+        <doc xml:space="preserve">Gets the HMAC as a hexadecimal string.
 
 Once this function has been called the #GHmac can no longer be
 updated with g_hmac_update().
@@ -10871,10 +10989,6 @@ machines and for '\' or '/' under Windows.</doc>
         </parameter>
       </parameters>
     </function-macro>
-    <constant name="KEY_FILE_DESKTOP_ACTION_GROUP_PREFIX" value="Desktop Action" c:type="G_KEY_FILE_DESKTOP_ACTION_GROUP_PREFIX">
-      
-      <type name="utf8" c:type="gchar*"/>
-    </constant>
     <constant name="KEY_FILE_DESKTOP_GROUP" value="Desktop Entry" c:type="G_KEY_FILE_DESKTOP_GROUP" version="2.14">
       <doc xml:space="preserve">The name of the main group of a desktop entry file, as defined in the
 [Desktop Entry Specification](http://freedesktop.org/Standards/desktop-entry-spec).
@@ -10915,17 +11029,9 @@ entries with the `Application` type.</doc>
       
       <type name="utf8" c:type="gchar*"/>
     </constant>
-    <constant name="KEY_FILE_DESKTOP_KEY_FULLNAME" value="X-GNOME-FullName" c:type="G_KEY_FILE_DESKTOP_KEY_FULLNAME">
-      
-      <type name="utf8" c:type="gchar*"/>
-    </constant>
     <constant name="KEY_FILE_DESKTOP_KEY_GENERIC_NAME" value="GenericName" c:type="G_KEY_FILE_DESKTOP_KEY_GENERIC_NAME" version="2.14">
       <doc xml:space="preserve">A key under #G_KEY_FILE_DESKTOP_GROUP, whose value is a localized
 string giving the generic name of the desktop entry.</doc>
-      
-      <type name="utf8" c:type="gchar*"/>
-    </constant>
-    <constant name="KEY_FILE_DESKTOP_KEY_GETTEXT_DOMAIN" value="X-GNOME-Gettext-Domain" c:type="G_KEY_FILE_DESKTOP_KEY_GETTEXT_DOMAIN">
       
       <type name="utf8" c:type="gchar*"/>
     </constant>
@@ -10939,10 +11045,6 @@ stating whether the desktop entry has been deleted by the user.</doc>
       <doc xml:space="preserve">A key under #G_KEY_FILE_DESKTOP_GROUP, whose value is a localized
 string giving the name of the icon to be displayed for the desktop
 entry.</doc>
-      
-      <type name="utf8" c:type="gchar*"/>
-    </constant>
-    <constant name="KEY_FILE_DESKTOP_KEY_KEYWORDS" value="Keywords" c:type="G_KEY_FILE_DESKTOP_KEY_KEYWORDS">
       
       <type name="utf8" c:type="gchar*"/>
     </constant>
@@ -12062,7 +12164,7 @@ If @key cannot be found then it is created.</doc>
             <type name="utf8" c:type="const gchar*"/>
           </parameter>
           <parameter name="value" transfer-ownership="none">
-            <doc xml:space="preserve">an double value</doc>
+            <doc xml:space="preserve">a double value</doc>
             <type name="gdouble" c:type="gdouble"/>
           </parameter>
         </parameters>
@@ -12929,7 +13031,14 @@ not modify any part of the list after that element.</doc>
 The freed elements are returned to the slice allocator.
 
 If list elements contain dynamically-allocated memory, you should
-either use g_list_free_full() or free them manually first.</doc>
+either use g_list_free_full() or free them manually first.
+
+It can be combined with g_steal_pointer() to ensure the list head pointer
+is not left dangling:
+|[&lt;!-- language="C" --&gt;
+GList *list_of_borrowed_things = &#x2026;;  /&lt;!-- --&gt;* (transfer container) *&lt;!-- --&gt;/
+g_list_free (g_steal_pointer (&amp;list_of_borrowed_things));
+]|</doc>
         
         <return-value transfer-ownership="none">
           <type name="none" c:type="void"/>
@@ -12967,7 +13076,16 @@ It is usually used after g_list_remove_link().</doc>
 and calls @free_func on every element's data.
 
 @free_func must not modify the list (eg, by removing the freed
-element from it).</doc>
+element from it).
+
+It can be combined with g_steal_pointer() to ensure the list head pointer
+is not left dangling &#xAD;&#x2014; this also has the nice property that the head pointer
+is cleared before any of the list elements are freed, to prevent double frees
+from @free_func:
+|[&lt;!-- language="C" --&gt;
+GList *list_of_owned_things = &#x2026;;  /&lt;!-- --&gt;* (transfer full) (element-type GObject) *&lt;!-- --&gt;/
+g_list_free_full (g_steal_pointer (&amp;list_of_owned_things), g_object_unref);
+]|</doc>
         
         <return-value transfer-ownership="none">
           <type name="none" c:type="void"/>
@@ -13709,7 +13827,7 @@ linked against at application run time.</doc>
       
       <type name="guint8" c:type="guint8"/>
     </constant>
-    <constant name="MICRO_VERSION" value="0" c:type="GLIB_MICRO_VERSION">
+    <constant name="MICRO_VERSION" value="1" c:type="GLIB_MICRO_VERSION">
       <doc xml:space="preserve">The micro version number of the GLib library.
 
 Like #gtk_micro_version, but from the headers used at
@@ -13738,7 +13856,7 @@ linked against at application run time.</doc>
       
       <type name="gint8" c:type="gint8"/>
     </constant>
-    <constant name="MINOR_VERSION" value="62" c:type="GLIB_MINOR_VERSION">
+    <constant name="MINOR_VERSION" value="64" c:type="GLIB_MINOR_VERSION">
       <doc xml:space="preserve">The minor version number of the GLib library.
 
 Like #gtk_minor_version, but from the headers used at
@@ -14893,11 +15011,11 @@ semantics for what constitutes the "current" line number other than
             <doc xml:space="preserve">a #GMarkupParseContext</doc>
             <type name="MarkupParseContext" c:type="GMarkupParseContext*"/>
           </instance-parameter>
-          <parameter name="line_number" transfer-ownership="none" nullable="1" allow-none="1">
+          <parameter name="line_number" direction="out" caller-allocates="0" transfer-ownership="full" optional="1" allow-none="1">
             <doc xml:space="preserve">return location for a line number, or %NULL</doc>
             <type name="gint" c:type="gint*"/>
           </parameter>
-          <parameter name="char_number" transfer-ownership="none" nullable="1" allow-none="1">
+          <parameter name="char_number" direction="out" caller-allocates="0" transfer-ownership="full" optional="1" allow-none="1">
             <doc xml:space="preserve">return location for a char-on-line number, or %NULL</doc>
             <type name="gint" c:type="gint*"/>
           </parameter>
@@ -16816,7 +16934,9 @@ exist, adds the @entries to it and sets the translation domain.</doc>
           </instance-parameter>
           <parameter name="entries" transfer-ownership="none">
             <doc xml:space="preserve">a %NULL-terminated array of #GOptionEntrys</doc>
-            <type name="OptionEntry" c:type="const GOptionEntry*"/>
+            <array c:type="const GOptionEntry*">
+              <type name="OptionEntry" c:type="GOptionEntry"/>
+            </array>
           </parameter>
           <parameter name="translation_domain" transfer-ownership="none" nullable="1" allow-none="1">
             <doc xml:space="preserve">a translation domain to use for translating
@@ -17034,10 +17154,12 @@ This function is useful if you are trying to use #GOptionContext with
             <doc xml:space="preserve">a #GOptionContext</doc>
             <type name="OptionContext" c:type="GOptionContext*"/>
           </instance-parameter>
-          <parameter name="arguments" direction="inout" caller-allocates="0" transfer-ownership="full">
-            <doc xml:space="preserve">a pointer to the
-   command line arguments (which must be in UTF-8 on Windows)</doc>
-            <array c:type="gchar***">
+          <parameter name="arguments" direction="inout" caller-allocates="0" transfer-ownership="full" optional="1">
+            <doc xml:space="preserve">a pointer
+   to the command line arguments (which must be in UTF-8 on Windows).
+   Starting with GLib 2.62, @arguments can be %NULL, which matches
+   g_option_context_parse().</doc>
+            <array zero-terminated="0" c:type="gchar***">
               <type name="utf8" c:type="gchar**"/>
             </array>
           </parameter>
@@ -17481,7 +17603,9 @@ the application can then add to its #GOptionContext.</doc>
           </instance-parameter>
           <parameter name="entries" transfer-ownership="none">
             <doc xml:space="preserve">a %NULL-terminated array of #GOptionEntrys</doc>
-            <type name="OptionEntry" c:type="const GOptionEntry*"/>
+            <array c:type="const GOptionEntry*">
+              <type name="OptionEntry" c:type="GOptionEntry"/>
+            </array>
           </parameter>
         </parameters>
       </method>
@@ -18551,7 +18675,32 @@ greater than second arg).
 
 Note that the comparison function for g_ptr_array_sort() doesn't
 take the pointers from the array as arguments, it takes pointers to
-the pointers in the array.
+the pointers in the array. Here is a full example of usage:
+
+|[&lt;!-- language="C" --&gt;
+typedef struct
+{
+  gchar *name;
+  gint size;
+} FileListEntry;
+
+static gint
+sort_filelist (gconstpointer a, gconstpointer b)
+{
+  const FileListEntry *entry1 = *((FileListEntry **) a);
+  const FileListEntry *entry2 = *((FileListEntry **) b);
+
+  return g_ascii_strcasecmp (entry1-&gt;name, entry2-&gt;name);
+}
+
+&#x2026;
+g_autoptr (GPtrArray) file_list = NULL;
+
+// initialize file_list array and load with many FileListEntry entries
+...
+// now sort it with
+g_ptr_array_sort (file_list, sort_filelist);
+]|
 
 This is guaranteed to be a stable sort since version 2.32.</doc>
         
@@ -18577,7 +18726,52 @@ user data argument.
 
 Note that the comparison function for g_ptr_array_sort_with_data()
 doesn't take the pointers from the array as arguments, it takes
-pointers to the pointers in the array.
+pointers to the pointers in the array. Here is a full example of use:
+
+|[&lt;!-- language="C" --&gt;
+typedef enum { SORT_NAME, SORT_SIZE } SortMode;
+
+typedef struct
+{
+  gchar *name;
+  gint size;
+} FileListEntry;
+
+static gint
+sort_filelist (gconstpointer a, gconstpointer b, gpointer user_data)
+{
+  gint order;
+  const SortMode sort_mode = GPOINTER_TO_INT (user_data);
+  const FileListEntry *entry1 = *((FileListEntry **) a);
+  const FileListEntry *entry2 = *((FileListEntry **) b);
+
+  switch (sort_mode)
+    {
+    case SORT_NAME:
+      order = g_ascii_strcasecmp (entry1-&gt;name, entry2-&gt;name);
+      break;
+    case SORT_SIZE:
+      order = entry1-&gt;size - entry2-&gt;size;
+      break;
+    default:
+      order = 0;
+      break;
+    }
+  return order;
+}
+
+...
+g_autoptr (GPtrArray) file_list = NULL;
+SortMode sort_mode;
+
+// initialize file_list array and load with many FileListEntry entries
+...
+// now sort it with
+sort_mode = SORT_NAME;
+g_ptr_array_sort_with_data (file_list,
+                            sort_filelist,
+                            GINT_TO_POINTER (sort_mode));
+]|
 
 This is guaranteed to be a stable sort since version 2.32.</doc>
         
@@ -18598,6 +18792,67 @@ This is guaranteed to be a stable sort since version 2.32.</doc>
           <parameter name="user_data" transfer-ownership="none" nullable="1" allow-none="1">
             <doc xml:space="preserve">data to pass to @compare_func</doc>
             <type name="gpointer" c:type="gpointer"/>
+          </parameter>
+        </parameters>
+      </function>
+      <function name="steal" c:identifier="g_ptr_array_steal" version="2.64" introspectable="0">
+        <doc xml:space="preserve">Frees the data in the array and resets the size to zero, while
+the underlying array is preserved for use elsewhere and returned
+to the caller.
+
+Even if set, the #GDestroyNotify function will never be called
+on the current contents of the array and the caller is
+responsible for freeing the array elements.
+
+An example of use:
+|[&lt;!-- language="C" --&gt;
+g_autoptr(GPtrArray) chunk_buffer = g_ptr_array_new_with_free_func (g_bytes_unref);
+
+// Some part of your application appends a number of chunks to the pointer array.
+g_ptr_array_add (chunk_buffer, g_bytes_new_static ("hello", 5));
+g_ptr_array_add (chunk_buffer, g_bytes_new_static ("world", 5));
+
+&#x2026;
+
+// Periodically, the chunks need to be sent as an array-and-length to some
+// other part of the program.
+GBytes **chunks;
+gsize n_chunks;
+
+chunks = g_ptr_array_steal (chunk_buffer, &amp;n_chunks);
+for (gsize i = 0; i &lt; n_chunks; i++)
+  {
+    // Do something with each chunk here, and then free them, since
+    // g_ptr_array_steal() transfers ownership of all the elements and the
+    // array to the caller.
+    &#x2026;
+
+    g_bytes_unref (chunks[i]);
+  }
+
+g_free (chunks);
+
+// After calling g_ptr_array_steal(), the pointer array can be reused for the
+// next set of chunks.
+g_assert (chunk_buffer-&gt;len == 0);
+]|</doc>
+        
+        <return-value transfer-ownership="full" nullable="1">
+          <doc xml:space="preserve">the element data, which should be
+    freed using g_free().</doc>
+          <type name="gpointer" c:type="gpointer*"/>
+        </return-value>
+        <parameters>
+          <parameter name="array" transfer-ownership="none">
+            <doc xml:space="preserve">a #GPtrArray.</doc>
+            <array name="GLib.PtrArray" c:type="GPtrArray*">
+              <type name="gpointer" c:type="gpointer"/>
+            </array>
+          </parameter>
+          <parameter name="len" direction="out" caller-allocates="1" transfer-ownership="none" optional="1" allow-none="1">
+            <doc xml:space="preserve">pointer to retrieve the number of
+   elements of the original array</doc>
+            <type name="gsize" c:type="gsize*"/>
           </parameter>
         </parameters>
       </function>
@@ -20779,7 +21034,7 @@ token.
 
 As a special case, the result of splitting the empty string "" is an
 empty vector, not a vector containing a single string. The reason for
-this special case is that being able to represent a empty vector is
+this special case is that being able to represent an empty vector is
 typically more useful than consistent handling of empty elements. If
 you do need to represent empty elements, you'll need to check for the
 empty string before calling this function.
@@ -20820,7 +21075,7 @@ token.
 
 As a special case, the result of splitting the empty string "" is an
 empty vector, not a vector containing a single string. The reason for
-this special case is that being able to represent a empty vector is
+this special case is that being able to represent an empty vector is
 typically more useful than consistent handling of empty elements. If
 you do need to represent empty elements, you'll need to check for the
 empty string before calling this function.
@@ -21019,7 +21274,7 @@ g_regex_new() and then use g_regex_split().
 As a special case, the result of splitting the empty string ""
 is an empty vector, not a vector containing a single string.
 The reason for this special case is that being able to represent
-a empty vector is typically more useful than consistent handling
+an empty vector is typically more useful than consistent handling
 of empty elements. If you do need to represent empty elements,
 you'll need to check for the empty string before calling this
 function.
@@ -21519,6 +21774,19 @@ This is ":" on UNIX machines and ";" under Windows.</doc>
       
       <type name="gint" c:type="gint"/>
     </constant>
+    <function-macro name="SIZEOF_MEMBER" c:identifier="G_SIZEOF_MEMBER" version="2.64" introspectable="0">
+      <doc xml:space="preserve">Returns the size of @member in the struct definition without having a
+declared instance of @struct_type.</doc>
+      
+      <parameters>
+        <parameter name="struct_type">
+          <doc xml:space="preserve">a structure type, e.g. #GOutputVector</doc>
+        </parameter>
+        <parameter name="member">
+          <doc xml:space="preserve">a field in the structure, e.g. `size`</doc>
+        </parameter>
+      </parameters>
+    </function-macro>
     <constant name="SIZEOF_SIZE_T" value="8" c:type="GLIB_SIZEOF_SIZE_T">
       
       <type name="gint" c:type="gint"/>
@@ -21816,7 +22084,14 @@ The freed elements are returned to the slice allocator.
 
 If list elements contain dynamically-allocated memory,
 you should either use g_slist_free_full() or free them manually
-first.</doc>
+first.
+
+It can be combined with g_steal_pointer() to ensure the list head pointer
+is not left dangling:
+|[&lt;!-- language="C" --&gt;
+GSList *list_of_borrowed_things = &#x2026;;  /&lt;!-- --&gt;* (transfer container) *&lt;!-- --&gt;/
+g_slist_free (g_steal_pointer (&amp;list_of_borrowed_things));
+]|</doc>
         
         <return-value transfer-ownership="none">
           <type name="none" c:type="void"/>
@@ -21851,7 +22126,16 @@ It is usually used after g_slist_remove_link().</doc>
 calls the specified destroy function on every element's data.
 
 @free_func must not modify the list (eg, by removing the freed
-element from it).</doc>
+element from it).
+
+It can be combined with g_steal_pointer() to ensure the list head pointer
+is not left dangling &#xAD;&#x2014; this also has the nice property that the head pointer
+is cleared before any of the list elements are freed, to prevent double frees
+from @free_func:
+|[&lt;!-- language="C" --&gt;
+GSList *list_of_owned_things = &#x2026;;  /&lt;!-- --&gt;* (transfer full) (element-type GObject) *&lt;!-- --&gt;/
+g_slist_free_full (g_steal_pointer (&amp;list_of_owned_things), g_object_unref);
+]|</doc>
         
         <return-value transfer-ownership="none">
           <type name="none" c:type="void"/>
@@ -24230,7 +24514,10 @@ As the name suggests, this function is not available on Windows.</doc>
       </method>
       <method name="attach" c:identifier="g_source_attach">
         <doc xml:space="preserve">Adds a #GSource to a @context so that it will be executed within
-that context. Remove it by calling g_source_destroy().</doc>
+that context. Remove it by calling g_source_destroy().
+
+This function is safe to call from any thread, regardless of which thread
+the @context is running in.</doc>
         
         <return-value transfer-ownership="none">
           <doc xml:space="preserve">the ID (greater than 0) for the source within the
@@ -24255,7 +24542,10 @@ context. It is safe to call this on sources which have already been
 removed from their context.
 
 This does not unref the #GSource: if you still hold a reference, use
-g_source_unref() to drop it.</doc>
+g_source_unref() to drop it.
+
+This function is safe to call from any thread, regardless of which thread
+the #GMainContext is running in.</doc>
         
         <return-value transfer-ownership="none">
           <type name="none" c:type="void"/>
@@ -24724,6 +25014,38 @@ source is blocked until the dispatch function returns.</doc>
           </parameter>
         </parameters>
       </method>
+      <method name="set_dispose_function" c:identifier="g_source_set_dispose_function" version="2.64" introspectable="0">
+        <doc xml:space="preserve">Set @dispose as dispose function on @source. @dispose will be called once
+the reference count of @source reaches 0 but before any of the state of the
+source is freed, especially before the finalize function is called.
+
+This means that at this point @source is still a valid #GSource and it is
+allow for the reference count to increase again until @dispose returns.
+
+The dispose function can be used to clear any "weak" references to the
+@source in other data structures in a thread-safe way where it is possible
+for another thread to increase the reference count of @source again while
+it is being freed.
+
+The finalize function can not be used for this purpose as at that point
+@source is already partially freed and not valid anymore.
+
+This should only ever be called from #GSource implementations.</doc>
+        
+        <return-value transfer-ownership="none">
+          <type name="none" c:type="void"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="source" transfer-ownership="none">
+            <doc xml:space="preserve">A #GSource to set the dispose function on</doc>
+            <type name="Source" c:type="GSource*"/>
+          </instance-parameter>
+          <parameter name="dispose" transfer-ownership="none">
+            <doc xml:space="preserve">#GSourceDisposeFunc to set on the source</doc>
+            <type name="SourceDisposeFunc" c:type="GSourceDisposeFunc"/>
+          </parameter>
+        </parameters>
+      </method>
       <method name="set_funcs" c:identifier="g_source_set_funcs" version="2.12">
         <doc xml:space="preserve">Sets the source functions (can be used to override
 default implementations) of an unattached source.</doc>
@@ -25006,6 +25328,20 @@ functions for managing callback objects.</doc>
         </callback>
       </field>
     </record>
+    <callback name="SourceDisposeFunc" c:type="GSourceDisposeFunc" version="2.64">
+      <doc xml:space="preserve">Dispose function for @source. See g_source_set_dispose_function() for
+details.</doc>
+      
+      <return-value transfer-ownership="none">
+        <type name="none" c:type="void"/>
+      </return-value>
+      <parameters>
+        <parameter name="source" transfer-ownership="none">
+          <doc xml:space="preserve">#GSource that is currently being disposed</doc>
+          <type name="Source" c:type="GSource*"/>
+        </parameter>
+      </parameters>
+    </callback>
     <callback name="SourceDummyMarshal" c:type="GSourceDummyMarshal">
       <doc xml:space="preserve">This is just a placeholder for #GClosureMarshal,
 which cannot be used here for dependency reasons.</doc>
@@ -26568,7 +26904,15 @@ If you are using threads to offload (potentially many) short-lived tasks,
 multiple #GThreads.
 
 To free the struct returned by this function, use g_thread_unref().
-Note that g_thread_join() implicitly unrefs the #GThread as well.</doc>
+Note that g_thread_join() implicitly unrefs the #GThread as well.
+
+New threads by default inherit their scheduler policy (POSIX) or thread
+priority (Windows) of the thread creating the new thread.
+
+This behaviour changed in GLib 2.64: before threads on Windows were not
+inheriting the thread priority but were spawned with the default priority.
+Starting with GLib 2.64 the behaviour is now consistent between Windows and
+POSIX and all threads inherit their parent thread's priority.</doc>
         
         <return-value transfer-ownership="full">
           <doc xml:space="preserve">the new #GThread</doc>
@@ -27273,7 +27617,8 @@ time values to be added to Coordinated Universal Time (UTC) to get
 the local time.
 
 In UNIX, the `TZ` environment variable typically corresponds
-to the name of a file in the zoneinfo database, or string in
+to the name of a file in the zoneinfo database, an absolute path to a file
+somewhere else, or a string in
 "std offset [dst [offset],start[/time],end[/time]]" (POSIX) format.
 There  are  no spaces in the specification. The name of standard
 and daylight savings time zone must be three or more alphabetic
@@ -27418,7 +27763,7 @@ adjusted time.</doc>
         </parameters>
       </method>
       <method name="find_interval" c:identifier="g_time_zone_find_interval" version="2.26">
-        <doc xml:space="preserve">Finds an the interval within @tz that corresponds to the given @time_.
+        <doc xml:space="preserve">Finds an interval within @tz that corresponds to the given @time_.
 The meaning of @time_ depends on @type.
 
 If @type is %G_TIME_TYPE_UNIVERSAL then this function will always
@@ -31033,7 +31378,7 @@ other than %G_VARIANT_TYPE_INT16.</doc>
         </return-value>
         <parameters>
           <instance-parameter name="value" transfer-ownership="none">
-            <doc xml:space="preserve">a int16 #GVariant instance</doc>
+            <doc xml:space="preserve">an int16 #GVariant instance</doc>
             <type name="Variant" c:type="GVariant*"/>
           </instance-parameter>
         </parameters>
@@ -31050,7 +31395,7 @@ other than %G_VARIANT_TYPE_INT32.</doc>
         </return-value>
         <parameters>
           <instance-parameter name="value" transfer-ownership="none">
-            <doc xml:space="preserve">a int32 #GVariant instance</doc>
+            <doc xml:space="preserve">an int32 #GVariant instance</doc>
             <type name="Variant" c:type="GVariant*"/>
           </instance-parameter>
         </parameters>
@@ -31067,7 +31412,7 @@ other than %G_VARIANT_TYPE_INT64.</doc>
         </return-value>
         <parameters>
           <instance-parameter name="value" transfer-ownership="none">
-            <doc xml:space="preserve">a int64 #GVariant instance</doc>
+            <doc xml:space="preserve">an int64 #GVariant instance</doc>
             <type name="Variant" c:type="GVariant*"/>
           </instance-parameter>
         </parameters>
@@ -31870,7 +32215,11 @@ In case of any error, %NULL will be returned.  If @error is non-%NULL
 then it will be set to reflect the error that occurred.
 
 Officially, the language understood by the parser is "any string
-produced by g_variant_print()".</doc>
+produced by g_variant_print()".
+
+There may be implementation specific restrictions on deeply nested values,
+which would result in a %G_VARIANT_PARSE_ERROR_RECURSION error. #GVariant is
+guaranteed to handle nesting up to at least 64 levels.</doc>
         
         <return-value transfer-ownership="full">
           <doc xml:space="preserve">a non-floating reference to a #GVariant, or %NULL</doc>
@@ -33134,6 +33483,9 @@ Here is an example for iterating with g_variant_iter_next_value():
       </member>
       <member name="value_expected" value="17" c:identifier="G_VARIANT_PARSE_ERROR_VALUE_EXPECTED">
         <doc xml:space="preserve">no value given</doc>
+      </member>
+      <member name="recursion" value="18" c:identifier="G_VARIANT_PARSE_ERROR_RECURSION">
+        <doc xml:space="preserve">variant was too deeply nested; #GVariant is only guaranteed to handle nesting up to 64 levels (Since: 2.64)</doc>
       </member>
     </enumeration>
     <record name="VariantType" c:type="GVariantType" glib:type-name="GVariantType" glib:get-type="g_variant_type_get_gtype" c:symbol-prefix="variant_type">
@@ -34792,7 +35144,7 @@ actual values of @n1 and @n2.</doc>
       
       <parameters>
         <parameter name="n1">
-          <doc xml:space="preserve">an floating point number</doc>
+          <doc xml:space="preserve">a floating point number</doc>
         </parameter>
         <parameter name="cmp">
           <doc xml:space="preserve">The comparison operator to use.
@@ -34813,7 +35165,7 @@ actual values of @n1 and @n2.</doc>
       
       <parameters>
         <parameter name="n1">
-          <doc xml:space="preserve">an floating point number</doc>
+          <doc xml:space="preserve">a floating point number</doc>
         </parameter>
         <parameter name="n2">
           <doc xml:space="preserve">another floating point number</doc>
@@ -34873,6 +35225,8 @@ The effect of `g_assert_cmpmem (m1, l1, m2, l2)` is
 the same as `g_assert_true (l1 == l2 &amp;&amp; memcmp (m1, m2, l1) == 0)`.
 The advantage of this macro is that it can produce a message that
 includes the actual values of @l1 and @l2.
+
+@m1 may be %NULL if (and only if) @l1 is zero; similarly for @m2 and @l2.
 
 |[&lt;!-- language="C" --&gt;
   g_assert_cmpmem (buf-&gt;data, buf-&gt;len, expected, sizeof (expected));
@@ -36056,10 +36410,10 @@ The output buffer must be large enough to fit all the data that will
 be written to it. Due to the way base64 encodes you will need
 at least: (@len / 3 + 1) * 4 + 4 bytes (+ 4 may be needed in case of
 non-zero state). If you enable line-breaking you will need at least:
-((@len / 3 + 1) * 4 + 4) / 72 + 1 bytes of extra space.
+((@len / 3 + 1) * 4 + 4) / 76 + 1 bytes of extra space.
 
 @break_lines is typically used when putting base64-encoded data in emails.
-It breaks the lines at 72 columns instead of putting all of the text on
+It breaks the lines at 76 columns instead of putting all of the text on
 the same line. This avoids problems with long lines in the email system.
 Note however that it breaks the lines with `LF` characters, not
 `CR LF` sequences, so the result cannot be passed directly to SMTP
@@ -36493,6 +36847,30 @@ and will be freed with g_free(), i.e. it could be allocated using g_strdup().</d
         </parameter>
       </parameters>
     </function>
+    <function name="byte_array_steal" c:identifier="g_byte_array_steal" moved-to="ByteArray.steal" version="2.64">
+      <doc xml:space="preserve">Frees the data in the array and resets the size to zero, while
+the underlying array is preserved for use elsewhere and returned
+to the caller.</doc>
+      
+      <return-value transfer-ownership="full">
+        <doc xml:space="preserve">the element data, which should be
+    freed using g_free().</doc>
+        <type name="guint8" c:type="guint8*"/>
+      </return-value>
+      <parameters>
+        <parameter name="array" transfer-ownership="none">
+          <doc xml:space="preserve">a #GByteArray.</doc>
+          <array name="GLib.ByteArray" c:type="GByteArray*">
+            <type name="guint8" c:type="guint8"/>
+          </array>
+        </parameter>
+        <parameter name="len" direction="out" caller-allocates="1" transfer-ownership="none" optional="1" allow-none="1">
+          <doc xml:space="preserve">pointer to retrieve the number of
+   elements of the original array</doc>
+          <type name="gsize" c:type="gsize*"/>
+        </parameter>
+      </parameters>
+    </function>
     <function name="byte_array_unref" c:identifier="g_byte_array_unref" moved-to="ByteArray.unref" version="2.22">
       <doc xml:space="preserve">Atomically decrements the reference count of @array by one. If the
 reference count drops to 0, all memory allocated by the array is
@@ -36793,6 +37171,27 @@ pointer casts.</doc>
         </parameter>
       </parameters>
     </function>
+    <function name="clear_list" c:identifier="g_clear_list" version="2.64" introspectable="0">
+      <doc xml:space="preserve">Clears a pointer to a #GList, freeing it and, optionally, freeing its elements using @destroy.
+
+@list_ptr must be a valid pointer. If @list_ptr points to a null #GList, this does nothing.</doc>
+      
+      <return-value transfer-ownership="none">
+        <type name="none" c:type="void"/>
+      </return-value>
+      <parameters>
+        <parameter name="list_ptr" transfer-ownership="none">
+          <doc xml:space="preserve">a #GList return location</doc>
+          <type name="GLib.List" c:type="GList**">
+            <type name="gpointer" c:type="gpointer"/>
+          </type>
+        </parameter>
+        <parameter name="destroy" transfer-ownership="none" nullable="1" allow-none="1" scope="async">
+          <doc xml:space="preserve">the function to pass to g_list_free_full() or %NULL to not free elements</doc>
+          <type name="DestroyNotify" c:type="GDestroyNotify"/>
+        </parameter>
+      </parameters>
+    </function>
     <function name="clear_pointer" c:identifier="g_clear_pointer" version="2.34" introspectable="0">
       <doc xml:space="preserve">Clears a reference to a variable.
 
@@ -36820,6 +37219,27 @@ will experience undefined behaviour.</doc>
         </parameter>
         <parameter name="destroy" transfer-ownership="none" scope="async">
           <doc xml:space="preserve">a function to which a gpointer can be passed, to destroy *@pp</doc>
+          <type name="DestroyNotify" c:type="GDestroyNotify"/>
+        </parameter>
+      </parameters>
+    </function>
+    <function name="clear_slist" c:identifier="g_clear_slist" version="2.64" introspectable="0">
+      <doc xml:space="preserve">Clears a pointer to a #GSList, freeing it and, optionally, freeing its elements using @destroy.
+
+@slist_ptr must be a valid pointer. If @slist_ptr points to a null #GSList, this does nothing.</doc>
+      
+      <return-value transfer-ownership="none">
+        <type name="none" c:type="void"/>
+      </return-value>
+      <parameters>
+        <parameter name="slist_ptr" transfer-ownership="none">
+          <doc xml:space="preserve">a #GSList return location</doc>
+          <type name="GLib.SList" c:type="GSList**">
+            <type name="gpointer" c:type="gpointer"/>
+          </type>
+        </parameter>
+        <parameter name="destroy" transfer-ownership="none" nullable="1" allow-none="1" scope="async">
+          <doc xml:space="preserve">the function to pass to g_slist_free_full() or %NULL to not free elements</doc>
           <type name="DestroyNotify" c:type="GDestroyNotify"/>
         </parameter>
       </parameters>
@@ -38941,9 +39361,9 @@ finally in the directories in the `PATH` environment variable. If
 the program is found, the return value contains the full name
 including the type suffix.</doc>
       
-      <return-value transfer-ownership="full">
-        <doc xml:space="preserve">a newly-allocated string with the absolute path,
-    or %NULL</doc>
+      <return-value transfer-ownership="full" nullable="1">
+        <doc xml:space="preserve">a newly-allocated
+  string with the absolute path, or %NULL</doc>
         <type name="filename" c:type="gchar*"/>
       </return-value>
       <parameters>
@@ -38969,8 +39389,8 @@ See g_format_size_full() for more options about how the size might be
 formatted.</doc>
       
       <return-value transfer-ownership="full">
-        <doc xml:space="preserve">a newly-allocated formatted string containing a human readable
-    file size</doc>
+        <doc xml:space="preserve">a newly-allocated formatted string containing
+  a human readable file size</doc>
         <type name="utf8" c:type="gchar*"/>
       </return-value>
       <parameters>
@@ -38994,8 +39414,8 @@ This string should be freed with g_free() when not needed any longer.</doc>
     suffixes to denote IEC units. Use g_format_size() instead.</doc-deprecated>
       
       <return-value transfer-ownership="full">
-        <doc xml:space="preserve">a newly-allocated formatted string containing a human
-    readable file size</doc>
+        <doc xml:space="preserve">a newly-allocated formatted string
+  containing a human readable file size</doc>
         <type name="utf8" c:type="gchar*"/>
       </return-value>
       <parameters>
@@ -39012,8 +39432,8 @@ This function is similar to g_format_size() but allows for flags
 that modify the output. See #GFormatSizeFlags.</doc>
       
       <return-value transfer-ownership="full">
-        <doc xml:space="preserve">a newly-allocated formatted string containing a human
-    readable file size</doc>
+        <doc xml:space="preserve">a newly-allocated formatted string
+  containing a human readable file size</doc>
         <type name="utf8" c:type="gchar*"/>
       </return-value>
       <parameters>
@@ -39078,8 +39498,9 @@ g_set_application_name() has not been called, returns the result of
 g_get_prgname() (which may be %NULL if g_set_prgname() has also not
 been called).</doc>
       
-      <return-value transfer-ownership="none">
-        <doc xml:space="preserve">human-readable application name. may return %NULL</doc>
+      <return-value transfer-ownership="none" nullable="1">
+        <doc xml:space="preserve">human-readable application
+  name. May return %NULL</doc>
         <type name="utf8" c:type="const gchar*"/>
       </return-value>
     </function>
@@ -39351,10 +39772,15 @@ g_get_language_names() returns g_get_language_names_with_category("LC_MESSAGES")
       <doc xml:space="preserve">Returns a list of derived variants of @locale, which can be used to
 e.g. construct locale-dependent filenames or search paths. The returned
 list is sorted from most desirable to least desirable.
-This function handles territory, charset and extra locale modifiers.
+This function handles territory, charset and extra locale modifiers. See
+[`setlocale(3)`](man:setlocale) for information about locales and their format.
 
-For example, if @locale is "fr_BE", then the returned list
-is "fr_BE", "fr".
+@locale itself is guaranteed to be returned in the output.
+
+For example, if @locale is `fr_BE`, then the returned list
+is `fr_BE`, `fr`. If @locale is `en_GB.UTF-8@euro`, then the returned list
+is `en_GB.UTF-8@euro`, `en_GB.UTF-8`, `en_GB@euro`, `en_GB`, `en.UTF-8@euro`,
+`en.UTF-8`, `en@euro`, `en`.
 
 If you need the list of variants for the current locale,
 use g_get_language_names().</doc>
@@ -39402,6 +39828,28 @@ similar cases.</doc>
         <type name="guint" c:type="guint"/>
       </return-value>
     </function>
+    <function name="get_os_info" c:identifier="g_get_os_info" version="2.64">
+      <doc xml:space="preserve">Get information about the operating system.
+
+On Linux this comes from the `/etc/os-release` file. On other systems, it may
+come from a variety of sources. You can either use the standard key names
+like %G_OS_INFO_KEY_NAME or pass any UTF-8 string key name. For example,
+`/etc/os-release` provides a number of other less commonly used values that may
+be useful. No key is guaranteed to be provided, so the caller should always
+check if the result is %NULL.</doc>
+      
+      <return-value transfer-ownership="full" nullable="1">
+        <doc xml:space="preserve">The associated value for the requested key or %NULL if
+  this information is not provided.</doc>
+        <type name="utf8" c:type="gchar*"/>
+      </return-value>
+      <parameters>
+        <parameter name="key_name" transfer-ownership="none">
+          <doc xml:space="preserve">a key for the OS info being requested, for example %G_OS_INFO_KEY_NAME.</doc>
+          <type name="utf8" c:type="const gchar*"/>
+        </parameter>
+      </parameters>
+    </function>
     <function name="get_prgname" c:identifier="g_get_prgname">
       <doc xml:space="preserve">Gets the name of the program. This name should not be localized,
 in contrast to g_get_application_name().
@@ -39413,9 +39861,9 @@ gdk_init(), which is called by gtk_init() and the
 taking the last component of @argv[0].</doc>
       
       <return-value transfer-ownership="none" nullable="1">
-        <doc xml:space="preserve">the name of the program, or %NULL if it has not been
-    set yet. The returned string belongs
-    to GLib and must not be modified or freed.</doc>
+        <doc xml:space="preserve">the name of the program,
+  or %NULL if it has not been set yet. The returned string belongs
+  to GLib and must not be modified or freed.</doc>
         <type name="utf8" c:type="const gchar*"/>
       </return-value>
     </function>
@@ -39554,8 +40002,8 @@ repository for temporary Internet files is used instead. A typical path is
 See the [documentation for `CSIDL_INTERNET_CACHE`](https://msdn.microsoft.com/en-us/library/windows/desktop/bb762494%28v=vs.85%29.aspx#csidl_internet_cache).</doc>
       
       <return-value transfer-ownership="none">
-        <doc xml:space="preserve">a string owned by GLib that must not be modified
-              or freed.</doc>
+        <doc xml:space="preserve">a string owned by GLib that
+  must not be modified or freed.</doc>
         <type name="filename" c:type="const gchar*"/>
       </return-value>
     </function>
@@ -39576,8 +40024,8 @@ Note that in this case on Windows it will be  the same
 as what g_get_user_data_dir() returns.</doc>
       
       <return-value transfer-ownership="none">
-        <doc xml:space="preserve">a string owned by GLib that must not be modified
-              or freed.</doc>
+        <doc xml:space="preserve">a string owned by GLib that
+  must not be modified or freed.</doc>
         <type name="filename" c:type="const gchar*"/>
       </return-value>
     </function>
@@ -39598,8 +40046,8 @@ Note that in this case on Windows it will be the same
 as what g_get_user_config_dir() returns.</doc>
       
       <return-value transfer-ownership="none">
-        <doc xml:space="preserve">a string owned by GLib that must not be modified
-              or freed.</doc>
+        <doc xml:space="preserve">a string owned by GLib that must
+  not be modified or freed.</doc>
         <type name="filename" c:type="const gchar*"/>
       </return-value>
     </function>
@@ -39685,6 +40133,10 @@ references to other environment variables, they are expanded.</doc>
 is equivalent to calling g_hash_table_replace() with @key as both the
 key and the value.
 
+In particular, this means that if @key already exists in the hash table, then
+the old copy of @key in the hash table is freed and @key replaces it in the
+table.
+
 When a hash table only ever contains keys that have themselves as the
 corresponding value it is able to be stored more efficiently.  See
 the discussion in the section description.
@@ -39705,7 +40157,7 @@ or not.</doc>
             <type name="gpointer" c:type="gpointer"/>
           </type>
         </parameter>
-        <parameter name="key" transfer-ownership="none" nullable="1" allow-none="1">
+        <parameter name="key" transfer-ownership="full" nullable="1" allow-none="1">
           <doc xml:space="preserve">a key to insert</doc>
           <type name="gpointer" c:type="gpointer"/>
         </parameter>
@@ -40683,6 +41135,9 @@ You can do these steps manually if you need greater control.</doc>
       <doc xml:space="preserve">Creates a #GSource that's dispatched when @condition is met for the
 given @channel. For example, if condition is #G_IO_IN, the source will
 be dispatched when there's data available for reading.
+
+The callback function invoked by the #GSource should be added with
+g_source_set_callback(), but it has type #GIOFunc (not #GSourceFunc).
 
 g_io_add_watch() is a simpler interface to this same functionality, for
 the case where you want to add the source to the default main loop context
@@ -42023,7 +42478,7 @@ of g_markup_escape_text(). See g_markup_printf_escaped().</doc>
     <function name="mem_is_system_malloc" c:identifier="g_mem_is_system_malloc" deprecated="1" deprecated-version="2.46">
       <doc xml:space="preserve">Checks whether the allocator used by g_malloc() is the system's
 malloc implementation. If it returns %TRUE memory allocated with
-malloc() can be used interchangeable with memory allocated using g_malloc().
+malloc() can be used interchangeably with memory allocated using g_malloc().
 This function is useful for avoiding an extra copy of allocated memory returned
 by a non-GLib-based API.</doc>
       <doc-deprecated xml:space="preserve">GLib always uses the system malloc, so this function always
@@ -43326,7 +43781,7 @@ running.</doc>
     </function>
     <function-macro name="rand_boolean" c:identifier="g_rand_boolean" introspectable="0">
       <doc xml:space="preserve">Returns a random #gboolean from @rand_.
-This corresponds to a unbiased coin toss.</doc>
+This corresponds to an unbiased coin toss.</doc>
       
       <parameters>
         <parameter name="rand_">
@@ -43899,7 +44354,7 @@ g_regex_new() and then use g_regex_split().
 As a special case, the result of splitting the empty string ""
 is an empty vector, not a vector containing a single string.
 The reason for this special case is that being able to represent
-a empty vector is typically more useful than consistent handling
+an empty vector is typically more useful than consistent handling
 of empty elements. If you do need to represent empty elements,
 you'll need to check for the empty string before calling this
 function.
@@ -46183,7 +46638,11 @@ when no longer needed.</doc>
       <doc xml:space="preserve">Similar to the standard C sprintf() function but safer, since it
 calculates the maximum space required and allocates memory to hold
 the result. The returned string should be freed with g_free() when no
-longer needed.</doc>
+longer needed.
+
+The returned string is guaranteed to be non-NULL, unless @format
+contains `%lc` or `%ls` conversions, which can fail if no multibyte
+representation is available for the given character.</doc>
       
       <return-value transfer-ownership="full">
         <doc xml:space="preserve">a newly-allocated string holding the result</doc>
@@ -46206,6 +46665,10 @@ longer needed.</doc>
 calculates the maximum space required and allocates memory to hold
 the result. The returned string should be freed with g_free() when
 no longer needed.
+
+The returned string is guaranteed to be non-NULL, unless @format
+contains `%lc` or `%ls` conversions, which can fail if no multibyte
+representation is available for the given character.
 
 See also g_vasprintf(), which offers the same functionality, but
 additionally returns the length of the allocated string.</doc>
@@ -46695,7 +47158,7 @@ and "".
 
 As a special case, the result of splitting the empty string "" is an empty
 vector, not a vector containing a single string. The reason for this
-special case is that being able to represent a empty vector is typically
+special case is that being able to represent an empty vector is typically
 more useful than consistent handling of empty elements. If you do need
 to represent empty elements, you'll need to check for the empty string
 before calling g_strsplit().</doc>
@@ -46740,7 +47203,7 @@ vector containing the four strings "", "def", "ghi", and "".
 
 As a special case, the result of splitting the empty string "" is an empty
 vector, not a vector containing a single string. The reason for this
-special case is that being able to represent a empty vector is typically
+special case is that being able to represent an empty vector is typically
 more useful than consistent handling of empty elements. If you do need
 to represent empty elements, you'll need to check for the empty string
 before calling g_strsplit_set().
@@ -47084,7 +47547,9 @@ do so even if it isn&#x2019;t.</doc>
       <doc xml:space="preserve">This function adds a message to test reports that
 associates a bug URI with a test case.
 Bug URIs are constructed from a base URI set with g_test_bug_base()
-and @bug_uri_snippet.</doc>
+and @bug_uri_snippet. If g_test_bug_base() has not been called, it is
+assumed to be the empty string, so a full URI can be provided to
+g_test_bug() instead.</doc>
       <doc-version xml:space="preserve">
 See also: g_test_summary()</doc-version>
       
@@ -47109,7 +47574,10 @@ a test case changes the base URI for the scope of the test
 case only.
 Bug URIs are constructed by appending a bug specific URI
 portion to @uri_pattern, or by replacing the special string
-'\%s' within @uri_pattern if that is present.</doc>
+'\%s' within @uri_pattern if that is present.
+
+If g_test_bug_base() is not called, bug URIs are formed solely
+from the value provided by g_test_bug().</doc>
       
       <return-value transfer-ownership="none">
         <type name="none" c:type="void"/>
@@ -48273,6 +48741,8 @@ the callback will be invoked in whichever thread is running that main
 context. You can do these steps manually if you need greater control or to
 use a custom main context.
 
+It is safe to call this function from any thread.
+
 The interval given is in terms of monotonic time, not wall clock
 time.  See g_get_monotonic_time().</doc>
       
@@ -48362,6 +48832,8 @@ g_timeout_source_new_seconds() and attaches it to the main loop context
 using g_source_attach(). You can do these steps manually if you need
 greater control. Also see g_timeout_add_seconds_full().
 
+It is safe to call this function from any thread.
+
 Note that the first call of the timer may not be precise for timeouts
 of one second. If you need finer precision and have such a timeout,
 you may want to use g_timeout_add() instead.
@@ -48425,6 +48897,8 @@ This internally creates a main loop source using
 g_timeout_source_new_seconds() and attaches it to the main loop context
 using g_source_attach(). You can do these steps manually if you need
 greater control.
+
+It is safe to call this function from any thread.
 
 The interval given is in terms of monotonic time, not wall clock
 time.  See g_get_monotonic_time().</doc>
@@ -49452,7 +49926,7 @@ terminals support zero-width rendering of zero-width marks.</doc>
       
       <return-value transfer-ownership="none">
         <doc xml:space="preserve">the result of converting @c to uppercase.
-              If @c is not an lowercase or titlecase character,
+              If @c is not a lowercase or titlecase character,
               or has no upper case equivalent @c is returned unchanged.</doc>
         <type name="gunichar" c:type="gunichar"/>
       </return-value>
@@ -49698,6 +50172,31 @@ The source will never close the fd -- you must do it yourself.</doc>
         <parameter name="condition" transfer-ownership="none">
           <doc xml:space="preserve">IO conditions to watch for on @fd</doc>
           <type name="IOCondition" c:type="GIOCondition"/>
+        </parameter>
+      </parameters>
+    </function>
+    <function name="unix_get_passwd_entry" c:identifier="g_unix_get_passwd_entry" version="2.64" throws="1">
+      <doc xml:space="preserve">Get the `passwd` file entry for the given @user_name using `getpwnam_r()`.
+This can fail if the given @user_name doesn&#x2019;t exist.
+
+The returned `struct passwd` has been allocated using g_malloc() and should
+be freed using g_free(). The strings referenced by the returned struct are
+included in the same allocation, so are valid until the `struct passwd` is
+freed.
+
+This function is safe to call from multiple threads concurrently.
+
+You will need to include `pwd.h` to get the definition of `struct passwd`.</doc>
+      
+      <return-value transfer-ownership="full" nullable="1">
+        <doc xml:space="preserve">passwd entry, or %NULL on error; free the returned
+   value with g_free()</doc>
+        <type name="gpointer" c:type="passwd*"/>
+      </return-value>
+      <parameters>
+        <parameter name="user_name" transfer-ownership="none">
+          <doc xml:space="preserve">the username to get the passwd file entry for</doc>
+          <type name="utf8" c:type="const gchar*"/>
         </parameter>
       </parameters>
     </function>
@@ -50448,7 +50947,7 @@ text rendering and therefore has to be as fast as possible.</doc>
       </parameters>
     </function>
     <function name="utf8_pointer_to_offset" c:identifier="g_utf8_pointer_to_offset">
-      <doc xml:space="preserve">Converts from a pointer to position within a string to a integer
+      <doc xml:space="preserve">Converts from a pointer to position within a string to an integer
 character offset.
 
 Since 2.10, this function allows @pos to be before @str, and returns
@@ -50881,7 +51380,9 @@ as per the aforementioned RFC.</doc>
       </parameters>
     </function>
     <function name="uuid_string_random" c:identifier="g_uuid_string_random" version="2.52">
-      <doc xml:space="preserve">Generates a random UUID (RFC 4122 version 4) as a string.</doc>
+      <doc xml:space="preserve">Generates a random UUID (RFC 4122 version 4) as a string. It has the same
+randomness guarantees as #GRand, so must not be used for cryptographic
+purposes such as key generation, nonces, salts or one-time pads.</doc>
       
       <return-value transfer-ownership="full">
         <doc xml:space="preserve">A string that should be freed with g_free().</doc>
@@ -50965,7 +51466,11 @@ In case of any error, %NULL will be returned.  If @error is non-%NULL
 then it will be set to reflect the error that occurred.
 
 Officially, the language understood by the parser is "any string
-produced by g_variant_print()".</doc>
+produced by g_variant_print()".
+
+There may be implementation specific restrictions on deeply nested values,
+which would result in a %G_VARIANT_PARSE_ERROR_RECURSION error. #GVariant is
+guaranteed to handle nesting up to at least 64 levels.</doc>
       
       <return-value transfer-ownership="full">
         <doc xml:space="preserve">a non-floating reference to a #GVariant, or %NULL</doc>
@@ -51128,6 +51633,10 @@ positional parameters, as specified in the Single Unix Specification.
 This function is similar to g_vsprintf(), except that it allocates a
 string to hold the output, instead of putting the output in a buffer
 you allocate in advance.
+
+The returned value in @string is guaranteed to be non-NULL, unless
+@format contains `%lc` or `%ls` conversions, which can fail if no
+multibyte representation is available for the given character.
 
 `glib/gprintf.h` must be explicitly included in order to use this function.</doc>
       
