@@ -109,3 +109,8 @@ xmlstarlet ed -P -L \
 	-d '//_:type[@c:type="hb_feature_t*"]/@zero-terminated' \
 	-u '//_:type[@c:type="hb_feature_t*"]/@c:type' -v "gconstpointer" \
 	Pango-1.0.gir
+
+#  Remove unstable method from focal release
+xmlstarlet ed -P -L \
+  	-d '///_:method[@c:identifier="atk_plug_set_child"]' \
+  	Atk-1.0.gir
