@@ -7,8 +7,349 @@ and/or use gtk-doc annotations.  -->
   <package name="javascriptcoregtk-4.0"/>
   <c:include name="jsc/jsc.h"/>
   <namespace name="JavaScriptCore" version="4.0" shared-library="libjavascriptcoregtk-4.0.so.18" c:identifier-prefixes="JSC" c:symbol-prefixes="jsc">
+    <callback name="Constructor" c:type="JSCConstructor">
+      <return-value transfer-ownership="full">
+        <type name="gpointer" c:type="gpointer"/>
+      </return-value>
+      <parameters>
+        <parameter name="args" transfer-ownership="none">
+          <type name="GLib.PtrArray" c:type="GPtrArray*"/>
+        </parameter>
+        <parameter name="user_data" transfer-ownership="none" nullable="1" allow-none="1" closure="1">
+          <type name="gpointer" c:type="gpointer"/>
+        </parameter>
+      </parameters>
+    </callback>
+    <callback name="ClassVariadicFunction" c:type="JSCClassVariadicFunction">
+      <return-value transfer-ownership="full">
+        <type name="Value" c:type="JSCValue*"/>
+      </return-value>
+      <parameters>
+        <parameter name="instance" transfer-ownership="none">
+          <type name="gpointer" c:type="gpointer"/>
+        </parameter>
+        <parameter name="args" transfer-ownership="none">
+          <type name="GLib.PtrArray" c:type="GPtrArray*"/>
+        </parameter>
+        <parameter name="user_data" transfer-ownership="none" nullable="1" allow-none="1" closure="1">
+          <type name="gpointer" c:type="gpointer"/>
+        </parameter>
+      </parameters>
+    </callback>
+    <callback name="PropertyGetter" c:type="JSCPropertyGetter">
+      <return-value transfer-ownership="full">
+        <type name="Value" c:type="JSCValue*"/>
+      </return-value>
+      <parameters>
+        <parameter name="instance" transfer-ownership="none">
+          <type name="gpointer" c:type="gpointer"/>
+        </parameter>
+        <parameter name="user_data" transfer-ownership="none" nullable="1" allow-none="1" closure="1">
+          <type name="gpointer" c:type="gpointer"/>
+        </parameter>
+      </parameters>
+    </callback>
+    <callback name="PropertySetter" c:type="JSCPropertySetter">
+      <return-value transfer-ownership="none">
+        <type name="none" c:type="void"/>
+      </return-value>
+      <parameters>
+        <parameter name="instance" transfer-ownership="none">
+          <type name="gpointer" c:type="gpointer"/>
+        </parameter>
+        <parameter name="value" transfer-ownership="none">
+          <type name="Value" c:type="JSCValue*"/>
+        </parameter>
+        <parameter name="user_data" transfer-ownership="none" nullable="1" allow-none="1" closure="1">
+          <type name="gpointer" c:type="gpointer"/>
+        </parameter>
+      </parameters>
+    </callback>
+    <callback name="VariadicFunction" c:type="JSCVariadicFunction">
+      <return-value transfer-ownership="full">
+        <type name="Value" c:type="JSCValue*"/>
+      </return-value>
+      <parameters>
+        <parameter name="args" transfer-ownership="none">
+          <type name="GLib.PtrArray" c:type="GPtrArray*"/>
+        </parameter>
+        <parameter name="user_data" transfer-ownership="none" nullable="1" allow-none="1" closure="1">
+          <type name="gpointer" c:type="gpointer"/>
+        </parameter>
+      </parameters>
+    </callback>
+    <callback name="Getter" c:type="JSCGetter">
+      <return-value transfer-ownership="full">
+        <type name="Value" c:type="JSCValue*"/>
+      </return-value>
+      <parameters>
+        <parameter name="user_data" transfer-ownership="none" nullable="1" allow-none="1" closure="1">
+          <type name="gpointer" c:type="gpointer"/>
+        </parameter>
+      </parameters>
+    </callback>
+    <callback name="Setter" c:type="JSCSetter">
+      <return-value transfer-ownership="none">
+        <type name="none" c:type="void"/>
+      </return-value>
+      <parameters>
+        <parameter name="value" transfer-ownership="none">
+          <type name="Value" c:type="JSCValue*"/>
+        </parameter>
+        <parameter name="user_data" transfer-ownership="none" nullable="1" allow-none="1" closure="1">
+          <type name="gpointer" c:type="gpointer"/>
+        </parameter>
+      </parameters>
+    </callback>
+    <record name="GlobalContextRef" c:type="JSGlobalContextRef" deprecated="1" deprecated-version="2.22" disguised="1" foreign="1">
+      <method name="ref" c:identifier="JSGlobalContextRetain">
+        <return-value transfer-ownership="none">
+          <type name="none" c:type="void"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="context" transfer-ownership="none">
+            <type name="GlobalContextRef" c:type="JSGlobalContextRef"/>
+          </instance-parameter>
+        </parameters>
+      </method>
+      <method name="unref" c:identifier="JSGlobalContextRelease">
+        <return-value transfer-ownership="none">
+          <type name="none" c:type="void"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="context" transfer-ownership="none">
+            <type name="GlobalContextRef" c:type="JSGlobalContextRef"/>
+          </instance-parameter>
+        </parameters>
+      </method>
+    </record>
+    <record name="ValueRef" c:type="JSValueRef" deprecated="1" deprecated-version="2.22" disguised="1">
+      <function name="ValueIsArray" c:identifier="JSValueIsArray" deprecated="1" deprecated-version="2.22">
+        <return-value transfer-ownership="none">
+          <type name="gboolean" c:type="gboolean"/>
+        </return-value>
+        <parameters>
+          <parameter name="ctx" transfer-ownership="none">
+            <type name="GlobalContextRef" c:type="JSGlobalContextRef"/>
+          </parameter>
+          <parameter name="value" transfer-ownership="none">
+            <type name="ValueRef" c:type="JSValueRef"/>
+          </parameter>
+        </parameters>
+      </function>
+      <function name="ValueProtect" c:type="JSValueProtect">
+        <return-value transfer-ownership="none">
+          <type name="none" c:type="void"/>
+        </return-value>
+        <parameters>
+          <parameter name="context" transfer-ownership="none">
+            <type name="GlobalContextRef" c:type="JSGlobalContextRef"/>
+          </parameter>
+          <parameter name="value" transfer-ownership="none">
+            <type name="ValueRef" c:type="JSValueRef"/>
+          </parameter>
+        </parameters>
+      </function>
+      <function name="ValueUnprotect" c:type="JSValueUnprotect">
+        <return-value transfer-ownership="none">
+          <type name="none" c:type="void"/>
+        </return-value>
+        <parameters>
+          <parameter name="context" transfer-ownership="none">
+            <type name="GlobalContextRef" c:type="JSGlobalContextRef"/>
+          </parameter>
+          <parameter name="value" transfer-ownership="none">
+            <type name="ValueRef" c:type="JSValueRef"/>
+          </parameter>
+        </parameters>
+      </function>
+      <function name="ValueIsBoolean" c:identifier="JSValueIsBoolean" deprecated="1" deprecated-version="2.22">
+        <return-value transfer-ownership="none">
+          <type name="gboolean" c:type="gboolean"/>
+        </return-value>
+        <parameters>
+          <parameter name="ctx" transfer-ownership="none">
+            <type name="GlobalContextRef" c:type="JSGlobalContextRef"/>
+          </parameter>
+          <parameter name="value" transfer-ownership="none">
+            <type name="ValueRef" c:type="JSValueRef"/>
+          </parameter>
+        </parameters>
+      </function>
+      <function name="ValueIsDate" c:identifier="JSValueIsDate" deprecated="1" deprecated-version="2.22">
+        <return-value transfer-ownership="none">
+          <type name="gboolean" c:type="gboolean"/>
+        </return-value>
+        <parameters>
+          <parameter name="ctx" transfer-ownership="none">
+            <type name="GlobalContextRef" c:type="JSGlobalContextRef"/>
+          </parameter>
+          <parameter name="value" transfer-ownership="none">
+            <type name="ValueRef" c:type="JSValueRef"/>
+          </parameter>
+        </parameters>
+      </function>
+      <function name="ValueIsObject" c:identifier="JSValueIsObject" deprecated="1" deprecated-version="2.22">
+        <return-value transfer-ownership="none">
+          <type name="gboolean" c:type="gboolean"/>
+        </return-value>
+        <parameters>
+          <parameter name="ctx" transfer-ownership="none">
+            <type name="GlobalContextRef" c:type="JSGlobalContextRef"/>
+          </parameter>
+          <parameter name="value" transfer-ownership="none">
+            <type name="ValueRef" c:type="JSValueRef"/>
+          </parameter>
+        </parameters>
+      </function>
+      <function name="ValueIsNull" c:identifier="JSValueIsNull" deprecated="1" deprecated-version="2.22">
+        <return-value transfer-ownership="none">
+          <type name="gboolean" c:type="gboolean"/>
+        </return-value>
+        <parameters>
+          <parameter name="ctx" transfer-ownership="none">
+            <type name="GlobalContextRef" c:type="JSGlobalContextRef"/>
+          </parameter>
+          <parameter name="value" transfer-ownership="none">
+            <type name="ValueRef" c:type="JSValueRef"/>
+          </parameter>
+        </parameters>
+      </function>
+      <function name="ValueIsNumber" c:identifier="JSValueIsNumber" deprecated="1" deprecated-version="2.22">
+        <return-value transfer-ownership="none">
+          <type name="gboolean" c:type="gboolean"/>
+        </return-value>
+        <parameters>
+          <parameter name="ctx" transfer-ownership="none">
+            <type name="GlobalContextRef" c:type="JSGlobalContextRef"/>
+          </parameter>
+          <parameter name="value" transfer-ownership="none">
+            <type name="ValueRef" c:type="JSValueRef"/>
+          </parameter>
+        </parameters>
+      </function>
+      <function name="ValueIsString" c:identifier="JSValueIsString" deprecated="1" deprecated-version="2.22">
+        <return-value transfer-ownership="none">
+          <type name="gboolean" c:type="gboolean"/>
+        </return-value>
+        <parameters>
+          <parameter name="ctx" transfer-ownership="none">
+            <type name="GlobalContextRef" c:type="JSGlobalContextRef"/>
+          </parameter>
+          <parameter name="value" transfer-ownership="none">
+            <type name="ValueRef" c:type="JSValueRef"/>
+          </parameter>
+        </parameters>
+      </function>
+      <function name="ValueIsUndefined" c:identifier="JSValueIsUndefined" deprecated="1" deprecated-version="2.22">
+        <return-value transfer-ownership="none">
+          <type name="gboolean" c:type="gboolean"/>
+        </return-value>
+        <parameters>
+          <parameter name="ctx" transfer-ownership="none">
+            <type name="GlobalContextRef" c:type="JSGlobalContextRef"/>
+          </parameter>
+          <parameter name="value" transfer-ownership="none">
+            <type name="ValueRef" c:type="JSValueRef"/>
+          </parameter>
+        </parameters>
+      </function>
+      <function name="ValueToBoolean" c:identifier="JSValueToBoolean" deprecated="1" deprecated-version="2.22">
+        <return-value transfer-ownership="none">
+          <type name="gboolean" c:type="gboolean"/>
+        </return-value>
+        <parameters>
+          <parameter name="ctx" transfer-ownership="none">
+            <type name="GlobalContextRef" c:type="JSGlobalContextRef"/>
+          </parameter>
+          <parameter name="value" transfer-ownership="none">
+            <type name="ValueRef" c:type="JSValueRef"/>
+          </parameter>
+        </parameters>
+      </function>
+      <function name="ValueToNumber" c:identifier="JSValueToNumber" deprecated="1" deprecated-version="2.22">
+        <return-value transfer-ownership="none">
+          <type name="gdouble" c:type="gdouble"/>
+        </return-value>
+        <parameters>
+          <parameter name="ctx" transfer-ownership="none">
+            <type name="GlobalContextRef" c:type="JSGlobalContextRef"/>
+          </parameter>
+          <parameter name="value" transfer-ownership="none">
+            <type name="ValueRef" c:type="JSValueRef"/>
+          </parameter>
+          <parameter name="exception" direction="out" caller-allocates="0" transfer-ownership="full" optional="1" allow-none="1">
+            <doc xml:space="preserve">return location for a #JSCException, or %NULL to ignore</doc>
+            <type name="Exception" c:type="JSCException**"/>
+          </parameter>
+        </parameters>
+      </function>
+      <function name="ValueToStringCopy" c:identifier="JSValueToStringCopy">
+        <return-value transfer-ownership="none">
+          <type name="StringRef" c:type="JSStringRef"/>
+        </return-value>
+        <parameters>
+          <parameter name="ctx" transfer-ownership="none">
+            <type name="GlobalContextRef" c:type="JSGlobalContextRef"/>
+          </parameter>
+          <parameter name="value" transfer-ownership="none">
+            <type name="ValueRef" c:type="JSValueRef"/>
+          </parameter>
+          <parameter name="exception" direction="out" caller-allocates="0" transfer-ownership="full" optional="1" allow-none="1">
+            <type name="ValueRef" c:type="JSValueRef*"/>
+          </parameter>
+        </parameters>
+      </function>
+    </record>
+    <record name="StringRef" c:type="JSStringRef" deprecated="1" deprecated-version="2.22" disguised="1" foreign="1">
+      <method name="ref" c:identifier="JSStringRetain">
+        <return-value transfer-ownership="none">
+          <type name="none" c:type="void"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="string" transfer-ownership="none">
+            <type name="StringRef" c:type="JSStringRef"/>
+          </instance-parameter>
+        </parameters>
+      </method>
+      <method name="unref" c:identifier="JSStringRelease">
+        <return-value transfer-ownership="none">
+          <type name="none" c:type="void"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="string" transfer-ownership="none">
+            <type name="StringRef" c:type="JSStringRef"/>
+          </instance-parameter>
+        </parameters>
+      </method>
+      <method name="GetMaximumUTF8CStringSize" c:identifier="JSStringGetMaximumUTF8CStringSize">
+        <return-value transfer-ownership="none">
+          <type name="gsize" c:type="gsize"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="string" transfer-ownership="none">
+            <type name="StringRef" c:type="JSStringRef"/>
+          </instance-parameter>
+        </parameters>
+      </method>
+      <method name="GetUTF8CStringJSStringGetUTF8CString" c:identifier="JSStringGetUTF8CString">
+        <return-value transfer-ownership="none">
+          <type name="gsize" c:type="gsize"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="string" transfer-ownership="none">
+            <type name="StringRef" c:type="JSStringRef"/>
+          </instance-parameter>
+          <parameter name="buffer" direction="inout" caller-allocates="1" transfer-ownership="none">
+            <type name="utf8" c:type="char**"/>
+          </parameter>
+          <parameter name="buffer_size" transfer-ownership="none">
+            <type name="gsize" c:type="gsize"/>
+          </parameter>
+        </parameters>
+      </method>
+    </record>
     <function-macro name="CHECK_VERSION" c:identifier="JSC_CHECK_VERSION" introspectable="0">
-      
       <parameters>
         <parameter name="major">
           <doc xml:space="preserve">major version (e.g. 1 for version 1.2.5)</doc>
@@ -22,28 +363,24 @@ and/or use gtk-doc annotations.  -->
       </parameters>
     </function-macro>
     <function-macro name="CLASS" c:identifier="JSC_CLASS" introspectable="0">
-      
       <parameters>
         <parameter name="obj">
         </parameter>
       </parameters>
     </function-macro>
     <function-macro name="CONTEXT" c:identifier="JSC_CONTEXT" introspectable="0">
-      
       <parameters>
         <parameter name="obj">
         </parameter>
       </parameters>
     </function-macro>
     <function-macro name="CONTEXT_CLASS" c:identifier="JSC_CONTEXT_CLASS" introspectable="0">
-      
       <parameters>
         <parameter name="klass">
         </parameter>
       </parameters>
     </function-macro>
     <function-macro name="CONTEXT_GET_CLASS" c:identifier="JSC_CONTEXT_GET_CLASS" introspectable="0">
-      
       <parameters>
         <parameter name="obj">
         </parameter>
@@ -51,7 +388,6 @@ and/or use gtk-doc annotations.  -->
     </function-macro>
     <enumeration name="CheckSyntaxMode" c:type="JSCCheckSyntaxMode">
       <doc xml:space="preserve">Enum values to specify a mode to check for syntax errors in jsc_context_check_syntax().</doc>
-      
       <member name="script" value="0" c:identifier="JSC_CHECK_SYNTAX_MODE_SCRIPT">
         <doc xml:space="preserve">mode to check syntax of a script</doc>
       </member>
@@ -61,7 +397,6 @@ and/or use gtk-doc annotations.  -->
     </enumeration>
     <enumeration name="CheckSyntaxResult" c:type="JSCCheckSyntaxResult">
       <doc xml:space="preserve">Enum values to specify the result of jsc_context_check_syntax().</doc>
-      
       <member name="success" value="0" c:identifier="JSC_CHECK_SYNTAX_RESULT_SUCCESS">
         <doc xml:space="preserve">no errors</doc>
       </member>
@@ -82,7 +417,6 @@ and/or use gtk-doc annotations.  -->
       </member>
     </enumeration>
     <class name="Class" c:symbol-prefix="class" c:type="JSCClass" parent="GObject.Object" glib:type-name="JSCClass" glib:get-type="jsc_class_get_type" glib:type-struct="ClassClass">
-      
       <method name="add_constructor" c:identifier="jsc_class_add_constructor" shadowed-by="add_constructorv" introspectable="0">
         <doc xml:space="preserve">Add a constructor to @jsc_class. If @name is %NULL, the class name will be used. When &lt;function&gt;new&lt;/function&gt;
 is used with the constructor or jsc_value_constructor_call() is called, @callback is invoked receiving the
@@ -94,7 +428,6 @@ jsc_context_set_value() to make the constructor available in the global object.
 
 Note that the value returned by @callback is adopted by @jsc_class, and the #GDestroyNotify passed to
 jsc_context_register_class() is responsible for disposing of it.</doc>
-        
         <return-value transfer-ownership="full">
           <doc xml:space="preserve">a #JSCValue representing the class constructor.</doc>
           <type name="Value" c:type="JSCValue*"/>
@@ -145,7 +478,6 @@ jsc_context_set_value() to make the constructor available in the global object.
 
 Note that the value returned by @callback is adopted by @jsc_class, and the #GDestroyNotify passed to
 jsc_context_register_class() is responsible for disposing of it.</doc>
-        
         <return-value transfer-ownership="full">
           <doc xml:space="preserve">a #JSCValue representing the class constructor.</doc>
           <type name="Value" c:type="JSCValue*"/>
@@ -161,7 +493,7 @@ jsc_context_register_class() is responsible for disposing of it.</doc>
           </parameter>
           <parameter name="callback" transfer-ownership="none" scope="notified" closure="2" destroy="3">
             <doc xml:space="preserve">a #GCallback to be called to create an instance of @jsc_class</doc>
-            <type name="GObject.Callback" c:type="GCallback"/>
+            <type name="Constructor" c:type="JSCConstructor"/>
           </parameter>
           <parameter name="user_data" transfer-ownership="none" nullable="1" allow-none="1">
             <doc xml:space="preserve">user data to pass to @callback</doc>
@@ -188,7 +520,6 @@ jsc_context_set_value() to make the constructor available in the global object.
 
 Note that the value returned by @callback is adopted by @jsc_class, and the #GDestroyNotify passed to
 jsc_context_register_class() is responsible for disposing of it.</doc>
-        
         <return-value transfer-ownership="full">
           <doc xml:space="preserve">a #JSCValue representing the class constructor.</doc>
           <type name="Value" c:type="JSCValue*"/>
@@ -240,7 +571,6 @@ Note that the value returned by @callback must be transfer full. In case of non-
 %G_TYPE_POINTER instead of the actual boxed #GType to ensure that the instance owned by #JSCClass is used.
 If you really want to return a new copy of the boxed type, use #JSC_TYPE_VALUE and return a #JSCValue created
 with jsc_value_new_object() that receives the copy as the instance parameter.</doc>
-        
         <return-value transfer-ownership="none">
           <type name="none" c:type="void"/>
         </return-value>
@@ -289,7 +619,6 @@ Note that the value returned by @callback must be transfer full. In case of non-
 %G_TYPE_POINTER instead of the actual boxed #GType to ensure that the instance owned by #JSCClass is used.
 If you really want to return a new copy of the boxed type, use #JSC_TYPE_VALUE and return a #JSCValue created
 with jsc_value_new_object() that receives the copy as the instance parameter.</doc>
-        
         <return-value transfer-ownership="none">
           <type name="none" c:type="void"/>
         </return-value>
@@ -304,7 +633,7 @@ with jsc_value_new_object() that receives the copy as the instance parameter.</d
           </parameter>
           <parameter name="callback" transfer-ownership="none" scope="notified" closure="2" destroy="3">
             <doc xml:space="preserve">a #GCallback to be called to invoke method @name of @jsc_class</doc>
-            <type name="GObject.Callback" c:type="GCallback"/>
+            <type name="ClassVariadicFunction" c:type="JSCClassVariadicFunction"/>
           </parameter>
           <parameter name="user_data" transfer-ownership="none" nullable="1" allow-none="1">
             <doc xml:space="preserve">user data to pass to @callback</doc>
@@ -330,7 +659,6 @@ Note that the value returned by @callback must be transfer full. In case of non-
 %G_TYPE_POINTER instead of the actual boxed #GType to ensure that the instance owned by #JSCClass is used.
 If you really want to return a new copy of the boxed type, use #JSC_TYPE_VALUE and return a #JSCValue created
 with jsc_value_new_object() that receives the copy as the instance parameter.</doc>
-        
         <return-value transfer-ownership="none">
           <type name="none" c:type="void"/>
         </return-value>
@@ -382,7 +710,6 @@ Note that the value returned by @getter must be transfer full. In case of non-re
 %G_TYPE_POINTER instead of the actual boxed #GType to ensure that the instance owned by #JSCClass is used.
 If you really want to return a new copy of the boxed type, use #JSC_TYPE_VALUE and return a #JSCValue created
 with jsc_value_new_object() that receives the copy as the instance parameter.</doc>
-        
         <return-value transfer-ownership="none">
           <type name="none" c:type="void"/>
         </return-value>
@@ -399,13 +726,13 @@ with jsc_value_new_object() that receives the copy as the instance parameter.</d
             <doc xml:space="preserve">the #GType of the property value</doc>
             <type name="GType" c:type="GType"/>
           </parameter>
-          <parameter name="getter" transfer-ownership="none" nullable="1" allow-none="1" scope="async">
+          <parameter name="getter" transfer-ownership="none" nullable="1" allow-none="1" scope="notified" closure="4" destroy="5">
             <doc xml:space="preserve">a #GCallback to be called to get the property value</doc>
-            <type name="GObject.Callback" c:type="GCallback"/>
+            <type name="PropertyGetter" c:type="JSCPropertyGetter"/>
           </parameter>
           <parameter name="setter" transfer-ownership="none" nullable="1" allow-none="1" scope="notified" closure="4" destroy="5">
             <doc xml:space="preserve">a #GCallback to be called to set the property value</doc>
-            <type name="GObject.Callback" c:type="GCallback"/>
+            <type name="PropertySetter" c:type="JSCPropertySetter"/>
           </parameter>
           <parameter name="user_data" transfer-ownership="none" nullable="1" allow-none="1">
             <doc xml:space="preserve">user data to pass to @getter and @setter</doc>
@@ -419,7 +746,6 @@ with jsc_value_new_object() that receives the copy as the instance parameter.</d
       </method>
       <method name="get_name" c:identifier="jsc_class_get_name">
         <doc xml:space="preserve">Get the class name of @jsc_class</doc>
-        
         <return-value transfer-ownership="none">
           <doc xml:space="preserve">the name of @jsc_class</doc>
           <type name="utf8" c:type="const char*"/>
@@ -433,7 +759,6 @@ with jsc_value_new_object() that receives the copy as the instance parameter.</d
       </method>
       <method name="get_parent" c:identifier="jsc_class_get_parent">
         <doc xml:space="preserve">Get the parent class of @jsc_class</doc>
-        
         <return-value transfer-ownership="none">
           <doc xml:space="preserve">the parent class of @jsc_class</doc>
           <type name="Class" c:type="JSCClass*"/>
@@ -464,7 +789,6 @@ with jsc_value_new_object() that receives the copy as the instance parameter.</d
     <callback name="ClassDeletePropertyFunction" c:type="JSCClassDeletePropertyFunction">
       <doc xml:space="preserve">The type of delete_property in #JSCClassVTable. This is only required when you need to handle
 external properties not added to the prototype.</doc>
-      
       <return-value transfer-ownership="none">
         <doc xml:space="preserve">%TRUE if handled or %FALSE to to forward the request to the parent class or prototype chain.</doc>
         <type name="gboolean" c:type="gboolean"/>
@@ -491,7 +815,6 @@ external properties not added to the prototype.</doc>
     <callback name="ClassEnumeratePropertiesFunction" c:type="JSCClassEnumeratePropertiesFunction">
       <doc xml:space="preserve">The type of enumerate_properties in #JSCClassVTable. This is only required when you need to handle
 external properties not added to the prototype.</doc>
-      
       <return-value transfer-ownership="full" nullable="1">
         <doc xml:space="preserve">a %NULL-terminated array of strings
    containing the property names, or %NULL if @instance doesn't have enumerable properties.</doc>
@@ -517,7 +840,6 @@ external properties not added to the prototype.</doc>
     <callback name="ClassGetPropertyFunction" c:type="JSCClassGetPropertyFunction">
       <doc xml:space="preserve">The type of get_property in #JSCClassVTable. This is only required when you need to handle
 external properties not added to the prototype.</doc>
-      
       <return-value transfer-ownership="full" nullable="1">
         <doc xml:space="preserve">a #JSCValue or %NULL to forward the request to
    the parent class or prototype chain</doc>
@@ -545,7 +867,6 @@ external properties not added to the prototype.</doc>
     <callback name="ClassHasPropertyFunction" c:type="JSCClassHasPropertyFunction">
       <doc xml:space="preserve">The type of has_property in #JSCClassVTable. This is only required when you need to handle
 external properties not added to the prototype.</doc>
-      
       <return-value transfer-ownership="none">
         <doc xml:space="preserve">%TRUE if @instance has a property with @name or %FALSE to forward the request
    to the parent class or prototype chain.</doc>
@@ -573,7 +894,6 @@ external properties not added to the prototype.</doc>
     <callback name="ClassSetPropertyFunction" c:type="JSCClassSetPropertyFunction">
       <doc xml:space="preserve">The type of set_property in #JSCClassVTable. This is only required when you need to handle
 external properties not added to the prototype.</doc>
-      
       <return-value transfer-ownership="none">
         <doc xml:space="preserve">%TRUE if handled or %FALSE to forward the request to the parent class or prototype chain.</doc>
         <type name="gboolean" c:type="gboolean"/>
@@ -605,7 +925,6 @@ external properties not added to the prototype.</doc>
       <doc xml:space="preserve">Virtual table for a JSCClass. This can be optionally used when registering a #JSCClass in a #JSCContext
 to provide a custom implementation for the class. All virtual functions are optional and can be set to
 %NULL to fallback to the default implementation.</doc>
-      
       <field name="get_property" writable="1">
         <doc xml:space="preserve">a #JSCClassGetPropertyFunction for getting a property.</doc>
         <type name="ClassGetPropertyFunction" c:type="JSCClassGetPropertyFunction"/>
@@ -628,7 +947,6 @@ to provide a custom implementation for the class. All virtual functions are opti
       </field>
       <field name="_jsc_reserved0" introspectable="0">
         <callback name="_jsc_reserved0">
-          
           <return-value transfer-ownership="none">
             <type name="none" c:type="void"/>
           </return-value>
@@ -636,7 +954,6 @@ to provide a custom implementation for the class. All virtual functions are opti
       </field>
       <field name="_jsc_reserved1" introspectable="0">
         <callback name="_jsc_reserved1">
-          
           <return-value transfer-ownership="none">
             <type name="none" c:type="void"/>
           </return-value>
@@ -644,7 +961,6 @@ to provide a custom implementation for the class. All virtual functions are opti
       </field>
       <field name="_jsc_reserved2" introspectable="0">
         <callback name="_jsc_reserved2">
-          
           <return-value transfer-ownership="none">
             <type name="none" c:type="void"/>
           </return-value>
@@ -652,7 +968,6 @@ to provide a custom implementation for the class. All virtual functions are opti
       </field>
       <field name="_jsc_reserved3" introspectable="0">
         <callback name="_jsc_reserved3">
-          
           <return-value transfer-ownership="none">
             <type name="none" c:type="void"/>
           </return-value>
@@ -660,12 +975,10 @@ to provide a custom implementation for the class. All virtual functions are opti
       </field>
     </record>
     <class name="Context" c:symbol-prefix="context" c:type="JSCContext" parent="GObject.Object" glib:type-name="JSCContext" glib:get-type="jsc_context_get_type" glib:type-struct="ContextClass">
-      
       <constructor name="new" c:identifier="jsc_context_new">
         <doc xml:space="preserve">Create a new #JSCContext. The context is created in a new #JSCVirtualMachine.
 Use jsc_context_new_with_virtual_machine() to create a new #JSCContext in an
 existing #JSCVirtualMachine.</doc>
-        
         <return-value transfer-ownership="full">
           <doc xml:space="preserve">the newly created #JSCContext.</doc>
           <type name="Context" c:type="JSCContext*"/>
@@ -673,7 +986,6 @@ existing #JSCVirtualMachine.</doc>
       </constructor>
       <constructor name="new_with_virtual_machine" c:identifier="jsc_context_new_with_virtual_machine">
         <doc xml:space="preserve">Create a new #JSCContext in @virtual_machine.</doc>
-        
         <return-value transfer-ownership="full">
           <doc xml:space="preserve">the newly created #JSCContext.</doc>
           <type name="Context" c:type="JSCContext*"/>
@@ -688,7 +1000,6 @@ existing #JSCVirtualMachine.</doc>
       <function name="get_current" c:identifier="jsc_context_get_current">
         <doc xml:space="preserve">Get the #JSCContext that is currently executing a function. This should only be
 called within a function or method callback, otherwise %NULL will be returned.</doc>
-        
         <return-value transfer-ownership="none" nullable="1">
           <doc xml:space="preserve">the #JSCContext that is currently executing.</doc>
           <type name="Context" c:type="JSCContext*"/>
@@ -699,7 +1010,6 @@ called within a function or method callback, otherwise %NULL will be returned.</
 the value is one-based so the first line is 1. @uri and @line_number are only used to fill the @exception.
 In case of errors @exception will be set to a new #JSCException with the details. You can pass %NULL to
 @exception to ignore the error details.</doc>
-        
         <return-value transfer-ownership="none">
           <doc xml:space="preserve">a #JSCCheckSyntaxResult</doc>
           <type name="CheckSyntaxResult" c:type="JSCCheckSyntaxResult"/>
@@ -737,7 +1047,6 @@ In case of errors @exception will be set to a new #JSCException with the details
       </method>
       <method name="clear_exception" c:identifier="jsc_context_clear_exception">
         <doc xml:space="preserve">Clear the uncaught exception in @context if any.</doc>
-        
         <return-value transfer-ownership="none">
           <type name="none" c:type="void"/>
         </return-value>
@@ -750,7 +1059,6 @@ In case of errors @exception will be set to a new #JSCException with the details
       </method>
       <method name="evaluate" c:identifier="jsc_context_evaluate">
         <doc xml:space="preserve">Evaluate @code in @context.</doc>
-        
         <return-value transfer-ownership="full">
           <doc xml:space="preserve">a #JSCValue representing the last value generated by the script.</doc>
           <type name="Value" c:type="JSCValue*"/>
@@ -776,7 +1084,6 @@ instead of being added to @context global object. The new object is returned as 
 Similar to how jsc_value_new_object() works, if @object_instance is not %NULL @object_class must be provided too.
 The @line_number is the starting line number in @uri; the value is one-based so the first line is 1.
 @uri and @line_number will be shown in exceptions and they don't affect the behavior of the script.</doc>
-        
         <return-value transfer-ownership="full">
           <doc xml:space="preserve">a #JSCValue representing the last value generated by the script.</doc>
           <type name="Value" c:type="JSCValue*"/>
@@ -820,7 +1127,6 @@ The @line_number is the starting line number in @uri; the value is one-based so 
         <doc xml:space="preserve">Evaluate @code in @context using @uri as the source URI. The @line_number is the starting line number
 in @uri; the value is one-based so the first line is 1. @uri and @line_number will be shown in exceptions and
 they don't affect the behavior of the script.</doc>
-        
         <return-value transfer-ownership="full">
           <doc xml:space="preserve">a #JSCValue representing the last value generated by the script.</doc>
           <type name="Value" c:type="JSCValue*"/>
@@ -850,7 +1156,6 @@ they don't affect the behavior of the script.</doc>
       </method>
       <method name="get_exception" c:identifier="jsc_context_get_exception">
         <doc xml:space="preserve">Get the last unhandled exception thrown in @context by API functions calls.</doc>
-        
         <return-value transfer-ownership="none" nullable="1">
           <doc xml:space="preserve">a #JSCException or %NULL if there isn't any
    unhandled exception in the #JSCContext.</doc>
@@ -865,7 +1170,6 @@ they don't affect the behavior of the script.</doc>
       </method>
       <method name="get_global_object" c:identifier="jsc_context_get_global_object">
         <doc xml:space="preserve">Get a #JSCValue referencing the @context global object</doc>
-        
         <return-value transfer-ownership="full">
           <doc xml:space="preserve">a #JSCValue</doc>
           <type name="Value" c:type="JSCValue*"/>
@@ -879,7 +1183,6 @@ they don't affect the behavior of the script.</doc>
       </method>
       <method name="get_value" c:identifier="jsc_context_get_value">
         <doc xml:space="preserve">Get a property of @context global object with @name.</doc>
-        
         <return-value transfer-ownership="full">
           <doc xml:space="preserve">a #JSCValue</doc>
           <type name="Value" c:type="JSCValue*"/>
@@ -897,7 +1200,6 @@ they don't affect the behavior of the script.</doc>
       </method>
       <method name="get_virtual_machine" c:identifier="jsc_context_get_virtual_machine">
         <doc xml:space="preserve">Get the #JSCVirtualMachine where @context was created.</doc>
-        
         <return-value transfer-ownership="none">
           <doc xml:space="preserve">the #JSCVirtualMachine where the #JSCContext was created.</doc>
           <type name="VirtualMachine" c:type="JSCVirtualMachine*"/>
@@ -912,7 +1214,6 @@ they don't affect the behavior of the script.</doc>
       <method name="pop_exception_handler" c:identifier="jsc_context_pop_exception_handler">
         <doc xml:space="preserve">Remove the last #JSCExceptionHandler previously pushed to @context with
 jsc_context_push_exception_handler().</doc>
-        
         <return-value transfer-ownership="none">
           <type name="none" c:type="void"/>
         </return-value>
@@ -932,7 +1233,6 @@ jsc_context_throw_exception() in @handler like the default one does.
 The last exception handler pushed is the only one used by the #JSCContext, use
 jsc_context_pop_exception_handler() to remove it and set the previous one. When @handler
 is removed from the context, @destroy_notify i called with @user_data as parameter.</doc>
-        
         <return-value transfer-ownership="none">
           <type name="none" c:type="void"/>
         </return-value>
@@ -962,7 +1262,6 @@ used. The optional @vtable parameter allows to provide a custom implementation f
 the class, for example, to handle external properties not added to the prototype.
 When an instance of the #JSCClass is cleared in the context, @destroy_notify is called with
 the instance as parameter.</doc>
-        
         <return-value transfer-ownership="none">
           <doc xml:space="preserve">a #JSCClass</doc>
           <type name="Class" c:type="JSCClass*"/>
@@ -992,7 +1291,6 @@ the instance as parameter.</doc>
       </method>
       <method name="set_value" c:identifier="jsc_context_set_value">
         <doc xml:space="preserve">Set a property of @context global object with @name and @value.</doc>
-        
         <return-value transfer-ownership="none">
           <type name="none" c:type="void"/>
         </return-value>
@@ -1014,7 +1312,6 @@ the instance as parameter.</doc>
       <method name="throw" c:identifier="jsc_context_throw">
         <doc xml:space="preserve">Throw an exception to @context using the given error message. The created #JSCException
 can be retrieved with jsc_context_get_exception().</doc>
-        
         <return-value transfer-ownership="none">
           <type name="none" c:type="void"/>
         </return-value>
@@ -1031,7 +1328,6 @@ can be retrieved with jsc_context_get_exception().</doc>
       </method>
       <method name="throw_exception" c:identifier="jsc_context_throw_exception">
         <doc xml:space="preserve">Throw @exception to @context.</doc>
-        
         <return-value transfer-ownership="none">
           <type name="none" c:type="void"/>
         </return-value>
@@ -1049,7 +1345,6 @@ can be retrieved with jsc_context_get_exception().</doc>
       <method name="throw_printf" c:identifier="jsc_context_throw_printf" introspectable="0">
         <doc xml:space="preserve">Throw an exception to @context using the given formatted string as error message.
 The created #JSCException can be retrieved with jsc_context_get_exception().</doc>
-        
         <return-value transfer-ownership="none">
           <type name="none" c:type="void"/>
         </return-value>
@@ -1071,7 +1366,6 @@ The created #JSCException can be retrieved with jsc_context_get_exception().</do
       <method name="throw_with_name" c:identifier="jsc_context_throw_with_name">
         <doc xml:space="preserve">Throw an exception to @context using the given error name and message. The created #JSCException
 can be retrieved with jsc_context_get_exception().</doc>
-        
         <return-value transfer-ownership="none">
           <type name="none" c:type="void"/>
         </return-value>
@@ -1093,7 +1387,6 @@ can be retrieved with jsc_context_get_exception().</doc>
       <method name="throw_with_name_printf" c:identifier="jsc_context_throw_with_name_printf" introspectable="0">
         <doc xml:space="preserve">Throw an exception to @context using the given error name and the formatted string as error message.
 The created #JSCException can be retrieved with jsc_context_get_exception().</doc>
-        
         <return-value transfer-ownership="none">
           <type name="none" c:type="void"/>
         </return-value>
@@ -1128,13 +1421,11 @@ The created #JSCException can be retrieved with jsc_context_get_exception().</do
       </field>
     </class>
     <record name="ContextClass" c:type="JSCContextClass" glib:is-gtype-struct-for="Context">
-      
       <field name="parent_class">
         <type name="GObject.ObjectClass" c:type="GObjectClass"/>
       </field>
       <field name="_jsc_reserved0" introspectable="0">
         <callback name="_jsc_reserved0">
-          
           <return-value transfer-ownership="none">
             <type name="none" c:type="void"/>
           </return-value>
@@ -1142,7 +1433,6 @@ The created #JSCException can be retrieved with jsc_context_get_exception().</do
       </field>
       <field name="_jsc_reserved1" introspectable="0">
         <callback name="_jsc_reserved1">
-          
           <return-value transfer-ownership="none">
             <type name="none" c:type="void"/>
           </return-value>
@@ -1150,7 +1440,6 @@ The created #JSCException can be retrieved with jsc_context_get_exception().</do
       </field>
       <field name="_jsc_reserved2" introspectable="0">
         <callback name="_jsc_reserved2">
-          
           <return-value transfer-ownership="none">
             <type name="none" c:type="void"/>
           </return-value>
@@ -1158,7 +1447,6 @@ The created #JSCException can be retrieved with jsc_context_get_exception().</do
       </field>
       <field name="_jsc_reserved3" introspectable="0">
         <callback name="_jsc_reserved3">
-          
           <return-value transfer-ownership="none">
             <type name="none" c:type="void"/>
           </return-value>
@@ -1169,38 +1457,32 @@ The created #JSCException can be retrieved with jsc_context_get_exception().</do
       
     </record>
     <function-macro name="DEPRECATED_FOR" c:identifier="JSC_DEPRECATED_FOR" introspectable="0">
-      
       <parameters>
         <parameter name="f">
         </parameter>
       </parameters>
     </function-macro>
     <function-macro name="EXCEPTION" c:identifier="JSC_EXCEPTION" introspectable="0">
-      
       <parameters>
         <parameter name="obj">
         </parameter>
       </parameters>
     </function-macro>
     <function-macro name="EXCEPTION_CLASS" c:identifier="JSC_EXCEPTION_CLASS" introspectable="0">
-      
       <parameters>
         <parameter name="klass">
         </parameter>
       </parameters>
     </function-macro>
     <function-macro name="EXCEPTION_GET_CLASS" c:identifier="JSC_EXCEPTION_GET_CLASS" introspectable="0">
-      
       <parameters>
         <parameter name="obj">
         </parameter>
       </parameters>
     </function-macro>
     <class name="Exception" c:symbol-prefix="exception" c:type="JSCException" parent="GObject.Object" glib:type-name="JSCException" glib:get-type="jsc_exception_get_type" glib:type-struct="ExceptionClass">
-      
       <constructor name="new" c:identifier="jsc_exception_new">
         <doc xml:space="preserve">Create a new #JSCException in @context with @message.</doc>
-        
         <return-value transfer-ownership="full">
           <doc xml:space="preserve">a new #JSCException.</doc>
           <type name="Exception" c:type="JSCException*"/>
@@ -1219,7 +1501,6 @@ The created #JSCException can be retrieved with jsc_context_get_exception().</do
       <constructor name="new_printf" c:identifier="jsc_exception_new_printf" introspectable="0">
         <doc xml:space="preserve">Create a new #JSCException in @context using a formatted string
 for the message.</doc>
-        
         <return-value transfer-ownership="full">
           <doc xml:space="preserve">a new #JSCException.</doc>
           <type name="Exception" c:type="JSCException*"/>
@@ -1243,7 +1524,6 @@ for the message.</doc>
         <doc xml:space="preserve">Create a new #JSCException in @context using a formatted string
 for the message. This is similar to jsc_exception_new_printf()
 except that the arguments to the format string are passed as a va_list.</doc>
-        
         <return-value transfer-ownership="full">
           <doc xml:space="preserve">a new #JSCException.</doc>
           <type name="Exception" c:type="JSCException*"/>
@@ -1265,7 +1545,6 @@ except that the arguments to the format string are passed as a va_list.</doc>
       </constructor>
       <constructor name="new_with_name" c:identifier="jsc_exception_new_with_name">
         <doc xml:space="preserve">Create a new #JSCException in @context with @name and @message.</doc>
-        
         <return-value transfer-ownership="full">
           <doc xml:space="preserve">a new #JSCException.</doc>
           <type name="Exception" c:type="JSCException*"/>
@@ -1288,7 +1567,6 @@ except that the arguments to the format string are passed as a va_list.</doc>
       <constructor name="new_with_name_printf" c:identifier="jsc_exception_new_with_name_printf" introspectable="0">
         <doc xml:space="preserve">Create a new #JSCException in @context with @name and using a formatted string
 for the message.</doc>
-        
         <return-value transfer-ownership="full">
           <doc xml:space="preserve">a new #JSCException.</doc>
           <type name="Exception" c:type="JSCException*"/>
@@ -1316,7 +1594,6 @@ for the message.</doc>
         <doc xml:space="preserve">Create a new #JSCException in @context with @name and using a formatted string
 for the message. This is similar to jsc_exception_new_with_name_printf()
 except that the arguments to the format string are passed as a va_list.</doc>
-        
         <return-value transfer-ownership="full">
           <doc xml:space="preserve">a new #JSCException.</doc>
           <type name="Exception" c:type="JSCException*"/>
@@ -1342,7 +1619,6 @@ except that the arguments to the format string are passed as a va_list.</doc>
       </constructor>
       <method name="get_backtrace_string" c:identifier="jsc_exception_get_backtrace_string">
         <doc xml:space="preserve">Get a string with the exception backtrace.</doc>
-        
         <return-value transfer-ownership="none" nullable="1">
           <doc xml:space="preserve">the exception backtrace string or %NULL.</doc>
           <type name="utf8" c:type="const char*"/>
@@ -1356,7 +1632,6 @@ except that the arguments to the format string are passed as a va_list.</doc>
       </method>
       <method name="get_column_number" c:identifier="jsc_exception_get_column_number">
         <doc xml:space="preserve">Get the column number at which @exception happened.</doc>
-        
         <return-value transfer-ownership="none">
           <doc xml:space="preserve">the column number of @exception.</doc>
           <type name="guint" c:type="guint"/>
@@ -1370,7 +1645,6 @@ except that the arguments to the format string are passed as a va_list.</doc>
       </method>
       <method name="get_line_number" c:identifier="jsc_exception_get_line_number">
         <doc xml:space="preserve">Get the line number at which @exception happened.</doc>
-        
         <return-value transfer-ownership="none">
           <doc xml:space="preserve">the line number of @exception.</doc>
           <type name="guint" c:type="guint"/>
@@ -1384,7 +1658,6 @@ except that the arguments to the format string are passed as a va_list.</doc>
       </method>
       <method name="get_message" c:identifier="jsc_exception_get_message">
         <doc xml:space="preserve">Get the error message of @exception.</doc>
-        
         <return-value transfer-ownership="none">
           <doc xml:space="preserve">the @exception error message.</doc>
           <type name="utf8" c:type="const char*"/>
@@ -1398,7 +1671,6 @@ except that the arguments to the format string are passed as a va_list.</doc>
       </method>
       <method name="get_name" c:identifier="jsc_exception_get_name">
         <doc xml:space="preserve">Get the error name of @exception</doc>
-        
         <return-value transfer-ownership="none">
           <doc xml:space="preserve">the @exception error name.</doc>
           <type name="utf8" c:type="const char*"/>
@@ -1412,7 +1684,6 @@ except that the arguments to the format string are passed as a va_list.</doc>
       </method>
       <method name="get_source_uri" c:identifier="jsc_exception_get_source_uri">
         <doc xml:space="preserve">Get the source URI of @exception.</doc>
-        
         <return-value transfer-ownership="none" nullable="1">
           <doc xml:space="preserve">the the source URI of @exception, or %NULL.</doc>
           <type name="utf8" c:type="const char*"/>
@@ -1427,7 +1698,6 @@ except that the arguments to the format string are passed as a va_list.</doc>
       <method name="report" c:identifier="jsc_exception_report">
         <doc xml:space="preserve">Return a report message of @exception, containing all the possible details such us
 source URI, line, column and backtrace, and formatted to be printed.</doc>
-        
         <return-value transfer-ownership="full">
           <doc xml:space="preserve">a new string with the exception report</doc>
           <type name="utf8" c:type="char*"/>
@@ -1441,7 +1711,6 @@ source URI, line, column and backtrace, and formatted to be printed.</doc>
       </method>
       <method name="to_string" c:identifier="jsc_exception_to_string">
         <doc xml:space="preserve">Get the string representation of @exception error.</doc>
-        
         <return-value transfer-ownership="full">
           <doc xml:space="preserve">the string representation of @exception.</doc>
           <type name="utf8" c:type="char*"/>
@@ -1461,13 +1730,11 @@ source URI, line, column and backtrace, and formatted to be printed.</doc>
       </field>
     </class>
     <record name="ExceptionClass" c:type="JSCExceptionClass" glib:is-gtype-struct-for="Exception">
-      
       <field name="parent_class">
         <type name="GObject.ObjectClass" c:type="GObjectClass"/>
       </field>
       <field name="_jsc_reserved0" introspectable="0">
         <callback name="_jsc_reserved0">
-          
           <return-value transfer-ownership="none">
             <type name="none" c:type="void"/>
           </return-value>
@@ -1475,7 +1742,6 @@ source URI, line, column and backtrace, and formatted to be printed.</doc>
       </field>
       <field name="_jsc_reserved1" introspectable="0">
         <callback name="_jsc_reserved1">
-          
           <return-value transfer-ownership="none">
             <type name="none" c:type="void"/>
           </return-value>
@@ -1483,7 +1749,6 @@ source URI, line, column and backtrace, and formatted to be printed.</doc>
       </field>
       <field name="_jsc_reserved2" introspectable="0">
         <callback name="_jsc_reserved2">
-          
           <return-value transfer-ownership="none">
             <type name="none" c:type="void"/>
           </return-value>
@@ -1491,7 +1756,6 @@ source URI, line, column and backtrace, and formatted to be printed.</doc>
       </field>
       <field name="_jsc_reserved3" introspectable="0">
         <callback name="_jsc_reserved3">
-          
           <return-value transfer-ownership="none">
             <type name="none" c:type="void"/>
           </return-value>
@@ -1500,7 +1764,6 @@ source URI, line, column and backtrace, and formatted to be printed.</doc>
     </record>
     <callback name="ExceptionHandler" c:type="JSCExceptionHandler">
       <doc xml:space="preserve">Function used to handle JavaScript exceptions in a #JSCContext.</doc>
-      
       <return-value transfer-ownership="none">
         <type name="none" c:type="void"/>
       </return-value>
@@ -1523,77 +1786,66 @@ source URI, line, column and backtrace, and formatted to be printed.</doc>
       
     </record>
     <function-macro name="IS_CLASS" c:identifier="JSC_IS_CLASS" introspectable="0">
-      
       <parameters>
         <parameter name="obj">
         </parameter>
       </parameters>
     </function-macro>
     <function-macro name="IS_CONTEXT" c:identifier="JSC_IS_CONTEXT" introspectable="0">
-      
       <parameters>
         <parameter name="obj">
         </parameter>
       </parameters>
     </function-macro>
     <function-macro name="IS_CONTEXT_CLASS" c:identifier="JSC_IS_CONTEXT_CLASS" introspectable="0">
-      
       <parameters>
         <parameter name="klass">
         </parameter>
       </parameters>
     </function-macro>
     <function-macro name="IS_EXCEPTION" c:identifier="JSC_IS_EXCEPTION" introspectable="0">
-      
       <parameters>
         <parameter name="obj">
         </parameter>
       </parameters>
     </function-macro>
     <function-macro name="IS_EXCEPTION_CLASS" c:identifier="JSC_IS_EXCEPTION_CLASS" introspectable="0">
-      
       <parameters>
         <parameter name="klass">
         </parameter>
       </parameters>
     </function-macro>
     <function-macro name="IS_VALUE" c:identifier="JSC_IS_VALUE" introspectable="0">
-      
       <parameters>
         <parameter name="obj">
         </parameter>
       </parameters>
     </function-macro>
     <function-macro name="IS_VALUE_CLASS" c:identifier="JSC_IS_VALUE_CLASS" introspectable="0">
-      
       <parameters>
         <parameter name="klass">
         </parameter>
       </parameters>
     </function-macro>
     <function-macro name="IS_VIRTUAL_MACHINE" c:identifier="JSC_IS_VIRTUAL_MACHINE" introspectable="0">
-      
       <parameters>
         <parameter name="obj">
         </parameter>
       </parameters>
     </function-macro>
     <function-macro name="IS_VIRTUAL_MACHINE_CLASS" c:identifier="JSC_IS_VIRTUAL_MACHINE_CLASS" introspectable="0">
-      
       <parameters>
         <parameter name="klass">
         </parameter>
       </parameters>
     </function-macro>
     <function-macro name="IS_WEAK_VALUE" c:identifier="JSC_IS_WEAK_VALUE" introspectable="0">
-      
       <parameters>
         <parameter name="obj">
         </parameter>
       </parameters>
     </function-macro>
     <function-macro name="IS_WEAK_VALUE_CLASS" c:identifier="JSC_IS_WEAK_VALUE_CLASS" introspectable="0">
-      
       <parameters>
         <parameter name="klass">
         </parameter>
@@ -1603,54 +1855,46 @@ source URI, line, column and backtrace, and formatted to be printed.</doc>
       <doc xml:space="preserve">Like jsc_get_major_version(), but from the headers used at
 application compile time, rather than from the library linked
 against at application run time.</doc>
-      
       <type name="gint" c:type="gint"/>
     </constant>
     <constant name="MICRO_VERSION" value="2" c:type="JSC_MICRO_VERSION">
       <doc xml:space="preserve">Like jsc_get_micro_version(), but from the headers used at
 application compile time, rather than from the library linked
 against at application run time.</doc>
-      
       <type name="gint" c:type="gint"/>
     </constant>
     <constant name="MINOR_VERSION" value="29" c:type="JSC_MINOR_VERSION">
       <doc xml:space="preserve">Like jsc_get_minor_version(), but from the headers used at
 application compile time, rather than from the library linked
 against at application run time.</doc>
-      
       <type name="gint" c:type="gint"/>
     </constant>
     <constant name="OPTIONS_USE_DFG" value="useDFGJIT" c:type="JSC_OPTIONS_USE_DFG" version="2.24">
       <doc xml:space="preserve">Allows the DFG JIT to be used if %TRUE.
 Option type: %JSC_OPTION_BOOLEAN
 Default value: %TRUE.</doc>
-      
       <type name="utf8" c:type="gchar*"/>
     </constant>
     <constant name="OPTIONS_USE_FTL" value="useFTLJIT" c:type="JSC_OPTIONS_USE_FTL" version="2.24">
       <doc xml:space="preserve">Allows the FTL JIT to be used if %TRUE.
 Option type: %JSC_OPTION_BOOLEAN
 Default value: %TRUE.</doc>
-      
       <type name="utf8" c:type="gchar*"/>
     </constant>
     <constant name="OPTIONS_USE_JIT" value="useJIT" c:type="JSC_OPTIONS_USE_JIT" version="2.24">
       <doc xml:space="preserve">Allows the executable pages to be allocated for JIT and thunks if %TRUE.
 Option type: %JSC_OPTION_BOOLEAN
 Default value: %TRUE.</doc>
-      
       <type name="utf8" c:type="gchar*"/>
     </constant>
     <constant name="OPTIONS_USE_LLINT" value="useLLInt" c:type="JSC_OPTIONS_USE_LLINT" version="2.24">
       <doc xml:space="preserve">Allows the LLINT to be used if %TRUE.
 Option type: %JSC_OPTION_BOOLEAN
 Default value: %TRUE.</doc>
-      
       <type name="utf8" c:type="gchar*"/>
     </constant>
     <enumeration name="OptionType" version="2.24" c:type="JSCOptionType">
       <doc xml:space="preserve">Enum values for options types.</doc>
-      
       <member name="boolean" value="0" c:identifier="JSC_OPTION_BOOLEAN">
         <doc xml:space="preserve">A #gboolean option type.</doc>
       </member>
@@ -1677,7 +1921,6 @@ Default value: %TRUE.</doc>
       <doc xml:space="preserve">Function used to iterate options.
 
 Not that @description string is not localized.</doc>
-      
       <return-value transfer-ownership="none">
         <doc xml:space="preserve">%TRUE to stop the iteration, or %FALSE otherwise</doc>
         <type name="gboolean" c:type="gboolean"/>
@@ -1702,53 +1945,45 @@ Not that @description string is not localized.</doc>
       </parameters>
     </callback>
     <function-macro name="VALUE" c:identifier="JSC_VALUE" introspectable="0">
-      
       <parameters>
         <parameter name="obj">
         </parameter>
       </parameters>
     </function-macro>
     <function-macro name="VALUE_CLASS" c:identifier="JSC_VALUE_CLASS" introspectable="0">
-      
       <parameters>
         <parameter name="klass">
         </parameter>
       </parameters>
     </function-macro>
     <function-macro name="VALUE_GET_CLASS" c:identifier="JSC_VALUE_GET_CLASS" introspectable="0">
-      
       <parameters>
         <parameter name="obj">
         </parameter>
       </parameters>
     </function-macro>
     <function-macro name="VIRTUAL_MACHINE" c:identifier="JSC_VIRTUAL_MACHINE" introspectable="0">
-      
       <parameters>
         <parameter name="obj">
         </parameter>
       </parameters>
     </function-macro>
     <function-macro name="VIRTUAL_MACHINE_CLASS" c:identifier="JSC_VIRTUAL_MACHINE_CLASS" introspectable="0">
-      
       <parameters>
         <parameter name="klass">
         </parameter>
       </parameters>
     </function-macro>
     <function-macro name="VIRTUAL_MACHINE_GET_CLASS" c:identifier="JSC_VIRTUAL_MACHINE_GET_CLASS" introspectable="0">
-      
       <parameters>
         <parameter name="obj">
         </parameter>
       </parameters>
     </function-macro>
     <class name="Value" c:symbol-prefix="value" c:type="JSCValue" parent="GObject.Object" glib:type-name="JSCValue" glib:get-type="jsc_value_get_type" glib:type-struct="ValueClass">
-      
       <constructor name="new_array" c:identifier="jsc_value_new_array" introspectable="0">
         <doc xml:space="preserve">Create a new #JSCValue referencing an array with the given items. If @first_item_type
 is %G_TYPE_NONE an empty array is created.</doc>
-        
         <return-value transfer-ownership="full">
           <doc xml:space="preserve">a #JSCValue.</doc>
           <type name="Value" c:type="JSCValue*"/>
@@ -1772,7 +2007,6 @@ is %G_TYPE_NONE an empty array is created.</doc>
         <doc xml:space="preserve">Create a new #JSCValue referencing an array with the items from @array. If @array
 is %NULL or empty a new empty array will be created. Elements of @array should be
 pointers to a #JSCValue.</doc>
-        
         <return-value transfer-ownership="full">
           <doc xml:space="preserve">a #JSCValue.</doc>
           <type name="Value" c:type="JSCValue*"/>
@@ -1793,7 +2027,6 @@ pointers to a #JSCValue.</doc>
       <constructor name="new_array_from_strv" c:identifier="jsc_value_new_array_from_strv">
         <doc xml:space="preserve">Create a new #JSCValue referencing an array of strings with the items from @strv. If @array
 is %NULL or empty a new empty array will be created.</doc>
-        
         <return-value transfer-ownership="full">
           <doc xml:space="preserve">a #JSCValue.</doc>
           <type name="Value" c:type="JSCValue*"/>
@@ -1813,7 +2046,6 @@ is %NULL or empty a new empty array will be created.</doc>
       </constructor>
       <constructor name="new_boolean" c:identifier="jsc_value_new_boolean">
         <doc xml:space="preserve">Create a new #JSCValue from @value</doc>
-        
         <return-value transfer-ownership="full">
           <doc xml:space="preserve">a #JSCValue.</doc>
           <type name="Value" c:type="JSCValue*"/>
@@ -1831,7 +2063,6 @@ is %NULL or empty a new empty array will be created.</doc>
       </constructor>
       <constructor name="new_from_json" c:identifier="jsc_value_new_from_json" version="2.28">
         <doc xml:space="preserve">Create a new #JSCValue referencing a new value created by parsing @json.</doc>
-        
         <return-value transfer-ownership="full">
           <doc xml:space="preserve">a #JSCValue.</doc>
           <type name="Value" c:type="JSCValue*"/>
@@ -1857,7 +2088,6 @@ Note that the value returned by @callback must be fully transferred. In case of 
 %G_TYPE_POINTER instead of the actual boxed #GType to ensure that the instance owned by #JSCClass is used.
 If you really want to return a new copy of the boxed type, use #JSC_TYPE_VALUE and return a #JSCValue created
 with jsc_value_new_object() that receives the copy as instance parameter.</doc>
-        
         <return-value transfer-ownership="full">
           <doc xml:space="preserve">a #JSCValue.</doc>
           <type name="Value" c:type="JSCValue*"/>
@@ -1907,7 +2137,6 @@ Note that the value returned by @callback must be fully transferred. In case of 
 %G_TYPE_POINTER instead of the actual boxed #GType to ensure that the instance owned by #JSCClass is used.
 If you really want to return a new copy of the boxed type, use #JSC_TYPE_VALUE and return a #JSCValue created
 with jsc_value_new_object() that receives the copy as instance parameter.</doc>
-        
         <return-value transfer-ownership="full">
           <doc xml:space="preserve">a #JSCValue.</doc>
           <type name="Value" c:type="JSCValue*"/>
@@ -1923,7 +2152,7 @@ with jsc_value_new_object() that receives the copy as instance parameter.</doc>
           </parameter>
           <parameter name="callback" transfer-ownership="none" scope="notified" closure="3" destroy="4">
             <doc xml:space="preserve">a #GCallback.</doc>
-            <type name="GObject.Callback" c:type="GCallback"/>
+            <type name="VariadicFunction" c:type="JSCVariadicFunction"/>
           </parameter>
           <parameter name="user_data" transfer-ownership="none" nullable="1" allow-none="1">
             <doc xml:space="preserve">user data to pass to @callback.</doc>
@@ -1949,7 +2178,6 @@ Note that the value returned by @callback must be fully transferred. In case of 
 %G_TYPE_POINTER instead of the actual boxed #GType to ensure that the instance owned by #JSCClass is used.
 If you really want to return a new copy of the boxed type, use #JSC_TYPE_VALUE and return a #JSCValue created
 with jsc_value_new_object() that receives the copy as instance parameter.</doc>
-        
         <return-value transfer-ownership="full">
           <doc xml:space="preserve">a #JSCValue.</doc>
           <type name="Value" c:type="JSCValue*"/>
@@ -1993,7 +2221,6 @@ with jsc_value_new_object() that receives the copy as instance parameter.</doc>
       </constructor>
       <constructor name="new_null" c:identifier="jsc_value_new_null">
         <doc xml:space="preserve">Create a new #JSCValue referencing &lt;function&gt;null&lt;/function&gt; in @context.</doc>
-        
         <return-value transfer-ownership="full">
           <doc xml:space="preserve">a #JSCValue.</doc>
           <type name="Value" c:type="JSCValue*"/>
@@ -2007,7 +2234,6 @@ with jsc_value_new_object() that receives the copy as instance parameter.</doc>
       </constructor>
       <constructor name="new_number" c:identifier="jsc_value_new_number">
         <doc xml:space="preserve">Create a new #JSCValue from @number.</doc>
-        
         <return-value transfer-ownership="full">
           <doc xml:space="preserve">a #JSCValue.</doc>
           <type name="Value" c:type="JSCValue*"/>
@@ -2027,7 +2253,6 @@ with jsc_value_new_object() that receives the copy as instance parameter.</doc>
         <doc xml:space="preserve">Create a new #JSCValue from @instance. If @instance is %NULL a new empty object is created.
 When @instance is provided, @jsc_class must be provided too. @jsc_class takes ownership of
 @instance that will be freed by the #GDestroyNotify passed to jsc_context_register_class().</doc>
-        
         <return-value transfer-ownership="full">
           <doc xml:space="preserve">a #JSCValue.</doc>
           <type name="Value" c:type="JSCValue*"/>
@@ -2050,7 +2275,6 @@ When @instance is provided, @jsc_class must be provided too. @jsc_class takes ow
       <constructor name="new_string" c:identifier="jsc_value_new_string">
         <doc xml:space="preserve">Create a new #JSCValue from @string. If you need to create a #JSCValue from a
 string containing null characters, use jsc_value_new_string_from_bytes() instead.</doc>
-        
         <return-value transfer-ownership="full">
           <doc xml:space="preserve">a #JSCValue.</doc>
           <type name="Value" c:type="JSCValue*"/>
@@ -2068,7 +2292,6 @@ string containing null characters, use jsc_value_new_string_from_bytes() instead
       </constructor>
       <constructor name="new_string_from_bytes" c:identifier="jsc_value_new_string_from_bytes">
         <doc xml:space="preserve">Create a new #JSCValue from @bytes.</doc>
-        
         <return-value transfer-ownership="full">
           <doc xml:space="preserve">a #JSCValue.</doc>
           <type name="Value" c:type="JSCValue*"/>
@@ -2086,7 +2309,6 @@ string containing null characters, use jsc_value_new_string_from_bytes() instead
       </constructor>
       <constructor name="new_undefined" c:identifier="jsc_value_new_undefined">
         <doc xml:space="preserve">Create a new #JSCValue referencing &lt;function&gt;undefined&lt;/function&gt; in @context.</doc>
-        
         <return-value transfer-ownership="full">
           <doc xml:space="preserve">a #JSCValue.</doc>
           <type name="Value" c:type="JSCValue*"/>
@@ -2101,7 +2323,6 @@ string containing null characters, use jsc_value_new_string_from_bytes() instead
       <method name="constructor_call" c:identifier="jsc_value_constructor_call" shadowed-by="constructor_callv" introspectable="0">
         <doc xml:space="preserve">Invoke &lt;function&gt;new&lt;/function&gt; with constructor referenced by @value. If @first_parameter_type
 is %G_TYPE_NONE no parameters will be passed to the constructor.</doc>
-        
         <return-value transfer-ownership="full">
           <doc xml:space="preserve">a #JSCValue referencing the newly created object instance.</doc>
           <type name="Value" c:type="JSCValue*"/>
@@ -2124,7 +2345,6 @@ is %G_TYPE_NONE no parameters will be passed to the constructor.</doc>
       <method name="constructor_callv" c:identifier="jsc_value_constructor_callv" shadows="constructor_call">
         <doc xml:space="preserve">Invoke &lt;function&gt;new&lt;/function&gt; with constructor referenced by @value. If @n_parameters
 is 0 no parameters will be passed to the constructor.</doc>
-        
         <return-value transfer-ownership="full">
           <doc xml:space="preserve">a #JSCValue referencing the newly created object instance.</doc>
           <type name="Value" c:type="JSCValue*"/>
@@ -2152,7 +2372,6 @@ is %G_TYPE_NONE no parameters will be passed to the function.
 
 This function always returns a #JSCValue, in case of void functions a #JSCValue referencing
 &lt;function&gt;undefined&lt;/function&gt; is returned</doc>
-        
         <return-value transfer-ownership="full">
           <doc xml:space="preserve">a #JSCValue with the return value of the function.</doc>
           <type name="Value" c:type="JSCValue*"/>
@@ -2178,7 +2397,6 @@ is 0 no parameters will be passed to the function.
 
 This function always returns a #JSCValue, in case of void functions a #JSCValue referencing
 &lt;function&gt;undefined&lt;/function&gt; is returned</doc>
-        
         <return-value transfer-ownership="full">
           <doc xml:space="preserve">a #JSCValue with the return value of the function.</doc>
           <type name="Value" c:type="JSCValue*"/>
@@ -2202,7 +2420,6 @@ This function always returns a #JSCValue, in case of void functions a #JSCValue 
       </method>
       <method name="get_context" c:identifier="jsc_value_get_context">
         <doc xml:space="preserve">Get the #JSCContext in which @value was created.</doc>
-        
         <return-value transfer-ownership="none">
           <doc xml:space="preserve">the #JSCValue context.</doc>
           <type name="Context" c:type="JSCContext*"/>
@@ -2216,7 +2433,6 @@ This function always returns a #JSCValue, in case of void functions a #JSCValue 
       </method>
       <method name="is_array" c:identifier="jsc_value_is_array">
         <doc xml:space="preserve">Get whether the value referenced by @value is an array.</doc>
-        
         <return-value transfer-ownership="none">
           <doc xml:space="preserve">whether the value is an array.</doc>
           <type name="gboolean" c:type="gboolean"/>
@@ -2230,7 +2446,6 @@ This function always returns a #JSCValue, in case of void functions a #JSCValue 
       </method>
       <method name="is_boolean" c:identifier="jsc_value_is_boolean">
         <doc xml:space="preserve">Get whether the value referenced by @value is a boolean.</doc>
-        
         <return-value transfer-ownership="none">
           <doc xml:space="preserve">whether the value is a boolean.</doc>
           <type name="gboolean" c:type="gboolean"/>
@@ -2244,7 +2459,6 @@ This function always returns a #JSCValue, in case of void functions a #JSCValue 
       </method>
       <method name="is_constructor" c:identifier="jsc_value_is_constructor">
         <doc xml:space="preserve">Get whether the value referenced by @value is a constructor.</doc>
-        
         <return-value transfer-ownership="none">
           <doc xml:space="preserve">whether the value is a constructor.</doc>
           <type name="gboolean" c:type="gboolean"/>
@@ -2258,7 +2472,6 @@ This function always returns a #JSCValue, in case of void functions a #JSCValue 
       </method>
       <method name="is_function" c:identifier="jsc_value_is_function">
         <doc xml:space="preserve">Get whether the value referenced by @value is a function</doc>
-        
         <return-value transfer-ownership="none">
           <doc xml:space="preserve">whether the value is a function.</doc>
           <type name="gboolean" c:type="gboolean"/>
@@ -2272,7 +2485,6 @@ This function always returns a #JSCValue, in case of void functions a #JSCValue 
       </method>
       <method name="is_null" c:identifier="jsc_value_is_null">
         <doc xml:space="preserve">Get whether the value referenced by @value is &lt;function&gt;null&lt;/function&gt;.</doc>
-        
         <return-value transfer-ownership="none">
           <doc xml:space="preserve">whether the value is null.</doc>
           <type name="gboolean" c:type="gboolean"/>
@@ -2286,7 +2498,6 @@ This function always returns a #JSCValue, in case of void functions a #JSCValue 
       </method>
       <method name="is_number" c:identifier="jsc_value_is_number">
         <doc xml:space="preserve">Get whether the value referenced by @value is a number.</doc>
-        
         <return-value transfer-ownership="none">
           <doc xml:space="preserve">whether the value is a number.</doc>
           <type name="gboolean" c:type="gboolean"/>
@@ -2300,7 +2511,6 @@ This function always returns a #JSCValue, in case of void functions a #JSCValue 
       </method>
       <method name="is_object" c:identifier="jsc_value_is_object">
         <doc xml:space="preserve">Get whether the value referenced by @value is an object.</doc>
-        
         <return-value transfer-ownership="none">
           <doc xml:space="preserve">whether the value is an object.</doc>
           <type name="gboolean" c:type="gboolean"/>
@@ -2314,7 +2524,6 @@ This function always returns a #JSCValue, in case of void functions a #JSCValue 
       </method>
       <method name="is_string" c:identifier="jsc_value_is_string">
         <doc xml:space="preserve">Get whether the value referenced by @value is a string</doc>
-        
         <return-value transfer-ownership="none">
           <doc xml:space="preserve">whether the value is a string</doc>
           <type name="gboolean" c:type="gboolean"/>
@@ -2328,7 +2537,6 @@ This function always returns a #JSCValue, in case of void functions a #JSCValue 
       </method>
       <method name="is_undefined" c:identifier="jsc_value_is_undefined">
         <doc xml:space="preserve">Get whether the value referenced by @value is &lt;function&gt;undefined&lt;/function&gt;.</doc>
-        
         <return-value transfer-ownership="none">
           <doc xml:space="preserve">whether the value is undefined.</doc>
           <type name="gboolean" c:type="gboolean"/>
@@ -2351,7 +2559,6 @@ Note that the value returned by @getter must be fully transferred. In case of bo
 %G_TYPE_POINTER instead of the actual boxed #GType to ensure that the instance owned by #JSCClass is used.
 If you really want to return a new copy of the boxed type, use #JSC_TYPE_VALUE and return a #JSCValue created
 with jsc_value_new_object() that receives the copy as instance parameter.</doc>
-        
         <return-value transfer-ownership="none">
           <type name="none" c:type="void"/>
         </return-value>
@@ -2372,13 +2579,13 @@ with jsc_value_new_object() that receives the copy as instance parameter.</doc>
             <doc xml:space="preserve">the #GType of the property</doc>
             <type name="GType" c:type="GType"/>
           </parameter>
-          <parameter name="getter" transfer-ownership="none" nullable="1" allow-none="1" scope="async">
+          <parameter name="getter" transfer-ownership="none" nullable="1" allow-none="1" scope="notified" closure="5" destroy="6">
             <doc xml:space="preserve">a #GCallback to be called to get the property value</doc>
-            <type name="GObject.Callback" c:type="GCallback"/>
+            <type name="Getter" c:type="JSCGetter"/>
           </parameter>
           <parameter name="setter" transfer-ownership="none" nullable="1" allow-none="1" scope="notified" closure="5" destroy="6">
             <doc xml:space="preserve">a #GCallback to be called to set the property value</doc>
-            <type name="GObject.Callback" c:type="GCallback"/>
+            <type name="Setter" c:type="JSCSetter"/>
           </parameter>
           <parameter name="user_data" transfer-ownership="none" nullable="1" allow-none="1">
             <doc xml:space="preserve">user data to pass to @getter and @setter</doc>
@@ -2393,7 +2600,6 @@ with jsc_value_new_object() that receives the copy as instance parameter.</doc>
       <method name="object_define_property_data" c:identifier="jsc_value_object_define_property_data">
         <doc xml:space="preserve">Define or modify a property with @property_name in object referenced by @value. This is equivalent to
 JavaScript &lt;function&gt;Object.defineProperty()&lt;/function&gt; when used with a data descriptor.</doc>
-        
         <return-value transfer-ownership="none">
           <type name="none" c:type="void"/>
         </return-value>
@@ -2419,7 +2625,6 @@ JavaScript &lt;function&gt;Object.defineProperty()&lt;/function&gt; when used wi
       <method name="object_delete_property" c:identifier="jsc_value_object_delete_property">
         <doc xml:space="preserve">Try to delete property with @name from @value. This function will return %FALSE if
 the property was defined without %JSC_VALUE_PROPERTY_CONFIGURABLE flag.</doc>
-        
         <return-value transfer-ownership="none">
           <doc xml:space="preserve">%TRUE if the property was deleted, or %FALSE otherwise.</doc>
           <type name="gboolean" c:type="gboolean"/>
@@ -2438,7 +2643,6 @@ the property was defined without %JSC_VALUE_PROPERTY_CONFIGURABLE flag.</doc>
       <method name="object_enumerate_properties" c:identifier="jsc_value_object_enumerate_properties">
         <doc xml:space="preserve">Get the list of property names of @value. Only properties defined with %JSC_VALUE_PROPERTY_ENUMERABLE
 flag will be collected.</doc>
-        
         <return-value transfer-ownership="full" nullable="1">
           <doc xml:space="preserve">a %NULL-terminated array of strings containing the
    property names, or %NULL if @value doesn't have enumerable properties.  Use g_strfreev() to free.</doc>
@@ -2455,7 +2659,6 @@ flag will be collected.</doc>
       </method>
       <method name="object_get_property" c:identifier="jsc_value_object_get_property">
         <doc xml:space="preserve">Get property with @name from @value.</doc>
-        
         <return-value transfer-ownership="full">
           <doc xml:space="preserve">the property #JSCValue.</doc>
           <type name="Value" c:type="JSCValue*"/>
@@ -2473,7 +2676,6 @@ flag will be collected.</doc>
       </method>
       <method name="object_get_property_at_index" c:identifier="jsc_value_object_get_property_at_index">
         <doc xml:space="preserve">Get property at @index from @value.</doc>
-        
         <return-value transfer-ownership="full">
           <doc xml:space="preserve">the property #JSCValue.</doc>
           <type name="Value" c:type="JSCValue*"/>
@@ -2491,7 +2693,6 @@ flag will be collected.</doc>
       </method>
       <method name="object_has_property" c:identifier="jsc_value_object_has_property">
         <doc xml:space="preserve">Get whether @value has property with @name.</doc>
-        
         <return-value transfer-ownership="none">
           <doc xml:space="preserve">%TRUE if @value has a property with @name, or %FALSE otherwise</doc>
           <type name="gboolean" c:type="gboolean"/>
@@ -2516,7 +2717,6 @@ of this function.
 
 This function always returns a #JSCValue, in case of void methods a #JSCValue referencing
 &lt;function&gt;undefined&lt;/function&gt; is returned.</doc>
-        
         <return-value transfer-ownership="full">
           <doc xml:space="preserve">a #JSCValue with the return value of the method.</doc>
           <type name="Value" c:type="JSCValue*"/>
@@ -2549,7 +2749,6 @@ of this function.
 
 This function always returns a #JSCValue, in case of void methods a #JSCValue referencing
 &lt;function&gt;undefined&lt;/function&gt; is returned.</doc>
-        
         <return-value transfer-ownership="full">
           <doc xml:space="preserve">a #JSCValue with the return value of the method.</doc>
           <type name="Value" c:type="JSCValue*"/>
@@ -2577,7 +2776,6 @@ This function always returns a #JSCValue, in case of void methods a #JSCValue re
       </method>
       <method name="object_is_instance_of" c:identifier="jsc_value_object_is_instance_of">
         <doc xml:space="preserve">Get whether the value referenced by @value is an instance of class @name.</doc>
-        
         <return-value transfer-ownership="none">
           <doc xml:space="preserve">whether the value is an object instance of class @name.</doc>
           <type name="gboolean" c:type="gboolean"/>
@@ -2595,7 +2793,6 @@ This function always returns a #JSCValue, in case of void methods a #JSCValue re
       </method>
       <method name="object_set_property" c:identifier="jsc_value_object_set_property">
         <doc xml:space="preserve">Set @property with @name on @value.</doc>
-        
         <return-value transfer-ownership="none">
           <type name="none" c:type="void"/>
         </return-value>
@@ -2616,7 +2813,6 @@ This function always returns a #JSCValue, in case of void methods a #JSCValue re
       </method>
       <method name="object_set_property_at_index" c:identifier="jsc_value_object_set_property_at_index">
         <doc xml:space="preserve">Set @property at @index on @value.</doc>
-        
         <return-value transfer-ownership="none">
           <type name="none" c:type="void"/>
         </return-value>
@@ -2637,7 +2833,6 @@ This function always returns a #JSCValue, in case of void methods a #JSCValue re
       </method>
       <method name="to_boolean" c:identifier="jsc_value_to_boolean">
         <doc xml:space="preserve">Convert @value to a boolean.</doc>
-        
         <return-value transfer-ownership="none">
           <doc xml:space="preserve">a #gboolean result of the conversion.</doc>
           <type name="gboolean" c:type="gboolean"/>
@@ -2651,7 +2846,6 @@ This function always returns a #JSCValue, in case of void methods a #JSCValue re
       </method>
       <method name="to_double" c:identifier="jsc_value_to_double">
         <doc xml:space="preserve">Convert @value to a double.</doc>
-        
         <return-value transfer-ownership="none">
           <doc xml:space="preserve">a #gdouble result of the conversion.</doc>
           <type name="gdouble" c:type="double"/>
@@ -2665,7 +2859,6 @@ This function always returns a #JSCValue, in case of void methods a #JSCValue re
       </method>
       <method name="to_int32" c:identifier="jsc_value_to_int32">
         <doc xml:space="preserve">Convert @value to a #gint32.</doc>
-        
         <return-value transfer-ownership="none">
           <doc xml:space="preserve">a #gint32 result of the conversion.</doc>
           <type name="gint32" c:type="gint32"/>
@@ -2680,7 +2873,6 @@ This function always returns a #JSCValue, in case of void methods a #JSCValue re
       <method name="to_json" c:identifier="jsc_value_to_json" version="2.28">
         <doc xml:space="preserve">Create a JSON string of @value serialization. If @indent is 0, the resulting JSON will
 not contain newlines. The size of the indent is clamped to 10 spaces.</doc>
-        
         <return-value transfer-ownership="full">
           <doc xml:space="preserve">a null-terminated JSON string with serialization of @value</doc>
           <type name="utf8" c:type="char*"/>
@@ -2699,7 +2891,6 @@ not contain newlines. The size of the indent is clamped to 10 spaces.</doc>
       <method name="to_string" c:identifier="jsc_value_to_string">
         <doc xml:space="preserve">Convert @value to a string. Use jsc_value_to_string_as_bytes() instead, if you need to
 handle strings containing null characters.</doc>
-        
         <return-value transfer-ownership="full">
           <doc xml:space="preserve">a null-terminated string result of the conversion.</doc>
           <type name="utf8" c:type="char*"/>
@@ -2714,7 +2905,6 @@ handle strings containing null characters.</doc>
       <method name="to_string_as_bytes" c:identifier="jsc_value_to_string_as_bytes">
         <doc xml:space="preserve">Convert @value to a string and return the results as #GBytes. This is needed
 to handle strings with null characters.</doc>
-        
         <return-value transfer-ownership="full">
           <doc xml:space="preserve">a #GBytes with the result of the conversion.</doc>
           <type name="GLib.Bytes" c:type="GBytes*"/>
@@ -2738,13 +2928,11 @@ to handle strings with null characters.</doc>
       </field>
     </class>
     <record name="ValueClass" c:type="JSCValueClass" glib:is-gtype-struct-for="Value">
-      
       <field name="parent_class">
         <type name="GObject.ObjectClass" c:type="GObjectClass"/>
       </field>
       <field name="_jsc_reserved0" introspectable="0">
         <callback name="_jsc_reserved0">
-          
           <return-value transfer-ownership="none">
             <type name="none" c:type="void"/>
           </return-value>
@@ -2752,7 +2940,6 @@ to handle strings with null characters.</doc>
       </field>
       <field name="_jsc_reserved1" introspectable="0">
         <callback name="_jsc_reserved1">
-          
           <return-value transfer-ownership="none">
             <type name="none" c:type="void"/>
           </return-value>
@@ -2760,7 +2947,6 @@ to handle strings with null characters.</doc>
       </field>
       <field name="_jsc_reserved2" introspectable="0">
         <callback name="_jsc_reserved2">
-          
           <return-value transfer-ownership="none">
             <type name="none" c:type="void"/>
           </return-value>
@@ -2768,7 +2954,6 @@ to handle strings with null characters.</doc>
       </field>
       <field name="_jsc_reserved3" introspectable="0">
         <callback name="_jsc_reserved3">
-          
           <return-value transfer-ownership="none">
             <type name="none" c:type="void"/>
           </return-value>
@@ -2781,7 +2966,6 @@ to handle strings with null characters.</doc>
     <bitfield name="ValuePropertyFlags" c:type="JSCValuePropertyFlags">
       <doc xml:space="preserve">Flags used when defining properties with jsc_value_object_define_property_data() and
 jsc_value_object_define_property_accessor().</doc>
-      
       <member name="configurable" value="1" c:identifier="JSC_VALUE_PROPERTY_CONFIGURABLE">
         <doc xml:space="preserve">the type of the property descriptor may be changed and the
  property may be deleted from the corresponding object.</doc>
@@ -2796,10 +2980,8 @@ jsc_value_object_define_property_accessor().</doc>
       </member>
     </bitfield>
     <class name="VirtualMachine" c:symbol-prefix="virtual_machine" c:type="JSCVirtualMachine" parent="GObject.Object" glib:type-name="JSCVirtualMachine" glib:get-type="jsc_virtual_machine_get_type" glib:type-struct="VirtualMachineClass">
-      
       <constructor name="new" c:identifier="jsc_virtual_machine_new">
         <doc xml:space="preserve">Create a new #JSCVirtualMachine.</doc>
-        
         <return-value transfer-ownership="full">
           <doc xml:space="preserve">the newly created #JSCVirtualMachine.</doc>
           <type name="VirtualMachine" c:type="JSCVirtualMachine*"/>
@@ -2813,13 +2995,11 @@ jsc_value_object_define_property_accessor().</doc>
       </field>
     </class>
     <record name="VirtualMachineClass" c:type="JSCVirtualMachineClass" glib:is-gtype-struct-for="VirtualMachine">
-      
       <field name="parent_class">
         <type name="GObject.ObjectClass" c:type="GObjectClass"/>
       </field>
       <field name="_jsc_reserved0" introspectable="0">
         <callback name="_jsc_reserved0">
-          
           <return-value transfer-ownership="none">
             <type name="none" c:type="void"/>
           </return-value>
@@ -2827,7 +3007,6 @@ jsc_value_object_define_property_accessor().</doc>
       </field>
       <field name="_jsc_reserved1" introspectable="0">
         <callback name="_jsc_reserved1">
-          
           <return-value transfer-ownership="none">
             <type name="none" c:type="void"/>
           </return-value>
@@ -2835,7 +3014,6 @@ jsc_value_object_define_property_accessor().</doc>
       </field>
       <field name="_jsc_reserved2" introspectable="0">
         <callback name="_jsc_reserved2">
-          
           <return-value transfer-ownership="none">
             <type name="none" c:type="void"/>
           </return-value>
@@ -2843,7 +3021,6 @@ jsc_value_object_define_property_accessor().</doc>
       </field>
       <field name="_jsc_reserved3" introspectable="0">
         <callback name="_jsc_reserved3">
-          
           <return-value transfer-ownership="none">
             <type name="none" c:type="void"/>
           </return-value>
@@ -2854,31 +3031,26 @@ jsc_value_object_define_property_accessor().</doc>
       
     </record>
     <function-macro name="WEAK_VALUE" c:identifier="JSC_WEAK_VALUE" introspectable="0">
-      
       <parameters>
         <parameter name="obj">
         </parameter>
       </parameters>
     </function-macro>
     <function-macro name="WEAK_VALUE_CLASS" c:identifier="JSC_WEAK_VALUE_CLASS" introspectable="0">
-      
       <parameters>
         <parameter name="klass">
         </parameter>
       </parameters>
     </function-macro>
     <function-macro name="WEAK_VALUE_GET_CLASS" c:identifier="JSC_WEAK_VALUE_GET_CLASS" introspectable="0">
-      
       <parameters>
         <parameter name="obj">
         </parameter>
       </parameters>
     </function-macro>
     <class name="WeakValue" c:symbol-prefix="weak_value" c:type="JSCWeakValue" parent="GObject.Object" glib:type-name="JSCWeakValue" glib:get-type="jsc_weak_value_get_type" glib:type-struct="WeakValueClass">
-      
       <constructor name="new" c:identifier="jsc_weak_value_new">
         <doc xml:space="preserve">Create a new #JSCWeakValue for the JavaScript value referenced by @value.</doc>
-        
         <return-value transfer-ownership="full">
           <doc xml:space="preserve">a new #JSCWeakValue</doc>
           <type name="WeakValue" c:type="JSCWeakValue*"/>
@@ -2892,7 +3064,6 @@ jsc_value_object_define_property_accessor().</doc>
       </constructor>
       <method name="get_value" c:identifier="jsc_weak_value_get_value">
         <doc xml:space="preserve">Get a #JSCValue referencing the JavaScript value of @weak_value.</doc>
-        
         <return-value transfer-ownership="full">
           <doc xml:space="preserve">a new #JSCValue or %NULL if @weak_value was cleared.</doc>
           <type name="Value" c:type="JSCValue*"/>
@@ -2922,13 +3093,11 @@ jsc_value_object_define_property_accessor().</doc>
       </glib:signal>
     </class>
     <record name="WeakValueClass" c:type="JSCWeakValueClass" glib:is-gtype-struct-for="WeakValue">
-      
       <field name="parent_class">
         <type name="GObject.ObjectClass" c:type="GObjectClass"/>
       </field>
       <field name="_jsc_reserved0" introspectable="0">
         <callback name="_jsc_reserved0">
-          
           <return-value transfer-ownership="none">
             <type name="none" c:type="void"/>
           </return-value>
@@ -2936,7 +3105,6 @@ jsc_value_object_define_property_accessor().</doc>
       </field>
       <field name="_jsc_reserved1" introspectable="0">
         <callback name="_jsc_reserved1">
-          
           <return-value transfer-ownership="none">
             <type name="none" c:type="void"/>
           </return-value>
@@ -2944,7 +3112,6 @@ jsc_value_object_define_property_accessor().</doc>
       </field>
       <field name="_jsc_reserved2" introspectable="0">
         <callback name="_jsc_reserved2">
-          
           <return-value transfer-ownership="none">
             <type name="none" c:type="void"/>
           </return-value>
@@ -2952,7 +3119,6 @@ jsc_value_object_define_property_accessor().</doc>
       </field>
       <field name="_jsc_reserved3" introspectable="0">
         <callback name="_jsc_reserved3">
-          
           <return-value transfer-ownership="none">
             <type name="none" c:type="void"/>
           </return-value>
@@ -2970,7 +3136,6 @@ This function is in the library, so it represents the JavaScriptCore library
 your code is running against. Contrast with the #JSC_MAJOR_VERSION
 macro, which represents the major version of the JavaScriptCore headers you
 have included when compiling your code.</doc>
-      
       <return-value transfer-ownership="none">
         <doc xml:space="preserve">the major version number of the JavaScriptCore library</doc>
         <type name="guint" c:type="guint"/>
@@ -2984,7 +3149,6 @@ This function is in the library, so it represents the JavaScriptCore library
 your code is running against. Contrast with the #JSC_MICRO_VERSION
 macro, which represents the micro version of the JavaScriptCore headers you
 have included when compiling your code.</doc>
-      
       <return-value transfer-ownership="none">
         <doc xml:space="preserve">the micro version number of the JavaScriptCore library</doc>
         <type name="guint" c:type="guint"/>
@@ -2998,7 +3162,6 @@ This function is in the library, so it represents the JavaScriptCore library
 your code is running against. Contrast with the #JSC_MINOR_VERSION
 macro, which represents the minor version of the JavaScriptCore headers you
 have included when compiling your code.</doc>
-      
       <return-value transfer-ownership="none">
         <doc xml:space="preserve">the minor version number of the JavaScriptCore library</doc>
         <type name="guint" c:type="guint"/>
@@ -3007,7 +3170,6 @@ have included when compiling your code.</doc>
     <function name="options_foreach" c:identifier="jsc_options_foreach" version="2.24">
       <doc xml:space="preserve">Iterates all available options calling @function for each one. Iteration can
 stop early if @function returns %FALSE.</doc>
-      
       <return-value transfer-ownership="none">
         <type name="none" c:type="void"/>
       </return-value>
@@ -3024,7 +3186,6 @@ stop early if @function returns %FALSE.</doc>
     </function>
     <function name="options_get_boolean" c:identifier="jsc_options_get_boolean" version="2.24">
       <doc xml:space="preserve">Get @option as a #gboolean value.</doc>
-      
       <return-value transfer-ownership="none">
         <doc xml:space="preserve">%TRUE if @value has been set or %FALSE if the option doesn't exist</doc>
         <type name="gboolean" c:type="gboolean"/>
@@ -3042,7 +3203,6 @@ stop early if @function returns %FALSE.</doc>
     </function>
     <function name="options_get_double" c:identifier="jsc_options_get_double" version="2.24">
       <doc xml:space="preserve">Get @option as a #gdouble value.</doc>
-      
       <return-value transfer-ownership="none">
         <doc xml:space="preserve">%TRUE if @value has been set or %FALSE if the option doesn't exist</doc>
         <type name="gboolean" c:type="gboolean"/>
@@ -3060,7 +3220,6 @@ stop early if @function returns %FALSE.</doc>
     </function>
     <function name="options_get_int" c:identifier="jsc_options_get_int" version="2.24">
       <doc xml:space="preserve">Get @option as a #gint value.</doc>
-      
       <return-value transfer-ownership="none">
         <doc xml:space="preserve">%TRUE if @value has been set or %FALSE if the option doesn't exist</doc>
         <type name="gboolean" c:type="gboolean"/>
@@ -3084,7 +3243,6 @@ Each entry in the returned #GOptionGroup is configured to apply the
 corresponding option during command line parsing. Applications only need to
 pass the returned group to g_option_context_add_group(), and the rest will
 be taken care for automatically.</doc>
-      
       <return-value transfer-ownership="full">
         <doc xml:space="preserve">a #GOptionGroup for the JSCOptions</doc>
         <type name="GLib.OptionGroup" c:type="GOptionGroup*"/>
@@ -3095,7 +3253,6 @@ be taken care for automatically.</doc>
 format &lt;emphasis&gt;[!]&amp;lt;low&amp;gt;[:&amp;lt;high&amp;gt;]&lt;/emphasis&gt; where low and high are #guint values.
 Values between low and high (both included) will be considered in
 the range, unless &lt;emphasis&gt;!&lt;/emphasis&gt; is used to invert the range.</doc>
-      
       <return-value transfer-ownership="none">
         <doc xml:space="preserve">%TRUE if @value has been set or %FALSE if the option doesn't exist</doc>
         <type name="gboolean" c:type="gboolean"/>
@@ -3113,7 +3270,6 @@ the range, unless &lt;emphasis&gt;!&lt;/emphasis&gt; is used to invert the range
     </function>
     <function name="options_get_size" c:identifier="jsc_options_get_size" version="2.24">
       <doc xml:space="preserve">Get @option as a #gsize value.</doc>
-      
       <return-value transfer-ownership="none">
         <doc xml:space="preserve">%TRUE if @value has been set or %FALSE if the option doesn't exist</doc>
         <type name="gboolean" c:type="gboolean"/>
@@ -3131,7 +3287,6 @@ the range, unless &lt;emphasis&gt;!&lt;/emphasis&gt; is used to invert the range
     </function>
     <function name="options_get_string" c:identifier="jsc_options_get_string" version="2.24">
       <doc xml:space="preserve">Get @option as a string.</doc>
-      
       <return-value transfer-ownership="none">
         <doc xml:space="preserve">%TRUE if @value has been set or %FALSE if the option doesn't exist</doc>
         <type name="gboolean" c:type="gboolean"/>
@@ -3149,7 +3304,6 @@ the range, unless &lt;emphasis&gt;!&lt;/emphasis&gt; is used to invert the range
     </function>
     <function name="options_get_uint" c:identifier="jsc_options_get_uint" version="2.24">
       <doc xml:space="preserve">Get @option as a #guint value.</doc>
-      
       <return-value transfer-ownership="none">
         <doc xml:space="preserve">%TRUE if @value has been set or %FALSE if the option doesn't exist</doc>
         <type name="gboolean" c:type="gboolean"/>
@@ -3167,7 +3321,6 @@ the range, unless &lt;emphasis&gt;!&lt;/emphasis&gt; is used to invert the range
     </function>
     <function name="options_set_boolean" c:identifier="jsc_options_set_boolean" version="2.24">
       <doc xml:space="preserve">Set @option as a #gboolean value.</doc>
-      
       <return-value transfer-ownership="none">
         <doc xml:space="preserve">%TRUE if option was correctly set or %FALSE otherwise.</doc>
         <type name="gboolean" c:type="gboolean"/>
@@ -3185,7 +3338,6 @@ the range, unless &lt;emphasis&gt;!&lt;/emphasis&gt; is used to invert the range
     </function>
     <function name="options_set_double" c:identifier="jsc_options_set_double" version="2.24">
       <doc xml:space="preserve">Set @option as a #gdouble value.</doc>
-      
       <return-value transfer-ownership="none">
         <doc xml:space="preserve">%TRUE if option was correctly set or %FALSE otherwise.</doc>
         <type name="gboolean" c:type="gboolean"/>
@@ -3203,7 +3355,6 @@ the range, unless &lt;emphasis&gt;!&lt;/emphasis&gt; is used to invert the range
     </function>
     <function name="options_set_int" c:identifier="jsc_options_set_int" version="2.24">
       <doc xml:space="preserve">Set @option as a #gint value.</doc>
-      
       <return-value transfer-ownership="none">
         <doc xml:space="preserve">%TRUE if option was correctly set or %FALSE otherwise.</doc>
         <type name="gboolean" c:type="gboolean"/>
@@ -3224,7 +3375,6 @@ the range, unless &lt;emphasis&gt;!&lt;/emphasis&gt; is used to invert the range
 format &lt;emphasis&gt;[!]&amp;lt;low&amp;gt;[:&amp;lt;high&amp;gt;]&lt;/emphasis&gt; where low and high are #guint values.
 Values between low and high (both included) will be considered in
 the range, unless &lt;emphasis&gt;!&lt;/emphasis&gt; is used to invert the range.</doc>
-      
       <return-value transfer-ownership="none">
         <doc xml:space="preserve">%TRUE if option was correctly set or %FALSE otherwise.</doc>
         <type name="gboolean" c:type="gboolean"/>
@@ -3242,7 +3392,6 @@ the range, unless &lt;emphasis&gt;!&lt;/emphasis&gt; is used to invert the range
     </function>
     <function name="options_set_size" c:identifier="jsc_options_set_size" version="2.24">
       <doc xml:space="preserve">Set @option as a #gsize value.</doc>
-      
       <return-value transfer-ownership="none">
         <doc xml:space="preserve">%TRUE if option was correctly set or %FALSE otherwise.</doc>
         <type name="gboolean" c:type="gboolean"/>
@@ -3260,7 +3409,6 @@ the range, unless &lt;emphasis&gt;!&lt;/emphasis&gt; is used to invert the range
     </function>
     <function name="options_set_string" c:identifier="jsc_options_set_string" version="2.24">
       <doc xml:space="preserve">Set @option as a string.</doc>
-      
       <return-value transfer-ownership="none">
         <doc xml:space="preserve">%TRUE if option was correctly set or %FALSE otherwise.</doc>
         <type name="gboolean" c:type="gboolean"/>
@@ -3278,7 +3426,6 @@ the range, unless &lt;emphasis&gt;!&lt;/emphasis&gt; is used to invert the range
     </function>
     <function name="options_set_uint" c:identifier="jsc_options_set_uint" version="2.24">
       <doc xml:space="preserve">Set @option as a #guint value.</doc>
-      
       <return-value transfer-ownership="none">
         <doc xml:space="preserve">%TRUE if option was correctly set or %FALSE otherwise.</doc>
         <type name="gboolean" c:type="gboolean"/>
