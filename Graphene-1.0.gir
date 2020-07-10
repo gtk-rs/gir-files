@@ -545,6 +545,82 @@ The returned value is owned by Graphene and should not be modified or freed.</do
         </return-value>
       </function>
     </record>
+    <function-macro name="CHECK_VERSION" c:identifier="GRAPHENE_CHECK_VERSION" introspectable="0">
+      
+      <parameters>
+        <parameter name="major">
+        </parameter>
+        <parameter name="minor">
+        </parameter>
+        <parameter name="micro">
+        </parameter>
+      </parameters>
+    </function-macro>
+    <function-macro name="DEPRECATED_FOR" c:identifier="GRAPHENE_DEPRECATED_FOR" introspectable="0">
+      
+      <parameters>
+        <parameter name="f">
+        </parameter>
+      </parameters>
+    </function-macro>
+    <function-macro name="DEPRECATED_IN_1_0_FOR" c:identifier="GRAPHENE_DEPRECATED_IN_1_0_FOR" introspectable="0">
+      
+      <parameters>
+        <parameter name="f">
+        </parameter>
+      </parameters>
+    </function-macro>
+    <function-macro name="DEPRECATED_IN_1_10_FOR" c:identifier="GRAPHENE_DEPRECATED_IN_1_10_FOR" introspectable="0">
+      
+      <parameters>
+        <parameter name="f">
+        </parameter>
+      </parameters>
+    </function-macro>
+    <function-macro name="DEPRECATED_IN_1_2_FOR" c:identifier="GRAPHENE_DEPRECATED_IN_1_2_FOR" introspectable="0">
+      
+      <parameters>
+        <parameter name="f">
+        </parameter>
+      </parameters>
+    </function-macro>
+    <function-macro name="DEPRECATED_IN_1_4_FOR" c:identifier="GRAPHENE_DEPRECATED_IN_1_4_FOR" introspectable="0">
+      
+      <parameters>
+        <parameter name="f">
+        </parameter>
+      </parameters>
+    </function-macro>
+    <function-macro name="DEPRECATED_IN_1_6_FOR" c:identifier="GRAPHENE_DEPRECATED_IN_1_6_FOR" introspectable="0">
+      
+      <parameters>
+        <parameter name="f">
+        </parameter>
+      </parameters>
+    </function-macro>
+    <function-macro name="DEPRECATED_IN_1_8_FOR" c:identifier="GRAPHENE_DEPRECATED_IN_1_8_FOR" introspectable="0">
+      
+      <parameters>
+        <parameter name="f">
+        </parameter>
+      </parameters>
+    </function-macro>
+    <function-macro name="ENCODE_VERSION" c:identifier="GRAPHENE_ENCODE_VERSION" version="1.0" introspectable="0">
+      <doc xml:space="preserve">Encodes the given components into a value that can be used for
+version checks.</doc>
+      
+      <parameters>
+        <parameter name="major">
+          <doc xml:space="preserve">a major version</doc>
+        </parameter>
+        <parameter name="minor">
+          <doc xml:space="preserve">a minor version</doc>
+        </parameter>
+        <parameter name="micro">
+          <doc xml:space="preserve">a micro version</doc>
+        </parameter>
+      </parameters>
+    </function-macro>
     <record name="Euler" c:type="graphene_euler_t" version="1.2" glib:type-name="GrapheneEuler" glib:get-type="graphene_euler_get_type" c:symbol-prefix="euler">
       <doc xml:space="preserve">Describe a rotation using Euler angles.
 
@@ -595,6 +671,57 @@ The contents of the returned structure are undefined.</doc>
           <instance-parameter name="e" transfer-ownership="none">
             <doc xml:space="preserve">a #graphene_euler_t</doc>
             <type name="Euler" c:type="graphene_euler_t*"/>
+          </instance-parameter>
+        </parameters>
+      </method>
+      <method name="get_alpha" c:identifier="graphene_euler_get_alpha" version="1.10">
+        <doc xml:space="preserve">Retrieves the first component of the Euler angle vector,
+depending on the order of rotation.
+
+See also: graphene_euler_get_x()</doc>
+        
+        <return-value transfer-ownership="none">
+          <doc xml:space="preserve">the first component of the Euler angle vector, in radians</doc>
+          <type name="gfloat" c:type="float"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="e" transfer-ownership="none">
+            <doc xml:space="preserve">a #graphene_euler_t</doc>
+            <type name="Euler" c:type="const graphene_euler_t*"/>
+          </instance-parameter>
+        </parameters>
+      </method>
+      <method name="get_beta" c:identifier="graphene_euler_get_beta" version="1.10">
+        <doc xml:space="preserve">Retrieves the second component of the Euler angle vector,
+depending on the order of rotation.
+
+See also: graphene_euler_get_y()</doc>
+        
+        <return-value transfer-ownership="none">
+          <doc xml:space="preserve">the second component of the Euler angle vector, in radians</doc>
+          <type name="gfloat" c:type="float"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="e" transfer-ownership="none">
+            <doc xml:space="preserve">a #graphene_euler_t</doc>
+            <type name="Euler" c:type="const graphene_euler_t*"/>
+          </instance-parameter>
+        </parameters>
+      </method>
+      <method name="get_gamma" c:identifier="graphene_euler_get_gamma" version="1.10">
+        <doc xml:space="preserve">Retrieves the third component of the Euler angle vector,
+depending on the order of rotation.
+
+See also: graphene_euler_get_z()</doc>
+        
+        <return-value transfer-ownership="none">
+          <doc xml:space="preserve">the third component of the Euler angle vector, in radians</doc>
+          <type name="gfloat" c:type="float"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="e" transfer-ownership="none">
+            <doc xml:space="preserve">a #graphene_euler_t</doc>
+            <type name="Euler" c:type="const graphene_euler_t*"/>
           </instance-parameter>
         </parameters>
       </method>
@@ -760,6 +887,37 @@ be initialized with all angles set to 0.</doc>
           </parameter>
         </parameters>
       </method>
+      <method name="init_from_radians" c:identifier="graphene_euler_init_from_radians" version="1.10">
+        <doc xml:space="preserve">Initializes a #graphene_euler_t using the given angles
+and order of rotation.</doc>
+        
+        <return-value transfer-ownership="none">
+          <doc xml:space="preserve">the initialized #graphene_euler_t</doc>
+          <type name="Euler" c:type="graphene_euler_t*"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="e" transfer-ownership="none">
+            <doc xml:space="preserve">the #graphene_euler_t to initialize</doc>
+            <type name="Euler" c:type="graphene_euler_t*"/>
+          </instance-parameter>
+          <parameter name="x" transfer-ownership="none">
+            <doc xml:space="preserve">rotation angle on the X axis, in radians</doc>
+            <type name="gfloat" c:type="float"/>
+          </parameter>
+          <parameter name="y" transfer-ownership="none">
+            <doc xml:space="preserve">rotation angle on the Y axis, in radians</doc>
+            <type name="gfloat" c:type="float"/>
+          </parameter>
+          <parameter name="z" transfer-ownership="none">
+            <doc xml:space="preserve">rotation angle on the Z axis, in radians</doc>
+            <type name="gfloat" c:type="float"/>
+          </parameter>
+          <parameter name="order" transfer-ownership="none">
+            <doc xml:space="preserve">order of rotations</doc>
+            <type name="EulerOrder" c:type="graphene_euler_order_t"/>
+          </parameter>
+        </parameters>
+      </method>
       <method name="init_from_vec3" c:identifier="graphene_euler_init_from_vec3" version="1.2">
         <doc xml:space="preserve">Initializes a #graphene_euler_t using the angles contained in a
 #graphene_vec3_t.
@@ -858,7 +1016,7 @@ used to initialize @e is %GRAPHENE_EULER_ORDER_XYZ:
  * the third rotation moves the body around the Z axis with
    an angle of &#x3C8;
 
-The rotation sign convention is left-handed, to preserve compatibility
+The rotation sign convention is right-handed, to preserve compatibility
 between Euler-based, quaternion-based, and angle-axis-based rotations.</doc>
         
         <return-value transfer-ownership="none">
@@ -872,6 +1030,23 @@ between Euler-based, quaternion-based, and angle-axis-based rotations.</doc>
           <parameter name="res" direction="out" caller-allocates="1" transfer-ownership="none">
             <doc xml:space="preserve">return location for a #graphene_matrix_t</doc>
             <type name="Matrix" c:type="graphene_matrix_t*"/>
+          </parameter>
+        </parameters>
+      </method>
+      <method name="to_quaternion" c:identifier="graphene_euler_to_quaternion" version="1.10">
+        <doc xml:space="preserve">Converts a #graphene_euler_t into a #graphene_quaternion_t.</doc>
+        
+        <return-value transfer-ownership="none">
+          <type name="none" c:type="void"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="e" transfer-ownership="none">
+            <doc xml:space="preserve">a #graphene_euler_t</doc>
+            <type name="Euler" c:type="const graphene_euler_t*"/>
+          </instance-parameter>
+          <parameter name="res" direction="out" caller-allocates="1" transfer-ownership="none">
+            <doc xml:space="preserve">return location for a #graphene_quaternion_t</doc>
+            <type name="Quaternion" c:type="graphene_quaternion_t*"/>
           </parameter>
         </parameters>
       </method>
@@ -905,22 +1080,100 @@ as an alias for one of the other orders.</doc>
   default order is one of the following enumeration values</doc>
       </member>
       <member name="xyz" value="0" c:identifier="GRAPHENE_EULER_ORDER_XYZ">
-        <doc xml:space="preserve">Rotate in the X, Y, and Z order</doc>
+        <doc xml:space="preserve">Rotate in the X, Y, and Z order. Deprecated in
+  Graphene 1.10, it's an alias for %GRAPHENE_EULER_ORDER_SXYZ</doc>
       </member>
       <member name="yzx" value="1" c:identifier="GRAPHENE_EULER_ORDER_YZX">
-        <doc xml:space="preserve">Rotate in the Y, Z, and X order</doc>
+        <doc xml:space="preserve">Rotate in the Y, Z, and X order. Deprecated in
+  Graphene 1.10, it's an alias for %GRAPHENE_EULER_ORDER_SYZX</doc>
       </member>
       <member name="zxy" value="2" c:identifier="GRAPHENE_EULER_ORDER_ZXY">
-        <doc xml:space="preserve">Rotate in the Z, X, and Y order</doc>
+        <doc xml:space="preserve">Rotate in the Z, X, and Y order. Deprecated in
+  Graphene 1.10, it's an alias for %GRAPHENE_EULER_ORDER_SZXY</doc>
       </member>
       <member name="xzy" value="3" c:identifier="GRAPHENE_EULER_ORDER_XZY">
-        <doc xml:space="preserve">Rotate in the X, Z, and Y order</doc>
+        <doc xml:space="preserve">Rotate in the X, Z, and Y order. Deprecated in
+  Graphene 1.10, it's an alias for %GRAPHENE_EULER_ORDER_SXZY</doc>
       </member>
       <member name="yxz" value="4" c:identifier="GRAPHENE_EULER_ORDER_YXZ">
-        <doc xml:space="preserve">Rotate in the Y, X, and Z order</doc>
+        <doc xml:space="preserve">Rotate in the Y, X, and Z order. Deprecated in
+  Graphene 1.10, it's an alias for %GRAPHENE_EULER_ORDER_SYXZ</doc>
       </member>
       <member name="zyx" value="5" c:identifier="GRAPHENE_EULER_ORDER_ZYX">
-        <doc xml:space="preserve">Rotate in the Z, Y, and X order</doc>
+        <doc xml:space="preserve">Rotate in the Z, Y, and X order. Deprecated in
+  Graphene 1.10, it's an alias for %GRAPHENE_EULER_ORDER_SZYX</doc>
+      </member>
+      <member name="sxyz" value="6" c:identifier="GRAPHENE_EULER_ORDER_SXYZ">
+        <doc xml:space="preserve">Defines a static rotation along the X, Y, and Z axes (Since: 1.10)</doc>
+      </member>
+      <member name="sxyx" value="7" c:identifier="GRAPHENE_EULER_ORDER_SXYX">
+        <doc xml:space="preserve">Defines a static rotation along the X, Y, and X axes (Since: 1.10)</doc>
+      </member>
+      <member name="sxzy" value="8" c:identifier="GRAPHENE_EULER_ORDER_SXZY">
+        <doc xml:space="preserve">Defines a static rotation along the X, Z, and Y axes (Since: 1.10)</doc>
+      </member>
+      <member name="sxzx" value="9" c:identifier="GRAPHENE_EULER_ORDER_SXZX">
+        <doc xml:space="preserve">Defines a static rotation along the X, Z, and X axes (Since: 1.10)</doc>
+      </member>
+      <member name="syzx" value="10" c:identifier="GRAPHENE_EULER_ORDER_SYZX">
+        <doc xml:space="preserve">Defines a static rotation along the Y, Z, and X axes (Since: 1.10)</doc>
+      </member>
+      <member name="syzy" value="11" c:identifier="GRAPHENE_EULER_ORDER_SYZY">
+        <doc xml:space="preserve">Defines a static rotation along the Y, Z, and Y axes (Since: 1.10)</doc>
+      </member>
+      <member name="syxz" value="12" c:identifier="GRAPHENE_EULER_ORDER_SYXZ">
+        <doc xml:space="preserve">Defines a static rotation along the Y, X, and Z axes (Since: 1.10)</doc>
+      </member>
+      <member name="syxy" value="13" c:identifier="GRAPHENE_EULER_ORDER_SYXY">
+        <doc xml:space="preserve">Defines a static rotation along the Y, X, and Y axes (Since: 1.10)</doc>
+      </member>
+      <member name="szxy" value="14" c:identifier="GRAPHENE_EULER_ORDER_SZXY">
+        <doc xml:space="preserve">Defines a static rotation along the Z, X, and Y axes (Since: 1.10)</doc>
+      </member>
+      <member name="szxz" value="15" c:identifier="GRAPHENE_EULER_ORDER_SZXZ">
+        <doc xml:space="preserve">Defines a static rotation along the Z, X, and Z axes (Since: 1.10)</doc>
+      </member>
+      <member name="szyx" value="16" c:identifier="GRAPHENE_EULER_ORDER_SZYX">
+        <doc xml:space="preserve">Defines a static rotation along the Z, Y, and X axes (Since: 1.10)</doc>
+      </member>
+      <member name="szyz" value="17" c:identifier="GRAPHENE_EULER_ORDER_SZYZ">
+        <doc xml:space="preserve">Defines a static rotation along the Z, Y, and Z axes (Since: 1.10)</doc>
+      </member>
+      <member name="rzyx" value="18" c:identifier="GRAPHENE_EULER_ORDER_RZYX">
+        <doc xml:space="preserve">Defines a relative rotation along the Z, Y, and X axes (Since: 1.10)</doc>
+      </member>
+      <member name="rxyx" value="19" c:identifier="GRAPHENE_EULER_ORDER_RXYX">
+        <doc xml:space="preserve">Defines a relative rotation along the X, Y, and X axes (Since: 1.10)</doc>
+      </member>
+      <member name="ryzx" value="20" c:identifier="GRAPHENE_EULER_ORDER_RYZX">
+        <doc xml:space="preserve">Defines a relative rotation along the Y, Z, and X axes (Since: 1.10)</doc>
+      </member>
+      <member name="rxzx" value="21" c:identifier="GRAPHENE_EULER_ORDER_RXZX">
+        <doc xml:space="preserve">Defines a relative rotation along the X, Z, and X axes (Since: 1.10)</doc>
+      </member>
+      <member name="rxzy" value="22" c:identifier="GRAPHENE_EULER_ORDER_RXZY">
+        <doc xml:space="preserve">Defines a relative rotation along the X, Z, and Y axes (Since: 1.10)</doc>
+      </member>
+      <member name="ryzy" value="23" c:identifier="GRAPHENE_EULER_ORDER_RYZY">
+        <doc xml:space="preserve">Defines a relative rotation along the Y, Z, and Y axes (Since: 1.10)</doc>
+      </member>
+      <member name="rzxy" value="24" c:identifier="GRAPHENE_EULER_ORDER_RZXY">
+        <doc xml:space="preserve">Defines a relative rotation along the Z, X, and Y axes (Since: 1.10)</doc>
+      </member>
+      <member name="ryxy" value="25" c:identifier="GRAPHENE_EULER_ORDER_RYXY">
+        <doc xml:space="preserve">Defines a relative rotation along the Y, X, and Y axes (Since: 1.10)</doc>
+      </member>
+      <member name="ryxz" value="26" c:identifier="GRAPHENE_EULER_ORDER_RYXZ">
+        <doc xml:space="preserve">Defines a relative rotation along the Y, X, and Z axes (Since: 1.10)</doc>
+      </member>
+      <member name="rzxz" value="27" c:identifier="GRAPHENE_EULER_ORDER_RZXZ">
+        <doc xml:space="preserve">Defines a relative rotation along the Z, X, and Z axes (Since: 1.10)</doc>
+      </member>
+      <member name="rxyz" value="28" c:identifier="GRAPHENE_EULER_ORDER_RXYZ">
+        <doc xml:space="preserve">Defines a relative rotation along the X, Y, and Z axes (Since: 1.10)</doc>
+      </member>
+      <member name="rzyz" value="29" c:identifier="GRAPHENE_EULER_ORDER_RZYZ">
+        <doc xml:space="preserve">Defines a relative rotation along the Z, Y, and Z axes (Since: 1.10)</doc>
       </member>
     </enumeration>
     <record name="Frustum" c:type="graphene_frustum_t" version="1.2" glib:type-name="GrapheneFrustum" glib:get-type="graphene_frustum_get_type" c:symbol-prefix="frustum">
@@ -930,7 +1183,7 @@ The contents of the `graphene_frustum_t` are private, and should not be
 modified directly.</doc>
       
       <field name="planes" readable="0" private="1">
-        <array zero-terminated="0" fixed-size="6" c:type="graphene_plane_t">
+        <array zero-terminated="0" fixed-size="6">
           <type name="Plane" c:type="graphene_plane_t"/>
         </array>
       </field>
@@ -1160,6 +1413,46 @@ should never be accessed directly.</doc>
           <type name="Matrix" c:type="graphene_matrix_t*"/>
         </return-value>
       </constructor>
+      <method name="decompose" c:identifier="graphene_matrix_decompose">
+        <doc xml:space="preserve">Decomposes a transformation matrix into its component transformations.
+
+The algorithm for decomposing a matrix is taken from the
+[CSS3 Transforms specification](http://dev.w3.org/csswg/css-transforms/);
+specifically, the decomposition code is based on the equivalent code
+published in "Graphics Gems II", edited by Jim Arvo, and
+[available online](http://tog.acm.org/resources/GraphicsGems/gemsii/unmatrix.c).</doc>
+        
+        <return-value transfer-ownership="none">
+          <doc xml:space="preserve">`true` if the matrix could be decomposed</doc>
+          <type name="gboolean" c:type="_Bool"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="m" transfer-ownership="none">
+            <doc xml:space="preserve">a #graphene_matrix_t</doc>
+            <type name="Matrix" c:type="const graphene_matrix_t*"/>
+          </instance-parameter>
+          <parameter name="translate" direction="out" caller-allocates="1" transfer-ownership="none">
+            <doc xml:space="preserve">the translation vector</doc>
+            <type name="Vec3" c:type="graphene_vec3_t*"/>
+          </parameter>
+          <parameter name="scale" direction="out" caller-allocates="1" transfer-ownership="none">
+            <doc xml:space="preserve">the scale vector</doc>
+            <type name="Vec3" c:type="graphene_vec3_t*"/>
+          </parameter>
+          <parameter name="rotate" direction="out" caller-allocates="1" transfer-ownership="none">
+            <doc xml:space="preserve">the rotation quaternion</doc>
+            <type name="Quaternion" c:type="graphene_quaternion_t*"/>
+          </parameter>
+          <parameter name="shear" direction="out" caller-allocates="1" transfer-ownership="none">
+            <doc xml:space="preserve">the shear vector</doc>
+            <type name="Vec3" c:type="graphene_vec3_t*"/>
+          </parameter>
+          <parameter name="perspective" direction="out" caller-allocates="1" transfer-ownership="none">
+            <doc xml:space="preserve">the perspective vector</doc>
+            <type name="Vec4" c:type="graphene_vec4_t*"/>
+          </parameter>
+        </parameters>
+      </method>
       <method name="determinant" c:identifier="graphene_matrix_determinant" version="1.0">
         <doc xml:space="preserve">Computes the determinant of the given matrix.</doc>
         
@@ -1553,7 +1846,19 @@ See also: graphene_frustum_init_from_matrix()</doc>
         <doc xml:space="preserve">Initializes a #graphene_matrix_t so that it positions the "camera"
 at the given @eye coordinates towards an object at the @center
 coordinates. The top of the camera is aligned to the direction
-of the @up vector.</doc>
+of the @up vector.
+
+Before the transform, the camera is assumed to be placed at the
+origin, looking towards the negative Z axis, with the top side of
+the camera facing in the direction of the Y axis and the right
+side in the direction of the X axis.
+
+In theory, one could use @m to transform a model of such a camera
+into world-space. However, it is more common to use the inverse of
+@m to transform another object from world coordinates to the view
+coordinates of the camera. Typically you would then apply the
+camera projection transform to get from view to screen
+coordinates.</doc>
         
         <return-value transfer-ownership="none">
           <doc xml:space="preserve">the initialized matrix</doc>
@@ -1872,7 +2177,7 @@ The product of this multiplication is (@a &#xD7; @b)</doc>
         </parameters>
       </method>
       <method name="near" c:identifier="graphene_matrix_near" version="1.10">
-        <doc xml:space="preserve">Compares the two given #graphene_matrix_t matrices and check
+        <doc xml:space="preserve">Compares the two given #graphene_matrix_t matrices and checks
 whether their values are within the given @epsilon of each
 other.</doc>
         
@@ -1891,6 +2196,7 @@ other.</doc>
             <type name="Matrix" c:type="const graphene_matrix_t*"/>
           </parameter>
           <parameter name="epsilon" transfer-ownership="none">
+            <doc xml:space="preserve">the threshold between the two matrices</doc>
             <type name="gfloat" c:type="float"/>
           </parameter>
         </parameters>
@@ -1935,7 +2241,10 @@ other.</doc>
         </parameters>
       </method>
       <method name="print" c:identifier="graphene_matrix_print" version="1.0">
-        <doc xml:space="preserve">Prints the contents of a matrix.</doc>
+        <doc xml:space="preserve">Prints the contents of a matrix to the standard error stream.
+
+This function is only useful for debugging; there are no guarantees
+made on the format of the output.</doc>
         
         <return-value transfer-ownership="none">
           <type name="none" c:type="void"/>
@@ -1970,7 +2279,9 @@ other.</doc>
         </parameters>
       </method>
       <method name="project_rect" c:identifier="graphene_matrix_project_rect" version="1.2">
-        <doc xml:space="preserve">Projects a #graphene_rect_t using the given matrix.</doc>
+        <doc xml:space="preserve">Projects all corners of a #graphene_rect_t using the given matrix.
+
+See also: graphene_matrix_project_point()</doc>
         
         <return-value transfer-ownership="none">
           <type name="none" c:type="void"/>
@@ -1995,7 +2306,7 @@ other.</doc>
         <doc xml:space="preserve">Projects a #graphene_rect_t using the given matrix.
 
 The resulting rectangle is the axis aligned bounding rectangle capable
-of containing fully the projected rectangle.</doc>
+of fully containing the projected rectangle.</doc>
         
         <return-value transfer-ownership="none">
           <type name="none" c:type="void"/>
@@ -2297,7 +2608,9 @@ values.</doc>
         <doc xml:space="preserve">Transforms each corner of a #graphene_rect_t using the given matrix @m.
 
 The result is the axis aligned bounding rectangle containing the coplanar
-quadrilateral.</doc>
+quadrilateral.
+
+See also: graphene_matrix_transform_point()</doc>
         
         <return-value transfer-ownership="none">
           <type name="none" c:type="void"/>
@@ -2376,7 +2689,9 @@ See also: graphene_simd4x4f_point3_mul()</doc>
 
 Unlike graphene_matrix_transform_vec3(), this function will take into
 account the fourth row vector of the #graphene_matrix_t when computing
-the dot product of each row vector of the matrix.</doc>
+the dot product of each row vector of the matrix.
+
+See also: graphene_simd4x4f_point3_mul()</doc>
         
         <return-value transfer-ownership="none">
           <type name="none" c:type="void"/>
@@ -2421,7 +2736,9 @@ the dot product of each row vector of the matrix.</doc>
       <method name="transform_rect" c:identifier="graphene_matrix_transform_rect" version="1.0">
         <doc xml:space="preserve">Transforms each corner of a #graphene_rect_t using the given matrix @m.
 
-The result is a coplanar quadrilateral.</doc>
+The result is a coplanar quadrilateral.
+
+See also: graphene_matrix_transform_point()</doc>
         
         <return-value transfer-ownership="none">
           <type name="none" c:type="void"/>
@@ -2646,6 +2963,47 @@ given matrix, within the given axis aligned rectangular @bounds.</doc>
       
       <type name="gdouble" c:type="gdouble"/>
     </constant>
+    <function-macro name="POINT3D_INIT" c:identifier="GRAPHENE_POINT3D_INIT" version="1.0" introspectable="0">
+      <doc xml:space="preserve">Initializes a #graphene_point3d_t to the given coordinates when declaring it.</doc>
+      
+      <parameters>
+        <parameter name="_x">
+          <doc xml:space="preserve">the X coordinate</doc>
+        </parameter>
+        <parameter name="_y">
+          <doc xml:space="preserve">the Y coordinate</doc>
+        </parameter>
+        <parameter name="_z">
+          <doc xml:space="preserve">the Z coordinate</doc>
+        </parameter>
+      </parameters>
+    </function-macro>
+    <function-macro name="POINT_INIT" c:identifier="GRAPHENE_POINT_INIT" version="1.0" introspectable="0">
+      <doc xml:space="preserve">Initializes a #graphene_point_t with the given coordinates
+when declaring it, e.g:
+
+|[&lt;!-- language="C" --&gt;
+  graphene_point_t p = GRAPHENE_POINT_INIT (10.f, 10.f);
+]|</doc>
+      
+      <parameters>
+        <parameter name="_x">
+          <doc xml:space="preserve">the X coordinate</doc>
+        </parameter>
+        <parameter name="_y">
+          <doc xml:space="preserve">the Y coordinate</doc>
+        </parameter>
+      </parameters>
+    </function-macro>
+    <function-macro name="PRIVATE_FIELD" c:identifier="GRAPHENE_PRIVATE_FIELD" introspectable="0">
+      
+      <parameters>
+        <parameter name="type">
+        </parameter>
+        <parameter name="name">
+        </parameter>
+      </parameters>
+    </function-macro>
     <record name="Plane" c:type="graphene_plane_t" version="1.2" glib:type-name="GraphenePlane" glib:get-type="graphene_plane_get_type" c:symbol-prefix="plane">
       <doc xml:space="preserve">A 2D plane that extends infinitely in a 3D volume.
 
@@ -2902,6 +3260,38 @@ and adjusts the constant accordingly.</doc>
           </instance-parameter>
           <parameter name="res" direction="out" caller-allocates="1" transfer-ownership="none">
             <doc xml:space="preserve">return location for the normalized plane</doc>
+            <type name="Plane" c:type="graphene_plane_t*"/>
+          </parameter>
+        </parameters>
+      </method>
+      <method name="transform" c:identifier="graphene_plane_transform" version="1.10">
+        <doc xml:space="preserve">Transforms a #graphene_plane_t @p using the given @matrix
+and @normal_matrix.
+
+If @normal_matrix is %NULL, a transformation matrix for the plane
+normal will be computed from @matrix. If you are transforming
+multiple planes using the same @matrix it's recommended to compute
+the normal matrix beforehand to avoid incurring in the cost of
+recomputing it every time.</doc>
+        
+        <return-value transfer-ownership="none">
+          <type name="none" c:type="void"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="p" transfer-ownership="none">
+            <doc xml:space="preserve">a #graphene_plane_t</doc>
+            <type name="Plane" c:type="const graphene_plane_t*"/>
+          </instance-parameter>
+          <parameter name="matrix" transfer-ownership="none">
+            <doc xml:space="preserve">a #graphene_matrix_t</doc>
+            <type name="Matrix" c:type="const graphene_matrix_t*"/>
+          </parameter>
+          <parameter name="normal_matrix" transfer-ownership="none" nullable="1" allow-none="1">
+            <doc xml:space="preserve">a #graphene_matrix_t</doc>
+            <type name="Matrix" c:type="const graphene_matrix_t*"/>
+          </parameter>
+          <parameter name="res" direction="out" caller-allocates="1" transfer-ownership="none">
+            <doc xml:space="preserve">the transformed plane</doc>
             <type name="Plane" c:type="graphene_plane_t*"/>
           </parameter>
         </parameters>
@@ -3505,7 +3895,7 @@ The contents of a #graphene_quad_t are private and should never be
 accessed directly.</doc>
       
       <field name="points" readable="0" private="1">
-        <array zero-terminated="0" fixed-size="4" c:type="graphene_point_t">
+        <array zero-terminated="0" fixed-size="4">
           <type name="Point" c:type="graphene_point_t"/>
         </array>
       </field>
@@ -3683,6 +4073,27 @@ The contents of the returned value are undefined.</doc>
           <type name="Quaternion" c:type="graphene_quaternion_t*"/>
         </return-value>
       </constructor>
+      <method name="add" c:identifier="graphene_quaternion_add" version="1.10">
+        <doc xml:space="preserve">Adds two #graphene_quaternion_t @a and @b.</doc>
+        
+        <return-value transfer-ownership="none">
+          <type name="none" c:type="void"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="a" transfer-ownership="none">
+            <doc xml:space="preserve">a #graphene_quaternion_t</doc>
+            <type name="Quaternion" c:type="const graphene_quaternion_t*"/>
+          </instance-parameter>
+          <parameter name="b" transfer-ownership="none">
+            <doc xml:space="preserve">a #graphene_quaternion_t</doc>
+            <type name="Quaternion" c:type="const graphene_quaternion_t*"/>
+          </parameter>
+          <parameter name="res" direction="out" caller-allocates="1" transfer-ownership="none">
+            <doc xml:space="preserve">the result of the operation</doc>
+            <type name="Quaternion" c:type="graphene_quaternion_t*"/>
+          </parameter>
+        </parameters>
+      </method>
       <method name="dot" c:identifier="graphene_quaternion_dot" version="1.0">
         <doc xml:space="preserve">Computes the dot product of two #graphene_quaternion_t.</doc>
         
@@ -3934,7 +4345,8 @@ transformation.</doc>
         </parameters>
       </method>
       <method name="invert" c:identifier="graphene_quaternion_invert" version="1.0">
-        <doc xml:space="preserve">Inverts a #graphene_quaternion_t.</doc>
+        <doc xml:space="preserve">Inverts a #graphene_quaternion_t, and returns the conjugate
+quaternion of @q.</doc>
         
         <return-value transfer-ownership="none">
           <type name="none" c:type="void"/>
@@ -3947,6 +4359,27 @@ transformation.</doc>
           <parameter name="res" direction="out" caller-allocates="1" transfer-ownership="none">
             <doc xml:space="preserve">return location for the inverted
   quaternion</doc>
+            <type name="Quaternion" c:type="graphene_quaternion_t*"/>
+          </parameter>
+        </parameters>
+      </method>
+      <method name="multiply" c:identifier="graphene_quaternion_multiply" version="1.10">
+        <doc xml:space="preserve">Multiplies two #graphene_quaternion_t @a and @b.</doc>
+        
+        <return-value transfer-ownership="none">
+          <type name="none" c:type="void"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="a" transfer-ownership="none">
+            <doc xml:space="preserve">a #graphene_quaternion_t</doc>
+            <type name="Quaternion" c:type="const graphene_quaternion_t*"/>
+          </instance-parameter>
+          <parameter name="b" transfer-ownership="none">
+            <doc xml:space="preserve">a #graphene_quaternion_t</doc>
+            <type name="Quaternion" c:type="const graphene_quaternion_t*"/>
+          </parameter>
+          <parameter name="res" direction="out" caller-allocates="1" transfer-ownership="none">
+            <doc xml:space="preserve">the result of the operation</doc>
             <type name="Quaternion" c:type="graphene_quaternion_t*"/>
           </parameter>
         </parameters>
@@ -3965,6 +4398,28 @@ transformation.</doc>
           <parameter name="res" direction="out" caller-allocates="1" transfer-ownership="none">
             <doc xml:space="preserve">return location for the normalized
   quaternion</doc>
+            <type name="Quaternion" c:type="graphene_quaternion_t*"/>
+          </parameter>
+        </parameters>
+      </method>
+      <method name="scale" c:identifier="graphene_quaternion_scale" version="1.10">
+        <doc xml:space="preserve">Scales all the elements of a #graphene_quaternion_t @q using
+the given scalar factor.</doc>
+        
+        <return-value transfer-ownership="none">
+          <type name="none" c:type="void"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="q" transfer-ownership="none">
+            <doc xml:space="preserve">a #graphene_quaternion_t</doc>
+            <type name="Quaternion" c:type="const graphene_quaternion_t*"/>
+          </instance-parameter>
+          <parameter name="factor" transfer-ownership="none">
+            <doc xml:space="preserve">a scaling factor</doc>
+            <type name="gfloat" c:type="float"/>
+          </parameter>
+          <parameter name="res" direction="out" caller-allocates="1" transfer-ownership="none">
+            <doc xml:space="preserve">the result of the operation</doc>
             <type name="Quaternion" c:type="graphene_quaternion_t*"/>
           </parameter>
         </parameters>
@@ -4116,6 +4571,24 @@ on each axis.</doc>
         </parameters>
       </method>
     </record>
+    <function-macro name="RECT_INIT" c:identifier="GRAPHENE_RECT_INIT" version="1.0" introspectable="0">
+      <doc xml:space="preserve">Initializes a #graphene_rect_t when declaring it.</doc>
+      
+      <parameters>
+        <parameter name="_x">
+          <doc xml:space="preserve">the X coordinate of the origin</doc>
+        </parameter>
+        <parameter name="_y">
+          <doc xml:space="preserve">the Y coordinate of the origin</doc>
+        </parameter>
+        <parameter name="_w">
+          <doc xml:space="preserve">the width</doc>
+        </parameter>
+        <parameter name="_h">
+          <doc xml:space="preserve">the height</doc>
+        </parameter>
+      </parameters>
+    </function-macro>
     <record name="Ray" c:type="graphene_ray_t" version="1.4" glib:type-name="GrapheneRay" glib:get-type="graphene_ray_get_type" c:symbol-prefix="ray">
       <doc xml:space="preserve">A ray emitted from an origin in a given direction.
 
@@ -4232,7 +4705,12 @@ If the ray does not intersect the plane, this function returns `INFINITY`.</doc>
         </parameters>
       </method>
       <method name="get_distance_to_point" c:identifier="graphene_ray_get_distance_to_point" version="1.4">
-        <doc xml:space="preserve">Computes the distance from the origin of the given ray to the given point.</doc>
+        <doc xml:space="preserve">Computes the distance of the closest approach between the
+given #graphene_ray_t @r and the point @p.
+
+The closest approach to a ray from a point is the distance
+between the point and the projection of the point on the
+ray itself.</doc>
         
         <return-value transfer-ownership="none">
           <doc xml:space="preserve">the distance of the point</doc>
@@ -4352,7 +4830,154 @@ values of another #graphene_ray_t.</doc>
           </parameter>
         </parameters>
       </method>
+      <method name="intersect_box" c:identifier="graphene_ray_intersect_box" version="1.10">
+        <doc xml:space="preserve">Intersects the given #graphene_ray_t @r with the given
+#graphene_box_t @b.</doc>
+        
+        <return-value transfer-ownership="none">
+          <doc xml:space="preserve">the type of intersection</doc>
+          <type name="RayIntersectionKind" c:type="graphene_ray_intersection_kind_t"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="r" transfer-ownership="none">
+            <doc xml:space="preserve">a #graphene_ray_t</doc>
+            <type name="Ray" c:type="const graphene_ray_t*"/>
+          </instance-parameter>
+          <parameter name="b" transfer-ownership="none">
+            <doc xml:space="preserve">a #graphene_box_t</doc>
+            <type name="Box" c:type="const graphene_box_t*"/>
+          </parameter>
+          <parameter name="t_out" direction="out" caller-allocates="0" transfer-ownership="full">
+            <doc xml:space="preserve">the distance of the point on the ray that intersects the box</doc>
+            <type name="gfloat" c:type="float*"/>
+          </parameter>
+        </parameters>
+      </method>
+      <method name="intersect_sphere" c:identifier="graphene_ray_intersect_sphere" version="1.10">
+        <doc xml:space="preserve">Intersects the given #graphene_ray_t @r with the given
+#graphene_sphere_t @s.</doc>
+        
+        <return-value transfer-ownership="none">
+          <doc xml:space="preserve">the type of intersection</doc>
+          <type name="RayIntersectionKind" c:type="graphene_ray_intersection_kind_t"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="r" transfer-ownership="none">
+            <doc xml:space="preserve">a #graphene_ray_t</doc>
+            <type name="Ray" c:type="const graphene_ray_t*"/>
+          </instance-parameter>
+          <parameter name="s" transfer-ownership="none">
+            <doc xml:space="preserve">a #graphene_sphere_t</doc>
+            <type name="Sphere" c:type="const graphene_sphere_t*"/>
+          </parameter>
+          <parameter name="t_out" direction="out" caller-allocates="0" transfer-ownership="full">
+            <doc xml:space="preserve">the distance of the point on the ray that intersects the sphere</doc>
+            <type name="gfloat" c:type="float*"/>
+          </parameter>
+        </parameters>
+      </method>
+      <method name="intersect_triangle" c:identifier="graphene_ray_intersect_triangle" version="1.10">
+        <doc xml:space="preserve">Intersects the given #graphene_ray_t @r with the given
+#graphene_triangle_t @t.</doc>
+        
+        <return-value transfer-ownership="none">
+          <doc xml:space="preserve">the type of intersection</doc>
+          <type name="RayIntersectionKind" c:type="graphene_ray_intersection_kind_t"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="r" transfer-ownership="none">
+            <doc xml:space="preserve">a #graphene_ray_t</doc>
+            <type name="Ray" c:type="const graphene_ray_t*"/>
+          </instance-parameter>
+          <parameter name="t" transfer-ownership="none">
+            <doc xml:space="preserve">a #graphene_triangle_t</doc>
+            <type name="Triangle" c:type="const graphene_triangle_t*"/>
+          </parameter>
+          <parameter name="t_out" direction="out" caller-allocates="0" transfer-ownership="full">
+            <doc xml:space="preserve">the distance of the point on the ray that intersects the triangle</doc>
+            <type name="gfloat" c:type="float*"/>
+          </parameter>
+        </parameters>
+      </method>
+      <method name="intersects_box" c:identifier="graphene_ray_intersects_box" version="1.10">
+        <doc xml:space="preserve">Checks whether the given #graphene_ray_t @r intersects the
+given #graphene_box_t @b.
+
+See also: graphene_ray_intersect_box()</doc>
+        
+        <return-value transfer-ownership="none">
+          <doc xml:space="preserve">`true` if the ray intersects the box</doc>
+          <type name="gboolean" c:type="_Bool"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="r" transfer-ownership="none">
+            <doc xml:space="preserve">a #graphene_ray_t</doc>
+            <type name="Ray" c:type="const graphene_ray_t*"/>
+          </instance-parameter>
+          <parameter name="b" transfer-ownership="none">
+            <doc xml:space="preserve">a #graphene_box_t</doc>
+            <type name="Box" c:type="const graphene_box_t*"/>
+          </parameter>
+        </parameters>
+      </method>
+      <method name="intersects_sphere" c:identifier="graphene_ray_intersects_sphere" version="1.10">
+        <doc xml:space="preserve">Checks if the given #graphene_ray_t @r intersects the
+given #graphene_sphere_t @s.
+
+See also: graphene_ray_intersect_sphere()</doc>
+        
+        <return-value transfer-ownership="none">
+          <doc xml:space="preserve">`true` if the ray intersects the sphere</doc>
+          <type name="gboolean" c:type="_Bool"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="r" transfer-ownership="none">
+            <doc xml:space="preserve">a #graphene_ray_t</doc>
+            <type name="Ray" c:type="const graphene_ray_t*"/>
+          </instance-parameter>
+          <parameter name="s" transfer-ownership="none">
+            <doc xml:space="preserve">a #graphene_sphere_t</doc>
+            <type name="Sphere" c:type="const graphene_sphere_t*"/>
+          </parameter>
+        </parameters>
+      </method>
+      <method name="intersects_triangle" c:identifier="graphene_ray_intersects_triangle" version="1.10">
+        <doc xml:space="preserve">Checks whether the given #graphene_ray_t @r intersects the
+given #graphene_triangle_t @b.
+
+See also: graphene_ray_intersect_triangle()</doc>
+        
+        <return-value transfer-ownership="none">
+          <doc xml:space="preserve">`true` if the ray intersects the triangle</doc>
+          <type name="gboolean" c:type="_Bool"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="r" transfer-ownership="none">
+            <doc xml:space="preserve">a #graphene_ray_t</doc>
+            <type name="Ray" c:type="const graphene_ray_t*"/>
+          </instance-parameter>
+          <parameter name="t" transfer-ownership="none">
+            <doc xml:space="preserve">a #graphene_triangle_t</doc>
+            <type name="Triangle" c:type="const graphene_triangle_t*"/>
+          </parameter>
+        </parameters>
+      </method>
     </record>
+    <enumeration name="RayIntersectionKind" version="1.10" c:type="graphene_ray_intersection_kind_t">
+      <doc xml:space="preserve">The type of intersection.</doc>
+      
+      <member name="none" value="0" c:identifier="GRAPHENE_RAY_INTERSECTION_KIND_NONE">
+        <doc xml:space="preserve">No intersection</doc>
+      </member>
+      <member name="enter" value="1" c:identifier="GRAPHENE_RAY_INTERSECTION_KIND_ENTER">
+        <doc xml:space="preserve">The ray is entering the intersected
+  object</doc>
+      </member>
+      <member name="leave" value="2" c:identifier="GRAPHENE_RAY_INTERSECTION_KIND_LEAVE">
+        <doc xml:space="preserve">The ray is leaving the intersected
+  object</doc>
+      </member>
+    </enumeration>
     <record name="Rect" c:type="graphene_rect_t" version="1.0" glib:type-name="GrapheneRect" glib:get-type="graphene_rect_get_type" c:symbol-prefix="rect">
       <doc xml:space="preserve">The location and size of a rectangle region.
 
@@ -4461,6 +5086,20 @@ rectangle.</doc>
           <instance-parameter name="r" transfer-ownership="none">
             <doc xml:space="preserve">a #graphene_rect_t</doc>
             <type name="Rect" c:type="graphene_rect_t*"/>
+          </instance-parameter>
+        </parameters>
+      </method>
+      <method name="get_area" c:identifier="graphene_rect_get_area" version="1.10">
+        <doc xml:space="preserve">Compute the area of given normalized rectangle.</doc>
+        
+        <return-value transfer-ownership="none">
+          <doc xml:space="preserve">the area of the normalized rectangle</doc>
+          <type name="gfloat" c:type="float"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="r" transfer-ownership="none">
+            <doc xml:space="preserve">a #graphene_rect_t</doc>
+            <type name="Rect" c:type="const graphene_rect_t*"/>
           </instance-parameter>
         </parameters>
       </method>
@@ -4903,13 +5542,17 @@ The size of the rectangle is left unchanged.</doc>
           </parameter>
         </parameters>
       </method>
-      <method name="round" c:identifier="graphene_rect_round" version="1.4">
+      <method name="round" c:identifier="graphene_rect_round" version="1.4" deprecated="1" deprecated-version="1.10">
         <doc xml:space="preserve">Rounds the origin and size of the given rectangle to
 their nearest integer values; the rounding is guaranteed
-to be large enough to contain the original rectangle.
+to be large enough to have an area bigger or equal to the
+original rectangle, but might not fully contain its extents.
+Use graphene_rect_round_extents() in case you need to round
+to a rectangle that covers fully the original one.
 
 This function is the equivalent of calling `floor` on
 the coordinates of the origin, and `ceil` on the size.</doc>
+        <doc-deprecated xml:space="preserve">Use graphene_rect_round_extents() instead</doc-deprecated>
         
         <return-value transfer-ownership="none">
           <type name="none" c:type="void"/>
@@ -4922,6 +5565,44 @@ the coordinates of the origin, and `ceil` on the size.</doc>
           <parameter name="res" direction="out" caller-allocates="1" transfer-ownership="none">
             <doc xml:space="preserve">return location for the
   rounded rectangle</doc>
+            <type name="Rect" c:type="graphene_rect_t*"/>
+          </parameter>
+        </parameters>
+      </method>
+      <method name="round_extents" c:identifier="graphene_rect_round_extents" version="1.10">
+        <doc xml:space="preserve">Rounds the origin of the given rectangle to its nearest
+integer value and and recompute the size so that the
+rectangle is large enough to contain all the conrners
+of the original rectangle.
+
+This function is the equivalent of calling `floor` on
+the coordinates of the origin, and recomputing the size
+calling `ceil` on the bottom-right coordinates.
+
+If you want to be sure that the rounded rectangle
+completely covers the area that was covered by the
+original rectangle &#x2014; i.e. you want to cover the area
+including all its corners &#x2014; this function will make sure
+that the size is recomputed taking into account the ceiling
+of the coordinates of the bottom-right corner.
+If the difference between the original coordinates and the
+coordinates of the rounded rectangle is greater than the
+difference between the original size and and the rounded
+size, then the move of the origin would not be compensated
+by a move in the anti-origin, leaving the corners of the
+original rectangle outside the rounded one.</doc>
+        
+        <return-value transfer-ownership="none">
+          <type name="none" c:type="void"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="r" transfer-ownership="none">
+            <doc xml:space="preserve">a #graphene_rect_t</doc>
+            <type name="Rect" c:type="const graphene_rect_t*"/>
+          </instance-parameter>
+          <parameter name="res" direction="out" caller-allocates="1" transfer-ownership="none">
+            <doc xml:space="preserve">return location for the
+  rectangle with rounded extents</doc>
             <type name="Rect" c:type="graphene_rect_t*"/>
           </parameter>
         </parameters>
@@ -4952,6 +5633,7 @@ and vertically by @s_v. The result @res is normalized.</doc>
         </return-value>
         <parameters>
           <instance-parameter name="r" transfer-ownership="none">
+            <doc xml:space="preserve">a #graphene_rect_t</doc>
             <type name="Rect" c:type="const graphene_rect_t*"/>
           </instance-parameter>
           <parameter name="s_h" transfer-ownership="none">
@@ -5018,6 +5700,23 @@ a size of 0, 0.</doc>
       
       <type name="utf8" c:type="gchar*"/>
     </constant>
+    <function-macro name="SIZE_INIT" c:identifier="GRAPHENE_SIZE_INIT" version="1.0" introspectable="0">
+      <doc xml:space="preserve">Initializes a #graphene_size_t with the given sizes when
+declaring it, e.g.:
+
+|[&lt;!-- language="C" --&gt;
+  graphene_size_t size = GRAPHENE_SIZE_INIT (100.f, 100.f);
+]|</doc>
+      
+      <parameters>
+        <parameter name="_w">
+          <doc xml:space="preserve">the width</doc>
+        </parameter>
+        <parameter name="_h">
+          <doc xml:space="preserve">the height</doc>
+        </parameter>
+      </parameters>
+    </function-macro>
     <record name="Simd4F" c:type="graphene_simd4f_t">
       
       <field name="x" readable="0" private="1">
@@ -5686,6 +6385,52 @@ their coordinates as #graphene_point3d_t.</doc>
           </parameter>
         </parameters>
       </method>
+      <method name="get_uv" c:identifier="graphene_triangle_get_uv" version="1.10">
+        <doc xml:space="preserve">Computes the UV coordinates of the given point @p.
+
+The point @p must lie on the same plane as the triangle @t; if the point
+is not coplanar, the result of this function is undefined. If @p is %NULL,
+the point will be set in (0, 0, 0).
+
+The UV coordinates will be placed in the @res vector:
+
+ - `res.x = u`
+ - `res.y = v`
+
+See also: graphene_triangle_get_barycoords()</doc>
+        
+        <return-value transfer-ownership="none">
+          <doc xml:space="preserve">`true` if the coordinates are valid</doc>
+          <type name="gboolean" c:type="_Bool"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="t" transfer-ownership="none">
+            <doc xml:space="preserve">a #graphene_triangle_t</doc>
+            <type name="Triangle" c:type="const graphene_triangle_t*"/>
+          </instance-parameter>
+          <parameter name="p" transfer-ownership="none" nullable="1" allow-none="1">
+            <doc xml:space="preserve">a #graphene_point3d_t</doc>
+            <type name="Point3D" c:type="const graphene_point3d_t*"/>
+          </parameter>
+          <parameter name="uv_a" transfer-ownership="none">
+            <doc xml:space="preserve">the UV coordinates of the first point</doc>
+            <type name="Vec2" c:type="const graphene_vec2_t*"/>
+          </parameter>
+          <parameter name="uv_b" transfer-ownership="none">
+            <doc xml:space="preserve">the UV coordinates of the second point</doc>
+            <type name="Vec2" c:type="const graphene_vec2_t*"/>
+          </parameter>
+          <parameter name="uv_c" transfer-ownership="none">
+            <doc xml:space="preserve">the UV coordinates of the third point</doc>
+            <type name="Vec2" c:type="const graphene_vec2_t*"/>
+          </parameter>
+          <parameter name="res" direction="out" caller-allocates="1" transfer-ownership="none">
+            <doc xml:space="preserve">a vector containing the UV coordinates
+  of the given point @p</doc>
+            <type name="Vec2" c:type="graphene_vec2_t*"/>
+          </parameter>
+        </parameters>
+      </method>
       <method name="get_vertices" c:identifier="graphene_triangle_get_vertices" version="1.2">
         <doc xml:space="preserve">Retrieves the three vertices of the given #graphene_triangle_t.</doc>
         
@@ -5708,6 +6453,40 @@ their coordinates as #graphene_point3d_t.</doc>
           <parameter name="c" direction="out" caller-allocates="1" transfer-ownership="none" optional="1" allow-none="1">
             <doc xml:space="preserve">return location for the third vertex</doc>
             <type name="Vec3" c:type="graphene_vec3_t*"/>
+          </parameter>
+        </parameters>
+      </method>
+      <method name="init_from_float" c:identifier="graphene_triangle_init_from_float" version="1.10">
+        <doc xml:space="preserve">Initializes a #graphene_triangle_t using the three given arrays
+of floating point values, each representing the coordinates of
+a point in 3D space.</doc>
+        
+        <return-value transfer-ownership="none">
+          <doc xml:space="preserve">the initialized #graphene_triangle_t</doc>
+          <type name="Triangle" c:type="graphene_triangle_t*"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="t" transfer-ownership="none">
+            <doc xml:space="preserve">the #graphene_triangle_t to initialize</doc>
+            <type name="Triangle" c:type="graphene_triangle_t*"/>
+          </instance-parameter>
+          <parameter name="a" transfer-ownership="none">
+            <doc xml:space="preserve">an array of 3 floating point values</doc>
+            <array zero-terminated="0" c:type="const float*" fixed-size="3">
+              <type name="gfloat" c:type="float"/>
+            </array>
+          </parameter>
+          <parameter name="b" transfer-ownership="none">
+            <doc xml:space="preserve">an array of 3 floating point values</doc>
+            <array zero-terminated="0" c:type="const float*" fixed-size="3">
+              <type name="gfloat" c:type="float"/>
+            </array>
+          </parameter>
+          <parameter name="c" transfer-ownership="none">
+            <doc xml:space="preserve">an array of 3 floating point values</doc>
+            <array zero-terminated="0" c:type="const float*" fixed-size="3">
+              <type name="gfloat" c:type="float"/>
+            </array>
           </parameter>
         </parameters>
       </method>
@@ -5764,18 +6543,69 @@ their coordinates as #graphene_point3d_t.</doc>
         </parameters>
       </method>
     </record>
+    <function-macro name="UNAVAILABLE" c:identifier="GRAPHENE_UNAVAILABLE" introspectable="0">
+      
+      <parameters>
+        <parameter name="maj">
+        </parameter>
+        <parameter name="min">
+        </parameter>
+      </parameters>
+    </function-macro>
     <constant name="VEC2_LEN" value="2" c:type="GRAPHENE_VEC2_LEN" version="1.0">
-      <doc xml:space="preserve">Evaluates to the number of components of a #graphene_vec2_t.</doc>
+      <doc xml:space="preserve">Evaluates to the number of components of a #graphene_vec2_t.
+
+This symbol is useful when declaring a C array of floating
+point values to be used with graphene_vec2_init_from_float() and
+graphene_vec2_to_float(), e.g.
+
+|[
+  float v[GRAPHENE_VEC2_LEN];
+
+  // vec is defined elsewhere
+  graphene_vec2_to_float (&amp;vec, v);
+
+  for (int i = 0; i &lt; GRAPHENE_VEC2_LEN; i++)
+    fprintf (stdout, "component %d: %g\n", i, v[i]);
+]|</doc>
       
       <type name="gint" c:type="gint"/>
     </constant>
     <constant name="VEC3_LEN" value="3" c:type="GRAPHENE_VEC3_LEN" version="1.0">
-      <doc xml:space="preserve">Evaluates to the number of components of a #graphene_vec3_t.</doc>
+      <doc xml:space="preserve">Evaluates to the number of components of a #graphene_vec3_t.
+
+This symbol is useful when declaring a C array of floating
+point values to be used with graphene_vec3_init_from_float() and
+graphene_vec3_to_float(), e.g.
+
+|[
+  float v[GRAPHENE_VEC3_LEN];
+
+  // vec is defined elsewhere
+  graphene_vec3_to_float (&amp;vec, v);
+
+  for (int i = 0; i &lt; GRAPHENE_VEC2_LEN; i++)
+    fprintf (stdout, "component %d: %g\n", i, v[i]);
+]|</doc>
       
       <type name="gint" c:type="gint"/>
     </constant>
     <constant name="VEC4_LEN" value="4" c:type="GRAPHENE_VEC4_LEN" version="1.0">
-      <doc xml:space="preserve">Evaluates to the number of components of a #graphene_vec4_t.</doc>
+      <doc xml:space="preserve">Evaluates to the number of components of a #graphene_vec4_t.
+
+This symbol is useful when declaring a C array of floating
+point values to be used with graphene_vec4_init_from_float() and
+graphene_vec4_to_float(), e.g.
+
+|[
+  float v[GRAPHENE_VEC4_LEN];
+
+  // vec is defined elsewhere
+  graphene_vec4_to_float (&amp;vec, v);
+
+  for (int i = 0; i &lt; GRAPHENE_VEC4_LEN; i++)
+    fprintf (stdout, "component %d: %g\n", i, v[i]);
+]|</doc>
       
       <type name="gint" c:type="gint"/>
     </constant>
@@ -5984,6 +6814,31 @@ This function can be called multiple times.</doc>
           <parameter name="src" transfer-ownership="none">
             <doc xml:space="preserve">a #graphene_vec2_t</doc>
             <type name="Vec2" c:type="const graphene_vec2_t*"/>
+          </parameter>
+        </parameters>
+      </method>
+      <method name="interpolate" c:identifier="graphene_vec2_interpolate" version="1.10">
+        <doc xml:space="preserve">Linearly interpolates @v1 and @v2 using the given @factor.</doc>
+        
+        <return-value transfer-ownership="none">
+          <type name="none" c:type="void"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="v1" transfer-ownership="none">
+            <doc xml:space="preserve">a #graphene_vec2_t</doc>
+            <type name="Vec2" c:type="const graphene_vec2_t*"/>
+          </instance-parameter>
+          <parameter name="v2" transfer-ownership="none">
+            <doc xml:space="preserve">a #graphene_vec2_t</doc>
+            <type name="Vec2" c:type="const graphene_vec2_t*"/>
+          </parameter>
+          <parameter name="factor" transfer-ownership="none">
+            <doc xml:space="preserve">the interpolation factor</doc>
+            <type name="gdouble" c:type="double"/>
+          </parameter>
+          <parameter name="res" direction="out" caller-allocates="1" transfer-ownership="none">
+            <doc xml:space="preserve">the interpolated vector</doc>
+            <type name="Vec2" c:type="graphene_vec2_t*"/>
           </parameter>
         </parameters>
       </method>
@@ -6563,6 +7418,31 @@ This function can be called multiple times.</doc>
           </parameter>
         </parameters>
       </method>
+      <method name="interpolate" c:identifier="graphene_vec3_interpolate" version="1.10">
+        <doc xml:space="preserve">Linearly interpolates @v1 and @v2 using the given @factor.</doc>
+        
+        <return-value transfer-ownership="none">
+          <type name="none" c:type="void"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="v1" transfer-ownership="none">
+            <doc xml:space="preserve">a #graphene_vec3_t</doc>
+            <type name="Vec3" c:type="const graphene_vec3_t*"/>
+          </instance-parameter>
+          <parameter name="v2" transfer-ownership="none">
+            <doc xml:space="preserve">a #graphene_vec3_t</doc>
+            <type name="Vec3" c:type="const graphene_vec3_t*"/>
+          </parameter>
+          <parameter name="factor" transfer-ownership="none">
+            <doc xml:space="preserve">the interpolation factor</doc>
+            <type name="gdouble" c:type="double"/>
+          </parameter>
+          <parameter name="res" direction="out" caller-allocates="1" transfer-ownership="none">
+            <doc xml:space="preserve">the interpolated vector</doc>
+            <type name="Vec3" c:type="graphene_vec3_t*"/>
+          </parameter>
+        </parameters>
+      </method>
       <method name="length" c:identifier="graphene_vec3_length" version="1.0">
         <doc xml:space="preserve">Retrieves the length of the given vector @v.</doc>
         
@@ -7139,6 +8019,31 @@ another #graphene_vec4_t.</doc>
           </parameter>
         </parameters>
       </method>
+      <method name="interpolate" c:identifier="graphene_vec4_interpolate" version="1.10">
+        <doc xml:space="preserve">Linearly interpolates @v1 and @v2 using the given @factor.</doc>
+        
+        <return-value transfer-ownership="none">
+          <type name="none" c:type="void"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="v1" transfer-ownership="none">
+            <doc xml:space="preserve">a #graphene_vec4_t</doc>
+            <type name="Vec4" c:type="const graphene_vec4_t*"/>
+          </instance-parameter>
+          <parameter name="v2" transfer-ownership="none">
+            <doc xml:space="preserve">a #graphene_vec4_t</doc>
+            <type name="Vec4" c:type="const graphene_vec4_t*"/>
+          </parameter>
+          <parameter name="factor" transfer-ownership="none">
+            <doc xml:space="preserve">the interpolation factor</doc>
+            <type name="gdouble" c:type="double"/>
+          </parameter>
+          <parameter name="res" direction="out" caller-allocates="1" transfer-ownership="none">
+            <doc xml:space="preserve">the interpolated vector</doc>
+            <type name="Vec4" c:type="graphene_vec4_t*"/>
+          </parameter>
+        </parameters>
+      </method>
       <method name="length" c:identifier="graphene_vec4_length" version="1.0">
         <doc xml:space="preserve">Computes the length of the given #graphene_vec4_t.</doc>
         
@@ -7459,10 +8364,6 @@ The returned value is owned by Graphene and should not be modified or freed.</do
         <type name="Box" c:type="const graphene_box_t*"/>
       </return-value>
     </function>
-    <constant name="false" value="0" c:type="false">
-      
-      <type name="gint" c:type="gint"/>
-    </constant>
     <function name="point3d_zero" c:identifier="graphene_point3d_zero" moved-to="Point3D.zero" version="1.0">
       <doc xml:space="preserve">Retrieves a constant point with all three coordinates set to 0.</doc>
       
@@ -7507,10 +8408,6 @@ equality checks and interpolations.</doc>
         <type name="Size" c:type="const graphene_size_t*"/>
       </return-value>
     </function>
-    <constant name="true" value="1" c:type="true">
-      
-      <type name="gint" c:type="gint"/>
-    </constant>
     <function name="vec2_one" c:identifier="graphene_vec2_one" moved-to="Vec2.one" version="1.0">
       <doc xml:space="preserve">Retrieves a constant vector with (1, 1) components.</doc>
       

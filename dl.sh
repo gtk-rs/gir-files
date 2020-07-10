@@ -18,5 +18,7 @@ VER="focal"
 # version 4
 ./gir-dl.sh https://packages.debian.org/experimental/amd64/libgtk-4-dev/download http.us.debian.org
 
+./gir-dl.sh https://packages.debian.org/bullseye/amd64/libgraphene-1.0-dev/download http.us.debian.org
+
 ./reformat.sh
 ./fix.sh
