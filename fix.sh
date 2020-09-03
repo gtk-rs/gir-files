@@ -12,6 +12,12 @@ xmlstarlet ed -P -L \
 	-u '//*[@glib:error-domain="g-option-context-error-quark"]/@glib:error-domain' -v g-option-error-quark \
 	GLib-2.0.gir
 
+# GtkEntry icon signals incorrect assume GdkEventButton when other variants may be passed
+xmlstarlet ed -P -L \
+	-u '//_:class[@name="Entry"]/glib:signal[@name="icon-press"]//_:parameter[@name="event"]/_:type[@name="Gdk.EventButton"]/@name' -v "Gdk.Event" \
+	-u '//_:class[@name="Entry"]/glib:signal[@name="icon-release"]//_:parameter[@name="event"]/_:type[@name="Gdk.EventButton"]/@name' -v "Gdk.Event" \
+	Gtk-3.0.gir
+
 # GtkIconSize usage
 xmlstarlet ed -P -L \
 	-u '//_:type[@c:type="GtkIconSize"]/@name' -v "IconSize" \
