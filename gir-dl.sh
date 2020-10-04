@@ -11,7 +11,7 @@ else
   MIRROR="$2"
 fi
 wget $WGETPARAMS -O tmp.html "$MIRRORS"
-URL=`cat tmp.html | grep -oP "http://($MIRROR|$EXTRA_MIRROR)/[^\"]+"`
+URL=`cat tmp.html | grep -oP "https://($MIRROR|$EXTRA_MIRROR)/[^\"]+"`
 rm tmp.html
 echo $URL
 wget $WGETPARAMS -O tmp.deb "$URL"

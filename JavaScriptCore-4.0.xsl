@@ -1,8 +1,8 @@
-<xsl:stylesheet xmlns="http://www.gtk.org/introspection/core/1.0"
-		xmlns:gir="http://www.gtk.org/introspection/core/1.0"
-		xmlns:c="http://www.gtk.org/introspection/c/1.0"
-		xmlns:glib="http://www.gtk.org/introspection/glib/1.0"
-		xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
+<xsl:stylesheet xmlns="https://www.gtk.org/introspection/core/1.0"
+		xmlns:gir="https://www.gtk.org/introspection/core/1.0"
+		xmlns:c="https://www.gtk.org/introspection/c/1.0"
+		xmlns:glib="https://www.gtk.org/introspection/glib/1.0"
+		xmlns:xsl="https://www.w3.org/1999/XSL/Transform"
 		version="1.0">
   <xsl:output method="xml" indent="yes"/>
 
