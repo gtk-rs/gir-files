@@ -104,6 +104,20 @@ xmlstarlet ed -P -L \
 	-a '//_:callback[@name="ParseErrorFunc"]/_:parameters/_:parameter[@name="section"]/_:type[not(@name) and @c:type="gconstpointer"]' -type attr -n "name" -v "gconstpointer" \
 	Gsk-4.0.gir
 
+# remove freetype and graphite methods; GitHub issue #2557
+xmlstarlet ed -P -L \
+	-d '///_:function[@c:identifier="hb_graphite2_face_get_gr_face"]' \
+	-d '///_:function[@c:identifier="hb_graphite2_font_get_gr_font"]' \
+	-d '///_:function[@c:identifier="hb_ft_face_create"]' \
+	-d '///_:function[@c:identifier="hb_ft_face_create_cached"]' \
+	-d '///_:function[@c:identifier="hb_ft_face_create_referenced"]' \
+	-d '///_:function[@c:identifier="hb_ft_font_create"]' \
+	-d '///_:function[@c:identifier="hb_ft_font_create_cached"]' \
+	-d '///_:function[@c:identifier="hb_ft_font_create_referenced"]' \
+	-d '///_:function[@c:identifier="hb_ft_font_get_face"]' \
+	-d '///_:function[@c:identifier="hb_ft_font_lock_face"]' \
+	HarfBuzz-0.0.gir
+
 # fix harfbuzz types on Pango
 xmlstarlet ed -P -L \
 	-i '///_:type[not(@name) and @c:type="hb_font_t*"]' -t 'attr' -n 'name' -v "gconstpointer" \
