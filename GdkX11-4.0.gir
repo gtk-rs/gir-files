@@ -7,7 +7,7 @@ and/or use gtk-doc annotations.  -->
   <include name="xlib" version="2.0"/>
   <package name="gtk4-x11"/>
   <c:include name="gdk/gdkx.h"/>
-  <namespace name="GdkX11" version="4.0" shared-library="libgtk-4.so.0.9802.0" c:identifier-prefixes="Gdk" c:symbol-prefixes="gdk">
+  <namespace name="GdkX11" version="4.0" shared-library="libgtk-4.so.0" c:identifier-prefixes="Gdk" c:symbol-prefixes="gdk">
     <function-macro name="DISPLAY_XDISPLAY" c:identifier="GDK_DISPLAY_XDISPLAY" introspectable="0">
       <doc xml:space="preserve">Returns the display of a #GdkDisplay.</doc>
       
@@ -81,20 +81,6 @@ and/or use gtk-doc annotations.  -->
       </parameters>
     </function-macro>
     <function-macro name="IS_X11_DRAG_CLASS" c:identifier="GDK_IS_X11_DRAG_CLASS" introspectable="0">
-      
-      <parameters>
-        <parameter name="klass">
-        </parameter>
-      </parameters>
-    </function-macro>
-    <function-macro name="IS_X11_KEYMAP" c:identifier="GDK_IS_X11_KEYMAP" introspectable="0">
-      
-      <parameters>
-        <parameter name="object">
-        </parameter>
-      </parameters>
-    </function-macro>
-    <function-macro name="IS_X11_KEYMAP_CLASS" c:identifier="GDK_IS_X11_KEYMAP_CLASS" introspectable="0">
       
       <parameters>
         <parameter name="klass">
@@ -188,8 +174,42 @@ using GDK_XID_TO_POINTER().</doc>
     <record name="X11DeviceManagerXI2Class" c:type="GdkX11DeviceManagerXI2Class" disguised="1" glib:is-gtype-struct-for="X11DeviceManagerXI2">
       
     </record>
+    <enumeration name="X11DeviceType" c:type="GdkX11DeviceType">
+      
+      <member name="logical" value="0" c:identifier="GDK_X11_DEVICE_TYPE_LOGICAL">
+      </member>
+      <member name="physical" value="1" c:identifier="GDK_X11_DEVICE_TYPE_PHYSICAL">
+      </member>
+      <member name="floating" value="2" c:identifier="GDK_X11_DEVICE_TYPE_FLOATING">
+      </member>
+    </enumeration>
     <class name="X11DeviceXI2" c:symbol-prefix="x11_device_xi2" c:type="GdkX11DeviceXI2" parent="Gdk.Device" glib:type-name="GdkX11DeviceXI2" glib:get-type="gdk_x11_device_xi2_get_type" glib:type-struct="X11DeviceXI2Class">
       
+      <method name="get_device_type" c:identifier="gdk_x11_device_xi2_get_device_type">
+        
+        <return-value transfer-ownership="none">
+          <type name="X11DeviceType" c:type="GdkX11DeviceType"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="device" transfer-ownership="none">
+            <type name="X11DeviceXI2" c:type="GdkX11DeviceXI2*"/>
+          </instance-parameter>
+        </parameters>
+      </method>
+      <method name="set_device_type" c:identifier="gdk_x11_device_xi2_set_device_type">
+        
+        <return-value transfer-ownership="none">
+          <type name="none" c:type="void"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="device" transfer-ownership="none">
+            <type name="X11DeviceXI2" c:type="GdkX11DeviceXI2*"/>
+          </instance-parameter>
+          <parameter name="type" transfer-ownership="none">
+            <type name="X11DeviceType" c:type="GdkX11DeviceType"/>
+          </parameter>
+        </parameters>
+      </method>
       <property name="device-id" writable="1" construct-only="1" transfer-ownership="none">
         <type name="gint" c:type="gint"/>
       </property>
@@ -199,6 +219,23 @@ using GDK_XID_TO_POINTER().</doc>
     </record>
     <class name="X11Display" c:symbol-prefix="x11_display" c:type="GdkX11Display" parent="Gdk.Display" glib:type-name="GdkX11Display" glib:get-type="gdk_x11_display_get_type" glib:type-struct="X11DisplayClass">
       
+      <function name="get_default_group" c:identifier="gdk_x11_display_get_default_group">
+        <doc xml:space="preserve">Returns the default group leader surface for all toplevel surfaces
+on @display. This surface is implicitly created by GDK.
+See gdk_surface_set_group().</doc>
+        
+        <return-value transfer-ownership="none">
+          <doc xml:space="preserve">The default group leader surface
+for @display</doc>
+          <type name="Gdk.Surface" c:type="GdkSurface*"/>
+        </return-value>
+        <parameters>
+          <parameter name="display" transfer-ownership="none">
+            <doc xml:space="preserve">a #GdkDisplay</doc>
+            <type name="Gdk.Display" c:type="GdkDisplay*"/>
+          </parameter>
+        </parameters>
+      </function>
       <function name="get_glx_version" c:identifier="gdk_x11_display_get_glx_version">
         <doc xml:space="preserve">Retrieves the version of the GLX implementation.</doc>
         
@@ -213,11 +250,11 @@ using GDK_XID_TO_POINTER().</doc>
           </parameter>
           <parameter name="major" direction="out" caller-allocates="0" transfer-ownership="full">
             <doc xml:space="preserve">return location for the GLX major version</doc>
-            <type name="gint" c:type="gint*"/>
+            <type name="gint" c:type="int*"/>
           </parameter>
           <parameter name="minor" direction="out" caller-allocates="0" transfer-ownership="full">
             <doc xml:space="preserve">return location for the GLX minor version</doc>
-            <type name="gint" c:type="gint*"/>
+            <type name="gint" c:type="int*"/>
           </parameter>
         </parameters>
       </function>
@@ -238,7 +275,7 @@ If no monitor is the designated primary monitor, any monitor
           <type name="Gdk.Monitor" c:type="GdkMonitor*"/>
         </return-value>
         <parameters>
-          <parameter name="display" transfer-ownership="none">
+          <parameter name="self" transfer-ownership="none">
             <doc xml:space="preserve">a #GdkDisplay</doc>
             <type name="Gdk.Display" c:type="GdkDisplay*"/>
           </parameter>
@@ -341,7 +378,7 @@ equivalent.</doc>
         
         <return-value transfer-ownership="none">
           <doc xml:space="preserve">X error code or 0 on success</doc>
-          <type name="gint" c:type="gint"/>
+          <type name="gint" c:type="int"/>
         </return-value>
         <parameters>
           <instance-parameter name="display" transfer-ownership="none">
@@ -393,7 +430,7 @@ See also gdk_error_trap_push() to push a trap on all displays.</doc>
         
         <return-value transfer-ownership="none">
           <doc xml:space="preserve">the startup notification ID for @display</doc>
-          <type name="utf8" c:type="const gchar*"/>
+          <type name="utf8" c:type="const char*"/>
         </return-value>
         <parameters>
           <instance-parameter name="display" transfer-ownership="none">
@@ -525,11 +562,11 @@ for the corresponding #GtkSetting).</doc>
           <parameter name="theme" transfer-ownership="none" nullable="1" allow-none="1">
             <doc xml:space="preserve">the name of the cursor theme to use, or %NULL to unset
         a previously set value</doc>
-            <type name="utf8" c:type="const gchar*"/>
+            <type name="utf8" c:type="const char*"/>
           </parameter>
           <parameter name="size" transfer-ownership="none">
             <doc xml:space="preserve">the cursor size to use, or 0 to keep the previous size</doc>
-            <type name="gint" c:type="const gint"/>
+            <type name="gint" c:type="const int"/>
           </parameter>
         </parameters>
       </method>
@@ -559,7 +596,7 @@ gdk_notify_startup_complete()).</doc>
           </instance-parameter>
           <parameter name="startup_id" transfer-ownership="none">
             <doc xml:space="preserve">the startup notification ID (must be valid utf8)</doc>
-            <type name="utf8" c:type="const gchar*"/>
+            <type name="utf8" c:type="const char*"/>
           </parameter>
         </parameters>
       </method>
@@ -582,7 +619,7 @@ to later user configuration changes.</doc>
           </instance-parameter>
           <parameter name="scale" transfer-ownership="none">
             <doc xml:space="preserve">The new scale value</doc>
-            <type name="gint" c:type="gint"/>
+            <type name="gint" c:type="int"/>
           </parameter>
         </parameters>
       </method>
@@ -592,7 +629,7 @@ locale into a form suitable for storing in a window property.</doc>
         
         <return-value transfer-ownership="none">
           <doc xml:space="preserve">0 upon success, non-zero upon failure</doc>
-          <type name="gint" c:type="gint"/>
+          <type name="gint" c:type="int"/>
         </return-value>
         <parameters>
           <instance-parameter name="display" transfer-ownership="none">
@@ -610,7 +647,7 @@ locale into a form suitable for storing in a window property.</doc>
           </parameter>
           <parameter name="format" direction="out" caller-allocates="0" transfer-ownership="full">
             <doc xml:space="preserve">location to store the format of the property</doc>
-            <type name="gint" c:type="gint*"/>
+            <type name="gint" c:type="int*"/>
           </parameter>
           <parameter name="ctext" direction="out" caller-allocates="0" transfer-ownership="full">
             <doc xml:space="preserve">location to store newly
@@ -621,7 +658,7 @@ locale into a form suitable for storing in a window property.</doc>
           </parameter>
           <parameter name="length" direction="out" caller-allocates="0" transfer-ownership="full">
             <doc xml:space="preserve">the length of @ctext, in bytes</doc>
-            <type name="gint" c:type="gint*"/>
+            <type name="gint" c:type="int*"/>
           </parameter>
         </parameters>
       </method>
@@ -634,7 +671,7 @@ nul-separated elements of the original text string.)</doc>
         <return-value transfer-ownership="none">
           <doc xml:space="preserve">the number of strings stored in list, or 0,
     if the conversion failed</doc>
-          <type name="gint" c:type="gint"/>
+          <type name="gint" c:type="int"/>
         </return-value>
         <parameters>
           <instance-parameter name="display" transfer-ownership="none">
@@ -649,7 +686,7 @@ nul-separated elements of the original text string.)</doc>
           </parameter>
           <parameter name="format" transfer-ownership="none">
             <doc xml:space="preserve">the format of the property</doc>
-            <type name="gint" c:type="gint"/>
+            <type name="gint" c:type="int"/>
           </parameter>
           <parameter name="text" transfer-ownership="none">
             <doc xml:space="preserve">The text data</doc>
@@ -657,13 +694,13 @@ nul-separated elements of the original text string.)</doc>
           </parameter>
           <parameter name="length" transfer-ownership="none">
             <doc xml:space="preserve">The number of items to transform</doc>
-            <type name="gint" c:type="gint"/>
+            <type name="gint" c:type="int"/>
           </parameter>
           <parameter name="list" transfer-ownership="none">
             <doc xml:space="preserve">location to store an  array of strings in
    the encoding of the current locale. This array should be
    freed using gdk_free_text_list().</doc>
-            <type name="utf8" c:type="gchar***"/>
+            <type name="utf8" c:type="char***"/>
           </parameter>
         </parameters>
       </method>
@@ -704,7 +741,7 @@ gdk_x11_display_grab().</doc>
           </parameter>
           <parameter name="format" direction="out" caller-allocates="0" transfer-ownership="full">
             <doc xml:space="preserve">location to store format of the result</doc>
-            <type name="gint" c:type="gint*"/>
+            <type name="gint" c:type="int*"/>
           </parameter>
           <parameter name="ctext" direction="out" caller-allocates="0" transfer-ownership="full">
             <doc xml:space="preserve">location to store the data of the result</doc>
@@ -715,7 +752,7 @@ gdk_x11_display_grab().</doc>
           <parameter name="length" direction="out" caller-allocates="0" transfer-ownership="full">
             <doc xml:space="preserve">location to store the length of the data
     stored in @ctext</doc>
-            <type name="gint" c:type="gint*"/>
+            <type name="gint" c:type="int*"/>
           </parameter>
         </parameters>
       </method>
@@ -763,55 +800,6 @@ XFreeEventData() will be called afterwards.</doc>
     <record name="X11GLContextClass" c:type="GdkX11GLContextClass" disguised="1" glib:is-gtype-struct-for="X11GLContext">
       
     </record>
-    <class name="X11Keymap" c:symbol-prefix="x11_keymap" c:type="GdkX11Keymap" parent="Gdk.Keymap" glib:type-name="GdkX11Keymap" glib:get-type="gdk_x11_keymap_get_type" glib:type-struct="X11KeymapClass">
-      
-      <method name="get_group_for_state" c:identifier="gdk_x11_keymap_get_group_for_state">
-        <doc xml:space="preserve">Extracts the group from the state field sent in an X Key event.
-This is only needed for code processing raw X events, since #GdkEventKey
-directly includes an is_modifier field.</doc>
-        
-        <return-value transfer-ownership="none">
-          <doc xml:space="preserve">the index of the active keyboard group for the event</doc>
-          <type name="gint" c:type="gint"/>
-        </return-value>
-        <parameters>
-          <instance-parameter name="keymap" transfer-ownership="none">
-            <doc xml:space="preserve">a #GdkX11Keymap</doc>
-            <type name="X11Keymap" c:type="GdkKeymap*"/>
-          </instance-parameter>
-          <parameter name="state" transfer-ownership="none">
-            <doc xml:space="preserve">raw state returned from X</doc>
-            <type name="guint" c:type="guint"/>
-          </parameter>
-        </parameters>
-      </method>
-      <method name="key_is_modifier" c:identifier="gdk_x11_keymap_key_is_modifier">
-        <doc xml:space="preserve">Determines whether a particular key code represents a key that
-is a modifier. That is, it&#x2019;s a key that normally just affects
-the keyboard state and the behavior of other keys rather than
-producing a direct effect itself. This is only needed for code
-processing raw X events, since #GdkEventKey directly includes
-an is_modifier field.</doc>
-        
-        <return-value transfer-ownership="none">
-          <doc xml:space="preserve">%TRUE if the hardware keycode is a modifier key</doc>
-          <type name="gboolean" c:type="gboolean"/>
-        </return-value>
-        <parameters>
-          <instance-parameter name="keymap" transfer-ownership="none">
-            <doc xml:space="preserve">a #GdkX11Keymap</doc>
-            <type name="X11Keymap" c:type="GdkKeymap*"/>
-          </instance-parameter>
-          <parameter name="keycode" transfer-ownership="none">
-            <doc xml:space="preserve">the hardware keycode from a key event</doc>
-            <type name="guint" c:type="guint"/>
-          </parameter>
-        </parameters>
-      </method>
-    </class>
-    <record name="X11KeymapClass" c:type="GdkX11KeymapClass" disguised="1" glib:is-gtype-struct-for="X11Keymap">
-      
-    </record>
     <class name="X11Monitor" c:symbol-prefix="x11_monitor" c:type="GdkX11Monitor" parent="Gdk.Monitor" glib:type-name="GdkX11Monitor" glib:get-type="gdk_x11_monitor_get_type" glib:type-struct="X11MonitorClass">
       
       <function name="get_output" c:identifier="gdk_x11_monitor_get_output">
@@ -822,6 +810,27 @@ an is_modifier field.</doc>
         <parameters>
           <parameter name="monitor" transfer-ownership="none">
             <type name="Gdk.Monitor" c:type="GdkMonitor*"/>
+          </parameter>
+        </parameters>
+      </function>
+      <function name="get_workarea" c:identifier="gdk_x11_monitor_get_workarea">
+        <doc xml:space="preserve">Retrieves the size and position of the &#x201C;work area&#x201D; on a monitor
+within the display coordinate space. The returned geometry is in
+&#x201D;application pixels&#x201D;, not in &#x201D;device pixels&#x201D; (see
+gdk_monitor_get_scale_factor()).</doc>
+        
+        <return-value transfer-ownership="none">
+          <type name="none" c:type="void"/>
+        </return-value>
+        <parameters>
+          <parameter name="monitor" transfer-ownership="none">
+            <doc xml:space="preserve">a #GdkMonitor</doc>
+            <type name="Gdk.Monitor" c:type="GdkMonitor*"/>
+          </parameter>
+          <parameter name="workarea" direction="out" caller-allocates="1" transfer-ownership="none">
+            <doc xml:space="preserve">a #GdkRectangle to be filled with
+    the monitor workarea</doc>
+            <type name="Gdk.Rectangle" c:type="GdkRectangle*"/>
           </parameter>
         </parameters>
       </function>
@@ -864,7 +873,7 @@ extension, 0 is returned.</doc>
           </instance-parameter>
           <parameter name="monitor_num" transfer-ownership="none">
             <doc xml:space="preserve">number of the monitor, between 0 and gdk_screen_get_n_monitors (screen)</doc>
-            <type name="gint" c:type="gint"/>
+            <type name="gint" c:type="int"/>
           </parameter>
         </parameters>
       </method>
@@ -1229,11 +1238,11 @@ not a toplevel surface, it is ignored.</doc>
           </instance-parameter>
           <parameter name="name" transfer-ownership="none">
             <doc xml:space="preserve">Property name, will be interned as an X atom</doc>
-            <type name="utf8" c:type="const gchar*"/>
+            <type name="utf8" c:type="const char*"/>
           </parameter>
           <parameter name="value" transfer-ownership="none" nullable="1" allow-none="1">
             <doc xml:space="preserve">Property value, or %NULL to delete</doc>
-            <type name="utf8" c:type="const gchar*"/>
+            <type name="utf8" c:type="const char*"/>
           </parameter>
         </parameters>
       </method>
@@ -1360,27 +1369,6 @@ not a toplevel surface, it is ignored.</doc>
         </parameter>
       </parameters>
     </function-macro>
-    <function-macro name="X11_KEYMAP" c:identifier="GDK_X11_KEYMAP" introspectable="0">
-      
-      <parameters>
-        <parameter name="object">
-        </parameter>
-      </parameters>
-    </function-macro>
-    <function-macro name="X11_KEYMAP_CLASS" c:identifier="GDK_X11_KEYMAP_CLASS" introspectable="0">
-      
-      <parameters>
-        <parameter name="klass">
-        </parameter>
-      </parameters>
-    </function-macro>
-    <function-macro name="X11_KEYMAP_GET_CLASS" c:identifier="GDK_X11_KEYMAP_GET_CLASS" introspectable="0">
-      
-      <parameters>
-        <parameter name="obj">
-        </parameter>
-      </parameters>
-    </function-macro>
     <function-macro name="X11_MONITOR" c:identifier="GDK_X11_MONITOR" introspectable="0">
       
       <parameters>
@@ -1446,7 +1434,7 @@ to convert the argument back to an XID.</doc>
       
       <return-value transfer-ownership="none">
         <doc xml:space="preserve">the XInput2 device ID.</doc>
-        <type name="gint" c:type="gint"/>
+        <type name="gint" c:type="int"/>
       </return-value>
       <parameters>
         <parameter name="device" transfer-ownership="none">
@@ -1470,7 +1458,7 @@ to convert the argument back to an XID.</doc>
         </parameter>
         <parameter name="device_id" transfer-ownership="none">
           <doc xml:space="preserve">a device ID, as understood by the XInput2 protocol</doc>
-          <type name="gint" c:type="gint"/>
+          <type name="gint" c:type="int"/>
         </parameter>
       </parameters>
     </function>
@@ -1499,7 +1487,7 @@ gdk_x11_display_text_property_to_text_list().</doc>
         <parameter name="list" transfer-ownership="none">
           <doc xml:space="preserve">the value stored in the @list parameter by
   a call to gdk_x11_display_text_property_to_text_list().</doc>
-          <type name="utf8" c:type="gchar**"/>
+          <type name="utf8" c:type="char**"/>
         </parameter>
       </parameters>
     </function>
@@ -1536,7 +1524,7 @@ faster than XInternAtom(), which is a round trip to the server each time.</doc>
         </parameter>
         <parameter name="atom_name" transfer-ownership="none">
           <doc xml:space="preserve">a string</doc>
-          <type name="utf8" c:type="const gchar*"/>
+          <type name="utf8" c:type="const char*"/>
         </parameter>
       </parameters>
     </function>
@@ -1548,8 +1536,8 @@ be freed.</doc>
       
       <return-value transfer-ownership="none">
         <doc xml:space="preserve">name of the X atom; this string is owned by GDK,
-  so it shouldn&#x2019;t be modifed or freed.</doc>
-        <type name="utf8" c:type="const gchar*"/>
+  so it shouldn&#x2019;t be modified or freed.</doc>
+        <type name="utf8" c:type="const char*"/>
       </return-value>
       <parameters>
         <parameter name="display" transfer-ownership="none">
@@ -1576,35 +1564,6 @@ be freed.</doc>
         </parameter>
       </parameters>
     </function>
-    <function name="x11_register_standard_event_type" c:identifier="gdk_x11_register_standard_event_type">
-      <doc xml:space="preserve">Registers interest in receiving extension events with type codes
-between @event_base and `event_base + n_events - 1`.
-The registered events must have the window field in the same place
-as core X events (this is not the case for e.g. XKB extension events).
-
-GDK may register the events of some X extensions on its own.
-
-This function should only be needed in unusual circumstances, e.g.
-when filtering XInput extension events on the root window.</doc>
-      
-      <return-value transfer-ownership="none">
-        <type name="none" c:type="void"/>
-      </return-value>
-      <parameters>
-        <parameter name="display" transfer-ownership="none">
-          <doc xml:space="preserve">a #GdkDisplay</doc>
-          <type name="X11Display" c:type="GdkDisplay*"/>
-        </parameter>
-        <parameter name="event_base" transfer-ownership="none">
-          <doc xml:space="preserve">first event type code to register</doc>
-          <type name="gint" c:type="gint"/>
-        </parameter>
-        <parameter name="n_events" transfer-ownership="none">
-          <doc xml:space="preserve">number of event type codes to register</doc>
-          <type name="gint" c:type="gint"/>
-        </parameter>
-      </parameters>
-    </function>
     <function name="x11_set_sm_client_id" c:identifier="gdk_x11_set_sm_client_id">
       <doc xml:space="preserve">Sets the `SM_CLIENT_ID` property on the application&#x2019;s leader window so that
 the window manager can save the application&#x2019;s state using the X11R6 ICCCM
@@ -1620,7 +1579,7 @@ session management and the Inter-Client Communication Conventions Manual</doc>
         <parameter name="sm_client_id" transfer-ownership="none" nullable="1" allow-none="1">
           <doc xml:space="preserve">the client id assigned by the session manager
    when the connection was opened, or %NULL to remove the property.</doc>
-          <type name="utf8" c:type="const gchar*"/>
+          <type name="utf8" c:type="const char*"/>
         </parameter>
       </parameters>
     </function>

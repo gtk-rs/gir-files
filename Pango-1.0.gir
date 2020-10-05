@@ -4,6 +4,7 @@ To affect the contents of this file, edit the original C definitions,
 and/or use gtk-doc annotations.  -->
 <repository xmlns="http://www.gtk.org/introspection/core/1.0" xmlns:c="http://www.gtk.org/introspection/c/1.0" xmlns:glib="http://www.gtk.org/introspection/glib/1.0" version="1.2">
   <include name="GObject" version="2.0"/>
+  <include name="HarfBuzz" version="0.0"/>
   <include name="cairo" version="1.0"/>
   <package name="pango"/>
   <c:include name="pango/pango.h"/>
@@ -352,7 +353,7 @@ location. When multiple attributes of the same type overlap,
 the attribute whose range starts closest to the current location
 is used.</doc>
         
-        <return-value transfer-ownership="full" nullable="1">
+        <return-value transfer-ownership="none" nullable="1">
           <doc xml:space="preserve">the current attribute of the given type,
               or %NULL if no attribute of that type applies to the
               current location.</doc>
@@ -522,7 +523,7 @@ replace any attributes of the same type on that segment
 and be merged with any adjoining attributes that are identical.
 
 This function is slower than pango_attr_list_insert() for
-creating a attribute list in order (potentially much slower
+creating an attribute list in order (potentially much slower
 for large lists). However, pango_attr_list_insert() is not
 suitable for continually changing a set of attributes
 since it never removes or combines existing attributes.</doc>
@@ -557,6 +558,26 @@ since it never removes or combines existing attributes.</doc>
             <doc xml:space="preserve">a #PangoAttrList, may be %NULL</doc>
             <type name="AttrList" c:type="PangoAttrList*"/>
           </instance-parameter>
+        </parameters>
+      </method>
+      <method name="equal" c:identifier="pango_attr_list_equal" version="1.46">
+        <doc xml:space="preserve">Checks whether @list and @other_list contain the same attributes and
+whether those attributes apply to the same ranges. Beware that this
+will return wrong values if any list contains duplicates.</doc>
+        
+        <return-value transfer-ownership="none">
+          <doc xml:space="preserve">%TRUE if the lists are equal, %FALSE if they aren't.</doc>
+          <type name="gboolean" c:type="gboolean"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="list" transfer-ownership="none">
+            <doc xml:space="preserve">a #PangoAttrList</doc>
+            <type name="AttrList" c:type="PangoAttrList*"/>
+          </instance-parameter>
+          <parameter name="other_list" transfer-ownership="none">
+            <doc xml:space="preserve">the other #PangoAttrList</doc>
+            <type name="AttrList" c:type="PangoAttrList*"/>
+          </parameter>
         </parameters>
       </method>
       <method name="filter" c:identifier="pango_attr_list_filter" version="1.2">
@@ -1011,6 +1032,12 @@ attribute is listed in parentheses after the description.</doc>
       <member name="insert_hyphens" value="28" c:identifier="PANGO_ATTR_INSERT_HYPHENS" glib:nick="insert-hyphens">
         <doc xml:space="preserve">whether to insert hyphens at intra-word line breaks (#PangoAttrInt). Since 1.44</doc>
       </member>
+      <member name="overline" value="29" c:identifier="PANGO_ATTR_OVERLINE" glib:nick="overline">
+        <doc xml:space="preserve">whether the text has an overline (#PangoAttrInt). Since 1.46</doc>
+      </member>
+      <member name="overline_color" value="30" c:identifier="PANGO_ATTR_OVERLINE_COLOR" glib:nick="overline-color">
+        <doc xml:space="preserve">overline color (#PangoAttrColor). Since 1.46</doc>
+      </member>
       <function name="get_name" c:identifier="pango_attr_type_get_name" version="1.22">
         <doc xml:space="preserve">Fetches the attribute type name passed in when registering the type using
 pango_attr_type_register().
@@ -1309,6 +1336,43 @@ forms is '&amp;num;fff' '&amp;num;ffffff' '&amp;num;fffffffff' and '&amp;num;fff
   result, or %NULL</doc>
             <type name="Color" c:type="PangoColor*"/>
           </instance-parameter>
+          <parameter name="spec" transfer-ownership="none">
+            <doc xml:space="preserve">a string specifying the new color</doc>
+            <type name="utf8" c:type="const char*"/>
+          </parameter>
+        </parameters>
+      </method>
+      <method name="parse_with_alpha" c:identifier="pango_color_parse_with_alpha" version="1.46">
+        <doc xml:space="preserve">Fill in the fields of a color from a string specification. The
+string can either one of a large set of standard names. (Taken
+from the CSS &lt;ulink url="http://dev.w3.org/csswg/css-color/#named-colors"&gt;specification&lt;/ulink&gt;), or it can be a hexadecimal
+value in the
+form '&amp;num;rgb' '&amp;num;rrggbb' '&amp;num;rrrgggbbb' or '&amp;num;rrrrggggbbbb' where
+'r', 'g' and 'b' are hex digits of the red, green, and blue
+components of the color, respectively. (White in the four
+forms is '&amp;num;fff' '&amp;num;ffffff' '&amp;num;fffffffff' and '&amp;num;ffffffffffff')
+
+Additionally, parse strings of the form
+'&amp;num;rgba', '&amp;num;rrggbbaa', '&amp;num;rrrrggggbbbbaaaa',
+if @alpha is not %NULL, and set @alpha to the value specified
+by the hex digits for 'a'. If no alpha component is found
+in @spec, @alpha is set to 0xffff (for a solid color).</doc>
+        
+        <return-value transfer-ownership="none">
+          <doc xml:space="preserve">%TRUE if parsing of the specifier succeeded,
+  otherwise false.</doc>
+          <type name="gboolean" c:type="gboolean"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="color" transfer-ownership="none" nullable="1" allow-none="1">
+            <doc xml:space="preserve">a #PangoColor structure in which to store the
+  result, or %NULL</doc>
+            <type name="Color" c:type="PangoColor*"/>
+          </instance-parameter>
+          <parameter name="alpha" direction="out" caller-allocates="0" transfer-ownership="full" optional="1" allow-none="1">
+            <doc xml:space="preserve">return location for alpha, or %NULL</doc>
+            <type name="guint16" c:type="guint16*"/>
+          </parameter>
           <parameter name="spec" transfer-ownership="none">
             <doc xml:space="preserve">a string specifying the new color</doc>
             <type name="utf8" c:type="const char*"/>
@@ -2147,6 +2211,13 @@ the current script.</doc>
         </parameter>
       </parameters>
     </function-macro>
+    <function-macro name="DEPRECATED_IN_1_46_FOR" c:identifier="PANGO_DEPRECATED_IN_1_46_FOR" introspectable="0">
+      
+      <parameters>
+        <parameter name="f">
+        </parameter>
+      </parameters>
+    </function-macro>
     <function-macro name="DEPRECATED_IN_1_4_FOR" c:identifier="PANGO_DEPRECATED_IN_1_4_FOR" introspectable="0">
       
       <parameters>
@@ -2736,10 +2807,10 @@ to an array of #PangoFontDescription, may be %NULL</doc>
           </parameter>
         </parameters>
       </function>
-      <virtual-method name="create_hb_font" introspectable="0">
+      <virtual-method name="create_hb_font">
         
-        <return-value>
-          <type c:type="gconstpointer" name="gconstpointer"/>
+        <return-value transfer-ownership="full">
+          <type name="HarfBuzz.font_t" c:type="gconstpointer"/>
         </return-value>
         <parameters>
           <instance-parameter name="font" transfer-ownership="none">
@@ -2793,7 +2864,7 @@ size in device units.</doc>
           </parameter>
         </parameters>
       </virtual-method>
-      <virtual-method name="get_features" invoker="get_features" version="1.44" introspectable="0">
+      <virtual-method name="get_features" invoker="get_features" version="1.44">
         <doc xml:space="preserve">Obtain the OpenType features that are provided by the font.
 These are passed to the rendering system, together with features
 that have been explicitly set via attributes.
@@ -2985,7 +3056,21 @@ language tag and character point.</doc>
           </parameter>
         </parameters>
       </method>
-      <method name="get_features" c:identifier="pango_font_get_features" version="1.44" introspectable="0">
+      <method name="get_face" c:identifier="pango_font_get_face" version="1.46">
+        <doc xml:space="preserve">Gets the #PangoFontFace to which @font belongs.</doc>
+        
+        <return-value transfer-ownership="none">
+          <doc xml:space="preserve">the #PangoFontFace</doc>
+          <type name="FontFace" c:type="PangoFontFace*"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="font" transfer-ownership="none">
+            <doc xml:space="preserve">a #PangoFont</doc>
+            <type name="Font" c:type="PangoFont*"/>
+          </instance-parameter>
+        </parameters>
+      </method>
+      <method name="get_features" c:identifier="pango_font_get_features" version="1.44">
         <doc xml:space="preserve">Obtain the OpenType features that are provided by the font.
 These are passed to the rendering system, together with features
 that have been explicitly set via attributes.
@@ -3086,7 +3171,7 @@ changes to the hb_font_t, use hb_font_create_sub_font().</doc>
         <return-value transfer-ownership="none" nullable="1">
           <doc xml:space="preserve">the hb_font_t object backing the
          font, or %NULL if the font does not have one</doc>
-          <type c:type="gconstpointer" name="gconstpointer"/>
+          <type name="HarfBuzz.font_t" c:type="gconstpointer"/>
         </return-value>
         <parameters>
           <instance-parameter name="font" transfer-ownership="none">
@@ -3262,8 +3347,8 @@ Returns %TRUE if @font can render @wc</doc>
           </parameters>
         </callback>
       </field>
-      <field name="get_features" introspectable="0">
-        <callback name="get_features" introspectable="0">
+      <field name="get_features">
+        <callback name="get_features">
           
           <return-value transfer-ownership="none">
             <type name="none" c:type="void"/>
@@ -3290,11 +3375,11 @@ Returns %TRUE if @font can render @wc</doc>
           </parameters>
         </callback>
       </field>
-      <field name="create_hb_font" introspectable="0">
-        <callback name="create_hb_font" introspectable="0">
+      <field name="create_hb_font">
+        <callback name="create_hb_font">
           
-          <return-value>
-            <type c:type="gconstpointer" name="gconstpointer"/>
+          <return-value transfer-ownership="full">
+            <type name="HarfBuzz.font_t" c:type="gconstpointer"/>
           </return-value>
           <parameters>
             <parameter name="font" transfer-ownership="none">
@@ -4056,6 +4141,21 @@ for displaying to users.</doc>
           </instance-parameter>
         </parameters>
       </virtual-method>
+      <virtual-method name="get_family" invoker="get_family" version="1.46">
+        <doc xml:space="preserve">Gets the #PangoFontFamily that @face
+belongs to.</doc>
+        
+        <return-value transfer-ownership="none">
+          <doc xml:space="preserve">the #PangoFontFamily</doc>
+          <type name="FontFamily" c:type="PangoFontFamily*"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="face" transfer-ownership="none">
+            <doc xml:space="preserve">a #PangoFontFace</doc>
+            <type name="FontFace" c:type="PangoFontFace*"/>
+          </instance-parameter>
+        </parameters>
+      </virtual-method>
       <virtual-method name="is_synthesized" invoker="is_synthesized" version="1.18">
         <doc xml:space="preserve">Returns whether a #PangoFontFace is synthesized by the underlying
 font rendering engine from another face, perhaps by shearing, emboldening,
@@ -4132,6 +4232,21 @@ for displaying to users.</doc>
         <parameters>
           <instance-parameter name="face" transfer-ownership="none">
             <doc xml:space="preserve">a #PangoFontFace.</doc>
+            <type name="FontFace" c:type="PangoFontFace*"/>
+          </instance-parameter>
+        </parameters>
+      </method>
+      <method name="get_family" c:identifier="pango_font_face_get_family" version="1.46">
+        <doc xml:space="preserve">Gets the #PangoFontFamily that @face
+belongs to.</doc>
+        
+        <return-value transfer-ownership="none">
+          <doc xml:space="preserve">the #PangoFontFamily</doc>
+          <type name="FontFamily" c:type="PangoFontFamily*"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="face" transfer-ownership="none">
+            <doc xml:space="preserve">a #PangoFontFace</doc>
             <type name="FontFace" c:type="PangoFontFace*"/>
           </instance-parameter>
         </parameters>
@@ -4263,6 +4378,21 @@ are in Pango units and are sorted in ascending order.</doc>
           </parameters>
         </callback>
       </field>
+      <field name="get_family">
+        <callback name="get_family">
+          
+          <return-value transfer-ownership="none">
+            <doc xml:space="preserve">the #PangoFontFamily</doc>
+            <type name="FontFamily" c:type="PangoFontFamily*"/>
+          </return-value>
+          <parameters>
+            <parameter name="face" transfer-ownership="none">
+              <doc xml:space="preserve">a #PangoFontFace</doc>
+              <type name="FontFace" c:type="PangoFontFace*"/>
+            </parameter>
+          </parameters>
+        </callback>
+      </field>
       <field name="_pango_reserved3" introspectable="0">
         <callback name="_pango_reserved3">
           
@@ -4285,6 +4415,27 @@ are in Pango units and are sorted in ascending order.</doc>
 font faces. The faces in a family share a common design, but differ in
 slant, weight, width and other aspects.</doc>
       
+      <virtual-method name="get_face" invoker="get_face" version="1.46">
+        <doc xml:space="preserve">Gets the #PangoFontFace of @family with the given name.</doc>
+        
+        <return-value transfer-ownership="none" nullable="1">
+          <doc xml:space="preserve">the #PangoFontFace,
+    or %NULL if no face with the given name exists.</doc>
+          <type name="FontFace" c:type="PangoFontFace*"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="family" transfer-ownership="none">
+            <doc xml:space="preserve">a #PangoFontFamily</doc>
+            <type name="FontFamily" c:type="PangoFontFamily*"/>
+          </instance-parameter>
+          <parameter name="name" transfer-ownership="none" nullable="1" allow-none="1">
+            <doc xml:space="preserve">the name of a face. If the name is %NULL,
+    the family's default face (fontconfig calls it "Regular")
+    will be returned.</doc>
+            <type name="utf8" c:type="const char*"/>
+          </parameter>
+        </parameters>
+      </virtual-method>
       <virtual-method name="get_name" invoker="get_name">
         <doc xml:space="preserve">Gets the name of the family. The name is unique among all
 fonts for the font backend and can be used in a #PangoFontDescription
@@ -4370,6 +4521,27 @@ width and other aspects.</doc>
           </parameter>
         </parameters>
       </virtual-method>
+      <method name="get_face" c:identifier="pango_font_family_get_face" version="1.46">
+        <doc xml:space="preserve">Gets the #PangoFontFace of @family with the given name.</doc>
+        
+        <return-value transfer-ownership="none" nullable="1">
+          <doc xml:space="preserve">the #PangoFontFace,
+    or %NULL if no face with the given name exists.</doc>
+          <type name="FontFace" c:type="PangoFontFace*"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="family" transfer-ownership="none">
+            <doc xml:space="preserve">a #PangoFontFamily</doc>
+            <type name="FontFamily" c:type="PangoFontFamily*"/>
+          </instance-parameter>
+          <parameter name="name" transfer-ownership="none" nullable="1" allow-none="1">
+            <doc xml:space="preserve">the name of a face. If the name is %NULL,
+    the family's default face (fontconfig calls it "Regular")
+    will be returned.</doc>
+            <type name="utf8" c:type="const char*"/>
+          </parameter>
+        </parameters>
+      </method>
       <method name="get_name" c:identifier="pango_font_family_get_name">
         <doc xml:space="preserve">Gets the name of the family. The name is unique among all
 fonts for the font backend and can be used in a #PangoFontDescription
@@ -4537,16 +4709,30 @@ width and other aspects.</doc>
           </parameters>
         </callback>
       </field>
-      <field name="_pango_reserved2" introspectable="0">
-        <callback name="_pango_reserved2">
+      <field name="get_face">
+        <callback name="get_face">
           
-          <return-value transfer-ownership="none">
-            <type name="none" c:type="void"/>
+          <return-value transfer-ownership="none" nullable="1">
+            <doc xml:space="preserve">the #PangoFontFace,
+    or %NULL if no face with the given name exists.</doc>
+            <type name="FontFace" c:type="PangoFontFace*"/>
           </return-value>
+          <parameters>
+            <parameter name="family" transfer-ownership="none">
+              <doc xml:space="preserve">a #PangoFontFamily</doc>
+              <type name="FontFamily" c:type="PangoFontFamily*"/>
+            </parameter>
+            <parameter name="name" transfer-ownership="none" nullable="1" allow-none="1">
+              <doc xml:space="preserve">the name of a face. If the name is %NULL,
+    the family's default face (fontconfig calls it "Regular")
+    will be returned.</doc>
+              <type name="utf8" c:type="const char*"/>
+            </parameter>
+          </parameters>
         </callback>
       </field>
-      <field name="_pango_reserved3" introspectable="0">
-        <callback name="_pango_reserved3">
+      <field name="_pango_reserved2" introspectable="0">
+        <callback name="_pango_reserved2">
           
           <return-value transfer-ownership="none">
             <type name="none" c:type="void"/>
@@ -4584,6 +4770,38 @@ and such data is changed.</doc>
             <doc xml:space="preserve">a #PangoFontMap</doc>
             <type name="FontMap" c:type="PangoFontMap*"/>
           </instance-parameter>
+        </parameters>
+      </virtual-method>
+      <virtual-method name="get_face" introspectable="0">
+        
+        <return-value>
+          <type name="FontFace" c:type="PangoFontFace*"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="fontmap" transfer-ownership="none">
+            <type name="FontMap" c:type="PangoFontMap*"/>
+          </instance-parameter>
+          <parameter name="font" transfer-ownership="none">
+            <type name="Font" c:type="PangoFont*"/>
+          </parameter>
+        </parameters>
+      </virtual-method>
+      <virtual-method name="get_family" invoker="get_family" version="1.46">
+        <doc xml:space="preserve">Gets a font family by name.</doc>
+        
+        <return-value transfer-ownership="none">
+          <doc xml:space="preserve">the #PangoFontFamily</doc>
+          <type name="FontFamily" c:type="PangoFontFamily*"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="fontmap" transfer-ownership="none">
+            <doc xml:space="preserve">a #PangoFontMap</doc>
+            <type name="FontMap" c:type="PangoFontMap*"/>
+          </instance-parameter>
+          <parameter name="name" transfer-ownership="none">
+            <doc xml:space="preserve">a family name</doc>
+            <type name="utf8" c:type="const char*"/>
+          </parameter>
         </parameters>
       </virtual-method>
       <virtual-method name="get_serial" invoker="get_serial" version="1.32.4">
@@ -4724,6 +4942,24 @@ gtk_widget_get_pango_context().  Use those instead.</doc>
             <doc xml:space="preserve">a #PangoFontMap</doc>
             <type name="FontMap" c:type="PangoFontMap*"/>
           </instance-parameter>
+        </parameters>
+      </method>
+      <method name="get_family" c:identifier="pango_font_map_get_family" version="1.46">
+        <doc xml:space="preserve">Gets a font family by name.</doc>
+        
+        <return-value transfer-ownership="none">
+          <doc xml:space="preserve">the #PangoFontFamily</doc>
+          <type name="FontFamily" c:type="PangoFontFamily*"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="fontmap" transfer-ownership="none">
+            <doc xml:space="preserve">a #PangoFontMap</doc>
+            <type name="FontMap" c:type="PangoFontMap*"/>
+          </instance-parameter>
+          <parameter name="name" transfer-ownership="none">
+            <doc xml:space="preserve">a family name</doc>
+            <type name="utf8" c:type="const char*"/>
+          </parameter>
         </parameters>
       </method>
       <method name="get_serial" c:identifier="pango_font_map_get_serial" version="1.32.4">
@@ -4948,20 +5184,39 @@ can handle fonts of this fonts loaded with this fontmap.</doc>
           </parameters>
         </callback>
       </field>
-      <field name="_pango_reserved1" introspectable="0">
-        <callback name="_pango_reserved1">
+      <field name="get_family">
+        <callback name="get_family">
           
           <return-value transfer-ownership="none">
-            <type name="none" c:type="void"/>
+            <doc xml:space="preserve">the #PangoFontFamily</doc>
+            <type name="FontFamily" c:type="PangoFontFamily*"/>
           </return-value>
+          <parameters>
+            <parameter name="fontmap" transfer-ownership="none">
+              <doc xml:space="preserve">a #PangoFontMap</doc>
+              <type name="FontMap" c:type="PangoFontMap*"/>
+            </parameter>
+            <parameter name="name" transfer-ownership="none">
+              <doc xml:space="preserve">a family name</doc>
+              <type name="utf8" c:type="const char*"/>
+            </parameter>
+          </parameters>
         </callback>
       </field>
-      <field name="_pango_reserved2" introspectable="0">
-        <callback name="_pango_reserved2">
+      <field name="get_face" introspectable="0">
+        <callback name="get_face" introspectable="0">
           
-          <return-value transfer-ownership="none">
-            <type name="none" c:type="void"/>
+          <return-value>
+            <type name="FontFace" c:type="PangoFontFace*"/>
           </return-value>
+          <parameters>
+            <parameter name="fontmap" transfer-ownership="none">
+              <type name="FontMap" c:type="PangoFontMap*"/>
+            </parameter>
+            <parameter name="font" transfer-ownership="none">
+              <type name="Font" c:type="PangoFont*"/>
+            </parameter>
+          </parameters>
         </callback>
       </field>
     </record>
@@ -7132,8 +7387,9 @@ positioned within the horizontal space available.</doc>
       <method name="get_attributes" c:identifier="pango_layout_get_attributes">
         <doc xml:space="preserve">Gets the attribute list for the layout, if any.</doc>
         
-        <return-value transfer-ownership="none">
-          <doc xml:space="preserve">a #PangoAttrList.</doc>
+        <return-value transfer-ownership="none" nullable="1">
+          <doc xml:space="preserve">a #PangoAttrList or %NULL
+  if none was set.</doc>
           <type name="AttrList" c:type="PangoAttrList*"/>
         </return-value>
         <parameters>
@@ -7236,6 +7492,25 @@ direction of the layout are inserted.</doc>
           <parameter name="weak_pos" direction="out" caller-allocates="1" transfer-ownership="none" optional="1" allow-none="1">
             <doc xml:space="preserve">location to store the weak cursor position (may be %NULL)</doc>
             <type name="Rectangle" c:type="PangoRectangle*"/>
+          </parameter>
+        </parameters>
+      </method>
+      <method name="get_direction" c:identifier="pango_layout_get_direction" version="1.46">
+        <doc xml:space="preserve">Gets the text direction at the given character
+position in @layout.</doc>
+        
+        <return-value transfer-ownership="none">
+          <doc xml:space="preserve">the text direction at @index</doc>
+          <type name="Direction" c:type="PangoDirection"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="layout" transfer-ownership="none">
+            <doc xml:space="preserve">a #PangoLayout</doc>
+            <type name="Layout" c:type="PangoLayout*"/>
+          </instance-parameter>
+          <parameter name="index" transfer-ownership="none">
+            <doc xml:space="preserve">the byte index of the char</doc>
+            <type name="gint" c:type="int"/>
           </parameter>
         </parameters>
       </method>
@@ -9511,6 +9786,18 @@ then applying the original transformation.</doc>
         </parameters>
       </method>
     </record>
+    <enumeration name="Overline" version="1.46" glib:type-name="PangoOverline" glib:get-type="pango_overline_get_type" c:type="PangoOverline">
+      <doc xml:space="preserve">The #PangoOverline enumeration is used to specify
+whether text should be overlined, and if so, the type
+of line.</doc>
+      <member name="none" value="0" c:identifier="PANGO_OVERLINE_NONE" glib:nick="none">
+        <doc xml:space="preserve">no overline should be drawn</doc>
+      </member>
+      <member name="single" value="1" c:identifier="PANGO_OVERLINE_SINGLE" glib:nick="single">
+        <doc xml:space="preserve">Draw a single line above the ink
+    extents of the text being underlined.</doc>
+      </member>
+    </enumeration>
     <function-macro name="PIXELS" c:identifier="PANGO_PIXELS" introspectable="0">
       <doc xml:space="preserve">Converts a dimension to device units by rounding.</doc>
       
@@ -9614,6 +9901,9 @@ purposes as setting colors.</doc>
       </member>
       <member name="strikethrough" value="3" c:identifier="PANGO_RENDER_PART_STRIKETHROUGH" glib:nick="strikethrough">
         <doc xml:space="preserve">strikethrough lines</doc>
+      </member>
+      <member name="overline" value="4" c:identifier="PANGO_RENDER_PART_OVERLINE" glib:nick="overline">
+        <doc xml:space="preserve">overlines</doc>
       </member>
     </enumeration>
     <class name="Renderer" c:symbol-prefix="renderer" c:type="PangoRenderer" version="1.8" parent="GObject.Object" abstract="1" glib:type-name="PangoRenderer" glib:get-type="pango_renderer_get_type" glib:type-struct="RendererClass">
@@ -11651,6 +11941,21 @@ of underlining.</doc>
     may automatically be used. This type of underlining is
     available since Pango 1.4.</doc>
       </member>
+      <member name="single_line" value="5" c:identifier="PANGO_UNDERLINE_SINGLE_LINE" glib:nick="single-line">
+        <doc xml:space="preserve">Like @PANGO_UNDERLINE_SINGLE, but
+    drawn continuously across multiple runs. This type
+    of underlining is available since Pango 1.46.</doc>
+      </member>
+      <member name="double_line" value="6" c:identifier="PANGO_UNDERLINE_DOUBLE_LINE" glib:nick="double-line">
+        <doc xml:space="preserve">Like @PANGO_UNDERLINE_DOUBLE, but
+    drawn continuously across multiple runs. This type
+    of underlining is available since Pango 1.46.</doc>
+      </member>
+      <member name="error_line" value="7" c:identifier="PANGO_UNDERLINE_ERROR_LINE" glib:nick="error-line">
+        <doc xml:space="preserve">Like @PANGO_UNDERLINE_ERROR, but
+    drawn continuously across multiple runs. This type
+    of underlining is available since Pango 1.46.</doc>
+      </member>
     </enumeration>
     <function-macro name="VERSION_CHECK" c:identifier="PANGO_VERSION_CHECK" introspectable="0">
       <doc xml:space="preserve">Checks that the version of Pango available at compile-time is not older than
@@ -12002,6 +12307,46 @@ of a word. This attribute can be used to suppress the hyphen.</doc>
           <doc xml:space="preserve">amount of extra space to add between graphemes
   of the text, in Pango units.</doc>
           <type name="gint" c:type="int"/>
+        </parameter>
+      </parameters>
+    </function>
+    <function name="attr_overline_color_new" c:identifier="pango_attr_overline_color_new" version="1.46">
+      <doc xml:space="preserve">Create a new overline color attribute. This attribute
+modifies the color of overlines. If not set, overlines
+will use the foreground color.</doc>
+      
+      <return-value transfer-ownership="full">
+        <doc xml:space="preserve">the newly allocated #PangoAttribute,
+              which should be freed with pango_attribute_destroy().</doc>
+        <type name="Attribute" c:type="PangoAttribute*"/>
+      </return-value>
+      <parameters>
+        <parameter name="red" transfer-ownership="none">
+          <doc xml:space="preserve">the red value (ranging from 0 to 65535)</doc>
+          <type name="guint16" c:type="guint16"/>
+        </parameter>
+        <parameter name="green" transfer-ownership="none">
+          <doc xml:space="preserve">the green value</doc>
+          <type name="guint16" c:type="guint16"/>
+        </parameter>
+        <parameter name="blue" transfer-ownership="none">
+          <doc xml:space="preserve">the blue value</doc>
+          <type name="guint16" c:type="guint16"/>
+        </parameter>
+      </parameters>
+    </function>
+    <function name="attr_overline_new" c:identifier="pango_attr_overline_new" version="1.46">
+      <doc xml:space="preserve">Create a new overline-style attribute.</doc>
+      
+      <return-value transfer-ownership="full">
+        <doc xml:space="preserve">the newly allocated #PangoAttribute,
+              which should be freed with pango_attribute_destroy().</doc>
+        <type name="Attribute" c:type="PangoAttribute*"/>
+      </return-value>
+      <parameters>
+        <parameter name="overline" transfer-ownership="none">
+          <doc xml:space="preserve">the overline style</doc>
+          <type name="Overline" c:type="PangoOverline"/>
         </parameter>
       </parameters>
     </function>

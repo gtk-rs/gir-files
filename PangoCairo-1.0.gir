@@ -12,14 +12,14 @@ and/or use gtk-doc annotations.  -->
     <function-macro name="FONT" c:identifier="PANGO_CAIRO_FONT" introspectable="0">
       
       <parameters>
-        <parameter name="object">
+        <parameter name="obj">
         </parameter>
       </parameters>
     </function-macro>
     <function-macro name="FONT_MAP" c:identifier="PANGO_CAIRO_FONT_MAP" introspectable="0">
       
       <parameters>
-        <parameter name="object">
+        <parameter name="obj">
         </parameter>
       </parameters>
     </function-macro>
@@ -33,7 +33,7 @@ on the particular font technology Cairo was compiled to use.</doc>
 The scaled font can be referenced and kept using
 cairo_scaled_font_reference().</doc>
         
-        <return-value transfer-ownership="full" nullable="1">
+        <return-value transfer-ownership="none" nullable="1">
           <doc xml:space="preserve">the #cairo_scaled_font_t used by @font,
               or %NULL if @font is %NULL.</doc>
           <type name="cairo.ScaledFont" c:type="cairo_scaled_font_t*"/>
@@ -213,6 +213,20 @@ units high. (10 * 96. / 72. = 13.3).</doc>
         </parameters>
       </method>
     </interface>
+    <function-macro name="IS_FONT" c:identifier="PANGO_CAIRO_IS_FONT" introspectable="0">
+      
+      <parameters>
+        <parameter name="obj">
+        </parameter>
+      </parameters>
+    </function-macro>
+    <function-macro name="IS_FONT_MAP" c:identifier="PANGO_CAIRO_IS_FONT_MAP" introspectable="0">
+      
+      <parameters>
+        <parameter name="obj">
+        </parameter>
+      </parameters>
+    </function-macro>
     <callback name="ShapeRendererFunc" c:type="PangoCairoShapeRendererFunc">
       <doc xml:space="preserve">Function type for rendering attributes of type %PANGO_ATTR_SHAPE
 with Pango's Cairo renderer.</doc>
@@ -237,7 +251,7 @@ to %TRUE when called from pango_cairo_layout_path() and
 pango_cairo_layout_line_path() rendering functions.</doc>
           <type name="gboolean" c:type="gboolean"/>
         </parameter>
-        <parameter name="data" transfer-ownership="none" nullable="1" allow-none="1">
+        <parameter name="data" transfer-ownership="none" nullable="1" allow-none="1" closure="3">
           <doc xml:space="preserve">user data passed to pango_cairo_context_set_shape_renderer()</doc>
           <type name="gpointer" c:type="gpointer"/>
         </parameter>
@@ -285,7 +299,7 @@ Retrieves callback function and associated user data for rendering
 attributes of type %PANGO_ATTR_SHAPE as set by
 pango_cairo_context_set_shape_renderer(), if any.</doc>
       
-      <return-value nullable="1">
+      <return-value transfer-ownership="none" nullable="1">
         <doc xml:space="preserve">the shape rendering callback previously
   set on the context, or %NULL if no shape rendering callback have
   been set.</doc>

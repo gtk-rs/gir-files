@@ -22,33 +22,19 @@ and/or use gtk-doc annotations.  -->
     <function-macro name="FONT_MAP" c:identifier="PANGO_XFT_FONT_MAP" introspectable="0">
       
       <parameters>
-        <parameter name="object">
+        <parameter name="obj">
         </parameter>
       </parameters>
     </function-macro>
     <class name="Font" c:symbol-prefix="font" c:type="PangoXftFont" parent="PangoFc.Font" glib:type-name="PangoXftFont" glib:get-type="pango_xft_font_get_type">
       <doc xml:space="preserve">#PangoXftFont is an implementation of #PangoFcFont using the Xft
 library for rendering.  It is used in conjunction with #PangoXftFontMap.</doc>
-      <function name="get_display" c:identifier="pango_xft_font_get_display" introspectable="0">
-        <doc xml:space="preserve">Returns the X display of the XftFont of a font.</doc>
-        
-        <return-value>
-          <doc xml:space="preserve">the X display of the XftFont associated to @font.</doc>
-          <type name="xlib.Display" c:type="Display*"/>
-        </return-value>
-        <parameters>
-          <parameter name="font" transfer-ownership="none">
-            <doc xml:space="preserve">a #PangoFont.</doc>
-            <type name="Pango.Font" c:type="PangoFont*"/>
-          </parameter>
-        </parameters>
-      </function>
       <function name="get_font" c:identifier="pango_xft_font_get_font" introspectable="0">
-        <doc xml:space="preserve">Returns the XftFont of a font.</doc>
+        <doc xml:space="preserve">Returns the `XftFont` of a font.</doc>
         
         <return-value nullable="1">
-          <doc xml:space="preserve">the XftFont associated to @font, or %NULL
-if @font is %NULL.</doc>
+          <doc xml:space="preserve">the `XftFont` associated to @font,
+  or %NULL if @font is %NULL.</doc>
           <type name="xft.Font" c:type="XftFont*"/>
         </return-value>
         <parameters>
@@ -58,7 +44,21 @@ if @font is %NULL.</doc>
           </parameter>
         </parameters>
       </function>
-      <function name="get_glyph" c:identifier="pango_xft_font_get_glyph" version="1.2">
+      <method name="get_display" c:identifier="pango_xft_font_get_display" introspectable="0">
+        <doc xml:space="preserve">Returns the X display of the `XftFont` of a font.</doc>
+        
+        <return-value transfer-ownership="none">
+          <doc xml:space="preserve">the X display of the XftFont associated to @font.</doc>
+          <type name="xlib.Display" c:type="Display*"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="font" transfer-ownership="none">
+            <doc xml:space="preserve">a #PangoFont.</doc>
+            <type name="Font" c:type="PangoFont*"/>
+          </instance-parameter>
+        </parameters>
+      </method>
+      <method name="get_glyph" c:identifier="pango_xft_font_get_glyph" version="1.2">
         <doc xml:space="preserve">Gets the glyph index for a given Unicode character
 for @font. If you only want to determine
 whether the font has the glyph, use pango_xft_font_has_char().
@@ -71,17 +71,17 @@ Use pango_fc_font_get_glyph() instead.</doc>
           <type name="guint" c:type="guint"/>
         </return-value>
         <parameters>
-          <parameter name="font" transfer-ownership="none">
+          <instance-parameter name="font" transfer-ownership="none">
             <doc xml:space="preserve">a #PangoFont for the Xft backend</doc>
-            <type name="Pango.Font" c:type="PangoFont*"/>
-          </parameter>
+            <type name="Font" c:type="PangoFont*"/>
+          </instance-parameter>
           <parameter name="wc" transfer-ownership="none">
             <doc xml:space="preserve">Unicode codepoint to look up</doc>
             <type name="gunichar" c:type="gunichar"/>
           </parameter>
         </parameters>
-      </function>
-      <function name="get_unknown_glyph" c:identifier="pango_xft_font_get_unknown_glyph">
+      </method>
+      <method name="get_unknown_glyph" c:identifier="pango_xft_font_get_unknown_glyph">
         <doc xml:space="preserve">Returns the index of a glyph suitable for drawing @wc as an
 unknown character.
 
@@ -92,17 +92,17 @@ Use PANGO_GET_UNKNOWN_GLYPH() instead.</doc>
           <type name="Pango.Glyph" c:type="PangoGlyph"/>
         </return-value>
         <parameters>
-          <parameter name="font" transfer-ownership="none">
+          <instance-parameter name="font" transfer-ownership="none">
             <doc xml:space="preserve">a #PangoFont.</doc>
-            <type name="Pango.Font" c:type="PangoFont*"/>
-          </parameter>
+            <type name="Font" c:type="PangoFont*"/>
+          </instance-parameter>
           <parameter name="wc" transfer-ownership="none">
             <doc xml:space="preserve">the Unicode character for which a glyph is needed.</doc>
             <type name="gunichar" c:type="gunichar"/>
           </parameter>
         </parameters>
-      </function>
-      <function name="has_char" c:identifier="pango_xft_font_has_char" version="1.2">
+      </method>
+      <method name="has_char" c:identifier="pango_xft_font_has_char" version="1.2">
         <doc xml:space="preserve">Determines whether @font has a glyph for the codepoint @wc.
 
 Use pango_fc_font_has_char() instead.</doc>
@@ -112,35 +112,35 @@ Use pango_fc_font_has_char() instead.</doc>
           <type name="gboolean" c:type="gboolean"/>
         </return-value>
         <parameters>
-          <parameter name="font" transfer-ownership="none">
+          <instance-parameter name="font" transfer-ownership="none">
             <doc xml:space="preserve">a #PangoFont for the Xft backend</doc>
-            <type name="Pango.Font" c:type="PangoFont*"/>
-          </parameter>
+            <type name="Font" c:type="PangoFont*"/>
+          </instance-parameter>
           <parameter name="wc" transfer-ownership="none">
             <doc xml:space="preserve">Unicode codepoint to look up</doc>
             <type name="gunichar" c:type="gunichar"/>
           </parameter>
         </parameters>
-      </function>
-      <function name="lock_face" c:identifier="pango_xft_font_lock_face" version="1.2" introspectable="0">
-        <doc xml:space="preserve">Gets the FreeType &lt;type&gt;FT_Face&lt;/type&gt; associated with a font,
-This face will be kept around until you call
-pango_xft_font_unlock_face().
+      </method>
+      <method name="lock_face" c:identifier="pango_xft_font_lock_face" version="1.2" introspectable="0">
+        <doc xml:space="preserve">Gets the FreeType `FT_Face` associated with a font.
+
+This face will be kept around until you call pango_xft_font_unlock_face().
 
 Use pango_fc_font_lock_face() instead.</doc>
         
         <return-value>
-          <doc xml:space="preserve">the FreeType &lt;type&gt;FT_Face&lt;/type&gt; associated with @font.</doc>
+          <doc xml:space="preserve">the FreeType `FT_Face` associated with @font.</doc>
           <type name="freetype2.Face" c:type="FT_Face"/>
         </return-value>
         <parameters>
-          <parameter name="font" transfer-ownership="none">
+          <instance-parameter name="font" transfer-ownership="none">
             <doc xml:space="preserve">a #PangoFont.</doc>
-            <type name="Pango.Font" c:type="PangoFont*"/>
-          </parameter>
+            <type name="Font" c:type="PangoFont*"/>
+          </instance-parameter>
         </parameters>
-      </function>
-      <function name="unlock_face" c:identifier="pango_xft_font_unlock_face" version="1.2">
+      </method>
+      <method name="unlock_face" c:identifier="pango_xft_font_unlock_face" version="1.2" introspectable="0">
         <doc xml:space="preserve">Releases a font previously obtained with
 pango_xft_font_lock_face().
 
@@ -150,12 +150,12 @@ Use pango_fc_font_unlock_face() instead.</doc>
           <type name="none" c:type="void"/>
         </return-value>
         <parameters>
-          <parameter name="font" transfer-ownership="none">
+          <instance-parameter name="font" transfer-ownership="none">
             <doc xml:space="preserve">a #PangoFont.</doc>
-            <type name="Pango.Font" c:type="PangoFont*"/>
-          </parameter>
+            <type name="Font" c:type="PangoFont*"/>
+          </instance-parameter>
         </parameters>
-      </function>
+      </method>
     </class>
     <class name="FontMap" c:symbol-prefix="font_map" c:type="PangoXftFontMap" parent="PangoFc.FontMap" glib:type-name="PangoXftFontMap" glib:get-type="pango_xft_font_map_get_type">
       <doc xml:space="preserve">#PangoXftFontMap is an implementation of #PangoFcFontMap suitable for
@@ -172,7 +172,21 @@ type #PangoXftFont.</doc>
     <function-macro name="IS_FONT_MAP" c:identifier="PANGO_XFT_IS_FONT_MAP" introspectable="0">
       
       <parameters>
+        <parameter name="obj">
+        </parameter>
+      </parameters>
+    </function-macro>
+    <function-macro name="IS_RENDERER" c:identifier="PANGO_XFT_IS_RENDERER" introspectable="0">
+      
+      <parameters>
         <parameter name="object">
+        </parameter>
+      </parameters>
+    </function-macro>
+    <function-macro name="IS_RENDERER_CLASS" c:identifier="PANGO_XFT_IS_RENDERER_CLASS" introspectable="0">
+      
+      <parameters>
+        <parameter name="klass">
         </parameter>
       </parameters>
     </function-macro>
