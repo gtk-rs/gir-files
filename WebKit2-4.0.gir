@@ -203,8 +203,10 @@ supplied. To continue without credentials, pass %NULL as @credential.</doc>
       <method name="can_save_credentials" c:identifier="webkit_authentication_request_can_save_credentials" version="2.2">
         <doc xml:space="preserve">Determine whether the authentication method associated with this
 #WebKitAuthenticationRequest should allow the storage of credentials.
-This will return %FALSE if WebKit doesn't support credential storing
-or if private browsing is enabled.</doc>
+This will return %FALSE if WebKit doesn't support credential storing,
+if private browsing is enabled, or if persistent credential storage has been
+disabled in #WebKitWebsiteDataManager, unless credentials saving has been
+explicitly enabled with webkit_authentication_request_set_can_save_credentials().</doc>
         
         <return-value transfer-ownership="none">
           <doc xml:space="preserve">%TRUE if WebKit can store credentials or %FALSE otherwise.</doc>
@@ -304,6 +306,20 @@ or %NULL if there is no stored credential.</doc>
           </instance-parameter>
         </parameters>
       </method>
+      <method name="get_security_origin" c:identifier="webkit_authentication_request_get_security_origin" version="2.30">
+        <doc xml:space="preserve">Get the #WebKitSecurityOrigin that this authentication challenge is applicable to.</doc>
+        
+        <return-value transfer-ownership="full">
+          <doc xml:space="preserve">a newly created #WebKitSecurityOrigin.</doc>
+          <type name="SecurityOrigin" c:type="WebKitSecurityOrigin*"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="request" transfer-ownership="none">
+            <doc xml:space="preserve">a #WebKitAuthenticationRequest</doc>
+            <type name="AuthenticationRequest" c:type="WebKitAuthenticationRequest*"/>
+          </instance-parameter>
+        </parameters>
+      </method>
       <method name="is_for_proxy" c:identifier="webkit_authentication_request_is_for_proxy" version="2.2">
         <doc xml:space="preserve">Determine whether the authentication challenge is associated with a proxy server rather than an "origin" server.</doc>
         
@@ -332,12 +348,71 @@ or %NULL if there is no stored credential.</doc>
           </instance-parameter>
         </parameters>
       </method>
+      <method name="set_can_save_credentials" c:identifier="webkit_authentication_request_set_can_save_credentials" version="2.30">
+        <doc xml:space="preserve">Set whether the authentication method associated with @request
+should allow the storage of credentials.
+This should be used by applications handling their own credentials
+storage to indicate that it should be supported even when internal
+credential storage is disabled or unsupported.
+Note that storing of credentials will not be allowed on ephemeral
+sessions in any case.</doc>
+        
+        <return-value transfer-ownership="none">
+          <type name="none" c:type="void"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="request" transfer-ownership="none">
+            <doc xml:space="preserve">a #WebKitAuthenticationRequest</doc>
+            <type name="AuthenticationRequest" c:type="WebKitAuthenticationRequest*"/>
+          </instance-parameter>
+          <parameter name="enabled" transfer-ownership="none">
+            <doc xml:space="preserve">value to set</doc>
+            <type name="gboolean" c:type="gboolean"/>
+          </parameter>
+        </parameters>
+      </method>
+      <method name="set_proposed_credential" c:identifier="webkit_authentication_request_set_proposed_credential" version="2.30">
+        <doc xml:space="preserve">Set the #WebKitCredential of the proposed authentication challenge that was
+stored from a previous session. This should only be used by applications handling
+their own credential storage. (When using the default WebKit credential storage,
+webkit_authentication_request_get_proposed_credential() already contains previously-stored
+credentials.)
+Passing a %NULL @credential will clear the proposed credential.</doc>
+        
+        <return-value transfer-ownership="none">
+          <type name="none" c:type="void"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="request" transfer-ownership="none">
+            <doc xml:space="preserve">a #WebKitAuthenticationRequest</doc>
+            <type name="AuthenticationRequest" c:type="WebKitAuthenticationRequest*"/>
+          </instance-parameter>
+          <parameter name="credential" transfer-ownership="none">
+            <doc xml:space="preserve">a #WebKitCredential, or %NULL</doc>
+            <type name="Credential" c:type="WebKitCredential*"/>
+          </parameter>
+        </parameters>
+      </method>
       <field name="parent">
         <type name="GObject.Object" c:type="GObject"/>
       </field>
       <field name="priv" readable="0" private="1">
         <type name="AuthenticationRequestPrivate" c:type="WebKitAuthenticationRequestPrivate*"/>
       </field>
+      <glib:signal name="authenticated" when="last" version="2.30">
+        <doc xml:space="preserve">This signal is emitted when the user authentication request succeeded.
+Applications handling their own credential storage should connect to
+this signal to save the credentials.</doc>
+        <return-value transfer-ownership="none">
+          <type name="none" c:type="void"/>
+        </return-value>
+        <parameters>
+          <parameter name="credential" transfer-ownership="none">
+            <doc xml:space="preserve">the #WebKitCredential accepted</doc>
+            <type name="Credential"/>
+          </parameter>
+        </parameters>
+      </glib:signal>
       <glib:signal name="cancelled" when="last" version="2.2">
         <doc xml:space="preserve">This signal is emitted when the user authentication request is
 cancelled. It allows the application to dismiss its authentication
@@ -549,6 +624,19 @@ or tab shouldn't be focused.</doc>
     <record name="AutomationSessionPrivate" c:type="WebKitAutomationSessionPrivate" disguised="1">
       
     </record>
+    <enumeration name="AutoplayPolicy" version="2.30" glib:type-name="WebKitAutoplayPolicy" glib:get-type="webkit_autoplay_policy_get_type" c:type="WebKitAutoplayPolicy">
+      <doc xml:space="preserve">Enum values used to specify autoplay policies.</doc>
+      <member name="allow" value="0" c:identifier="WEBKIT_AUTOPLAY_ALLOW" glib:nick="allow">
+        <doc xml:space="preserve">Do not restrict autoplay.</doc>
+      </member>
+      <member name="allow_without_sound" value="1" c:identifier="WEBKIT_AUTOPLAY_ALLOW_WITHOUT_SOUND" glib:nick="allow-without-sound">
+        <doc xml:space="preserve">Allow videos to autoplay if
+    they have no audio track, or if their audio track is muted.</doc>
+      </member>
+      <member name="deny" value="2" c:identifier="WEBKIT_AUTOPLAY_DENY" glib:nick="deny">
+        <doc xml:space="preserve">Never allow autoplay.</doc>
+      </member>
+    </enumeration>
     <function-macro name="BACK_FORWARD_LIST" c:identifier="WEBKIT_BACK_FORWARD_LIST" introspectable="0">
       
       <parameters>
@@ -1544,6 +1632,9 @@ If the @user_data #GVariant is floating, it is consumed.</doc>
       <member name="insert_emoji" value="44" c:identifier="WEBKIT_CONTEXT_MENU_ACTION_INSERT_EMOJI" glib:nick="insert-emoji">
         <doc xml:space="preserve">Insert an emoji. Since 2.26</doc>
       </member>
+      <member name="paste_as_plain_text" value="45" c:identifier="WEBKIT_CONTEXT_MENU_ACTION_PASTE_AS_PLAIN_TEXT" glib:nick="paste-as-plain-text">
+        <doc xml:space="preserve">Paste clipboard contents as plain text. Since 2.30</doc>
+      </member>
       <member name="custom" value="10000" c:identifier="WEBKIT_CONTEXT_MENU_ACTION_CUSTOM" glib:nick="custom">
         <doc xml:space="preserve">Custom action defined by applications.</doc>
       </member>
@@ -1631,10 +1722,10 @@ If the @user_data #GVariant is floating, it is consumed.</doc>
 Stock actions are handled automatically by WebKit so that, for example,
 when a menu item created with a %WEBKIT_CONTEXT_MENU_ACTION_STOP is
 activated the action associated will be handled by WebKit and the current
-load operation will be stopped. You can get the #GtkAction of a
+load operation will be stopped. You can get the #GAction of a
 #WebKitContextMenuItem created with a #WebKitContextMenuAction with
-webkit_context_menu_item_get_action() and connect to #GtkAction::activate signal
-to be notified when the item is activated. But you can't prevent the associated
+webkit_context_menu_item_get_gaction() and connect to the #GSimpleAction::activate signal
+to be notified when the item is activated, but you can't prevent the associated
 action from being performed.</doc>
         
         <return-value transfer-ownership="none">
@@ -1988,6 +2079,9 @@ webkit_cookie_manager_delete_cookie_finish() to get the result of the operation.
       </method>
       <method name="get_accept_policy" c:identifier="webkit_cookie_manager_get_accept_policy">
         <doc xml:space="preserve">Asynchronously get the cookie acceptance policy of @cookie_manager.
+Note that when policy was set to %WEBKIT_COOKIE_POLICY_ACCEPT_NO_THIRD_PARTY and
+ITP is enabled, this will return %WEBKIT_COOKIE_POLICY_ACCEPT_ALWAYS.
+See also webkit_website_data_manager_set_itp_enabled().
 
 When the operation is finished, @callback will be called. You can then call
 webkit_cookie_manager_get_accept_policy_finish() to get the result of the operation.</doc>
@@ -2141,7 +2235,11 @@ be released with g_strfreev().</doc>
         </parameters>
       </method>
       <method name="set_accept_policy" c:identifier="webkit_cookie_manager_set_accept_policy">
-        <doc xml:space="preserve">Set the cookie acceptance policy of @cookie_manager as @policy.</doc>
+        <doc xml:space="preserve">Set the cookie acceptance policy of @cookie_manager as @policy.
+Note that ITP has its own way to handle third-party cookies, so when it's enabled,
+and @policy is set to %WEBKIT_COOKIE_POLICY_ACCEPT_NO_THIRD_PARTY, %WEBKIT_COOKIE_POLICY_ACCEPT_ALWAYS
+will be used instead. Once disabled, the policy will be set back to %WEBKIT_COOKIE_POLICY_ACCEPT_NO_THIRD_PARTY.
+See also webkit_website_data_manager_set_itp_enabled().</doc>
         
         <return-value transfer-ownership="none">
           <type name="none" c:type="void"/>
@@ -2892,6 +2990,16 @@ webkit_web_view_execute_editing_command_with_argument().</doc>
     <constant name="EDITING_COMMAND_PASTE" value="Paste" c:type="WEBKIT_EDITING_COMMAND_PASTE">
       <doc xml:space="preserve">The paste clipboard command. Pastes the contents of the clipboard to
 a #WebKitWebView.
+You can check whether it's possible to execute the command with
+webkit_web_view_can_execute_editing_command(). In general it's possible
+to paste from the clipboard when the #WebKitWebView content is editable
+and clipboard is not empty.</doc>
+      
+      <type name="utf8" c:type="gchar*"/>
+    </constant>
+    <constant name="EDITING_COMMAND_PASTE_AS_PLAIN_TEXT" value="PasteAsPlainText" c:type="WEBKIT_EDITING_COMMAND_PASTE_AS_PLAIN_TEXT" version="2.30">
+      <doc xml:space="preserve">The paste as plaintext clipboard command. Pastes the contents of the
+clipboard to a #WebKitWebView, with formatting removed.
 You can check whether it's possible to execute the command with
 webkit_web_view_can_execute_editing_command(). In general it's possible
 to paste from the clipboard when the #WebKitWebView content is editable
@@ -5294,6 +5402,20 @@ is present in #WebKitHitTestResult:context</doc>
         </parameter>
       </parameters>
     </function-macro>
+    <function-macro name="IS_WEBSITE_DATA_ACCESS_PERMISSION_REQUEST" c:identifier="WEBKIT_IS_WEBSITE_DATA_ACCESS_PERMISSION_REQUEST" introspectable="0">
+      
+      <parameters>
+        <parameter name="obj">
+        </parameter>
+      </parameters>
+    </function-macro>
+    <function-macro name="IS_WEBSITE_DATA_ACCESS_PERMISSION_REQUEST_CLASS" c:identifier="WEBKIT_IS_WEBSITE_DATA_ACCESS_PERMISSION_REQUEST_CLASS" introspectable="0">
+      
+      <parameters>
+        <parameter name="klass">
+        </parameter>
+      </parameters>
+    </function-macro>
     <function-macro name="IS_WEBSITE_DATA_MANAGER" c:identifier="WEBKIT_IS_WEBSITE_DATA_MANAGER" introspectable="0">
       
       <parameters>
@@ -5302,6 +5424,20 @@ is present in #WebKitHitTestResult:context</doc>
       </parameters>
     </function-macro>
     <function-macro name="IS_WEBSITE_DATA_MANAGER_CLASS" c:identifier="WEBKIT_IS_WEBSITE_DATA_MANAGER_CLASS" introspectable="0">
+      
+      <parameters>
+        <parameter name="klass">
+        </parameter>
+      </parameters>
+    </function-macro>
+    <function-macro name="IS_WEBSITE_POLICIES" c:identifier="WEBKIT_IS_WEBSITE_POLICIES" introspectable="0">
+      
+      <parameters>
+        <parameter name="obj">
+        </parameter>
+      </parameters>
+    </function-macro>
+    <function-macro name="IS_WEBSITE_POLICIES_CLASS" c:identifier="WEBKIT_IS_WEBSITE_POLICIES_CLASS" introspectable="0">
       
       <parameters>
         <parameter name="klass">
@@ -5392,6 +5528,150 @@ is present in #WebKitHitTestResult:context</doc>
         </parameter>
       </parameters>
     </function-macro>
+    <record name="ITPFirstParty" c:type="WebKitITPFirstParty" glib:type-name="WebKitITPFirstParty" glib:get-type="webkit_itp_first_party_get_type" c:symbol-prefix="itp_first_party">
+      
+      <method name="get_domain" c:identifier="webkit_itp_first_party_get_domain" version="2.30">
+        <doc xml:space="preserve">Get the domain name of @itp_first_party</doc>
+        
+        <return-value transfer-ownership="none">
+          <doc xml:space="preserve">the domain name</doc>
+          <type name="utf8" c:type="const char*"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="itp_first_party" transfer-ownership="none">
+            <doc xml:space="preserve">a #WebKitITPFirstParty</doc>
+            <type name="ITPFirstParty" c:type="WebKitITPFirstParty*"/>
+          </instance-parameter>
+        </parameters>
+      </method>
+      <method name="get_last_update_time" c:identifier="webkit_itp_first_party_get_last_update_time" version="2.30">
+        <doc xml:space="preserve">Get the last time a #WebKitITPThirdParty has been seen under @itp_first_party.
+Each @WebKitITPFirstParty is created by webkit_itp_third_party_get_first_parties() and
+therefore corresponds to exactly one #WebKitITPThirdParty.</doc>
+        
+        <return-value transfer-ownership="none">
+          <doc xml:space="preserve">the last update time as a #GDateTime</doc>
+          <type name="GLib.DateTime" c:type="GDateTime*"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="itp_first_party" transfer-ownership="none">
+            <doc xml:space="preserve">a #WebKitITPFirstParty</doc>
+            <type name="ITPFirstParty" c:type="WebKitITPFirstParty*"/>
+          </instance-parameter>
+        </parameters>
+      </method>
+      <method name="get_website_data_access_allowed" c:identifier="webkit_itp_first_party_get_website_data_access_allowed" version="2.30">
+        <doc xml:space="preserve">Get whether @itp_first_party has granted website data access to its #WebKitITPThirdParty.
+Each @WebKitITPFirstParty is created by webkit_itp_third_party_get_first_parties() and
+therefore corresponds to exactly one #WebKitITPThirdParty.</doc>
+        
+        <return-value transfer-ownership="none">
+          <doc xml:space="preserve">%TRUE if website data access has been granted, or %FALSE otherwise</doc>
+          <type name="gboolean" c:type="gboolean"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="itp_first_party" transfer-ownership="none">
+            <doc xml:space="preserve">a #WebKitITPFirstParty</doc>
+            <type name="ITPFirstParty" c:type="WebKitITPFirstParty*"/>
+          </instance-parameter>
+        </parameters>
+      </method>
+      <method name="ref" c:identifier="webkit_itp_first_party_ref" version="2.30">
+        <doc xml:space="preserve">Atomically increments the reference count of @itp_first_party by one.
+This function is MT-safe and may be called from any thread.</doc>
+        
+        <return-value transfer-ownership="full">
+          <doc xml:space="preserve">The passed #WebKitITPFirstParty</doc>
+          <type name="ITPFirstParty" c:type="WebKitITPFirstParty*"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="itp_first_party" transfer-ownership="none">
+            <doc xml:space="preserve">a #WebKitITPFirstParty</doc>
+            <type name="ITPFirstParty" c:type="WebKitITPFirstParty*"/>
+          </instance-parameter>
+        </parameters>
+      </method>
+      <method name="unref" c:identifier="webkit_itp_first_party_unref" version="2.30">
+        <doc xml:space="preserve">Atomically decrements the reference count of @itp_first_party by one.
+If the reference count drops to 0, all memory allocated by
+#WebKitITPFirstParty is released. This function is MT-safe and may be
+called from any thread.</doc>
+        
+        <return-value transfer-ownership="none">
+          <type name="none" c:type="void"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="itp_first_party" transfer-ownership="none">
+            <doc xml:space="preserve">a #WebKitITPFirstParty</doc>
+            <type name="ITPFirstParty" c:type="WebKitITPFirstParty*"/>
+          </instance-parameter>
+        </parameters>
+      </method>
+    </record>
+    <record name="ITPThirdParty" c:type="WebKitITPThirdParty" glib:type-name="WebKitITPThirdParty" glib:get-type="webkit_itp_third_party_get_type" c:symbol-prefix="itp_third_party">
+      
+      <method name="get_domain" c:identifier="webkit_itp_third_party_get_domain" version="2.30">
+        <doc xml:space="preserve">Get the domain name of @itp_third_party</doc>
+        
+        <return-value transfer-ownership="none">
+          <doc xml:space="preserve">the domain name</doc>
+          <type name="utf8" c:type="const char*"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="itp_third_party" transfer-ownership="none">
+            <doc xml:space="preserve">a #WebKitITPThirdParty</doc>
+            <type name="ITPThirdParty" c:type="WebKitITPThirdParty*"/>
+          </instance-parameter>
+        </parameters>
+      </method>
+      <method name="get_first_parties" c:identifier="webkit_itp_third_party_get_first_parties" version="2.30">
+        <doc xml:space="preserve">Get the list of #WebKitITPFirstParty under which @itp_third_party has been seen.</doc>
+        
+        <return-value transfer-ownership="none">
+          <doc xml:space="preserve">a #GList of #WebKitITPFirstParty</doc>
+          <type name="GLib.List" c:type="GList*">
+            <type name="ITPFirstParty"/>
+          </type>
+        </return-value>
+        <parameters>
+          <instance-parameter name="itp_third_party" transfer-ownership="none">
+            <doc xml:space="preserve">a #WebKitITPThirdParty</doc>
+            <type name="ITPThirdParty" c:type="WebKitITPThirdParty*"/>
+          </instance-parameter>
+        </parameters>
+      </method>
+      <method name="ref" c:identifier="webkit_itp_third_party_ref" version="2.30">
+        <doc xml:space="preserve">Atomically increments the reference count of @itp_third_party by one.
+This function is MT-safe and may be called from any thread.</doc>
+        
+        <return-value transfer-ownership="full">
+          <doc xml:space="preserve">The passed #WebKitITPThirdParty</doc>
+          <type name="ITPThirdParty" c:type="WebKitITPThirdParty*"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="itp_third_party" transfer-ownership="none">
+            <doc xml:space="preserve">a #WebKitITPThirdParty</doc>
+            <type name="ITPThirdParty" c:type="WebKitITPThirdParty*"/>
+          </instance-parameter>
+        </parameters>
+      </method>
+      <method name="unref" c:identifier="webkit_itp_third_party_unref" version="2.30">
+        <doc xml:space="preserve">Atomically decrements the reference count of @itp_third_party by one.
+If the reference count drops to 0, all memory allocated by
+#WebKitITPThirdParty is released. This function is MT-safe and may be
+called from any thread.</doc>
+        
+        <return-value transfer-ownership="none">
+          <type name="none" c:type="void"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="itp_third_party" transfer-ownership="none">
+            <doc xml:space="preserve">a #WebKitITPThirdParty</doc>
+            <type name="ITPThirdParty" c:type="WebKitITPThirdParty*"/>
+          </instance-parameter>
+        </parameters>
+      </method>
+    </record>
     <bitfield name="InputHints" version="2.28" glib:type-name="WebKitInputHints" glib:get-type="webkit_input_hints_get_type" c:type="WebKitInputHints">
       <doc xml:space="preserve">Enum values used to describe hints that might be taken into account by input methods.</doc>
       <member name="none" value="0" c:identifier="WEBKIT_INPUT_HINT_NONE" glib:nick="none">
@@ -6534,14 +6814,14 @@ against at application run time.</doc>
       
       <type name="gint" c:type="gint"/>
     </constant>
-    <constant name="MICRO_VERSION" value="2" c:type="WEBKIT_MICRO_VERSION">
+    <constant name="MICRO_VERSION" value="1" c:type="WEBKIT_MICRO_VERSION">
       <doc xml:space="preserve">Like webkit_get_micro_version(), but from the headers used at
 application compile time, rather than from the library linked
 against at application run time.</doc>
       
       <type name="gint" c:type="gint"/>
     </constant>
-    <constant name="MINOR_VERSION" value="28" c:type="WEBKIT_MINOR_VERSION">
+    <constant name="MINOR_VERSION" value="30" c:type="WEBKIT_MINOR_VERSION">
       <doc xml:space="preserve">Like webkit_get_minor_version(), but from the headers used at
 application compile time, rather than from the library linked
 against at application run time.</doc>
@@ -8061,6 +8341,29 @@ as a list of #WebKitMimeInfo.</doc>
             <doc xml:space="preserve">a #WebKitPolicyDecision</doc>
             <type name="PolicyDecision" c:type="WebKitPolicyDecision*"/>
           </instance-parameter>
+        </parameters>
+      </method>
+      <method name="use_with_policies" c:identifier="webkit_policy_decision_use_with_policies" version="2.30">
+        <doc xml:space="preserve">Accept the navigation action which triggered this decision, and
+continue with @policies affecting all subsequent loads of resources
+in the origin associated with the accepted navigation action.
+
+For example, a navigation decision to a video sharing website may
+be accepted under the priviso no movies are allowed to autoplay. The
+autoplay policy in this case would be set in the @policies.</doc>
+        
+        <return-value transfer-ownership="none">
+          <type name="none" c:type="void"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="decision" transfer-ownership="none">
+            <doc xml:space="preserve">a #WebKitPolicyDecision</doc>
+            <type name="PolicyDecision" c:type="WebKitPolicyDecision*"/>
+          </instance-parameter>
+          <parameter name="policies" transfer-ownership="none">
+            <doc xml:space="preserve">a #WebKitWebsitePolicies</doc>
+            <type name="WebsitePolicies" c:type="WebKitWebsitePolicies*"/>
+          </parameter>
         </parameters>
       </method>
       <field name="parent">
@@ -10144,6 +10447,20 @@ otherwise.</doc>
           </instance-parameter>
         </parameters>
       </method>
+      <method name="get_media_content_types_requiring_hardware_support" c:identifier="webkit_settings_get_media_content_types_requiring_hardware_support" version="2.30">
+        <doc xml:space="preserve">Gets the #WebKitSettings:media-content-types-requiring-hardware-support property.</doc>
+        
+        <return-value transfer-ownership="none">
+          <doc xml:space="preserve">Media content types requiring hardware support, or %NULL.</doc>
+          <type name="utf8" c:type="const gchar*"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="settings" transfer-ownership="none">
+            <doc xml:space="preserve">a #WebKitSettings</doc>
+            <type name="Settings" c:type="WebKitSettings*"/>
+          </instance-parameter>
+        </parameters>
+      </method>
       <method name="get_media_playback_allows_inline" c:identifier="webkit_settings_get_media_playback_allows_inline">
         <doc xml:space="preserve">Get the #WebKitSettings:media-playback-allows-inline property.</doc>
         
@@ -11104,6 +11421,23 @@ otherwise.</doc>
           </parameter>
         </parameters>
       </method>
+      <method name="set_media_content_types_requiring_hardware_support" c:identifier="webkit_settings_set_media_content_types_requiring_hardware_support" version="2.30">
+        <doc xml:space="preserve">Set the #WebKitSettings:media-content-types-requiring-hardware-support property.</doc>
+        
+        <return-value transfer-ownership="none">
+          <type name="none" c:type="void"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="settings" transfer-ownership="none">
+            <doc xml:space="preserve">a #WebKitSettings</doc>
+            <type name="Settings" c:type="WebKitSettings*"/>
+          </instance-parameter>
+          <parameter name="content_types" transfer-ownership="none" nullable="1" allow-none="1">
+            <doc xml:space="preserve">list of media content types requiring hardware support split by semicolons (:) or %NULL to use the default value.</doc>
+            <type name="utf8" c:type="const gchar*"/>
+          </parameter>
+        </parameters>
+      </method>
       <method name="set_media_playback_allows_inline" c:identifier="webkit_settings_set_media_playback_allows_inline">
         <doc xml:space="preserve">Set the #WebKitSettings:media-playback-allows-inline property.</doc>
         
@@ -11315,10 +11649,10 @@ signal will be emitted.</doc>
         <type name="gboolean" c:type="gboolean"/>
       </property>
       <property name="allow-top-navigation-to-data-urls" version="2.28" writable="1" construct="1" transfer-ownership="none">
-        <doc xml:space="preserve">Whether or not the top frame is allowed to navigate to data URLs. It is encouraged to disable it
+        <doc xml:space="preserve">Whether or not the top frame is allowed to navigate to data URLs. It is disabled by default
 due to the risk it poses when loading untrusted URLs, with data URLs being used in scamming
 and phishing attacks. In contrast, a scenario where it could be enabled could be an app that
-embeds a WebView and you have control of the pages being shown instead of a generic browser.</doc>
+embeds a WebView and you have control of the pages being show instead of a generic browser.</doc>
         <type name="gboolean" c:type="gboolean"/>
       </property>
       <property name="allow-universal-access-from-file-urls" version="2.14" writable="1" construct="1" transfer-ownership="none">
@@ -11600,6 +11934,11 @@ intervention.</doc>
         <doc xml:space="preserve">Determines whether a site can load favicons irrespective
 of the value of #WebKitSettings:auto-load-images.</doc>
         <type name="gboolean" c:type="gboolean"/>
+      </property>
+      <property name="media-content-types-requiring-hardware-support" version="2.30" writable="1" construct="1" transfer-ownership="none">
+        <doc xml:space="preserve">List of media content types requiring hardware support, split by semicolons (:).
+For example: 'video/webm; codecs="vp*":video/mp4; codecs="avc*":video/&amp;ast; codecs="av1*"'.</doc>
+        <type name="utf8" c:type="gchar*"/>
       </property>
       <property name="media-playback-allows-inline" writable="1" construct="1" transfer-ownership="none">
         <doc xml:space="preserve">Whether media playback is full-screen only or inline playback is allowed.
@@ -13350,9 +13689,9 @@ allowed.</doc>
       
       <constructor name="new" c:identifier="webkit_user_script_new" version="2.6">
         <doc xml:space="preserve">Creates a new user script. Scripts can be applied to some URIs
-only by passing non-null values for @whitelist or @blacklist. Passing a
-%NULL whitelist implies that all URIs are on the whitelist. The script
-is applied if an URI matches the whitelist and not the blacklist.
+only by passing non-null values for @allow_list or @block_list. Passing a
+%NULL allow_list implies that all URIs are on the allow_list. The script
+is applied if an URI matches the allow_list and not the block_list.
 URI patterns must be of the form `[protocol]://[host]/[path]`, where the
 *host* and *path* components can contain the wildcard character (`*`) to
 represent zero or more other characters.</doc>
@@ -13374,14 +13713,14 @@ represent zero or more other characters.</doc>
             <doc xml:space="preserve">A #WebKitUserScriptInjectionTime value</doc>
             <type name="UserScriptInjectionTime" c:type="WebKitUserScriptInjectionTime"/>
           </parameter>
-          <parameter name="whitelist" transfer-ownership="none" nullable="1" allow-none="1">
-            <doc xml:space="preserve">A whitelist of URI patterns or %NULL</doc>
+          <parameter name="allow_list" transfer-ownership="none" nullable="1" allow-none="1">
+            <doc xml:space="preserve">An allow_list of URI patterns or %NULL</doc>
             <array c:type="const gchar* const*">
               <type name="utf8" c:type="gchar*"/>
             </array>
           </parameter>
-          <parameter name="blacklist" transfer-ownership="none" nullable="1" allow-none="1">
-            <doc xml:space="preserve">A blacklist of URI patterns or %NULL</doc>
+          <parameter name="block_list" transfer-ownership="none" nullable="1" allow-none="1">
+            <doc xml:space="preserve">A block_list of URI patterns or %NULL</doc>
             <array c:type="const gchar* const*">
               <type name="utf8" c:type="gchar*"/>
             </array>
@@ -13413,14 +13752,14 @@ See webkit_user_script_new() for a full description.</doc>
             <doc xml:space="preserve">the name of a #WebKitScriptWorld</doc>
             <type name="utf8" c:type="const gchar*"/>
           </parameter>
-          <parameter name="whitelist" transfer-ownership="none" nullable="1" allow-none="1">
-            <doc xml:space="preserve">A whitelist of URI patterns or %NULL</doc>
+          <parameter name="allow_list" transfer-ownership="none" nullable="1" allow-none="1">
+            <doc xml:space="preserve">An allow_list of URI patterns or %NULL</doc>
             <array c:type="const gchar* const*">
               <type name="utf8" c:type="gchar*"/>
             </array>
           </parameter>
-          <parameter name="blacklist" transfer-ownership="none" nullable="1" allow-none="1">
-            <doc xml:space="preserve">A blacklist of URI patterns or %NULL</doc>
+          <parameter name="block_list" transfer-ownership="none" nullable="1" allow-none="1">
+            <doc xml:space="preserve">A block_list of URI patterns or %NULL</doc>
             <array c:type="const gchar* const*">
               <type name="utf8" c:type="gchar*"/>
             </array>
@@ -13486,9 +13825,9 @@ from any thread.</doc>
       
       <constructor name="new" c:identifier="webkit_user_style_sheet_new" version="2.6">
         <doc xml:space="preserve">Creates a new user style sheet. Style sheets can be applied to some URIs
-only by passing non-null values for @whitelist or @blacklist. Passing a
-%NULL whitelist implies that all URIs are on the whitelist. The style
-sheet is applied if an URI matches the whitelist and not the blacklist.
+only by passing non-null values for @allow_list or @block_list. Passing a
+%NULL allow_list implies that all URIs are on the allow_list. The style
+sheet is applied if an URI matches the allow_list and not the block_list.
 URI patterns must be of the form `[protocol]://[host]/[path]`, where the
 *host* and *path* components can contain the wildcard character (`*`) to
 represent zero or more other characters.</doc>
@@ -13510,14 +13849,14 @@ represent zero or more other characters.</doc>
             <doc xml:space="preserve">A #WebKitUserStyleLevel</doc>
             <type name="UserStyleLevel" c:type="WebKitUserStyleLevel"/>
           </parameter>
-          <parameter name="whitelist" transfer-ownership="none" nullable="1" allow-none="1">
-            <doc xml:space="preserve">A whitelist of URI patterns or %NULL</doc>
+          <parameter name="allow_list" transfer-ownership="none" nullable="1" allow-none="1">
+            <doc xml:space="preserve">An allow_list of URI patterns or %NULL</doc>
             <array c:type="const gchar* const*">
               <type name="utf8" c:type="gchar*"/>
             </array>
           </parameter>
-          <parameter name="blacklist" transfer-ownership="none" nullable="1" allow-none="1">
-            <doc xml:space="preserve">A blacklist of URI patterns or %NULL</doc>
+          <parameter name="block_list" transfer-ownership="none" nullable="1" allow-none="1">
+            <doc xml:space="preserve">A block_list of URI patterns or %NULL</doc>
             <array c:type="const gchar* const*">
               <type name="utf8" c:type="gchar*"/>
             </array>
@@ -13549,14 +13888,14 @@ See webkit_user_style_sheet_new() for a full description.</doc>
             <doc xml:space="preserve">the name of a #WebKitScriptWorld</doc>
             <type name="utf8" c:type="const gchar*"/>
           </parameter>
-          <parameter name="whitelist" transfer-ownership="none" nullable="1" allow-none="1">
-            <doc xml:space="preserve">A whitelist of URI patterns or %NULL</doc>
+          <parameter name="allow_list" transfer-ownership="none" nullable="1" allow-none="1">
+            <doc xml:space="preserve">An allow_list of URI patterns or %NULL</doc>
             <array c:type="const gchar* const*">
               <type name="utf8" c:type="gchar*"/>
             </array>
           </parameter>
-          <parameter name="blacklist" transfer-ownership="none" nullable="1" allow-none="1">
-            <doc xml:space="preserve">A blacklist of URI patterns or %NULL</doc>
+          <parameter name="block_list" transfer-ownership="none" nullable="1" allow-none="1">
+            <doc xml:space="preserve">A block_list of URI patterns or %NULL</doc>
             <array c:type="const gchar* const*">
               <type name="utf8" c:type="gchar*"/>
             </array>
@@ -13595,6 +13934,27 @@ called from any thread.</doc>
         </parameters>
       </method>
     </record>
+    <function-macro name="WEBSITE_DATA_ACCESS_PERMISSION_REQUEST" c:identifier="WEBKIT_WEBSITE_DATA_ACCESS_PERMISSION_REQUEST" introspectable="0">
+      
+      <parameters>
+        <parameter name="obj">
+        </parameter>
+      </parameters>
+    </function-macro>
+    <function-macro name="WEBSITE_DATA_ACCESS_PERMISSION_REQUEST_CLASS" c:identifier="WEBKIT_WEBSITE_DATA_ACCESS_PERMISSION_REQUEST_CLASS" introspectable="0">
+      
+      <parameters>
+        <parameter name="klass">
+        </parameter>
+      </parameters>
+    </function-macro>
+    <function-macro name="WEBSITE_DATA_ACCESS_PERMISSION_REQUEST_GET_CLASS" c:identifier="WEBKIT_WEBSITE_DATA_ACCESS_PERMISSION_REQUEST_GET_CLASS" introspectable="0">
+      
+      <parameters>
+        <parameter name="obj">
+        </parameter>
+      </parameters>
+    </function-macro>
     <function-macro name="WEBSITE_DATA_MANAGER" c:identifier="WEBKIT_WEBSITE_DATA_MANAGER" introspectable="0">
       
       <parameters>
@@ -13610,6 +13970,27 @@ called from any thread.</doc>
       </parameters>
     </function-macro>
     <function-macro name="WEBSITE_DATA_MANAGER_GET_CLASS" c:identifier="WEBKIT_WEBSITE_DATA_MANAGER_GET_CLASS" introspectable="0">
+      
+      <parameters>
+        <parameter name="obj">
+        </parameter>
+      </parameters>
+    </function-macro>
+    <function-macro name="WEBSITE_POLICIES" c:identifier="WEBKIT_WEBSITE_POLICIES" introspectable="0">
+      
+      <parameters>
+        <parameter name="obj">
+        </parameter>
+      </parameters>
+    </function-macro>
+    <function-macro name="WEBSITE_POLICIES_CLASS" c:identifier="WEBKIT_WEBSITE_POLICIES_CLASS" introspectable="0">
+      
+      <parameters>
+        <parameter name="klass">
+        </parameter>
+      </parameters>
+    </function-macro>
+    <function-macro name="WEBSITE_POLICIES_GET_CLASS" c:identifier="WEBKIT_WEBSITE_POLICIES_GET_CLASS" introspectable="0">
       
       <parameters>
         <parameter name="obj">
@@ -14160,6 +14541,20 @@ details on the format of the languages in the list.</doc>
           </instance-parameter>
         </parameters>
       </method>
+      <method name="get_use_system_appearance_for_scrollbars" c:identifier="webkit_web_context_get_use_system_appearance_for_scrollbars" version="2.30">
+        <doc xml:space="preserve">Get the #WebKitWebContext:use-system-appearance-for-scrollbars property.</doc>
+        
+        <return-value transfer-ownership="none">
+          <doc xml:space="preserve">%TRUE if scrollbars are rendering using the system appearance, or %FALSE otherwise</doc>
+          <type name="gboolean" c:type="gboolean"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="context" transfer-ownership="none">
+            <doc xml:space="preserve">a #WebKitWebContext</doc>
+            <type name="WebContext" c:type="WebKitWebContext*"/>
+          </instance-parameter>
+        </parameters>
+      </method>
       <method name="get_web_process_count_limit" c:identifier="webkit_web_context_get_web_process_count_limit" version="2.10" deprecated="1" deprecated-version="2.26">
         <doc xml:space="preserve">Gets the maximum number of web processes that can be created at the same time for the @context.
 
@@ -14656,6 +15051,23 @@ in WebKit.</doc>
           </parameter>
         </parameters>
       </method>
+      <method name="set_use_system_appearance_for_scrollbars" c:identifier="webkit_web_context_set_use_system_appearance_for_scrollbars" version="2.30">
+        <doc xml:space="preserve">Set the #WebKitWebContext:use-system-appearance-for-scrollbars property.</doc>
+        
+        <return-value transfer-ownership="none">
+          <type name="none" c:type="void"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="context" transfer-ownership="none">
+            <doc xml:space="preserve">a #WebKitWebContext</doc>
+            <type name="WebContext" c:type="WebKitWebContext*"/>
+          </instance-parameter>
+          <parameter name="enabled" transfer-ownership="none">
+            <doc xml:space="preserve">value to set</doc>
+            <type name="gboolean" c:type="gboolean"/>
+          </parameter>
+        </parameters>
+      </method>
       <method name="set_web_extensions_directory" c:identifier="webkit_web_context_set_web_extensions_directory">
         <doc xml:space="preserve">Set the directory where WebKit will look for Web Extensions.
 This method must be called before loading anything in this context,
@@ -14733,6 +15145,14 @@ their own separate Web processes, which are started (and
 terminated) on demand as the user navigates across different
 domains. This is an important security measure which helps prevent
 websites stealing data from other visited pages.</doc>
+        <type name="gboolean" c:type="gboolean"/>
+      </property>
+      <property name="use-system-appearance-for-scrollbars" version="2.30" writable="1" construct="1" transfer-ownership="none">
+        <doc xml:space="preserve">Whether to use system appearance for rendering scrollbars.
+
+This is enabled by default for backwards compatibility, but it's only
+recommened to use when the application includes other widgets to ensure
+consistency, or when consistency with other applications is required too.</doc>
         <type name="gboolean" c:type="gboolean"/>
       </property>
       <property name="website-data-manager" version="2.10" writable="1" construct-only="1" transfer-ownership="none">
@@ -15482,8 +15902,8 @@ this method should always be used when creating the #WebKitWebView in the #WebKi
 You can also use this method to implement other process models based on %WEBKIT_PROCESS_MODEL_MULTIPLE_SECONDARY_PROCESSES,
 like for example, sharing the same web process for all the views in the same security domain.
 
-The newly created #WebKitWebView will also have the same #WebKitUserContentManager
-and #WebKitSettings as @web_view.</doc>
+The newly created #WebKitWebView will also have the same #WebKitUserContentManager,
+#WebKitSettings, and #WebKitWebsitePolicies as @web_view.</doc>
         
         <return-value transfer-ownership="full">
           <doc xml:space="preserve">The newly created #WebKitWebView widget</doc>
@@ -16241,6 +16661,20 @@ this particular #WebKitWebView.</doc>
           </instance-parameter>
         </parameters>
       </method>
+      <method name="get_is_muted" c:identifier="webkit_web_view_get_is_muted" version="2.30">
+        <doc xml:space="preserve">Gets the mute state of @web_view.</doc>
+        
+        <return-value transfer-ownership="none">
+          <doc xml:space="preserve">%TRUE if @web_view audio is muted or %FALSE is audio is not muted.</doc>
+          <type name="gboolean" c:type="gboolean"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="web_view" transfer-ownership="none">
+            <doc xml:space="preserve">a #WebKitWebView</doc>
+            <type name="WebView" c:type="WebKitWebView*"/>
+          </instance-parameter>
+        </parameters>
+      </method>
       <method name="get_javascript_global_context" c:identifier="webkit_web_view_get_javascript_global_context" introspectable="0" deprecated="1" deprecated-version="2.22">
         <doc xml:space="preserve">Get the global JavaScript context used by @web_view to deserialize the
 result values of scripts executed with webkit_web_view_run_javascript().</doc>
@@ -16522,6 +16956,25 @@ of @web_view's #WebKitWebContext.</doc>
         <return-value transfer-ownership="none">
           <doc xml:space="preserve">a #WebKitWebsiteDataManager</doc>
           <type name="WebsiteDataManager" c:type="WebKitWebsiteDataManager*"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="web_view" transfer-ownership="none">
+            <doc xml:space="preserve">a #WebKitWebView</doc>
+            <type name="WebView" c:type="WebKitWebView*"/>
+          </instance-parameter>
+        </parameters>
+      </method>
+      <method name="get_website_policies" c:identifier="webkit_web_view_get_website_policies" version="2.30">
+        <doc xml:space="preserve">Gets the default website policies set on construction in the
+@web_view. These can be overridden on a per-origin basis via the
+#WebKitWebView::decide-policy signal handler.
+
+See also webkit_policy_decision_use_with_policies().</doc>
+        
+        <return-value transfer-ownership="none">
+          <doc xml:space="preserve">the default #WebKitWebsitePolicies
+    associated with the view.</doc>
+          <type name="WebsitePolicies" c:type="WebKitWebsitePolicies*"/>
         </return-value>
         <parameters>
           <instance-parameter name="web_view" transfer-ownership="none">
@@ -17365,6 +17818,23 @@ Note that the same #WebKitInputMethodContext can't be set on more than one #WebK
           </parameter>
         </parameters>
       </method>
+      <method name="set_is_muted" c:identifier="webkit_web_view_set_is_muted" version="2.30">
+        <doc xml:space="preserve">Sets the mute state of @web_view.</doc>
+        
+        <return-value transfer-ownership="none">
+          <type name="none" c:type="void"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="web_view" transfer-ownership="none">
+            <doc xml:space="preserve">a #WebKitWebView</doc>
+            <type name="WebView" c:type="WebKitWebView*"/>
+          </instance-parameter>
+          <parameter name="muted" transfer-ownership="none">
+            <doc xml:space="preserve">mute flag</doc>
+            <type name="gboolean" c:type="gboolean"/>
+          </parameter>
+        </parameters>
+      </method>
       <method name="set_settings" c:identifier="webkit_web_view_set_settings">
         <doc xml:space="preserve">Sets the #WebKitSettings to be applied to @web_view. The
 existing #WebKitSettings of @web_view will be replaced by
@@ -17489,6 +17959,11 @@ When the load operation finishes the property is set to %FALSE before
 #WebKitWebView::load-changed is emitted with %WEBKIT_LOAD_FINISHED.</doc>
         <type name="gboolean" c:type="gboolean"/>
       </property>
+      <property name="is-muted" version="2.30" writable="1" transfer-ownership="none">
+        <doc xml:space="preserve">Whether the #WebKitWebView audio is muted. When %TRUE, audio is silenced.
+It may still be playing, i.e. #WebKitWebView:is-playing-audio may be %TRUE.</doc>
+        <type name="gboolean" c:type="gboolean"/>
+      </property>
       <property name="is-playing-audio" version="2.8" transfer-ownership="none">
         <doc xml:space="preserve">Whether the #WebKitWebView is currently playing audio from a page.
 This property becomes %TRUE as soon as web content starts playing any
@@ -17527,6 +18002,10 @@ See webkit_web_view_get_uri() for more details.</doc>
       <property name="web-context" writable="1" construct-only="1" transfer-ownership="none">
         <doc xml:space="preserve">The #WebKitWebContext of the view.</doc>
         <type name="WebContext"/>
+      </property>
+      <property name="website-policies" version="2.30" writable="1" construct-only="1" transfer-ownership="none">
+        <doc xml:space="preserve">The #WebKitWebsitePolicies for the view.</doc>
+        <type name="WebsitePolicies"/>
       </property>
       <property name="zoom-level" writable="1" transfer-ownership="none">
         <doc xml:space="preserve">The zoom level of the #WebKitWebView content.
@@ -18895,6 +19374,85 @@ called from any thread.</doc>
         </parameters>
       </method>
     </record>
+    <class name="WebsiteDataAccessPermissionRequest" c:symbol-prefix="website_data_access_permission_request" c:type="WebKitWebsiteDataAccessPermissionRequest" parent="GObject.Object" glib:type-name="WebKitWebsiteDataAccessPermissionRequest" glib:get-type="webkit_website_data_access_permission_request_get_type" glib:type-struct="WebsiteDataAccessPermissionRequestClass">
+      
+      <implements name="PermissionRequest"/>
+      <method name="get_current_domain" c:identifier="webkit_website_data_access_permission_request_get_current_domain" version="2.30">
+        <doc xml:space="preserve">Get the current domain being browsed.</doc>
+        
+        <return-value transfer-ownership="none">
+          <doc xml:space="preserve">the current domain name</doc>
+          <type name="utf8" c:type="const char*"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="request" transfer-ownership="none">
+            <doc xml:space="preserve">a #WebKitWebsiteDataAccessPermissionRequest</doc>
+            <type name="WebsiteDataAccessPermissionRequest" c:type="WebKitWebsiteDataAccessPermissionRequest*"/>
+          </instance-parameter>
+        </parameters>
+      </method>
+      <method name="get_requesting_domain" c:identifier="webkit_website_data_access_permission_request_get_requesting_domain" version="2.30">
+        <doc xml:space="preserve">Get the domain requesting permission to access its cookies while browsing the current domain.</doc>
+        
+        <return-value transfer-ownership="none">
+          <doc xml:space="preserve">the requesting domain name</doc>
+          <type name="utf8" c:type="const char*"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="request" transfer-ownership="none">
+            <doc xml:space="preserve">a #WebKitWebsiteDataAccessPermissionRequest</doc>
+            <type name="WebsiteDataAccessPermissionRequest" c:type="WebKitWebsiteDataAccessPermissionRequest*"/>
+          </instance-parameter>
+        </parameters>
+      </method>
+      <field name="parent">
+        <type name="GObject.Object" c:type="GObject"/>
+      </field>
+      <field name="priv" readable="0" private="1">
+        <type name="WebsiteDataAccessPermissionRequestPrivate" c:type="WebKitWebsiteDataAccessPermissionRequestPrivate*"/>
+      </field>
+    </class>
+    <record name="WebsiteDataAccessPermissionRequestClass" c:type="WebKitWebsiteDataAccessPermissionRequestClass" glib:is-gtype-struct-for="WebsiteDataAccessPermissionRequest">
+      
+      <field name="parent_class">
+        <type name="GObject.ObjectClass" c:type="GObjectClass"/>
+      </field>
+      <field name="_webkit_reserved0" introspectable="0">
+        <callback name="_webkit_reserved0">
+          
+          <return-value transfer-ownership="none">
+            <type name="none" c:type="void"/>
+          </return-value>
+        </callback>
+      </field>
+      <field name="_webkit_reserved1" introspectable="0">
+        <callback name="_webkit_reserved1">
+          
+          <return-value transfer-ownership="none">
+            <type name="none" c:type="void"/>
+          </return-value>
+        </callback>
+      </field>
+      <field name="_webkit_reserved2" introspectable="0">
+        <callback name="_webkit_reserved2">
+          
+          <return-value transfer-ownership="none">
+            <type name="none" c:type="void"/>
+          </return-value>
+        </callback>
+      </field>
+      <field name="_webkit_reserved3" introspectable="0">
+        <callback name="_webkit_reserved3">
+          
+          <return-value transfer-ownership="none">
+            <type name="none" c:type="void"/>
+          </return-value>
+        </callback>
+      </field>
+    </record>
+    <record name="WebsiteDataAccessPermissionRequestPrivate" c:type="WebKitWebsiteDataAccessPermissionRequestPrivate" disguised="1">
+      
+    </record>
     <class name="WebsiteDataManager" c:symbol-prefix="website_data_manager" c:type="WebKitWebsiteDataManager" parent="GObject.Object" glib:type-name="WebKitWebsiteDataManager" glib:get-type="webkit_website_data_manager_get_type" glib:type-struct="WebsiteDataManagerClass">
       
       <constructor name="new" c:identifier="webkit_website_data_manager_new" version="2.10" introspectable="0">
@@ -19094,6 +19652,20 @@ webkit_website_data_manager_fetch_finish() to get the result of the operation.</
           </instance-parameter>
         </parameters>
       </method>
+      <method name="get_dom_cache_directory" c:identifier="webkit_website_data_manager_get_dom_cache_directory" version="2.30">
+        <doc xml:space="preserve">Get the #WebKitWebsiteDataManager:dom-cache-directory property.</doc>
+        
+        <return-value transfer-ownership="none" nullable="1">
+          <doc xml:space="preserve">the directory where DOM cache is stored or %NULL if @manager is ephemeral.</doc>
+          <type name="utf8" c:type="const gchar*"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="manager" transfer-ownership="none">
+            <doc xml:space="preserve">a #WebKitWebsiteDataManager</doc>
+            <type name="WebsiteDataManager" c:type="WebKitWebsiteDataManager*"/>
+          </instance-parameter>
+        </parameters>
+      </method>
       <method name="get_hsts_cache_directory" c:identifier="webkit_website_data_manager_get_hsts_cache_directory" version="2.26">
         <doc xml:space="preserve">Get the #WebKitWebsiteDataManager:hsts-cache-directory property.</doc>
         
@@ -19122,6 +19694,85 @@ webkit_website_data_manager_fetch_finish() to get the result of the operation.</
           </instance-parameter>
         </parameters>
       </method>
+      <method name="get_itp_directory" c:identifier="webkit_website_data_manager_get_itp_directory" version="2.30">
+        <doc xml:space="preserve">Get the #WebKitWebsiteDataManager:itp-directory property.</doc>
+        
+        <return-value transfer-ownership="none" nullable="1">
+          <doc xml:space="preserve">the directory where Intelligent Tracking Prevention data is stored or %NULL if @manager is ephemeral.</doc>
+          <type name="utf8" c:type="const gchar*"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="manager" transfer-ownership="none">
+            <doc xml:space="preserve">a #WebKitWebsiteDataManager</doc>
+            <type name="WebsiteDataManager" c:type="WebKitWebsiteDataManager*"/>
+          </instance-parameter>
+        </parameters>
+      </method>
+      <method name="get_itp_enabled" c:identifier="webkit_website_data_manager_get_itp_enabled" version="2.30">
+        <doc xml:space="preserve">Get whether Intelligent Tracking Prevention (ITP) is enabled or not.</doc>
+        
+        <return-value transfer-ownership="none">
+          <doc xml:space="preserve">%TRUE if ITP is enabled, or %FALSE otherwise.</doc>
+          <type name="gboolean" c:type="gboolean"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="manager" transfer-ownership="none">
+            <doc xml:space="preserve">a #WebKitWebsiteDataManager</doc>
+            <type name="WebsiteDataManager" c:type="WebKitWebsiteDataManager*"/>
+          </instance-parameter>
+        </parameters>
+      </method>
+      <method name="get_itp_summary" c:identifier="webkit_website_data_manager_get_itp_summary" version="2.30">
+        <doc xml:space="preserve">Asynchronously get the list of #WebKitITPThirdParty seen for @manager. Every #WebKitITPThirdParty
+contains the list of #WebKitITPFirstParty under which it has been seen.
+
+When the operation is finished, @callback will be called. You can then call
+webkit_website_data_manager_get_itp_summary_finish() to get the result of the operation.</doc>
+        
+        <return-value transfer-ownership="none">
+          <type name="none" c:type="void"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="manager" transfer-ownership="none">
+            <doc xml:space="preserve">a #WebKitWebsiteDataManager</doc>
+            <type name="WebsiteDataManager" c:type="WebKitWebsiteDataManager*"/>
+          </instance-parameter>
+          <parameter name="cancellable" transfer-ownership="none" nullable="1" allow-none="1">
+            <doc xml:space="preserve">a #GCancellable or %NULL to ignore</doc>
+            <type name="Gio.Cancellable" c:type="GCancellable*"/>
+          </parameter>
+          <parameter name="callback" transfer-ownership="none" nullable="1" allow-none="1" scope="async" closure="2">
+            <doc xml:space="preserve">a #GAsyncReadyCallback to call when the request is satisfied</doc>
+            <type name="Gio.AsyncReadyCallback" c:type="GAsyncReadyCallback"/>
+          </parameter>
+          <parameter name="user_data" transfer-ownership="none" nullable="1" allow-none="1">
+            <doc xml:space="preserve">the data to pass to callback function</doc>
+            <type name="gpointer" c:type="gpointer"/>
+          </parameter>
+        </parameters>
+      </method>
+      <method name="get_itp_summary_finish" c:identifier="webkit_website_data_manager_get_itp_summary_finish" version="2.30" throws="1">
+        <doc xml:space="preserve">Finish an asynchronous operation started with webkit_website_data_manager_get_itp_summary().</doc>
+        
+        <return-value transfer-ownership="full">
+          <doc xml:space="preserve">a #GList of #WebKitITPThirdParty.
+   You must free the #GList with g_list_free() and unref the #WebKitITPThirdParty&lt;!-- --&gt;s with
+   webkit_itp_third_party_unref() when you're done with them.</doc>
+          <type name="GLib.List" c:type="GList*">
+            <type name="ITPThirdParty"/>
+          </type>
+        </return-value>
+        <parameters>
+          <instance-parameter name="manager" transfer-ownership="none">
+            <doc xml:space="preserve">a #WebKitWebsiteDataManager</doc>
+            <type name="WebsiteDataManager" c:type="WebKitWebsiteDataManager*"/>
+          </instance-parameter>
+          <parameter name="result" transfer-ownership="none">
+            <doc xml:space="preserve">a #GAsyncResult</doc>
+            <type name="Gio.AsyncResult" c:type="GAsyncResult*"/>
+          </parameter>
+        </parameters>
+      </method>
       <method name="get_local_storage_directory" c:identifier="webkit_website_data_manager_get_local_storage_directory" version="2.10">
         <doc xml:space="preserve">Get the #WebKitWebsiteDataManager:local-storage-directory property.</doc>
         
@@ -19141,6 +19792,35 @@ webkit_website_data_manager_fetch_finish() to get the result of the operation.</
         
         <return-value transfer-ownership="none" nullable="1">
           <doc xml:space="preserve">the directory where offline web application cache is stored or %NULL if @manager is ephemeral.</doc>
+          <type name="utf8" c:type="const gchar*"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="manager" transfer-ownership="none">
+            <doc xml:space="preserve">a #WebKitWebsiteDataManager</doc>
+            <type name="WebsiteDataManager" c:type="WebKitWebsiteDataManager*"/>
+          </instance-parameter>
+        </parameters>
+      </method>
+      <method name="get_persistent_credential_storage_enabled" c:identifier="webkit_website_data_manager_get_persistent_credential_storage_enabled" version="2.30">
+        <doc xml:space="preserve">Get whether persistent credential storage is enabled or not.
+See also webkit_website_data_manager_set_persistent_credential_storage_enabled().</doc>
+        
+        <return-value transfer-ownership="none">
+          <doc xml:space="preserve">%TRUE if persistent credential storage is enabled, or %FALSE otherwise.</doc>
+          <type name="gboolean" c:type="gboolean"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="manager" transfer-ownership="none">
+            <doc xml:space="preserve">a #WebKitWebsiteDataManager</doc>
+            <type name="WebsiteDataManager" c:type="WebKitWebsiteDataManager*"/>
+          </instance-parameter>
+        </parameters>
+      </method>
+      <method name="get_service_worker_registrations_directory" c:identifier="webkit_website_data_manager_get_service_worker_registrations_directory" version="2.30">
+        <doc xml:space="preserve">Get the #WebKitWebsiteDataManager:service-worker-registrations-directory property.</doc>
+        
+        <return-value transfer-ownership="none" nullable="1">
+          <doc xml:space="preserve">the directory where service worker registrations are stored or %NULL if @manager is ephemeral.</doc>
           <type name="utf8" c:type="const gchar*"/>
         </return-value>
         <parameters>
@@ -19236,6 +19916,45 @@ webkit_website_data_manager_remove_finish() to get the result of the operation.<
           </parameter>
         </parameters>
       </method>
+      <method name="set_itp_enabled" c:identifier="webkit_website_data_manager_set_itp_enabled" version="2.30">
+        <doc xml:space="preserve">Enable or disable Intelligent Tracking Prevention (ITP). When ITP is enabled resource load statistics
+are collected and used to decide whether to allow or block third-party cookies and prevent user tracking.
+Note that while ITP is enabled the accept policy %WEBKIT_COOKIE_POLICY_ACCEPT_NO_THIRD_PARTY is ignored and
+%WEBKIT_COOKIE_POLICY_ACCEPT_ALWAYS is used instead. See also webkit_cookie_manager_set_accept_policy().</doc>
+        
+        <return-value transfer-ownership="none">
+          <type name="none" c:type="void"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="manager" transfer-ownership="none">
+            <doc xml:space="preserve">a #WebKitWebsiteDataManager</doc>
+            <type name="WebsiteDataManager" c:type="WebKitWebsiteDataManager*"/>
+          </instance-parameter>
+          <parameter name="enabled" transfer-ownership="none">
+            <doc xml:space="preserve">value to set</doc>
+            <type name="gboolean" c:type="gboolean"/>
+          </parameter>
+        </parameters>
+      </method>
+      <method name="set_persistent_credential_storage_enabled" c:identifier="webkit_website_data_manager_set_persistent_credential_storage_enabled" version="2.30">
+        <doc xml:space="preserve">Enable or disable persistent credential storage. When enabled, which is the default for
+non-ephemeral sessions, the network process will try to read and write HTTP authentiacation
+credentials from persistent storage.</doc>
+        
+        <return-value transfer-ownership="none">
+          <type name="none" c:type="void"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="manager" transfer-ownership="none">
+            <doc xml:space="preserve">a #WebKitWebsiteDataManager</doc>
+            <type name="WebsiteDataManager" c:type="WebKitWebsiteDataManager*"/>
+          </instance-parameter>
+          <parameter name="enabled" transfer-ownership="none">
+            <doc xml:space="preserve">value to set</doc>
+            <type name="gboolean" c:type="gboolean"/>
+          </parameter>
+        </parameters>
+      </method>
       <property name="base-cache-directory" version="2.10" writable="1" construct-only="1" transfer-ownership="none">
         <doc xml:space="preserve">The base directory for Website cache. This is used as a base directory
 for any Website cache when no specific cache directory has been provided.</doc>
@@ -19248,6 +19967,10 @@ for any Website data when no specific data directory has been provided.</doc>
       </property>
       <property name="disk-cache-directory" version="2.10" writable="1" construct-only="1" transfer-ownership="none">
         <doc xml:space="preserve">The directory where HTTP disk cache will be stored.</doc>
+        <type name="utf8" c:type="gchar*"/>
+      </property>
+      <property name="dom-cache-directory" version="2.30" writable="1" construct-only="1" transfer-ownership="none">
+        <doc xml:space="preserve">The directory where DOM cache will be stored.</doc>
         <type name="utf8" c:type="gchar*"/>
       </property>
       <property name="hsts-cache-directory" version="2.26" writable="1" construct-only="1" transfer-ownership="none">
@@ -19265,12 +19988,20 @@ storage. Note that if you create an ephemeral #WebKitWebsiteDataManager all othe
 parameters to configure data directories will be ignored.</doc>
         <type name="gboolean" c:type="gboolean"/>
       </property>
+      <property name="itp-directory" version="2.30" writable="1" construct-only="1" transfer-ownership="none">
+        <doc xml:space="preserve">The directory where Intelligent Tracking Prevention (ITP) data will be stored.</doc>
+        <type name="utf8" c:type="gchar*"/>
+      </property>
       <property name="local-storage-directory" version="2.10" writable="1" construct-only="1" transfer-ownership="none">
         <doc xml:space="preserve">The directory where local storage data will be stored.</doc>
         <type name="utf8" c:type="gchar*"/>
       </property>
       <property name="offline-application-cache-directory" version="2.10" writable="1" construct-only="1" transfer-ownership="none">
         <doc xml:space="preserve">The directory where offline web application cache will be stored.</doc>
+        <type name="utf8" c:type="gchar*"/>
+      </property>
+      <property name="service-worker-registrations-directory" version="2.30" writable="1" construct-only="1" transfer-ownership="none">
+        <doc xml:space="preserve">The directory where service workers registrations will be stored.</doc>
         <type name="utf8" c:type="gchar*"/>
       </property>
       <property name="websql-directory" version="2.10" deprecated="1" deprecated-version="2.24." writable="1" construct-only="1" transfer-ownership="none">
@@ -19361,10 +20092,128 @@ parameters to configure data directories will be ignored.</doc>
       <member name="hsts_cache" value="1024" c:identifier="WEBKIT_WEBSITE_DATA_HSTS_CACHE" glib:nick="hsts-cache">
         <doc xml:space="preserve">HSTS cache. Since 2.26</doc>
       </member>
-      <member name="all" value="2047" c:identifier="WEBKIT_WEBSITE_DATA_ALL" glib:nick="all">
+      <member name="itp" value="2048" c:identifier="WEBKIT_WEBSITE_DATA_ITP" glib:nick="itp">
+        <doc xml:space="preserve">Intelligent Tracking Prevention data. Since 2.30.</doc>
+      </member>
+      <member name="service_worker_registrations" value="4096" c:identifier="WEBKIT_WEBSITE_DATA_SERVICE_WORKER_REGISTRATIONS" glib:nick="service-worker-registrations">
+        <doc xml:space="preserve">Service worker registrations. Since 2.30</doc>
+      </member>
+      <member name="dom_cache" value="8192" c:identifier="WEBKIT_WEBSITE_DATA_DOM_CACHE" glib:nick="dom-cache">
+        <doc xml:space="preserve">DOM (CacheStorage) cache. Since 2.30</doc>
+      </member>
+      <member name="all" value="16383" c:identifier="WEBKIT_WEBSITE_DATA_ALL" glib:nick="all">
         <doc xml:space="preserve">All types.</doc>
       </member>
     </bitfield>
+    <class name="WebsitePolicies" c:symbol-prefix="website_policies" c:type="WebKitWebsitePolicies" parent="GObject.Object" glib:type-name="WebKitWebsitePolicies" glib:get-type="webkit_website_policies_get_type" glib:type-struct="WebsitePoliciesClass">
+      
+      <constructor name="new" c:identifier="webkit_website_policies_new" version="2.30">
+        <doc xml:space="preserve">Create a new #WebKitWebsitePolicies</doc>
+        
+        <return-value transfer-ownership="full">
+          <doc xml:space="preserve">the newly created #WebKitWebsitePolicies</doc>
+          <type name="WebsitePolicies" c:type="WebKitWebsitePolicies*"/>
+        </return-value>
+      </constructor>
+      <constructor name="new_with_policies" c:identifier="webkit_website_policies_new_with_policies" version="2.30" introspectable="0">
+        <doc xml:space="preserve">Create a new #WebKitWebsitePolicies with policies given as variadic
+arguments.</doc>
+        
+        <return-value transfer-ownership="full">
+          <doc xml:space="preserve">the newly created #WebKitWebsitePolicies
+
+&lt;informalexample&gt;&lt;programlisting&gt;
+WebKitWebsitePolicies *default_website_policies = webkit_website_policies_new_with_policies(
+    "autoplay", WEBKIT_AUTOPLAY_DENY,
+    NULL);
+...
+WebKitWebView *view = WEBKIT_WEB_VIEW(g_object_new(WEBKIT_TYPE_WEB_VIEW,
+    "web-context", ctx,
+    "settings", settings,
+    "user-content-manager", content_manager,
+    "website-policies", default_website_policies,
+    NULL));
+...
+&lt;/programlisting&gt;&lt;/informalexample&gt;</doc>
+          <type name="WebsitePolicies" c:type="WebKitWebsitePolicies*"/>
+        </return-value>
+        <parameters>
+          <parameter name="first_policy_name" transfer-ownership="none">
+            <doc xml:space="preserve">name of the first policy to set</doc>
+            <type name="utf8" c:type="const gchar*"/>
+          </parameter>
+          <parameter name="..." transfer-ownership="none">
+            <doc xml:space="preserve">value of first policy, followed by more policies, %NULL-terminated</doc>
+            <varargs/>
+          </parameter>
+        </parameters>
+      </constructor>
+      <method name="get_autoplay_policy" c:identifier="webkit_website_policies_get_autoplay_policy" version="2.30">
+        <doc xml:space="preserve">Get the #WebKitWebsitePolicies:autoplay property.</doc>
+        
+        <return-value transfer-ownership="none">
+          <doc xml:space="preserve">#WebKitAutoplayPolicy</doc>
+          <type name="AutoplayPolicy" c:type="WebKitAutoplayPolicy"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="policies" transfer-ownership="none">
+            <doc xml:space="preserve">a #WebKitWebsitePolicies</doc>
+            <type name="WebsitePolicies" c:type="WebKitWebsitePolicies*"/>
+          </instance-parameter>
+        </parameters>
+      </method>
+      <property name="autoplay" version="2.30" writable="1" construct-only="1" transfer-ownership="none">
+        <doc xml:space="preserve">The #WebKitAutoplayPolicy of #WebKitWebsitePolicies.</doc>
+        <type name="AutoplayPolicy"/>
+      </property>
+      <field name="parent">
+        <type name="GObject.Object" c:type="GObject"/>
+      </field>
+      <field name="priv">
+        <type name="WebsitePoliciesPrivate" c:type="WebKitWebsitePoliciesPrivate*"/>
+      </field>
+    </class>
+    <record name="WebsitePoliciesClass" c:type="WebKitWebsitePoliciesClass" glib:is-gtype-struct-for="WebsitePolicies">
+      
+      <field name="parent_class">
+        <type name="GObject.ObjectClass" c:type="GObjectClass"/>
+      </field>
+      <field name="_webkit_reserved0" introspectable="0">
+        <callback name="_webkit_reserved0">
+          
+          <return-value transfer-ownership="none">
+            <type name="none" c:type="void"/>
+          </return-value>
+        </callback>
+      </field>
+      <field name="_webkit_reserved1" introspectable="0">
+        <callback name="_webkit_reserved1">
+          
+          <return-value transfer-ownership="none">
+            <type name="none" c:type="void"/>
+          </return-value>
+        </callback>
+      </field>
+      <field name="_webkit_reserved2" introspectable="0">
+        <callback name="_webkit_reserved2">
+          
+          <return-value transfer-ownership="none">
+            <type name="none" c:type="void"/>
+          </return-value>
+        </callback>
+      </field>
+      <field name="_webkit_reserved3" introspectable="0">
+        <callback name="_webkit_reserved3">
+          
+          <return-value transfer-ownership="none">
+            <type name="none" c:type="void"/>
+          </return-value>
+        </callback>
+      </field>
+    </record>
+    <record name="WebsitePoliciesPrivate" c:type="WebKitWebsitePoliciesPrivate" disguised="1">
+      
+    </record>
     <class name="WindowProperties" c:symbol-prefix="window_properties" c:type="WebKitWindowProperties" parent="GObject.Object" glib:type-name="WebKitWindowProperties" glib:get-type="webkit_window_properties_get_type" glib:type-struct="WindowPropertiesClass">
       
       <method name="get_fullscreen" c:identifier="webkit_window_properties_get_fullscreen">

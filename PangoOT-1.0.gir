@@ -5,8 +5,8 @@ and/or use gtk-doc annotations.  -->
 <repository xmlns="http://www.gtk.org/introspection/core/1.0" xmlns:c="http://www.gtk.org/introspection/c/1.0" xmlns:glib="http://www.gtk.org/introspection/glib/1.0" version="1.2">
   <include name="PangoFc" version="1.0"/>
   <include name="freetype2" version="2.0"/>
-  <package name="pangoft2"/>
-  <c:include name="pango/pangoft2.h"/>
+  <package name="pangoot"/>
+  <c:include name="pango/pango-ot.h"/>
   <namespace name="PangoOT" version="1.0" shared-library="libpangoft2-1.0.so.0" c:identifier-prefixes="PangoOT" c:symbol-prefixes="pango_ot">
     <alias name="Tag" c:type="PangoOTTag">
       <doc xml:space="preserve">The #PangoOTTag typedef is used to represent TrueType and OpenType
@@ -21,8 +21,23 @@ feature should be applied to all glyphs.</doc>
       
       <type name="guint" c:type="guint"/>
     </constant>
-    <record name="Buffer" c:type="PangoOTBuffer" disguised="1">
+    <record name="Buffer" c:type="PangoOTBuffer" glib:type-name="PangoOTBuffer" glib:get-type="pango_ot_buffer_get_type" c:symbol-prefix="buffer">
       
+      <constructor name="new" c:identifier="pango_ot_buffer_new" version="1.4">
+        <doc xml:space="preserve">Creates a new #PangoOTBuffer for the given OpenType font.</doc>
+        
+        <return-value transfer-ownership="full">
+          <doc xml:space="preserve">the newly allocated #PangoOTBuffer, which should
+              be freed with pango_ot_buffer_destroy().</doc>
+          <type name="Buffer" c:type="PangoOTBuffer*"/>
+        </return-value>
+        <parameters>
+          <parameter name="font" transfer-ownership="none">
+            <doc xml:space="preserve">a #PangoFcFont</doc>
+            <type name="PangoFc.Font" c:type="PangoFcFont*"/>
+          </parameter>
+        </parameters>
+      </constructor>
       <method name="add_glyph" c:identifier="pango_ot_buffer_add_glyph" version="1.4">
         <doc xml:space="preserve">Appends a glyph to a #PangoOTBuffer, with @properties identifying which
 features should be applied on this glyph.  See pango_ot_ruleset_add_feature().</doc>
@@ -160,21 +175,6 @@ fonts.</doc>
           </parameter>
         </parameters>
       </method>
-      <function name="new" c:identifier="pango_ot_buffer_new" version="1.4" introspectable="0">
-        <doc xml:space="preserve">Creates a new #PangoOTBuffer for the given OpenType font.</doc>
-        
-        <return-value>
-          <doc xml:space="preserve">the newly allocated #PangoOTBuffer, which should
-              be freed with pango_ot_buffer_destroy().</doc>
-          <type name="Buffer" c:type="PangoOTBuffer*"/>
-        </return-value>
-        <parameters>
-          <parameter name="font" transfer-ownership="none">
-            <doc xml:space="preserve">a #PangoFcFont</doc>
-            <type name="PangoFc.Font" c:type="PangoFcFont*"/>
-          </parameter>
-        </parameters>
-      </function>
     </record>
     <constant name="DEFAULT_LANGUAGE" value="65535" c:type="PANGO_OT_DEFAULT_LANGUAGE" version="1.16">
       <doc xml:space="preserve">This is used as the language index in pango_ot_info_find_feature() when
@@ -238,6 +238,20 @@ applied on this glyph.  See pango_ot_ruleset_add_feature().</doc>
       </field>
     </record>
     <function-macro name="INFO" c:identifier="PANGO_OT_INFO" introspectable="0">
+      
+      <parameters>
+        <parameter name="object">
+        </parameter>
+      </parameters>
+    </function-macro>
+    <function-macro name="IS_INFO" c:identifier="PANGO_OT_IS_INFO" introspectable="0">
+      
+      <parameters>
+        <parameter name="object">
+        </parameter>
+      </parameters>
+    </function-macro>
+    <function-macro name="IS_RULESET" c:identifier="PANGO_OT_IS_RULESET" introspectable="0">
       
       <parameters>
         <parameter name="object">
@@ -776,7 +790,7 @@ in @ruleset</doc>
         </parameters>
       </method>
     </class>
-    <record name="RulesetDescription" c:type="PangoOTRulesetDescription" version="1.18">
+    <record name="RulesetDescription" c:type="PangoOTRulesetDescription" version="1.18" glib:type-name="PangoOTRulesetDescription" glib:get-type="pango_ot_ruleset_description_get_type" c:symbol-prefix="ruleset_description">
       <doc xml:space="preserve">The #PangoOTRuleset structure holds all the information needed
 to build a complete #PangoOTRuleset from an OpenType font.
 The main use of this struct is to act as the key for a per-font
@@ -821,13 +835,13 @@ struct.</doc>
         <doc xml:space="preserve">length of @other_features, or 0.</doc>
         <type name="guint" c:type="guint"/>
       </field>
-      <method name="copy" c:identifier="pango_ot_ruleset_description_copy" version="1.18" introspectable="0">
+      <method name="copy" c:identifier="pango_ot_ruleset_description_copy" version="1.18">
         <doc xml:space="preserve">Creates a copy of @desc, which should be freed with
 pango_ot_ruleset_description_free(). Primarily used internally
 by pango_ot_ruleset_get_for_description() to cache rulesets for
 ruleset descriptions.</doc>
         
-        <return-value>
+        <return-value transfer-ownership="full">
           <doc xml:space="preserve">the newly allocated #PangoOTRulesetDescription, which
               should be freed with pango_ot_ruleset_description_free().</doc>
           <type name="RulesetDescription" c:type="PangoOTRulesetDescription*"/>

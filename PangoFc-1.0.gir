@@ -5,8 +5,8 @@ and/or use gtk-doc annotations.  -->
 <repository xmlns="http://www.gtk.org/introspection/core/1.0" xmlns:c="http://www.gtk.org/introspection/c/1.0" xmlns:glib="http://www.gtk.org/introspection/glib/1.0" version="1.2">
   <include name="Pango" version="1.0"/>
   <include name="fontconfig" version="2.0"/>
-  <package name="pangoft2"/>
-  <c:include name="pango/pangoft2.h"/>
+  <package name="pangofc"/>
+  <c:include name="pango/pangofc-fontmap.h"/>
   <namespace name="PangoFc" version="1.0" shared-library="libpangoft2-1.0.so.0" c:identifier-prefixes="PangoFc" c:symbol-prefixes="pango_fc">
     <function-macro name="DECODER" c:identifier="PANGO_FC_DECODER" introspectable="0">
       
@@ -393,13 +393,13 @@ Since 1.44, it does nothing.</doc>
         </parameters>
       </method>
       <method name="lock_face" c:identifier="pango_fc_font_lock_face" version="1.4" introspectable="0" deprecated="1" deprecated-version="1.44">
-        <doc xml:space="preserve">Gets the FreeType &lt;type&gt;FT_Face&lt;/type&gt; associated with a font,
+        <doc xml:space="preserve">Gets the FreeType `FT_Face` associated with a font,
 This face will be kept around until you call
 pango_fc_font_unlock_face().</doc>
         <doc-deprecated xml:space="preserve">Use pango_font_get_hb_font() instead</doc-deprecated>
         
         <return-value>
-          <doc xml:space="preserve">the FreeType &lt;type&gt;FT_Face&lt;/type&gt; associated with @font.</doc>
+          <doc xml:space="preserve">the FreeType `FT_Face` associated with @font.</doc>
           <type c:type="FT_Face"/>
         </return-value>
         <parameters>
@@ -529,7 +529,7 @@ will be regenerated using the updated configuration.</doc>
           </instance-parameter>
         </parameters>
       </method>
-      <method name="create_context" c:identifier="pango_fc_font_map_create_context" version="1.4" introspectable="0" deprecated="1" deprecated-version="1.22">
+      <method name="create_context" c:identifier="pango_fc_font_map_create_context" version="1.4" deprecated="1" deprecated-version="1.22">
         <doc xml:space="preserve">Creates a new context for this fontmap. This function is intended
 only for backend implementations deriving from #PangoFcFontMap;
 it is possible that a backend will store additional information
@@ -537,7 +537,7 @@ needed for correct operation on the #PangoContext after calling
 this function.</doc>
         <doc-deprecated xml:space="preserve">Use pango_font_map_create_context() instead.</doc-deprecated>
         
-        <return-value>
+        <return-value transfer-ownership="full">
           <doc xml:space="preserve">a new #PangoContext</doc>
           <type name="Pango.Context" c:type="PangoContext*"/>
         </return-value>
@@ -569,10 +569,12 @@ a font map using pango_fc_font_map_add_decoder_find_func().</doc>
         </parameters>
       </method>
       <method name="get_config" c:identifier="pango_fc_font_map_get_config" version="1.38" introspectable="0">
-        <doc xml:space="preserve">Fetches FcConfig attached to a font map.  See pango_fc_font_map_set_config().</doc>
+        <doc xml:space="preserve">Fetches the `FcConfig` attached to a font map.
+
+See also: pango_fc_font_map_set_config()</doc>
         
         <return-value nullable="1">
-          <doc xml:space="preserve">the #FcConfig object attached to @fcfontmap, which
+          <doc xml:space="preserve">the `FcConfig` object attached to @fcfontmap, which
          might be %NULL.</doc>
           <type c:type="FcConfig*"/>
         </return-value>
@@ -583,16 +585,20 @@ a font map using pango_fc_font_map_add_decoder_find_func().</doc>
           </instance-parameter>
         </parameters>
       </method>
-      <method name="get_hb_face" c:identifier="pango_fc_font_map_get_hb_face" introspectable="0">
+      <method name="get_hb_face" c:identifier="pango_fc_font_map_get_hb_face" version="1.44" introspectable="0">
+        <doc xml:space="preserve">Retrieves the `hb_face_t` for the given #PangoFcFont.</doc>
         
-        <return-value>
-          <type c:type="hb_face_t*"/>
+        <return-value transfer-ownership="none" nullable="1">
+          <doc xml:space="preserve">the `hb_face_t` for the given Pango font</doc>
+          <type name="HarfBuzz.face_t" c:type="hb_face_t*"/>
         </return-value>
         <parameters>
           <instance-parameter name="fcfontmap" transfer-ownership="none">
+            <doc xml:space="preserve">a #PangoFcFontMap</doc>
             <type name="FontMap" c:type="PangoFcFontMap*"/>
           </instance-parameter>
           <parameter name="fcfont" transfer-ownership="none">
+            <doc xml:space="preserve">a #PangoFcFont</doc>
             <type name="Font" c:type="PangoFcFont*"/>
           </parameter>
         </parameters>
@@ -622,7 +628,7 @@ does NOT need to retain a reference.</doc>
             <type name="FontMap" c:type="PangoFcFontMap*"/>
           </instance-parameter>
           <parameter name="fcconfig" transfer-ownership="none" nullable="1" allow-none="1">
-            <doc xml:space="preserve">a #FcConfig, or %NULL</doc>
+            <doc xml:space="preserve">a `FcConfig`, or %NULL</doc>
             <type c:type="FcConfig*"/>
           </parameter>
         </parameters>
@@ -663,6 +669,34 @@ different fonts for horizontal and vertical writing directions.</doc>
       
       <type name="utf8" c:type="gchar*"/>
     </constant>
+    <function-macro name="IS_DECODER" c:identifier="PANGO_FC_IS_DECODER" introspectable="0">
+      
+      <parameters>
+        <parameter name="object">
+        </parameter>
+      </parameters>
+    </function-macro>
+    <function-macro name="IS_DECODER_CLASS" c:identifier="PANGO_FC_IS_DECODER_CLASS" introspectable="0">
+      
+      <parameters>
+        <parameter name="klass">
+        </parameter>
+      </parameters>
+    </function-macro>
+    <function-macro name="IS_FONT" c:identifier="PANGO_FC_IS_FONT" introspectable="0">
+      
+      <parameters>
+        <parameter name="object">
+        </parameter>
+      </parameters>
+    </function-macro>
+    <function-macro name="IS_FONT_MAP" c:identifier="PANGO_FC_IS_FONT_MAP" introspectable="0">
+      
+      <parameters>
+        <parameter name="object">
+        </parameter>
+      </parameters>
+    </function-macro>
     <constant name="PRGNAME" value="prgname" c:type="PANGO_FC_PRGNAME" version="1.24">
       <doc xml:space="preserve">String representing a fontconfig property name that Pango sets on any
 fontconfig pattern it passes to fontconfig.

@@ -97,8 +97,26 @@ keys.</doc>
         <doc xml:space="preserve">Send terminal's "erase" setting.</doc>
       </member>
     </enumeration>
+    <bitfield name="FeatureFlags" version="0.62" c:type="VteFeatureFlags">
+      <doc xml:space="preserve">An enumeration type for features.</doc>
+      
+      <member name="flag_bidi" value="1" c:identifier="VTE_FEATURE_FLAG_BIDI">
+        <doc xml:space="preserve">whether VTE was built with bidirectional text support</doc>
+      </member>
+      <member name="flag_icu" value="2" c:identifier="VTE_FEATURE_FLAG_ICU">
+        <doc xml:space="preserve">whether VTE was built with ICU support</doc>
+      </member>
+      <member name="flag_systemd" value="4" c:identifier="VTE_FEATURE_FLAG_SYSTEMD">
+        <doc xml:space="preserve">whether VTE was built with systemd support</doc>
+      </member>
+      <member name="flag_sixel" value="8" c:identifier="VTE_FEATURE_FLAG_SIXEL">
+        <doc xml:space="preserve">whether VTE was built with SIXEL support</doc>
+      </member>
+      <member name="flags_mask" value="-1" c:identifier="VTE_FEATURE_FLAGS_MASK">
+      </member>
+    </bitfield>
     <enumeration name="Format" version="0.50" glib:type-name="VteFormat" glib:get-type="vte_format_get_type" c:type="VteFormat">
-      <doc xml:space="preserve">An enumeratio type that can be used to specify the format the selection
+      <doc xml:space="preserve">An enumeration type that can be used to specify the format the selection
 should be copied to the clipboard in.</doc>
       <member name="text" value="1" c:identifier="VTE_FORMAT_TEXT" glib:nick="text">
         <doc xml:space="preserve">Export as plain text</doc>
@@ -141,13 +159,13 @@ should be copied to the clipboard in.</doc>
       
       <type name="gint" c:type="gint"/>
     </constant>
-    <constant name="MICRO_VERSION" value="1" c:type="VTE_MICRO_VERSION">
+    <constant name="MICRO_VERSION" value="0" c:type="VTE_MICRO_VERSION">
       <doc xml:space="preserve">The micro version number of the VTE library
 (e.g. in version 3.1.4 this is 4).</doc>
       
       <type name="gint" c:type="gint"/>
     </constant>
-    <constant name="MINOR_VERSION" value="60" c:type="VTE_MINOR_VERSION">
+    <constant name="MINOR_VERSION" value="62" c:type="VTE_MINOR_VERSION">
       <doc xml:space="preserve">The minor version number of the VTE library
 (e.g. in version 3.1.4 this is 1).</doc>
       
@@ -218,6 +236,10 @@ function; you must not call it again.
 
 Also, you MUST pass the %G_SPAWN_DO_NOT_REAP_CHILD flag.
 
+Note also that %G_SPAWN_STDOUT_TO_DEV_NULL, %G_SPAWN_STDERR_TO_DEV_NULL,
+and %G_SPAWN_CHILD_INHERITS_STDIN are not supported, since stdin, stdout
+and stderr of the child process will always be connected to the PTY.
+
 Note that you should set the PTY's size using vte_pty_set_size() before
 spawning the child process, so that the child process has the correct
 size from the start instead of starting with a default size and then
@@ -240,7 +262,6 @@ using vte_terminal_pty_new_sync() which does this automatically.</doc>
         </parameters>
       </constructor>
       <method name="child_setup" c:identifier="vte_pty_child_setup">
-        <doc xml:space="preserve">FIXMEchpe</doc>
         
         <return-value transfer-ownership="none">
           <type name="none" c:type="void"/>
@@ -350,28 +371,9 @@ discipline do multibyte backspace correctly.</doc>
         </parameters>
       </method>
       <method name="spawn_async" c:identifier="vte_pty_spawn_async" version="0.48">
-        <doc xml:space="preserve">Starts the specified command under the pseudo-terminal @pty.
-The @argv and @envv lists should be %NULL-terminated.
-The "TERM" environment variable is automatically set to a default value,
-but can be overridden from @envv.
-@pty_flags controls logging the session to the specified system log files.
-
-Note that %G_SPAWN_DO_NOT_REAP_CHILD will always be added to @spawn_flags.
-
-Note that all open file descriptors will be closed in the child. If you want
-to keep some file descriptor open for use in the child process, you need to
-use a child setup function that unsets the FD_CLOEXEC flag on that file
-descriptor.
-
-Beginning with 0.60, and on linux only, and unless %VTE_SPAWN_NO_SYSTEMD_SCOPE is
-passed in @spawn_flags, the newly created child process will be moved to its own
-systemd user scope; and if %VTE_SPAWN_REQUIRE_SYSTEMD_SCOPE is passed, and creation
-of the systemd user scope fails, the whole spawn will fail.
-You can override the options used for the systemd user scope by
-providing a systemd override file for 'vte-spawn-.scope' unit. See man:systemd.unit(5)
-for further information.
-
-See vte_pty_new(), g_spawn_async() and vte_terminal_watch_child() for more information.</doc>
+        <doc xml:space="preserve">Like vte_pty_spawn_with_fds_async(), except that this function does not
+allow passing file descriptors to the child process. See vte_pty_spawn_with_fds_async()
+for more information.</doc>
         
         <return-value transfer-ownership="none">
           <type name="none" c:type="void"/>
@@ -416,7 +418,7 @@ See vte_pty_new(), g_spawn_async() and vte_terminal_watch_child() for more infor
             <type name="GLib.DestroyNotify" c:type="GDestroyNotify"/>
           </parameter>
           <parameter name="timeout" transfer-ownership="none">
-            <doc xml:space="preserve">a timeout value in ms, or -1 to wait indefinitely</doc>
+            <doc xml:space="preserve">a timeout value in ms, -1 for the default timeout, or G_MAXINT to wait indefinitely</doc>
             <type name="gint" c:type="int"/>
           </parameter>
           <parameter name="cancellable" transfer-ownership="none" nullable="1" allow-none="1">
@@ -449,6 +451,119 @@ See vte_pty_new(), g_spawn_async() and vte_terminal_watch_child() for more infor
           <parameter name="child_pid" direction="out" caller-allocates="0" transfer-ownership="full" optional="1" allow-none="1">
             <doc xml:space="preserve">a location to store the child PID, or %NULL</doc>
             <type name="GLib.Pid" c:type="GPid*"/>
+          </parameter>
+        </parameters>
+      </method>
+      <method name="spawn_with_fds_async" c:identifier="vte_pty_spawn_with_fds_async" version="0.62">
+        <doc xml:space="preserve">Starts the specified command under the pseudo-terminal @pty.
+The @argv and @envv lists should be %NULL-terminated.
+The "TERM" environment variable is automatically set to a default value,
+but can be overridden from @envv.
+@pty_flags controls logging the session to the specified system log files.
+
+Note also that %G_SPAWN_STDOUT_TO_DEV_NULL, %G_SPAWN_STDERR_TO_DEV_NULL,
+and %G_SPAWN_CHILD_INHERITS_STDIN are not supported in @spawn_flags, since
+stdin, stdout and stderr of the child process will always be connected to
+the PTY. Also %G_SPAWN_LEAVE_DESCRIPTORS_OPEN is not supported; and
+%G_SPAWN_DO_NOT_REAP_CHILD will always be added to @spawn_flags.
+
+If @fds is not %NULL, the child process will map the file descriptors from
+@fds according to @map_fds; @n_map_fds must be less or equal to @n_fds.
+This function will take ownership of the file descriptors in @fds;
+you must not use or close them after this call. All file descriptors in @fds
+must have the FD_CLOEXEC flag set on them; it will be unset in the child process
+before calling exec.
+
+Note that all  open file descriptors apart from those mapped as above
+will be closed in the child. (If you want to keep some other file descriptor
+open for use in the child process, you need to use a child setup function
+that unsets the FD_CLOEXEC flag on that file descriptor manually.)
+
+Beginning with 0.60, and on linux only, and unless %VTE_SPAWN_NO_SYSTEMD_SCOPE is
+passed in @spawn_flags, the newly created child process will be moved to its own
+systemd user scope; and if %VTE_SPAWN_REQUIRE_SYSTEMD_SCOPE is passed, and creation
+of the systemd user scope fails, the whole spawn will fail.
+You can override the options used for the systemd user scope by
+providing a systemd override file for 'vte-spawn-.scope' unit. See man:systemd.unit(5)
+for further information.
+
+See vte_pty_new(), and vte_terminal_watch_child() for more information.</doc>
+        
+        <return-value transfer-ownership="none">
+          <type name="none" c:type="void"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="pty" transfer-ownership="none">
+            <doc xml:space="preserve">a #VtePty</doc>
+            <type name="Pty" c:type="VtePty*"/>
+          </instance-parameter>
+          <parameter name="working_directory" transfer-ownership="none" nullable="1" allow-none="1">
+            <doc xml:space="preserve">the name of a directory the command should start
+  in, or %NULL to use the current working directory</doc>
+            <type name="utf8" c:type="const char*"/>
+          </parameter>
+          <parameter name="argv" transfer-ownership="none">
+            <doc xml:space="preserve">child's argument vector</doc>
+            <array c:type="const char* const*">
+              <type name="filename"/>
+            </array>
+          </parameter>
+          <parameter name="envv" transfer-ownership="none" nullable="1" allow-none="1">
+            <doc xml:space="preserve">a list of environment
+  variables to be added to the environment before starting the process, or %NULL</doc>
+            <array c:type="const char* const*">
+              <type name="filename"/>
+            </array>
+          </parameter>
+          <parameter name="fds" transfer-ownership="none" nullable="1" allow-none="1" scope="call">
+            <doc xml:space="preserve">an array of file descriptors, or %NULL</doc>
+            <array length="4" zero-terminated="0" c:type="const int*">
+              <type name="gint" c:type="int"/>
+            </array>
+          </parameter>
+          <parameter name="n_fds" transfer-ownership="none">
+            <doc xml:space="preserve">the number of file descriptors in @fds, or 0 if @fds is %NULL</doc>
+            <type name="gint" c:type="int"/>
+          </parameter>
+          <parameter name="map_fds" transfer-ownership="none" nullable="1" allow-none="1" scope="call">
+            <doc xml:space="preserve">an array of integers, or %NULL</doc>
+            <array length="6" zero-terminated="0" c:type="const int*">
+              <type name="gint" c:type="int"/>
+            </array>
+          </parameter>
+          <parameter name="n_map_fds" transfer-ownership="none">
+            <doc xml:space="preserve">the number of elements in @map_fds, or 0 if @map_fds is %NULL</doc>
+            <type name="gint" c:type="int"/>
+          </parameter>
+          <parameter name="spawn_flags" transfer-ownership="none">
+            <doc xml:space="preserve">flags from #GSpawnFlags</doc>
+            <type name="GLib.SpawnFlags" c:type="GSpawnFlags"/>
+          </parameter>
+          <parameter name="child_setup" transfer-ownership="none" nullable="1" allow-none="1" scope="notified" closure="9" destroy="10">
+            <doc xml:space="preserve">an extra child setup function to run in the child just before exec(), or %NULL</doc>
+            <type name="GLib.SpawnChildSetupFunc" c:type="GSpawnChildSetupFunc"/>
+          </parameter>
+          <parameter name="child_setup_data" transfer-ownership="none" nullable="1" allow-none="1" scope="notified" closure="8">
+            <doc xml:space="preserve">user data for @child_setup, or %NULL</doc>
+            <type name="gpointer" c:type="gpointer"/>
+          </parameter>
+          <parameter name="child_setup_data_destroy" transfer-ownership="none" scope="async" destroy="9">
+            <doc xml:space="preserve">a #GDestroyNotify for @child_setup_data, or %NULL</doc>
+            <type name="GLib.DestroyNotify" c:type="GDestroyNotify"/>
+          </parameter>
+          <parameter name="timeout" transfer-ownership="none">
+            <doc xml:space="preserve">a timeout value in ms, -1 for the default timeout, or G_MAXINT to wait indefinitely</doc>
+            <type name="gint" c:type="int"/>
+          </parameter>
+          <parameter name="cancellable" transfer-ownership="none" nullable="1" allow-none="1">
+            <doc xml:space="preserve">a #GCancellable, or %NULL</doc>
+            <type name="Gio.Cancellable" c:type="GCancellable*"/>
+          </parameter>
+          <parameter name="callback" transfer-ownership="none" nullable="1" allow-none="1" scope="async" closure="14">
+            <type name="Gio.AsyncReadyCallback" c:type="GAsyncReadyCallback"/>
+          </parameter>
+          <parameter name="user_data" transfer-ownership="none" nullable="1" allow-none="1">
+            <type name="gpointer" c:type="gpointer"/>
           </parameter>
         </parameters>
       </method>
@@ -515,46 +630,77 @@ enumeration. See #GError for more information on error domains.</doc>
     <record name="Regex" c:type="VteRegex" glib:type-name="VteRegex" glib:get-type="vte_regex_get_type" c:symbol-prefix="regex">
       
       <constructor name="new_for_match" c:identifier="vte_regex_new_for_match" throws="1">
+        <doc xml:space="preserve">Compiles @pattern into a regex for use as a match regex
+with vte_terminal_match_add_regex() or
+vte_terminal_event_check_regex_simple().
+
+See man:pcre2pattern(3) for information
+about the supported regex language.
+
+The regex will be compiled using %PCRE2_UTF and possibly other flags, in
+addition to the flags supplied in @flags.</doc>
         
         <return-value transfer-ownership="full">
+          <doc xml:space="preserve">a newly created #VteRegex, or %NULL with @error filled in</doc>
           <type name="Regex" c:type="VteRegex*"/>
         </return-value>
         <parameters>
           <parameter name="pattern" transfer-ownership="none">
+            <doc xml:space="preserve">a regex pattern string</doc>
             <type name="utf8" c:type="const char*"/>
           </parameter>
           <parameter name="pattern_length" transfer-ownership="none">
+            <doc xml:space="preserve">the length of @pattern in bytes, or -1 if the
+ string is NUL-terminated and the length is unknown</doc>
             <type name="gssize" c:type="gssize"/>
           </parameter>
           <parameter name="flags" transfer-ownership="none">
+            <doc xml:space="preserve">PCRE2 compile flags</doc>
             <type name="guint32" c:type="guint32"/>
           </parameter>
         </parameters>
       </constructor>
       <constructor name="new_for_search" c:identifier="vte_regex_new_for_search" throws="1">
+        <doc xml:space="preserve">Compiles @pattern into a regex for use as a search regex
+with vte_terminal_search_set_regex().
+
+See man:pcre2pattern(3) for information
+about the supported regex language.
+
+The regex will be compiled using %PCRE2_UTF and possibly other flags, in
+addition to the flags supplied in @flags.</doc>
         
         <return-value transfer-ownership="full">
+          <doc xml:space="preserve">a newly created #VteRegex, or %NULL with @error filled in</doc>
           <type name="Regex" c:type="VteRegex*"/>
         </return-value>
         <parameters>
           <parameter name="pattern" transfer-ownership="none">
+            <doc xml:space="preserve">a regex pattern string</doc>
             <type name="utf8" c:type="const char*"/>
           </parameter>
           <parameter name="pattern_length" transfer-ownership="none">
+            <doc xml:space="preserve">the length of @pattern in bytes, or -1 if the
+ string is NUL-terminated and the length is unknown</doc>
             <type name="gssize" c:type="gssize"/>
           </parameter>
           <parameter name="flags" transfer-ownership="none">
+            <doc xml:space="preserve">PCRE2 compile flags</doc>
             <type name="guint32" c:type="guint32"/>
           </parameter>
         </parameters>
       </constructor>
       <method name="jit" c:identifier="vte_regex_jit" throws="1">
+        <doc xml:space="preserve">If the platform supports JITing, JIT compiles @regex.</doc>
         
         <return-value transfer-ownership="none">
+          <doc xml:space="preserve">%TRUE if JITing succeeded (or PCRE2 was built without
+  JIT support), or %FALSE with @error filled in</doc>
           <type name="gboolean" c:type="gboolean"/>
         </return-value>
         <parameters>
           <instance-parameter name="regex" transfer-ownership="none">
+            <doc xml:space="preserve">a #VteRegex</doc>
             <type name="Regex" c:type="VteRegex*"/>
           </instance-parameter>
           <parameter name="flags" transfer-ownership="none">
@@ -563,43 +709,57 @@ enumeration. See #GError for more information on error domains.</doc>
         </parameters>
       </method>
       <method name="ref" c:identifier="vte_regex_ref">
+        <doc xml:space="preserve">Increases the reference count of @regex by one.</doc>
         
         <return-value transfer-ownership="full">
+          <doc xml:space="preserve">@regex</doc>
           <type name="Regex" c:type="VteRegex*"/>
         </return-value>
         <parameters>
           <instance-parameter name="regex" transfer-ownership="none">
+            <doc xml:space="preserve">a #VteRegex</doc>
             <type name="Regex" c:type="VteRegex*"/>
           </instance-parameter>
         </parameters>
       </method>
-      <method name="substitute" c:identifier="vte_regex_substitute" throws="1">
+      <method name="substitute" c:identifier="vte_regex_substitute" version="0.56" throws="1">
+        <doc xml:space="preserve">See man:pcre2api(3) on pcre2_substitute() for more information.</doc>
         
         <return-value transfer-ownership="full">
+          <doc xml:space="preserve">the substituted string, or %NULL
+  if an error occurred</doc>
           <type name="utf8" c:type="char*"/>
         </return-value>
         <parameters>
           <instance-parameter name="regex" transfer-ownership="none">
+            <doc xml:space="preserve">a #VteRegex</doc>
             <type name="Regex" c:type="VteRegex*"/>
           </instance-parameter>
           <parameter name="subject" transfer-ownership="none">
+            <doc xml:space="preserve">the subject string</doc>
             <type name="utf8" c:type="const char*"/>
           </parameter>
           <parameter name="replacement" transfer-ownership="none">
+            <doc xml:space="preserve">the replacement string</doc>
             <type name="utf8" c:type="const char*"/>
           </parameter>
           <parameter name="flags" transfer-ownership="none">
+            <doc xml:space="preserve">PCRE2 match flags</doc>
             <type name="guint32" c:type="guint32"/>
           </parameter>
         </parameters>
       </method>
       <method name="unref" c:identifier="vte_regex_unref">
+        <doc xml:space="preserve">Decreases the reference count of @regex by one, and frees @regex
+if the refcount reaches zero.</doc>
         
         <return-value transfer-ownership="full">
+          <doc xml:space="preserve">%NULL</doc>
           <type name="Regex" c:type="VteRegex*"/>
         </return-value>
         <parameters>
-          <instance-parameter name="regex" transfer-ownership="none">
+          <instance-parameter name="regex" transfer-ownership="full">
+            <doc xml:space="preserve">a #VteRegex</doc>
             <type name="Regex" c:type="VteRegex*"/>
           </instance-parameter>
         </parameters>
@@ -1162,11 +1322,58 @@ selection.</doc>
           </parameter>
         </parameters>
       </method>
-      <method name="event_check_regex_simple" c:identifier="vte_terminal_event_check_regex_simple" version="0.46">
+      <method name="event_check_regex_array" c:identifier="vte_terminal_event_check_regex_array" shadows="event_check_regex_simple" version="0.62">
+        <doc xml:space="preserve">Like vte_terminal_event_check_regex_simple(), but returns an array of strings,
+containing the matching text (or %NULL if no match) corresponding to each of the
+regexes in @regexes.
+
+You must free each string and the array; but note that this is *not* a %NULL-terminated
+string array, and so you must *not* use g_strfreev() on it.</doc>
+        
+        <return-value transfer-ownership="full" nullable="1">
+          <doc xml:space="preserve">a newly allocated array of strings,
+  or %NULL if none of the regexes matched</doc>
+          <array length="4" zero-terminated="0" c:type="char**">
+            <type name="utf8"/>
+          </array>
+        </return-value>
+        <parameters>
+          <instance-parameter name="terminal" transfer-ownership="none">
+            <doc xml:space="preserve">a #VteTerminal</doc>
+            <type name="Terminal" c:type="VteTerminal*"/>
+          </instance-parameter>
+          <parameter name="event" transfer-ownership="none">
+            <doc xml:space="preserve">a #GdkEvent</doc>
+            <type name="Gdk.Event" c:type="GdkEvent*"/>
+          </parameter>
+          <parameter name="regexes" transfer-ownership="none">
+            <doc xml:space="preserve">an array of #VteRegex</doc>
+            <array length="2" zero-terminated="0" c:type="VteRegex**">
+              <type name="Regex" c:type="VteRegex*"/>
+            </array>
+          </parameter>
+          <parameter name="n_regexes" transfer-ownership="none">
+            <doc xml:space="preserve">number of items in @regexes</doc>
+            <type name="gsize" c:type="gsize"/>
+          </parameter>
+          <parameter name="match_flags" transfer-ownership="none">
+            <doc xml:space="preserve">PCRE2 match flags, or 0</doc>
+            <type name="guint32" c:type="guint32"/>
+          </parameter>
+          <parameter name="n_matches" direction="out" caller-allocates="0" transfer-ownership="full" optional="1" allow-none="1">
+            <doc xml:space="preserve">number of items in @matches, which is always equal to @n_regexes</doc>
+            <type name="gsize" c:type="gsize*"/>
+          </parameter>
+        </parameters>
+      </method>
+      <method name="event_check_regex_simple" c:identifier="vte_terminal_event_check_regex_simple" shadowed-by="event_check_regex_array" version="0.46" introspectable="0">
         <doc xml:space="preserve">Checks each regex in @regexes if the text in and around the position of
 the event matches the regular expressions.  If a match exists, the matched
 text is stored in @matches at the position of the regex in @regexes; otherwise
-%NULL is stored there.</doc>
+%NULL is stored there.  Each non-%NULL element of @matches should be freed with
+g_free().
+
+Note that the regexes in @regexes should have been created using the %PCRE2_MULTILINE flag.</doc>
         
         <return-value transfer-ownership="none">
           <doc xml:space="preserve">%TRUE iff any of the regexes produced a match</doc>
@@ -1195,7 +1402,7 @@ text is stored in @matches at the position of the regex in @regexes; otherwise
             <doc xml:space="preserve">PCRE2 match flags, or 0</doc>
             <type name="guint32" c:type="guint32"/>
           </parameter>
-          <parameter name="matches" direction="out" caller-allocates="1" transfer-ownership="none">
+          <parameter name="matches" direction="out" caller-allocates="1" transfer-ownership="full">
             <doc xml:space="preserve">a location to store the matches</doc>
             <array length="2" zero-terminated="0" c:type="char**">
               <type name="utf8" c:type="char*"/>
@@ -1550,6 +1757,19 @@ This method is unaware of BiDi. The returned column is logical column.</doc>
         
         <return-value transfer-ownership="none">
           <doc xml:space="preserve">%TRUE if Arabic shaping is enabled, %FALSE if not</doc>
+          <type name="gboolean" c:type="gboolean"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="terminal" transfer-ownership="none">
+            <doc xml:space="preserve">a #VteTerminal</doc>
+            <type name="Terminal" c:type="VteTerminal*"/>
+          </instance-parameter>
+        </parameters>
+      </method>
+      <method name="get_enable_sixel" c:identifier="vte_terminal_get_enable_sixel" version="0.62">
+        
+        <return-value transfer-ownership="none">
+          <doc xml:space="preserve">%FALSE</doc>
           <type name="gboolean" c:type="gboolean"/>
         </return-value>
         <parameters>
@@ -1999,7 +2219,9 @@ The caller must tolerate the returned string potentially not being a valid URI.<
       <method name="match_add_regex" c:identifier="vte_terminal_match_add_regex" version="0.46">
         <doc xml:space="preserve">Adds the regular expression @regex to the list of matching expressions.  When the
 user moves the mouse cursor over a section of displayed text which matches
-this expression, the text will be highlighted.</doc>
+this expression, the text will be highlighted.
+
+Note that @regex should have been created using the %PCRE2_MULTILINE flag.</doc>
         
         <return-value transfer-ownership="none">
           <doc xml:space="preserve">an integer associated with this expression</doc>
@@ -2361,7 +2583,9 @@ vte_terminal_search_set_regex().</doc>
         </parameters>
       </method>
       <method name="search_set_regex" c:identifier="vte_terminal_search_set_regex" version="0.46">
-        <doc xml:space="preserve">Sets the regex to search for. Unsets the search regex when passed %NULL.</doc>
+        <doc xml:space="preserve">Sets the regex to search for. Unsets the search regex when passed %NULL.
+
+Note that @regex should have been created using the %PCRE2_MULTILINE flag.</doc>
         
         <return-value transfer-ownership="none">
           <type name="none" c:type="void"/>
@@ -2856,6 +3080,23 @@ presses the delete key.</doc>
           </parameter>
         </parameters>
       </method>
+      <method name="set_enable_sixel" c:identifier="vte_terminal_set_enable_sixel" version="0.62">
+        <doc xml:space="preserve">This function does nothing.</doc>
+        
+        <return-value transfer-ownership="none">
+          <type name="none" c:type="void"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="terminal" transfer-ownership="none">
+            <doc xml:space="preserve">a #VteTerminal</doc>
+            <type name="Terminal" c:type="VteTerminal*"/>
+          </instance-parameter>
+          <parameter name="enabled" transfer-ownership="none">
+            <doc xml:space="preserve">whether to enable SIXEL images</doc>
+            <type name="gboolean" c:type="gboolean"/>
+          </parameter>
+        </parameters>
+      </method>
       <method name="set_encoding" c:identifier="vte_terminal_set_encoding" deprecated="1" deprecated-version="0.54" throws="1">
         <doc xml:space="preserve">Changes the encoding the terminal will expect data from the child to
 be encoded with.  For certain terminal types, applications executing in the
@@ -3144,34 +3385,10 @@ Use %NULL to reset the set of exception characters to the default.</doc>
       </method>
       <method name="spawn_async" c:identifier="vte_terminal_spawn_async" version="0.48">
         <doc xml:space="preserve">A convenience function that wraps creating the #VtePty and spawning
-the child process on it. See vte_pty_new_sync(), vte_pty_spawn_async(),
-and vte_pty_spawn_finish() for more information.
-
-When the operation is finished successfully, @callback will be called
-with the child #GPid, and a %NULL #GError. The child PID will already be
-watched via vte_terminal_watch_child().
-
-When the operation fails, @callback will be called with a -1 #GPid,
-and a non-%NULL #GError containing the error information.
-
-Beginning with 0.60, and on linux only, and unless %VTE_SPAWN_NO_SYSTEMD_SCOPE is
-passed in @spawn_flags, the newly created child process will be moved to its own
-systemd user scope; and if %VTE_SPAWN_REQUIRE_SYSTEMD_SCOPE is passed, and creation
-of the systemd user scope fails, the whole spawn will fail.
-You can override the options used for the systemd user scope by
-providing a systemd override file for 'vte-spawn-.scope' unit. See man:systemd.unit(5)
-for further information.
-
-Note that if @terminal has been destroyed before the operation is called,
-@callback will be called with a %NULL @terminal; you must not do anything
-in the callback besides freeing any resources associated with @user_data,
-but taking care not to access the now-destroyed #VteTerminal. Note that
-in this case, if spawning was successful, the child process will be aborted
-automatically.
-
-Beginning with 0.52, sets PWD to @working_directory in order to preserve symlink components.
-The caller should also make sure that symlinks were preserved while constructing the value of @working_directory,
-e.g. by using vte_terminal_get_current_directory_uri(), g_get_current_dir() or get_current_dir_name().</doc>
+the child process on it. Like vte_terminal_spawn_with_fds_async(),
+except that this function does not allow passing file descriptors to
+the child process. See vte_terminal_spawn_with_fds_async() for more
+information.</doc>
         
         <return-value transfer-ownership="none">
           <type name="none" c:type="void"/>
@@ -3203,7 +3420,7 @@ e.g. by using vte_terminal_get_current_directory_uri(), g_get_current_dir() or g
               <type name="filename"/>
             </array>
           </parameter>
-          <parameter name="spawn_flags_" transfer-ownership="none">
+          <parameter name="spawn_flags" transfer-ownership="none">
             <doc xml:space="preserve">flags from #GSpawnFlags</doc>
             <type name="GLib.SpawnFlags" c:type="GSpawnFlags"/>
           </parameter>
@@ -3220,7 +3437,7 @@ e.g. by using vte_terminal_get_current_directory_uri(), g_get_current_dir() or g
             <type name="GLib.DestroyNotify" c:type="GDestroyNotify"/>
           </parameter>
           <parameter name="timeout" transfer-ownership="none">
-            <doc xml:space="preserve">a timeout value in ms, or -1 to wait indefinitely</doc>
+            <doc xml:space="preserve">a timeout value in ms, -1 for the default timeout, or G_MAXINT to wait indefinitely</doc>
             <type name="gint" c:type="int"/>
           </parameter>
           <parameter name="cancellable" transfer-ownership="none" nullable="1" allow-none="1">
@@ -3245,6 +3462,11 @@ but can be overridden from @envv.
 @pty_flags controls logging the session to the specified system log files.
 
 Note that %G_SPAWN_DO_NOT_REAP_CHILD will always be added to @spawn_flags.
+
+Note also that %G_SPAWN_STDOUT_TO_DEV_NULL, %G_SPAWN_STDERR_TO_DEV_NULL,
+and %G_SPAWN_CHILD_INHERITS_STDIN are not supported in @spawn_flags, since
+stdin, stdout and stderr of the child process will always be connected to
+the PTY.
 
 Note that all open file descriptors will be closed in the child. If you want
 to keep some file descriptor open for use in the child process, you need to
@@ -3308,6 +3530,136 @@ e.g. by using vte_terminal_get_current_directory_uri(), g_get_current_dir() or g
           <parameter name="cancellable" transfer-ownership="none" nullable="1" allow-none="1">
             <doc xml:space="preserve">a #GCancellable, or %NULL</doc>
             <type name="Gio.Cancellable" c:type="GCancellable*"/>
+          </parameter>
+        </parameters>
+      </method>
+      <method name="spawn_with_fds_async" c:identifier="vte_terminal_spawn_with_fds_async" version="0.62">
+        <doc xml:space="preserve">A convenience function that wraps creating the #VtePty and spawning
+the child process on it. See vte_pty_new_sync(), vte_pty_spawn_with_fds_async(),
+and vte_pty_spawn_finish() for more information.
+
+When the operation is finished successfully, @callback will be called
+with the child #GPid, and a %NULL #GError. The child PID will already be
+watched via vte_terminal_watch_child().
+
+When the operation fails, @callback will be called with a -1 #GPid,
+and a non-%NULL #GError containing the error information.
+
+Note that %G_SPAWN_STDOUT_TO_DEV_NULL, %G_SPAWN_STDERR_TO_DEV_NULL,
+and %G_SPAWN_CHILD_INHERITS_STDIN are not supported in @spawn_flags, since
+stdin, stdout and stderr of the child process will always be connected to
+the PTY.
+
+If @fds is not %NULL, the child process will map the file descriptors from
+@fds according to @map_fds; @n_map_fds must be less or equal to @n_fds.
+This function will take ownership of the file descriptors in @fds;
+you must not use or close them after this call.
+
+Note that all  open file descriptors apart from those mapped as above
+will be closed in the child. (If you want to keep some other file descriptor
+open for use in the child process, you need to use a child setup function
+that unsets the FD_CLOEXEC flag on that file descriptor manually.)
+
+Beginning with 0.60, and on linux only, and unless %VTE_SPAWN_NO_SYSTEMD_SCOPE is
+passed in @spawn_flags, the newly created child process will be moved to its own
+systemd user scope; and if %VTE_SPAWN_REQUIRE_SYSTEMD_SCOPE is passed, and creation
+of the systemd user scope fails, the whole spawn will fail.
+You can override the options used for the systemd user scope by
+providing a systemd override file for 'vte-spawn-.scope' unit. See man:systemd.unit(5)
+for further information.
+
+Note that if @terminal has been destroyed before the operation is called,
+@callback will be called with a %NULL @terminal; you must not do anything
+in the callback besides freeing any resources associated with @user_data,
+but taking care not to access the now-destroyed #VteTerminal. Note that
+in this case, if spawning was successful, the child process will be aborted
+automatically.
+
+Beginning with 0.52, sets PWD to @working_directory in order to preserve symlink components.
+The caller should also make sure that symlinks were preserved while constructing the value of @working_directory,
+e.g. by using vte_terminal_get_current_directory_uri(), g_get_current_dir() or get_current_dir_name().</doc>
+        
+        <return-value transfer-ownership="none">
+          <type name="none" c:type="void"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="terminal" transfer-ownership="none">
+            <doc xml:space="preserve">a #VteTerminal</doc>
+            <type name="Terminal" c:type="VteTerminal*"/>
+          </instance-parameter>
+          <parameter name="pty_flags" transfer-ownership="none">
+            <doc xml:space="preserve">flags from #VtePtyFlags</doc>
+            <type name="PtyFlags" c:type="VtePtyFlags"/>
+          </parameter>
+          <parameter name="working_directory" transfer-ownership="none" nullable="1" allow-none="1">
+            <doc xml:space="preserve">the name of a directory the command should start
+  in, or %NULL to use the current working directory</doc>
+            <type name="utf8" c:type="const char*"/>
+          </parameter>
+          <parameter name="argv" transfer-ownership="none">
+            <doc xml:space="preserve">child's argument vector</doc>
+            <array c:type="const char* const*">
+              <type name="filename"/>
+            </array>
+          </parameter>
+          <parameter name="envv" transfer-ownership="none" nullable="1" allow-none="1">
+            <doc xml:space="preserve">a list of environment
+  variables to be added to the environment before starting the process, or %NULL</doc>
+            <array c:type="const char* const*">
+              <type name="filename"/>
+            </array>
+          </parameter>
+          <parameter name="fds" transfer-ownership="none" nullable="1" allow-none="1" scope="call">
+            <doc xml:space="preserve">an array of file descriptors, or %NULL</doc>
+            <array length="5" zero-terminated="0" c:type="const int*">
+              <type name="gint" c:type="int"/>
+            </array>
+          </parameter>
+          <parameter name="n_fds" transfer-ownership="none">
+            <doc xml:space="preserve">the number of file descriptors in @fds, or 0 if @fds is %NULL</doc>
+            <type name="gint" c:type="int"/>
+          </parameter>
+          <parameter name="map_fds" transfer-ownership="none" nullable="1" allow-none="1" scope="call">
+            <doc xml:space="preserve">an array of integers, or %NULL</doc>
+            <array length="7" zero-terminated="0" c:type="const int*">
+              <type name="gint" c:type="int"/>
+            </array>
+          </parameter>
+          <parameter name="n_map_fds" transfer-ownership="none">
+            <doc xml:space="preserve">the number of elements in @map_fds, or 0 if @map_fds is %NULL</doc>
+            <type name="gint" c:type="int"/>
+          </parameter>
+          <parameter name="spawn_flags" transfer-ownership="none">
+            <doc xml:space="preserve">flags from #GSpawnFlags</doc>
+            <type name="GLib.SpawnFlags" c:type="GSpawnFlags"/>
+          </parameter>
+          <parameter name="child_setup" transfer-ownership="none" nullable="1" allow-none="1" scope="notified" closure="10" destroy="11">
+            <doc xml:space="preserve">an extra child setup function to run in the child just before exec(), or %NULL</doc>
+            <type name="GLib.SpawnChildSetupFunc" c:type="GSpawnChildSetupFunc"/>
+          </parameter>
+          <parameter name="child_setup_data" transfer-ownership="none" nullable="1" allow-none="1" scope="notified" closure="9">
+            <doc xml:space="preserve">user data for @child_setup, or %NULL</doc>
+            <type name="gpointer" c:type="gpointer"/>
+          </parameter>
+          <parameter name="child_setup_data_destroy" transfer-ownership="none" scope="async" destroy="10">
+            <doc xml:space="preserve">a #GDestroyNotify for @child_setup_data, or %NULL</doc>
+            <type name="GLib.DestroyNotify" c:type="GDestroyNotify"/>
+          </parameter>
+          <parameter name="timeout" transfer-ownership="none">
+            <doc xml:space="preserve">a timeout value in ms, -1 for the default timeout, or G_MAXINT to wait indefinitely</doc>
+            <type name="gint" c:type="int"/>
+          </parameter>
+          <parameter name="cancellable" transfer-ownership="none" nullable="1" allow-none="1">
+            <doc xml:space="preserve">a #GCancellable, or %NULL</doc>
+            <type name="Gio.Cancellable" c:type="GCancellable*"/>
+          </parameter>
+          <parameter name="callback" transfer-ownership="none" nullable="1" allow-none="1" scope="async" closure="15">
+            <doc xml:space="preserve">a #VteTerminalSpawnAsyncCallback, or %NULL</doc>
+            <type name="TerminalSpawnAsyncCallback" c:type="VteTerminalSpawnAsyncCallback"/>
+          </parameter>
+          <parameter name="user_data" transfer-ownership="none" nullable="1" allow-none="1" closure="14">
+            <doc xml:space="preserve">user data for @callback, or %NULL</doc>
+            <type name="gpointer" c:type="gpointer"/>
           </parameter>
         </parameters>
       </method>
@@ -3460,6 +3812,10 @@ when the user presses the delete key.</doc>
       </property>
       <property name="enable-shaping" version="0.58" writable="1" transfer-ownership="none">
         <doc xml:space="preserve">Controls whether or not the terminal will shape Arabic text.</doc>
+        <type name="gboolean" c:type="gboolean"/>
+      </property>
+      <property name="enable-sixel" version="0.62" writable="1" transfer-ownership="none">
+        <doc xml:space="preserve">Controls whether SIXEL image support is enabled.</doc>
         <type name="gboolean" c:type="gboolean"/>
       </property>
       <property name="encoding" deprecated="1" deprecated-version="0.54" writable="1" transfer-ownership="none">
@@ -4336,6 +4692,14 @@ passing %NULL to vte_terminal_set_encoding().</doc>
           <type name="gboolean" c:type="gboolean"/>
         </parameter>
       </parameters>
+    </function>
+    <function name="get_feature_flags" c:identifier="vte_get_feature_flags" version="0.62">
+      <doc xml:space="preserve">Gets features VTE was compiled with.</doc>
+      
+      <return-value transfer-ownership="none">
+        <doc xml:space="preserve">flags from #VteFeatureFlags</doc>
+        <type name="FeatureFlags" c:type="VteFeatureFlags"/>
+      </return-value>
     </function>
     <function name="get_features" c:identifier="vte_get_features" version="0.40">
       <doc xml:space="preserve">Gets a list of features vte was compiled with.</doc>
