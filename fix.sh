@@ -10,6 +10,7 @@ xmlstarlet ed -P -L \
 # but in this case it happens to be named differently, i.e., as g_option_error_quark.
 xmlstarlet ed -P -L \
 	-u '//*[@glib:error-domain="g-option-context-error-quark"]/@glib:error-domain' -v g-option-error-quark \
+	-u '//*[@name="UriError"]/@glib:error-domain' -v g-uri-error-quark \
 	GLib-2.0.gir
 
 # GtkEntry icon signals incorrect assume GdkEventButton when other variants may be passed
