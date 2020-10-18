@@ -398,7 +398,7 @@ gdk_draw_context_end_frame() is called.</doc>
         <return-value transfer-ownership="full" nullable="1">
           <doc xml:space="preserve">a Cairo context to be used
   to draw the contents of the #GdkSurface. %NULL is returned
-  when @contet is not drawing.</doc>
+  when @context is not drawing.</doc>
           <type name="cairo.Context" c:type="cairo_t*"/>
         </return-value>
         <parameters>
@@ -1411,7 +1411,7 @@ registered.</doc>
           <type name="ContentFormats" c:type="GdkContentFormats*"/>
         </return-value>
         <parameters>
-          <instance-parameter name="formats" transfer-ownership="none">
+          <instance-parameter name="formats" transfer-ownership="full">
             <doc xml:space="preserve">a #GdkContentFormats</doc>
             <type name="ContentFormats" c:type="GdkContentFormats*"/>
           </instance-parameter>
@@ -1426,7 +1426,7 @@ registered.</doc>
           <type name="ContentFormats" c:type="GdkContentFormats*"/>
         </return-value>
         <parameters>
-          <instance-parameter name="formats" transfer-ownership="none">
+          <instance-parameter name="formats" transfer-ownership="full">
             <doc xml:space="preserve">a #GdkContentFormats</doc>
             <type name="ContentFormats" c:type="GdkContentFormats*"/>
           </instance-parameter>
@@ -1687,7 +1687,7 @@ Whenever data needs to be written, the union provider will try the given
 be chosen to provide it.
 
 This allows an easy way to support providing data in different formats.
-For example, an image may be provided by its file and by the iamge
+For example, an image may be provided by its file and by the image
 contents with a call such as
 |[&lt;!-- language="C" --&gt;
 gdk_content_provider_new_union ((GdkContentProvider *[2]) {
@@ -2441,13 +2441,13 @@ This function consumes @error.</doc>
         <doc xml:space="preserve">crossing because a grab is deactivated.</doc>
       </member>
       <member name="gtk_grab" value="3" c:identifier="GDK_CROSSING_GTK_GRAB" glib:nick="gtk-grab">
-        <doc xml:space="preserve">crossing because a GTK+ grab is activated.</doc>
+        <doc xml:space="preserve">crossing because a GTK grab is activated.</doc>
       </member>
       <member name="gtk_ungrab" value="4" c:identifier="GDK_CROSSING_GTK_UNGRAB" glib:nick="gtk-ungrab">
-        <doc xml:space="preserve">crossing because a GTK+ grab is deactivated.</doc>
+        <doc xml:space="preserve">crossing because a GTK grab is deactivated.</doc>
       </member>
       <member name="state_changed" value="5" c:identifier="GDK_CROSSING_STATE_CHANGED" glib:nick="state-changed">
-        <doc xml:space="preserve">crossing because a GTK+ widget changed
+        <doc xml:space="preserve">crossing because a GTK widget changed
   state (e.g. sensitivity).</doc>
       </member>
       <member name="touch_begin" value="6" c:identifier="GDK_CROSSING_TOUCH_BEGIN" glib:nick="touch-begin">
@@ -2747,9 +2747,8 @@ will be returned and the GdkCursor::name property will be set.</doc>
       <doc xml:space="preserve">The #GdkDevice object represents a single input device, such
 as a keyboard, a mouse, a touchpad, etc.
 
-See the #GdkSeat documentation for more information
-about the various kinds of logical and physical devices, and their
-relationships.</doc>
+See the #GdkSeat documentation for more information about the
+various kinds of devices, and their relationships.</doc>
       <method name="get_caps_lock_state" c:identifier="gdk_device_get_caps_lock_state">
         <doc xml:space="preserve">Retrieves whether the Caps Lock modifier of the
 keyboard is locked, if @device is a keyboard device.</doc>
@@ -2804,7 +2803,7 @@ of its symbols. See pango_unichar_direction().</doc>
         
         <return-value transfer-ownership="none">
           <doc xml:space="preserve">a #GdkDisplay. This memory is owned
-         by GTK+, and must not be freed or unreffed.</doc>
+         by GTK, and must not be freed or unreffed.</doc>
           <type name="Display" c:type="GdkDisplay*"/>
         </return-value>
         <parameters>
@@ -2816,7 +2815,8 @@ of its symbols. See pango_unichar_direction().</doc>
       </method>
       <method name="get_has_cursor" c:identifier="gdk_device_get_has_cursor">
         <doc xml:space="preserve">Determines whether the pointer follows device motion.
-This is not meaningful for keyboard devices, which don't have a pointer.</doc>
+This is not meaningful for keyboard devices, which
+don't have a pointer.</doc>
         
         <return-value transfer-ownership="none">
           <doc xml:space="preserve">%TRUE if the pointer follows device motion</doc>
@@ -2845,7 +2845,8 @@ if @device is a keyboard device.</doc>
         </parameters>
       </method>
       <method name="get_name" c:identifier="gdk_device_get_name">
-        <doc xml:space="preserve">Determines the name of the device.</doc>
+        <doc xml:space="preserve">Determines the name of the device, suitable
+for showing in a user interface.</doc>
         
         <return-value transfer-ownership="none">
           <doc xml:space="preserve">a name</doc>
@@ -2922,8 +2923,7 @@ keyboard is locked, if @device is a keyboard device.</doc>
         <doc xml:space="preserve">Returns the #GdkSeat the device belongs to.</doc>
         
         <return-value transfer-ownership="none">
-          <doc xml:space="preserve">A #GdkSeat. This memory is owned by GTK+ and
-         must not be freed.</doc>
+          <doc xml:space="preserve">a #GdkSeat</doc>
           <type name="Seat" c:type="GdkSeat*"/>
         </return-value>
         <parameters>
@@ -3126,13 +3126,12 @@ can be used to obtain the number of groups, gdk_device_pad_get_n_features()
 and gdk_device_pad_get_feature_group() can be combined to find out the
 number of buttons/rings/strips the device has, and how are they grouped.
 
-Each of those groups have different modes, which may be used to map
-each individual pad feature to multiple actions. Only one mode is
-effective (current) for each given group, different groups may have
-different current modes. The number of available modes in a group can
-be found out through gdk_device_pad_get_group_n_modes(), and the current
-mode for a given group will be notified through the #GdkEventPadGroupMode
-event.</doc>
+Each of those groups have different modes, which may be used to map each
+individual pad feature to multiple actions. Only one mode is effective
+(current) for each given group, different groups may have different
+current modes. The number of available modes in a group can be found
+out through gdk_device_pad_get_group_n_modes(), and the current mode for
+a given group will be notified through events of type #GDK_PAD_GROUP_MODE.</doc>
       
       <prerequisite name="Device"/>
       <method name="get_feature_group" c:identifier="gdk_device_pad_get_feature_group">
@@ -3347,7 +3346,7 @@ objects. Every display has a one or more seats, which can be accessed with
 gdk_display_get_default_seat() and gdk_display_list_seats().
 
 Output devices are represented by #GdkMonitor objects, which can be accessed
-with gdk_display_get_monitor() and similar APIs.</doc>
+with gdk_display_get_monitor_at_surface() and similar APIs.</doc>
       <function name="get_default" c:identifier="gdk_display_get_default">
         <doc xml:space="preserve">Gets the default #GdkDisplay. This is a convenience
 function for:
@@ -3614,7 +3613,7 @@ if no ID has been defined.</doc>
       <method name="is_composited" c:identifier="gdk_display_is_composited">
         <doc xml:space="preserve">Returns whether surfaces can reasonably be expected to have
 their alpha channel drawn correctly on the screen. Check
-gdk_display_is_rgba() for wether the display supports an
+gdk_display_is_rgba() for whether the display supports an
 alpha channel.
 
 On X11 this function returns whether a compositing manager is
@@ -3635,7 +3634,7 @@ expected to have their alpha channels drawn correctly on the screen.</doc>
         </parameters>
       </method>
       <method name="is_rgba" c:identifier="gdk_display_is_rgba">
-        <doc xml:space="preserve">Returns wether surfaces on this @display are created with an
+        <doc xml:space="preserve">Returns whether surfaces on this @display are created with an
 alpha channel.
 
 Even if a %TRUE is returned, it is possible that the
@@ -3644,9 +3643,6 @@ surface on the screen: in particular, for X an appropriate
 windowing manager and compositing manager must be running to
 provide appropriate display. Use gdk_display_is_composited()
 to check if that is the case.
-
-For setting an overall opacity for a top-level surface, see
-gdk_surface_set_opacity().
 
 On modern displays, this value is always %TRUE.</doc>
         
@@ -3768,7 +3764,7 @@ The returned array should be freed with g_free().</doc>
         <doc xml:space="preserve">Indicates to the GUI environment that the application has
 finished loading, using a given identifier.
 
-GTK+ will call this function automatically for #GtkWindow
+GTK will call this function automatically for #GtkWindow
 with custom startup-notification identifier unless
 gtk_window_set_auto_startup_notification() is called to
 disable that feature.</doc>
@@ -3830,9 +3826,9 @@ On modern displays, this value is always %TRUE.</doc>
         <doc xml:space="preserve">Flushes any requests queued for the windowing system and waits until all
 requests have been handled. This is often used for making sure that the
 display is synchronized with the current state of the program. Calling
-gdk_display_sync() before gdk_error_trap_pop() makes sure that any errors
-generated from earlier requests are handled before the error trap is
-removed.
+gdk_display_sync() before gdk_x11_display_error_trap_pop() makes sure
+that any errors generated from earlier requests are handled before the
+error trap is removed.
 
 This is most useful for X11. On windowing systems where requests are
 handled synchronously, this function will do nothing.</doc>
@@ -4032,9 +4028,7 @@ with multiple backends). Applications can use gdk_set_allowed_backends()
 to limit what backends can be used.</doc>
         
         <return-value transfer-ownership="none">
-          <doc xml:space="preserve">The global #GdkDisplayManager singleton;
-    gdk_parse_args(), gdk_init(), or gdk_init_check() must have
-    been called first.</doc>
+          <doc xml:space="preserve">The global #GdkDisplayManager singleton</doc>
           <type name="DisplayManager" c:type="GdkDisplayManager*"/>
         </return-value>
       </function>
@@ -4476,7 +4470,7 @@ during a DND operation.</doc>
 rendering methods, such as #GdkGLContext or #GdkVulkanContext. It provides
 shared functionality between those contexts.
 
-You will always interact with one of those s.ubclasses.
+You will always interact with one of those subclasses.
 
 A GdkDrawContext is always associated with a single toplevel surface.</doc>
       <method name="begin_frame" c:identifier="gdk_draw_context_begin_frame">
@@ -4558,7 +4552,7 @@ After a call to gdk_draw_context_begin_frame() this function will return
 a union of the region passed to that function and the area of the surface
 that the @context determined needs to be repainted.
 
-If @context is not inbetween calls to gdk_draw_context_begin_frame() and
+If @context is not in between calls to gdk_draw_context_begin_frame() and
 gdk_draw_context_end_frame(), %NULL will be returned.</doc>
         
         <return-value transfer-ownership="none" nullable="1">
@@ -4611,7 +4605,7 @@ In this situation, drawing commands may be effecting the contents of a
         <type name="Display"/>
       </property>
       <property name="surface" writable="1" construct-only="1" transfer-ownership="none">
-        <doc xml:space="preserve">The #GdkSurface the gl context is bound to.</doc>
+        <doc xml:space="preserve">The #GdkSurface the context is bound to.</doc>
         <type name="Surface"/>
       </property>
     </class>
@@ -4648,7 +4642,7 @@ contains multiple actions - ie gdk_drag_action_is_unique()
 returns %FALSE for the result - gdk_drop_finish() must choose
 the action to use when accepting the drop. This will only
 happen if you passed %GDK_ACTION_ASK as one of the possible
-actions in gdk_drag_status(). %GDK_ACTION_ASK itself will not
+actions in gdk_drop_status(). %GDK_ACTION_ASK itself will not
 be included in the actions returned by this function.
 
 This value may change over the lifetime of the #GdkDrop both
@@ -5279,9 +5273,9 @@ returns #GDK_CURRENT_TIME.</doc>
         </parameters>
       </method>
       <method name="triggers_context_menu" c:identifier="gdk_event_triggers_context_menu">
-        <doc xml:space="preserve">This function returns whether a #GdkEventButton should trigger a
-context menu, according to platform conventions. The right mouse
-button always triggers context menus.
+        <doc xml:space="preserve">This function returns whether a #GdkEvent should trigger a
+context menu, according to platform conventions. The right
+mouse button always triggers context menus.
 
 This function should always be used instead of simply checking for
 event-&gt;button == %GDK_BUTTON_SECONDARY.</doc>
@@ -5541,6 +5535,21 @@ gdk_frame_clock_begin_updating().</doc>
           </instance-parameter>
         </parameters>
       </method>
+      <method name="get_fps" c:identifier="gdk_frame_clock_get_fps">
+        <doc xml:space="preserve">Calculates the current frames-per-second, based on the
+frame timings of @frame_clock.</doc>
+        
+        <return-value transfer-ownership="none">
+          <doc xml:space="preserve">the current fps, as a double</doc>
+          <type name="gdouble" c:type="double"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="frame_clock" transfer-ownership="none">
+            <doc xml:space="preserve">a #GdkFrameClock</doc>
+            <type name="FrameClock" c:type="GdkFrameClock*"/>
+          </instance-parameter>
+        </parameters>
+      </method>
       <method name="get_frame_counter" c:identifier="gdk_frame_clock_get_frame_counter">
         <doc xml:space="preserve">A #GdkFrameClock maintains a 64-bit counter that increments for
 each frame drawn.</doc>
@@ -5716,8 +5725,8 @@ performed. GTK normally handles this internally.</doc>
         <doc xml:space="preserve">This signal is emitted as the third step of toolkit and
 application processing of the frame. The frame is
 repainted. GDK normally handles this internally and
-produces expose events, which are turned into GTK
-#GtkWidget::draw signals.</doc>
+emits #GdkSurface::render which are turned into
+#GtkWidget::snapshot signals by GTK.</doc>
         <return-value transfer-ownership="none">
           <type name="none" c:type="void"/>
         </return-value>
@@ -6220,7 +6229,7 @@ calling this function.</doc>
       <method name="set_forward_compatible" c:identifier="gdk_gl_context_set_forward_compatible">
         <doc xml:space="preserve">Sets whether the #GdkGLContext should be forward compatible.
 
-Forward compatibile contexts must not support OpenGL functionality that
+Forward compatible contexts must not support OpenGL functionality that
 has been marked as deprecated in the requested version; non-forward
 compatible contexts, on the other hand, must support both deprecated and
 non deprecated functionality.
@@ -16032,25 +16041,29 @@ for details).</doc>
         <doc xml:space="preserve">4 bytes; for alpha, red, green, blue.
     The color values are premultiplied with the alpha value.</doc>
       </member>
-      <member name="b8g8r8a8" value="2" c:identifier="GDK_MEMORY_B8G8R8A8" glib:nick="b8g8r8a8">
+      <member name="r8g8b8a8_premultiplied" value="2" c:identifier="GDK_MEMORY_R8G8B8A8_PREMULTIPLIED" glib:nick="r8g8b8a8-premultiplied">
+        <doc xml:space="preserve">4 bytes; for red, green, blue, alpha
+    The color values are premultiplied with the alpha value.</doc>
+      </member>
+      <member name="b8g8r8a8" value="3" c:identifier="GDK_MEMORY_B8G8R8A8" glib:nick="b8g8r8a8">
         <doc xml:space="preserve">4 bytes; for blue, green, red, alpha.</doc>
       </member>
-      <member name="a8r8g8b8" value="3" c:identifier="GDK_MEMORY_A8R8G8B8" glib:nick="a8r8g8b8">
+      <member name="a8r8g8b8" value="4" c:identifier="GDK_MEMORY_A8R8G8B8" glib:nick="a8r8g8b8">
         <doc xml:space="preserve">4 bytes; for alpha, red, green, blue.</doc>
       </member>
-      <member name="r8g8b8a8" value="4" c:identifier="GDK_MEMORY_R8G8B8A8" glib:nick="r8g8b8a8">
+      <member name="r8g8b8a8" value="5" c:identifier="GDK_MEMORY_R8G8B8A8" glib:nick="r8g8b8a8">
         <doc xml:space="preserve">4 bytes; for red, green, blue, alpha.</doc>
       </member>
-      <member name="a8b8g8r8" value="5" c:identifier="GDK_MEMORY_A8B8G8R8" glib:nick="a8b8g8r8">
+      <member name="a8b8g8r8" value="6" c:identifier="GDK_MEMORY_A8B8G8R8" glib:nick="a8b8g8r8">
         <doc xml:space="preserve">4 bytes; for alpha, blue, green, red.</doc>
       </member>
-      <member name="r8g8b8" value="6" c:identifier="GDK_MEMORY_R8G8B8" glib:nick="r8g8b8">
+      <member name="r8g8b8" value="7" c:identifier="GDK_MEMORY_R8G8B8" glib:nick="r8g8b8">
         <doc xml:space="preserve">3 bytes; for red, green, blue. The data is opaque.</doc>
       </member>
-      <member name="b8g8r8" value="7" c:identifier="GDK_MEMORY_B8G8R8" glib:nick="b8g8r8">
+      <member name="b8g8r8" value="8" c:identifier="GDK_MEMORY_B8G8R8" glib:nick="b8g8r8">
         <doc xml:space="preserve">3 bytes; for blue, green, red. The data is opaque.</doc>
       </member>
-      <member name="n_formats" value="8" c:identifier="GDK_MEMORY_N_FORMATS" glib:nick="n-formats">
+      <member name="n_formats" value="9" c:identifier="GDK_MEMORY_N_FORMATS" glib:nick="n-formats">
         <doc xml:space="preserve">The number of formats. This value will change as
     more formats get added, so do not rely on its concrete integer.</doc>
       </member>
@@ -16487,13 +16500,13 @@ resolution screens or when OpenGL is available. A #GdkPaintable will however
 always produce the same output for the same snapshot.
 
 A #GdkPaintable may change its contents, meaning that it will now produce a
-different output with the same snpashot. Once that happens, it will call
+different output with the same snapshot. Once that happens, it will call
 gdk_paintable_invalidate_contents() which will emit the
-#GdkPaintable::invalidate-contents signal.
-If a paintable is known to never change its contents, it will set the
-%GDK_PAINTABLE_STATIC_CONTENTS flag. If a consumer cannot deal with changing
-contents, it may call gdk_paintable_get_static_image() which will return a
-static paintable and use that.
+#GdkPaintable::invalidate-contents signal. If a paintable is known to never
+change its contents, it will set the %GDK_PAINTABLE_STATIC_CONTENTS flag.
+If a consumer cannot deal with changing contents, it may call
+gdk_paintable_get_current_image() which will return a static paintable and
+use that.
 
 A paintable can report an intrinsic (or preferred) size or aspect ratio it
 wishes to be rendered at, though it doesn't have to. Consumers of the interface
@@ -17190,6 +17203,14 @@ hidden if the @popup was set to autohide.</doc>
       <property name="parent" writable="1" construct-only="1" transfer-ownership="none">
         <type name="Surface"/>
       </property>
+      <glib:signal name="popup-layout-changed" when="first">
+        <doc xml:space="preserve">Emitted when the layout of a popup surface has changed, e.g. if the popup
+layout was reactive and after the parent moved causing the popover to end
+up partially off-screen.</doc>
+        <return-value transfer-ownership="none">
+          <type name="none" c:type="void"/>
+        </return-value>
+      </glib:signal>
     </interface>
     <record name="PopupInterface" c:type="GdkPopupInterface" disguised="1" glib:is-gtype-struct-for="Popup">
       
@@ -17200,13 +17221,12 @@ The GdkPopupLayout struct contains information that is
 necessary to do so.</doc>
       
       <constructor name="new" c:identifier="gdk_popup_layout_new">
-        <doc xml:space="preserve">Create a popup layout description. Used together with
-gdk_surface_present_popup() to describe how a popup surface should be placed
-and behave on-screen.
+        <doc xml:space="preserve">Create a popup layout description. Used together with gdk_popup_present()
+to describe how a popup surface should be placed and behave on-screen.
 
 @anchor_rect is relative to the top-left corner of the surface's parent.
-@rect_anchor and @surface_anchor determine anchor points on @anchor_rect and
-surface to pin together.
+@rect_anchor and @surface_anchor determine anchor points on @anchor_rect
+and surface to pin together.
 
 The position of @anchor_rect's anchor point can optionally be offset using
 gdk_popup_layout_set_offset(), which is equivalent to offsetting the
@@ -17586,14 +17606,16 @@ The string can be either one of:
 - A standard name (Taken from the X11 rgb.txt file).
 - A hexadecimal value in the form &#x201C;\#rgb&#x201D;, &#x201C;\#rrggbb&#x201D;,
   &#x201C;\#rrrgggbbb&#x201D; or &#x201D;\#rrrrggggbbbb&#x201D;
+- A hexadecimal value in the form &#x201C;\#rgba&#x201D;, &#x201C;\#rrggbbaa&#x201D;,
+  or &#x201D;\#rrrrggggbbbbaaaa&#x201D;
 - A RGB color in the form &#x201C;rgb(r,g,b)&#x201D; (In this case the color will
   have full opacity)
 - A RGBA color in the form &#x201C;rgba(r,g,b,a)&#x201D;
 
 Where &#x201C;r&#x201D;, &#x201C;g&#x201D;, &#x201C;b&#x201D; and &#x201C;a&#x201D; are respectively the red, green, blue and
-alpha color values. In the last two cases, &#x201C;r&#x201D;, &#x201C;g&#x201D;, and &#x201C;b&#x201D; are either integers
-in the range 0 to 255 or percentage values in the range 0% to 100%, and
-a is a floating point value in the range 0 to 1.</doc>
+alpha color values. In the last two cases, &#x201C;r&#x201D;, &#x201C;g&#x201D;, and &#x201C;b&#x201D; are either
+integers in the range 0 to 255 or percentage values in the range 0% to
+100%, and a is a floating point value in the range 0 to 1.</doc>
         
         <return-value transfer-ownership="none">
           <doc xml:space="preserve">%TRUE if the parsing succeeded</doc>
@@ -17806,7 +17828,7 @@ zero width or height).</doc>
       </member>
       <member name="smooth" value="4" c:identifier="GDK_SCROLL_SMOOTH" glib:nick="smooth">
         <doc xml:space="preserve">the scrolling is determined by the delta values
-  in scroll events. See gdk_event_get_scroll_deltas()</doc>
+  in scroll events. See gdk_scroll_event_get_deltas()</doc>
       </member>
     </enumeration>
     <class name="ScrollEvent" c:symbol-prefix="scroll_event" c:type="GdkScrollEvent" parent="Event" glib:type-name="GdkScrollEvent" glib:get-type="gdk_scroll_event_get_type" glib:fundamental="1">
@@ -17892,7 +17914,7 @@ that belong to a user.</doc>
         <return-value transfer-ownership="container">
           <doc xml:space="preserve">A list of #GdkDevices.
          The list must be freed with g_list_free(), the elements are owned
-         by GDK and must not be freed.</doc>
+         by GTK and must not be freed.</doc>
           <type name="GLib.List" c:type="GList*">
             <type name="Device"/>
           </type>
@@ -17924,10 +17946,10 @@ that belong to a user.</doc>
         </parameters>
       </method>
       <method name="get_keyboard" c:identifier="gdk_seat_get_keyboard">
-        <doc xml:space="preserve">Returns the logical device that routes keyboard events.</doc>
+        <doc xml:space="preserve">Returns the device that routes keyboard events.</doc>
         
         <return-value transfer-ownership="none" nullable="1">
-          <doc xml:space="preserve">a logical #GdkDevice with keyboard
+          <doc xml:space="preserve">a #GdkDevice with keyboard
          capabilities. This object is owned by GTK and must not be freed.</doc>
           <type name="Device" c:type="GdkDevice*"/>
         </return-value>
@@ -17939,10 +17961,10 @@ that belong to a user.</doc>
         </parameters>
       </method>
       <method name="get_pointer" c:identifier="gdk_seat_get_pointer">
-        <doc xml:space="preserve">Returns the logical device that routes pointer events.</doc>
+        <doc xml:space="preserve">Returns the device that routes pointer events.</doc>
         
         <return-value transfer-ownership="none" nullable="1">
-          <doc xml:space="preserve">a logical #GdkDevice with pointer
+          <doc xml:space="preserve">a #GdkDevice with pointer
          capabilities. This object is owned by GTK and must not be freed.</doc>
           <type name="Device" c:type="GdkDevice*"/>
         </return-value>
@@ -17958,8 +17980,8 @@ that belong to a user.</doc>
 application.</doc>
         
         <return-value transfer-ownership="container">
-          <doc xml:space="preserve">A list of tools. Free with
-g_list_free().</doc>
+          <doc xml:space="preserve">
+    A list of tools. Free with g_list_free().</doc>
           <type name="GLib.List" c:type="GList*">
             <type name="DeviceTool"/>
           </type>
@@ -18098,8 +18120,8 @@ It&#x2019;s a low-level object, used to implement high-level objects such as
       <constructor name="new_popup" c:identifier="gdk_surface_new_popup">
         <doc xml:space="preserve">Create a new popup surface.
 
-The surface will be attached to @parent and can be positioned relative to it
-using gdk_surface_show_popup() or later using gdk_surface_layout_popup().</doc>
+The surface will be attached to @parent and can be positioned
+relative to it using gdk_popup_present().</doc>
         
         <return-value transfer-ownership="full">
           <doc xml:space="preserve">a new #GdkSurface</doc>
@@ -18127,14 +18149,6 @@ using gdk_surface_show_popup() or later using gdk_surface_layout_popup().</doc>
           <parameter name="display" transfer-ownership="none">
             <doc xml:space="preserve">the display to create the surface on</doc>
             <type name="Display" c:type="GdkDisplay*"/>
-          </parameter>
-          <parameter name="width" transfer-ownership="none">
-            <doc xml:space="preserve">width of new surface</doc>
-            <type name="gint" c:type="int"/>
-          </parameter>
-          <parameter name="height" transfer-ownership="none">
-            <doc xml:space="preserve">height of new surface</doc>
-            <type name="gint" c:type="int"/>
           </parameter>
         </parameters>
       </constructor>
@@ -18314,7 +18328,8 @@ The position is given in coordinates relative to the upper left
 corner of @surface.</doc>
         
         <return-value transfer-ownership="none">
-          <type name="none" c:type="void"/>
+          <doc xml:space="preserve">%TRUE if the device is over the surface</doc>
+          <type name="gboolean" c:type="gboolean"/>
         </return-value>
         <parameters>
           <instance-parameter name="surface" transfer-ownership="none">
@@ -18387,8 +18402,8 @@ Surface size is reported in &#x201D;application pixels&#x201D;, not
         </parameters>
       </method>
       <method name="get_mapped" c:identifier="gdk_surface_get_mapped">
-        <doc xml:space="preserve">Checks whether the surface has been mapped (with gdk_surface_show() or
-gdk_surface_show_unraised()).</doc>
+        <doc xml:space="preserve">Checks whether the surface has been mapped (with gdk_toplevel_present()
+or gdk_popup_present()).</doc>
         
         <return-value transfer-ownership="none">
           <doc xml:space="preserve">%TRUE if the surface is mapped</doc>
@@ -18553,7 +18568,7 @@ invisible and allows for nicely antialiased borders,
 and the input region controls where the surface is
 &#x201C;clickable&#x201D;.
 
-Use gdk_display_support_input_shapes() to find out if
+Use gdk_display_supports_input_shapes() to find out if
 a particular backend supports input regions.</doc>
         
         <return-value transfer-ownership="none">
@@ -18682,8 +18697,14 @@ for details.</doc>
       <property name="frame-clock" writable="1" construct-only="1" transfer-ownership="none">
         <type name="FrameClock"/>
       </property>
+      <property name="height" transfer-ownership="none">
+        <type name="gint" c:type="gint"/>
+      </property>
       <property name="mapped" transfer-ownership="none">
         <type name="gboolean" c:type="gboolean"/>
+      </property>
+      <property name="width" transfer-ownership="none">
+        <type name="gint" c:type="gint"/>
       </property>
       <glib:signal name="enter-monitor" when="first">
         <doc xml:space="preserve">Emitted when @surface starts being present on the monitor.</doc>
@@ -18721,14 +18742,6 @@ for details.</doc>
             <type name="Monitor"/>
           </parameter>
         </parameters>
-      </glib:signal>
-      <glib:signal name="popup-layout-changed" when="first">
-        <doc xml:space="preserve">Emitted when the layout of a popup @surface has changed, e.g. if the popup
-layout was reactive and after the parent moved causing the popover to end
-up partially off-screen.</doc>
-        <return-value transfer-ownership="none">
-          <type name="none" c:type="void"/>
-        </return-value>
       </glib:signal>
       <glib:signal name="render" when="last">
         <doc xml:space="preserve">Emitted when part of the surface needs to be redrawn.</doc>
@@ -18793,65 +18806,6 @@ Surface size is reported in &#x201D;application pixels&#x201D;, not
         <doc xml:space="preserve">the lower right corner.</doc>
       </member>
     </enumeration>
-    <bitfield name="SurfaceState" glib:type-name="GdkSurfaceState" glib:get-type="gdk_surface_state_get_type" c:type="GdkSurfaceState">
-      <doc xml:space="preserve">Specifies the state of a toplevel surface.
-
-On platforms that support information about individual edges, the %GDK_SURFACE_STATE_TILED
-state will be set whenever any of the individual tiled states is set. On platforms
-that lack that support, the tiled state will give an indication of tiledness without
-any of the per-edge states being set.</doc>
-      <member name="withdrawn" value="1" c:identifier="GDK_SURFACE_STATE_WITHDRAWN" glib:nick="withdrawn">
-        <doc xml:space="preserve">the surface is not shown</doc>
-      </member>
-      <member name="minimized" value="2" c:identifier="GDK_SURFACE_STATE_MINIMIZED" glib:nick="minimized">
-        <doc xml:space="preserve">the surface is minimized</doc>
-      </member>
-      <member name="maximized" value="4" c:identifier="GDK_SURFACE_STATE_MAXIMIZED" glib:nick="maximized">
-        <doc xml:space="preserve">the surface is maximized</doc>
-      </member>
-      <member name="sticky" value="8" c:identifier="GDK_SURFACE_STATE_STICKY" glib:nick="sticky">
-        <doc xml:space="preserve">the surface is sticky</doc>
-      </member>
-      <member name="fullscreen" value="16" c:identifier="GDK_SURFACE_STATE_FULLSCREEN" glib:nick="fullscreen">
-        <doc xml:space="preserve">the surface is maximized without decorations</doc>
-      </member>
-      <member name="above" value="32" c:identifier="GDK_SURFACE_STATE_ABOVE" glib:nick="above">
-        <doc xml:space="preserve">the surface is kept above other surfaces</doc>
-      </member>
-      <member name="below" value="64" c:identifier="GDK_SURFACE_STATE_BELOW" glib:nick="below">
-        <doc xml:space="preserve">the surface is kept below other surfaces</doc>
-      </member>
-      <member name="focused" value="128" c:identifier="GDK_SURFACE_STATE_FOCUSED" glib:nick="focused">
-        <doc xml:space="preserve">the surface is presented as focused (with active decorations)</doc>
-      </member>
-      <member name="tiled" value="256" c:identifier="GDK_SURFACE_STATE_TILED" glib:nick="tiled">
-        <doc xml:space="preserve">the surface is in a tiled state</doc>
-      </member>
-      <member name="top_tiled" value="512" c:identifier="GDK_SURFACE_STATE_TOP_TILED" glib:nick="top-tiled">
-        <doc xml:space="preserve">whether the top edge is tiled</doc>
-      </member>
-      <member name="top_resizable" value="1024" c:identifier="GDK_SURFACE_STATE_TOP_RESIZABLE" glib:nick="top-resizable">
-        <doc xml:space="preserve">whether the top edge is resizable</doc>
-      </member>
-      <member name="right_tiled" value="2048" c:identifier="GDK_SURFACE_STATE_RIGHT_TILED" glib:nick="right-tiled">
-        <doc xml:space="preserve">whether the right edge is tiled</doc>
-      </member>
-      <member name="right_resizable" value="4096" c:identifier="GDK_SURFACE_STATE_RIGHT_RESIZABLE" glib:nick="right-resizable">
-        <doc xml:space="preserve">whether the right edge is resizable</doc>
-      </member>
-      <member name="bottom_tiled" value="8192" c:identifier="GDK_SURFACE_STATE_BOTTOM_TILED" glib:nick="bottom-tiled">
-        <doc xml:space="preserve">whether the bottom edge is tiled</doc>
-      </member>
-      <member name="bottom_resizable" value="16384" c:identifier="GDK_SURFACE_STATE_BOTTOM_RESIZABLE" glib:nick="bottom-resizable">
-        <doc xml:space="preserve">whether the bottom edge is resizable</doc>
-      </member>
-      <member name="left_tiled" value="32768" c:identifier="GDK_SURFACE_STATE_LEFT_TILED" glib:nick="left-tiled">
-        <doc xml:space="preserve">whether the left edge is tiled</doc>
-      </member>
-      <member name="left_resizable" value="65536" c:identifier="GDK_SURFACE_STATE_LEFT_RESIZABLE" glib:nick="left-resizable">
-        <doc xml:space="preserve">whether the left edge is resizable</doc>
-      </member>
-    </bitfield>
     <function-macro name="TEXTURE" c:identifier="GDK_TEXTURE" introspectable="0">
       
       <parameters>
@@ -19132,11 +19086,11 @@ on a #GtkWindow, rather than calling this function.</doc>
       </method>
       <method name="get_state" c:identifier="gdk_toplevel_get_state">
         <doc xml:space="preserve">Gets the bitwise OR of the currently active surface state flags,
-from the #GdkSurfaceState enumeration.</doc>
+from the #GdkToplevelState enumeration.</doc>
         
         <return-value transfer-ownership="none">
           <doc xml:space="preserve">surface state bitfield</doc>
-          <type name="SurfaceState" c:type="GdkSurfaceState"/>
+          <type name="ToplevelState" c:type="GdkToplevelState"/>
         </return-value>
         <parameters>
           <instance-parameter name="toplevel" transfer-ownership="none">
@@ -19216,8 +19170,12 @@ The windowing system may choose to ignore the request.</doc>
       </method>
       <method name="present" c:identifier="gdk_toplevel_present">
         <doc xml:space="preserve">Present @toplevel after having processed the #GdkToplevelLayout rules.
-If the toplevel was previously now showing, it will be showed,
+If the toplevel was previously not showing, it will be showed,
 otherwise it will change layout according to @layout.
+
+GDK may emit the 'compute-size' signal to let the user of this toplevel
+compute the preferred size of the toplevel surface. See
+#GdkToplevel::compute-size for details.
 
 Presenting may fail.</doc>
         
@@ -19230,14 +19188,6 @@ Presenting may fail.</doc>
             <doc xml:space="preserve">the #GdkToplevel to show</doc>
             <type name="Toplevel" c:type="GdkToplevel*"/>
           </instance-parameter>
-          <parameter name="width" transfer-ownership="none">
-            <doc xml:space="preserve">the unconstrained toplevel width to layout</doc>
-            <type name="gint" c:type="int"/>
-          </parameter>
-          <parameter name="height" transfer-ownership="none">
-            <doc xml:space="preserve">the unconstrained toplevel height to layout</doc>
-            <type name="gint" c:type="int"/>
-          </parameter>
           <parameter name="layout" transfer-ownership="none">
             <doc xml:space="preserve">the #GdkToplevelLayout object used to layout</doc>
             <type name="ToplevelLayout" c:type="GdkToplevelLayout*"/>
@@ -19466,7 +19416,7 @@ tiled window states.</doc>
         <type name="utf8" c:type="gchar*"/>
       </property>
       <property name="state" transfer-ownership="none">
-        <type name="SurfaceState"/>
+        <type name="ToplevelState"/>
       </property>
       <property name="title" writable="1" transfer-ownership="none">
         <type name="utf8" c:type="gchar*"/>
@@ -19474,6 +19424,27 @@ tiled window states.</doc>
       <property name="transient-for" writable="1" transfer-ownership="none">
         <type name="Surface"/>
       </property>
+      <glib:signal name="compute-size" when="last">
+        <doc xml:space="preserve">Compute the desired size of the toplevel, given the information passed via
+the #GdkToplevelSize object.
+
+It will normally be emitted during or after gdk_toplevel_present(),
+depending on the configuration received by the windowing system. It may
+also be emitted at any other point in time, in response to the windowing
+system spontaneously changing the configuration.
+
+It is the responsibility of the GdkToplevel user to handle this signal;
+failing to do so will result in an arbitrary size being used as a result.</doc>
+        <return-value transfer-ownership="none">
+          <type name="none" c:type="void"/>
+        </return-value>
+        <parameters>
+          <parameter name="size" direction="out" caller-allocates="1" transfer-ownership="none">
+            <doc xml:space="preserve">a #GdkToplevelSize</doc>
+            <type name="ToplevelSize"/>
+          </parameter>
+        </parameters>
+      </glib:signal>
     </interface>
     <record name="ToplevelInterface" c:type="GdkToplevelInterface" disguised="1" glib:is-gtype-struct-for="Toplevel">
       
@@ -19499,16 +19470,6 @@ The size is in &#x201D;application pixels&#x201D;, not
           <doc xml:space="preserve">newly created instance of #GdkToplevelLayout</doc>
           <type name="ToplevelLayout" c:type="GdkToplevelLayout*"/>
         </return-value>
-        <parameters>
-          <parameter name="min_width" transfer-ownership="none">
-            <doc xml:space="preserve">the minimum width for the layout</doc>
-            <type name="gint" c:type="int"/>
-          </parameter>
-          <parameter name="min_height" transfer-ownership="none">
-            <doc xml:space="preserve">the minimum height for the layout</doc>
-            <type name="gint" c:type="int"/>
-          </parameter>
-        </parameters>
       </constructor>
       <method name="copy" c:identifier="gdk_toplevel_layout_copy">
         <doc xml:space="preserve">Create a new #GdkToplevelLayout and copy the contents of @layout into it.</doc>
@@ -19580,34 +19541,6 @@ surface as maximized.</doc>
         <return-value transfer-ownership="none">
           <doc xml:space="preserve">%TRUE if the layout is maximized</doc>
           <type name="gboolean" c:type="gboolean"/>
-        </return-value>
-        <parameters>
-          <instance-parameter name="layout" transfer-ownership="none">
-            <doc xml:space="preserve">a #GdkToplevelLayout</doc>
-            <type name="ToplevelLayout" c:type="GdkToplevelLayout*"/>
-          </instance-parameter>
-        </parameters>
-      </method>
-      <method name="get_min_height" c:identifier="gdk_toplevel_layout_get_min_height">
-        <doc xml:space="preserve">Returns the minimum height of the given layout.</doc>
-        
-        <return-value transfer-ownership="none">
-          <doc xml:space="preserve">the minimum height of @layout</doc>
-          <type name="gint" c:type="int"/>
-        </return-value>
-        <parameters>
-          <instance-parameter name="layout" transfer-ownership="none">
-            <doc xml:space="preserve">a #GdkToplevelLayout</doc>
-            <type name="ToplevelLayout" c:type="GdkToplevelLayout*"/>
-          </instance-parameter>
-        </parameters>
-      </method>
-      <method name="get_min_width" c:identifier="gdk_toplevel_layout_get_min_width">
-        <doc xml:space="preserve">Returns the minimum width of the given layout.</doc>
-        
-        <return-value transfer-ownership="none">
-          <doc xml:space="preserve">the minimum width of @layout</doc>
-          <type name="gint" c:type="int"/>
         </return-value>
         <parameters>
           <instance-parameter name="layout" transfer-ownership="none">
@@ -19717,6 +19650,149 @@ to resize the surface after it has been presented.</doc>
         </parameters>
       </method>
     </record>
+    <record name="ToplevelSize" c:type="GdkToplevelSize" disguised="1">
+      <doc xml:space="preserve">The GdkToplevelSIze struct contains information that may be useful
+for users of GdkToplevel to compute a surface size. It also carries
+information back with the computational result.</doc>
+      
+      <method name="get_bounds" c:identifier="gdk_toplevel_size_get_bounds">
+        <doc xml:space="preserve">Retrieves the bounds the toplevel is placed within.
+
+The bounds represent the largest size a toplevel may have while still being
+able to fit within some type of boundary. Depending on the backend, this may
+be equivalent to the dimensions of the work area or the monitor on which the
+window is being presented on, or something else that limits the way a
+toplevel can be presented.</doc>
+        
+        <return-value transfer-ownership="none">
+          <type name="none" c:type="void"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="size" transfer-ownership="none">
+            <doc xml:space="preserve">a #GdkToplevelSize</doc>
+            <type name="ToplevelSize" c:type="GdkToplevelSize*"/>
+          </instance-parameter>
+          <parameter name="bounds_width" direction="out" caller-allocates="0" transfer-ownership="full">
+            <doc xml:space="preserve">return location for width</doc>
+            <type name="gint" c:type="int*"/>
+          </parameter>
+          <parameter name="bounds_height" direction="out" caller-allocates="0" transfer-ownership="full">
+            <doc xml:space="preserve">return location for height</doc>
+            <type name="gint" c:type="int*"/>
+          </parameter>
+        </parameters>
+      </method>
+      <method name="set_min_size" c:identifier="gdk_toplevel_size_set_min_size">
+        <doc xml:space="preserve">The minimum size corresponds to the limitations the toplevel can be shrunk
+to, without resulting in incorrect painting. A user of a #GdkToplevel should
+calculate these given both the existing size, and the bounds retrieved from
+the #GdkToplevelSize object.
+
+The minimum size should be within the bounds (see
+gdk_toplevel_size_get_bounds()).</doc>
+        
+        <return-value transfer-ownership="none">
+          <type name="none" c:type="void"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="size" transfer-ownership="none">
+            <doc xml:space="preserve">a #GdkToplevelSize</doc>
+            <type name="ToplevelSize" c:type="GdkToplevelSize*"/>
+          </instance-parameter>
+          <parameter name="min_width" transfer-ownership="none">
+            <doc xml:space="preserve">the minimum width</doc>
+            <type name="gint" c:type="int"/>
+          </parameter>
+          <parameter name="min_height" transfer-ownership="none">
+            <doc xml:space="preserve">the minimum height</doc>
+            <type name="gint" c:type="int"/>
+          </parameter>
+        </parameters>
+      </method>
+      <method name="set_size" c:identifier="gdk_toplevel_size_set_size">
+        <doc xml:space="preserve">Sets the size the toplevel prefers to be resized to. The size should be
+within the bounds (see gdk_toplevel_size_get_bounds()). The set size should
+be considered as a hint, and should not be assumed to be respected by the
+windowing system, or backend.</doc>
+        
+        <return-value transfer-ownership="none">
+          <type name="none" c:type="void"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="size" transfer-ownership="none">
+            <doc xml:space="preserve">a #GdkToplevelSize</doc>
+            <type name="ToplevelSize" c:type="GdkToplevelSize*"/>
+          </instance-parameter>
+          <parameter name="width" transfer-ownership="none">
+            <doc xml:space="preserve">the width</doc>
+            <type name="gint" c:type="int"/>
+          </parameter>
+          <parameter name="height" transfer-ownership="none">
+            <doc xml:space="preserve">the height</doc>
+            <type name="gint" c:type="int"/>
+          </parameter>
+        </parameters>
+      </method>
+    </record>
+    <bitfield name="ToplevelState" glib:type-name="GdkToplevelState" glib:get-type="gdk_toplevel_state_get_type" c:type="GdkToplevelState">
+      <doc xml:space="preserve">Specifies the state of a toplevel surface.
+
+On platforms that support information about individual edges, the %GDK_TOPLEVEL_STATE_TILED
+state will be set whenever any of the individual tiled states is set. On platforms
+that lack that support, the tiled state will give an indication of tiledness without
+any of the per-edge states being set.</doc>
+      <member name="withdrawn" value="1" c:identifier="GDK_TOPLEVEL_STATE_WITHDRAWN" glib:nick="withdrawn">
+        <doc xml:space="preserve">the surface is not shown</doc>
+      </member>
+      <member name="minimized" value="2" c:identifier="GDK_TOPLEVEL_STATE_MINIMIZED" glib:nick="minimized">
+        <doc xml:space="preserve">the surface is minimized</doc>
+      </member>
+      <member name="maximized" value="4" c:identifier="GDK_TOPLEVEL_STATE_MAXIMIZED" glib:nick="maximized">
+        <doc xml:space="preserve">the surface is maximized</doc>
+      </member>
+      <member name="sticky" value="8" c:identifier="GDK_TOPLEVEL_STATE_STICKY" glib:nick="sticky">
+        <doc xml:space="preserve">the surface is sticky</doc>
+      </member>
+      <member name="fullscreen" value="16" c:identifier="GDK_TOPLEVEL_STATE_FULLSCREEN" glib:nick="fullscreen">
+        <doc xml:space="preserve">the surface is maximized without decorations</doc>
+      </member>
+      <member name="above" value="32" c:identifier="GDK_TOPLEVEL_STATE_ABOVE" glib:nick="above">
+        <doc xml:space="preserve">the surface is kept above other surfaces</doc>
+      </member>
+      <member name="below" value="64" c:identifier="GDK_TOPLEVEL_STATE_BELOW" glib:nick="below">
+        <doc xml:space="preserve">the surface is kept below other surfaces</doc>
+      </member>
+      <member name="focused" value="128" c:identifier="GDK_TOPLEVEL_STATE_FOCUSED" glib:nick="focused">
+        <doc xml:space="preserve">the surface is presented as focused (with active decorations)</doc>
+      </member>
+      <member name="tiled" value="256" c:identifier="GDK_TOPLEVEL_STATE_TILED" glib:nick="tiled">
+        <doc xml:space="preserve">the surface is in a tiled state</doc>
+      </member>
+      <member name="top_tiled" value="512" c:identifier="GDK_TOPLEVEL_STATE_TOP_TILED" glib:nick="top-tiled">
+        <doc xml:space="preserve">whether the top edge is tiled</doc>
+      </member>
+      <member name="top_resizable" value="1024" c:identifier="GDK_TOPLEVEL_STATE_TOP_RESIZABLE" glib:nick="top-resizable">
+        <doc xml:space="preserve">whether the top edge is resizable</doc>
+      </member>
+      <member name="right_tiled" value="2048" c:identifier="GDK_TOPLEVEL_STATE_RIGHT_TILED" glib:nick="right-tiled">
+        <doc xml:space="preserve">whether the right edge is tiled</doc>
+      </member>
+      <member name="right_resizable" value="4096" c:identifier="GDK_TOPLEVEL_STATE_RIGHT_RESIZABLE" glib:nick="right-resizable">
+        <doc xml:space="preserve">whether the right edge is resizable</doc>
+      </member>
+      <member name="bottom_tiled" value="8192" c:identifier="GDK_TOPLEVEL_STATE_BOTTOM_TILED" glib:nick="bottom-tiled">
+        <doc xml:space="preserve">whether the bottom edge is tiled</doc>
+      </member>
+      <member name="bottom_resizable" value="16384" c:identifier="GDK_TOPLEVEL_STATE_BOTTOM_RESIZABLE" glib:nick="bottom-resizable">
+        <doc xml:space="preserve">whether the bottom edge is resizable</doc>
+      </member>
+      <member name="left_tiled" value="32768" c:identifier="GDK_TOPLEVEL_STATE_LEFT_TILED" glib:nick="left-tiled">
+        <doc xml:space="preserve">whether the left edge is tiled</doc>
+      </member>
+      <member name="left_resizable" value="65536" c:identifier="GDK_TOPLEVEL_STATE_LEFT_RESIZABLE" glib:nick="left-resizable">
+        <doc xml:space="preserve">whether the left edge is resizable</doc>
+      </member>
+    </bitfield>
     <class name="TouchEvent" c:symbol-prefix="touch_event" c:type="GdkTouchEvent" parent="Event" glib:type-name="GdkTouchEvent" glib:get-type="gdk_touch_event_get_type" glib:fundamental="1">
       <method name="get_emulating_pointer" c:identifier="gdk_touch_event_get_emulating_pointer">
         <doc xml:space="preserve">Extracts whether a touch event is emulating a pointer event.</doc>
@@ -19946,6 +20022,16 @@ Calling this may change the current GL context.</doc>
         </parameter>
       </parameters>
     </function>
+    <docsection name="cairo_interaction">
+      <doc xml:space="preserve">[Cairo](http://cairographics.org) is a graphics
+library that supports vector graphics and image compositing that
+can be used with GDK and GTK.
+
+GDK does not wrap the cairo API, instead it allows to create cairo
+contexts which can be used to draw on #GdkSurfaces. Additional
+functions allow use #GdkRectangles with cairo and to use #GdkRGBAs,
+#GdkPixbufs and #GdkSurfaces as sources for drawing operations.</doc>
+    </docsection>
     <function name="cairo_rectangle" c:identifier="gdk_cairo_rectangle">
       <doc xml:space="preserve">Adds the given rectangle to the current path of @cr.</doc>
       
@@ -20040,36 +20126,6 @@ so that the origin of @pixbuf is @pixbuf_x, @pixbuf_y.</doc>
         <parameter name="rgba" transfer-ownership="none">
           <doc xml:space="preserve">a #GdkRGBA</doc>
           <type name="RGBA" c:type="const GdkRGBA*"/>
-        </parameter>
-      </parameters>
-    </function>
-    <function name="cairo_surface_upload_to_gl" c:identifier="gdk_cairo_surface_upload_to_gl">
-      <doc xml:space="preserve">Uploads the contents of a Cairo @surface to a GL texture @target.</doc>
-      
-      <return-value transfer-ownership="none">
-        <type name="none" c:type="void"/>
-      </return-value>
-      <parameters>
-        <parameter name="surface" transfer-ownership="none">
-          <doc xml:space="preserve">a Cairo surface</doc>
-          <type name="cairo.Surface" c:type="cairo_surface_t*"/>
-        </parameter>
-        <parameter name="target" transfer-ownership="none">
-          <doc xml:space="preserve">a GL texture target</doc>
-          <type name="gint" c:type="int"/>
-        </parameter>
-        <parameter name="width" transfer-ownership="none">
-          <doc xml:space="preserve">the width of the texture @target</doc>
-          <type name="gint" c:type="int"/>
-        </parameter>
-        <parameter name="height" transfer-ownership="none">
-          <doc xml:space="preserve">the height of the texture @target</doc>
-          <type name="gint" c:type="int"/>
-        </parameter>
-        <parameter name="context" transfer-ownership="none" nullable="1" allow-none="1">
-          <doc xml:space="preserve">a #GdkGLContext, or %NULL to use the currently
-  bound context</doc>
-          <type name="GLContext" c:type="GdkGLContext*"/>
         </parameter>
       </parameters>
     </function>
@@ -20245,6 +20301,60 @@ call gdk_content_serialize_finish() to get the result of the operation.</doc>
         </parameter>
       </parameters>
     </function>
+    <docsection name="cursors">
+      <doc xml:space="preserve">These functions are used to create and destroy cursors. Cursors
+are immutable objects, so once you created them, there is no way
+to modify them later. Create a new cursor, when you want to change
+something about it.
+
+Cursors by themselves are not very interesting, they must be
+bound to a window for users to see them. This is done with
+gdk_surface_set_cursor() or gdk_surface_set_device_cursor().
+Applications will typically use higher-level GTK+ functions such
+as gtk_widget_set_cursor() instead.
+
+Cursors are not bound to a given #GdkDisplay, so they can be shared.
+However, the appearance of cursors may vary when used on different
+platforms.
+
+There are multiple ways to create cursors. The platform's own cursors
+can be created with gdk_cursor_new_from_name(). That function lists
+the commonly available names that are shared with the CSS specification.
+Other names may be available, depending on the platform in use.
+Another option to create a cursor is to use gdk_cursor_new_from_texture()
+and provide an image to use for the cursor.
+
+To ease work with unsupported cursors, a fallback cursor can be provided.
+If a #GdkSurface cannot use a cursor because of the reasons mentioned above,
+it will try the fallback cursor. Of course, fallback cursors can themselves
+have fallback cursors again, so it is possible to provide a chain of
+progressively easier to support cursors. If none of the provided cursors
+can be supported, the default cursor will be the ultimate fallback.</doc>
+    </docsection>
+    <docsection name="dnd">
+      <doc xml:space="preserve">These functions provide a low-level interface for drag and drop.
+
+The GdkDrag object represents the source side of an ongoing DND operation.
+It is created when a drag is started, and stays alive for duration of
+the DND operation. After a drag has been started with gdk_drag_begin(),
+the caller gets informed about the status of the ongoing drag operation
+with signals on the #GdkDrag object.
+
+The GdkDrop object represents the target side of an ongoing DND operation.
+Possible drop sites get informed about the status of the ongoing drag operation
+with events of type %GDK_DRAG_ENTER, %GDK_DRAG_LEAVE, %GDK_DRAG_MOTION and
+%GDK_DROP_START. The #GdkDrop object can be obtained from these #GdkEvents
+using gdk_dnd_event_get_drop().
+
+The actual data transfer is initiated from the target side via an async
+read, using one of the GdkDrop functions for this purpose: gdk_drop_read_async()
+or gdk_drop_read_value_async().
+
+GTK provides a higher level abstraction based on top of these functions,
+and so they are not normally needed in GTK applications. See the
+[Drag and Drop][gtk4-Drag-and-Drop] section of the GTK documentation
+for more information.</doc>
+    </docsection>
     <function name="drag_action_is_unique" c:identifier="gdk_drag_action_is_unique" moved-to="DragAction.is_unique">
       <doc xml:space="preserve">Checks if @action represents a single action or if it
 includes multiple flags that can be selected from.
@@ -20263,6 +20373,14 @@ is returned.</doc>
         </parameter>
       </parameters>
     </function>
+    <docsection name="events">
+      <doc xml:space="preserve">This section describes functions dealing with events from the window
+system.
+
+In GTK applications the events are handled automatically by toplevel
+widgets and passed on to the event controllers of appropriate widgets,
+so these functions are rarely needed.</doc>
+    </docsection>
     <function name="events_get_angle" c:identifier="gdk_events_get_angle">
       <doc xml:space="preserve">If both events contain X/Y information, this function will return %TRUE
 and return in @angle the relative angle from @event1 to @event2. The rotation
@@ -20338,6 +20456,22 @@ will be returned in @x and @y.</doc>
         </parameter>
       </parameters>
     </function>
+    <docsection name="general">
+      <doc xml:space="preserve">This section describes miscellaneous macros and utility functions
+related to library versioning, as well as deprecation facilities.
+
+The GDK and GTK headers annotate deprecated APIs in a way that produces
+compiler warnings if these deprecated APIs are used. The warnings
+can be turned off by defining the macro %GDK_DISABLE_DEPRECATION_WARNINGS
+before including the glib.h header.
+
+GDK and GTK also provide support for building applications against
+defined subsets of deprecated or new APIs. Define the macro
+%GDK_VERSION_MIN_REQUIRED to specify up to what version
+you want to receive warnings about deprecated APIs. Define the
+macro %GDK_VERSION_MAX_ALLOWED to specify the newest version
+whose API you want to use.</doc>
+    </docsection>
     <function name="gl_error_quark" c:identifier="gdk_gl_error_quark" moved-to="GLError.quark">
       <return-value transfer-ownership="none">
         <type name="GLib.Quark" c:type="GQuark"/>
@@ -20361,6 +20495,111 @@ See RFC 2048 for the syntax if mime types.</doc>
         </parameter>
       </parameters>
     </function>
+    <docsection name="keys">
+      <doc xml:space="preserve">Key values are the codes which are sent whenever a key is pressed or released.
+They are included in the data contained in a key press or release #GdkEvent.
+The complete list of key values can be found in the `gdk/gdkkeysyms.h` header
+file.
+
+Key values are regularly updated from the upstream X.org X11 implementation,
+so new values are added regularly. They will be prefixed with GDK_KEY_ rather
+than XF86XK_ or XK_ (for older symbols).
+
+Key values can be converted into a string representation using
+gdk_keyval_name(). The reverse function, converting a string to a key value,
+is provided by gdk_keyval_from_name().
+
+The case of key values can be determined using gdk_keyval_is_upper() and
+gdk_keyval_is_lower(). Key values can be converted to upper or lower case
+using gdk_keyval_to_upper() and gdk_keyval_to_lower().
+
+When it makes sense, key values can be converted to and from
+Unicode characters with gdk_keyval_to_unicode() and gdk_unicode_to_keyval().
+
+# Groups # {#key-group-explanation}
+
+At the lowest level, physical keys on the keyboard are represented by
+numeric keycodes, and GDK knows how to translate these keycodes into
+key values according to the configured keyboard layout and the current
+state of the keyboard. In the GDK api, the mapping from keycodes to key
+values is available via gdk_display_map_keycode(), and the reverse mapping
+is available via gdk_display_map_keyval(). The results of these functions
+are returned in #GdkKeymapKey structs.
+
+You can think of a #GdkKeymapKey as a representation of a symbol printed on
+a physical keyboard key. That is, it contains three pieces of information.
+First, it contains the hardware keycode; this is an identifying number for
+a physical key. Second, it contains the &#x201C;level&#x201D; of the key. The level indicates
+which symbol on the key will be used, in a vertical direction. So on a standard
+US keyboard, the key with the number &#x201C;1&#x201C; on it also has the exclamation point
+(&#x201D;!&#x201D;) character on it. The level indicates whether to use the &#x201C;1&#x201D; or the &#x201C;!&#x201D;
+symbol. The letter keys are considered to have a lowercase letter at level 0,
+and an uppercase letter at level 1, though normally only the uppercase letter
+is printed on the key. Third, the #GdkKeymapKey contains a group; groups are
+not used on standard US keyboards, but are used in many other countries. On a
+keyboard with groups, there can be 3 or 4 symbols printed on a single key.
+The group indicates movement in a horizontal direction. Usually groups are
+used for two different languages. In group 0, a key might have two English
+characters, and in group 1 it might have two Hebrew characters. The Hebrew
+characters will be printed on the key next to the English characters.
+
+When GDK creates a key event in order to deliver a key press or release,
+it first converts the current keyboard state into an effective group and
+level. This is done via a set of rules that varies widely according to
+type of keyboard and user configuration. The input to this translation
+consists of the hardware keycode pressed, the active modifiers, and the
+active group. It then applies the appropriate rules, and returns the
+group/level to be used to index the keymap, along with the modifiers
+which did not affect the group and level. i.e. it returns &#x201C;unconsumed
+modifiers.&#x201D; The keyboard group may differ from the effective group used
+for lookups because some keys don't have multiple groups - e.g. the Enter
+key is always in group 0 regardless of keyboard state.
+
+The results of the translation, including the keyval, are all included
+in the key event and can be obtained via #GdkEvent getters.
+
+# Consumed modifiers
+
+The @consumed_modifiers in a key event are modifiers that should be masked
+out from @state when comparing this key press to a hot key. For instance,
+on a US keyboard, the `plus` symbol is shifted, so when comparing a key
+press to a `&lt;Control&gt;plus` accelerator `&lt;Shift&gt;` should be masked out.
+
+|[&lt;!-- language="C" --&gt;
+// We want to ignore irrelevant modifiers like ScrollLock
+#define ALL_ACCELS_MASK (GDK_CONTROL_MASK | GDK_SHIFT_MASK | GDK_ALT_MASK)
+state = gdk_event_get_modifier_state (event);
+gdk_keymap_translate_keyboard_state (keymap,
+                                     gdk_key_event_get_keycode (event),
+                                     state,
+                                     gdk_key_event_get_group (event),
+                                     &amp;keyval, NULL, NULL, &amp;consumed);
+if (keyval == GDK_PLUS &amp;&amp;
+    (state &amp; ~consumed &amp; ALL_ACCELS_MASK) == GDK_CONTROL_MASK)
+  // Control was pressed
+]|
+
+An older interpretation @consumed_modifiers was that it contained
+all modifiers that might affect the translation of the key;
+this allowed accelerators to be stored with irrelevant consumed
+modifiers, by doing:
+|[&lt;!-- language="C" --&gt;
+// XXX Don&#x2019;t do this XXX
+if (keyval == accel_keyval &amp;&amp;
+    (state &amp; ~consumed &amp; ALL_ACCELS_MASK) == (accel_mods &amp; ~consumed))
+  // Accelerator was pressed
+]|
+
+However, this did not work if multi-modifier combinations were
+used in the keymap, since, for instance, `&lt;Control&gt;` would be
+masked out even if only `&lt;Control&gt;&lt;Alt&gt;` was used in the keymap.
+To support this usage as well as well as possible, all single
+modifier combinations that could affect the key for any combination
+of modifiers will be returned in @consumed_modifiers; multi-modifier
+combinations are returned only when actually found in @state. When
+you store accelerators, you should always store them with consumed
+modifiers removed. Store `&lt;Control&gt;plus`, not `&lt;Control&gt;&lt;Shift&gt;plus`.</doc>
+    </docsection>
     <function name="keyval_convert_case" c:identifier="gdk_keyval_convert_case">
       <doc xml:space="preserve">Obtains the upper- and lower-case versions of the keyval @symbol.
 Examples of keyvals are #GDK_KEY_a, #GDK_KEY_Enter, #GDK_KEY_F1, etc.</doc>
@@ -20523,6 +20762,96 @@ virtual function when the paintable is in an incomplete state (like a
         </parameter>
       </parameters>
     </function>
+    <docsection name="pango_interaction">
+      <doc xml:space="preserve">Pango is the text layout system used by GDK and GTK. The functions
+and types in this section are used to obtain clip regions for
+#PangoLayouts, and to get #PangoContexts that can be used with
+GDK.
+
+Creating a #PangoLayout object is the first step in rendering text,
+and requires getting a handle to a #PangoContext. For GTK programs,
+you&#x2019;ll usually want to use gtk_widget_get_pango_context(), or
+gtk_widget_create_pango_layout(). Once you have a #PangoLayout,
+you can set the text and attributes of it with Pango functions like
+pango_layout_set_text() and get its size with pango_layout_get_size().
+(Note that Pango uses a fixed point system internally, so converting
+between Pango units and pixels using [PANGO_SCALE][PANGO-SCALE-CAPS]
+or the PANGO_PIXELS() macro.)
+
+Rendering a Pango layout is done most simply with pango_cairo_show_layout();
+you can also draw pieces of the layout with pango_cairo_show_layout_line().
+
+## Draw transformed text with Pango and cairo ## {#rotated-example}
+
+|[&lt;!-- language="C" --&gt;
+#define RADIUS 100
+#define N_WORDS 10
+#define FONT "Sans Bold 18"
+
+PangoContext *context;
+PangoLayout *layout;
+PangoFontDescription *desc;
+
+double radius;
+int width, height;
+int i;
+
+// Set up a transformation matrix so that the user space coordinates for
+// where we are drawing are [-RADIUS, RADIUS], [-RADIUS, RADIUS]
+// We first center, then change the scale
+
+width = gdk_surface_get_width (surface);
+height = gdk_surface_get_height (surface);
+radius = MIN (width, height) / 2.;
+
+cairo_translate (cr,
+                 radius + (width - 2 * radius) / 2,
+                 radius + (height - 2 * radius) / 2);
+                 cairo_scale (cr, radius / RADIUS, radius / RADIUS);
+
+// Create a PangoLayout, set the font and text
+context = gdk_pango_context_get_for_display (display);
+layout = pango_layout_new (context);
+pango_layout_set_text (layout, "Text", -1);
+desc = pango_font_description_from_string (FONT);
+pango_layout_set_font_description (layout, desc);
+pango_font_description_free (desc);
+
+// Draw the layout N_WORDS times in a circle
+for (i = 0; i &lt; N_WORDS; i++)
+  {
+    double red, green, blue;
+    double angle = 2 * G_PI * i / n_words;
+
+    cairo_save (cr);
+
+    // Gradient from red at angle == 60 to blue at angle == 300
+    red = (1 + cos (angle - 60)) / 2;
+    green = 0;
+    blue = 1 - red;
+
+    cairo_set_source_rgb (cr, red, green, blue);
+    cairo_rotate (cr, angle);
+
+    // Inform Pango to re-layout the text with the new transformation matrix
+    pango_cairo_update_layout (cr, layout);
+
+    pango_layout_get_size (layout, &amp;width, &amp;height);
+
+    cairo_move_to (cr, - width / 2 / PANGO_SCALE, - DEFAULT_TEXT_RADIUS);
+    pango_cairo_show_layout (cr, layout);
+
+    cairo_restore (cr);
+  }
+
+g_object_unref (layout);
+g_object_unref (context);
+]|
+
+## Output of the [example][rotated-example] above.
+
+![](rotated-text.png)</doc>
+    </docsection>
     <function name="pango_layout_get_clip_region" c:identifier="gdk_pango_layout_get_clip_region" introspectable="0">
       <doc xml:space="preserve">Obtains a clip region which contains the areas where the given ranges
 of text would be drawn. @x_origin and @y_origin are the top left point
@@ -20661,6 +20990,35 @@ the pixbuf back into a texture to draw it on screen.</doc>
         </parameter>
       </parameters>
     </function>
+    <docsection name="pixbufs">
+      <doc xml:space="preserve">Pixbufs are client-side images. For details on how to create
+and manipulate pixbufs, see the #GdkPixbuf API documentation.
+
+The functions described here allow to obtain pixbufs from
+#GdkSurfaces and cairo surfaces.</doc>
+    </docsection>
+    <docsection name="regions">
+      <doc xml:space="preserve">GDK provides the #GdkPoint and #GdkRectangle data types for representing pixels
+and sets of pixels on the screen. Together with Cairo&#x2019;s #cairo_region_t data
+type, they make up the central types for representing graphical data.
+
+A #GdkPoint represents an x and y coordinate of a point.
+
+A #GdkRectangle represents the position and size of a rectangle.
+The intersection of two rectangles can be computed with
+gdk_rectangle_intersect(). To find the union of two rectangles use
+gdk_rectangle_union().
+
+#cairo_region_t is usually used for managing clipping of graphical operations.</doc>
+    </docsection>
+    <docsection name="rgba_colors">
+      <doc xml:space="preserve">#GdkRGBA is a convenient way to pass rgba colors around.
+It&#x2019;s based on cairo&#x2019;s way to deal with colors and mirrors its behavior.
+All values are in the range from 0.0 to 1.0 inclusive. So the color
+(0.0, 0.0, 0.0, 0.0) represents transparent black and
+(1.0, 1.0, 1.0, 1.0) is opaque white. Other values will be clamped
+to this range when drawing.</doc>
+    </docsection>
     <function name="set_allowed_backends" c:identifier="gdk_set_allowed_backends">
       <doc xml:space="preserve">Sets a list of backends that GDK should try to use.
 
@@ -20699,6 +21057,27 @@ in order to take effect.</doc>
           <type name="utf8" c:type="const char*"/>
         </parameter>
       </parameters>
+    </function>
+    <docsection name="textures">
+      <doc xml:space="preserve">#GdkTexture is the basic element used to refer to pixel data.
+It is primarily mean for pixel data that will not change over
+multiple frames, and will be used for a long time.
+
+There are various ways to create #GdkTexture objects from a
+#GdkPixbuf, or a Cairo surface, or other pixel data.
+
+The ownership of the pixel data is transferred to the #GdkTexture
+instance; you can only make a copy of it, via gdk_texture_download().
+
+#GdkTexture is an immutable object: That means you cannot change
+anything about it other than increasing the reference count via
+g_object_ref().</doc>
+    </docsection>
+    <function name="toplevel_size_get_type" c:identifier="gdk_toplevel_size_get_type">
+      
+      <return-value transfer-ownership="none">
+        <type name="GType" c:type="GType"/>
+      </return-value>
     </function>
     <function name="unicode_to_keyval" c:identifier="gdk_unicode_to_keyval">
       <doc xml:space="preserve">Convert from a ISO10646 character to a key symbol.</doc>
