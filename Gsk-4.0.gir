@@ -2003,7 +2003,7 @@ during deserialization of node data.</doc>
       <parameters>
         <parameter name="section" transfer-ownership="none">
           <doc xml:space="preserve">the #GtkCssSection where the error occurred</doc>
-          <type c:type="gconstpointer" name="gconstpointer"/>
+          <type c:type="const GtkCssSection*"/>
         </parameter>
         <parameter name="error" transfer-ownership="none">
           <doc xml:space="preserve">the error</doc>
@@ -2436,7 +2436,11 @@ node to a file for later inspection.</doc>
       <constructor name="new_for_surface" c:identifier="gsk_renderer_new_for_surface">
         <doc xml:space="preserve">Creates an appropriate #GskRenderer instance for the given @surface.
 
-The renderer will be realized when it is returned.</doc>
+If the `GSK_RENDERER` environment variable is set, GSK will
+try that renderer first, before trying the backend-specific
+default. The ultimate fallback is the cairo renderer.
+
+The renderer will be realized before it is returned.</doc>
         
         <return-value transfer-ownership="full" nullable="1">
           <doc xml:space="preserve">a #GskRenderer</doc>
@@ -3589,7 +3593,7 @@ the correct inverse of %NULL. If you need to differentiate
 between those cases, you should check @self is not %NULL
 before calling this function.</doc>
         
-        <return-value transfer-ownership="full">
+        <return-value transfer-ownership="full" nullable="1">
           <doc xml:space="preserve">The inverted transform or %NULL if the transform
     cannot be inverted.</doc>
           <type name="Transform" c:type="GskTransform*"/>
