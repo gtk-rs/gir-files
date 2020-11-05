@@ -100,8 +100,8 @@ xmlstarlet ed -P -L \
 
 # fix cyclic dependency on gtk 4.0
 xmlstarlet ed -P -L \
-	-a '//_:callback[@name="ParseErrorFunc"]/_:parameters/_:parameter[@name="section"]/_:type[@c:type="const GtkCssSection*"]' -type attr -n "name" -v "Gtk.CssSection" \
-	-a '//_:callback[@name="ParseErrorFunc"]/_:parameters/_:parameter[@name="section"]/_:type[not(@name) and @c:type="gconstpointer"]' -type attr -n "name" -v "gconstpointer" \
+	-u '//_:callback[@name="ParseErrorFunc"]/_:parameters/_:parameter[@name="section"]/_:type/@c:type' -v "gconstpointer" \
+	-a '//_:callback[@name="ParseErrorFunc"]/_:parameters/_:parameter[@name="section"]/_:type' -type attr -n "name" -v "gconstpointer" \
 	Gsk-4.0.gir
 
 # remove freetype and graphite methods; GitHub issue #2557
