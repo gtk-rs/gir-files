@@ -531,7 +531,7 @@ of the request.</doc>
       <method name="read_finish" c:identifier="gdk_clipboard_read_finish" throws="1">
         <doc xml:space="preserve">Finishes an asynchronous clipboard read started with gdk_clipboard_read_async().</doc>
         
-        <return-value transfer-ownership="full">
+        <return-value transfer-ownership="full" nullable="1">
           <doc xml:space="preserve">a #GInputStream or %NULL on error.</doc>
           <type name="Gio.InputStream" c:type="GInputStream*"/>
         </return-value>
@@ -1317,7 +1317,7 @@ is returned.</doc>
 in @second. If no matching mime type is found, %NULL is
 returned.</doc>
         
-        <return-value transfer-ownership="none">
+        <return-value transfer-ownership="none" nullable="1">
           <doc xml:space="preserve">The first common mime type or %NULL if none.</doc>
           <type name="utf8" c:type="const char*"/>
         </return-value>
@@ -2578,7 +2578,11 @@ when the #GdkDisplay it is used on does not support textured cursors.</doc>
       </method>
       <method name="get_hotspot_x" c:identifier="gdk_cursor_get_hotspot_x">
         <doc xml:space="preserve">Returns the horizontal offset of the hotspot. The hotspot indicates the
-pixel that will be directly above the cursor.</doc>
+pixel that will be directly above the cursor.
+
+Note that named cursors may have a nonzero hotspot, but this function
+will only return the hotspot position for cursors created with
+gdk_cursor_new_from_texture().</doc>
         
         <return-value transfer-ownership="none">
           <doc xml:space="preserve">the horizontal offset of the hotspot or 0 for named cursors</doc>
@@ -2593,7 +2597,11 @@ pixel that will be directly above the cursor.</doc>
       </method>
       <method name="get_hotspot_y" c:identifier="gdk_cursor_get_hotspot_y">
         <doc xml:space="preserve">Returns the vertical offset of the hotspot. The hotspot indicates the
-pixel that will be directly above the cursor.</doc>
+pixel that will be directly above the cursor.
+
+Note that named cursors may have a nonzero hotspot, but this function
+will only return the hotspot position for cursors created with
+gdk_cursor_new_from_texture().</doc>
         
         <return-value transfer-ownership="none">
           <doc xml:space="preserve">the vertical offset of the hotspot or 0 for named cursors</doc>
@@ -2608,7 +2616,7 @@ pixel that will be directly above the cursor.</doc>
       </method>
       <method name="get_name" c:identifier="gdk_cursor_get_name">
         <doc xml:space="preserve">Returns the name of the cursor. If the cursor is not a named cursor, %NULL
-will be returned and the GdkCursor::texture property will be set.</doc>
+will be returned.</doc>
         
         <return-value transfer-ownership="none" nullable="1">
           <doc xml:space="preserve">the name of the cursor or %NULL if it is not
@@ -2624,7 +2632,7 @@ will be returned and the GdkCursor::texture property will be set.</doc>
       </method>
       <method name="get_texture" c:identifier="gdk_cursor_get_texture">
         <doc xml:space="preserve">Returns the texture for the cursor. If the cursor is a named cursor, %NULL
-will be returned and the GdkCursor::name property will be set.</doc>
+will be returned.</doc>
         
         <return-value transfer-ownership="none" nullable="1">
           <doc xml:space="preserve">the texture for cursor or %NULL if it is a
@@ -3585,7 +3593,7 @@ for the @display.</doc>
         <doc xml:space="preserve">Gets the startup notification ID for a Wayland display, or %NULL
 if no ID has been defined.</doc>
         
-        <return-value transfer-ownership="none">
+        <return-value transfer-ownership="none" nullable="1">
           <doc xml:space="preserve">the startup notification ID for @display, or %NULL</doc>
           <type name="utf8" c:type="const char*"/>
         </return-value>
@@ -4009,8 +4017,8 @@ macros like GDK_IS_X11_DISPLAY() to find out which backend is in use:
     }
   else
 #endif
-#ifdef GDK_WINDOWING_QUARTZ
-  if (GDK_IS_QUARTZ_DISPLAY (display))
+#ifdef GDK_WINDOWING_MACOS
+  if (GDK_IS_MACOS_DISPLAY (display))
     {
       // make Quartz-specific calls here
     }
@@ -5452,8 +5460,8 @@ leaving the surface.</doc>
       </method>
     </class>
     <class name="FrameClock" c:symbol-prefix="frame_clock" c:type="GdkFrameClock" parent="GObject.Object" abstract="1" glib:type-name="GdkFrameClock" glib:get-type="gdk_frame_clock_get_type" glib:type-struct="FrameClockClass">
-      <doc xml:space="preserve">A #GdkFrameClock tells the application when to update and repaint a
-window. This may be synced to the vertical refresh rate of the
+      <doc xml:space="preserve">A #GdkFrameClock tells the application when to update and repaint
+a surface. This may be synced to the vertical refresh rate of the
 monitor, for example. Even when the frame clock uses a simple timer
 rather than a hardware-based vertical sync, the frame clock helps
 because it ensures everything paints at the same time (reducing the
@@ -16481,7 +16489,7 @@ a pad event.</doc>
       </method>
     </class>
     <interface name="Paintable" c:symbol-prefix="paintable" c:type="GdkPaintable" glib:type-name="GdkPaintable" glib:get-type="gdk_paintable_get_type" glib:type-struct="PaintableInterface">
-      <doc xml:space="preserve">#GdkPaintable is a simple interface used by GDK and GDK to represent
+      <doc xml:space="preserve">#GdkPaintable is a simple interface used by GDK and GTK to represent
 objects that can be painted anywhere at any size without requiring any
 sort of layout. The interface is inspired by similar concepts elsewhere,
 such as [ClutterContent](https://developer.gnome.org/clutter/stable/ClutterContent.html),
@@ -16582,23 +16590,23 @@ See #GdkPaintableFlags for the flags and what they mean.</doc>
       </virtual-method>
       <virtual-method name="get_intrinsic_aspect_ratio" invoker="get_intrinsic_aspect_ratio">
         <doc xml:space="preserve">Gets the preferred aspect ratio the @paintable would like to be displayed at.
-The aspect ration is the width divided by the height, so a value of 0.5 means
+The aspect ratio is the width divided by the height, so a value of 0.5 means
 that the @paintable prefers to be displayed twice as high as it is wide.
 Consumers of this interface can use this to preserve aspect ratio when displaying
-this paintable.
+the paintable.
 
 This is a purely informational value and does not in any way limit the values
 that may be passed to gdk_paintable_snapshot().
 
-Usually when a @paintable returns non-0 values from
+Usually when a @paintable returns nonzero values from
 gdk_paintable_get_intrinsic_width() and gdk_paintable_get_intrinsic_height()
 the aspect ratio should conform to those values, though that is not required.
 
-If the @paintable does not have a preferred aspect ratio, it returns 0.0.
+If the @paintable does not have a preferred aspect ratio, it returns 0.
 Negative values are never returned.</doc>
         
         <return-value transfer-ownership="none">
-          <doc xml:space="preserve">the intrinsic aspect ratio of @paintable or 0.0 if none.</doc>
+          <doc xml:space="preserve">the intrinsic aspect ratio of @paintable or 0 if none.</doc>
           <type name="gdouble" c:type="double"/>
         </return-value>
         <parameters>
@@ -16767,23 +16775,23 @@ See #GdkPaintableFlags for the flags and what they mean.</doc>
       </method>
       <method name="get_intrinsic_aspect_ratio" c:identifier="gdk_paintable_get_intrinsic_aspect_ratio">
         <doc xml:space="preserve">Gets the preferred aspect ratio the @paintable would like to be displayed at.
-The aspect ration is the width divided by the height, so a value of 0.5 means
+The aspect ratio is the width divided by the height, so a value of 0.5 means
 that the @paintable prefers to be displayed twice as high as it is wide.
 Consumers of this interface can use this to preserve aspect ratio when displaying
-this paintable.
+the paintable.
 
 This is a purely informational value and does not in any way limit the values
 that may be passed to gdk_paintable_snapshot().
 
-Usually when a @paintable returns non-0 values from
+Usually when a @paintable returns nonzero values from
 gdk_paintable_get_intrinsic_width() and gdk_paintable_get_intrinsic_height()
 the aspect ratio should conform to those values, though that is not required.
 
-If the @paintable does not have a preferred aspect ratio, it returns 0.0.
+If the @paintable does not have a preferred aspect ratio, it returns 0.
 Negative values are never returned.</doc>
         
         <return-value transfer-ownership="none">
-          <doc xml:space="preserve">the intrinsic aspect ratio of @paintable or 0.0 if none.</doc>
+          <doc xml:space="preserve">the intrinsic aspect ratio of @paintable or 0 if none.</doc>
           <type name="gdouble" c:type="double"/>
         </return-value>
         <parameters>
@@ -16840,7 +16848,7 @@ values are never returned.</doc>
       <method name="invalidate_contents" c:identifier="gdk_paintable_invalidate_contents">
         <doc xml:space="preserve">Called by implementations of #GdkPaintable to invalidate their contents.
 Unless the contents are invalidated, implementations must guarantee that
-multiple calls to GdkPaintable::snapshot produce the same output.
+multiple calls of gdk_paintable_snapshot() produce the same output.
 
 This function will emit the #GdkPaintable::invalidate-contents signal.
 
@@ -16859,8 +16867,8 @@ it must not call this function.</doc>
       </method>
       <method name="invalidate_size" c:identifier="gdk_paintable_invalidate_size">
         <doc xml:space="preserve">Called by implementations of #GdkPaintable to invalidate their size.
-As long as the size is not invalidated, @paintable must return the same values
-for its width, height and intrinsic height.
+As long as the size is not invalidated, @paintable must return the same
+values for its intrinsic width, height and aspect ratio.
 
 This function will emit the #GdkPaintable::invalidate-size signal.
 
@@ -17042,7 +17050,7 @@ make the implementation likely quite slow.</doc>
         <callback name="get_intrinsic_aspect_ratio">
           
           <return-value transfer-ownership="none">
-            <doc xml:space="preserve">the intrinsic aspect ratio of @paintable or 0.0 if none.</doc>
+            <doc xml:space="preserve">the intrinsic aspect ratio of @paintable or 0 if none.</doc>
             <type name="gdouble" c:type="double"/>
           </return-value>
           <parameters>
@@ -17054,21 +17062,12 @@ make the implementation likely quite slow.</doc>
         </callback>
       </field>
     </record>
-    <record name="Point" c:type="GdkPoint">
-      <doc xml:space="preserve">Defines the x and y coordinates of a point.</doc>
-      
-      <field name="x" writable="1">
-        <doc xml:space="preserve">the x coordinate of the point</doc>
-        <type name="gint" c:type="int"/>
-      </field>
-      <field name="y" writable="1">
-        <doc xml:space="preserve">the y coordinate of the point</doc>
-        <type name="gint" c:type="int"/>
-      </field>
-    </record>
     <interface name="Popup" c:symbol-prefix="popup" c:type="GdkPopup" glib:type-name="GdkPopup" glib:get-type="gdk_popup_get_type" glib:type-struct="PopupInterface">
       <doc xml:space="preserve">A #GdkPopup is a surface that is attached to another surface,
-and is positioned relative to it.</doc>
+called its #GdkPopup:parent, and is positioned relative to it.
+
+#GdkPopups are typically used to implement menus and similar popups.
+They can be modal, which is indicated by the #GdkPopup:autohide property.</doc>
       
       <prerequisite name="Surface"/>
       <method name="get_autohide" c:identifier="gdk_popup_get_autohide">
@@ -18114,8 +18113,14 @@ of physical pixels on an output device are laid out.</doc>
     </enumeration>
     <class name="Surface" c:symbol-prefix="surface" c:type="GdkSurface" parent="GObject.Object" abstract="1" glib:type-name="GdkSurface" glib:get-type="gdk_surface_get_type" glib:type-struct="SurfaceClass">
       <doc xml:space="preserve">A #GdkSurface is a (usually) rectangular region on the screen.
-It&#x2019;s a low-level object, used to implement high-level objects such as
-#GtkWindow on the GTK level.</doc>
+It&#x2019;s a low-level object, used to implement high-level objects
+such as #GtkWindow or #GtkDialog in GTK.
+
+The surfaces you see in practice are either #GdkToplevel or
+#GdkPopup, and those interfaces provide much of the required
+API to interact with these surfaces. Other, more specialized
+surface types exist, but you will rarely interact with them
+directly.</doc>
       
       <constructor name="new_popup" c:identifier="gdk_surface_new_popup">
         <doc xml:space="preserve">Create a new popup surface.
@@ -18818,7 +18823,7 @@ Surface size is reported in &#x201D;application pixels&#x201D;, not
       
       <implements name="Paintable"/>
       <constructor name="new_for_pixbuf" c:identifier="gdk_texture_new_for_pixbuf">
-        <doc xml:space="preserve">Creates a new texture object representing the GdkPixbuf.</doc>
+        <doc xml:space="preserve">Creates a new texture object representing the #GdkPixbuf.</doc>
         
         <return-value transfer-ownership="full">
           <doc xml:space="preserve">a new #GdkTexture</doc>
@@ -18832,8 +18837,12 @@ Surface size is reported in &#x201D;application pixels&#x201D;, not
         </parameters>
       </constructor>
       <constructor name="new_from_file" c:identifier="gdk_texture_new_from_file" throws="1">
-        <doc xml:space="preserve">Creates a new texture by loading an image from a file.  The file format is
-detected automatically. If %NULL is returned, then @error will be set.</doc>
+        <doc xml:space="preserve">Creates a new texture by loading an image from a file.
+The file format is detected automatically, and can be any
+format that is supported by the gdk-pixbuf library, such as
+JPEG or PNG.
+
+If %NULL is returned, then @error will be set.</doc>
         
         <return-value transfer-ownership="full">
           <doc xml:space="preserve">A newly-created #GdkTexture or %NULL if an error occurred.</doc>
@@ -18848,7 +18857,9 @@ detected automatically. If %NULL is returned, then @error will be set.</doc>
       </constructor>
       <constructor name="new_from_resource" c:identifier="gdk_texture_new_from_resource">
         <doc xml:space="preserve">Creates a new texture by loading an image from a resource.
-The file format is detected automatically.
+The file format is detected automatically, and can be any
+format that is supported by the gdk-pixbuf library, such as
+JPEG or PNG.
 
 It is a fatal error if @resource_path does not specify a valid
 image resource and the program will abort if that happens.
@@ -18908,7 +18919,7 @@ cairo_surface_mark_dirty (surface);
         </parameters>
       </method>
       <method name="get_height" c:identifier="gdk_texture_get_height">
-        <doc xml:space="preserve">Returns the height of the @texture.</doc>
+        <doc xml:space="preserve">Returns the height of the @texture, in pixels.</doc>
         
         <return-value transfer-ownership="none">
           <doc xml:space="preserve">the height of the #GdkTexture</doc>
@@ -18922,7 +18933,7 @@ cairo_surface_mark_dirty (surface);
         </parameters>
       </method>
       <method name="get_width" c:identifier="gdk_texture_get_width">
-        <doc xml:space="preserve">Returns the width of @texture.</doc>
+        <doc xml:space="preserve">Returns the width of @texture, in pixels.</doc>
         
         <return-value transfer-ownership="none">
           <doc xml:space="preserve">the width of the #GdkTexture</doc>
@@ -18959,11 +18970,11 @@ look into using the gdk-pixbuf library.</doc>
         </parameters>
       </method>
       <property name="height" writable="1" construct-only="1" transfer-ownership="none">
-        <doc xml:space="preserve">The height of the texture.</doc>
+        <doc xml:space="preserve">The height of the texture, in pixels.</doc>
         <type name="gint" c:type="gint"/>
       </property>
       <property name="width" writable="1" construct-only="1" transfer-ownership="none">
-        <doc xml:space="preserve">The width of the texture.</doc>
+        <doc xml:space="preserve">The width of the texture, in pixels.</doc>
         <type name="gint" c:type="gint"/>
       </property>
     </class>
@@ -18989,7 +19000,12 @@ look into using the gdk-pixbuf library.</doc>
       </field>
     </record>
     <interface name="Toplevel" c:symbol-prefix="toplevel" c:type="GdkToplevel" glib:type-name="GdkToplevel" glib:get-type="gdk_toplevel_get_type" glib:type-struct="ToplevelInterface">
-      <doc xml:space="preserve">A #GdkToplevel is a freestanding toplevel surface.</doc>
+      <doc xml:space="preserve">A #GdkToplevel is a freestanding toplevel surface.
+
+The #GdkToplevel interface provides useful APIs for
+interacting with the windowing system, such as controlling
+maximization and size of the surface, setting icons and
+transient parents for dialogs.</doc>
       
       <prerequisite name="Surface"/>
       <method name="begin_move" c:identifier="gdk_toplevel_begin_move">
@@ -20304,13 +20320,13 @@ call gdk_content_serialize_finish() to get the result of the operation.</doc>
     <docsection name="cursors">
       <doc xml:space="preserve">These functions are used to create and destroy cursors. Cursors
 are immutable objects, so once you created them, there is no way
-to modify them later. Create a new cursor, when you want to change
+to modify them later. Create a new cursor when you want to change
 something about it.
 
 Cursors by themselves are not very interesting, they must be
 bound to a window for users to see them. This is done with
 gdk_surface_set_cursor() or gdk_surface_set_device_cursor().
-Applications will typically use higher-level GTK+ functions such
+Applications will typically use higher-level GTK functions such
 as gtk_widget_set_cursor() instead.
 
 Cursors are not bound to a given #GdkDisplay, so they can be shared.
@@ -20320,16 +20336,19 @@ platforms.
 There are multiple ways to create cursors. The platform's own cursors
 can be created with gdk_cursor_new_from_name(). That function lists
 the commonly available names that are shared with the CSS specification.
-Other names may be available, depending on the platform in use.
+Other names may be available, depending on the platform in use. On some
+platforms, what images are used for named cursors may be influenced by
+the cursor theme.
+
 Another option to create a cursor is to use gdk_cursor_new_from_texture()
 and provide an image to use for the cursor.
 
 To ease work with unsupported cursors, a fallback cursor can be provided.
 If a #GdkSurface cannot use a cursor because of the reasons mentioned above,
-it will try the fallback cursor. Of course, fallback cursors can themselves
-have fallback cursors again, so it is possible to provide a chain of
-progressively easier to support cursors. If none of the provided cursors
-can be supported, the default cursor will be the ultimate fallback.</doc>
+it will try the fallback cursor. Fallback cursors can themselves have fallback
+cursors again, so it is possible to provide a chain of progressively easier
+to support cursors. If none of the provided cursors can be supported, the
+default cursor will be the ultimate fallback.</doc>
     </docsection>
     <docsection name="dnd">
       <doc xml:space="preserve">These functions provide a low-level interface for drag and drop.
@@ -20998,21 +21017,23 @@ The functions described here allow to obtain pixbufs from
 #GdkSurfaces and cairo surfaces.</doc>
     </docsection>
     <docsection name="regions">
-      <doc xml:space="preserve">GDK provides the #GdkPoint and #GdkRectangle data types for representing pixels
-and sets of pixels on the screen. Together with Cairo&#x2019;s #cairo_region_t data
-type, they make up the central types for representing graphical data.
-
-A #GdkPoint represents an x and y coordinate of a point.
+      <doc xml:space="preserve">GDK provides a #GdkRectangle data type for representing rectangles.
+Together with Cairo&#x2019;s #cairo_region_t data type, these are the central
+types for representing sets of pixels.
 
 A #GdkRectangle represents the position and size of a rectangle.
 The intersection of two rectangles can be computed with
 gdk_rectangle_intersect(). To find the union of two rectangles use
 gdk_rectangle_union().
 
-#cairo_region_t is usually used for managing clipping of graphical operations.</doc>
+#cairo_region_t is usually used for managing clipping of graphical
+operations.
+
+The graphene library has a number of other data types for regions and
+volumes in 2D and 3D.</doc>
     </docsection>
     <docsection name="rgba_colors">
-      <doc xml:space="preserve">#GdkRGBA is a convenient way to pass rgba colors around.
+      <doc xml:space="preserve">#GdkRGBA is a convenient way to pass colors around.
 It&#x2019;s based on cairo&#x2019;s way to deal with colors and mirrors its behavior.
 All values are in the range from 0.0 to 1.0 inclusive. So the color
 (0.0, 0.0, 0.0, 0.0) represents transparent black and
