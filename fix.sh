@@ -50,11 +50,6 @@ xmlstarlet ed -P -L \
 	-u '//_:class[@name="Object"]/_:constructor[@name="new_with_properties"]//_:parameter[@name="values"]/_:array/@c:type' -v "const GValue*" \
 	GObject-2.0.gir
 
-# incorrectly marked as transfer-none GitLab issue #197
-xmlstarlet ed -P -L \
-	-u '//_:class[@name="Binding"]/_:method[@name="unbind"]//_:instance-parameter[@name="binding"]/@transfer-ownership' -v "full" \
-	GObject-2.0.gir
-
 # fix wrong "full" transfer ownership
 xmlstarlet ed -P -L \
 	-u '//_:method[@c:identifier="gdk_frame_clock_get_current_timings"]/_:return-value/@transfer-ownership' -v "none" \
