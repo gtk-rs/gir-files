@@ -93,11 +93,6 @@ xmlstarlet ed -P -L \
 	-u '//_:constant[@name="DOM_NODE_FILTER_SHOW_ALL"]/_:type/@c:type' -v "guint" \
 	WebKit2WebExtension-4.0.gir
 
-# fix cyclic dependency on gtk 4.0
-xmlstarlet ed -P -L \
-	-u '//_:callback[@name="ParseErrorFunc"]/_:parameters/_:parameter[@name="section"]/_:type/@c:type' -v "gconstpointer" \
-	-a '//_:callback[@name="ParseErrorFunc"]/_:parameters/_:parameter[@name="section"]/_:type' -type attr -n "name" -v "gconstpointer" \
-	Gsk-4.0.gir
 
 # remove freetype and graphite methods; GitHub issue #2557
 xmlstarlet ed -P -L \
