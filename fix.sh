@@ -56,6 +56,12 @@ xmlstarlet ed -P -L \
 	-u '//_:method[@c:identifier="gdk_frame_clock_get_timings"]/_:return-value/@transfer-ownership' -v "none" \
 	Gdk-3.0.gir
 
+# replace gmodule with gpointer
+xmlstarlet ed -P -L \
+	-u '//_:record[@name="PixbufModule"]/_:field[@name="module"]/_:type/@name' -v "gpointer" \
+	-u '//_:record[@name="PixbufModule"]/_:field[@name="module"]/_:type/@c:type' -v "gpointer" \
+	GdkPixbuf-2.0.gir
+
 # replace "gint" response_id parameters with "ResponseType"
 xmlstarlet ed -P -L \
 	-u '//_:parameter[@name="response_id"]/_:type[@name="gint"]/@c:type' -v "GtkResponseType" \
