@@ -30,15 +30,8 @@ and/or use gtk-doc annotations.  -->
       </parameters>
     </function-macro>
     <class name="Decoder" c:symbol-prefix="decoder" c:type="PangoFcDecoder" version="1.6" parent="GObject.Object" abstract="1" glib:type-name="PangoFcDecoder" glib:get-type="pango_fc_decoder_get_type" glib:type-struct="DecoderClass">
-      <doc xml:space="preserve">#PangoFcDecoder is a virtual base class that implementations will
-inherit from.  It's the interface that is used to define a custom
-encoding for a font.  These objects are created in your code from a
-function callback that was originally registered with
-pango_fc_font_map_add_decoder_find_func().  Pango requires
-information about the supported charset for a font as well as the
-individual character to glyph conversions.  Pango gets that
-information via the #get_charset and #get_glyph callbacks into your
-object implementation.</doc>
+      <doc xml:space="preserve">PangoFcDecoder represents a decoder that an application provides
+for handling a font that is encoded in a custom way.</doc>
       
       <virtual-method name="get_charset" invoker="get_charset" version="1.6">
         <doc xml:space="preserve">Generates an #FcCharSet of supported characters for the fcfont
@@ -280,12 +273,14 @@ list of OpenType axis setting of the form AXIS=VALUE.</doc>
       <type name="utf8" c:type="gchar*"/>
     </constant>
     <class name="Font" c:symbol-prefix="font" c:type="PangoFcFont" parent="Pango.Font" abstract="1" glib:type-name="PangoFcFont" glib:get-type="pango_fc_font_get_type" glib:type-struct="FontClass">
-      <doc xml:space="preserve">#PangoFcFont is a base class for font implementations
-using the Fontconfig and FreeType libraries and is used in
-conjunction with #PangoFcFontMap. When deriving from this
-class, you need to implement all of its virtual functions
-other than shutdown() along with the get_glyph_extents()
-virtual function from #PangoFont.</doc>
+      <doc xml:space="preserve">#PangoFcFont is a base class for font implementation using the
+Fontconfig and FreeType libraries. It is used in the
+&lt;link linkend="pango-Xft-Fonts-and-Rendering"&gt;Xft&lt;/link&gt; and
+&lt;link linkend="pango-FreeType-Fonts-and-Rendering"&gt;FreeType&lt;/link&gt;
+backends shipped with Pango, but can also be used when creating
+new backends. Any backend deriving from this base class will
+take advantage of the wide range of shapers implemented using
+FreeType that come with Pango.</doc>
       
       <function name="description_from_pattern" c:identifier="pango_fc_font_description_from_pattern" version="1.4">
         <doc xml:space="preserve">Creates a #PangoFontDescription that matches the specified
@@ -464,6 +459,14 @@ pango_fc_font_lock_face().</doc>
       
     </record>
     <class name="FontMap" c:symbol-prefix="font_map" c:type="PangoFcFontMap" parent="Pango.FontMap" abstract="1" glib:type-name="PangoFcFontMap" glib:get-type="pango_fc_font_map_get_type" glib:type-struct="FontMapClass">
+      <doc xml:space="preserve">PangoFcFontMap is a base class for font map implementations using the
+Fontconfig and FreeType libraries. It is used in the
+&lt;link linkend="pango-Xft-Fonts-and-Rendering"&gt;Xft&lt;/link&gt; and
+&lt;link linkend="pango-FreeType-Fonts-and-Rendering"&gt;FreeType&lt;/link&gt;
+backends shipped with Pango, but can also be used when creating
+new backends. Any backend deriving from this base class will
+take advantage of the wide range of shapers implemented using
+FreeType that come with Pango.</doc>
       
       <method name="add_decoder_find_func" c:identifier="pango_fc_font_map_add_decoder_find_func" version="1.6" introspectable="0">
         <doc xml:space="preserve">This function saves a callback method in the #PangoFcFontMap that

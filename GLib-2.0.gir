@@ -13381,7 +13381,7 @@ g_list_free (g_steal_pointer (&amp;list_of_borrowed_things));
         </return-value>
         <parameters>
           <parameter name="list" transfer-ownership="none">
-            <doc xml:space="preserve">a #GList</doc>
+            <doc xml:space="preserve">the first link of a #GList</doc>
             <type name="GLib.List" c:type="GList*">
               <type name="gpointer" c:type="gpointer"/>
             </type>
@@ -13428,7 +13428,7 @@ g_list_free_full (g_steal_pointer (&amp;list_of_owned_things), g_object_unref);
         </return-value>
         <parameters>
           <parameter name="list" transfer-ownership="none">
-            <doc xml:space="preserve">a pointer to a #GList</doc>
+            <doc xml:space="preserve">the first link of a #GList</doc>
             <type name="GLib.List" c:type="GList*">
               <type name="gpointer" c:type="gpointer"/>
             </type>
@@ -22434,7 +22434,7 @@ g_slist_free (g_steal_pointer (&amp;list_of_borrowed_things));
         </return-value>
         <parameters>
           <parameter name="list" transfer-ownership="none">
-            <doc xml:space="preserve">a #GSList</doc>
+            <doc xml:space="preserve">the first link of a #GSList</doc>
             <type name="GLib.SList" c:type="GSList*">
               <type name="gpointer" c:type="gpointer"/>
             </type>
@@ -22478,7 +22478,7 @@ g_slist_free_full (g_steal_pointer (&amp;list_of_owned_things), g_object_unref);
         </return-value>
         <parameters>
           <parameter name="list" transfer-ownership="none">
-            <doc xml:space="preserve">a pointer to a #GSList</doc>
+            <doc xml:space="preserve">the first link of a #GSList</doc>
             <type name="GLib.SList" c:type="GSList*">
               <type name="gpointer" c:type="gpointer"/>
             </type>
@@ -40721,6 +40721,33 @@ representation is valid. Sometimes neither is valid. Use the API.
 
 GLib also features #GDateTime which represents a precise time.</doc>
     </docsection>
+    <docsection name="date-time">
+      <doc xml:space="preserve">#GDateTime is a structure that combines a Gregorian date and time
+into a single structure.  It provides many conversion and methods to
+manipulate dates and times.  Time precision is provided down to
+microseconds and the time can range (proleptically) from 0001-01-01
+00:00:00 to 9999-12-31 23:59:59.999999.  #GDateTime follows POSIX
+time in the sense that it is oblivious to leap seconds.
+
+#GDateTime is an immutable object; once it has been created it cannot
+be modified further.  All modifiers will create a new #GDateTime.
+Nearly all such functions can fail due to the date or time going out
+of range, in which case %NULL will be returned.
+
+#GDateTime is reference counted: the reference count is increased by calling
+g_date_time_ref() and decreased by calling g_date_time_unref(). When the
+reference count drops to 0, the resources allocated by the #GDateTime
+structure are released.
+
+Many parts of the API may produce non-obvious results.  As an
+example, adding two months to January 31st will yield March 31st
+whereas adding one month and then one month again will yield either
+March 28th or March 29th.  Also note that adding 24 hours is not
+always the same as adding one day (since days containing daylight
+savings time transitions are either 23 or 25 hours in length).
+
+#GDateTime is available since GLib 2.26.</doc>
+    </docsection>
     <function name="date_get_days_in_month" c:identifier="g_date_get_days_in_month" moved-to="Date.get_days_in_month">
       <doc xml:space="preserve">Returns the number of days in a month, taking leap
 years into account.</doc>
@@ -40991,33 +41018,6 @@ though there is a 16-bit limit to what #GDate will understand.</doc>
         </parameter>
       </parameters>
     </function>
-    <docsection name="datetime">
-      <doc xml:space="preserve">#GDateTime is a structure that combines a Gregorian date and time
-into a single structure.  It provides many conversion and methods to
-manipulate dates and times.  Time precision is provided down to
-microseconds and the time can range (proleptically) from 0001-01-01
-00:00:00 to 9999-12-31 23:59:59.999999.  #GDateTime follows POSIX
-time in the sense that it is oblivious to leap seconds.
-
-#GDateTime is an immutable object; once it has been created it cannot
-be modified further.  All modifiers will create a new #GDateTime.
-Nearly all such functions can fail due to the date or time going out
-of range, in which case %NULL will be returned.
-
-#GDateTime is reference counted: the reference count is increased by calling
-g_date_time_ref() and decreased by calling g_date_time_unref(). When the
-reference count drops to 0, the resources allocated by the #GDateTime
-structure are released.
-
-Many parts of the API may produce non-obvious results.  As an
-example, adding two months to January 31st will yield March 31st
-whereas adding one month and then one month again will yield either
-March 28th or March 29th.  Also note that adding 24 hours is not
-always the same as adding one day (since days containing daylight
-savings time transitions are either 23 or 25 hours in length).
-
-#GDateTime is available since GLib 2.26.</doc>
-    </docsection>
     <function name="dcgettext" c:identifier="g_dcgettext" version="2.26">
       <doc xml:space="preserve">This is a variant of g_dgettext() that allows specifying a locale
 category instead of always using `LC_MESSAGES`. See g_dgettext() for
@@ -53801,7 +53801,7 @@ which may be %NULL.</doc>
         </parameter>
       </parameters>
     </function>
-    <docsection name="treesbinary">
+    <docsection name="trees-binary">
       <doc xml:space="preserve">The #GTree structure and its associated functions provide a sorted
 collection of key/value pairs optimized for searching and traversing
 in order. This means that most of the operations  (access, search,
@@ -53827,7 +53827,7 @@ the traversal, use g_tree_foreach().
 
 To destroy a #GTree, use g_tree_destroy().</doc>
     </docsection>
-    <docsection name="treesnary">
+    <docsection name="trees-nary">
       <doc xml:space="preserve">The #GNode struct and its associated functions provide a N-ary tree
 data structure, where nodes in the tree can contain arbitrary data.
 
@@ -56133,7 +56133,7 @@ Further note that this function does not validate the result
 string; it may e.g. include embedded NUL characters. The only
 validation done by this function is to ensure that the input can
 be correctly interpreted as UTF-16, i.e. it doesn't contain
-things unpaired surrogates.</doc>
+unpaired surrogates or partial character sequences.</doc>
       
       <return-value transfer-ownership="full">
         <doc xml:space="preserve">a pointer to a newly allocated UTF-8 string.
