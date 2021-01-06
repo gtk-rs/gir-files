@@ -6,7 +6,7 @@ and/or use gtk-doc annotations.  -->
   <include name="Gdk" version="4.0"/>
   <package name="gtk4"/>
   <c:include name="gsk/gsk.h"/>
-  <namespace name="Gsk" version="4.0" shared-library="libgtk-4.so.0" c:identifier-prefixes="Gsk" c:symbol-prefixes="gsk">
+  <namespace name="Gsk" version="4.0" shared-library="libgtk-4.so.1" c:identifier-prefixes="Gsk" c:symbol-prefixes="gsk">
     <function-macro name="BROADWAY_RENDERER" c:identifier="GSK_BROADWAY_RENDERER" introspectable="0">
       
       <parameters>
@@ -89,6 +89,7 @@ on blending and blend modes.</doc>
       </member>
     </enumeration>
     <class name="BlendNode" c:symbol-prefix="blend_node" c:type="GskBlendNode" parent="RenderNode" glib:type-name="GskBlendNode" glib:get-type="gsk_blend_node_get_type" glib:fundamental="1">
+      <doc xml:space="preserve">A render node applying a blending function between its two child nodes.</doc>
       <constructor name="new" c:identifier="gsk_blend_node_new">
         <doc xml:space="preserve">Creates a #GskRenderNode that will use @blend_mode to blend the @top
 node onto the @bottom node.</doc>
@@ -156,6 +157,7 @@ node onto the @bottom node.</doc>
       </method>
     </class>
     <class name="BlurNode" c:symbol-prefix="blur_node" c:type="GskBlurNode" parent="RenderNode" glib:type-name="GskBlurNode" glib:get-type="gsk_blur_node_get_type" glib:fundamental="1">
+      <doc xml:space="preserve">A render node applying a blur effect to its single child.</doc>
       <constructor name="new" c:identifier="gsk_blur_node_new">
         <doc xml:space="preserve">Creates a render node that blurs the child.</doc>
         
@@ -204,6 +206,7 @@ node onto the @bottom node.</doc>
       </method>
     </class>
     <class name="BorderNode" c:symbol-prefix="border_node" c:type="GskBorderNode" parent="RenderNode" glib:type-name="GskBorderNode" glib:get-type="gsk_border_node_get_type" glib:fundamental="1">
+      <doc xml:space="preserve">A render node for a border.</doc>
       <constructor name="new" c:identifier="gsk_border_node_new">
         <doc xml:space="preserve">Creates a #GskRenderNode that will stroke a border rectangle inside the
 given @outline. The 4 sides of the border can have different widths and
@@ -234,7 +237,7 @@ colors.</doc>
           </parameter>
         </parameters>
       </constructor>
-      <method name="peek_colors" c:identifier="gsk_border_node_peek_colors">
+      <method name="get_colors" c:identifier="gsk_border_node_get_colors">
         <doc xml:space="preserve">Retrieves the colors of the border.</doc>
         
         <return-value transfer-ownership="none">
@@ -249,7 +252,7 @@ colors.</doc>
           </instance-parameter>
         </parameters>
       </method>
-      <method name="peek_outline" c:identifier="gsk_border_node_peek_outline">
+      <method name="get_outline" c:identifier="gsk_border_node_get_outline">
         <doc xml:space="preserve">Retrieves the outline of the border.</doc>
         
         <return-value transfer-ownership="none">
@@ -263,13 +266,16 @@ colors.</doc>
           </instance-parameter>
         </parameters>
       </method>
-      <method name="peek_widths" c:identifier="gsk_border_node_peek_widths">
+      <method name="get_widths" c:identifier="gsk_border_node_get_widths">
         <doc xml:space="preserve">Retrieves the stroke widths of the border.</doc>
         
         <return-value transfer-ownership="none">
-          <doc xml:space="preserve">an array of 4 floats for the top,
-    right, bottom and left stroke width of the border</doc>
-          <type name="gfloat" c:type="const float*"/>
+          <doc xml:space="preserve">an array of 4 floats
+  for the top, right, bottom and left stroke width of the border,
+  respectively</doc>
+          <array zero-terminated="0" c:type="const float*" fixed-size="4">
+            <type name="gfloat" c:type="float"/>
+          </array>
         </return-value>
         <parameters>
           <instance-parameter name="node" transfer-ownership="none">
@@ -322,6 +328,7 @@ support.</doc>
       </parameters>
     </function-macro>
     <class name="CairoNode" c:symbol-prefix="cairo_node" c:type="GskCairoNode" parent="RenderNode" glib:type-name="GskCairoNode" glib:get-type="gsk_cairo_node_get_type" glib:fundamental="1">
+      <doc xml:space="preserve">A render node for a Cairo surface.</doc>
       <constructor name="new" c:identifier="gsk_cairo_node_new">
         <doc xml:space="preserve">Creates a #GskRenderNode that will render a cairo surface
 into the area given by @bounds. You can draw to the cairo
@@ -357,7 +364,7 @@ rendering to @renderer.</doc>
           </instance-parameter>
         </parameters>
       </method>
-      <method name="peek_surface" c:identifier="gsk_cairo_node_peek_surface">
+      <method name="get_surface" c:identifier="gsk_cairo_node_get_surface">
         <doc xml:space="preserve">Retrieves the Cairo surface used by the render node.</doc>
         
         <return-value transfer-ownership="none">
@@ -394,6 +401,7 @@ avoided.</doc>
       
     </record>
     <class name="ClipNode" c:symbol-prefix="clip_node" c:type="GskClipNode" parent="RenderNode" glib:type-name="GskClipNode" glib:get-type="gsk_clip_node_get_type" glib:fundamental="1">
+      <doc xml:space="preserve">A render node applying a rectangular clip to its single child node.</doc>
       <constructor name="new" c:identifier="gsk_clip_node_new">
         <doc xml:space="preserve">Creates a #GskRenderNode that will clip the @child to the area
 given by @clip.</doc>
@@ -427,7 +435,7 @@ given by @clip.</doc>
           </instance-parameter>
         </parameters>
       </method>
-      <method name="peek_clip" c:identifier="gsk_clip_node_peek_clip">
+      <method name="get_clip" c:identifier="gsk_clip_node_get_clip">
         <doc xml:space="preserve">Retrieves the clip rectangle for @node.</doc>
         
         <return-value transfer-ownership="none">
@@ -443,6 +451,7 @@ given by @clip.</doc>
       </method>
     </class>
     <class name="ColorMatrixNode" c:symbol-prefix="color_matrix_node" c:type="GskColorMatrixNode" parent="RenderNode" glib:type-name="GskColorMatrixNode" glib:get-type="gsk_color_matrix_node_get_type" glib:fundamental="1">
+      <doc xml:space="preserve">A render node controlling the color matrix of its single child node.</doc>
       <constructor name="new" c:identifier="gsk_color_matrix_node_new">
         <doc xml:space="preserve">Creates a #GskRenderNode that will drawn the @child with reduced
 @color_matrix.
@@ -488,7 +497,7 @@ for every pixel.</doc>
           </instance-parameter>
         </parameters>
       </method>
-      <method name="peek_color_matrix" c:identifier="gsk_color_matrix_node_peek_color_matrix">
+      <method name="get_color_matrix" c:identifier="gsk_color_matrix_node_get_color_matrix">
         <doc xml:space="preserve">Retrieves the color matrix used by the @node.</doc>
         
         <return-value transfer-ownership="none">
@@ -502,7 +511,7 @@ for every pixel.</doc>
           </instance-parameter>
         </parameters>
       </method>
-      <method name="peek_color_offset" c:identifier="gsk_color_matrix_node_peek_color_offset">
+      <method name="get_color_offset" c:identifier="gsk_color_matrix_node_get_color_offset">
         <doc xml:space="preserve">Retrieves the color offset used by the @node.</doc>
         
         <return-value transfer-ownership="none">
@@ -518,6 +527,7 @@ for every pixel.</doc>
       </method>
     </class>
     <class name="ColorNode" c:symbol-prefix="color_node" c:type="GskColorNode" parent="RenderNode" glib:type-name="GskColorNode" glib:get-type="gsk_color_node_get_type" glib:fundamental="1">
+      <doc xml:space="preserve">A render node for a solid color.</doc>
       <constructor name="new" c:identifier="gsk_color_node_new">
         <doc xml:space="preserve">Creates a #GskRenderNode that will render the color specified by @rgba into
 the area given by @bounds.</doc>
@@ -537,7 +547,7 @@ the area given by @bounds.</doc>
           </parameter>
         </parameters>
       </constructor>
-      <method name="peek_color" c:identifier="gsk_color_node_peek_color">
+      <method name="get_color" c:identifier="gsk_color_node_get_color">
         <doc xml:space="preserve">Retrieves the color of the given @node.</doc>
         
         <return-value transfer-ownership="none">
@@ -553,15 +563,120 @@ the area given by @bounds.</doc>
       </method>
     </class>
     <record name="ColorStop" c:type="GskColorStop">
+      <doc xml:space="preserve">A color stop in a gradient node.</doc>
       
       <field name="offset" writable="1">
+        <doc xml:space="preserve">the offset of the color stop</doc>
         <type name="gfloat" c:type="float"/>
       </field>
       <field name="color" writable="1">
+        <doc xml:space="preserve">the color at the given offset</doc>
         <type name="Gdk.RGBA" c:type="GdkRGBA"/>
       </field>
     </record>
+    <class name="ConicGradientNode" c:symbol-prefix="conic_gradient_node" c:type="GskConicGradientNode" parent="RenderNode" glib:type-name="GskConicGradientNode" glib:get-type="gsk_conic_gradient_node_get_type" glib:fundamental="1">
+      <doc xml:space="preserve">A render node for a conic gradient.</doc>
+      <constructor name="new" c:identifier="gsk_conic_gradient_node_new">
+        <doc xml:space="preserve">Creates a #GskRenderNode that draws a conic gradient. The conic gradient
+starts around @center in the direction of @rotation. A rotation of 0 means
+that the gradient points up. Color stops are then added clockwise.</doc>
+        
+        <return-value transfer-ownership="full">
+          <doc xml:space="preserve">A new #GskRenderNode</doc>
+          <type name="ConicGradientNode" c:type="GskRenderNode*"/>
+        </return-value>
+        <parameters>
+          <parameter name="bounds" transfer-ownership="none">
+            <doc xml:space="preserve">the bounds of the node</doc>
+            <type name="Graphene.Rect" c:type="const graphene_rect_t*"/>
+          </parameter>
+          <parameter name="center" transfer-ownership="none">
+            <doc xml:space="preserve">the center of the gradient</doc>
+            <type name="Graphene.Point" c:type="const graphene_point_t*"/>
+          </parameter>
+          <parameter name="rotation" transfer-ownership="none">
+            <doc xml:space="preserve">the rotation of the gradient in degrees</doc>
+            <type name="gfloat" c:type="float"/>
+          </parameter>
+          <parameter name="color_stops" transfer-ownership="none">
+            <doc xml:space="preserve">a pointer to an array of #GskColorStop defining the gradient
+  The offsets of all color steps must be increasing. The first stop's offset must be &gt;= 0 and the last
+  stop's offset must be &lt;= 1.</doc>
+            <array length="4" zero-terminated="0" c:type="const GskColorStop*">
+              <type name="ColorStop" c:type="GskColorStop"/>
+            </array>
+          </parameter>
+          <parameter name="n_color_stops" transfer-ownership="none">
+            <doc xml:space="preserve">the number of elements in @color_stops</doc>
+            <type name="gsize" c:type="gsize"/>
+          </parameter>
+        </parameters>
+      </constructor>
+      <method name="get_center" c:identifier="gsk_conic_gradient_node_get_center">
+        <doc xml:space="preserve">Retrieves the center pointer for the gradient.</doc>
+        
+        <return-value transfer-ownership="none">
+          <doc xml:space="preserve">the center point for the gradient</doc>
+          <type name="Graphene.Point" c:type="const graphene_point_t*"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="node" transfer-ownership="none">
+            <doc xml:space="preserve">a #GskRenderNode for a conic gradient</doc>
+            <type name="ConicGradientNode" c:type="GskRenderNode*"/>
+          </instance-parameter>
+        </parameters>
+      </method>
+      <method name="get_color_stops" c:identifier="gsk_conic_gradient_node_get_color_stops">
+        <doc xml:space="preserve">Retrieves the color stops in the gradient.</doc>
+        
+        <return-value transfer-ownership="none">
+          <doc xml:space="preserve">the color stops in the gradient</doc>
+          <array length="0" zero-terminated="0" c:type="const GskColorStop*">
+            <type name="ColorStop" c:type="GskColorStop"/>
+          </array>
+        </return-value>
+        <parameters>
+          <instance-parameter name="node" transfer-ownership="none">
+            <doc xml:space="preserve">a #GskRenderNode for a conic gradient</doc>
+            <type name="ConicGradientNode" c:type="GskRenderNode*"/>
+          </instance-parameter>
+          <parameter name="n_stops" direction="out" caller-allocates="0" transfer-ownership="full" optional="1" allow-none="1">
+            <doc xml:space="preserve">the number of color stops in the returned array</doc>
+            <type name="gsize" c:type="gsize*"/>
+          </parameter>
+        </parameters>
+      </method>
+      <method name="get_n_color_stops" c:identifier="gsk_conic_gradient_node_get_n_color_stops">
+        <doc xml:space="preserve">Retrieves the number of color stops in the gradient.</doc>
+        
+        <return-value transfer-ownership="none">
+          <doc xml:space="preserve">the number of color stops</doc>
+          <type name="gsize" c:type="gsize"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="node" transfer-ownership="none">
+            <doc xml:space="preserve">a #GskRenderNode for a conic gradient</doc>
+            <type name="ConicGradientNode" c:type="GskRenderNode*"/>
+          </instance-parameter>
+        </parameters>
+      </method>
+      <method name="get_rotation" c:identifier="gsk_conic_gradient_node_get_rotation">
+        <doc xml:space="preserve">Retrieves the rotation for the gradient in degrees.</doc>
+        
+        <return-value transfer-ownership="none">
+          <doc xml:space="preserve">the rotation for the gradient</doc>
+          <type name="gfloat" c:type="float"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="node" transfer-ownership="none">
+            <doc xml:space="preserve">a #GskRenderNode for a conic gradient</doc>
+            <type name="ConicGradientNode" c:type="GskRenderNode*"/>
+          </instance-parameter>
+        </parameters>
+      </method>
+    </class>
     <class name="ContainerNode" c:symbol-prefix="container_node" c:type="GskContainerNode" parent="RenderNode" glib:type-name="GskContainerNode" glib:get-type="gsk_container_node_get_type" glib:fundamental="1">
+      <doc xml:space="preserve">A render node that can contain other render nodes.</doc>
       <constructor name="new" c:identifier="gsk_container_node_new">
         <doc xml:space="preserve">Creates a new #GskRenderNode instance for holding the given @children.
 The new node will acquire a reference to each of the children.</doc>
@@ -632,6 +747,7 @@ The new node will acquire a reference to each of the children.</doc>
       </member>
     </enumeration>
     <class name="CrossFadeNode" c:symbol-prefix="cross_fade_node" c:type="GskCrossFadeNode" parent="RenderNode" glib:type-name="GskCrossFadeNode" glib:get-type="gsk_cross_fade_node_get_type" glib:fundamental="1">
+      <doc xml:space="preserve">A render node cross fading between two child nodes.</doc>
       <constructor name="new" c:identifier="gsk_cross_fade_node_new">
         <doc xml:space="preserve">Creates a #GskRenderNode that will do a cross-fade between @start and @end.</doc>
         
@@ -699,6 +815,8 @@ The new node will acquire a reference to each of the children.</doc>
       </method>
     </class>
     <class name="DebugNode" c:symbol-prefix="debug_node" c:type="GskDebugNode" parent="RenderNode" glib:type-name="GskDebugNode" glib:get-type="gsk_debug_node_get_type" glib:fundamental="1">
+      <doc xml:space="preserve">A render node that emits a debugging message when drawing its
+child node.</doc>
       <constructor name="new" c:identifier="gsk_debug_node_new">
         <doc xml:space="preserve">Creates a #GskRenderNode that will add debug information about
 the given @child.
@@ -765,6 +883,7 @@ used by GTK.</doc>
       
     </record>
     <class name="GLShader" c:symbol-prefix="gl_shader" c:type="GskGLShader" parent="GObject.Object" glib:type-name="GskGLShader" glib:get-type="gsk_gl_shader_get_type" glib:type-struct="GLShaderClass">
+      <doc xml:space="preserve">An object representing a GL shader program.</doc>
       
       <constructor name="new_from_bytes" c:identifier="gsk_gl_shader_new_from_bytes">
         <doc xml:space="preserve">Creates a #GskGLShader that will render pixels using the specified code.</doc>
@@ -1215,6 +1334,7 @@ will be %NULL.</doc>
       </field>
     </record>
     <class name="GLShaderNode" c:symbol-prefix="gl_shader_node" c:type="GskGLShaderNode" parent="RenderNode" glib:type-name="GskGLShaderNode" glib:get-type="gsk_gl_shader_node_get_type" glib:fundamental="1">
+      <doc xml:space="preserve">A render node using a GL shader when drawing its children nodes.</doc>
       <constructor name="new" c:identifier="gsk_gl_shader_node_new">
         <doc xml:space="preserve">Creates a #GskRenderNode that will render the given @shader into the
 area given by @bounds. The @args is a block of data to use for uniform
@@ -1604,6 +1724,7 @@ having to worry about others changing them.</doc>
       </parameters>
     </function-macro>
     <class name="InsetShadowNode" c:symbol-prefix="inset_shadow_node" c:type="GskInsetShadowNode" parent="RenderNode" glib:type-name="GskInsetShadowNode" glib:get-type="gsk_inset_shadow_node_get_type" glib:fundamental="1">
+      <doc xml:space="preserve">A render node for an inset shadow.</doc>
       <constructor name="new" c:identifier="gsk_inset_shadow_node_new">
         <doc xml:space="preserve">Creates a #GskRenderNode that will render an inset shadow
 into the box given by @outline.</doc>
@@ -1653,6 +1774,20 @@ into the box given by @outline.</doc>
           </instance-parameter>
         </parameters>
       </method>
+      <method name="get_color" c:identifier="gsk_inset_shadow_node_get_color">
+        <doc xml:space="preserve">Retrieves the color of the inset shadow.</doc>
+        
+        <return-value transfer-ownership="none">
+          <doc xml:space="preserve">the color of the shadow</doc>
+          <type name="Gdk.RGBA" c:type="const GdkRGBA*"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="node" transfer-ownership="none">
+            <doc xml:space="preserve">a #GskRenderNode for an inset shadow</doc>
+            <type name="InsetShadowNode" c:type="GskRenderNode*"/>
+          </instance-parameter>
+        </parameters>
+      </method>
       <method name="get_dx" c:identifier="gsk_inset_shadow_node_get_dx">
         <doc xml:space="preserve">Retrieves the horizontal offset of the inset shadow.</doc>
         
@@ -1681,6 +1816,20 @@ into the box given by @outline.</doc>
           </instance-parameter>
         </parameters>
       </method>
+      <method name="get_outline" c:identifier="gsk_inset_shadow_node_get_outline">
+        <doc xml:space="preserve">Retrieves the outline rectangle of the inset shadow.</doc>
+        
+        <return-value transfer-ownership="none">
+          <doc xml:space="preserve">a rounded rectangle</doc>
+          <type name="RoundedRect" c:type="const GskRoundedRect*"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="node" transfer-ownership="none">
+            <doc xml:space="preserve">a #GskRenderNode for an inset shadow</doc>
+            <type name="InsetShadowNode" c:type="GskRenderNode*"/>
+          </instance-parameter>
+        </parameters>
+      </method>
       <method name="get_spread" c:identifier="gsk_inset_shadow_node_get_spread">
         <doc xml:space="preserve">Retrieves how much the shadow spreads inwards.</doc>
         
@@ -1695,36 +1844,9 @@ into the box given by @outline.</doc>
           </instance-parameter>
         </parameters>
       </method>
-      <method name="peek_color" c:identifier="gsk_inset_shadow_node_peek_color">
-        <doc xml:space="preserve">Retrieves the color of the inset shadow.</doc>
-        
-        <return-value transfer-ownership="none">
-          <doc xml:space="preserve">the color of the shadow</doc>
-          <type name="Gdk.RGBA" c:type="const GdkRGBA*"/>
-        </return-value>
-        <parameters>
-          <instance-parameter name="node" transfer-ownership="none">
-            <doc xml:space="preserve">a #GskRenderNode for an inset shadow</doc>
-            <type name="InsetShadowNode" c:type="GskRenderNode*"/>
-          </instance-parameter>
-        </parameters>
-      </method>
-      <method name="peek_outline" c:identifier="gsk_inset_shadow_node_peek_outline">
-        <doc xml:space="preserve">Retrieves the outline rectangle of the inset shadow.</doc>
-        
-        <return-value transfer-ownership="none">
-          <doc xml:space="preserve">a rounded rectangle</doc>
-          <type name="RoundedRect" c:type="const GskRoundedRect*"/>
-        </return-value>
-        <parameters>
-          <instance-parameter name="node" transfer-ownership="none">
-            <doc xml:space="preserve">a #GskRenderNode for an inset shadow</doc>
-            <type name="InsetShadowNode" c:type="GskRenderNode*"/>
-          </instance-parameter>
-        </parameters>
-      </method>
     </class>
     <class name="LinearGradientNode" c:symbol-prefix="linear_gradient_node" c:type="GskLinearGradientNode" parent="RenderNode" glib:type-name="GskLinearGradientNode" glib:get-type="gsk_linear_gradient_node_get_type" glib:fundamental="1">
+      <doc xml:space="preserve">A render node for a linear gradient.</doc>
       <constructor name="new" c:identifier="gsk_linear_gradient_node_new">
         <doc xml:space="preserve">Creates a #GskRenderNode that will create a linear gradient from the given
 points and color stops, and render that into the area given by @bounds.</doc>
@@ -1760,21 +1882,7 @@ points and color stops, and render that into the area given by @bounds.</doc>
           </parameter>
         </parameters>
       </constructor>
-      <method name="get_n_color_stops" c:identifier="gsk_linear_gradient_node_get_n_color_stops">
-        <doc xml:space="preserve">Retrieves the number of color stops in the gradient.</doc>
-        
-        <return-value transfer-ownership="none">
-          <doc xml:space="preserve">the number of color stops</doc>
-          <type name="gsize" c:type="gsize"/>
-        </return-value>
-        <parameters>
-          <instance-parameter name="node" transfer-ownership="none">
-            <doc xml:space="preserve">a #GskRenderNode for a linear gradient</doc>
-            <type name="LinearGradientNode" c:type="GskRenderNode*"/>
-          </instance-parameter>
-        </parameters>
-      </method>
-      <method name="peek_color_stops" c:identifier="gsk_linear_gradient_node_peek_color_stops">
+      <method name="get_color_stops" c:identifier="gsk_linear_gradient_node_get_color_stops">
         <doc xml:space="preserve">Retrieves the color stops in the gradient.</doc>
         
         <return-value transfer-ownership="none">
@@ -1794,7 +1902,7 @@ points and color stops, and render that into the area given by @bounds.</doc>
           </parameter>
         </parameters>
       </method>
-      <method name="peek_end" c:identifier="gsk_linear_gradient_node_peek_end">
+      <method name="get_end" c:identifier="gsk_linear_gradient_node_get_end">
         <doc xml:space="preserve">Retrieves the final point of the linear gradient.</doc>
         
         <return-value transfer-ownership="none">
@@ -1808,7 +1916,21 @@ points and color stops, and render that into the area given by @bounds.</doc>
           </instance-parameter>
         </parameters>
       </method>
-      <method name="peek_start" c:identifier="gsk_linear_gradient_node_peek_start">
+      <method name="get_n_color_stops" c:identifier="gsk_linear_gradient_node_get_n_color_stops">
+        <doc xml:space="preserve">Retrieves the number of color stops in the gradient.</doc>
+        
+        <return-value transfer-ownership="none">
+          <doc xml:space="preserve">the number of color stops</doc>
+          <type name="gsize" c:type="gsize"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="node" transfer-ownership="none">
+            <doc xml:space="preserve">a #GskRenderNode for a linear gradient</doc>
+            <type name="LinearGradientNode" c:type="GskRenderNode*"/>
+          </instance-parameter>
+        </parameters>
+      </method>
+      <method name="get_start" c:identifier="gsk_linear_gradient_node_get_start">
         <doc xml:space="preserve">Retrieves the initial point of the linear gradient.</doc>
         
         <return-value transfer-ownership="none">
@@ -1824,6 +1946,7 @@ points and color stops, and render that into the area given by @bounds.</doc>
       </method>
     </class>
     <class name="OpacityNode" c:symbol-prefix="opacity_node" c:type="GskOpacityNode" parent="RenderNode" glib:type-name="GskOpacityNode" glib:get-type="gsk_opacity_node_get_type" glib:fundamental="1">
+      <doc xml:space="preserve">A render node controlling the opacity of its single child node.</doc>
       <constructor name="new" c:identifier="gsk_opacity_node_new">
         <doc xml:space="preserve">Creates a #GskRenderNode that will drawn the @child with reduced
 @opacity.</doc>
@@ -1873,6 +1996,7 @@ points and color stops, and render that into the area given by @bounds.</doc>
       </method>
     </class>
     <class name="OutsetShadowNode" c:symbol-prefix="outset_shadow_node" c:type="GskOutsetShadowNode" parent="RenderNode" glib:type-name="GskOutsetShadowNode" glib:get-type="gsk_outset_shadow_node_get_type" glib:fundamental="1">
+      <doc xml:space="preserve">A render node for an outset shadow.</doc>
       <constructor name="new" c:identifier="gsk_outset_shadow_node_new">
         <doc xml:space="preserve">Creates a #GskRenderNode that will render an outset shadow
 around the box given by @outline.</doc>
@@ -1922,6 +2046,20 @@ around the box given by @outline.</doc>
           </instance-parameter>
         </parameters>
       </method>
+      <method name="get_color" c:identifier="gsk_outset_shadow_node_get_color">
+        <doc xml:space="preserve">Retrieves the color of the outset shadow.</doc>
+        
+        <return-value transfer-ownership="none">
+          <doc xml:space="preserve">a color</doc>
+          <type name="Gdk.RGBA" c:type="const GdkRGBA*"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="node" transfer-ownership="none">
+            <doc xml:space="preserve">a #GskRenderNode for an outset shadow</doc>
+            <type name="OutsetShadowNode" c:type="GskRenderNode*"/>
+          </instance-parameter>
+        </parameters>
+      </method>
       <method name="get_dx" c:identifier="gsk_outset_shadow_node_get_dx">
         <doc xml:space="preserve">Retrieves the horizontal offset of the outset shadow.</doc>
         
@@ -1950,6 +2088,20 @@ around the box given by @outline.</doc>
           </instance-parameter>
         </parameters>
       </method>
+      <method name="get_outline" c:identifier="gsk_outset_shadow_node_get_outline">
+        <doc xml:space="preserve">Retrieves the outline rectangle of the outset shadow.</doc>
+        
+        <return-value transfer-ownership="none">
+          <doc xml:space="preserve">a rounded rectangle</doc>
+          <type name="RoundedRect" c:type="const GskRoundedRect*"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="node" transfer-ownership="none">
+            <doc xml:space="preserve">a #GskRenderNode for an outset shadow</doc>
+            <type name="OutsetShadowNode" c:type="GskRenderNode*"/>
+          </instance-parameter>
+        </parameters>
+      </method>
       <method name="get_spread" c:identifier="gsk_outset_shadow_node_get_spread">
         <doc xml:space="preserve">Retrieves how much the shadow spreads outwards.</doc>
         
@@ -1964,36 +2116,8 @@ around the box given by @outline.</doc>
           </instance-parameter>
         </parameters>
       </method>
-      <method name="peek_color" c:identifier="gsk_outset_shadow_node_peek_color">
-        <doc xml:space="preserve">Retrieves the color of the outset shadow.</doc>
-        
-        <return-value transfer-ownership="none">
-          <doc xml:space="preserve">a color</doc>
-          <type name="Gdk.RGBA" c:type="const GdkRGBA*"/>
-        </return-value>
-        <parameters>
-          <instance-parameter name="node" transfer-ownership="none">
-            <doc xml:space="preserve">a #GskRenderNode for an outset shadow</doc>
-            <type name="OutsetShadowNode" c:type="GskRenderNode*"/>
-          </instance-parameter>
-        </parameters>
-      </method>
-      <method name="peek_outline" c:identifier="gsk_outset_shadow_node_peek_outline">
-        <doc xml:space="preserve">Retrieves the outline rectangle of the outset shadow.</doc>
-        
-        <return-value transfer-ownership="none">
-          <doc xml:space="preserve">a rounded rectangle</doc>
-          <type name="RoundedRect" c:type="const GskRoundedRect*"/>
-        </return-value>
-        <parameters>
-          <instance-parameter name="node" transfer-ownership="none">
-            <doc xml:space="preserve">a #GskRenderNode for an outset shadow</doc>
-            <type name="OutsetShadowNode" c:type="GskRenderNode*"/>
-          </instance-parameter>
-        </parameters>
-      </method>
     </class>
-    <callback name="ParseErrorFunc" c:type="GskParseErrorFunc" introspectable="0">
+    <callback name="ParseErrorFunc" c:type="GskParseErrorFunc">
       <doc xml:space="preserve">The type of callback that is called when a parse error occurs
 during deserialization of node data.</doc>
       
@@ -2001,20 +2125,48 @@ during deserialization of node data.</doc>
         <type name="none" c:type="void"/>
       </return-value>
       <parameters>
-        <parameter name="section" transfer-ownership="none">
-          <doc xml:space="preserve">the #GtkCssSection where the error occurred</doc>
-          <type c:type="const GtkCssSection*"/>
+        <parameter name="start" transfer-ownership="none">
+          <doc xml:space="preserve">start of the error location</doc>
+          <type name="ParseLocation" c:type="const GskParseLocation*"/>
+        </parameter>
+        <parameter name="end" transfer-ownership="none">
+          <doc xml:space="preserve">end of the error location</doc>
+          <type name="ParseLocation" c:type="const GskParseLocation*"/>
         </parameter>
         <parameter name="error" transfer-ownership="none">
           <doc xml:space="preserve">the error</doc>
           <type name="GLib.Error" c:type="const GError*"/>
         </parameter>
-        <parameter name="user_data" transfer-ownership="none" nullable="1" allow-none="1" closure="2">
+        <parameter name="user_data" transfer-ownership="none" nullable="1" allow-none="1" closure="3">
           <doc xml:space="preserve">user data</doc>
           <type name="gpointer" c:type="gpointer"/>
         </parameter>
       </parameters>
     </callback>
+    <record name="ParseLocation" c:type="GskParseLocation">
+      <doc xml:space="preserve">A location in a parse buffer.</doc>
+      
+      <field name="bytes" writable="1">
+        <doc xml:space="preserve">the offset of the location in the parse buffer, as bytes</doc>
+        <type name="gsize" c:type="gsize"/>
+      </field>
+      <field name="chars" writable="1">
+        <doc xml:space="preserve">the offset of the location in the parse buffer, as characters</doc>
+        <type name="gsize" c:type="gsize"/>
+      </field>
+      <field name="lines" writable="1">
+        <doc xml:space="preserve">the line of the location in the parse buffer</doc>
+        <type name="gsize" c:type="gsize"/>
+      </field>
+      <field name="line_bytes" writable="1">
+        <doc xml:space="preserve">the position in the line, as bytes</doc>
+        <type name="gsize" c:type="gsize"/>
+      </field>
+      <field name="line_chars" writable="1">
+        <doc xml:space="preserve">the position in the line, as characters</doc>
+        <type name="gsize" c:type="gsize"/>
+      </field>
+    </record>
     <function-macro name="RENDERER" c:identifier="GSK_RENDERER" introspectable="0">
       
       <parameters>
@@ -2042,6 +2194,7 @@ All corner sizes will be initialized to 0.</doc>
       </parameters>
     </function-macro>
     <class name="RadialGradientNode" c:symbol-prefix="radial_gradient_node" c:type="GskRadialGradientNode" parent="RenderNode" glib:type-name="GskRadialGradientNode" glib:get-type="gsk_radial_gradient_node_get_type" glib:fundamental="1">
+      <doc xml:space="preserve">A render node for a radial gradient.</doc>
       <constructor name="new" c:identifier="gsk_radial_gradient_node_new">
         <doc xml:space="preserve">Creates a #GskRenderNode that draws a radial gradient. The radial gradient
 starts around @center. The size of the gradient is dictated by @hradius
@@ -2090,6 +2243,40 @@ in horizontal orientation and by @vradius in vertial orientation.</doc>
           </parameter>
         </parameters>
       </constructor>
+      <method name="get_center" c:identifier="gsk_radial_gradient_node_get_center">
+        <doc xml:space="preserve">Retrieves the center pointer for the gradient.</doc>
+        
+        <return-value transfer-ownership="none">
+          <doc xml:space="preserve">the center point for the gradient</doc>
+          <type name="Graphene.Point" c:type="const graphene_point_t*"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="node" transfer-ownership="none">
+            <doc xml:space="preserve">a #GskRenderNode for a radial gradient</doc>
+            <type name="RadialGradientNode" c:type="GskRenderNode*"/>
+          </instance-parameter>
+        </parameters>
+      </method>
+      <method name="get_color_stops" c:identifier="gsk_radial_gradient_node_get_color_stops">
+        <doc xml:space="preserve">Retrieves the color stops in the gradient.</doc>
+        
+        <return-value transfer-ownership="none">
+          <doc xml:space="preserve">the color stops in the gradient</doc>
+          <array length="0" zero-terminated="0" c:type="const GskColorStop*">
+            <type name="ColorStop" c:type="GskColorStop"/>
+          </array>
+        </return-value>
+        <parameters>
+          <instance-parameter name="node" transfer-ownership="none">
+            <doc xml:space="preserve">a #GskRenderNode for a radial gradient</doc>
+            <type name="RadialGradientNode" c:type="GskRenderNode*"/>
+          </instance-parameter>
+          <parameter name="n_stops" direction="out" caller-allocates="0" transfer-ownership="full" optional="1" allow-none="1">
+            <doc xml:space="preserve">the number of color stops in the returned array</doc>
+            <type name="gsize" c:type="gsize*"/>
+          </parameter>
+        </parameters>
+      </method>
       <method name="get_end" c:identifier="gsk_radial_gradient_node_get_end">
         <doc xml:space="preserve">Retrieves the end value for the gradient.</doc>
         
@@ -2160,44 +2347,10 @@ in horizontal orientation and by @vradius in vertial orientation.</doc>
           </instance-parameter>
         </parameters>
       </method>
-      <method name="peek_center" c:identifier="gsk_radial_gradient_node_peek_center">
-        <doc xml:space="preserve">Retrieves the center pointer for the gradient.</doc>
-        
-        <return-value transfer-ownership="none">
-          <doc xml:space="preserve">the center point for the gradient</doc>
-          <type name="Graphene.Point" c:type="const graphene_point_t*"/>
-        </return-value>
-        <parameters>
-          <instance-parameter name="node" transfer-ownership="none">
-            <doc xml:space="preserve">a #GskRenderNode for a radial gradient</doc>
-            <type name="RadialGradientNode" c:type="GskRenderNode*"/>
-          </instance-parameter>
-        </parameters>
-      </method>
-      <method name="peek_color_stops" c:identifier="gsk_radial_gradient_node_peek_color_stops">
-        <doc xml:space="preserve">Retrieves the color stops in the gradient.</doc>
-        
-        <return-value transfer-ownership="none">
-          <doc xml:space="preserve">the color stops in the gradient</doc>
-          <array length="0" zero-terminated="0" c:type="const GskColorStop*">
-            <type name="ColorStop" c:type="GskColorStop"/>
-          </array>
-        </return-value>
-        <parameters>
-          <instance-parameter name="node" transfer-ownership="none">
-            <doc xml:space="preserve">a #GskRenderNode for a radial gradient</doc>
-            <type name="RadialGradientNode" c:type="GskRenderNode*"/>
-          </instance-parameter>
-          <parameter name="n_stops" direction="out" caller-allocates="0" transfer-ownership="full" optional="1" allow-none="1">
-            <doc xml:space="preserve">the number of color stops in the returned array</doc>
-            <type name="gsize" c:type="gsize*"/>
-          </parameter>
-        </parameters>
-      </method>
     </class>
     <class name="RenderNode" c:symbol-prefix="render_node" c:type="GskRenderNode" abstract="1" glib:type-name="GskRenderNode" glib:get-type="gsk_render_node_get_type" glib:fundamental="1" glib:ref-func="gsk_render_node_ref" glib:unref-func="gsk_render_node_unref">
       <doc xml:space="preserve">A node in the render tree.</doc>
-      <function name="deserialize" c:identifier="gsk_render_node_deserialize" introspectable="0">
+      <function name="deserialize" c:identifier="gsk_render_node_deserialize">
         <doc xml:space="preserve">Loads data previously created via gsk_render_node_serialize(). For a
 discussion of the supported format, see that function.</doc>
         
@@ -2379,59 +2532,64 @@ node to a file for later inspection.</doc>
       <member name="repeating_radial_gradient_node" value="7" c:identifier="GSK_REPEATING_RADIAL_GRADIENT_NODE" glib:nick="repeating-radial-gradient-node">
         <doc xml:space="preserve">A node drawing a repeating radial gradient</doc>
       </member>
-      <member name="border_node" value="8" c:identifier="GSK_BORDER_NODE" glib:nick="border-node">
+      <member name="conic_gradient_node" value="8" c:identifier="GSK_CONIC_GRADIENT_NODE" glib:nick="conic-gradient-node">
+        <doc xml:space="preserve">A node drawing a conic gradient</doc>
+      </member>
+      <member name="border_node" value="9" c:identifier="GSK_BORDER_NODE" glib:nick="border-node">
         <doc xml:space="preserve">A node stroking a border around an area</doc>
       </member>
-      <member name="texture_node" value="9" c:identifier="GSK_TEXTURE_NODE" glib:nick="texture-node">
+      <member name="texture_node" value="10" c:identifier="GSK_TEXTURE_NODE" glib:nick="texture-node">
         <doc xml:space="preserve">A node drawing a #GdkTexture</doc>
       </member>
-      <member name="inset_shadow_node" value="10" c:identifier="GSK_INSET_SHADOW_NODE" glib:nick="inset-shadow-node">
+      <member name="inset_shadow_node" value="11" c:identifier="GSK_INSET_SHADOW_NODE" glib:nick="inset-shadow-node">
         <doc xml:space="preserve">A node drawing an inset shadow</doc>
       </member>
-      <member name="outset_shadow_node" value="11" c:identifier="GSK_OUTSET_SHADOW_NODE" glib:nick="outset-shadow-node">
+      <member name="outset_shadow_node" value="12" c:identifier="GSK_OUTSET_SHADOW_NODE" glib:nick="outset-shadow-node">
         <doc xml:space="preserve">A node drawing an outset shadow</doc>
       </member>
-      <member name="transform_node" value="12" c:identifier="GSK_TRANSFORM_NODE" glib:nick="transform-node">
+      <member name="transform_node" value="13" c:identifier="GSK_TRANSFORM_NODE" glib:nick="transform-node">
         <doc xml:space="preserve">A node that renders its child after applying a matrix transform</doc>
       </member>
-      <member name="opacity_node" value="13" c:identifier="GSK_OPACITY_NODE" glib:nick="opacity-node">
+      <member name="opacity_node" value="14" c:identifier="GSK_OPACITY_NODE" glib:nick="opacity-node">
         <doc xml:space="preserve">A node that changes the opacity of its child</doc>
       </member>
-      <member name="color_matrix_node" value="14" c:identifier="GSK_COLOR_MATRIX_NODE" glib:nick="color-matrix-node">
+      <member name="color_matrix_node" value="15" c:identifier="GSK_COLOR_MATRIX_NODE" glib:nick="color-matrix-node">
         <doc xml:space="preserve">A node that applies a color matrix to every pixel</doc>
       </member>
-      <member name="repeat_node" value="15" c:identifier="GSK_REPEAT_NODE" glib:nick="repeat-node">
+      <member name="repeat_node" value="16" c:identifier="GSK_REPEAT_NODE" glib:nick="repeat-node">
         <doc xml:space="preserve">A node that repeats the child's contents</doc>
       </member>
-      <member name="clip_node" value="16" c:identifier="GSK_CLIP_NODE" glib:nick="clip-node">
+      <member name="clip_node" value="17" c:identifier="GSK_CLIP_NODE" glib:nick="clip-node">
         <doc xml:space="preserve">A node that clips its child to a rectangular area</doc>
       </member>
-      <member name="rounded_clip_node" value="17" c:identifier="GSK_ROUNDED_CLIP_NODE" glib:nick="rounded-clip-node">
+      <member name="rounded_clip_node" value="18" c:identifier="GSK_ROUNDED_CLIP_NODE" glib:nick="rounded-clip-node">
         <doc xml:space="preserve">A node that clips its child to a rounded rectangle</doc>
       </member>
-      <member name="shadow_node" value="18" c:identifier="GSK_SHADOW_NODE" glib:nick="shadow-node">
+      <member name="shadow_node" value="19" c:identifier="GSK_SHADOW_NODE" glib:nick="shadow-node">
         <doc xml:space="preserve">A node that draws a shadow below its child</doc>
       </member>
-      <member name="blend_node" value="19" c:identifier="GSK_BLEND_NODE" glib:nick="blend-node">
+      <member name="blend_node" value="20" c:identifier="GSK_BLEND_NODE" glib:nick="blend-node">
         <doc xml:space="preserve">A node that blends two children together</doc>
       </member>
-      <member name="cross_fade_node" value="20" c:identifier="GSK_CROSS_FADE_NODE" glib:nick="cross-fade-node">
+      <member name="cross_fade_node" value="21" c:identifier="GSK_CROSS_FADE_NODE" glib:nick="cross-fade-node">
         <doc xml:space="preserve">A node that cross-fades between two children</doc>
       </member>
-      <member name="text_node" value="21" c:identifier="GSK_TEXT_NODE" glib:nick="text-node">
+      <member name="text_node" value="22" c:identifier="GSK_TEXT_NODE" glib:nick="text-node">
         <doc xml:space="preserve">A node containing a glyph string</doc>
       </member>
-      <member name="blur_node" value="22" c:identifier="GSK_BLUR_NODE" glib:nick="blur-node">
+      <member name="blur_node" value="23" c:identifier="GSK_BLUR_NODE" glib:nick="blur-node">
         <doc xml:space="preserve">A node that applies a blur</doc>
       </member>
-      <member name="debug_node" value="23" c:identifier="GSK_DEBUG_NODE" glib:nick="debug-node">
+      <member name="debug_node" value="24" c:identifier="GSK_DEBUG_NODE" glib:nick="debug-node">
         <doc xml:space="preserve">Debug information that does not affect the rendering</doc>
       </member>
-      <member name="gl_shader_node" value="24" c:identifier="GSK_GL_SHADER_NODE" glib:nick="gl-shader-node">
+      <member name="gl_shader_node" value="25" c:identifier="GSK_GL_SHADER_NODE" glib:nick="gl-shader-node">
         <doc xml:space="preserve">A node that uses OpenGL fragment shaders to render</doc>
       </member>
     </enumeration>
     <class name="Renderer" c:symbol-prefix="renderer" c:type="GskRenderer" parent="GObject.Object" abstract="1" glib:type-name="GskRenderer" glib:get-type="gsk_renderer_get_type" glib:type-struct="RendererClass">
+      <doc xml:space="preserve">Base type for the object managing the rendering pipeline
+for a #GdkSurface.</doc>
       
       <constructor name="new_for_surface" c:identifier="gsk_renderer_new_for_surface">
         <doc xml:space="preserve">Creates an appropriate #GskRenderer instance for the given @surface.
@@ -2584,6 +2742,7 @@ transform node and pass that node instead.</doc>
       
     </record>
     <class name="RepeatNode" c:symbol-prefix="repeat_node" c:type="GskRepeatNode" parent="RenderNode" glib:type-name="GskRepeatNode" glib:get-type="gsk_repeat_node_get_type" glib:fundamental="1">
+      <doc xml:space="preserve">A render node repeating its single child node.</doc>
       <constructor name="new" c:identifier="gsk_repeat_node_new">
         <doc xml:space="preserve">Creates a #GskRenderNode that will repeat the drawing of @child across
 the given @bounds.</doc>
@@ -2622,7 +2781,7 @@ the given @bounds.</doc>
           </instance-parameter>
         </parameters>
       </method>
-      <method name="peek_child_bounds" c:identifier="gsk_repeat_node_peek_child_bounds">
+      <method name="get_child_bounds" c:identifier="gsk_repeat_node_get_child_bounds">
         <doc xml:space="preserve">Retrieves the bounding rectangle of the child of @node.</doc>
         
         <return-value transfer-ownership="none">
@@ -2638,6 +2797,7 @@ the given @bounds.</doc>
       </method>
     </class>
     <class name="RepeatingLinearGradientNode" c:symbol-prefix="repeating_linear_gradient_node" c:type="GskRepeatingLinearGradientNode" parent="RenderNode" glib:type-name="GskRepeatingLinearGradientNode" glib:get-type="gsk_repeating_linear_gradient_node_get_type" glib:fundamental="1">
+      <doc xml:space="preserve">A render node for a repeating linear gradient.</doc>
       <constructor name="new" c:identifier="gsk_repeating_linear_gradient_node_new">
         <doc xml:space="preserve">Creates a #GskRenderNode that will create a repeating linear gradient
 from the given points and color stops, and render that into the area
@@ -2676,6 +2836,7 @@ given by @bounds.</doc>
       </constructor>
     </class>
     <class name="RepeatingRadialGradientNode" c:symbol-prefix="repeating_radial_gradient_node" c:type="GskRepeatingRadialGradientNode" parent="RenderNode" glib:type-name="GskRepeatingRadialGradientNode" glib:get-type="gsk_repeating_radial_gradient_node_get_type" glib:fundamental="1">
+      <doc xml:space="preserve">A render node for a repeating radial gradient.</doc>
       <constructor name="new" c:identifier="gsk_repeating_radial_gradient_node_new">
         <doc xml:space="preserve">Creates a #GskRenderNode that draws a repeating radial gradient. The radial gradient
 starts around @center. The size of the gradient is dictated by @hradius
@@ -2726,6 +2887,7 @@ in horizontal orientation and by @vradius in vertial orientation.</doc>
       </constructor>
     </class>
     <class name="RoundedClipNode" c:symbol-prefix="rounded_clip_node" c:type="GskRoundedClipNode" parent="RenderNode" glib:type-name="GskRoundedClipNode" glib:get-type="gsk_rounded_clip_node_get_type" glib:fundamental="1">
+      <doc xml:space="preserve">A render node applying a rounded rectangle clip to its single child.</doc>
       <constructor name="new" c:identifier="gsk_rounded_clip_node_new">
         <doc xml:space="preserve">Creates a #GskRenderNode that will clip the @child to the area
 given by @clip.</doc>
@@ -2759,7 +2921,7 @@ given by @clip.</doc>
           </instance-parameter>
         </parameters>
       </method>
-      <method name="peek_clip" c:identifier="gsk_rounded_clip_node_peek_clip">
+      <method name="get_clip" c:identifier="gsk_rounded_clip_node_get_clip">
         <doc xml:space="preserve">Retrievs the rounded rectangle used to clip the contents of the @node.</doc>
         
         <return-value transfer-ownership="none">
@@ -3068,28 +3230,42 @@ rendering pipeline.</doc>
       </function>
     </enumeration>
     <record name="ShaderArgsBuilder" c:type="GskShaderArgsBuilder" glib:type-name="GskShaderArgsBuilder" glib:get-type="gsk_shader_args_builder_get_type" c:symbol-prefix="shader_args_builder">
+      <doc xml:space="preserve">An object to build the uniforms data for a #GskGLShader.</doc>
       
       <constructor name="new" c:identifier="gsk_shader_args_builder_new">
+        <doc xml:space="preserve">Allocates a builder that can be used to construct a new uniform data
+chunk.</doc>
         
         <return-value transfer-ownership="full">
+          <doc xml:space="preserve">The newly allocated builder, free with
+    gsk_shader_args_builder_unref()</doc>
           <type name="ShaderArgsBuilder" c:type="GskShaderArgsBuilder*"/>
         </return-value>
         <parameters>
           <parameter name="shader" transfer-ownership="none">
+            <doc xml:space="preserve">a #GskGLShader</doc>
             <type name="GLShader" c:type="GskGLShader*"/>
           </parameter>
-          <parameter name="initial_values" transfer-ownership="none">
+          <parameter name="initial_values" transfer-ownership="none" nullable="1" allow-none="1">
+            <doc xml:space="preserve">optional #Bytes with initial values</doc>
             <type name="GLib.Bytes" c:type="GBytes*"/>
           </parameter>
         </parameters>
       </constructor>
-      <method name="free_to_args" c:identifier="gsk_shader_args_builder_free_to_args">
+      <method name="free_to_args" c:identifier="gsk_shader_args_builder_free_to_args" introspectable="0">
+        <doc xml:space="preserve">Creates a new #GBytes args from the current state of the
+given @builder, and frees the @builder instance. Any uniforms
+of the shader that have not been explicitly set on the @builder
+are zero-initialized.</doc>
         
         <return-value transfer-ownership="full">
+          <doc xml:space="preserve">the newly created #GBytes
+  with all the args added to @builder</doc>
           <type name="GLib.Bytes" c:type="GBytes*"/>
         </return-value>
         <parameters>
           <instance-parameter name="builder" transfer-ownership="none">
+            <doc xml:space="preserve">a #GskShaderArgsBuilder</doc>
             <type name="ShaderArgsBuilder" c:type="GskShaderArgsBuilder*"/>
           </instance-parameter>
         </parameters>
@@ -3301,21 +3477,27 @@ If the resulting reference count is zero, frees the builder.</doc>
       </method>
     </record>
     <record name="Shadow" c:type="GskShadow">
+      <doc xml:space="preserve">The shadow parameters in a shadow node.</doc>
       
       <field name="color" writable="1">
+        <doc xml:space="preserve">the color of the shadow</doc>
         <type name="Gdk.RGBA" c:type="GdkRGBA"/>
       </field>
       <field name="dx" writable="1">
+        <doc xml:space="preserve">the horizontal offset of the shadow</doc>
         <type name="gfloat" c:type="float"/>
       </field>
       <field name="dy" writable="1">
+        <doc xml:space="preserve">the vertical offset of the shadow</doc>
         <type name="gfloat" c:type="float"/>
       </field>
       <field name="radius" writable="1">
+        <doc xml:space="preserve">the radius of the shadow</doc>
         <type name="gfloat" c:type="float"/>
       </field>
     </record>
     <class name="ShadowNode" c:symbol-prefix="shadow_node" c:type="GskShadowNode" parent="RenderNode" glib:type-name="GskShadowNode" glib:get-type="gsk_shadow_node_get_type" glib:fundamental="1">
+      <doc xml:space="preserve">A render node drawing one or more shadows behind its single child node.</doc>
       <constructor name="new" c:identifier="gsk_shadow_node_new">
         <doc xml:space="preserve">Creates a #GskRenderNode that will draw a @child with the given
 @shadows below it.</doc>
@@ -3369,7 +3551,7 @@ If the resulting reference count is zero, frees the builder.</doc>
           </instance-parameter>
         </parameters>
       </method>
-      <method name="peek_shadow" c:identifier="gsk_shadow_node_peek_shadow">
+      <method name="get_shadow" c:identifier="gsk_shadow_node_get_shadow">
         <doc xml:space="preserve">Retrieves the shadow data at the given index @i.</doc>
         
         <return-value transfer-ownership="none">
@@ -3389,6 +3571,7 @@ If the resulting reference count is zero, frees the builder.</doc>
       </method>
     </class>
     <class name="TextNode" c:symbol-prefix="text_node" c:type="GskTextNode" parent="RenderNode" glib:type-name="GskTextNode" glib:get-type="gsk_text_node_get_type" glib:fundamental="1">
+      <doc xml:space="preserve">A render node drawing a set of glyphs.</doc>
       <constructor name="new" c:identifier="gsk_text_node_new">
         <doc xml:space="preserve">Creates a render node that renders the given glyphs,
 Note that @color may not be used if the font contains
@@ -3417,6 +3600,54 @@ color glyphs.</doc>
           </parameter>
         </parameters>
       </constructor>
+      <method name="get_color" c:identifier="gsk_text_node_get_color">
+        <doc xml:space="preserve">Retrieves the color used by the text @node.</doc>
+        
+        <return-value transfer-ownership="none">
+          <doc xml:space="preserve">the text color</doc>
+          <type name="Gdk.RGBA" c:type="const GdkRGBA*"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="node" transfer-ownership="none">
+            <doc xml:space="preserve">a text #GskRenderNode</doc>
+            <type name="TextNode" c:type="GskRenderNode*"/>
+          </instance-parameter>
+        </parameters>
+      </method>
+      <method name="get_font" c:identifier="gsk_text_node_get_font">
+        <doc xml:space="preserve">Returns the font used by the text @node.</doc>
+        
+        <return-value transfer-ownership="none">
+          <doc xml:space="preserve">the font</doc>
+          <type name="Pango.Font" c:type="PangoFont*"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="node" transfer-ownership="none">
+            <doc xml:space="preserve">The #GskRenderNode</doc>
+            <type name="TextNode" c:type="GskRenderNode*"/>
+          </instance-parameter>
+        </parameters>
+      </method>
+      <method name="get_glyphs" c:identifier="gsk_text_node_get_glyphs">
+        <doc xml:space="preserve">Retrieves the glyph information in the @node.</doc>
+        
+        <return-value transfer-ownership="none">
+          <doc xml:space="preserve">the glyph information</doc>
+          <array length="0" zero-terminated="0" c:type="const PangoGlyphInfo*">
+            <type name="Pango.GlyphInfo" c:type="PangoGlyphInfo"/>
+          </array>
+        </return-value>
+        <parameters>
+          <instance-parameter name="node" transfer-ownership="none">
+            <doc xml:space="preserve">a text #GskRenderNode</doc>
+            <type name="TextNode" c:type="GskRenderNode*"/>
+          </instance-parameter>
+          <parameter name="n_glyphs" direction="out" caller-allocates="0" transfer-ownership="full" optional="1" allow-none="1">
+            <doc xml:space="preserve">the number of glyphs returned</doc>
+            <type name="guint" c:type="guint*"/>
+          </parameter>
+        </parameters>
+      </method>
       <method name="get_num_glyphs" c:identifier="gsk_text_node_get_num_glyphs">
         <doc xml:space="preserve">Retrieves the number of glyphs in the text node.</doc>
         
@@ -3459,56 +3690,9 @@ color glyphs.</doc>
           </instance-parameter>
         </parameters>
       </method>
-      <method name="peek_color" c:identifier="gsk_text_node_peek_color">
-        <doc xml:space="preserve">Retrieves the color used by the text @node.</doc>
-        
-        <return-value transfer-ownership="none">
-          <doc xml:space="preserve">the text color</doc>
-          <type name="Gdk.RGBA" c:type="const GdkRGBA*"/>
-        </return-value>
-        <parameters>
-          <instance-parameter name="node" transfer-ownership="none">
-            <doc xml:space="preserve">a text #GskRenderNode</doc>
-            <type name="TextNode" c:type="GskRenderNode*"/>
-          </instance-parameter>
-        </parameters>
-      </method>
-      <method name="peek_font" c:identifier="gsk_text_node_peek_font">
-        <doc xml:space="preserve">Returns the font used by the text @node.</doc>
-        
-        <return-value transfer-ownership="none">
-          <doc xml:space="preserve">the font</doc>
-          <type name="Pango.Font" c:type="PangoFont*"/>
-        </return-value>
-        <parameters>
-          <instance-parameter name="node" transfer-ownership="none">
-            <doc xml:space="preserve">The #GskRenderNode</doc>
-            <type name="TextNode" c:type="GskRenderNode*"/>
-          </instance-parameter>
-        </parameters>
-      </method>
-      <method name="peek_glyphs" c:identifier="gsk_text_node_peek_glyphs">
-        <doc xml:space="preserve">Retrieves the glyph information in the @node.</doc>
-        
-        <return-value transfer-ownership="none">
-          <doc xml:space="preserve">the glyph information</doc>
-          <array length="0" zero-terminated="0" c:type="const PangoGlyphInfo*">
-            <type name="Pango.GlyphInfo" c:type="PangoGlyphInfo"/>
-          </array>
-        </return-value>
-        <parameters>
-          <instance-parameter name="node" transfer-ownership="none">
-            <doc xml:space="preserve">a text #GskRenderNode</doc>
-            <type name="TextNode" c:type="GskRenderNode*"/>
-          </instance-parameter>
-          <parameter name="n_glyphs" direction="out" caller-allocates="0" transfer-ownership="full" optional="1" allow-none="1">
-            <doc xml:space="preserve">the number of glyphs returned</doc>
-            <type name="guint" c:type="guint*"/>
-          </parameter>
-        </parameters>
-      </method>
     </class>
     <class name="TextureNode" c:symbol-prefix="texture_node" c:type="GskTextureNode" parent="RenderNode" glib:type-name="GskTextureNode" glib:get-type="gsk_texture_node_get_type" glib:fundamental="1">
+      <doc xml:space="preserve">A render node for a #GdkTexture.</doc>
       <constructor name="new" c:identifier="gsk_texture_node_new">
         <doc xml:space="preserve">Creates a #GskRenderNode that will render the given
 @texture into the area given by @bounds.</doc>
@@ -3560,11 +3744,11 @@ color glyphs.</doc>
           <type name="gboolean" c:type="gboolean"/>
         </return-value>
         <parameters>
-          <instance-parameter name="first" transfer-ownership="none">
+          <instance-parameter name="first" transfer-ownership="none" nullable="1" allow-none="1">
             <doc xml:space="preserve">the first transform</doc>
             <type name="Transform" c:type="GskTransform*"/>
           </instance-parameter>
-          <parameter name="second" transfer-ownership="none">
+          <parameter name="second" transfer-ownership="none" nullable="1" allow-none="1">
             <doc xml:space="preserve">the second transform</doc>
             <type name="Transform" c:type="GskTransform*"/>
           </parameter>
@@ -4101,6 +4285,7 @@ multiplication `C = A * B`, `category(C) = MIN (category(A), category(B))`.</doc
       </member>
     </enumeration>
     <class name="TransformNode" c:symbol-prefix="transform_node" c:type="GskTransformNode" parent="RenderNode" glib:type-name="GskTransformNode" glib:get-type="gsk_transform_node_get_type" glib:fundamental="1">
+      <doc xml:space="preserve">A render node applying a #GskTransform to its single child node.</doc>
       <constructor name="new" c:identifier="gsk_transform_node_new">
         <doc xml:space="preserve">Creates a #GskRenderNode that will transform the given @child
 with the given @transform.</doc>
