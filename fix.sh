@@ -71,7 +71,7 @@ xmlstarlet ed -L \
 # fix wrong "full" transfer ownership
 xmlstarlet ed -L \
 	-u '//_:constructor[@c:identifier="gtk_shortcut_label_new"]/_:return-value/@transfer-ownership' -v "none" \
-	Gtk-3.0.gir Gtk-4.0.gir
+	Gtk-3.0.gir
 
 # add out annotation for functions returning GValue
 xmlstarlet ed -L \
@@ -85,7 +85,7 @@ xmlstarlet ed -L \
 	-a '//_:method[@c:identifier="gtk_widget_style_get_property"]//_:parameter[@name="value" and not(@caller-allocates)]' -type attr -n "caller-allocates" -v "1" \
 	Gtk-3.0.gir
 
-xmlstarlet tr JavaScriptCore-4.0.xsl JavaScriptCore-4.0.gir | xmlstarlet fo > JavaScriptCore-4.0.gir.tmp
+xmlstarlet tr JavaScriptCore-4.0.xsl JavaScriptCore-4.0.gir | xmlstarlet fo >JavaScriptCore-4.0.gir.tmp
 mv JavaScriptCore-4.0.gir.tmp JavaScriptCore-4.0.gir
 
 # fill in types from JavaScriptCore
@@ -98,7 +98,6 @@ xmlstarlet ed -L \
 	-u '//_:constant[@name="DOM_NODE_FILTER_SHOW_ALL"]/_:type/@name' -v "guint" \
 	-u '//_:constant[@name="DOM_NODE_FILTER_SHOW_ALL"]/_:type/@c:type' -v "guint" \
 	WebKit2WebExtension-4.0.gir
-
 
 # remove freetype and graphite methods; GitHub issue #2557
 xmlstarlet ed -L \
@@ -128,8 +127,8 @@ xmlstarlet ed -L \
 
 #  Remove unstable method from focal release
 xmlstarlet ed -L \
-  	-d '///_:method[@c:identifier="atk_plug_set_child"]' \
-  	Atk-1.0.gir
+	-d '///_:method[@c:identifier="atk_plug_set_child"]' \
+	Atk-1.0.gir
 
 # fix non-existant c-types
 xmlstarlet ed -L \
