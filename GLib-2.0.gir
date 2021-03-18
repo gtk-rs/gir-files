@@ -2658,7 +2658,11 @@ together.</doc>
       </function>
       <function name="new_take" c:identifier="g_byte_array_new_take" version="2.32">
         <doc xml:space="preserve">Create byte array containing the data. The data will be owned by the array
-and will be freed with g_free(), i.e. it could be allocated using g_strdup().</doc>
+and will be freed with g_free(), i.e. it could be allocated using g_strdup().
+
+Do not use it if @len is greater than %G_MAXUINT. #GByteArray
+stores the length of its data in #guint, which may be shorter than
+#gsize.</doc>
         <return-value transfer-ownership="full">
           <doc xml:space="preserve">a new #GByteArray</doc>
           <array name="GLib.ByteArray" c:type="GByteArray*">
@@ -3230,7 +3234,11 @@ the same byte data.
 As an optimization, the byte data is transferred to the array without copying
 if this was the last reference to bytes and bytes was created with
 g_bytes_new(), g_bytes_new_take() or g_byte_array_free_to_bytes(). In all
-other cases the data is copied.</doc>
+other cases the data is copied.
+
+Do not use it if @bytes contains more than %G_MAXUINT
+bytes. #GByteArray stores the length of its data in #guint, which
+may be shorter than #gsize, that @bytes is using.</doc>
         <return-value transfer-ownership="full">
           <doc xml:space="preserve">a new mutable #GByteArray containing the same byte data</doc>
           <array name="GLib.ByteArray" c:type="GByteArray*">
@@ -3322,7 +3330,7 @@ vector of raw bytes. Once either g_checksum_get_string() or
 g_checksum_get_digest() have been called on a #GChecksum, the checksum
 will be closed and it won't be possible to call g_checksum_update()
 on it anymore.</doc>
-        <return-value transfer-ownership="full">
+        <return-value transfer-ownership="full" nullable="1">
           <doc xml:space="preserve">the newly created #GChecksum, or %NULL.
   Use g_checksum_free() to free the memory allocated by it.</doc>
           <type name="Checksum" c:type="GChecksum*"/>
@@ -3339,8 +3347,8 @@ on it anymore.</doc>
 g_checksum_get_string() or g_checksum_get_digest(), the copied
 checksum will be closed as well.</doc>
         <return-value transfer-ownership="full">
-          <doc xml:space="preserve">the copy of the passed #GChecksum. Use g_checksum_free()
-  when finished using it.</doc>
+          <doc xml:space="preserve">the copy of the passed #GChecksum. Use
+  g_checksum_free() when finished using it.</doc>
           <type name="Checksum" c:type="GChecksum*"/>
         </return-value>
         <parameters>
@@ -6044,6 +6052,25 @@ February on a non-leap year, the day will be clamped to 28th February.</doc>
           </parameter>
         </parameters>
       </method>
+      <method name="compare" c:identifier="g_date_time_compare" version="2.26">
+        <doc xml:space="preserve">A comparison function for #GDateTimes that is suitable
+as a #GCompareFunc. Both #GDateTimes must be non-%NULL.</doc>
+        <return-value transfer-ownership="none">
+          <doc xml:space="preserve">-1, 0 or 1 if @dt1 is less than, equal to or greater
+  than @dt2.</doc>
+          <type name="gint" c:type="gint"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="dt1" transfer-ownership="none">
+            <doc xml:space="preserve">first #GDateTime to compare</doc>
+            <type name="DateTime" c:type="gconstpointer"/>
+          </instance-parameter>
+          <parameter name="dt2" transfer-ownership="none">
+            <doc xml:space="preserve">second #GDateTime to compare</doc>
+            <type name="DateTime" c:type="gconstpointer"/>
+          </parameter>
+        </parameters>
+      </method>
       <method name="difference" c:identifier="g_date_time_difference" version="2.26">
         <doc xml:space="preserve">Calculates the difference in time between @end and @begin.  The
 #GTimeSpan that is returned is effectively @end - @begin (ie:
@@ -6061,6 +6088,26 @@ positive if the first parameter is larger).</doc>
           <parameter name="begin" transfer-ownership="none">
             <doc xml:space="preserve">a #GDateTime</doc>
             <type name="DateTime" c:type="GDateTime*"/>
+          </parameter>
+        </parameters>
+      </method>
+      <method name="equal" c:identifier="g_date_time_equal" version="2.26">
+        <doc xml:space="preserve">Checks to see if @dt1 and @dt2 are equal.
+
+Equal here means that they represent the same moment after converting
+them to the same time zone.</doc>
+        <return-value transfer-ownership="none">
+          <doc xml:space="preserve">%TRUE if @dt1 and @dt2 are equal</doc>
+          <type name="gboolean" c:type="gboolean"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="dt1" transfer-ownership="none">
+            <doc xml:space="preserve">a #GDateTime</doc>
+            <type name="DateTime" c:type="gconstpointer"/>
+          </instance-parameter>
+          <parameter name="dt2" transfer-ownership="none">
+            <doc xml:space="preserve">a #GDateTime</doc>
+            <type name="DateTime" c:type="gconstpointer"/>
           </parameter>
         </parameters>
       </method>
@@ -6485,6 +6532,19 @@ if 4 or more days of that week are contained within the new year.</doc>
           </parameter>
         </parameters>
       </method>
+      <method name="hash" c:identifier="g_date_time_hash" version="2.26">
+        <doc xml:space="preserve">Hashes @datetime into a #guint, suitable for use within #GHashTable.</doc>
+        <return-value transfer-ownership="none">
+          <doc xml:space="preserve">a #guint containing the hash</doc>
+          <type name="guint" c:type="guint"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="datetime" transfer-ownership="none">
+            <doc xml:space="preserve">a #GDateTime</doc>
+            <type name="DateTime" c:type="gconstpointer"/>
+          </instance-parameter>
+        </parameters>
+      </method>
       <method name="is_daylight_savings" c:identifier="g_date_time_is_daylight_savings" version="2.26">
         <doc xml:space="preserve">Determines if daylight savings time is in effect at the time and in
 the time zone of @datetime.</doc>
@@ -6634,58 +6694,6 @@ When the reference count reaches zero, the resources allocated by
           </instance-parameter>
         </parameters>
       </method>
-      <function name="compare" c:identifier="g_date_time_compare" version="2.26">
-        <doc xml:space="preserve">A comparison function for #GDateTimes that is suitable
-as a #GCompareFunc. Both #GDateTimes must be non-%NULL.</doc>
-        <return-value transfer-ownership="none">
-          <doc xml:space="preserve">-1, 0 or 1 if @dt1 is less than, equal to or greater
-  than @dt2.</doc>
-          <type name="gint" c:type="gint"/>
-        </return-value>
-        <parameters>
-          <parameter name="dt1" transfer-ownership="none">
-            <doc xml:space="preserve">first #GDateTime to compare</doc>
-            <type name="gpointer" c:type="gconstpointer"/>
-          </parameter>
-          <parameter name="dt2" transfer-ownership="none">
-            <doc xml:space="preserve">second #GDateTime to compare</doc>
-            <type name="gpointer" c:type="gconstpointer"/>
-          </parameter>
-        </parameters>
-      </function>
-      <function name="equal" c:identifier="g_date_time_equal" version="2.26">
-        <doc xml:space="preserve">Checks to see if @dt1 and @dt2 are equal.
-
-Equal here means that they represent the same moment after converting
-them to the same time zone.</doc>
-        <return-value transfer-ownership="none">
-          <doc xml:space="preserve">%TRUE if @dt1 and @dt2 are equal</doc>
-          <type name="gboolean" c:type="gboolean"/>
-        </return-value>
-        <parameters>
-          <parameter name="dt1" transfer-ownership="none">
-            <doc xml:space="preserve">a #GDateTime</doc>
-            <type name="gpointer" c:type="gconstpointer"/>
-          </parameter>
-          <parameter name="dt2" transfer-ownership="none">
-            <doc xml:space="preserve">a #GDateTime</doc>
-            <type name="gpointer" c:type="gconstpointer"/>
-          </parameter>
-        </parameters>
-      </function>
-      <function name="hash" c:identifier="g_date_time_hash" version="2.26">
-        <doc xml:space="preserve">Hashes @datetime into a #guint, suitable for use within #GHashTable.</doc>
-        <return-value transfer-ownership="none">
-          <doc xml:space="preserve">a #guint containing the hash</doc>
-          <type name="guint" c:type="guint"/>
-        </return-value>
-        <parameters>
-          <parameter name="datetime" transfer-ownership="none">
-            <doc xml:space="preserve">a #GDateTime</doc>
-            <type name="gpointer" c:type="gconstpointer"/>
-          </parameter>
-        </parameters>
-      </function>
     </record>
     <enumeration name="DateWeekday" c:type="GDateWeekday">
       <doc xml:space="preserve">Enumeration representing a day of the week; #G_DATE_MONDAY,
@@ -10996,7 +11004,7 @@ the line breaks between lines, but does not include the final line break.</doc>
             <doc xml:space="preserve">a group name, or %NULL</doc>
             <type name="utf8" c:type="const gchar*"/>
           </parameter>
-          <parameter name="key" transfer-ownership="none">
+          <parameter name="key" transfer-ownership="none" nullable="1" allow-none="1">
             <doc xml:space="preserve">a key</doc>
             <type name="utf8" c:type="const gchar*"/>
           </parameter>
@@ -11325,7 +11333,7 @@ be %NULL.</doc>
       </method>
       <method name="get_start_group" c:identifier="g_key_file_get_start_group" version="2.6">
         <doc xml:space="preserve">Returns the name of the start group of the file.</doc>
-        <return-value transfer-ownership="full">
+        <return-value transfer-ownership="full" nullable="1">
           <doc xml:space="preserve">The start group of the key file.</doc>
           <type name="utf8" c:type="gchar*"/>
         </return-value>
@@ -13441,7 +13449,7 @@ linked against at application run time.</doc>
       <doc xml:space="preserve">The maximum value which can be held in a #guint8.</doc>
       <type name="guint8" c:type="guint8"/>
     </constant>
-    <constant name="MICRO_VERSION" value="0" c:type="GLIB_MICRO_VERSION">
+    <constant name="MICRO_VERSION" value="7" c:type="GLIB_MICRO_VERSION">
       <doc xml:space="preserve">The micro version number of the GLib library.
 
 Like #gtk_micro_version, but from the headers used at
@@ -13535,7 +13543,10 @@ a typical event source will use g_source_add_unix_fd() instead.</doc>
         </parameters>
       </method>
       <method name="check" c:identifier="g_main_context_check">
-        <doc xml:space="preserve">Passes the results of polling back to the main loop.
+        <doc xml:space="preserve">Passes the results of polling back to the main loop. You should be
+careful to pass @fds and its length @n_fds as received from
+g_main_context_query(), as this functions relies on assumptions
+on how @fds is filled.
 
 You must have successfully acquired the context with
 g_main_context_acquire() before you may call this function.</doc>
@@ -13882,7 +13893,10 @@ see g_file_supports_thread_contexts().</doc>
         </parameters>
       </method>
       <method name="query" c:identifier="g_main_context_query">
-        <doc xml:space="preserve">Determines information necessary to poll this main loop.
+        <doc xml:space="preserve">Determines information necessary to poll this main loop. You should
+be careful to pass the resulting @fds array and its length @n_fds
+as is when calling g_main_context_check(), as this function relies
+on assumptions made when the array is filled.
 
 You must have successfully acquired the context with
 g_main_context_acquire() before you may call this function.</doc>
@@ -14040,7 +14054,7 @@ loop with a termination condition, computed from multiple threads:
 
 |[&lt;!-- language="C" --&gt;
   #define NUM_TASKS 10
-  static volatile gint tasks_remaining = NUM_TASKS;
+  static gint tasks_remaining = NUM_TASKS;  // (atomic)
   ...
  
   while (g_atomic_int_get (&amp;tasks_remaining) != 0)
@@ -14086,7 +14100,7 @@ always return %NULL if you are running in the default thread.)
 
 If you need to hold a reference on the context, use
 g_main_context_ref_thread_default() instead.</doc>
-        <return-value transfer-ownership="none">
+        <return-value transfer-ownership="none" nullable="1">
           <doc xml:space="preserve">the thread-default #GMainContext, or
 %NULL if the thread-default context is the global default context.</doc>
           <type name="MainContext" c:type="GMainContext*"/>
@@ -16247,7 +16261,10 @@ like this:
     }
 
   // use initialization_value here
-]|</doc>
+]|
+
+While @location has a `volatile` qualifier, this is a historical artifact and
+the pointer passed to it should not be `volatile`.</doc>
         <return-value transfer-ownership="none">
           <doc xml:space="preserve">%TRUE if the initialization section should be entered,
     %FALSE and blocks otherwise</doc>
@@ -16266,7 +16283,10 @@ like this:
 0-initialized initialization variable, and an initialization value
 other than 0. Sets the variable to the initialization value, and
 releases concurrent threads blocking in g_once_init_enter() on this
-initialization variable.</doc>
+initialization variable.
+
+While @location has a `volatile` qualifier, this is a historical artifact and
+the pointer passed to it should not be `volatile`.</doc>
         <return-value transfer-ownership="none">
           <type name="none" c:type="void"/>
         </return-value>
@@ -17752,9 +17772,9 @@ function has been set for @array.
 This function is not thread-safe. If using a #GPtrArray from multiple
 threads, use only the atomic g_ptr_array_ref() and g_ptr_array_unref()
 functions.</doc>
-        <return-value transfer-ownership="none" nullable="1">
-          <doc xml:space="preserve">the pointer array if @free_seg is %FALSE, otherwise %NULL.
-    The pointer array should be freed using g_free().</doc>
+        <return-value transfer-ownership="full" nullable="1">
+          <doc xml:space="preserve">the pointer array if @free_seg is
+    %FALSE, otherwise %NULL. The pointer array should be freed using g_free().</doc>
           <type name="gpointer" c:type="gpointer*"/>
         </return-value>
         <parameters>
@@ -19241,13 +19261,19 @@ to undefined behaviour.</doc>
       </method>
       <method name="reader_lock" c:identifier="g_rw_lock_reader_lock" version="2.32">
         <doc xml:space="preserve">Obtain a read lock on @rw_lock. If another thread currently holds
-the write lock on @rw_lock, the current thread will block. If another thread
-does not hold the write lock, but is waiting for it, it is implementation
-defined whether the reader or writer will block. Read locks can be taken
+the write lock on @rw_lock, the current thread will block until the
+write lock was (held and) released. If another thread does not hold
+the write lock, but is waiting for it, it is implementation defined
+whether the reader or writer will block. Read locks can be taken
 recursively.
 
-It is implementation-defined how many threads are allowed to
-hold read locks on the same lock simultaneously. If the limit is hit,
+Calling g_rw_lock_reader_lock() while the current thread already
+owns a write lock leads to undefined behaviour. Read locks however
+can be taken recursively, in which case you need to make sure to
+call g_rw_lock_reader_unlock() the same amount of times.
+
+It is implementation-defined how many read locks are allowed to be
+held on the same lock simultaneously. If the limit is hit,
 or if a deadlock is detected, a critical warning will be emitted.</doc>
         <return-value transfer-ownership="none">
           <type name="none" c:type="void"/>
@@ -19290,9 +19316,12 @@ by the current thread leads to undefined behaviour.</doc>
         </parameters>
       </method>
       <method name="writer_lock" c:identifier="g_rw_lock_writer_lock" version="2.32">
-        <doc xml:space="preserve">Obtain a write lock on @rw_lock. If any thread already holds
+        <doc xml:space="preserve">Obtain a write lock on @rw_lock. If another thread currently holds
 a read or write lock on @rw_lock, the current thread will block
-until all other threads have dropped their locks on @rw_lock.</doc>
+until all other threads have dropped their locks on @rw_lock.
+
+Calling g_rw_lock_writer_lock() while the current thread already
+owns a read or write lock on @rw_lock leads to undefined behaviour.</doc>
         <return-value transfer-ownership="none">
           <type name="none" c:type="void"/>
         </return-value>
@@ -19304,8 +19333,9 @@ until all other threads have dropped their locks on @rw_lock.</doc>
         </parameters>
       </method>
       <method name="writer_trylock" c:identifier="g_rw_lock_writer_trylock" version="2.32">
-        <doc xml:space="preserve">Tries to obtain a write lock on @rw_lock. If any other thread holds
-a read or write lock on @rw_lock, it immediately returns %FALSE.
+        <doc xml:space="preserve">Tries to obtain a write lock on @rw_lock. If another thread
+currently holds a read or write lock on @rw_lock, it immediately
+returns %FALSE.
 Otherwise it locks @rw_lock and returns %TRUE.</doc>
         <return-value transfer-ownership="none">
           <doc xml:space="preserve">%TRUE if @rw_lock could be locked</doc>
@@ -22734,9 +22764,9 @@ than the number of items in @seq, the end iterator is returned.</doc>
         </parameters>
       </method>
       <method name="get_length" c:identifier="g_sequence_get_length" version="2.14">
-        <doc xml:space="preserve">Returns the length of @seq. Note that this method is O(h) where `h' is the
-height of the tree. It is thus more efficient to use g_sequence_is_empty()
-when comparing the length to zero.</doc>
+        <doc xml:space="preserve">Returns the positive length (&gt;= 0) of @seq. Note that this method is
+O(h) where `h' is the height of the tree. It is thus more efficient
+to use g_sequence_is_empty() when comparing the length to zero.</doc>
         <return-value transfer-ownership="none">
           <doc xml:space="preserve">the length of @seq</doc>
           <type name="gint" c:type="gint"/>
@@ -23786,7 +23816,7 @@ is unique within the #GMainContext instance passed to g_source_attach().</doc>
       <method name="get_name" c:identifier="g_source_get_name" version="2.26">
         <doc xml:space="preserve">Gets a name for the source, used in debugging and profiling.  The
 name may be #NULL if it has never been set with g_source_set_name().</doc>
-        <return-value transfer-ownership="none">
+        <return-value transfer-ownership="none" nullable="1">
           <doc xml:space="preserve">the name of the source</doc>
           <type name="utf8" c:type="const char*"/>
         </return-value>
@@ -23859,10 +23889,10 @@ idle_callback (gpointer data)
 {
   SomeWidget *self = data;
    
-  GDK_THREADS_ENTER ();
+  g_mutex_lock (&amp;self-&gt;idle_id_mutex);
   // do stuff with self
   self-&gt;idle_id = 0;
-  GDK_THREADS_LEAVE ();
+  g_mutex_unlock (&amp;self-&gt;idle_id_mutex);
    
   return G_SOURCE_REMOVE;
 }
@@ -23870,9 +23900,19 @@ idle_callback (gpointer data)
 static void
 some_widget_do_stuff_later (SomeWidget *self)
 {
+  g_mutex_lock (&amp;self-&gt;idle_id_mutex);
   self-&gt;idle_id = g_idle_add (idle_callback, self);
+  g_mutex_unlock (&amp;self-&gt;idle_id_mutex);
 }
  
+static void
+some_widget_init (SomeWidget *self)
+{
+  g_mutex_init (&amp;self-&gt;idle_id_mutex);
+
+  // ...
+}
+
 static void
 some_widget_finalize (GObject *object)
 {
@@ -23881,6 +23921,8 @@ some_widget_finalize (GObject *object)
   if (self-&gt;idle_id)
     g_source_remove (self-&gt;idle_id);
    
+  g_mutex_clear (&amp;self-&gt;idle_id_mutex);
+
   G_OBJECT_CLASS (parent_class)-&gt;finalize (object);
 }
 ]|
@@ -23897,12 +23939,12 @@ idle_callback (gpointer data)
 {
   SomeWidget *self = data;
   
-  GDK_THREADS_ENTER ();
+  g_mutex_lock (&amp;self-&gt;idle_id_mutex);
   if (!g_source_is_destroyed (g_main_current_source ()))
     {
       // do stuff with self
     }
-  GDK_THREADS_LEAVE ();
+  g_mutex_unlock (&amp;self-&gt;idle_id_mutex);
   
   return FALSE;
 }
@@ -26609,71 +26651,15 @@ g_date_time_unref (dt);
     <record name="TimeZone" c:type="GTimeZone" version="2.26" glib:type-name="GTimeZone" glib:get-type="g_time_zone_get_type" c:symbol-prefix="time_zone">
       <doc xml:space="preserve">#GTimeZone is an opaque structure whose members cannot be accessed
 directly.</doc>
-      <constructor name="new" c:identifier="g_time_zone_new" version="2.26">
-        <doc xml:space="preserve">Creates a #GTimeZone corresponding to @identifier.
+      <constructor name="new" c:identifier="g_time_zone_new" version="2.26" deprecated="1" deprecated-version="2.68">
+        <doc xml:space="preserve">A version of g_time_zone_new_identifier() which returns the UTC time zone
+if @identifier could not be parsed or loaded.
 
-@identifier can either be an RFC3339/ISO 8601 time offset or
-something that would pass as a valid value for the `TZ` environment
-variable (including %NULL).
-
-In Windows, @identifier can also be the unlocalized name of a time
-zone for standard time, for example "Pacific Standard Time".
-
-Valid RFC3339 time offsets are `"Z"` (for UTC) or
-`"&#xB1;hh:mm"`.  ISO 8601 additionally specifies
-`"&#xB1;hhmm"` and `"&#xB1;hh"`.  Offsets are
-time values to be added to Coordinated Universal Time (UTC) to get
-the local time.
-
-In UNIX, the `TZ` environment variable typically corresponds
-to the name of a file in the zoneinfo database, an absolute path to a file
-somewhere else, or a string in
-"std offset [dst [offset],start[/time],end[/time]]" (POSIX) format.
-There  are  no spaces in the specification. The name of standard
-and daylight savings time zone must be three or more alphabetic
-characters. Offsets are time values to be added to local time to
-get Coordinated Universal Time (UTC) and should be
-`"[&#xB1;]hh[[:]mm[:ss]]"`.  Dates are either
-`"Jn"` (Julian day with n between 1 and 365, leap
-years not counted), `"n"` (zero-based Julian day
-with n between 0 and 365) or `"Mm.w.d"` (day d
-(0 &lt;= d &lt;= 6) of week w (1 &lt;= w &lt;= 5) of month m (1 &lt;= m &lt;= 12), day
-0 is a Sunday).  Times are in local wall clock time, the default is
-02:00:00.
-
-In Windows, the "tzn[+|&#x2013;]hh[:mm[:ss]][dzn]" format is used, but also
-accepts POSIX format.  The Windows format uses US rules for all time
-zones; daylight savings time is 60 minutes behind the standard time
-with date and time of change taken from Pacific Standard Time.
-Offsets are time values to be added to the local time to get
-Coordinated Universal Time (UTC).
-
-g_time_zone_new_local() calls this function with the value of the
-`TZ` environment variable. This function itself is independent of
-the value of `TZ`, but if @identifier is %NULL then `/etc/localtime`
-will be consulted to discover the correct time zone on UNIX and the
-registry will be consulted or GetTimeZoneInformation() will be used
-to get the local time zone on Windows.
-
-If intervals are not available, only time zone rules from `TZ`
-environment variable or other means, then they will be computed
-from year 1900 to 2037.  If the maximum year for the rules is
-available and it is greater than 2037, then it will followed
-instead.
-
-See
-[RFC3339 &#xA7;5.6](http://tools.ietf.org/html/rfc3339#section-5.6)
-for a precise definition of valid RFC3339 time offsets
-(the `time-offset` expansion) and ISO 8601 for the
-full list of valid time offsets.  See
-[The GNU C Library manual](http://www.gnu.org/s/libc/manual/html_node/TZ-Variable.html)
-for an explanation of the possible
-values of the `TZ` environment variable. See
-[Microsoft Time Zone Index Values](http://msdn.microsoft.com/en-us/library/ms912391%28v=winembedded.11%29.aspx)
-for the list of time zones on Windows.
-
-You should release the return value by calling g_time_zone_unref()
-when you are done with it.</doc>
+If you need to check whether @identifier was loaded successfully, use
+g_time_zone_new_identifier().</doc>
+        <doc-deprecated xml:space="preserve">Use g_time_zone_new_identifier() instead, as it provides
+    error reporting. Change your code to handle a potentially %NULL return
+    value.</doc-deprecated>
         <return-value transfer-ownership="full">
           <doc xml:space="preserve">the requested timezone</doc>
           <type name="TimeZone" c:type="GTimeZone*"/>
@@ -27400,17 +27386,8 @@ If the root node has children the height is 2, etc.</doc>
       <method name="insert" c:identifier="g_tree_insert">
         <doc xml:space="preserve">Inserts a key/value pair into a #GTree.
 
-If the given key already exists in the #GTree its corresponding value
-is set to the new value. If you supplied a @value_destroy_func when
-creating the #GTree, the old value is freed using that function. If
-you supplied a @key_destroy_func when creating the #GTree, the passed
-key is freed using that function.
-
-The tree is automatically 'balanced' as new key/value pairs are added,
-so that the distance from the root to every leaf is as small as possible.
-The cost of maintaining a balanced tree while inserting new key/value
-result in a O(n log(n)) operation where most of the other operations
-are O(log(n)).</doc>
+Inserts a new key and value into a #GTree as g_tree_insert_node() does,
+only this function does not return the inserted or set node.</doc>
         <return-value transfer-ownership="none">
           <type name="none" c:type="void"/>
         </return-value>
@@ -27533,15 +27510,8 @@ are O(log(n)).</doc>
         </parameters>
       </method>
       <method name="replace" c:identifier="g_tree_replace">
-        <doc xml:space="preserve">Inserts a new key and value into a #GTree similar to g_tree_insert().
-The difference is that if the key already exists in the #GTree, it gets
-replaced by the new key. If you supplied a @value_destroy_func when
-creating the #GTree, the old value is freed using that function. If you
-supplied a @key_destroy_func when creating the #GTree, the old key is
-freed using that function.
-
-The tree is automatically 'balanced' as new key/value pairs are added,
-so that the distance from the root to every leaf is as small as possible.</doc>
+        <doc xml:space="preserve">Inserts a new key and value into a #GTree as g_tree_replace_node() does,
+only this function does not return the inserted or set node.</doc>
         <return-value transfer-ownership="none">
           <type name="none" c:type="void"/>
         </return-value>
@@ -28657,11 +28627,12 @@ g_filename_to_uri() if you want to properly convert between
 
 Note that there is no `g_uri_equal ()` function, because comparing
 URIs usefully requires scheme-specific knowledge that #GUri does
-not have. For example, `http://example.com/` and
-`http://EXAMPLE.COM:80` have exactly the same meaning according
-to the HTTP specification, and `data:,foo` and
-`data:;base64,Zm9v` resolve to the same thing according to the
-`data:` URI specification.</doc>
+not have. #GUri can help with normalization if you use the various
+encoded #GUriFlags as well as %G_URI_FLAGS_SCHEME_NORMALIZE however
+it is not comprehensive.
+For example, `data:,foo` and `data:;base64,Zm9v` resolve to the same
+thing according to the `data:` URI specification which GLib does not
+handle.</doc>
       <method name="get_auth_params" c:identifier="g_uri_get_auth_params" version="2.66">
         <doc xml:space="preserve">Gets @uri's authentication parameters, which may contain
 `%`-encoding, depending on the flags with which @uri was created.
@@ -28718,7 +28689,7 @@ that address, without the brackets around it that are necessary in
 the string form of the URI. Note that in this case there may also
 be a scope ID attached to the address. Eg, `fe80::1234%``em1` (or
 `fe80::1234%``25em1` if the string is still encoded).</doc>
-        <return-value transfer-ownership="none">
+        <return-value transfer-ownership="none" nullable="1">
           <doc xml:space="preserve">@uri's host.</doc>
           <type name="utf8" c:type="const gchar*"/>
         </return-value>
@@ -28838,7 +28809,7 @@ the flags with which @uri was created.</doc>
 If the result is not a valid absolute URI, it will be discarded, and an error
 returned.</doc>
         <return-value transfer-ownership="full">
-          <doc xml:space="preserve">a new #GUri.</doc>
+          <doc xml:space="preserve">a new #GUri, or NULL on error.</doc>
           <type name="Uri" c:type="GUri*"/>
         </return-value>
         <parameters>
@@ -28883,8 +28854,8 @@ If @uri might contain sensitive details, such as authentication parameters,
 or private data in its query string, and the returned string is going to be
 logged, then consider using g_uri_to_string_partial() to redact parts.</doc>
         <return-value transfer-ownership="full">
-          <doc xml:space="preserve">a string representing @uri, which the caller
-    must free.</doc>
+          <doc xml:space="preserve">a string representing @uri,
+    which the caller must free.</doc>
           <type name="utf8" c:type="char*"/>
         </return-value>
         <parameters>
@@ -28898,8 +28869,8 @@ logged, then consider using g_uri_to_string_partial() to redact parts.</doc>
         <doc xml:space="preserve">Returns a string representing @uri, subject to the options in
 @flags. See g_uri_to_string() and #GUriHideFlags for more details.</doc>
         <return-value transfer-ownership="full">
-          <doc xml:space="preserve">a string representing @uri, which the caller
-    must free.</doc>
+          <doc xml:space="preserve">a string representing
+    @uri, which the caller must free.</doc>
           <type name="utf8" c:type="char*"/>
         </return-value>
         <parameters>
@@ -29046,8 +29017,8 @@ portions of a URI.
 Though technically incorrect, this will also allow escaping nul
 bytes as `%``00`.</doc>
         <return-value transfer-ownership="full">
-          <doc xml:space="preserve">an escaped version of @unescaped. The returned
-    string should be freed when no longer needed.</doc>
+          <doc xml:space="preserve">an escaped version of @unescaped.
+    The returned string should be freed when no longer needed.</doc>
           <type name="utf8" c:type="char*"/>
         </return-value>
         <parameters>
@@ -29078,8 +29049,8 @@ they are not escaped. This is useful for the "reserved" characters
 in the URI specification, since those are allowed unescaped in some
 portions of a URI.</doc>
         <return-value transfer-ownership="full">
-          <doc xml:space="preserve">an escaped version of @unescaped. The returned string
-should be freed when no longer needed.</doc>
+          <doc xml:space="preserve">an escaped version of @unescaped. The
+returned string should be freed when no longer needed.</doc>
           <type name="utf8" c:type="char*"/>
         </return-value>
         <parameters>
@@ -29259,7 +29230,7 @@ discarding any comments. The URIs are not validated.</doc>
 valid [absolute URI][relative-absolute-uris], it will be discarded, and an
 error returned.</doc>
         <return-value transfer-ownership="full">
-          <doc xml:space="preserve">a new #GUri.</doc>
+          <doc xml:space="preserve">a new #GUri, or NULL on error.</doc>
           <type name="Uri" c:type="GUri*"/>
         </return-value>
         <parameters>
@@ -29299,9 +29270,9 @@ the returned attributes.
 If @params cannot be parsed (for example, it contains two @separators
 characters in a row), then @error is set and %NULL is returned.</doc>
         <return-value transfer-ownership="full">
-          <doc xml:space="preserve">A hash table of
-    attribute/value pairs, with both names and values fully-decoded; or %NULL
-    on error.</doc>
+          <doc xml:space="preserve">
+    A hash table of attribute/value pairs, with both names and values
+    fully-decoded; or %NULL on error.</doc>
           <type name="GLib.HashTable" c:type="GHashTable*">
             <type name="utf8"/>
             <type name="utf8"/>
@@ -29384,7 +29355,8 @@ discarded, and an error returned.
 (If @base_uri_string is %NULL, this just returns @uri_ref, or
 %NULL if @uri_ref is invalid or not absolute.)</doc>
         <return-value transfer-ownership="full">
-          <doc xml:space="preserve">the resolved URI string.</doc>
+          <doc xml:space="preserve">the resolved URI string,
+or NULL on error.</doc>
           <type name="utf8" c:type="gchar*"/>
         </return-value>
         <parameters>
@@ -29593,9 +29565,9 @@ returned. This is useful if you want to avoid for instance having a slash
 being expanded in an escaped path element, which might confuse pathname
 handling.</doc>
         <return-value transfer-ownership="full">
-          <doc xml:space="preserve">an unescaped version of @escaped_string or %NULL on
-    error (if decoding failed, using %G_URI_ERROR_FAILED error code). The
-    returned #GBytes should be unreffed when no longer needed.</doc>
+          <doc xml:space="preserve">an unescaped version of @escaped_string
+    or %NULL on error (if decoding failed, using %G_URI_ERROR_FAILED error
+    code). The returned #GBytes should be unreffed when no longer needed.</doc>
           <type name="Bytes" c:type="GBytes*"/>
         </return-value>
         <parameters>
@@ -29626,11 +29598,11 @@ escaped path element, which might confuse pathname handling.
 
 Note: `NUL` byte is not accepted in the output, in contrast to
 g_uri_unescape_bytes().</doc>
-        <return-value transfer-ownership="full">
-          <doc xml:space="preserve">an unescaped version of @escaped_string or %NULL on error.
-The returned string should be freed when no longer needed.  As a
-special case if %NULL is given for @escaped_string, this function
-will return %NULL.</doc>
+        <return-value transfer-ownership="full" nullable="1">
+          <doc xml:space="preserve">an unescaped version of @escaped_string,
+or %NULL on error. The returned string should be freed when no longer
+needed.  As a special case if %NULL is given for @escaped_string, this
+function will return %NULL.</doc>
           <type name="utf8" c:type="char*"/>
         </return-value>
         <parameters>
@@ -29658,9 +29630,9 @@ character appears as an escaped character in @escaped_string, then
 that is an error and %NULL will be returned. This is useful if you
 want to avoid for instance having a slash being expanded in an
 escaped path element, which might confuse pathname handling.</doc>
-        <return-value transfer-ownership="full">
-          <doc xml:space="preserve">an unescaped version of @escaped_string. The returned string
-should be freed when no longer needed.</doc>
+        <return-value transfer-ownership="full" nullable="1">
+          <doc xml:space="preserve">an unescaped version of @escaped_string.
+The returned string should be freed when no longer needed.</doc>
           <type name="utf8" c:type="char*"/>
         </return-value>
         <parameters>
@@ -30068,7 +30040,7 @@ value pairs. A #GVariant is also immutable: once it's been created neither
 its type nor its content can be modified further.
 
 GVariant is useful whenever data needs to be serialized, for example when
-sending method parameters in DBus, or when saving settings using GSettings.
+sending method parameters in D-Bus, or when saving settings using GSettings.
 
 When creating a new #GVariant, you pass the data you want to store in it
 along with a string representing the type of data you wish to pass to it.
@@ -33734,7 +33706,7 @@ may only appear nested inside of arrays.
 
 Just as in D-Bus, GVariant types are described with strings ("type
 strings").  Subject to the differences mentioned above, these strings
-are of the same form as those found in DBus.  Note, however: D-Bus
+are of the same form as those found in D-Bus.  Note, however: D-Bus
 always works in terms of messages and therefore individual type
 strings appear nowhere in its interface.  Instead, "signatures"
 are a concatenation of the strings of the type of each argument in a
@@ -36097,7 +36069,10 @@ Think of this operation as an atomic version of
 This call acts as a full compiler and hardware memory barrier.
 
 Before version 2.30, this function did not return a value
-(but g_atomic_int_exchange_and_add() did, and had the same meaning).</doc>
+(but g_atomic_int_exchange_and_add() did, and had the same meaning).
+
+While @atomic has a `volatile` qualifier, this is a historical artifact and
+the pointer passed to it should not be `volatile`.</doc>
       <return-value transfer-ownership="none">
         <doc xml:space="preserve">the value of @atomic before the add, signed</doc>
         <type name="gint" c:type="gint"/>
@@ -36120,7 +36095,10 @@ storing the result back in @atomic.
 This call acts as a full compiler and hardware memory barrier.
 
 Think of this operation as an atomic version of
-`{ tmp = *atomic; *atomic &amp;= val; return tmp; }`.</doc>
+`{ tmp = *atomic; *atomic &amp;= val; return tmp; }`.
+
+While @atomic has a `volatile` qualifier, this is a historical artifact and
+the pointer passed to it should not be `volatile`.</doc>
       <return-value transfer-ownership="none">
         <doc xml:space="preserve">the value of @atomic before the operation, unsigned</doc>
         <type name="guint" c:type="guint"/>
@@ -36145,7 +36123,10 @@ This compare and exchange is done atomically.
 Think of this operation as an atomic version of
 `{ if (*atomic == oldval) { *atomic = newval; return TRUE; } else return FALSE; }`.
 
-This call acts as a full compiler and hardware memory barrier.</doc>
+This call acts as a full compiler and hardware memory barrier.
+
+While @atomic has a `volatile` qualifier, this is a historical artifact and
+the pointer passed to it should not be `volatile`.</doc>
       <return-value transfer-ownership="none">
         <doc xml:space="preserve">%TRUE if the exchange took place</doc>
         <type name="gboolean" c:type="gboolean"/>
@@ -36171,7 +36152,10 @@ This call acts as a full compiler and hardware memory barrier.</doc>
 Think of this operation as an atomic version of
 `{ *atomic -= 1; return (*atomic == 0); }`.
 
-This call acts as a full compiler and hardware memory barrier.</doc>
+This call acts as a full compiler and hardware memory barrier.
+
+While @atomic has a `volatile` qualifier, this is a historical artifact and
+the pointer passed to it should not be `volatile`.</doc>
       <return-value transfer-ownership="none">
         <doc xml:space="preserve">%TRUE if the resultant value is zero</doc>
         <type name="gboolean" c:type="gboolean"/>
@@ -36207,7 +36191,10 @@ compatibility reasons.  Don't use this function in new code.</doc>
       <doc xml:space="preserve">Gets the current value of @atomic.
 
 This call acts as a full compiler and hardware
-memory barrier (before the get).</doc>
+memory barrier (before the get).
+
+While @atomic has a `volatile` qualifier, this is a historical artifact and
+the pointer passed to it should not be `volatile`.</doc>
       <return-value transfer-ownership="none">
         <doc xml:space="preserve">the value of the integer</doc>
         <type name="gint" c:type="gint"/>
@@ -36224,7 +36211,10 @@ memory barrier (before the get).</doc>
 
 Think of this operation as an atomic version of `{ *atomic += 1; }`.
 
-This call acts as a full compiler and hardware memory barrier.</doc>
+This call acts as a full compiler and hardware memory barrier.
+
+While @atomic has a `volatile` qualifier, this is a historical artifact and
+the pointer passed to it should not be `volatile`.</doc>
       <return-value transfer-ownership="none">
         <type name="none" c:type="void"/>
       </return-value>
@@ -36242,7 +36232,10 @@ storing the result back in @atomic.
 Think of this operation as an atomic version of
 `{ tmp = *atomic; *atomic |= val; return tmp; }`.
 
-This call acts as a full compiler and hardware memory barrier.</doc>
+This call acts as a full compiler and hardware memory barrier.
+
+While @atomic has a `volatile` qualifier, this is a historical artifact and
+the pointer passed to it should not be `volatile`.</doc>
       <return-value transfer-ownership="none">
         <doc xml:space="preserve">the value of @atomic before the operation, unsigned</doc>
         <type name="guint" c:type="guint"/>
@@ -36262,7 +36255,10 @@ This call acts as a full compiler and hardware memory barrier.</doc>
       <doc xml:space="preserve">Sets the value of @atomic to @newval.
 
 This call acts as a full compiler and hardware
-memory barrier (after the set).</doc>
+memory barrier (after the set).
+
+While @atomic has a `volatile` qualifier, this is a historical artifact and
+the pointer passed to it should not be `volatile`.</doc>
       <return-value transfer-ownership="none">
         <type name="none" c:type="void"/>
       </return-value>
@@ -36284,7 +36280,10 @@ storing the result back in @atomic.
 Think of this operation as an atomic version of
 `{ tmp = *atomic; *atomic ^= val; return tmp; }`.
 
-This call acts as a full compiler and hardware memory barrier.</doc>
+This call acts as a full compiler and hardware memory barrier.
+
+While @atomic has a `volatile` qualifier, this is a historical artifact and
+the pointer passed to it should not be `volatile`.</doc>
       <return-value transfer-ownership="none">
         <doc xml:space="preserve">the value of @atomic before the operation, unsigned</doc>
         <type name="guint" c:type="guint"/>
@@ -36343,7 +36342,10 @@ perform the operations normally and then release the lock.</doc>
 Think of this operation as an atomic version of
 `{ tmp = *atomic; *atomic += val; return tmp; }`.
 
-This call acts as a full compiler and hardware memory barrier.</doc>
+This call acts as a full compiler and hardware memory barrier.
+
+While @atomic has a `volatile` qualifier, this is a historical artifact and
+the pointer passed to it should not be `volatile`.</doc>
       <return-value transfer-ownership="none">
         <doc xml:space="preserve">the value of @atomic before the add, signed</doc>
         <type name="gssize" c:type="gssize"/>
@@ -36366,7 +36368,10 @@ storing the result back in @atomic.
 Think of this operation as an atomic version of
 `{ tmp = *atomic; *atomic &amp;= val; return tmp; }`.
 
-This call acts as a full compiler and hardware memory barrier.</doc>
+This call acts as a full compiler and hardware memory barrier.
+
+While @atomic has a `volatile` qualifier, this is a historical artifact and
+the pointer passed to it should not be `volatile`.</doc>
       <return-value transfer-ownership="none">
         <doc xml:space="preserve">the value of @atomic before the operation, unsigned</doc>
         <type name="gsize" c:type="gsize"/>
@@ -36391,7 +36396,10 @@ This compare and exchange is done atomically.
 Think of this operation as an atomic version of
 `{ if (*atomic == oldval) { *atomic = newval; return TRUE; } else return FALSE; }`.
 
-This call acts as a full compiler and hardware memory barrier.</doc>
+This call acts as a full compiler and hardware memory barrier.
+
+While @atomic has a `volatile` qualifier, this is a historical artifact and
+the pointer passed to it should not be `volatile`.</doc>
       <return-value transfer-ownership="none">
         <doc xml:space="preserve">%TRUE if the exchange took place</doc>
         <type name="gboolean" c:type="gboolean"/>
@@ -36415,7 +36423,10 @@ This call acts as a full compiler and hardware memory barrier.</doc>
       <doc xml:space="preserve">Gets the current value of @atomic.
 
 This call acts as a full compiler and hardware
-memory barrier (before the get).</doc>
+memory barrier (before the get).
+
+While @atomic has a `volatile` qualifier, this is a historical artifact and
+the pointer passed to it should not be `volatile`.</doc>
       <return-value transfer-ownership="none" nullable="1">
         <doc xml:space="preserve">the value of the pointer</doc>
         <type name="gpointer" c:type="gpointer"/>
@@ -36434,7 +36445,10 @@ storing the result back in @atomic.
 Think of this operation as an atomic version of
 `{ tmp = *atomic; *atomic |= val; return tmp; }`.
 
-This call acts as a full compiler and hardware memory barrier.</doc>
+This call acts as a full compiler and hardware memory barrier.
+
+While @atomic has a `volatile` qualifier, this is a historical artifact and
+the pointer passed to it should not be `volatile`.</doc>
       <return-value transfer-ownership="none">
         <doc xml:space="preserve">the value of @atomic before the operation, unsigned</doc>
         <type name="gsize" c:type="gsize"/>
@@ -36454,7 +36468,10 @@ This call acts as a full compiler and hardware memory barrier.</doc>
       <doc xml:space="preserve">Sets the value of @atomic to @newval.
 
 This call acts as a full compiler and hardware
-memory barrier (after the set).</doc>
+memory barrier (after the set).
+
+While @atomic has a `volatile` qualifier, this is a historical artifact and
+the pointer passed to it should not be `volatile`.</doc>
       <return-value transfer-ownership="none">
         <type name="none" c:type="void"/>
       </return-value>
@@ -36476,7 +36493,10 @@ storing the result back in @atomic.
 Think of this operation as an atomic version of
 `{ tmp = *atomic; *atomic ^= val; return tmp; }`.
 
-This call acts as a full compiler and hardware memory barrier.</doc>
+This call acts as a full compiler and hardware memory barrier.
+
+While @atomic has a `volatile` qualifier, this is a historical artifact and
+the pointer passed to it should not be `volatile`.</doc>
       <return-value transfer-ownership="none">
         <doc xml:space="preserve">the value of @atomic before the operation, unsigned</doc>
         <type name="gsize" c:type="gsize"/>
@@ -37309,7 +37329,11 @@ together.</doc>
     </function>
     <function name="byte_array_new_take" c:identifier="g_byte_array_new_take" moved-to="ByteArray.new_take" version="2.32">
       <doc xml:space="preserve">Create byte array containing the data. The data will be owned by the array
-and will be freed with g_free(), i.e. it could be allocated using g_strdup().</doc>
+and will be freed with g_free(), i.e. it could be allocated using g_strdup().
+
+Do not use it if @len is greater than %G_MAXUINT. #GByteArray
+stores the length of its data in #guint, which may be shorter than
+#gsize.</doc>
       <return-value transfer-ownership="full">
         <doc xml:space="preserve">a new #GByteArray</doc>
         <array name="GLib.ByteArray" c:type="GByteArray*">
@@ -37652,7 +37676,7 @@ due to limitations in POSIX process interfaces:
 * the application must not wait for @pid to exit by any other
   mechanism, including `waitpid(pid, ...)` or a second child-watch
   source for the same @pid
-* the application must not ignore SIGCHILD
+* the application must not ignore `SIGCHLD`
 
 If any of those conditions are not met, this and related APIs will
 not work correctly. This can often be diagnosed via a GLib warning
@@ -37799,9 +37823,11 @@ convenience wrapper for g_checksum_new(), g_checksum_get_string()
 and g_checksum_free().
 
 The hexadecimal string returned will be in lower case.</doc>
-      <return-value transfer-ownership="full">
-        <doc xml:space="preserve">the digest of the binary data as a string in hexadecimal.
-  The returned string should be freed with g_free() when done using it.</doc>
+      <return-value transfer-ownership="full" nullable="1">
+        <doc xml:space="preserve">the digest of the binary data as a
+  string in hexadecimal, or %NULL if g_checksum_new() fails for
+  @checksum_type. The returned string should be freed with g_free() when
+  done using it.</doc>
         <type name="utf8" c:type="gchar*"/>
       </return-value>
       <parameters>
@@ -37821,9 +37847,11 @@ convenience wrapper for g_checksum_new(), g_checksum_get_string()
 and g_checksum_free().
 
 The hexadecimal string returned will be in lower case.</doc>
-      <return-value transfer-ownership="full">
-        <doc xml:space="preserve">the digest of the binary data as a string in hexadecimal.
-  The returned string should be freed with g_free() when done using it.</doc>
+      <return-value transfer-ownership="full" nullable="1">
+        <doc xml:space="preserve">the digest of the binary data as a
+  string in hexadecimal, or %NULL if g_checksum_new() fails for
+  @checksum_type. The returned string should be freed with g_free() when
+  done using it.</doc>
         <type name="utf8" c:type="gchar*"/>
       </return-value>
       <parameters>
@@ -37847,8 +37875,9 @@ The hexadecimal string returned will be in lower case.</doc>
       <doc xml:space="preserve">Computes the checksum of a string.
 
 The hexadecimal string returned will be in lower case.</doc>
-      <return-value transfer-ownership="full">
-        <doc xml:space="preserve">the checksum as a hexadecimal string. The returned string
+      <return-value transfer-ownership="full" nullable="1">
+        <doc xml:space="preserve">the checksum as a hexadecimal string,
+  or %NULL if g_checksum_new() fails for @checksum_type. The returned string
   should be freed with g_free() when done using it.</doc>
         <type name="utf8" c:type="gchar*"/>
       </return-value>
@@ -39088,58 +39117,6 @@ where the C library only complies to C89.</doc>
         </parameter>
       </parameters>
     </function>
-    <function name="date_time_compare" c:identifier="g_date_time_compare" moved-to="DateTime.compare" version="2.26">
-      <doc xml:space="preserve">A comparison function for #GDateTimes that is suitable
-as a #GCompareFunc. Both #GDateTimes must be non-%NULL.</doc>
-      <return-value transfer-ownership="none">
-        <doc xml:space="preserve">-1, 0 or 1 if @dt1 is less than, equal to or greater
-  than @dt2.</doc>
-        <type name="gint" c:type="gint"/>
-      </return-value>
-      <parameters>
-        <parameter name="dt1" transfer-ownership="none">
-          <doc xml:space="preserve">first #GDateTime to compare</doc>
-          <type name="gpointer" c:type="gconstpointer"/>
-        </parameter>
-        <parameter name="dt2" transfer-ownership="none">
-          <doc xml:space="preserve">second #GDateTime to compare</doc>
-          <type name="gpointer" c:type="gconstpointer"/>
-        </parameter>
-      </parameters>
-    </function>
-    <function name="date_time_equal" c:identifier="g_date_time_equal" moved-to="DateTime.equal" version="2.26">
-      <doc xml:space="preserve">Checks to see if @dt1 and @dt2 are equal.
-
-Equal here means that they represent the same moment after converting
-them to the same time zone.</doc>
-      <return-value transfer-ownership="none">
-        <doc xml:space="preserve">%TRUE if @dt1 and @dt2 are equal</doc>
-        <type name="gboolean" c:type="gboolean"/>
-      </return-value>
-      <parameters>
-        <parameter name="dt1" transfer-ownership="none">
-          <doc xml:space="preserve">a #GDateTime</doc>
-          <type name="gpointer" c:type="gconstpointer"/>
-        </parameter>
-        <parameter name="dt2" transfer-ownership="none">
-          <doc xml:space="preserve">a #GDateTime</doc>
-          <type name="gpointer" c:type="gconstpointer"/>
-        </parameter>
-      </parameters>
-    </function>
-    <function name="date_time_hash" c:identifier="g_date_time_hash" moved-to="DateTime.hash" version="2.26">
-      <doc xml:space="preserve">Hashes @datetime into a #guint, suitable for use within #GHashTable.</doc>
-      <return-value transfer-ownership="none">
-        <doc xml:space="preserve">a #guint containing the hash</doc>
-        <type name="guint" c:type="guint"/>
-      </return-value>
-      <parameters>
-        <parameter name="datetime" transfer-ownership="none">
-          <doc xml:space="preserve">a #GDateTime</doc>
-          <type name="gpointer" c:type="gconstpointer"/>
-        </parameter>
-      </parameters>
-    </function>
     <function name="date_valid_day" c:identifier="g_date_valid_day" moved-to="Date.valid_day">
       <doc xml:space="preserve">Returns %TRUE if the day of the month is valid (a day is valid if it's
 between 1 and 31 inclusive).</doc>
@@ -39886,14 +39863,14 @@ Summary of rules for use of #GError:
 - Do not report programming errors via #GError.
 
 - The last argument of a function that returns an error should
-  be a location where a #GError can be placed (i.e. "#GError** error").
-  If #GError is used with varargs, the #GError** should be the last
-  argument before the "...".
+  be a location where a #GError can be placed (i.e. `GError **error`).
+  If #GError is used with varargs, the `GError**` should be the last
+  argument before the `...`.
 
-- The caller may pass %NULL for the #GError** if they are not interested
+- The caller may pass %NULL for the `GError**` if they are not interested
   in details of the exact error that occurred.
 
-- If %NULL is passed for the #GError** argument, then errors should
+- If %NULL is passed for the `GError**` argument, then errors should
   not be returned to the caller, but your function should still
   abort and return if an error occurs. That is, control flow should
   not be affected by whether the caller wants to get a #GError.
@@ -39907,11 +39884,13 @@ Summary of rules for use of #GError:
 - If a #GError is reported, out parameters are not guaranteed to
   be set to any defined value.
 
-- A #GError* must be initialized to %NULL before passing its address
+- A `GError*` must be initialized to %NULL before passing its address
   to a function that can report errors.
 
+- #GError structs must not be stack-allocated.
+
 - "Piling up" errors is always a bug. That is, if you assign a
-  new #GError to a #GError* that is non-%NULL, thus overwriting
+  new #GError to a `GError*` that is non-%NULL, thus overwriting
   the previous error, it indicates that you should have aborted
   the operation instead of continuing. If you were able to continue,
   you should have cleared the previous error with g_clear_error().
@@ -39919,12 +39898,12 @@ Summary of rules for use of #GError:
 
 - By convention, if you return a boolean value indicating success
   then %TRUE means success and %FALSE means failure. Avoid creating
-  functions which have a boolean return value and a GError parameter,
+  functions which have a boolean return value and a #GError parameter,
   but where the boolean does something other than signal whether the
-  GError is set.  Among other problems, it requires C callers to allocate
-  a temporary error.  Instead, provide a "gboolean *" out parameter.
+  #GError is set.  Among other problems, it requires C callers to allocate
+  a temporary error.  Instead, provide a `gboolean *` out parameter.
   There are functions in GLib itself such as g_key_file_has_key() that
-  are deprecated because of this. If %FALSE is returned, the error must
+  are hard to use because of this. If %FALSE is returned, the error must
   be set to a non-%NULL value.  One exception to this is that in situations
   that are already considered to be undefined behaviour (such as when a
   g_return_val_if_fail() check fails), the error need not be set.
@@ -39941,7 +39920,122 @@ Summary of rules for use of #GError:
 - When implementing a function that can report errors, you may want
   to add a check at the top of your function that the error return
   location is either %NULL or contains a %NULL error (e.g.
-  `g_return_if_fail (error == NULL || *error == NULL);`).</doc>
+  `g_return_if_fail (error == NULL || *error == NULL);`).
+
+## Extended #GError Domains # {#gerror-extended-domains}
+
+Since GLib 2.68 it is possible to extend the #GError type. This is
+done with the G_DEFINE_EXTENDED_ERROR() macro. To create an
+extended #GError type do something like this in the header file:
+|[&lt;!-- language="C" --&gt;
+typedef enum
+{
+  MY_ERROR_BAD_REQUEST,
+} MyError;
+#define MY_ERROR (my_error_quark ())
+GQuark my_error_quark (void);
+int
+my_error_get_parse_error_id (GError *error);
+const char *
+my_error_get_bad_request_details (GError *error);
+]|
+and in implementation:
+|[&lt;!-- language="C" --&gt;
+typedef struct
+{
+  int parse_error_id;
+  char *bad_request_details;
+} MyErrorPrivate;
+
+static void
+my_error_private_init (MyErrorPrivate *priv)
+{
+  priv-&gt;parse_error_id = -1;
+  // No need to set priv-&gt;bad_request_details to NULL,
+  // the struct is initialized with zeros.
+}
+
+static void
+my_error_private_copy (const MyErrorPrivate *src_priv, MyErrorPrivate *dest_priv)
+{
+  dest_priv-&gt;parse_error_id = src_priv-&gt;parse_error_id;
+  dest_priv-&gt;bad_request_details = g_strdup (src_priv-&gt;bad_request_details);
+}
+
+static void
+my_error_private_clear (MyErrorPrivate *priv)
+{
+  g_free (priv-&gt;bad_request_details);
+}
+
+// This defines the my_error_get_private and my_error_quark functions.
+G_DEFINE_EXTENDED_ERROR (MyError, my_error)
+
+int
+my_error_get_parse_error_id (GError *error)
+{
+  MyErrorPrivate *priv = my_error_get_private (error);
+  g_return_val_if_fail (priv != NULL, -1);
+  return priv-&gt;parse_error_id;
+}
+
+const char *
+my_error_get_bad_request_details (GError *error)
+{
+  MyErrorPrivate *priv = my_error_get_private (error);
+  g_return_val_if_fail (priv != NULL, NULL);
+  g_return_val_if_fail (error-&gt;code != MY_ERROR_BAD_REQUEST, NULL);
+  return priv-&gt;bad_request_details;
+}
+
+static void
+my_error_set_bad_request (GError     **error,
+                          const char  *reason,
+                          int          error_id,
+                          const char  *details)
+{
+  MyErrorPrivate *priv;
+  g_set_error (error, MY_ERROR, MY_ERROR_BAD_REQUEST, "Invalid request: %s", reason);
+  if (error != NULL &amp;&amp; *error != NULL)
+    {
+      priv = my_error_get_private (error);
+      g_return_val_if_fail (priv != NULL, NULL);
+      priv-&gt;parse_error_id = error_id;
+      priv-&gt;bad_request_details = g_strdup (details);
+    }
+}
+]|
+An example of use of the error could be:
+|[&lt;!-- language="C" --&gt;
+gboolean
+send_request (GBytes *request, GError **error)
+{
+  ParseFailedStatus *failure = validate_request (request);
+  if (failure != NULL)
+    {
+      my_error_set_bad_request (error, failure-&gt;reason, failure-&gt;error_id, failure-&gt;details);
+      parse_failed_status_free (failure);
+      return FALSE;
+    }
+
+  return send_one (request, error);
+}
+]|
+
+Please note that if you are a library author and your library
+exposes an existing error domain, then you can't make this error
+domain an extended one without breaking ABI. This is because
+earlier it was possible to create an error with this error domain
+on the stack and then copy it with g_error_copy(). If the new
+version of your library makes the error domain an extended one,
+then g_error_copy() called by code that allocated the error on the
+stack will try to copy more data than it used to, which will lead
+to undefined behavior. You must not stack-allocate errors with an
+extended error domain, and it is bad practice to stack-allocate any
+other #GErrors.
+
+Extended error domains in unloadable plugins/modules are not
+supported.</doc>
     </docsection>
     <function name="file_error_from_errno" c:identifier="g_file_error_from_errno">
       <doc xml:space="preserve">Gets a #GFileError constant based on the passed-in @err_no.
@@ -40056,7 +40150,7 @@ for filenames. Use g_filename_to_utf8() to convert it to UTF-8.</doc>
     </function>
     <function name="file_set_contents" c:identifier="g_file_set_contents" version="2.8" throws="1">
       <doc xml:space="preserve">Writes all of @contents to a file named @filename. This is a convenience
-wrapper around calling g_file_set_contents() with `flags` set to
+wrapper around calling g_file_set_contents_full() with `flags` set to
 `G_FILE_SET_CONTENTS_CONSISTENT | G_FILE_SET_CONTENTS_ONLY_EXISTING` and
 `mode` set to `0666`.</doc>
       <return-value transfer-ownership="none">
@@ -40993,7 +41087,10 @@ This folder is used for application data
 that is not user specific. For example, an application can store
 a spell-check dictionary, a database of clip art, or a log file in the
 CSIDL_COMMON_APPDATA folder. This information will not roam and is available
-to anyone using the computer.</doc>
+to anyone using the computer.
+
+The return value is cached and modifying it at runtime is not supported, as
+it&#x2019;s not thread-safe to modify environment variables at runtime.</doc>
       <return-value transfer-ownership="none">
         <doc xml:space="preserve">
     a %NULL-terminated array of strings owned by GLib that must not be
@@ -41034,7 +41131,10 @@ folder's name is "bin", its parent is used, otherwise the folder
 itself.
 
 Note that on Windows the returned list can vary depending on where
-this function is called.</doc>
+this function is called.
+
+The return value is cached and modifying it at runtime is not supported, as
+it&#x2019;s not thread-safe to modify environment variables at runtime.</doc>
       <return-value transfer-ownership="none">
         <doc xml:space="preserve">
     a %NULL-terminated array of strings owned by GLib that must not be
@@ -41077,7 +41177,10 @@ On Windows it follows XDG Base Directory Specification if `XDG_CACHE_HOME` is de
 If `XDG_CACHE_HOME` is undefined, the directory that serves as a common
 repository for temporary Internet files is used instead. A typical path is
 `C:\Documents and Settings\username\Local Settings\Temporary Internet Files`.
-See the [documentation for `CSIDL_INTERNET_CACHE`](https://msdn.microsoft.com/en-us/library/windows/desktop/bb762494%28v=vs.85%29.aspx#csidl_internet_cache).</doc>
+See the [documentation for `CSIDL_INTERNET_CACHE`](https://msdn.microsoft.com/en-us/library/windows/desktop/bb762494%28v=vs.85%29.aspx#csidl_internet_cache).
+
+The return value is cached and modifying it at runtime is not supported, as
+it&#x2019;s not thread-safe to modify environment variables at runtime.</doc>
       <return-value transfer-ownership="none">
         <doc xml:space="preserve">a string owned by GLib that
   must not be modified or freed.</doc>
@@ -41098,7 +41201,10 @@ If `XDG_CONFIG_HOME` is undefined, the folder to use for local (as opposed
 to roaming) application data is used instead. See the
 [documentation for `CSIDL_LOCAL_APPDATA`](https://msdn.microsoft.com/en-us/library/windows/desktop/bb762494%28v=vs.85%29.aspx#csidl_local_appdata).
 Note that in this case on Windows it will be  the same
-as what g_get_user_data_dir() returns.</doc>
+as what g_get_user_data_dir() returns.
+
+The return value is cached and modifying it at runtime is not supported, as
+it&#x2019;s not thread-safe to modify environment variables at runtime.</doc>
       <return-value transfer-ownership="none">
         <doc xml:space="preserve">a string owned by GLib that
   must not be modified or freed.</doc>
@@ -41119,7 +41225,10 @@ is defined. If `XDG_DATA_HOME` is undefined, the folder to use for local (as
 opposed to roaming) application data is used instead. See the
 [documentation for `CSIDL_LOCAL_APPDATA`](https://msdn.microsoft.com/en-us/library/windows/desktop/bb762494%28v=vs.85%29.aspx#csidl_local_appdata).
 Note that in this case on Windows it will be the same
-as what g_get_user_config_dir() returns.</doc>
+as what g_get_user_config_dir() returns.
+
+The return value is cached and modifying it at runtime is not supported, as
+it&#x2019;s not thread-safe to modify environment variables at runtime.</doc>
       <return-value transfer-ownership="none">
         <doc xml:space="preserve">a string owned by GLib that must
   not be modified or freed.</doc>
@@ -41146,7 +41255,10 @@ in the
 This is the directory
 specified in the `XDG_RUNTIME_DIR` environment variable.
 In the case that this variable is not set, we return the value of
-g_get_user_cache_dir(), after verifying that it exists.</doc>
+g_get_user_cache_dir(), after verifying that it exists.
+
+The return value is cached and modifying it at runtime is not supported, as
+it&#x2019;s not thread-safe to modify environment variables at runtime.</doc>
       <return-value transfer-ownership="none">
         <doc xml:space="preserve">a string owned by GLib that must not be
     modified or freed.</doc>
@@ -41212,6 +41324,19 @@ backward-compatibility with the old ASCII-only DNS, by defining an
 ASCII-Compatible Encoding of any given Unicode name, which can be
 used with non-IDN-aware applications and protocols. (For example,
 "&#x3A0;&#x3B1;&#x3BD;&#x8A9E;.org" maps to "xn--4wa8awb4637h.org".)</doc>
+    </docsection>
+    <docsection name="gstrvbuilder">
+      <doc xml:space="preserve">#GStrvBuilder is a method of easily building dynamically sized
+NULL-terminated string arrays.
+
+The following example shows how to build a two element array:
+
+|[&lt;!-- language="C" --&gt;
+  g_autoptr(GStrvBuilder) builder = g_strv_builder_new ();
+  g_strv_builder_add (builder, "hello");
+  g_strv_builder_add (builder, "world");
+  g_auto(GStrv) array = g_strv_builder_end (builder);
+]|</doc>
     </docsection>
     <docsection name="gunix">
       <doc xml:space="preserve">Most of GLib is intended to be portable; in contrast, this set of
@@ -41845,9 +41970,9 @@ g_hostname_is_ascii_encoded() to both return %TRUE for a name.</doc>
       <doc xml:space="preserve">Converts @hostname to its canonical ASCII form; an ASCII-only
 string containing no uppercase letters and not ending with a
 trailing dot.</doc>
-      <return-value transfer-ownership="full">
-        <doc xml:space="preserve">an ASCII hostname, which must be freed, or %NULL if
-@hostname is in some way invalid.</doc>
+      <return-value transfer-ownership="full" nullable="1">
+        <doc xml:space="preserve">an ASCII hostname, which must be freed,
+   or %NULL if @hostname is in some way invalid.</doc>
         <type name="utf8" c:type="gchar*"/>
       </return-value>
       <parameters>
@@ -41865,9 +41990,9 @@ and not ending with a trailing dot.
 
 Of course if @hostname is not an internationalized hostname, then
 the canonical presentation form will be entirely ASCII.</doc>
-      <return-value transfer-ownership="full">
-        <doc xml:space="preserve">a UTF-8 hostname, which must be freed, or %NULL if
-@hostname is in some way invalid.</doc>
+      <return-value transfer-ownership="full" nullable="1">
+        <doc xml:space="preserve">a UTF-8 hostname, which must be freed,
+   or %NULL if @hostname is in some way invalid.</doc>
         <type name="utf8" c:type="gchar*"/>
       </return-value>
       <parameters>
@@ -42822,7 +42947,8 @@ environment variables:
 
 stderr is used for levels %G_LOG_LEVEL_ERROR, %G_LOG_LEVEL_CRITICAL,
 %G_LOG_LEVEL_WARNING and %G_LOG_LEVEL_MESSAGE. stdout is used for
-the rest.
+the rest, unless stderr was requested by
+g_log_writer_default_set_use_stderr().
 
 This has no effect if structured logging is enabled; see
 [Using Structured Logging][using-structured-logging].</doc>
@@ -43283,7 +43409,11 @@ if no other is set using g_log_set_writer_func().
 
 As with g_log_default_handler(), this function drops debug and informational
 messages unless their log domain (or `all`) is listed in the space-separated
-`G_MESSAGES_DEBUG` environment variable.</doc>
+`G_MESSAGES_DEBUG` environment variable.
+
+g_log_writer_default() uses the mask set by g_log_set_always_fatal() to
+determine which messages are fatal. When using a custom writer func instead it is
+up to the writer function to determine which log messages are fatal.</doc>
       <return-value transfer-ownership="none">
         <doc xml:space="preserve">%G_LOG_WRITER_HANDLED on success, %G_LOG_WRITER_UNHANDLED otherwise</doc>
         <type name="LogWriterOutput" c:type="GLogWriterOutput"/>
@@ -43411,7 +43541,9 @@ defined, but will always return %G_LOG_WRITER_UNHANDLED.</doc>
     <function name="log_writer_standard_streams" c:identifier="g_log_writer_standard_streams" version="2.50">
       <doc xml:space="preserve">Format a structured log message and print it to either `stdout` or `stderr`,
 depending on its log level. %G_LOG_LEVEL_INFO and %G_LOG_LEVEL_DEBUG messages
-are sent to `stdout`; all other log levels are sent to `stderr`. Only fields
+are sent to `stdout`, or to `stderr` if requested by
+g_log_writer_default_set_use_stderr();
+all other log levels are sent to `stderr`. Only fields
 which are understood by this function are included in the formatted string
 which is printed.
 
@@ -43656,7 +43788,7 @@ always return %NULL if you are running in the default thread.)
 
 If you need to hold a reference on the context, use
 g_main_context_ref_thread_default() instead.</doc>
-      <return-value transfer-ownership="none">
+      <return-value transfer-ownership="none" nullable="1">
         <doc xml:space="preserve">the thread-default #GMainContext, or
 %NULL if the thread-default context is the global default context.</doc>
         <type name="MainContext" c:type="GMainContext*"/>
@@ -43677,7 +43809,7 @@ is the global default context, this will return that #GMainContext
     </function>
     <function name="main_current_source" c:identifier="g_main_current_source" version="2.12">
       <doc xml:space="preserve">Returns the currently firing source for this thread.</doc>
-      <return-value transfer-ownership="none">
+      <return-value transfer-ownership="none" nullable="1">
         <doc xml:space="preserve">The currently firing source or %NULL.</doc>
         <type name="Source" c:type="GSource*"/>
       </return-value>
@@ -44095,9 +44227,12 @@ profiling tools instead</doc-deprecated>
         </parameter>
       </parameters>
     </function>
-    <function name="memdup" c:identifier="g_memdup">
+    <function name="memdup" c:identifier="g_memdup" deprecated="1" deprecated-version="2.68">
       <doc xml:space="preserve">Allocates @byte_size bytes of memory, and copies @byte_size bytes into it
 from @mem. If @mem is %NULL it returns %NULL.</doc>
+      <doc-deprecated xml:space="preserve">Use g_memdup2() instead, as it accepts a #gsize argument
+    for @byte_size, avoiding the possibility of overflow in a #gsize &#x2192; #guint
+    conversion</doc-deprecated>
       <return-value transfer-ownership="none" nullable="1">
         <doc xml:space="preserve">a pointer to the newly-allocated copy of the memory, or %NULL if @mem
  is %NULL.</doc>
@@ -44325,7 +44460,8 @@ are listed in the `G_MESSAGES_DEBUG` environment variable (or it is set to
 It is recommended that custom log writer functions re-use the
 `G_MESSAGES_DEBUG` environment variable, rather than inventing a custom one,
 so that developers can re-use the same debugging techniques and tools across
-projects.
+projects. Since GLib 2.68, this can be implemented by dropping messages
+for which g_log_writer_default_would_drop() returns %TRUE.
 
 ## Testing for Messages ## {#testing-for-messages}
 
@@ -44845,7 +44981,10 @@ like this:
     }
 
   // use initialization_value here
-]|</doc>
+]|
+
+While @location has a `volatile` qualifier, this is a historical artifact and
+the pointer passed to it should not be `volatile`.</doc>
       <return-value transfer-ownership="none">
         <doc xml:space="preserve">%TRUE if the initialization section should be entered,
     %FALSE and blocks otherwise</doc>
@@ -44864,7 +45003,10 @@ like this:
 0-initialized initialization variable, and an initialization value
 other than 0. Sets the variable to the initialization value, and
 releases concurrent threads blocking in g_once_init_enter() on this
-initialization variable.</doc>
+initialization variable.
+
+While @location has a `volatile` qualifier, this is a historical artifact and
+the pointer passed to it should not be `volatile`.</doc>
       <return-value transfer-ownership="none">
         <type name="none" c:type="void"/>
       </return-value>
@@ -47812,24 +47954,8 @@ are different concepts on Windows.</doc>
       </parameters>
     </function>
     <function name="spawn_async_with_fds" c:identifier="g_spawn_async_with_fds" version="2.58" throws="1">
-      <doc xml:space="preserve">Identical to g_spawn_async_with_pipes() but instead of
-creating pipes for the stdin/stdout/stderr, you can pass existing
-file descriptors into this function through the @stdin_fd,
-@stdout_fd and @stderr_fd parameters. The following @flags
-also have their behaviour slightly tweaked as a result:
-
-%G_SPAWN_STDOUT_TO_DEV_NULL means that the child's standard output
-will be discarded, instead of going to the same location as the parent's
-standard output. If you use this flag, @standard_output must be -1.
-%G_SPAWN_STDERR_TO_DEV_NULL means that the child's standard error
-will be discarded, instead of going to the same location as the parent's
-standard error. If you use this flag, @standard_error must be -1.
-%G_SPAWN_CHILD_INHERITS_STDIN means that the child will inherit the parent's
-standard input (by default, the child's standard input is attached to
-/dev/null). If you use this flag, @standard_input must be -1.
-
-It is valid to pass the same fd in multiple parameters (e.g. you can pass
-a single fd for both stdout and stderr).</doc>
+      <doc xml:space="preserve">Identical to g_spawn_async_with_pipes_and_fds() but with `n_fds` set to zero,
+so no FD assignments are used.</doc>
       <return-value transfer-ownership="none">
         <doc xml:space="preserve">%TRUE on success, %FALSE if an error was set</doc>
         <type name="gboolean" c:type="gboolean"/>
@@ -47868,186 +47994,22 @@ a single fd for both stdout and stderr).</doc>
           <type name="Pid" c:type="GPid*"/>
         </parameter>
         <parameter name="stdin_fd" transfer-ownership="none">
-          <doc xml:space="preserve">file descriptor to use for child's stdin, or -1</doc>
+          <doc xml:space="preserve">file descriptor to use for child's stdin, or `-1`</doc>
           <type name="gint" c:type="gint"/>
         </parameter>
         <parameter name="stdout_fd" transfer-ownership="none">
-          <doc xml:space="preserve">file descriptor to use for child's stdout, or -1</doc>
+          <doc xml:space="preserve">file descriptor to use for child's stdout, or `-1`</doc>
           <type name="gint" c:type="gint"/>
         </parameter>
         <parameter name="stderr_fd" transfer-ownership="none">
-          <doc xml:space="preserve">file descriptor to use for child's stderr, or -1</doc>
+          <doc xml:space="preserve">file descriptor to use for child's stderr, or `-1`</doc>
           <type name="gint" c:type="gint"/>
         </parameter>
       </parameters>
     </function>
     <function name="spawn_async_with_pipes" c:identifier="g_spawn_async_with_pipes" throws="1">
-      <doc xml:space="preserve">Executes a child program asynchronously (your program will not
-block waiting for the child to exit). The child program is
-specified by the only argument that must be provided, @argv.
-@argv should be a %NULL-terminated array of strings, to be passed
-as the argument vector for the child. The first string in @argv
-is of course the name of the program to execute. By default, the
-name of the program must be a full path. If @flags contains the
-%G_SPAWN_SEARCH_PATH flag, the `PATH` environment variable is
-used to search for the executable. If @flags contains the
-%G_SPAWN_SEARCH_PATH_FROM_ENVP flag, the `PATH` variable from
-@envp is used to search for the executable. If both the
-%G_SPAWN_SEARCH_PATH and %G_SPAWN_SEARCH_PATH_FROM_ENVP flags
-are set, the `PATH` variable from @envp takes precedence over
-the environment variable.
-
-If the program name is not a full path and %G_SPAWN_SEARCH_PATH flag is not
-used, then the program will be run from the current directory (or
-@working_directory, if specified); this might be unexpected or even
-dangerous in some cases when the current directory is world-writable.
-
-On Windows, note that all the string or string vector arguments to
-this function and the other g_spawn*() functions are in UTF-8, the
-GLib file name encoding. Unicode characters that are not part of
-the system codepage passed in these arguments will be correctly
-available in the spawned program only if it uses wide character API
-to retrieve its command line. For C programs built with Microsoft's
-tools it is enough to make the program have a wmain() instead of
-main(). wmain() has a wide character argument vector as parameter.
-
-At least currently, mingw doesn't support wmain(), so if you use
-mingw to develop the spawned program, it should call
-g_win32_get_command_line() to get arguments in UTF-8.
-
-On Windows the low-level child process creation API CreateProcess()
-doesn't use argument vectors, but a command line. The C runtime
-library's spawn*() family of functions (which g_spawn_async_with_pipes()
-eventually calls) paste the argument vector elements together into
-a command line, and the C runtime startup code does a corresponding
-reconstruction of an argument vector from the command line, to be
-passed to main(). Complications arise when you have argument vector
-elements that contain spaces or double quotes. The `spawn*()` functions
-don't do any quoting or escaping, but on the other hand the startup
-code does do unquoting and unescaping in order to enable receiving
-arguments with embedded spaces or double quotes. To work around this
-asymmetry, g_spawn_async_with_pipes() will do quoting and escaping on
-argument vector elements that need it before calling the C runtime
-spawn() function.
-
-The returned @child_pid on Windows is a handle to the child
-process, not its identifier. Process handles and process
-identifiers are different concepts on Windows.
-
-@envp is a %NULL-terminated array of strings, where each string
-has the form `KEY=VALUE`. This will become the child's environment.
-If @envp is %NULL, the child inherits its parent's environment.
-
-@flags should be the bitwise OR of any flags you want to affect the
-function's behaviour. The %G_SPAWN_DO_NOT_REAP_CHILD means that the
-child will not automatically be reaped; you must use a child watch
-(g_child_watch_add()) to be notified about the death of the child process,
-otherwise it will stay around as a zombie process until this process exits.
-Eventually you must call g_spawn_close_pid() on the @child_pid, in order to
-free resources which may be associated with the child process. (On Unix,
-using a child watch is equivalent to calling waitpid() or handling
-the %SIGCHLD signal manually. On Windows, calling g_spawn_close_pid()
-is equivalent to calling CloseHandle() on the process handle returned
-in @child_pid). See g_child_watch_add().
-
-Open UNIX file descriptors marked as `FD_CLOEXEC` will be automatically
-closed in the child process. %G_SPAWN_LEAVE_DESCRIPTORS_OPEN means that
-other open file descriptors will be inherited by the child; otherwise all
-descriptors except stdin/stdout/stderr will be closed before calling exec()
-in the child. %G_SPAWN_SEARCH_PATH means that @argv[0] need not be an
-absolute path, it will be looked for in the `PATH` environment
-variable. %G_SPAWN_SEARCH_PATH_FROM_ENVP means need not be an
-absolute path, it will be looked for in the `PATH` variable from
-@envp. If both %G_SPAWN_SEARCH_PATH and %G_SPAWN_SEARCH_PATH_FROM_ENVP
-are used, the value from @envp takes precedence over the environment.
-%G_SPAWN_STDOUT_TO_DEV_NULL means that the child's standard output
-will be discarded, instead of going to the same location as the parent's
-standard output. If you use this flag, @standard_output must be %NULL.
-%G_SPAWN_STDERR_TO_DEV_NULL means that the child's standard error
-will be discarded, instead of going to the same location as the parent's
-standard error. If you use this flag, @standard_error must be %NULL.
-%G_SPAWN_CHILD_INHERITS_STDIN means that the child will inherit the parent's
-standard input (by default, the child's standard input is attached to
-`/dev/null`). If you use this flag, @standard_input must be %NULL.
-%G_SPAWN_FILE_AND_ARGV_ZERO means that the first element of @argv is
-the file to execute, while the remaining elements are the actual
-argument vector to pass to the file. Normally g_spawn_async_with_pipes()
-uses @argv[0] as the file to execute, and passes all of @argv to the child.
-
-@child_setup and @user_data are a function and user data. On POSIX
-platforms, the function is called in the child after GLib has
-performed all the setup it plans to perform (including creating
-pipes, closing file descriptors, etc.) but before calling exec().
-That is, @child_setup is called just before calling exec() in the
-child. Obviously actions taken in this function will only affect
-the child, not the parent.
-
-On Windows, there is no separate fork() and exec() functionality.
-Child processes are created and run with a single API call,
-CreateProcess(). There is no sensible thing @child_setup
-could be used for on Windows so it is ignored and not called.
-
-If non-%NULL, @child_pid will on Unix be filled with the child's
-process ID. You can use the process ID to send signals to the child,
-or to use g_child_watch_add() (or waitpid()) if you specified the
-%G_SPAWN_DO_NOT_REAP_CHILD flag. On Windows, @child_pid will be
-filled with a handle to the child process only if you specified the
-%G_SPAWN_DO_NOT_REAP_CHILD flag. You can then access the child
-process using the Win32 API, for example wait for its termination
-with the WaitFor*() functions, or examine its exit code with
-GetExitCodeProcess(). You should close the handle with CloseHandle()
-or g_spawn_close_pid() when you no longer need it.
-
-If non-%NULL, the @standard_input, @standard_output, @standard_error
-locations will be filled with file descriptors for writing to the child's
-standard input or reading from its standard output or standard error.
-The caller of g_spawn_async_with_pipes() must close these file descriptors
-when they are no longer in use. If these parameters are %NULL, the
-corresponding pipe won't be created.
-
-If @standard_input is %NULL, the child's standard input is attached to
-`/dev/null` unless %G_SPAWN_CHILD_INHERITS_STDIN is set.
-
-If @standard_error is NULL, the child's standard error goes to the same
-location as the parent's standard error unless %G_SPAWN_STDERR_TO_DEV_NULL
-is set.
-
-If @standard_output is NULL, the child's standard output goes to the same
-location as the parent's standard output unless %G_SPAWN_STDOUT_TO_DEV_NULL
-is set.
-
-@error can be %NULL to ignore errors, or non-%NULL to report errors.
-If an error is set, the function returns %FALSE. Errors are reported
-even if they occur in the child (for example if the executable in
-@argv[0] is not found). Typically the `message` field of returned
-errors should be displayed to users. Possible errors are those from
-the #G_SPAWN_ERROR domain.
-
-If an error occurs, @child_pid, @standard_input, @standard_output,
-and @standard_error will not be filled with valid values.
-
-If @child_pid is not %NULL and an error does not occur then the returned
-process reference must be closed using g_spawn_close_pid().
-
-On modern UNIX platforms, GLib can use an efficient process launching
-codepath driven internally by posix_spawn(). This has the advantage of
-avoiding the fork-time performance costs of cloning the parent process
-address space, and avoiding associated memory overcommit checks that are
-not relevant in the context of immediately executing a distinct process.
-This optimized codepath will be used provided that the following conditions
-are met:
-
-1. %G_SPAWN_DO_NOT_REAP_CHILD is set
-2. %G_SPAWN_LEAVE_DESCRIPTORS_OPEN is set
-3. %G_SPAWN_SEARCH_PATH_FROM_ENVP is not set
-4. @working_directory is %NULL
-5. @child_setup is %NULL
-6. The program is of a recognised binary format, or has a shebang. Otherwise, GLib will have to execute the program through the shell, which is not done using the optimized codepath.
-
-If you are writing a GTK+ application, and the program you are spawning is a
-graphical application too, then to ensure that the spawned program opens its
-windows on the right screen, you may want to use #GdkAppLaunchContext,
-#GAppLaunchContext, or set the %DISPLAY environment variable.</doc>
+      <doc xml:space="preserve">Identical to g_spawn_async_with_pipes_and_fds() but with `n_fds` set to zero,
+so no FD assignments are used.</doc>
       <return-value transfer-ownership="none">
         <doc xml:space="preserve">%TRUE on success, %FALSE if an error was set</doc>
         <type name="gboolean" c:type="gboolean"/>
@@ -49405,7 +49367,8 @@ to @haystack_len.</doc>
           <type name="utf8" c:type="const gchar*"/>
         </parameter>
         <parameter name="haystack_len" transfer-ownership="none">
-          <doc xml:space="preserve">the maximum length of @haystack</doc>
+          <doc xml:space="preserve">the maximum length of @haystack in bytes. A length of -1
+    can be used to mean "search the entire string", like g_strrstr().</doc>
           <type name="gssize" c:type="gssize"/>
         </parameter>
         <parameter name="needle" transfer-ownership="none">
@@ -49529,13 +49492,12 @@ to @haystack_len.</doc>
       </return-value>
       <parameters>
         <parameter name="haystack" transfer-ownership="none">
-          <doc xml:space="preserve">a string</doc>
+          <doc xml:space="preserve">a nul-terminated string</doc>
           <type name="utf8" c:type="const gchar*"/>
         </parameter>
         <parameter name="haystack_len" transfer-ownership="none">
-          <doc xml:space="preserve">the maximum length of @haystack. Note that -1 is
-    a valid length, if @haystack is nul-terminated, meaning it will
-    search through the whole string.</doc>
+          <doc xml:space="preserve">the maximum length of @haystack in bytes. A length of -1
+    can be used to mean "search the entire string", like `strstr()`.</doc>
           <type name="gssize" c:type="gssize"/>
         </parameter>
         <parameter name="needle" transfer-ownership="none">
@@ -53153,8 +53115,8 @@ portions of a URI.
 Though technically incorrect, this will also allow escaping nul
 bytes as `%``00`.</doc>
       <return-value transfer-ownership="full">
-        <doc xml:space="preserve">an escaped version of @unescaped. The returned
-    string should be freed when no longer needed.</doc>
+        <doc xml:space="preserve">an escaped version of @unescaped.
+    The returned string should be freed when no longer needed.</doc>
         <type name="utf8" c:type="char*"/>
       </return-value>
       <parameters>
@@ -53185,8 +53147,8 @@ they are not escaped. This is useful for the "reserved" characters
 in the URI specification, since those are allowed unescaped in some
 portions of a URI.</doc>
       <return-value transfer-ownership="full">
-        <doc xml:space="preserve">an escaped version of @unescaped. The returned string
-should be freed when no longer needed.</doc>
+        <doc xml:space="preserve">an escaped version of @unescaped. The
+returned string should be freed when no longer needed.</doc>
         <type name="utf8" c:type="char*"/>
       </return-value>
       <parameters>
@@ -53366,7 +53328,7 @@ discarding any comments. The URIs are not validated.</doc>
 valid [absolute URI][relative-absolute-uris], it will be discarded, and an
 error returned.</doc>
       <return-value transfer-ownership="full">
-        <doc xml:space="preserve">a new #GUri.</doc>
+        <doc xml:space="preserve">a new #GUri, or NULL on error.</doc>
         <type name="Uri" c:type="GUri*"/>
       </return-value>
       <parameters>
@@ -53406,9 +53368,9 @@ the returned attributes.
 If @params cannot be parsed (for example, it contains two @separators
 characters in a row), then @error is set and %NULL is returned.</doc>
       <return-value transfer-ownership="full">
-        <doc xml:space="preserve">A hash table of
-    attribute/value pairs, with both names and values fully-decoded; or %NULL
-    on error.</doc>
+        <doc xml:space="preserve">
+    A hash table of attribute/value pairs, with both names and values
+    fully-decoded; or %NULL on error.</doc>
         <type name="GLib.HashTable" c:type="GHashTable*">
           <type name="utf8"/>
           <type name="utf8"/>
@@ -53491,7 +53453,8 @@ discarded, and an error returned.
 (If @base_uri_string is %NULL, this just returns @uri_ref, or
 %NULL if @uri_ref is invalid or not absolute.)</doc>
       <return-value transfer-ownership="full">
-        <doc xml:space="preserve">the resolved URI string.</doc>
+        <doc xml:space="preserve">the resolved URI string,
+or NULL on error.</doc>
         <type name="utf8" c:type="gchar*"/>
       </return-value>
       <parameters>
@@ -53700,9 +53663,9 @@ returned. This is useful if you want to avoid for instance having a slash
 being expanded in an escaped path element, which might confuse pathname
 handling.</doc>
       <return-value transfer-ownership="full">
-        <doc xml:space="preserve">an unescaped version of @escaped_string or %NULL on
-    error (if decoding failed, using %G_URI_ERROR_FAILED error code). The
-    returned #GBytes should be unreffed when no longer needed.</doc>
+        <doc xml:space="preserve">an unescaped version of @escaped_string
+    or %NULL on error (if decoding failed, using %G_URI_ERROR_FAILED error
+    code). The returned #GBytes should be unreffed when no longer needed.</doc>
         <type name="Bytes" c:type="GBytes*"/>
       </return-value>
       <parameters>
@@ -53733,11 +53696,11 @@ escaped path element, which might confuse pathname handling.
 
 Note: `NUL` byte is not accepted in the output, in contrast to
 g_uri_unescape_bytes().</doc>
-      <return-value transfer-ownership="full">
-        <doc xml:space="preserve">an unescaped version of @escaped_string or %NULL on error.
-The returned string should be freed when no longer needed.  As a
-special case if %NULL is given for @escaped_string, this function
-will return %NULL.</doc>
+      <return-value transfer-ownership="full" nullable="1">
+        <doc xml:space="preserve">an unescaped version of @escaped_string,
+or %NULL on error. The returned string should be freed when no longer
+needed.  As a special case if %NULL is given for @escaped_string, this
+function will return %NULL.</doc>
         <type name="utf8" c:type="char*"/>
       </return-value>
       <parameters>
@@ -53765,9 +53728,9 @@ character appears as an escaped character in @escaped_string, then
 that is an error and %NULL will be returned. This is useful if you
 want to avoid for instance having a slash being expanded in an
 escaped path element, which might confuse pathname handling.</doc>
-      <return-value transfer-ownership="full">
-        <doc xml:space="preserve">an unescaped version of @escaped_string. The returned string
-should be freed when no longer needed.</doc>
+      <return-value transfer-ownership="full" nullable="1">
+        <doc xml:space="preserve">an unescaped version of @escaped_string.
+The returned string should be freed when no longer needed.</doc>
         <type name="utf8" c:type="char*"/>
       </return-value>
       <parameters>
@@ -54995,7 +54958,7 @@ the Single Unix Specification.</doc>
         </parameter>
         <parameter name="format" transfer-ownership="none">
           <doc xml:space="preserve">a standard printf() format string, but notice
-         string precision pitfalls][string-precision]</doc>
+         [string precision pitfalls][string-precision]</doc>
           <type name="utf8" c:type="const gchar*"/>
         </parameter>
         <parameter name="args" transfer-ownership="none">

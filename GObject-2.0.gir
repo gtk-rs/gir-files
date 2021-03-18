@@ -238,10 +238,21 @@ binding, source, and target instances to drop.
           </instance-parameter>
         </parameters>
       </method>
-      <method name="get_source" c:identifier="g_binding_get_source" version="2.26">
-        <doc xml:space="preserve">Retrieves the #GObject instance used as the source of the binding.</doc>
-        <return-value transfer-ownership="none">
-          <doc xml:space="preserve">the source #GObject</doc>
+      <method name="get_source" c:identifier="g_binding_get_source" version="2.26" deprecated="1" deprecated-version="2.68">
+        <doc xml:space="preserve">Retrieves the #GObject instance used as the source of the binding.
+
+A #GBinding can outlive the source #GObject as the binding does not hold a
+strong reference to the source. If the source is destroyed before the
+binding then this function will return %NULL.
+
+Use g_binding_dup_source() if the source or binding are used from different
+threads as otherwise the pointer returned from this function might become
+invalid if the source is finalized from another thread in the meantime.</doc>
+        <doc-deprecated xml:space="preserve">Use g_binding_dup_source() for a safer version of this
+function.</doc-deprecated>
+        <return-value transfer-ownership="none" nullable="1">
+          <doc xml:space="preserve">the source #GObject, or %NULL if the
+    source does not exist any more.</doc>
           <type name="Object" c:type="GObject*"/>
         </return-value>
         <parameters>
@@ -265,10 +276,21 @@ of the binding.</doc>
           </instance-parameter>
         </parameters>
       </method>
-      <method name="get_target" c:identifier="g_binding_get_target" version="2.26">
-        <doc xml:space="preserve">Retrieves the #GObject instance used as the target of the binding.</doc>
-        <return-value transfer-ownership="none">
-          <doc xml:space="preserve">the target #GObject</doc>
+      <method name="get_target" c:identifier="g_binding_get_target" version="2.26" deprecated="1" deprecated-version="2.68">
+        <doc xml:space="preserve">Retrieves the #GObject instance used as the target of the binding.
+
+A #GBinding can outlive the target #GObject as the binding does not hold a
+strong reference to the target. If the target is destroyed before the
+binding then this function will return %NULL.
+
+Use g_binding_dup_target() if the target or binding are used from different
+threads as otherwise the pointer returned from this function might become
+invalid if the target is finalized from another thread in the meantime.</doc>
+        <doc-deprecated xml:space="preserve">Use g_binding_dup_target() for a safer version of this
+function.</doc-deprecated>
+        <return-value transfer-ownership="none" nullable="1">
+          <doc xml:space="preserve">the target #GObject, or %NULL if the
+    target does not exist any more.</doc>
           <type name="Object" c:type="GObject*"/>
         </return-value>
         <parameters>
@@ -297,9 +319,13 @@ of the binding.</doc>
 property expressed by @binding.
 
 This function will release the reference that is being held on
-the @binding instance; if you want to hold on to the #GBinding instance
-after calling g_binding_unbind(), you will need to hold a reference
-to it.</doc>
+the @binding instance if the binding is still bound; if you want to hold on
+to the #GBinding instance after calling g_binding_unbind(), you will need
+to hold a reference to it.
+
+Note however that this function does not take ownership of @binding, it
+only unrefs the reference that was initially created by
+g_object_bind_property() and is owned by the binding.</doc>
         <return-value transfer-ownership="none">
           <type name="none" c:type="void"/>
         </return-value>
@@ -4984,6 +5010,13 @@ The binding will automatically be removed when either the @source or the
 @source and the @target you can just call g_object_unref() on the returned
 #GBinding instance.
 
+Removing the binding by calling g_object_unref() on it must only be done if
+the binding, @source and @target are only used from a single thread and it
+is clear that both @source and @target outlive the binding. Especially it
+is not safe to rely on this if the binding, @source or @target can be
+finalized from different threads. Keep another reference to the binding and
+use g_binding_unbind() instead to be on the safe side.
+
 A #GObject can have multiple bindings.</doc>
         <return-value transfer-ownership="none">
           <doc xml:space="preserve">the #GBinding instance representing the
@@ -6133,7 +6166,7 @@ use this @object as closure data.</doc>
       </method>
       <method name="weak_ref" c:identifier="g_object_weak_ref" introspectable="0">
         <doc xml:space="preserve">Adds a weak reference callback to an object. Weak references are
-used for notification when an object is finalized. They are called
+used for notification when an object is disposed. They are called
 "weak references" because they allow you to safely hold a pointer
 to an object without calling g_object_ref() (g_object_ref() adds a
 strong reference, that is, forces the object to stay alive).
@@ -7049,7 +7082,8 @@ for use as a label for the property in a property editor, and the
 @blurb, which should be a somewhat longer description, suitable for
 e.g. a tooltip. The @nick and @blurb should ideally be localized.</doc>
         <return-value transfer-ownership="none">
-          <doc xml:space="preserve">a newly allocated #GParamSpec instance</doc>
+          <doc xml:space="preserve">(transfer floating): a newly allocated
+    #GParamSpec instance, which is initially floating</doc>
           <type name="ParamSpec" c:type="gpointer"/>
         </return-value>
         <parameters>
@@ -7147,7 +7181,7 @@ the rules for valid names.</doc>
       </virtual-method>
       <method name="get_blurb" c:identifier="g_param_spec_get_blurb">
         <doc xml:space="preserve">Get the short description of a #GParamSpec.</doc>
-        <return-value transfer-ownership="none">
+        <return-value transfer-ownership="none" nullable="1">
           <doc xml:space="preserve">the short description of @pspec.</doc>
           <type name="utf8" c:type="const gchar*"/>
         </return-value>
@@ -7240,7 +7274,7 @@ type while preserving all the properties from the parent
 type. Redirection is established by creating a property
 of type #GParamSpecOverride. See g_object_class_override_property()
 for an example of the use of this capability.</doc>
-        <return-value transfer-ownership="none">
+        <return-value transfer-ownership="none" nullable="1">
           <doc xml:space="preserve">paramspec to which requests on this
          paramspec should be redirected, or %NULL if none.</doc>
           <type name="ParamSpec" c:type="GParamSpec*"/>
@@ -7254,7 +7288,7 @@ for an example of the use of this capability.</doc>
       </method>
       <method name="ref" c:identifier="g_param_spec_ref" introspectable="0">
         <doc xml:space="preserve">Increments the reference count of @pspec.</doc>
-        <return-value>
+        <return-value transfer-ownership="full">
           <doc xml:space="preserve">the #GParamSpec that was passed into this function</doc>
           <type name="ParamSpec" c:type="GParamSpec*"/>
         </return-value>
@@ -7267,7 +7301,7 @@ for an example of the use of this capability.</doc>
       </method>
       <method name="ref_sink" c:identifier="g_param_spec_ref_sink" version="2.10" introspectable="0">
         <doc xml:space="preserve">Convenience function to ref and sink a #GParamSpec.</doc>
-        <return-value>
+        <return-value transfer-ownership="full">
           <doc xml:space="preserve">the #GParamSpec that was passed into this function</doc>
           <type name="ParamSpec" c:type="GParamSpec*"/>
         </return-value>
@@ -7325,7 +7359,7 @@ g_param_spec_set_qdata() with the same @quark.</doc>
             <doc xml:space="preserve">an opaque user data pointer</doc>
             <type name="gpointer" c:type="gpointer"/>
           </parameter>
-          <parameter name="destroy" transfer-ownership="none" scope="async">
+          <parameter name="destroy" transfer-ownership="none" nullable="1" allow-none="1" scope="async">
             <doc xml:space="preserve">function to invoke with @data as argument, when @data needs to
  be freed</doc>
             <type name="GLib.DestroyNotify" c:type="GDestroyNotify"/>
@@ -7794,7 +7828,7 @@ the pool.</doc>
       </method>
       <method name="lookup" c:identifier="g_param_spec_pool_lookup">
         <doc xml:space="preserve">Looks up a #GParamSpec in the pool.</doc>
-        <return-value transfer-ownership="none">
+        <return-value transfer-ownership="none" nullable="1">
           <doc xml:space="preserve">The found #GParamSpec, or %NULL if no
 matching #GParamSpec was found.</doc>
           <type name="ParamSpec" c:type="GParamSpec*"/>
@@ -7835,14 +7869,14 @@ matching #GParamSpec was found.</doc>
           </parameter>
         </parameters>
       </method>
-      <function name="new" c:identifier="g_param_spec_pool_new">
+      <function name="new" c:identifier="g_param_spec_pool_new" introspectable="0">
         <doc xml:space="preserve">Creates a new #GParamSpecPool.
 
 If @type_prefixing is %TRUE, lookups in the newly created pool will
 allow to specify the owner as a colon-separated prefix of the
 property name, like "GtkContainer:border-width". This feature is
 deprecated, so you should always set @type_prefixing to %FALSE.</doc>
-        <return-value transfer-ownership="none">
+        <return-value transfer-ownership="full">
           <doc xml:space="preserve">a newly allocated #GParamSpecPool.</doc>
           <type name="ParamSpecPool" c:type="GParamSpecPool*"/>
         </return-value>
@@ -9716,7 +9750,7 @@ function outside of the GObject type system itself.</doc>
             <type name="TypePlugin" c:type="GTypePlugin*"/>
           </instance-parameter>
           <parameter name="instance_type" transfer-ownership="none">
-            <doc xml:space="preserve">the #GType of an instantiable type to which the interface
+            <doc xml:space="preserve">the #GType of an instantiatable type to which the interface
  is added</doc>
             <type name="GType" c:type="GType"/>
           </parameter>
@@ -10366,9 +10400,9 @@ its reference count. If the contents of the #GValue are %NULL, then
       <method name="dup_param" c:identifier="g_value_dup_param" introspectable="0">
         <doc xml:space="preserve">Get the contents of a %G_TYPE_PARAM #GValue, increasing its
 reference count.</doc>
-        <return-value>
-          <doc xml:space="preserve">#GParamSpec content of @value, should be unreferenced when
-         no longer needed.</doc>
+        <return-value transfer-ownership="full">
+          <doc xml:space="preserve">#GParamSpec content of @value, should be
+    unreferenced when no longer needed.</doc>
           <type name="ParamSpec" c:type="GParamSpec*"/>
         </return-value>
         <parameters>
@@ -12825,8 +12859,8 @@ connected to. The @handler_id_ptr is then set to zero, which is never a valid ha
 
 If the handler ID is 0 then this function does nothing.
 
-A macro is also included that allows this function to be used without
-pointer casts.</doc>
+There is also a macro version of this function so that the code
+will be inlined.</doc>
       <return-value transfer-ownership="none">
         <type name="none" c:type="void"/>
       </return-value>
@@ -12836,7 +12870,8 @@ pointer casts.</doc>
           <type name="gulong" c:type="gulong*"/>
         </parameter>
         <parameter name="instance" transfer-ownership="none">
-          <doc xml:space="preserve">The instance to remove the signal handler from.</doc>
+          <doc xml:space="preserve">The instance to remove the signal handler from.
+  This pointer may be %NULL or invalid, if the handler ID is zero.</doc>
           <type name="Object" c:type="gpointer"/>
         </parameter>
       </parameters>
@@ -12902,7 +12937,7 @@ my_enum_complete_type_info (GTypePlugin     *plugin,
     </function>
     <function name="enum_get_value" c:identifier="g_enum_get_value">
       <doc xml:space="preserve">Returns the #GEnumValue for a value.</doc>
-      <return-value transfer-ownership="none">
+      <return-value transfer-ownership="none" nullable="1">
         <doc xml:space="preserve">the #GEnumValue for @value, or %NULL
          if @value is not a member of the enumeration</doc>
         <type name="EnumValue" c:type="GEnumValue*"/>
@@ -12920,7 +12955,7 @@ my_enum_complete_type_info (GTypePlugin     *plugin,
     </function>
     <function name="enum_get_value_by_name" c:identifier="g_enum_get_value_by_name">
       <doc xml:space="preserve">Looks up a #GEnumValue by name.</doc>
-      <return-value transfer-ownership="none">
+      <return-value transfer-ownership="none" nullable="1">
         <doc xml:space="preserve">the #GEnumValue with name @name,
          or %NULL if the enumeration doesn't have a member
          with that name</doc>
@@ -12939,7 +12974,7 @@ my_enum_complete_type_info (GTypePlugin     *plugin,
     </function>
     <function name="enum_get_value_by_nick" c:identifier="g_enum_get_value_by_nick">
       <doc xml:space="preserve">Looks up a #GEnumValue by nickname.</doc>
-      <return-value transfer-ownership="none">
+      <return-value transfer-ownership="none" nullable="1">
         <doc xml:space="preserve">the #GEnumValue with nickname @nick,
          or %NULL if the enumeration doesn't have a member
          with that nickname</doc>
@@ -13055,7 +13090,7 @@ g_enum_complete_type_info() above.</doc>
     </function>
     <function name="flags_get_first_value" c:identifier="g_flags_get_first_value">
       <doc xml:space="preserve">Returns the first #GFlagsValue which is set in @value.</doc>
-      <return-value transfer-ownership="none">
+      <return-value transfer-ownership="none" nullable="1">
         <doc xml:space="preserve">the first #GFlagsValue which is set in
          @value, or %NULL if none is set</doc>
         <type name="FlagsValue" c:type="GFlagsValue*"/>
@@ -13073,7 +13108,7 @@ g_enum_complete_type_info() above.</doc>
     </function>
     <function name="flags_get_value_by_name" c:identifier="g_flags_get_value_by_name">
       <doc xml:space="preserve">Looks up a #GFlagsValue by name.</doc>
-      <return-value transfer-ownership="none">
+      <return-value transfer-ownership="none" nullable="1">
         <doc xml:space="preserve">the #GFlagsValue with name @name,
          or %NULL if there is no flag with that name</doc>
         <type name="FlagsValue" c:type="GFlagsValue*"/>
@@ -13091,7 +13126,7 @@ g_enum_complete_type_info() above.</doc>
     </function>
     <function name="flags_get_value_by_nick" c:identifier="g_flags_get_value_by_nick">
       <doc xml:space="preserve">Looks up a #GFlagsValue by nickname.</doc>
-      <return-value transfer-ownership="none">
+      <return-value transfer-ownership="none" nullable="1">
         <doc xml:space="preserve">the #GFlagsValue with nickname @nick,
          or %NULL if there is no flag with that nickname</doc>
         <type name="FlagsValue" c:type="GFlagsValue*"/>
@@ -13296,8 +13331,8 @@ support.  Signals are described in detail [here][gobject-Signals].
 For a tutorial on implementing a new GObject class, see [How to define and
 implement a new GObject][howto-gobject]. For a list of naming conventions for
 GObjects and their methods, see the [GType conventions][gtype-conventions].
-For the high-level concepts behind GObject, read [Instantiable classed types:
-Objects][gtype-instantiable-classed].
+For the high-level concepts behind GObject, read [Instantiatable classed types:
+Objects][gtype-instantiatable-classed].
 
 ## Floating references # {#floating-ref}
 
@@ -13889,24 +13924,6 @@ See g_param_spec_internal() for details on property names.</doc>
         <parameter name="flags" transfer-ownership="none">
           <doc xml:space="preserve">flags for the property specified</doc>
           <type name="ParamFlags" c:type="GParamFlags"/>
-        </parameter>
-      </parameters>
-    </function>
-    <function name="param_spec_pool_new" c:identifier="g_param_spec_pool_new" moved-to="ParamSpecPool.new">
-      <doc xml:space="preserve">Creates a new #GParamSpecPool.
-
-If @type_prefixing is %TRUE, lookups in the newly created pool will
-allow to specify the owner as a colon-separated prefix of the
-property name, like "GtkContainer:border-width". This feature is
-deprecated, so you should always set @type_prefixing to %FALSE.</doc>
-      <return-value transfer-ownership="none">
-        <doc xml:space="preserve">a newly allocated #GParamSpecPool.</doc>
-        <type name="ParamSpecPool" c:type="GParamSpecPool*"/>
-      </return-value>
-      <parameters>
-        <parameter name="type_prefixing" transfer-ownership="none">
-          <doc xml:space="preserve">Whether the pool will support type-prefixed property names.</doc>
-          <type name="gboolean" c:type="gboolean"/>
         </parameter>
       </parameters>
     </function>
@@ -14520,11 +14537,11 @@ for signals which don't have #G_SIGNAL_NO_HOOKS flag set.</doc>
           <doc xml:space="preserve">a #GSignalEmissionHook function.</doc>
           <type name="SignalEmissionHook" c:type="GSignalEmissionHook"/>
         </parameter>
-        <parameter name="hook_data" transfer-ownership="none" nullable="1" allow-none="1">
+        <parameter name="hook_data" transfer-ownership="none" nullable="1" allow-none="1" scope="notified" closure="2">
           <doc xml:space="preserve">user data for @hook_func.</doc>
           <type name="gpointer" c:type="gpointer"/>
         </parameter>
-        <parameter name="data_destroy" transfer-ownership="none" scope="async">
+        <parameter name="data_destroy" transfer-ownership="none" nullable="1" allow-none="1" scope="async" destroy="3">
           <doc xml:space="preserve">a #GDestroyNotify for @hook_data.</doc>
           <type name="GLib.DestroyNotify" c:type="GDestroyNotify"/>
         </parameter>
@@ -14695,11 +14712,11 @@ used. Specify @connect_flags if you need `..._after()` or
           <doc xml:space="preserve">the #GCallback to connect.</doc>
           <type name="Callback" c:type="GCallback"/>
         </parameter>
-        <parameter name="data" transfer-ownership="none" nullable="1" allow-none="1">
+        <parameter name="data" transfer-ownership="none" nullable="1" allow-none="1" scope="notified" closure="2">
           <doc xml:space="preserve">data to pass to @c_handler calls.</doc>
           <type name="gpointer" c:type="gpointer"/>
         </parameter>
-        <parameter name="destroy_data" transfer-ownership="none">
+        <parameter name="destroy_data" transfer-ownership="none" nullable="1" allow-none="1" scope="notified" destroy="3">
           <doc xml:space="preserve">a #GClosureNotify for @data.</doc>
           <type name="ClosureNotify" c:type="GClosureNotify"/>
         </parameter>
@@ -14907,8 +14924,9 @@ specified signal returns a value, but may be ignored otherwise.</doc>
     </function>
     <function name="signal_get_invocation_hint" c:identifier="g_signal_get_invocation_hint">
       <doc xml:space="preserve">Returns the invocation hint of the innermost signal emission of instance.</doc>
-      <return-value transfer-ownership="none">
-        <doc xml:space="preserve">the invocation hint of the innermost signal  emission.</doc>
+      <return-value transfer-ownership="none" nullable="1">
+        <doc xml:space="preserve">the invocation hint of the innermost
+    signal emission, or %NULL if not found.</doc>
         <type name="SignalInvocationHint" c:type="GSignalInvocationHint*"/>
       </return-value>
       <parameters>
@@ -14998,7 +15016,7 @@ If no handler was found, 0 is returned.</doc>
           <doc xml:space="preserve">The C closure callback of the handler (useless for non-C closures).</doc>
           <type name="gpointer" c:type="gpointer"/>
         </parameter>
-        <parameter name="data" transfer-ownership="none" nullable="1" allow-none="1">
+        <parameter name="data" transfer-ownership="none" nullable="1" allow-none="1" closure="4">
           <doc xml:space="preserve">The closure data of the handler's closure.</doc>
           <type name="gpointer" c:type="gpointer"/>
         </parameter>
@@ -15101,7 +15119,7 @@ otherwise.</doc>
           <doc xml:space="preserve">The C closure callback of the handlers (useless for non-C closures).</doc>
           <type name="gpointer" c:type="gpointer"/>
         </parameter>
-        <parameter name="data" transfer-ownership="none" nullable="1" allow-none="1">
+        <parameter name="data" transfer-ownership="none" nullable="1" allow-none="1" closure="4">
           <doc xml:space="preserve">The closure data of the handlers' closures.</doc>
           <type name="gpointer" c:type="gpointer"/>
         </parameter>
@@ -15185,7 +15203,7 @@ disconnected handlers otherwise.</doc>
           <doc xml:space="preserve">The C closure callback of the handlers (useless for non-C closures).</doc>
           <type name="gpointer" c:type="gpointer"/>
         </parameter>
-        <parameter name="data" transfer-ownership="none" nullable="1" allow-none="1">
+        <parameter name="data" transfer-ownership="none" nullable="1" allow-none="1" closure="4">
           <doc xml:space="preserve">The closure data of the handlers' closures.</doc>
           <type name="gpointer" c:type="gpointer"/>
         </parameter>
@@ -15244,7 +15262,7 @@ not currently blocked.</doc>
           <doc xml:space="preserve">The C closure callback of the handlers (useless for non-C closures).</doc>
           <type name="gpointer" c:type="gpointer"/>
         </parameter>
-        <parameter name="data" transfer-ownership="none" nullable="1" allow-none="1">
+        <parameter name="data" transfer-ownership="none" nullable="1" allow-none="1" closure="4">
           <doc xml:space="preserve">The closure data of the handlers' closures.</doc>
           <type name="gpointer" c:type="gpointer"/>
         </parameter>
@@ -15361,7 +15379,7 @@ See g_signal_new() for details on allowed signal names.</doc>
       <doc xml:space="preserve">Given the signal's identifier, finds its name.
 
 Two different signals may have the same name, if they have differing types.</doc>
-      <return-value transfer-ownership="none">
+      <return-value transfer-ownership="none" nullable="1">
         <doc xml:space="preserve">the signal name, or %NULL if the signal number was invalid.</doc>
         <type name="utf8" c:type="const gchar*"/>
       </return-value>
@@ -15423,11 +15441,11 @@ be used.</doc>
  not associate a class method slot with this signal.</doc>
           <type name="guint" c:type="guint"/>
         </parameter>
-        <parameter name="accumulator" transfer-ownership="none" closure="5">
+        <parameter name="accumulator" transfer-ownership="none" nullable="1" allow-none="1" closure="5">
           <doc xml:space="preserve">the accumulator for this signal; may be %NULL.</doc>
           <type name="SignalAccumulator" c:type="GSignalAccumulator"/>
         </parameter>
-        <parameter name="accu_data" transfer-ownership="none" nullable="1" allow-none="1">
+        <parameter name="accu_data" transfer-ownership="none" nullable="1" allow-none="1" closure="4">
           <doc xml:space="preserve">user data for the @accumulator.</doc>
           <type name="gpointer" c:type="gpointer"/>
         </parameter>
@@ -15488,17 +15506,17 @@ the marshaller for this signal.</doc>
  %G_SIGNAL_RUN_FIRST or %G_SIGNAL_RUN_LAST.</doc>
           <type name="SignalFlags" c:type="GSignalFlags"/>
         </parameter>
-        <parameter name="class_handler" transfer-ownership="none">
+        <parameter name="class_handler" transfer-ownership="none" nullable="1" allow-none="1">
           <doc xml:space="preserve">a #GCallback which acts as class implementation of
  this signal. Used to invoke a class method generically. Pass %NULL to
  not associate a class method with this signal.</doc>
           <type name="Callback" c:type="GCallback"/>
         </parameter>
-        <parameter name="accumulator" transfer-ownership="none" closure="5">
+        <parameter name="accumulator" transfer-ownership="none" nullable="1" allow-none="1" closure="5">
           <doc xml:space="preserve">the accumulator for this signal; may be %NULL.</doc>
           <type name="SignalAccumulator" c:type="GSignalAccumulator"/>
         </parameter>
-        <parameter name="accu_data" transfer-ownership="none" nullable="1" allow-none="1">
+        <parameter name="accu_data" transfer-ownership="none" nullable="1" allow-none="1" closure="4">
           <doc xml:space="preserve">user data for the @accumulator.</doc>
           <type name="gpointer" c:type="gpointer"/>
         </parameter>
@@ -15549,15 +15567,15 @@ the marshaller for this signal.</doc>
  %G_SIGNAL_RUN_FIRST or %G_SIGNAL_RUN_LAST.</doc>
           <type name="SignalFlags" c:type="GSignalFlags"/>
         </parameter>
-        <parameter name="class_closure" transfer-ownership="none">
+        <parameter name="class_closure" transfer-ownership="none" nullable="1" allow-none="1">
           <doc xml:space="preserve">The closure to invoke on signal emission; may be %NULL.</doc>
           <type name="Closure" c:type="GClosure*"/>
         </parameter>
-        <parameter name="accumulator" transfer-ownership="none" closure="5">
+        <parameter name="accumulator" transfer-ownership="none" nullable="1" allow-none="1" closure="5">
           <doc xml:space="preserve">the accumulator for this signal; may be %NULL.</doc>
           <type name="SignalAccumulator" c:type="GSignalAccumulator"/>
         </parameter>
-        <parameter name="accu_data" transfer-ownership="none" nullable="1" allow-none="1">
+        <parameter name="accu_data" transfer-ownership="none" nullable="1" allow-none="1" closure="4">
           <doc xml:space="preserve">user data for the @accumulator.</doc>
           <type name="gpointer" c:type="gpointer"/>
         </parameter>
@@ -15617,7 +15635,7 @@ the marshaller for this signal.</doc>
           <doc xml:space="preserve">the accumulator for this signal; may be %NULL</doc>
           <type name="SignalAccumulator" c:type="GSignalAccumulator"/>
         </parameter>
-        <parameter name="accu_data" transfer-ownership="none" nullable="1" allow-none="1">
+        <parameter name="accu_data" transfer-ownership="none" nullable="1" allow-none="1" closure="4">
           <doc xml:space="preserve">user data for the @accumulator</doc>
           <type name="gpointer" c:type="gpointer"/>
         </parameter>
@@ -15636,9 +15654,9 @@ the marshaller for this signal.</doc>
           <doc xml:space="preserve">the length of @param_types</doc>
           <type name="guint" c:type="guint"/>
         </parameter>
-        <parameter name="param_types" transfer-ownership="none">
+        <parameter name="param_types" transfer-ownership="none" nullable="1" allow-none="1">
           <doc xml:space="preserve">an array of types, one for
-    each parameter</doc>
+    each parameter (may be %NULL if @n_params is zero)</doc>
           <array length="8" zero-terminated="0" c:type="GType*">
             <type name="GType" c:type="GType"/>
           </array>
@@ -16086,7 +16104,7 @@ interfaces.</doc>
       </parameters>
     </function>
     <function name="type_add_interface_dynamic" c:identifier="g_type_add_interface_dynamic">
-      <doc xml:space="preserve">Adds @interface_type to the dynamic @instantiable_type. The information
+      <doc xml:space="preserve">Adds @interface_type to the dynamic @instance_type. The information
 contained in the #GTypePlugin structure pointed to by @plugin
 is used to manage the relationship.</doc>
       <return-value transfer-ownership="none">
@@ -16094,7 +16112,7 @@ is used to manage the relationship.</doc>
       </return-value>
       <parameters>
         <parameter name="instance_type" transfer-ownership="none">
-          <doc xml:space="preserve">#GType value of an instantiable type</doc>
+          <doc xml:space="preserve">#GType value of an instantiatable type</doc>
           <type name="GType" c:type="GType"/>
         </parameter>
         <parameter name="interface_type" transfer-ownership="none">
@@ -16108,7 +16126,7 @@ is used to manage the relationship.</doc>
       </parameters>
     </function>
     <function name="type_add_interface_static" c:identifier="g_type_add_interface_static">
-      <doc xml:space="preserve">Adds @interface_type to the static @instantiable_type.
+      <doc xml:space="preserve">Adds @interface_type to the static @instance_type.
 The information contained in the #GInterfaceInfo structure
 pointed to by @info is used to manage the relationship.</doc>
       <return-value transfer-ownership="none">
@@ -16116,7 +16134,7 @@ pointed to by @info is used to manage the relationship.</doc>
       </return-value>
       <parameters>
         <parameter name="instance_type" transfer-ownership="none">
-          <doc xml:space="preserve">#GType value of an instantiable type</doc>
+          <doc xml:space="preserve">#GType value of an instantiatable type</doc>
           <type name="GType" c:type="GType"/>
         </parameter>
         <parameter name="interface_type" transfer-ownership="none">
@@ -16715,11 +16733,11 @@ whether @type conforms to it.</doc>
       </return-value>
       <parameters>
         <parameter name="type" transfer-ownership="none">
-          <doc xml:space="preserve">type to check anchestry for</doc>
+          <doc xml:space="preserve">type to check ancestry for</doc>
           <type name="GType" c:type="GType"/>
         </parameter>
         <parameter name="is_a_type" transfer-ownership="none">
-          <doc xml:space="preserve">possible anchestor of @type or interface that @type
+          <doc xml:space="preserve">possible ancestor of @type or interface that @type
     could conform to</doc>
           <type name="GType" c:type="GType"/>
         </parameter>
@@ -16764,14 +16782,14 @@ not be passed in and will most likely lead to a crash.</doc>
     </function>
     <function name="type_next_base" c:identifier="g_type_next_base">
       <doc xml:space="preserve">Given a @leaf_type and a @root_type which is contained in its
-anchestry, return the type that @root_type is the immediate parent
+ancestry, return the type that @root_type is the immediate parent
 of. In other words, this function determines the type that is
 derived directly from @root_type which is also a base class of
 @leaf_type.  Given a root type and a leaf type, this function can
 be used to determine the types and order in which the leaf type is
 descended from the root type.</doc>
       <return-value transfer-ownership="none">
-        <doc xml:space="preserve">immediate child of @root_type and anchestor of @leaf_type</doc>
+        <doc xml:space="preserve">immediate child of @root_type and ancestor of @leaf_type</doc>
         <type name="GType" c:type="GType"/>
       </return-value>
       <parameters>
