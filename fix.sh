@@ -141,3 +141,11 @@ xmlstarlet ed -L \
 	-u '//_:class[@name="WaylandSeat"]/_:method[@name="get_wl_seat"]//_:type[@name="gpointer"]/@c:type' -v "gpointer" \
 	-u '//_:class[@name="WaylandSurface"]/_:method[@name="get_wl_surface"]//_:type[@name="gpointer"]/@c:type' -v "gpointer" \
 	GdkWayland-4.0.gir
+
+# Fix invalid type for GtkImage and GtkStackSwitcher "icon-size" property
+xmlstarlet ed -L \
+	-u '//_:class[@name="Image"]/_:property[@name="icon-size"]/_:type/@c:type' -v "GtkIconSize" \
+	-u '//_:class[@name="Image"]/_:property[@name="icon-size"]/_:type/@name' -v "IconSize" \
+	-u '//_:class[@name="StackSwitcher"]/_:property[@name="icon-size"]/_:type/@c:type' -v "GtkIconSize" \
+	-u '//_:class[@name="StackSwitcher"]/_:property[@name="icon-size"]/_:type/@name' -v "IconSize" \
+	Gtk-3.0.gir
