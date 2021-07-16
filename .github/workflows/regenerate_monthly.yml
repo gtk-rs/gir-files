@@ -1,0 +1,23 @@
+name: Redownload & regenerate (monthly)
+on:
+  schedule:
+    - cron: '0 0 1 * *'
+jobs:
+  regenerate:
+    name: Regenerate GIR files
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+      - name: Redownload, regenerate, reformat
+        run: |
+          sudo apt-get update > /dev/null
+          sudo apt-get -qq upgrade > /dev/null
+          sudo apt-get -qq install binutils wget tar xmlstarlet > /dev/null
+          ./dl.sh
+      - name: Commit changes to repository, if any
+        run: |
+          git diff --quiet && git diff --staged --quiet || git commit -am "Update all GIR files"
+          git push
