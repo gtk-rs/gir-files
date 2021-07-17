@@ -12,14 +12,22 @@ jobs:
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
       - name: Redownload, regenerate, reformat
+        id: changes
         run: |
           sudo apt-get update > /dev/null
           sudo apt-get -qq upgrade > /dev/null
           sudo apt-get -qq install binutils wget tar xmlstarlet > /dev/null
           ./dl.sh
-      - name: Commit changes to repository, if any
+          echo ::set-output name=pr_title::"Update GIR files ($(date +%Y-%m-%d))"
+          echo ::set-output name=pr_body::"This PR was auto-generated on $(date +%Y-%m-%d). Please review and manually edit before merging."
+      - name: Create PR
+        id: cpr
+        uses: peter-evans/create-pull-request@v3
+        with:
+          commit-message: Update GIR files
+          title: ${{ steps.changes.outputs.pr_title }}
+          body: ${{ steps.changes.outputs.pr_body }}
+          delete-branch: true
+      - name: Review PR
         run: |
-          git config --global user.name 'github-actions[bot]'
-          git config --global user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          git diff --quiet && git diff --staged --quiet || git commit -am "Update all GIR files"
-          git push
+          echo "Opened PR ${{ steps.cpr.outputs.pull-request-number }} (${{ steps.cpr.outputs.pull-request-url }})"
