@@ -7,8 +7,8 @@ files used to generate all [`gtk-rs`](https://github.com/gtk-rs/gtk-rs) crates.
 
 You can update all the files by doing:
 
-```bash
-./dl.sh
+```console
+$ ./dl.sh
 ```
 
 This command will fetch the gir files for the latest release of each library.
@@ -24,9 +24,9 @@ a bug fix or a missing API.
 
 Manually copy the updated gir file and then run
 
-```bash
-./reformat.sh
-./fix.sh
+```console
+$ ./reformat.sh
+$ ./fix.sh
 ```
 
 ## Validating an update
