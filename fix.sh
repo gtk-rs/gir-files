@@ -85,20 +85,6 @@ xmlstarlet ed -L \
 	-a '//_:method[@c:identifier="gtk_widget_style_get_property"]//_:parameter[@name="value" and not(@caller-allocates)]' -type attr -n "caller-allocates" -v "1" \
 	Gtk-3.0.gir
 
-xmlstarlet tr JavaScriptCore-4.0.xsl JavaScriptCore-4.0.gir | xmlstarlet fo >JavaScriptCore-4.0.gir.tmp
-mv JavaScriptCore-4.0.gir.tmp JavaScriptCore-4.0.gir
-
-# fill in types from JavaScriptCore
-xmlstarlet ed -L \
-	-i '///_:type[not(@name) and @c:type="JSGlobalContextRef"]' -t 'attr' -n 'name' -v "JavaScriptCore.GlobalContextRef" \
-	-i '///_:type[not(@name) and @c:type="JSValueRef"]' -t 'attr' -n 'name' -v "JavaScriptCore.ValueRef" \
-	WebKit2WebExtension-4.0.gir WebKit2-4.0.gir
-
-xmlstarlet ed -L \
-	-u '//_:constant[@name="DOM_NODE_FILTER_SHOW_ALL"]/_:type/@name' -v "guint" \
-	-u '//_:constant[@name="DOM_NODE_FILTER_SHOW_ALL"]/_:type/@c:type' -v "guint" \
-	WebKit2WebExtension-4.0.gir
-
 # remove freetype and graphite methods; GitHub issue #2557
 xmlstarlet ed -L \
 	-d '///_:function[@c:identifier="hb_graphite2_face_get_gr_face"]' \
