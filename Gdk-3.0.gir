@@ -593,8 +593,8 @@ To make the cursor invisible, use %GDK_BLANK_CURSOR.</doc>
       </constructor>
       <constructor name="new_for_display" c:identifier="gdk_cursor_new_for_display" version="2.2">
         <doc xml:space="preserve">Creates a new cursor from the set of builtin cursors.</doc>
-        <return-value transfer-ownership="full">
-          <doc xml:space="preserve">a new #GdkCursor</doc>
+        <return-value transfer-ownership="full" nullable="1">
+          <doc xml:space="preserve">a new #GdkCursor, or %NULL on failure</doc>
           <type name="Cursor" c:type="GdkCursor*"/>
         </return-value>
         <parameters>
@@ -14770,7 +14770,7 @@ See gdk_keymap_get_caps_lock_state().</doc>
     <constant name="MAX_TIMECOORD_AXES" value="128" c:type="GDK_MAX_TIMECOORD_AXES">
       <type name="gint" c:type="gint"/>
     </constant>
-    <constant name="MICRO_VERSION" value="23" c:type="GDK_MICRO_VERSION">
+    <constant name="MICRO_VERSION" value="30" c:type="GDK_MICRO_VERSION">
       <type name="gint" c:type="gint"/>
     </constant>
     <constant name="MINOR_VERSION" value="24" c:type="GDK_MINOR_VERSION">
@@ -17666,7 +17666,7 @@ or any other error occurs.</doc>
           </instance-parameter>
           <parameter name="format" transfer-ownership="none">
             <doc xml:space="preserve">the format for the new surface</doc>
-            <type name="gint" c:type="cairo_format_t"/>
+            <type name="cairo.Format" c:type="cairo_format_t"/>
           </parameter>
           <parameter name="width" transfer-ownership="none">
             <doc xml:space="preserve">width of the new surface</doc>
@@ -21594,6 +21594,17 @@ context @cr.</doc>
         </parameter>
       </parameters>
     </function>
+    <docsection name="cairo_interaction">
+      <doc xml:space="preserve">[Cairo](http://cairographics.org) is a graphics
+library that supports vector graphics and image compositing that
+can be used with GDK. GTK+ does all of its drawing using cairo.
+
+GDK does not wrap the cairo API, instead it allows to create cairo
+contexts which can be used to draw on #GdkWindows. Additional
+functions allow use #GdkRectangles with cairo and to use #GdkColors,
+#GdkRGBAs, #GdkPixbufs and #GdkWindows as sources for drawing
+operations.</doc>
+    </docsection>
     <function name="cairo_rectangle" c:identifier="gdk_cairo_rectangle" version="2.8">
       <doc xml:space="preserve">Adds the given rectangle to the current path of @cr.</doc>
       <return-value transfer-ownership="none">
@@ -21783,6 +21794,29 @@ and &#x201C;\#ffffffffffff&#x201D;).</doc>
         </parameter>
       </parameters>
     </function>
+    <docsection name="colors">
+      <doc xml:space="preserve">A #GdkColor represents a color.
+
+When working with cairo, it is often more convenient
+to use a #GdkRGBA instead, and #GdkColor has been
+deprecated in favor of #GdkRGBA.</doc>
+    </docsection>
+    <docsection name="cursors">
+      <doc xml:space="preserve">These functions are used to create and destroy cursors.
+There is a number of standard cursors, but it is also
+possible to construct new cursors from pixbufs. There
+may be limitations as to what kinds of cursors can be
+constructed on a given display, see
+gdk_display_supports_cursor_alpha(),
+gdk_display_supports_cursor_color(),
+gdk_display_get_default_cursor_size() and
+gdk_display_get_maximal_cursor_size().
+
+Cursors by themselves are not very interesting, they must be be
+bound to a window for users to see them. This is done with
+gdk_window_set_cursor() or by setting the cursor member of the
+#GdkWindowAttr passed to gdk_window_new().</doc>
+    </docsection>
     <function name="disable_multidevice" c:identifier="gdk_disable_multidevice" version="3.0">
       <doc xml:space="preserve">Disables multidevice support in GDK. This call must happen prior
 to gdk_display_open(), gtk_init(), gtk_init_with_args() or
@@ -21796,6 +21830,17 @@ any way and doesn&#x2019;t observe the presence of XInput 2.</doc>
         <type name="none" c:type="void"/>
       </return-value>
     </function>
+    <docsection name="dnd">
+      <doc xml:space="preserve">These functions provide a low level interface for drag and drop.
+The X backend of GDK supports both the Xdnd and Motif drag and drop
+protocols transparently, the Win32 backend supports the WM_DROPFILES
+protocol.
+
+GTK+ provides a higher level abstraction based on top of these functions,
+and so they are not normally needed in GTK+ applications.
+See the [Drag and Drop][gtk3-Drag-and-Drop] section of
+the GTK+ documentation for more information.</doc>
+    </docsection>
     <function name="drag_abort" c:identifier="gdk_drag_abort">
       <doc xml:space="preserve">Aborts a drag without dropping.
 
@@ -22267,6 +22312,21 @@ motion events from a %GDK_MOTION_NOTIFY event usually works like this:
         </parameter>
       </parameters>
     </function>
+    <docsection name="event_structs">
+      <doc xml:space="preserve">The event structures contain data specific to each type of event in GDK.
+
+&gt; A common mistake is to forget to set the event mask of a widget so that
+&gt; the required events are received. See gtk_widget_set_events().</doc>
+    </docsection>
+    <docsection name="events">
+      <doc xml:space="preserve">This section describes functions dealing with events from the window
+system.
+
+In GTK+ applications the events are handled automatically in
+gtk_main_do_event() and passed on to the appropriate widgets, so these
+functions are rarely needed. Though some of the fields in the
+[Event Structures][gdk3-Event-Structures] are useful.</doc>
+    </docsection>
     <function name="events_get_angle" c:identifier="gdk_events_get_angle" version="3.0">
       <doc xml:space="preserve">If both events contain X/Y information, this function will return %TRUE
 and return in @angle the relative angle from @event1 to @event2. The rotation
@@ -22354,6 +22414,26 @@ This is rarely needed by applications.</doc>
         <type name="none" c:type="void"/>
       </return-value>
     </function>
+    <docsection name="gdktestutils">
+      <doc xml:space="preserve">The functions in this section are intended to be used in test programs.
+They allow to simulate some user input.</doc>
+    </docsection>
+    <docsection name="general">
+      <doc xml:space="preserve">This section describes the GDK initialization functions and miscellaneous
+utility functions, as well as deprecation facilities.
+
+The GDK and GTK+ headers annotate deprecated APIs in a way that produces
+compiler warnings if these deprecated APIs are used. The warnings
+can be turned off by defining the macro %GDK_DISABLE_DEPRECATION_WARNINGS
+before including the glib.h header.
+
+GDK and GTK+ also provide support for building applications against
+defined subsets of deprecated or new APIs. Define the macro
+%GDK_VERSION_MIN_REQUIRED to specify up to what version
+you want to receive warnings about deprecated APIs. Define the
+macro %GDK_VERSION_MAX_ALLOWED to specify the newest version
+whose API you want to use.</doc>
+    </docsection>
     <function name="get_default_root_window" c:identifier="gdk_get_default_root_window">
       <doc xml:space="preserve">Obtains the root window (parent all other windows are inside)
 for the default display and screen.</doc>
@@ -22507,6 +22587,70 @@ application.</doc>
         </parameter>
       </parameters>
     </function>
+    <docsection name="keys">
+      <doc xml:space="preserve">Key values are the codes which are sent whenever a key is pressed or released.
+They appear in the #GdkEventKey.keyval field of the
+#GdkEventKey structure, which is passed to signal handlers for the
+#GtkWidget::key-press-event and #GtkWidget::key-release-event signals.
+The complete list of key values can be found in the
+`gdk/gdkkeysyms.h` header file.
+
+Key values are regularly updated from the upstream X.org X11 implementation,
+so new values are added regularly. They will be prefixed with GDK_KEY_ rather
+than XF86XK_ or XK_ (for older symbols).
+
+Key values can be converted into a string representation using
+gdk_keyval_name(). The reverse function, converting a string to a key value,
+is provided by gdk_keyval_from_name().
+
+The case of key values can be determined using gdk_keyval_is_upper() and
+gdk_keyval_is_lower(). Key values can be converted to upper or lower case
+using gdk_keyval_to_upper() and gdk_keyval_to_lower().
+
+When it makes sense, key values can be converted to and from
+Unicode characters with gdk_keyval_to_unicode() and gdk_unicode_to_keyval().
+
+# Groups # {#key-group-explanation}
+
+One #GdkKeymap object exists for each user display. gdk_keymap_get_default()
+returns the #GdkKeymap for the default display; to obtain keymaps for other
+displays, use gdk_keymap_get_for_display(). A keymap
+is a mapping from #GdkKeymapKey to key values. You can think of a #GdkKeymapKey
+as a representation of a symbol printed on a physical keyboard key. That is, it
+contains three pieces of information. First, it contains the hardware keycode;
+this is an identifying number for a physical key. Second, it contains the
+&#x201C;level&#x201D; of the key. The level indicates which symbol on the
+key will be used, in a vertical direction. So on a standard US keyboard, the key
+with the number &#x201C;1&#x201C; on it also has the exclamation point (&#x201D;!&#x201D;) character on
+it. The level indicates whether to use the &#x201C;1&#x201D; or the &#x201C;!&#x201D; symbol.  The letter
+keys are considered to have a lowercase letter at level 0, and an uppercase
+letter at level 1, though only the uppercase letter is printed.  Third, the
+#GdkKeymapKey contains a group; groups are not used on standard US keyboards,
+but are used in many other countries. On a keyboard with groups, there can be 3
+or 4 symbols printed on a single key. The group indicates movement in a
+horizontal direction. Usually groups are used for two different languages.  In
+group 0, a key might have two English characters, and in group 1 it might have
+two Hebrew characters. The Hebrew characters will be printed on the key next to
+the English characters.
+
+In order to use a keymap to interpret a key event, it&#x2019;s necessary to first
+convert the keyboard state into an effective group and level. This is done via a
+set of rules that varies widely according to type of keyboard and user
+configuration. The function gdk_keymap_translate_keyboard_state() accepts a
+keyboard state -- consisting of hardware keycode pressed, active modifiers, and
+active group -- applies the appropriate rules, and returns the group/level to be
+used to index the keymap, along with the modifiers which did not affect the
+group and level. i.e. it returns &#x201C;unconsumed modifiers.&#x201D; The keyboard group may
+differ from the effective group used for keymap lookups because some keys don't
+have multiple groups - e.g. the Enter key is always in group 0 regardless of
+keyboard state.
+
+Note that gdk_keymap_translate_keyboard_state() also returns the keyval, i.e. it
+goes ahead and performs the keymap lookup in addition to telling you which
+effective group/level values were used for the lookup. #GdkEventKey already
+contains this keyval, however, so you don&#x2019;t normally need to call
+gdk_keymap_translate_keyboard_state() just to get the keyval.</doc>
+    </docsection>
     <function name="keyval_convert_case" c:identifier="gdk_keyval_convert_case">
       <doc xml:space="preserve">Obtains the upper- and lower-case versions of the keyval @symbol.
 Examples of keyvals are #GDK_KEY_a, #GDK_KEY_Enter, #GDK_KEY_F1, etc.</doc>
@@ -22805,6 +22949,97 @@ changes to the screen&#x2019;s font rendering settings.</doc>
         </parameter>
       </parameters>
     </function>
+    <docsection name="pango_interaction">
+      <doc xml:space="preserve">Pango is the text layout system used by GDK and GTK+. The functions
+and types in this section are used to obtain clip regions for
+#PangoLayouts, and to get #PangoContexts that can be used with
+GDK.
+
+Creating a #PangoLayout object is the first step in rendering text,
+and requires getting a handle to a #PangoContext. For GTK+ programs,
+you&#x2019;ll usually want to use gtk_widget_get_pango_context(), or
+gtk_widget_create_pango_layout(), rather than using the lowlevel
+gdk_pango_context_get_for_screen(). Once you have a #PangoLayout, you
+can set the text and attributes of it with Pango functions like
+pango_layout_set_text() and get its size with pango_layout_get_size().
+(Note that Pango uses a fixed point system internally, so converting
+between Pango units and pixels using [PANGO_SCALE][PANGO-SCALE-CAPS]
+or the PANGO_PIXELS() macro.)
+
+Rendering a Pango layout is done most simply with pango_cairo_show_layout();
+you can also draw pieces of the layout with pango_cairo_show_layout_line().
+
+## Draw transformed text with Pango and cairo ## {#rotated-example}
+
+|[&lt;!-- language="C" --&gt;
+#define RADIUS 100
+#define N_WORDS 10
+#define FONT "Sans Bold 18"
+
+PangoContext *context;
+PangoLayout *layout;
+PangoFontDescription *desc;
+
+double radius;
+int width, height;
+int i;
+
+// Set up a transformation matrix so that the user space coordinates for
+// where we are drawing are [-RADIUS, RADIUS], [-RADIUS, RADIUS]
+// We first center, then change the scale
+
+width = gdk_window_get_width (window);
+height = gdk_window_get_height (window);
+radius = MIN (width, height) / 2.;
+
+cairo_translate (cr,
+                 radius + (width - 2 * radius) / 2,
+                 radius + (height - 2 * radius) / 2);
+                 cairo_scale (cr, radius / RADIUS, radius / RADIUS);
+
+// Create a PangoLayout, set the font and text
+context = gdk_pango_context_get_for_screen (screen);
+layout = pango_layout_new (context);
+pango_layout_set_text (layout, "Text", -1);
+desc = pango_font_description_from_string (FONT);
+pango_layout_set_font_description (layout, desc);
+pango_font_description_free (desc);
+
+// Draw the layout N_WORDS times in a circle
+for (i = 0; i &lt; N_WORDS; i++)
+  {
+    double red, green, blue;
+    double angle = 2 * G_PI * i / n_words;
+
+    cairo_save (cr);
+
+    // Gradient from red at angle == 60 to blue at angle == 300
+    red = (1 + cos (angle - 60)) / 2;
+    green = 0;
+    blue = 1 - red;
+
+    cairo_set_source_rgb (cr, red, green, blue);
+    cairo_rotate (cr, angle);
+
+    // Inform Pango to re-layout the text with the new transformation matrix
+    pango_cairo_update_layout (cr, layout);
+
+    pango_layout_get_size (layout, &amp;width, &amp;height);
+
+    cairo_move_to (cr, - width / 2 / PANGO_SCALE, - DEFAULT_TEXT_RADIUS);
+    pango_cairo_show_layout (cr, layout);
+
+    cairo_restore (cr);
+  }
+
+g_object_unref (layout);
+g_object_unref (context);
+]|
+
+## Output of the [example][rotated-example] above.
+
+![](rotated-text.png)</doc>
+    </docsection>
     <function name="pango_layout_get_clip_region" c:identifier="gdk_pango_layout_get_clip_region" introspectable="0">
       <doc xml:space="preserve">Obtains a clip region which contains the areas where the given ranges
 of text would be drawn. @x_origin and @y_origin are the top left point
@@ -23004,6 +23239,13 @@ instead.
         </parameter>
       </parameters>
     </function>
+    <docsection name="pixbufs">
+      <doc xml:space="preserve">Pixbufs are client-side images. For details on how to create
+and manipulate pixbufs, see the #GdkPixbuf API documentation.
+
+The functions described here allow to obtain pixbufs from
+#GdkWindows and cairo surfaces.</doc>
+    </docsection>
     <function name="pointer_grab" c:identifier="gdk_pointer_grab" deprecated="1" deprecated-version="3.0">
       <doc xml:space="preserve">Grabs the pointer (usually a mouse) so that all events are passed to this
 application until the pointer is ungrabbed with gdk_pointer_ungrab(), or
@@ -23108,6 +23350,35 @@ public API and should not be used in application code.</doc>
         <type name="none" c:type="void"/>
       </return-value>
     </function>
+    <docsection name="properties">
+      <doc xml:space="preserve">Each window under X can have any number of associated
+&#x201C;properties&#x201D; attached to it.
+Properties are arbitrary chunks of data identified by
+&#x201C;atom&#x201D;s. (An &#x201C;atom&#x201D;
+is a numeric index into a string table on the X server. They are used
+to transfer strings efficiently between clients without
+having to transfer the entire string.) A property
+has an associated type, which is also identified
+using an atom.
+
+A property has an associated &#x201C;format&#x201D;,
+an integer describing how many bits are in each unit
+of data inside the property. It must be 8, 16, or 32.
+When data is transferred between the server and client,
+if they are of different endianesses it will be byteswapped
+as necessary according to the format of the property.
+Note that on the client side, properties of format 32
+will be stored with one unit per long,
+even if a long integer has more than 32 bits on the platform.
+(This decision was apparently made for Xlib to maintain
+compatibility with programs that assumed longs were 32
+bits, at the expense of programs that knew better.)
+
+The functions in this section are used to add, remove
+and change properties on windows, to convert atoms
+to and from strings and to manipulate some types of
+data commonly stored in X window properties.</doc>
+    </docsection>
     <function name="property_change" c:identifier="gdk_property_change" introspectable="0">
       <doc xml:space="preserve">Changes the contents of a property on a window.</doc>
       <return-value transfer-ownership="none">
@@ -23302,6 +23573,28 @@ The array returned by this function should not be freed.</doc>
         </parameter>
       </parameters>
     </function>
+    <docsection name="regions">
+      <doc xml:space="preserve">GDK provides the #GdkPoint and #GdkRectangle data types for representing pixels
+and sets of pixels on the screen. Together with Cairo&#x2019;s #cairo_region_t data
+type, they make up the central types for representing graphical data.
+
+A #GdkPoint represents an x and y coordinate of a point.
+
+A #GdkRectangle represents the position and size of a rectangle.
+The intersection of two rectangles can be computed with
+gdk_rectangle_intersect(). To find the union of two rectangles use
+gdk_rectangle_union().
+
+#cairo_region_t is usually used for managing clipping of graphical operations.</doc>
+    </docsection>
+    <docsection name="rgba_colors">
+      <doc xml:space="preserve">#GdkRGBA is a convenient way to pass rgba colors around.
+It&#x2019;s based on cairo&#x2019;s way to deal with colors and mirrors its behavior.
+All values are in the range from 0.0 to 1.0 inclusive. So the color
+(0.0, 0.0, 0.0, 0.0) represents transparent black and
+(1.0, 1.0, 1.0, 1.0) is opaque white. Other values will be clamped
+to this range when drawing.</doc>
+    </docsection>
     <function name="selection_convert" c:identifier="gdk_selection_convert">
       <doc xml:space="preserve">Retrieves the contents of a selection in a given
 form.</doc>
@@ -23536,6 +23829,37 @@ API instead.</doc>
         </parameter>
       </parameters>
     </function>
+    <docsection name="selections">
+      <doc xml:space="preserve">GDK&#x2019;s selection functions, based on the [X selection mechanism](
+https://www.x.org/releases/X11R7.6/doc/xorg-docs/specs/ICCCM/icccm.html),
+provide a way to transfer arbitrary chunks of
+data between programs. A &#x201C;selection&#x201D; is a essentially
+a named clipboard, identified by a string interned as a #GdkAtom. By
+claiming ownership of a selection, an application indicates that it will
+be responsible for supplying its contents. The most common selections are
+`PRIMARY` and `CLIPBOARD`.
+
+The contents of a selection can be represented in a number of formats,
+called &#x201C;targets&#x201D;. Each target is identified by an atom.
+A list of all possible targets supported by the selection owner can be
+retrieved by requesting the special target `TARGETS`. When
+a selection is retrieved, the data is accompanied by a type (an atom), and
+a format (an integer, representing the number of bits per item).
+See [Properties and Atoms][gdk3-Properties-and-Atoms]
+for more information.
+
+The functions in this section only contain the lowlevel parts of the
+selection protocol. A considerably more complicated implementation is needed
+on top of this. GTK+ contains such an implementation in the functions in
+`gtkselection.h` and programmers should use those functions
+instead of the ones presented here. If you plan to implement selection
+handling directly on top of the functions here, you should refer to the
+[X Inter-Client Communication Conventions Manual (ICCCM)](
+https://www.x.org/releases/X11R7.6/doc/xorg-docs/specs/ICCCM/icccm.html).
+
+Note that although much of the selection API design is based on that of X,
+it will work on other GDK backends too.</doc>
+    </docsection>
     <function name="set_allowed_backends" c:identifier="gdk_set_allowed_backends" version="3.10">
       <doc xml:space="preserve">Sets a list of backends that GDK should try to use.
 
@@ -23807,6 +24131,59 @@ a list of UTF-8 strings.</doc>
         </parameter>
       </parameters>
     </function>
+    <docsection name="threads">
+      <doc xml:space="preserve">For thread safety, GDK relies on the thread primitives in GLib,
+and on the thread-safe GLib main loop.
+
+GLib is completely thread safe (all global data is automatically
+locked), but individual data structure instances are not automatically
+locked for performance reasons. So e.g. you must coordinate
+accesses to the same #GHashTable from multiple threads.
+
+GTK+, however, is not thread safe. You should only use GTK+ and GDK
+from the thread gtk_init() and gtk_main() were called on.
+This is usually referred to as the &#x201C;main thread&#x201D;.
+
+Signals on GTK+ and GDK types, as well as non-signal callbacks, are
+emitted in the main thread.
+
+You can schedule work in the main thread safely from other threads
+by using gdk_threads_add_idle() and gdk_threads_add_timeout():
+
+|[&lt;!-- language="C" --&gt;
+static void
+worker_thread (void)
+{
+  ExpensiveData *expensive_data = do_expensive_computation ();
+
+  gdk_threads_add_idle (got_value, expensive_data);
+}
+
+static gboolean
+got_value (gpointer user_data)
+{
+  ExpensiveData *expensive_data = user_data;
+
+  my_app-&gt;expensive_data = expensive_data;
+  gtk_button_set_sensitive (my_app-&gt;button, TRUE);
+  gtk_button_set_label (my_app-&gt;button, expensive_data-&gt;result_label);
+
+  return G_SOURCE_REMOVE;
+}
+]|
+
+You should use gdk_threads_add_idle() and gdk_threads_add_timeout()
+instead of g_idle_add() and g_timeout_add() since libraries not under
+your control might be using the deprecated GDK locking mechanism.
+If you are sure that none of the code in your application and libraries
+use the deprecated gdk_threads_enter() or gdk_threads_leave() methods,
+then you can safely use g_idle_add() and g_timeout_add().
+
+For more information on this "worker thread" pattern, you should
+also look at #GTask, which gives you high-level tools to perform
+expensive tasks from worker threads, and will handle thread
+management for you.</doc>
+    </docsection>
     <function name="threads_add_idle" c:identifier="gdk_threads_add_idle" shadowed-by="threads_add_idle_full" version="2.12" introspectable="0">
       <doc xml:space="preserve">A wrapper for the common usage of gdk_threads_add_idle_full()
 assigning the default priority, #G_PRIORITY_DEFAULT_IDLE.
@@ -24150,5 +24527,64 @@ is not specified; it may be as pseudo-escape sequences
         </parameter>
       </parameters>
     </function>
+    <docsection name="visuals">
+      <doc xml:space="preserve">A #GdkVisual describes a particular video hardware display format.
+It includes information about the number of bits used for each color,
+the way the bits are translated into an RGB value for display, and
+the way the bits are stored in memory. For example, a piece of display
+hardware might support 24-bit color, 16-bit color, or 8-bit color;
+meaning 24/16/8-bit pixel sizes. For a given pixel size, pixels can
+be in different formats; for example the &#x201C;red&#x201D; element of an RGB pixel
+may be in the top 8 bits of the pixel, or may be in the lower 4 bits.
+
+There are several standard visuals. The visual returned by
+gdk_screen_get_system_visual() is the system&#x2019;s default visual, and
+the visual returned by gdk_screen_get_rgba_visual() should be used for
+creating windows with an alpha channel.
+
+A number of functions are provided for determining the &#x201C;best&#x201D; available
+visual. For the purposes of making this determination, higher bit depths
+are considered better, and for visuals of the same bit depth,
+%GDK_VISUAL_PSEUDO_COLOR is preferred at 8bpp, otherwise, the visual
+types are ranked in the order of(highest to lowest)
+%GDK_VISUAL_DIRECT_COLOR, %GDK_VISUAL_TRUE_COLOR,
+%GDK_VISUAL_PSEUDO_COLOR, %GDK_VISUAL_STATIC_COLOR,
+%GDK_VISUAL_GRAYSCALE, then %GDK_VISUAL_STATIC_GRAY.</doc>
+    </docsection>
+    <docsection name="windows">
+      <doc xml:space="preserve">A #GdkWindow is a (usually) rectangular region on the screen.
+It&#x2019;s a low-level object, used to implement high-level objects such as
+#GtkWidget and #GtkWindow on the GTK+ level. A #GtkWindow is a toplevel
+window, the thing a user might think of as a &#x201C;window&#x201D; with a titlebar
+and so on; a #GtkWindow may contain many #GdkWindows. For example,
+each #GtkButton has a #GdkWindow associated with it.
+
+# Composited Windows # {#COMPOSITED-WINDOWS}
+
+Normally, the windowing system takes care of rendering the contents
+of a child window onto its parent window. This mechanism can be
+intercepted by calling gdk_window_set_composited() on the child
+window. For a &#x201C;composited&#x201D; window it is the
+responsibility of the application to render the window contents at
+the right spot.
+
+# Offscreen Windows # {#OFFSCREEN-WINDOWS}
+
+Offscreen windows are more general than composited windows, since
+they allow not only to modify the rendering of the child window onto
+its parent, but also to apply coordinate transformations.
+
+To integrate an offscreen window into a window hierarchy, one has
+to call gdk_offscreen_window_set_embedder() and handle a number of
+signals. The #GdkWindow::pick-embedded-child signal on the embedder
+window is used to select an offscreen child at given coordinates,
+and the #GdkWindow::to-embedder and #GdkWindow::from-embedder signals
+on the offscreen window are used to translate coordinates between
+the embedder and the offscreen window.
+
+For rendering an offscreen window onto its embedder, the contents
+of the offscreen window are available as a surface, via
+gdk_offscreen_window_get_surface().</doc>
+    </docsection>
   </namespace>
 </repository>

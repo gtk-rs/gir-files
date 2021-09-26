@@ -113,17 +113,41 @@ directory it will return `\Windows\mylibrary.dll`.</doc>
           <type name="utf8" c:type="const gchar*"/>
         </return-value>
       </function>
+      <function name="error_quark" c:identifier="g_module_error_quark">
+        <return-value transfer-ownership="none">
+          <type name="GLib.Quark" c:type="GQuark"/>
+        </return-value>
+      </function>
       <function name="open" c:identifier="g_module_open" introspectable="0">
+        <doc xml:space="preserve">A thin wrapper function around g_module_open_full()</doc>
+        <return-value>
+          <doc xml:space="preserve">a #GModule on success, or %NULL on failure</doc>
+          <type name="Module" c:type="GModule*"/>
+        </return-value>
+        <parameters>
+          <parameter name="file_name" transfer-ownership="none" nullable="1" allow-none="1">
+            <doc xml:space="preserve">the name of the file containing the module, or %NULL
+    to obtain a #GModule representing the main program itself</doc>
+            <type name="utf8" c:type="const gchar*"/>
+          </parameter>
+          <parameter name="flags" transfer-ownership="none">
+            <doc xml:space="preserve">the flags used for opening the module. This can be the
+    logical OR of any of the #GModuleFlags.</doc>
+            <type name="ModuleFlags" c:type="GModuleFlags"/>
+          </parameter>
+        </parameters>
+      </function>
+      <function name="open_full" c:identifier="g_module_open_full" version="2.70" introspectable="0" throws="1">
         <doc xml:space="preserve">Opens a module. If the module has already been opened,
 its reference count is incremented.
 
-First of all g_module_open() tries to open @file_name as a module.
+First of all g_module_open_full() tries to open @file_name as a module.
 If that fails and @file_name has the ".la"-suffix (and is a libtool
 archive) it tries to open the corresponding module. If that fails
 and it doesn't have the proper module suffix for the platform
 (#G_MODULE_SUFFIX), this suffix will be appended and the corresponding
 module will be opened. If that fails and @file_name doesn't have the
-".la"-suffix, this suffix is appended and g_module_open() tries to open
+".la"-suffix, this suffix is appended and g_module_open_full() tries to open
 the corresponding module. If eventually that fails as well, %NULL is
 returned.</doc>
         <return-value>
@@ -168,6 +192,15 @@ error.</doc>
         </parameter>
       </parameters>
     </callback>
+    <enumeration name="ModuleError" version="2.70" c:type="GModuleError" glib:error-domain="g-module-error-quark">
+      <doc xml:space="preserve">Errors returned by g_module_open_full().</doc>
+      <member name="failed" value="0" c:identifier="G_MODULE_ERROR_FAILED">
+        <doc xml:space="preserve">there was an error loading or opening a module file</doc>
+      </member>
+      <member name="check_failed" value="1" c:identifier="G_MODULE_ERROR_CHECK_FAILED">
+        <doc xml:space="preserve">a module returned an error from its `g_module_check_init()` function</doc>
+      </member>
+    </enumeration>
     <bitfield name="ModuleFlags" c:type="GModuleFlags">
       <doc xml:space="preserve">Flags passed to g_module_open().
 Note that these flags are not supported on all platforms.</doc>
@@ -238,6 +271,11 @@ directory it will return `\Windows\mylibrary.dll`.</doc>
       <return-value transfer-ownership="none">
         <doc xml:space="preserve">a string describing the last module error</doc>
         <type name="utf8" c:type="const gchar*"/>
+      </return-value>
+    </function>
+    <function name="module_error_quark" c:identifier="g_module_error_quark" moved-to="Module.error_quark">
+      <return-value transfer-ownership="none">
+        <type name="GLib.Quark" c:type="GQuark"/>
       </return-value>
     </function>
     <function name="module_supported" c:identifier="g_module_supported" moved-to="Module.supported">

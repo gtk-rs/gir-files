@@ -10,9 +10,11 @@ and/or use gtk-doc annotations.  -->
     <alias name="SignalCMarshaller" c:type="GSignalCMarshaller">
       <doc xml:space="preserve">This is the signature of marshaller functions, required to marshall
 arrays of parameter values to signal emissions into C language callback
-invocations. It is merely an alias to #GClosureMarshal since the #GClosure
-mechanism takes over responsibility of actual function invocation for the
-signal system.</doc>
+invocations.
+
+It is merely an alias to #GClosureMarshal since the #GClosure mechanism
+takes over responsibility of actual function invocation for the signal
+system.</doc>
       <type name="ClosureMarshal" c:type="GClosureMarshal"/>
     </alias>
     <alias name="SignalCVaMarshaller" c:type="GSignalCVaMarshaller">
@@ -46,10 +48,10 @@ For instance:
                            G_ADD_PRIVATE (MyObject))
 ]|
 
-Will add MyObjectPrivate as the private data to any instance of the MyObject
-type.
+Will add `MyObjectPrivate` as the private data to any instance of the
+`MyObject` type.
 
-G_DEFINE_TYPE_* macros will automatically create a private function
+`G_DEFINE_TYPE_*` macros will automatically create a private function
 based on the arguments to this macro, which can be used to safely
 retrieve the private data from an instance of the type; for instance:
 
@@ -77,7 +79,7 @@ retrieve the private data from an instance of the type; for instance:
   }
 ]|
 
-Note that this macro can only be used together with the G_DEFINE_TYPE_*
+Note that this macro can only be used together with the `G_DEFINE_TYPE_*`
 macros, since it depends on variable names from those macros.
 
 Also note that private structs added with these macros must have a struct
@@ -94,8 +96,9 @@ case the returned pointer must not be dereferenced.</doc>
     </function-macro>
     <function-macro name="ADD_PRIVATE_DYNAMIC" c:identifier="G_ADD_PRIVATE_DYNAMIC" version="2.38" introspectable="0">
       <doc xml:space="preserve">A convenience macro to ease adding private data to instances of a new dynamic
-type in the @_C_ section of G_DEFINE_DYNAMIC_TYPE_EXTENDED(). See
-G_ADD_PRIVATE() for details, it is similar but for static types.
+type in the @_C_ section of G_DEFINE_DYNAMIC_TYPE_EXTENDED().
+
+See G_ADD_PRIVATE() for details, it is similar but for static types.
 
 Note that this macro can only be used together with the
 G_DEFINE_DYNAMIC_TYPE_EXTENDED macros, since it depends on variable
@@ -115,8 +118,11 @@ names from that macro.</doc>
     <callback name="BaseFinalizeFunc" c:type="GBaseFinalizeFunc">
       <doc xml:space="preserve">A callback function used by the type system to finalize those portions
 of a derived types class structure that were setup from the corresponding
-GBaseInitFunc() function. Class finalization basically works the inverse
-way in which class initialization is performed.
+GBaseInitFunc() function.
+
+Class finalization basically works the inverse way in which class
+initialization is performed.
+
 See GClassInitFunc() for a discussion of the class initialization process.</doc>
       <return-value transfer-ownership="none">
         <type name="none" c:type="void"/>
@@ -130,9 +136,12 @@ See GClassInitFunc() for a discussion of the class initialization process.</doc>
     </callback>
     <callback name="BaseInitFunc" c:type="GBaseInitFunc">
       <doc xml:space="preserve">A callback function used by the type system to do base initialization
-of the class structures of derived types. It is called as part of the
-initialization process of all derived classes and should reallocate
-or reset all dynamic class members copied over from the parent class.
+of the class structures of derived types.
+
+This function is called as part of the initialization process of all derived
+classes and should reallocate or reset all dynamic class members copied over
+from the parent class.
+
 For example, class members (such as strings) that are not sufficiently
 handled by a plain memory copy of the parent class into the derived class
 have to be altered. See GClassInitFunc() for a discussion of the class
@@ -150,9 +159,10 @@ initialization process.</doc>
     <class name="Binding" c:symbol-prefix="binding" c:type="GBinding" version="2.26" parent="Object" glib:type-name="GBinding" glib:get-type="g_binding_get_type">
       <doc xml:space="preserve">#GBinding is the representation of a binding between a property on a
 #GObject instance (or source) and another property on another #GObject
-instance (or target). Whenever the source property changes, the same
-value is applied to the target property; for instance, the following
-binding:
+instance (or target).
+
+Whenever the source property changes, the same value is applied to the
+target property; for instance, the following binding:
 
 |[&lt;!-- language="C" --&gt;
   g_object_bind_property (object1, "property-a",
@@ -225,7 +235,43 @@ and target properties, instead of relying on the last reference on the
 binding, source, and target instances to drop.
 
 #GBinding is available since GObject 2.26</doc>
-      <method name="get_flags" c:identifier="g_binding_get_flags" version="2.26">
+      <method name="dup_source" c:identifier="g_binding_dup_source" version="2.68">
+        <doc xml:space="preserve">Retrieves the #GObject instance used as the source of the binding.
+
+A #GBinding can outlive the source #GObject as the binding does not hold a
+strong reference to the source. If the source is destroyed before the
+binding then this function will return %NULL.</doc>
+        <return-value transfer-ownership="full" nullable="1">
+          <doc xml:space="preserve">the source #GObject, or %NULL if the
+    source does not exist any more.</doc>
+          <type name="Object" c:type="GObject*"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="binding" transfer-ownership="none">
+            <doc xml:space="preserve">a #GBinding</doc>
+            <type name="Binding" c:type="GBinding*"/>
+          </instance-parameter>
+        </parameters>
+      </method>
+      <method name="dup_target" c:identifier="g_binding_dup_target" version="2.68">
+        <doc xml:space="preserve">Retrieves the #GObject instance used as the target of the binding.
+
+A #GBinding can outlive the target #GObject as the binding does not hold a
+strong reference to the target. If the target is destroyed before the
+binding then this function will return %NULL.</doc>
+        <return-value transfer-ownership="full" nullable="1">
+          <doc xml:space="preserve">the target #GObject, or %NULL if the
+    target does not exist any more.</doc>
+          <type name="Object" c:type="GObject*"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="binding" transfer-ownership="none">
+            <doc xml:space="preserve">a #GBinding</doc>
+            <type name="Binding" c:type="GBinding*"/>
+          </instance-parameter>
+        </parameters>
+      </method>
+      <method name="get_flags" c:identifier="g_binding_get_flags" glib:get-property="flags" version="2.26">
         <doc xml:space="preserve">Retrieves the flags passed when constructing the #GBinding.</doc>
         <return-value transfer-ownership="none">
           <doc xml:space="preserve">the #GBindingFlags used by the #GBinding</doc>
@@ -238,7 +284,7 @@ binding, source, and target instances to drop.
           </instance-parameter>
         </parameters>
       </method>
-      <method name="get_source" c:identifier="g_binding_get_source" version="2.26" deprecated="1" deprecated-version="2.68">
+      <method name="get_source" c:identifier="g_binding_get_source" glib:get-property="source" version="2.26" deprecated="1" deprecated-version="2.68">
         <doc xml:space="preserve">Retrieves the #GObject instance used as the source of the binding.
 
 A #GBinding can outlive the source #GObject as the binding does not hold a
@@ -262,7 +308,7 @@ function.</doc-deprecated>
           </instance-parameter>
         </parameters>
       </method>
-      <method name="get_source_property" c:identifier="g_binding_get_source_property" version="2.26">
+      <method name="get_source_property" c:identifier="g_binding_get_source_property" glib:get-property="source-property" version="2.26">
         <doc xml:space="preserve">Retrieves the name of the property of #GBinding:source used as the source
 of the binding.</doc>
         <return-value transfer-ownership="none">
@@ -276,7 +322,7 @@ of the binding.</doc>
           </instance-parameter>
         </parameters>
       </method>
-      <method name="get_target" c:identifier="g_binding_get_target" version="2.26" deprecated="1" deprecated-version="2.68">
+      <method name="get_target" c:identifier="g_binding_get_target" glib:get-property="target" version="2.26" deprecated="1" deprecated-version="2.68">
         <doc xml:space="preserve">Retrieves the #GObject instance used as the target of the binding.
 
 A #GBinding can outlive the target #GObject as the binding does not hold a
@@ -300,7 +346,7 @@ function.</doc-deprecated>
           </instance-parameter>
         </parameters>
       </method>
-      <method name="get_target_property" c:identifier="g_binding_get_target_property" version="2.26">
+      <method name="get_target_property" c:identifier="g_binding_get_target_property" glib:get-property="target-property" version="2.26">
         <doc xml:space="preserve">Retrieves the name of the property of #GBinding:target used as the target
 of the binding.</doc>
         <return-value transfer-ownership="none">
@@ -336,15 +382,15 @@ g_object_bind_property() and is owned by the binding.</doc>
           </instance-parameter>
         </parameters>
       </method>
-      <property name="flags" version="2.26" writable="1" construct-only="1" transfer-ownership="none">
+      <property name="flags" version="2.26" writable="1" construct-only="1" transfer-ownership="none" getter="get_flags">
         <doc xml:space="preserve">Flags to be used to control the #GBinding</doc>
         <type name="BindingFlags"/>
       </property>
-      <property name="source" version="2.26" writable="1" construct-only="1" transfer-ownership="none">
+      <property name="source" version="2.26" writable="1" construct-only="1" transfer-ownership="none" getter="get_source">
         <doc xml:space="preserve">The #GObject that should be used as the source of the binding</doc>
         <type name="Object"/>
       </property>
-      <property name="source-property" version="2.26" writable="1" construct-only="1" transfer-ownership="none">
+      <property name="source-property" version="2.26" writable="1" construct-only="1" transfer-ownership="none" getter="get_source_property">
         <doc xml:space="preserve">The name of the property of #GBinding:source that should be used
 as the source of the binding.
 
@@ -352,11 +398,11 @@ This should be in [canonical form][canonical-parameter-names] to get the
 best performance.</doc>
         <type name="utf8" c:type="gchar*"/>
       </property>
-      <property name="target" version="2.26" writable="1" construct-only="1" transfer-ownership="none">
+      <property name="target" version="2.26" writable="1" construct-only="1" transfer-ownership="none" getter="get_target">
         <doc xml:space="preserve">The #GObject that should be used as the target of the binding</doc>
         <type name="Object"/>
       </property>
-      <property name="target-property" version="2.26" writable="1" construct-only="1" transfer-ownership="none">
+      <property name="target-property" version="2.26" writable="1" construct-only="1" transfer-ownership="none" getter="get_target_property">
         <doc xml:space="preserve">The name of the property of #GBinding:target that should be used
 as the target of the binding.
 
@@ -370,21 +416,21 @@ best performance.</doc>
 g_object_bind_property_full().
 
 This enumeration can be extended at later date.</doc>
-      <member name="default" value="0" c:identifier="G_BINDING_DEFAULT" glib:nick="default">
+      <member name="default" value="0" c:identifier="G_BINDING_DEFAULT" glib:nick="default" glib:name="G_BINDING_DEFAULT">
         <doc xml:space="preserve">The default binding; if the source property
   changes, the target property is updated with its value.</doc>
       </member>
-      <member name="bidirectional" value="1" c:identifier="G_BINDING_BIDIRECTIONAL" glib:nick="bidirectional">
+      <member name="bidirectional" value="1" c:identifier="G_BINDING_BIDIRECTIONAL" glib:nick="bidirectional" glib:name="G_BINDING_BIDIRECTIONAL">
         <doc xml:space="preserve">Bidirectional binding; if either the
   property of the source or the property of the target changes,
   the other is updated.</doc>
       </member>
-      <member name="sync_create" value="2" c:identifier="G_BINDING_SYNC_CREATE" glib:nick="sync-create">
+      <member name="sync_create" value="2" c:identifier="G_BINDING_SYNC_CREATE" glib:nick="sync-create" glib:name="G_BINDING_SYNC_CREATE">
         <doc xml:space="preserve">Synchronize the values of the source and
   target properties when creating the binding; the direction of
   the synchronization is always from the source to the target.</doc>
       </member>
-      <member name="invert_boolean" value="4" c:identifier="G_BINDING_INVERT_BOOLEAN" glib:nick="invert-boolean">
+      <member name="invert_boolean" value="4" c:identifier="G_BINDING_INVERT_BOOLEAN" glib:nick="invert-boolean" glib:name="G_BINDING_INVERT_BOOLEAN">
         <doc xml:space="preserve">If the two properties being bound are
   booleans, setting one to %TRUE will result in the other being
   set to %FALSE and vice versa. This flag will only work for
@@ -393,8 +439,9 @@ This enumeration can be extended at later date.</doc>
       </member>
     </bitfield>
     <callback name="BindingTransformFunc" c:type="GBindingTransformFunc" version="2.26">
-      <doc xml:space="preserve">A function to be called to transform @from_value to @to_value. If
-this is the @transform_to function of a binding, then @from_value
+      <doc xml:space="preserve">A function to be called to transform @from_value to @to_value.
+
+If this is the @transform_to function of a binding, then @from_value
 is the @source_property on the @source object, and @to_value is the
 @target_property on the @target object. If this is the
 @transform_from function of a %G_BINDING_BIDIRECTIONAL binding,
@@ -2365,6 +2412,7 @@ the first parameter.
     </function-macro>
     <function-macro name="CLOSURE_N_NOTIFIERS" c:identifier="G_CLOSURE_N_NOTIFIERS" introspectable="0">
       <doc xml:space="preserve">Get the total number of notifiers connected with the closure @cl.
+
 The count includes the meta marshaller, the finalize and invalidate notifiers
 and the marshal guards. Note that each guard counts as two notifiers.
 See g_closure_set_meta_marshal(), g_closure_add_finalize_notifier(),
@@ -2377,18 +2425,23 @@ g_closure_add_invalidate_notifier() and g_closure_add_marshal_guards().</doc>
     </function-macro>
     <callback name="Callback" c:type="GCallback">
       <doc xml:space="preserve">The type used for callback functions in structure definitions and function
-signatures. This doesn't mean that all callback functions must take no
-parameters and return void. The required signature of a callback function
-is determined by the context in which is used (e.g. the signal to which it
-is connected). Use G_CALLBACK() to cast the callback function to a #GCallback.</doc>
+signatures.
+
+This doesn't mean that all callback functions must take no  parameters and
+return void. The required signature of a callback function is determined by
+the context in which is used (e.g. the signal to which it is connected).
+
+Use G_CALLBACK() to cast the callback function to a #GCallback.</doc>
       <return-value transfer-ownership="none">
         <type name="none" c:type="void"/>
       </return-value>
     </callback>
     <callback name="ClassFinalizeFunc" c:type="GClassFinalizeFunc">
       <doc xml:space="preserve">A callback function used by the type system to finalize a class.
+
 This function is rarely needed, as dynamically allocated class resources
 should be handled by GBaseInitFunc() and GBaseFinalizeFunc().
+
 Also, specification of a GClassFinalizeFunc() in the #GTypeInfo
 structure of a static type is invalid, because classes of static types
 will never be finalized (they are artificially kept alive when their
@@ -2409,8 +2462,9 @@ reference count drops to zero).</doc>
     </callback>
     <callback name="ClassInitFunc" c:type="GClassInitFunc">
       <doc xml:space="preserve">A callback function used by the type system to initialize the class
-of a specific type. This function should initialize all static class
-members.
+of a specific type.
+
+This function should initialize all static class members.
 
 The initialization process of a class involves:
 
@@ -2479,6 +2533,7 @@ type_b_class_init (TypeBClass *class)
   class-&gt;static_float = 3.14159265358979323846;
 }
 ]|
+
 Initialization of TypeBClass will first cause initialization of
 TypeAClass (derived classes reference their parent classes, see
 g_type_class_ref() on this).
@@ -2518,8 +2573,9 @@ time.</doc>
       </parameters>
     </callback>
     <record name="Closure" c:type="GClosure" glib:type-name="GClosure" glib:get-type="g_closure_get_type" c:symbol-prefix="closure">
-      <doc xml:space="preserve">A #GClosure represents a callback supplied by the programmer. It
-will generally comprise a function of some kind and a marshaller
+      <doc xml:space="preserve">A #GClosure represents a callback supplied by the programmer.
+
+It will generally comprise a function of some kind and a marshaller
 used to call it. It is the responsibility of the marshaller to
 convert the arguments for the invocation from #GValues into
 a suitable form, perform the callback on the converted arguments,
@@ -2562,38 +2618,38 @@ callback function/data pointer combination:
 - g_closure_invalidate() and invalidation notifiers allow callbacks to be
   automatically removed when the objects they point to go away.</doc>
       <field name="ref_count" readable="0" bits="15" private="1">
-        <type name="guint" c:type="volatile guint"/>
+        <type name="guint" c:type="guint"/>
       </field>
       <field name="meta_marshal_nouse" readable="0" bits="1" private="1">
-        <type name="guint" c:type="volatile guint"/>
+        <type name="guint" c:type="guint"/>
       </field>
       <field name="n_guards" readable="0" bits="1" private="1">
-        <type name="guint" c:type="volatile guint"/>
+        <type name="guint" c:type="guint"/>
       </field>
       <field name="n_fnotifiers" readable="0" bits="2" private="1">
-        <type name="guint" c:type="volatile guint"/>
+        <type name="guint" c:type="guint"/>
       </field>
       <field name="n_inotifiers" readable="0" bits="8" private="1">
-        <type name="guint" c:type="volatile guint"/>
+        <type name="guint" c:type="guint"/>
       </field>
       <field name="in_inotify" readable="0" bits="1" private="1">
-        <type name="guint" c:type="volatile guint"/>
+        <type name="guint" c:type="guint"/>
       </field>
       <field name="floating" readable="0" bits="1" private="1">
-        <type name="guint" c:type="volatile guint"/>
+        <type name="guint" c:type="guint"/>
       </field>
       <field name="derivative_flag" readable="0" bits="1" private="1">
-        <type name="guint" c:type="volatile guint"/>
+        <type name="guint" c:type="guint"/>
       </field>
       <field name="in_marshal" writable="1" bits="1">
         <doc xml:space="preserve">Indicates whether the closure is currently being invoked with
  g_closure_invoke()</doc>
-        <type name="guint" c:type="volatile guint"/>
+        <type name="guint" c:type="guint"/>
       </field>
       <field name="is_invalid" writable="1" bits="1">
         <doc xml:space="preserve">Indicates whether the closure has been invalidated by
  g_closure_invalidate()</doc>
-        <type name="guint" c:type="volatile guint"/>
+        <type name="guint" c:type="guint"/>
       </field>
       <field name="marshal">
         <callback name="marshal">
@@ -2652,8 +2708,9 @@ when implementing new types of closures.</doc>
       </constructor>
       <constructor name="new_simple" c:identifier="g_closure_new_simple">
         <doc xml:space="preserve">Allocates a struct of the given size and initializes the initial
-part as a #GClosure. This function is mainly useful when
-implementing new types of closures.
+part as a #GClosure.
+
+This function is mainly useful when implementing new types of closures:
 
 |[&lt;!-- language="C" --&gt;
 typedef struct _MyClosure MyClosure;
@@ -2705,11 +2762,12 @@ MyClosure *my_closure_new (gpointer data)
       </constructor>
       <method name="add_finalize_notifier" c:identifier="g_closure_add_finalize_notifier" introspectable="0">
         <doc xml:space="preserve">Registers a finalization notifier which will be called when the
-reference count of @closure goes down to 0. Multiple finalization
-notifiers on a single closure are invoked in unspecified order. If
-a single call to g_closure_unref() results in the closure being
-both invalidated and finalized, then the invalidate notifiers will
-be run before the finalize notifiers.</doc>
+reference count of @closure goes down to 0.
+
+Multiple finalization notifiers on a single closure are invoked in
+unspecified order. If a single call to g_closure_unref() results in
+the closure being both invalidated and finalized, then the invalidate
+notifiers will be run before the finalize notifiers.</doc>
         <return-value transfer-ownership="none">
           <type name="none" c:type="void"/>
         </return-value>
@@ -2730,9 +2788,10 @@ be run before the finalize notifiers.</doc>
       </method>
       <method name="add_invalidate_notifier" c:identifier="g_closure_add_invalidate_notifier" introspectable="0">
         <doc xml:space="preserve">Registers an invalidation notifier which will be called when the
-@closure is invalidated with g_closure_invalidate(). Invalidation
-notifiers are invoked before finalization notifiers, in an
-unspecified order.</doc>
+@closure is invalidated with g_closure_invalidate().
+
+Invalidation notifiers are invoked before finalization notifiers,
+in an unspecified order.</doc>
         <return-value transfer-ownership="none">
           <type name="none" c:type="void"/>
         </return-value>
@@ -2753,9 +2812,11 @@ unspecified order.</doc>
       </method>
       <method name="add_marshal_guards" c:identifier="g_closure_add_marshal_guards" introspectable="0">
         <doc xml:space="preserve">Adds a pair of notifiers which get invoked before and after the
-closure callback, respectively. This is typically used to protect
-the extra arguments for the duration of the callback. See
-g_object_watch_closure() for an example of marshal guards.</doc>
+closure callback, respectively.
+
+This is typically used to protect the extra arguments for the
+duration of the callback. See g_object_watch_closure() for an
+example of marshal guards.</doc>
         <return-value transfer-ownership="none">
           <type name="none" c:type="void"/>
         </return-value>
@@ -2788,7 +2849,9 @@ g_object_watch_closure() for an example of marshal guards.</doc>
         <doc xml:space="preserve">Sets a flag on the closure to indicate that its calling
 environment has become invalid, and thus causes any future
 invocations of g_closure_invoke() on this @closure to be
-ignored. Also, invalidation notifiers installed on the closure will
+ignored.
+
+Also, invalidation notifiers installed on the closure will
 be called at this point. Note that unless you are holding a
 reference to the closure yourself, the invalidation notifiers may
 unref the closure and cause it to be destroyed, so if you need to
@@ -2903,12 +2966,16 @@ Notice that notifiers are automatically removed after they are run.</doc>
         </parameters>
       </method>
       <method name="set_marshal" c:identifier="g_closure_set_marshal" introspectable="0">
-        <doc xml:space="preserve">Sets the marshaller of @closure. The `marshal_data`
-of @marshal provides a way for a meta marshaller to provide additional
-information to the marshaller. (See g_closure_set_meta_marshal().) For
-GObject's C predefined marshallers (the g_cclosure_marshal_*()
+        <doc xml:space="preserve">Sets the marshaller of @closure.
+
+The `marshal_data` of @marshal provides a way for a meta marshaller to
+provide additional information to the marshaller.
+
+For GObject's C predefined marshallers (the `g_cclosure_marshal_*()`
 functions), what it provides is a callback function to use instead of
-@closure-&gt;callback.</doc>
+@closure-&gt;callback.
+
+See also: g_closure_set_meta_marshal()</doc>
         <return-value transfer-ownership="none">
           <type name="none" c:type="void"/>
         </return-value>
@@ -2924,12 +2991,15 @@ functions), what it provides is a callback function to use instead of
         </parameters>
       </method>
       <method name="set_meta_marshal" c:identifier="g_closure_set_meta_marshal" introspectable="0">
-        <doc xml:space="preserve">Sets the meta marshaller of @closure.  A meta marshaller wraps
-@closure-&gt;marshal and modifies the way it is called in some
-fashion. The most common use of this facility is for C callbacks.
+        <doc xml:space="preserve">Sets the meta marshaller of @closure.
+
+A meta marshaller wraps the @closure's marshal and modifies the way
+it is called in some fashion. The most common use of this facility
+is for C callbacks.
+
 The same marshallers (generated by [glib-genmarshal][glib-genmarshal]),
 are used everywhere, but the way that we get the callback function
-differs. In most cases we want to use @closure-&gt;callback, but in
+differs. In most cases we want to use the @closure's callback, but in
 other cases we want to use some different technique to retrieve the
 callback function.
 
@@ -2958,27 +3028,34 @@ the right callback and passes it to the marshaller as the
         </parameters>
       </method>
       <method name="sink" c:identifier="g_closure_sink">
-        <doc xml:space="preserve">Takes over the initial ownership of a closure.  Each closure is
-initially created in a "floating" state, which means that the initial
-reference count is not owned by any caller. g_closure_sink() checks
-to see if the object is still floating, and if so, unsets the
-floating state and decreases the reference count. If the closure
-is not floating, g_closure_sink() does nothing. The reason for the
-existence of the floating state is to prevent cumbersome code
-sequences like:
+        <doc xml:space="preserve">Takes over the initial ownership of a closure.
+
+Each closure is initially created in a "floating" state, which means
+that the initial reference count is not owned by any caller.
+
+This function checks to see if the object is still floating, and if so,
+unsets the floating state and decreases the reference count. If the
+closure is not floating, g_closure_sink() does nothing.
+
+The reason for the existence of the floating state is to prevent
+cumbersome code sequences like:
+
 |[&lt;!-- language="C" --&gt;
 closure = g_cclosure_new (cb_func, cb_data);
 g_source_set_closure (source, closure);
 g_closure_unref (closure); // GObject doesn't really need this
 ]|
+
 Because g_source_set_closure() (and similar functions) take ownership of the
 initial reference count, if it is unowned, we instead can write:
+
 |[&lt;!-- language="C" --&gt;
 g_source_set_closure (source, g_cclosure_new (cb_func, cb_data));
 ]|
 
 Generally, this function is used together with g_closure_ref(). An example
 of storing a closure for later notification looks like:
+
 |[&lt;!-- language="C" --&gt;
 static GClosure *notify_closure = NULL;
 void
@@ -3011,8 +3088,10 @@ g_closure_ref() should be called prior to this function.</doc>
       </method>
       <method name="unref" c:identifier="g_closure_unref">
         <doc xml:space="preserve">Decrements the reference count of a closure after it was previously
-incremented by the same caller. If no other callers are using the
-closure, then the closure will be destroyed and freed.</doc>
+incremented by the same caller.
+
+If no other callers are using the closure, then the closure will be
+destroyed and freed.</doc>
         <return-value transfer-ownership="none">
           <type name="none" c:type="void"/>
         </return-value>
@@ -3108,7 +3187,7 @@ header file for a type which is intended to be subclassed.
 
 You might use it in a header as follows:
 
-|[
+|[&lt;!-- language="C" --&gt;
 #ifndef _gtk_frobber_h_
 #define _gtk_frobber_h_
 
@@ -3135,26 +3214,26 @@ GtkWidget *    gtk_frobber_new   (void);
 
 This results in the following things happening:
 
-- the usual gtk_frobber_get_type() function is declared with a return type of #GType
+- the usual `gtk_frobber_get_type()` function is declared with a return type of #GType
 
-- the GtkFrobber struct is created with GtkWidget as the first and only item.  You are expected to use
+- the `GtkFrobber` struct is created with `GtkWidget` as the first and only item.  You are expected to use
   a private structure from your .c file to store your instance variables.
 
-- the GtkFrobberClass type is defined as a typedef to struct _GtkFrobberClass, which is left undefined.
+- the `GtkFrobberClass` type is defined as a typedef to `struct _GtkFrobberClass`, which is left undefined.
   You should do this from the header file directly after you use the macro.
 
-- the GTK_FROBBER() and GTK_FROBBER_CLASS() casts are emitted as static inline functions along with
-  the GTK_IS_FROBBER() and GTK_IS_FROBBER_CLASS() type checking functions and GTK_FROBBER_GET_CLASS()
+- the `GTK_FROBBER()` and `GTK_FROBBER_CLASS()` casts are emitted as `static inline` functions along with
+  the `GTK_IS_FROBBER()` and `GTK_IS_FROBBER_CLASS()` type checking functions and `GTK_FROBBER_GET_CLASS()`
   function.
 
 - g_autoptr() support being added for your type, based on the type of your parent class
 
 You can only use this function if your parent type also supports g_autoptr().
 
-Because the type macro (GTK_TYPE_FROBBER in the above example) is not a callable, you must continue to
+Because the type macro (`GTK_TYPE_FROBBER` in the above example) is not a callable, you must continue to
 manually define this as a macro for yourself.
 
-The declaration of the _get_type() function is the first thing emitted by the macro.  This allows this macro
+The declaration of the `_get_type()` function is the first thing emitted by the macro.  This allows this macro
 to be used in the usual way with export control and API versioning macros.
 
 If you are writing a library, it is important to note that it is possible to convert a type from using
@@ -3169,30 +3248,30 @@ If you must use G_DECLARE_DERIVABLE_TYPE() you should be sure to include some pa
 class structure to leave space for the addition of future virtual functions.</doc>
       <parameters>
         <parameter name="ModuleObjName">
-          <doc xml:space="preserve">The name of the new type, in camel case (like GtkWidget)</doc>
+          <doc xml:space="preserve">The name of the new type, in camel case (like `GtkWidget`)</doc>
         </parameter>
         <parameter name="module_obj_name">
           <doc xml:space="preserve">The name of the new type in lowercase, with words
- separated by '_' (like 'gtk_widget')</doc>
+ separated by `_` (like `gtk_widget`)</doc>
         </parameter>
         <parameter name="MODULE">
-          <doc xml:space="preserve">The name of the module, in all caps (like 'GTK')</doc>
+          <doc xml:space="preserve">The name of the module, in all caps (like `GTK`)</doc>
         </parameter>
         <parameter name="OBJ_NAME">
-          <doc xml:space="preserve">The bare name of the type, in all caps (like 'WIDGET')</doc>
+          <doc xml:space="preserve">The bare name of the type, in all caps (like `WIDGET`)</doc>
         </parameter>
         <parameter name="ParentName">
-          <doc xml:space="preserve">the name of the parent type, in camel case (like GtkWidget)</doc>
+          <doc xml:space="preserve">the name of the parent type, in camel case (like `GtkWidget`)</doc>
         </parameter>
       </parameters>
     </function-macro>
     <function-macro name="DECLARE_FINAL_TYPE" c:identifier="G_DECLARE_FINAL_TYPE" version="2.44" introspectable="0">
-      <doc xml:space="preserve">A convenience macro for emitting the usual declarations in the header file for a type which is not (at the
-present time) intended to be subclassed.
+      <doc xml:space="preserve">A convenience macro for emitting the usual declarations in the header file
+for a type which is not (at the present time) intended to be subclassed.
 
 You might use it in a header as follows:
 
-|[
+|[&lt;!-- language="C" --&gt;
 #ifndef _myapp_window_h_
 #define _myapp_window_h_
 
@@ -3210,15 +3289,15 @@ MyAppWindow *    my_app_window_new    (void);
 
 This results in the following things happening:
 
-- the usual my_app_window_get_type() function is declared with a return type of #GType
+- the usual `my_app_window_get_type()` function is declared with a return type of #GType
 
-- the MyAppWindow types is defined as a typedef of struct _MyAppWindow.  The struct itself is not
+- the `MyAppWindow` type is defined as a `typedef` of `struct _MyAppWindow`.  The struct itself is not
   defined and should be defined from the .c file before G_DEFINE_TYPE() is used.
 
-- the MY_APP_WINDOW() cast is emitted as static inline function along with the MY_APP_IS_WINDOW() type
+- the `MY_APP_WINDOW()` cast is emitted as `static inline` function along with the `MY_APP_IS_WINDOW()` type
   checking function
 
-- the MyAppWindowClass type is defined as a struct containing GtkWindowClass.  This is done for the
+- the `MyAppWindowClass` type is defined as a struct containing `GtkWindowClass`.  This is done for the
   convenience of the person defining the type and should not be considered to be part of the ABI.  In
   particular, without a firm declaration of the instance structure, it is not possible to subclass the type
   and therefore the fact that the size of the class structure is exposed is not a concern and it can be
@@ -3228,10 +3307,10 @@ This results in the following things happening:
 
 You can only use this function if your parent type also supports g_autoptr().
 
-Because the type macro (MY_APP_TYPE_WINDOW in the above example) is not a callable, you must continue to
+Because the type macro (`MY_APP_TYPE_WINDOW` in the above example) is not a callable, you must continue to
 manually define this as a macro for yourself.
 
-The declaration of the _get_type() function is the first thing emitted by the macro.  This allows this macro
+The declaration of the `_get_type()` function is the first thing emitted by the macro.  This allows this macro
 to be used in the usual way with export control and API versioning macros.
 
 If you want to declare your own class structure, use G_DECLARE_DERIVABLE_TYPE().
@@ -3243,29 +3322,29 @@ subclassed.  Once a class structure has been exposed it is not possible to chang
 reorder items without breaking the API and/or ABI.</doc>
       <parameters>
         <parameter name="ModuleObjName">
-          <doc xml:space="preserve">The name of the new type, in camel case (like GtkWidget)</doc>
+          <doc xml:space="preserve">The name of the new type, in camel case (like `GtkWidget`)</doc>
         </parameter>
         <parameter name="module_obj_name">
           <doc xml:space="preserve">The name of the new type in lowercase, with words
- separated by '_' (like 'gtk_widget')</doc>
+ separated by `_` (like `gtk_widget`)</doc>
         </parameter>
         <parameter name="MODULE">
-          <doc xml:space="preserve">The name of the module, in all caps (like 'GTK')</doc>
+          <doc xml:space="preserve">The name of the module, in all caps (like `GTK`)</doc>
         </parameter>
         <parameter name="OBJ_NAME">
-          <doc xml:space="preserve">The bare name of the type, in all caps (like 'WIDGET')</doc>
+          <doc xml:space="preserve">The bare name of the type, in all caps (like `WIDGET`)</doc>
         </parameter>
         <parameter name="ParentName">
-          <doc xml:space="preserve">the name of the parent type, in camel case (like GtkWidget)</doc>
+          <doc xml:space="preserve">the name of the parent type, in camel case (like `GtkWidget`)</doc>
         </parameter>
       </parameters>
     </function-macro>
     <function-macro name="DECLARE_INTERFACE" c:identifier="G_DECLARE_INTERFACE" version="2.44" introspectable="0">
-      <doc xml:space="preserve">A convenience macro for emitting the usual declarations in the header file for a GInterface type.
+      <doc xml:space="preserve">A convenience macro for emitting the usual declarations in the header file for a #GInterface type.
 
 You might use it in a header as follows:
 
-|[
+|[&lt;!-- language="C" --&gt;
 #ifndef _my_model_h_
 #define _my_model_h_
 
@@ -3289,45 +3368,46 @@ gpointer my_model_get_item (MyModel *model);
 
 This results in the following things happening:
 
-- the usual my_model_get_type() function is declared with a return type of #GType
+- the usual `my_model_get_type()` function is declared with a return type of #GType
 
-- the MyModelInterface type is defined as a typedef to struct _MyModelInterface,
+- the `MyModelInterface` type is defined as a typedef to `struct _MyModelInterface`,
   which is left undefined. You should do this from the header file directly after
   you use the macro.
 
-- the MY_MODEL() cast is emitted as static inline functions along with
-  the MY_IS_MODEL() type checking function and MY_MODEL_GET_IFACE() function.
+- the `MY_MODEL()` cast is emitted as `static inline` functions along with
+  the `MY_IS_MODEL()` type checking function and `MY_MODEL_GET_IFACE()` function.
 
 - g_autoptr() support being added for your type, based on your prerequisite type.
 
 You can only use this function if your prerequisite type also supports g_autoptr().
 
-Because the type macro (MY_TYPE_MODEL in the above example) is not a callable, you must continue to
+Because the type macro (`MY_TYPE_MODEL` in the above example) is not a callable, you must continue to
 manually define this as a macro for yourself.
 
-The declaration of the _get_type() function is the first thing emitted by the macro.  This allows this macro
+The declaration of the `_get_type()` function is the first thing emitted by the macro.  This allows this macro
 to be used in the usual way with export control and API versioning macros.</doc>
       <parameters>
         <parameter name="ModuleObjName">
-          <doc xml:space="preserve">The name of the new type, in camel case (like GtkWidget)</doc>
+          <doc xml:space="preserve">The name of the new type, in camel case (like `GtkWidget`)</doc>
         </parameter>
         <parameter name="module_obj_name">
           <doc xml:space="preserve">The name of the new type in lowercase, with words
- separated by '_' (like 'gtk_widget')</doc>
+ separated by `_` (like `gtk_widget`)</doc>
         </parameter>
         <parameter name="MODULE">
-          <doc xml:space="preserve">The name of the module, in all caps (like 'GTK')</doc>
+          <doc xml:space="preserve">The name of the module, in all caps (like `GTK`)</doc>
         </parameter>
         <parameter name="OBJ_NAME">
-          <doc xml:space="preserve">The bare name of the type, in all caps (like 'WIDGET')</doc>
+          <doc xml:space="preserve">The bare name of the type, in all caps (like `WIDGET`)</doc>
         </parameter>
         <parameter name="PrerequisiteName">
-          <doc xml:space="preserve">the name of the prerequisite type, in camel case (like GtkWidget)</doc>
+          <doc xml:space="preserve">the name of the prerequisite type, in camel case (like `GtkWidget`)</doc>
         </parameter>
       </parameters>
     </function-macro>
     <function-macro name="DEFINE_ABSTRACT_TYPE" c:identifier="G_DEFINE_ABSTRACT_TYPE" version="2.4" introspectable="0">
       <doc xml:space="preserve">A convenience macro for type implementations.
+
 Similar to G_DEFINE_TYPE(), but defines an abstract type.
 See G_DEFINE_TYPE_EXTENDED() for an example.</doc>
       <parameters>
@@ -3336,7 +3416,7 @@ See G_DEFINE_TYPE_EXTENDED() for an example.</doc>
         </parameter>
         <parameter name="t_n">
           <doc xml:space="preserve">The name of the new type, in lowercase, with words
- separated by '_'.</doc>
+ separated by `_`.</doc>
         </parameter>
         <parameter name="T_P">
           <doc xml:space="preserve">The #GType of the parent type.</doc>
@@ -3345,9 +3425,11 @@ See G_DEFINE_TYPE_EXTENDED() for an example.</doc>
     </function-macro>
     <function-macro name="DEFINE_ABSTRACT_TYPE_WITH_CODE" c:identifier="G_DEFINE_ABSTRACT_TYPE_WITH_CODE" version="2.4" introspectable="0">
       <doc xml:space="preserve">A convenience macro for type implementations.
+
 Similar to G_DEFINE_TYPE_WITH_CODE(), but defines an abstract type and
-allows you to insert custom code into the *_get_type() function, e.g.
+allows you to insert custom code into the `*_get_type()` function, e.g.
 interface implementations  via G_IMPLEMENT_INTERFACE().
+
 See G_DEFINE_TYPE_EXTENDED() for an example.</doc>
       <parameters>
         <parameter name="TN">
@@ -3355,18 +3437,19 @@ See G_DEFINE_TYPE_EXTENDED() for an example.</doc>
         </parameter>
         <parameter name="t_n">
           <doc xml:space="preserve">The name of the new type, in lowercase, with words
- separated by '_'.</doc>
+ separated by `_`.</doc>
         </parameter>
         <parameter name="T_P">
           <doc xml:space="preserve">The #GType of the parent type.</doc>
         </parameter>
         <parameter name="_C_">
-          <doc xml:space="preserve">Custom code that gets inserted in the @type_name_get_type() function.</doc>
+          <doc xml:space="preserve">Custom code that gets inserted in the `type_name_get_type()` function.</doc>
         </parameter>
       </parameters>
     </function-macro>
     <function-macro name="DEFINE_ABSTRACT_TYPE_WITH_PRIVATE" c:identifier="G_DEFINE_ABSTRACT_TYPE_WITH_PRIVATE" version="2.38" introspectable="0">
       <doc xml:space="preserve">Similar to G_DEFINE_TYPE_WITH_PRIVATE(), but defines an abstract type.
+
 See G_DEFINE_TYPE_EXTENDED() for an example.</doc>
       <parameters>
         <parameter name="TN">
@@ -3374,7 +3457,7 @@ See G_DEFINE_TYPE_EXTENDED() for an example.</doc>
         </parameter>
         <parameter name="t_n">
           <doc xml:space="preserve">The name of the new type, in lowercase, with words
- separated by '_'.</doc>
+ separated by `_`.</doc>
         </parameter>
         <parameter name="T_P">
           <doc xml:space="preserve">The #GType of the parent type.</doc>
@@ -3382,15 +3465,30 @@ See G_DEFINE_TYPE_EXTENDED() for an example.</doc>
       </parameters>
     </function-macro>
     <function-macro name="DEFINE_BOXED_TYPE" c:identifier="G_DEFINE_BOXED_TYPE" version="2.26" introspectable="0">
-      <doc xml:space="preserve">A convenience macro for boxed type implementations, which defines a
-type_name_get_type() function registering the boxed type.</doc>
+      <doc xml:space="preserve">A convenience macro for defining a new custom boxed type.
+
+Using this macro is the recommended way of defining new custom boxed
+types, over calling g_boxed_type_register_static() directly. It defines
+a `type_name_get_type()` function which will return the newly defined
+#GType, enabling lazy instantiation.
+
+|[&lt;!-- language="C" --&gt;
+G_DEFINE_BOXED_TYPE (MyStruct, my_struct, my_struct_copy, my_struct_free)
+
+void
+foo ()
+{
+  GType type = my_struct_get_type ();
+  // ... your code ...
+}
+]|</doc>
       <parameters>
         <parameter name="TypeName">
           <doc xml:space="preserve">The name of the new type, in Camel case</doc>
         </parameter>
         <parameter name="type_name">
           <doc xml:space="preserve">The name of the new type, in lowercase, with words
- separated by '_'</doc>
+ separated by `_`</doc>
         </parameter>
         <parameter name="copy_func">
           <doc xml:space="preserve">the #GBoxedCopyFunc for the new type</doc>
@@ -3402,8 +3500,9 @@ type_name_get_type() function registering the boxed type.</doc>
     </function-macro>
     <function-macro name="DEFINE_BOXED_TYPE_WITH_CODE" c:identifier="G_DEFINE_BOXED_TYPE_WITH_CODE" version="2.26" introspectable="0">
       <doc xml:space="preserve">A convenience macro for boxed type implementations.
+
 Similar to G_DEFINE_BOXED_TYPE(), but allows to insert custom code into the
-type_name_get_type() function, e.g. to register value transformations with
+`type_name_get_type()` function, e.g. to register value transformations with
 g_value_register_transform_func(), for instance:
 
 |[&lt;!-- language="C" --&gt;
@@ -3421,7 +3520,7 @@ defined boxed type is exposed in the `g_define_type_id` variable.</doc>
         </parameter>
         <parameter name="type_name">
           <doc xml:space="preserve">The name of the new type, in lowercase, with words
- separated by '_'</doc>
+ separated by `_`</doc>
         </parameter>
         <parameter name="copy_func">
           <doc xml:space="preserve">the #GBoxedCopyFunc for the new type</doc>
@@ -3430,7 +3529,7 @@ defined boxed type is exposed in the `g_define_type_id` variable.</doc>
           <doc xml:space="preserve">the #GBoxedFreeFunc for the new type</doc>
         </parameter>
         <parameter name="_C_">
-          <doc xml:space="preserve">Custom code that gets inserted in the *_get_type() function</doc>
+          <doc xml:space="preserve">Custom code that gets inserted in the `*_get_type()` function</doc>
         </parameter>
       </parameters>
     </function-macro>
@@ -3438,9 +3537,10 @@ defined boxed type is exposed in the `g_define_type_id` variable.</doc>
       <doc xml:space="preserve">A convenience macro for dynamic type implementations, which declares a
 class initialization function, an instance initialization function (see
 #GTypeInfo for information about these) and a static variable named
-`t_n`_parent_class pointing to the parent class. Furthermore,
-it defines a `*_get_type()` and a static `*_register_type()` functions
-for use in your `module_init()`.
+`t_n`_parent_class pointing to the parent class.
+
+Furthermore, it defines a `*_get_type()` and a static `*_register_type()`
+functions for use in your `module_init()`.
 
 See G_DEFINE_DYNAMIC_TYPE_EXTENDED() for an example.</doc>
       <parameters>
@@ -3460,7 +3560,7 @@ See G_DEFINE_DYNAMIC_TYPE_EXTENDED() for an example.</doc>
       <doc xml:space="preserve">A more general version of G_DEFINE_DYNAMIC_TYPE() which
 allows to specify #GTypeFlags and custom code.
 
-|[
+|[&lt;!-- language="C" --&gt;
 G_DEFINE_DYNAMIC_TYPE_EXTENDED (GtkGadget,
                                 gtk_gadget,
                                 GTK_TYPE_THING,
@@ -3468,8 +3568,10 @@ G_DEFINE_DYNAMIC_TYPE_EXTENDED (GtkGadget,
                                 G_IMPLEMENT_INTERFACE_DYNAMIC (TYPE_GIZMO,
                                                                gtk_gadget_gizmo_init));
 ]|
+
 expands to
-|[
+
+|[&lt;!-- language="C" --&gt;
 static void     gtk_gadget_init              (GtkGadget      *self);
 static void     gtk_gadget_class_init        (GtkGadgetClass *klass);
 static void     gtk_gadget_class_finalize    (GtkGadgetClass *klass);
@@ -3536,9 +3638,71 @@ gtk_gadget_register_type (GTypeModule *type_module)
         </parameter>
       </parameters>
     </function-macro>
+    <function-macro name="DEFINE_FINAL_TYPE" c:identifier="G_DEFINE_FINAL_TYPE" version="2.70" introspectable="0">
+      <doc xml:space="preserve">A convenience macro for type implementations.
+
+Similar to G_DEFINE_TYPE(), but defines a final type.
+
+See G_DEFINE_TYPE_EXTENDED() for an example.</doc>
+      <parameters>
+        <parameter name="TN">
+          <doc xml:space="preserve">the name of the new type, in Camel case</doc>
+        </parameter>
+        <parameter name="t_n">
+          <doc xml:space="preserve">the name of the new type, in lower case, with words
+  separated by `_` (snake case)</doc>
+        </parameter>
+        <parameter name="T_P">
+          <doc xml:space="preserve">the #GType of the parent type</doc>
+        </parameter>
+      </parameters>
+    </function-macro>
+    <function-macro name="DEFINE_FINAL_TYPE_WITH_CODE" c:identifier="G_DEFINE_FINAL_TYPE_WITH_CODE" version="2.70" introspectable="0">
+      <doc xml:space="preserve">A convenience macro for type implementations.
+
+Similar to G_DEFINE_TYPE_WITH_CODE(), but defines a final type and
+allows you to insert custom code into the `*_get_type()` function, e.g.
+interface implementations  via G_IMPLEMENT_INTERFACE().
+
+See G_DEFINE_TYPE_EXTENDED() for an example.</doc>
+      <parameters>
+        <parameter name="TN">
+          <doc xml:space="preserve">the name of the new type, in Camel case</doc>
+        </parameter>
+        <parameter name="t_n">
+          <doc xml:space="preserve">the name of the new type, in lower case, with words
+  separated by `_` (snake case)</doc>
+        </parameter>
+        <parameter name="T_P">
+          <doc xml:space="preserve">the #GType of the parent type</doc>
+        </parameter>
+        <parameter name="_C_">
+          <doc xml:space="preserve">Custom code that gets inserted in the `type_name_get_type()` function.</doc>
+        </parameter>
+      </parameters>
+    </function-macro>
+    <function-macro name="DEFINE_FINAL_TYPE_WITH_PRIVATE" c:identifier="G_DEFINE_FINAL_TYPE_WITH_PRIVATE" version="2.70" introspectable="0">
+      <doc xml:space="preserve">A convenience macro for type implementations.
+
+Similar to G_DEFINE_TYPE_WITH_PRIVATE(), but defines a final type.
+
+See G_DEFINE_TYPE_EXTENDED() for an example.</doc>
+      <parameters>
+        <parameter name="TN">
+          <doc xml:space="preserve">the name of the new type, in Camel case</doc>
+        </parameter>
+        <parameter name="t_n">
+          <doc xml:space="preserve">the name of the new type, in lower case, with words
+  separated by `_` (snake case)</doc>
+        </parameter>
+        <parameter name="T_P">
+          <doc xml:space="preserve">the #GType of the parent type</doc>
+        </parameter>
+      </parameters>
+    </function-macro>
     <function-macro name="DEFINE_INTERFACE" c:identifier="G_DEFINE_INTERFACE" version="2.24" introspectable="0">
       <doc xml:space="preserve">A convenience macro for #GTypeInterface definitions, which declares
-a default vtable initialization function and defines a *_get_type()
+a default vtable initialization function and defines a `*_get_type()`
 function.
 
 The macro expects the interface initialization function to have the
@@ -3555,64 +3719,66 @@ must write the #GTypeInterface definitions manually.</doc>
           <doc xml:space="preserve">The name of the new type, in Camel case.</doc>
         </parameter>
         <parameter name="t_n">
-          <doc xml:space="preserve">The name of the new type, in lowercase, with words separated by '_'.</doc>
+          <doc xml:space="preserve">The name of the new type, in lowercase, with words separated by `_`.</doc>
         </parameter>
         <parameter name="T_P">
-          <doc xml:space="preserve">The #GType of the prerequisite type for the interface, or 0
-(%G_TYPE_INVALID) for no prerequisite type.</doc>
+          <doc xml:space="preserve">The #GType of the prerequisite type for the interface, or %G_TYPE_INVALID
+for no prerequisite type.</doc>
         </parameter>
       </parameters>
     </function-macro>
     <function-macro name="DEFINE_INTERFACE_WITH_CODE" c:identifier="G_DEFINE_INTERFACE_WITH_CODE" version="2.24" introspectable="0">
-      <doc xml:space="preserve">A convenience macro for #GTypeInterface definitions. Similar to
-G_DEFINE_INTERFACE(), but allows you to insert custom code into the
-*_get_type() function, e.g. additional interface implementations
-via G_IMPLEMENT_INTERFACE(), or additional prerequisite types. See
-G_DEFINE_TYPE_EXTENDED() for a similar example using
+      <doc xml:space="preserve">A convenience macro for #GTypeInterface definitions.
+
+Similar to G_DEFINE_INTERFACE(), but allows you to insert custom code
+into the `*_get_type()` function, e.g. additional interface implementations
+via G_IMPLEMENT_INTERFACE(), or additional prerequisite types.
+
+See G_DEFINE_TYPE_EXTENDED() for a similar example using
 G_DEFINE_TYPE_WITH_CODE().</doc>
       <parameters>
         <parameter name="TN">
           <doc xml:space="preserve">The name of the new type, in Camel case.</doc>
         </parameter>
         <parameter name="t_n">
-          <doc xml:space="preserve">The name of the new type, in lowercase, with words separated by '_'.</doc>
+          <doc xml:space="preserve">The name of the new type, in lowercase, with words separated by `_`.</doc>
         </parameter>
         <parameter name="T_P">
-          <doc xml:space="preserve">The #GType of the prerequisite type for the interface, or 0
-(%G_TYPE_INVALID) for no prerequisite type.</doc>
+          <doc xml:space="preserve">The #GType of the prerequisite type for the interface, or %G_TYPE_INVALID
+for no prerequisite type.</doc>
         </parameter>
         <parameter name="_C_">
-          <doc xml:space="preserve">Custom code that gets inserted in the *_get_type() function.</doc>
+          <doc xml:space="preserve">Custom code that gets inserted in the `*_get_type()` function.</doc>
         </parameter>
       </parameters>
     </function-macro>
     <function-macro name="DEFINE_POINTER_TYPE" c:identifier="G_DEFINE_POINTER_TYPE" version="2.26" introspectable="0">
       <doc xml:space="preserve">A convenience macro for pointer type implementations, which defines a
-type_name_get_type() function registering the pointer type.</doc>
+`type_name_get_type()` function registering the pointer type.</doc>
       <parameters>
         <parameter name="TypeName">
           <doc xml:space="preserve">The name of the new type, in Camel case</doc>
         </parameter>
         <parameter name="type_name">
           <doc xml:space="preserve">The name of the new type, in lowercase, with words
- separated by '_'</doc>
+ separated by `_`</doc>
         </parameter>
       </parameters>
     </function-macro>
     <function-macro name="DEFINE_POINTER_TYPE_WITH_CODE" c:identifier="G_DEFINE_POINTER_TYPE_WITH_CODE" version="2.26" introspectable="0">
       <doc xml:space="preserve">A convenience macro for pointer type implementations.
 Similar to G_DEFINE_POINTER_TYPE(), but allows to insert
-custom code into the type_name_get_type() function.</doc>
+custom code into the `type_name_get_type()` function.</doc>
       <parameters>
         <parameter name="TypeName">
           <doc xml:space="preserve">The name of the new type, in Camel case</doc>
         </parameter>
         <parameter name="type_name">
           <doc xml:space="preserve">The name of the new type, in lowercase, with words
- separated by '_'</doc>
+ separated by `_`</doc>
         </parameter>
         <parameter name="_C_">
-          <doc xml:space="preserve">Custom code that gets inserted in the *_get_type() function</doc>
+          <doc xml:space="preserve">Custom code that gets inserted in the `*_get_type()` function</doc>
         </parameter>
       </parameters>
     </function-macro>
@@ -3620,7 +3786,7 @@ custom code into the type_name_get_type() function.</doc>
       <doc xml:space="preserve">A convenience macro for type implementations, which declares a class
 initialization function, an instance initialization function (see #GTypeInfo
 for information about these) and a static variable named `t_n_parent_class`
-pointing to the parent class. Furthermore, it defines  a *_get_type() function.
+pointing to the parent class. Furthermore, it defines a `*_get_type()` function.
 See G_DEFINE_TYPE_EXTENDED() for an example.</doc>
       <parameters>
         <parameter name="TN">
@@ -3628,7 +3794,7 @@ See G_DEFINE_TYPE_EXTENDED() for an example.</doc>
         </parameter>
         <parameter name="t_n">
           <doc xml:space="preserve">The name of the new type, in lowercase, with words
- separated by '_'.</doc>
+ separated by `_`.</doc>
         </parameter>
         <parameter name="T_P">
           <doc xml:space="preserve">The #GType of the parent type.</doc>
@@ -3648,7 +3814,9 @@ G_DEFINE_TYPE_EXTENDED (GtkGadget,
                         G_IMPLEMENT_INTERFACE (TYPE_GIZMO,
                                                gtk_gadget_gizmo_init));
 ]|
+
 expands to
+
 |[&lt;!-- language="C" --&gt;
 static void     gtk_gadget_init       (GtkGadget      *self);
 static void     gtk_gadget_class_init (GtkGadgetClass *klass);
@@ -3669,8 +3837,8 @@ static inline gpointer gtk_gadget_get_instance_private (GtkGadget *self)
 GType
 gtk_gadget_get_type (void)
 {
-  static volatile gsize g_define_type_id__volatile = 0;
-  if (g_once_init_enter (&amp;g_define_type_id__volatile))
+  static gsize static_g_define_type_id = 0;
+  if (g_once_init_enter (&amp;static_g_define_type_id))
     {
       GType g_define_type_id =
         g_type_register_static_simple (GTK_TYPE_WIDGET,
@@ -3690,11 +3858,12 @@ gtk_gadget_get_type (void)
         };
         g_type_add_interface_static (g_define_type_id, TYPE_GIZMO, &amp;g_implement_interface_info);
       }
-      g_once_init_leave (&amp;g_define_type_id__volatile, g_define_type_id);
+      g_once_init_leave (&amp;static_g_define_type_id, g_define_type_id);
     }
-  return g_define_type_id__volatile;
+  return static_g_define_type_id;
 }
 ]|
+
 The only pieces which have to be manually provided are the definitions of
 the instance and class structure and the definitions of the instance and
 class init functions.</doc>
@@ -3704,7 +3873,7 @@ class init functions.</doc>
         </parameter>
         <parameter name="t_n">
           <doc xml:space="preserve">The name of the new type, in lowercase, with words
-   separated by '_'.</doc>
+   separated by `_`.</doc>
         </parameter>
         <parameter name="T_P">
           <doc xml:space="preserve">The #GType of the parent type.</doc>
@@ -3713,27 +3882,28 @@ class init functions.</doc>
           <doc xml:space="preserve">#GTypeFlags to pass to g_type_register_static()</doc>
         </parameter>
         <parameter name="_C_">
-          <doc xml:space="preserve">Custom code that gets inserted in the *_get_type() function.</doc>
+          <doc xml:space="preserve">Custom code that gets inserted in the `*_get_type()` function.</doc>
         </parameter>
       </parameters>
     </function-macro>
     <function-macro name="DEFINE_TYPE_WITH_CODE" c:identifier="G_DEFINE_TYPE_WITH_CODE" version="2.4" introspectable="0">
       <doc xml:space="preserve">A convenience macro for type implementations.
+
 Similar to G_DEFINE_TYPE(), but allows you to insert custom code into the
-*_get_type() function, e.g. interface implementations via G_IMPLEMENT_INTERFACE().
+`*_get_type()` function, e.g. interface implementations via G_IMPLEMENT_INTERFACE().
 See G_DEFINE_TYPE_EXTENDED() for an example.</doc>
       <parameters>
         <parameter name="TN">
           <doc xml:space="preserve">The name of the new type, in Camel case.</doc>
         </parameter>
         <parameter name="t_n">
-          <doc xml:space="preserve">The name of the new type in lowercase, with words separated by '_'.</doc>
+          <doc xml:space="preserve">The name of the new type in lowercase, with words separated by `_`.</doc>
         </parameter>
         <parameter name="T_P">
           <doc xml:space="preserve">The #GType of the parent type.</doc>
         </parameter>
         <parameter name="_C_">
-          <doc xml:space="preserve">Custom code that gets inserted in the *_get_type() function.</doc>
+          <doc xml:space="preserve">Custom code that gets inserted in the `*_get_type()` function.</doc>
         </parameter>
       </parameters>
     </function-macro>
@@ -3742,11 +3912,12 @@ See G_DEFINE_TYPE_EXTENDED() for an example.</doc>
 initialization function, an instance initialization function (see #GTypeInfo
 for information about these), a static variable named `t_n_parent_class`
 pointing to the parent class, and adds private instance data to the type.
-Furthermore, it defines a *_get_type() function. See G_DEFINE_TYPE_EXTENDED()
+
+Furthermore, it defines a `*_get_type()` function. See G_DEFINE_TYPE_EXTENDED()
 for an example.
 
 Note that private structs added with this macros must have a struct
-name of the form @TN Private.
+name of the form `TN ## Private`.
 
 The private instance data can be retrieved using the automatically generated
 getter function `t_n_get_instance_private()`.
@@ -3758,7 +3929,7 @@ See also: G_ADD_PRIVATE()</doc>
         </parameter>
         <parameter name="t_n">
           <doc xml:space="preserve">The name of the new type, in lowercase, with words
- separated by '_'.</doc>
+ separated by `_`.</doc>
         </parameter>
         <parameter name="T_P">
           <doc xml:space="preserve">The #GType of the parent type.</doc>
@@ -3896,7 +4067,7 @@ nickname.</doc>
 of G_DEFINE_TYPE_WITH_CODE() or G_DEFINE_ABSTRACT_TYPE_WITH_CODE().
 See G_DEFINE_TYPE_EXTENDED() for an example.
 
-Note that this macro can only be used together with the G_DEFINE_TYPE_*
+Note that this macro can only be used together with the `G_DEFINE_TYPE_*`
 macros, since it depends on variable names from those macros.</doc>
       <parameters>
         <parameter name="TYPE_IFACE">
@@ -3909,8 +4080,9 @@ macros, since it depends on variable names from those macros.</doc>
     </function-macro>
     <function-macro name="IMPLEMENT_INTERFACE_DYNAMIC" c:identifier="G_IMPLEMENT_INTERFACE_DYNAMIC" version="2.24" introspectable="0">
       <doc xml:space="preserve">A convenience macro to ease interface addition in the @_C_ section
-of G_DEFINE_DYNAMIC_TYPE_EXTENDED(). See G_DEFINE_DYNAMIC_TYPE_EXTENDED()
-for an example.
+of G_DEFINE_DYNAMIC_TYPE_EXTENDED().
+
+See G_DEFINE_DYNAMIC_TYPE_EXTENDED() for an example.
 
 Note that this macro can only be used together with the
 G_DEFINE_DYNAMIC_TYPE_EXTENDED macros, since it depends on variable
@@ -3926,7 +4098,9 @@ names from that macro.</doc>
     </function-macro>
     <function-macro name="INITIALLY_UNOWNED" c:identifier="G_INITIALLY_UNOWNED" introspectable="0">
       <doc xml:space="preserve">Casts a #GInitiallyUnowned or derived pointer into a (GInitiallyUnowned*)
-pointer. Depending on the current debugging level, this function may invoke
+pointer.
+
+Depending on the current debugging level, this function may invoke
 certain runtime checks to identify invalid casts.</doc>
       <parameters>
         <parameter name="object">
@@ -4245,14 +4419,15 @@ or derived.</doc>
       </parameters>
     </function-macro>
     <class name="InitiallyUnowned" c:symbol-prefix="initially_unowned" c:type="GInitiallyUnowned" parent="Object" glib:type-name="GInitiallyUnowned" glib:get-type="g_initially_unowned_get_type" glib:type-struct="InitiallyUnownedClass">
-      <doc xml:space="preserve">All the fields in the GInitiallyUnowned structure
-are private to the #GInitiallyUnowned implementation and should never be
-accessed directly.</doc>
+      <doc xml:space="preserve">A type for objects that have an initially floating reference.
+
+All the fields in the `GInitiallyUnowned` structure are private to the
+implementation and should never be accessed directly.</doc>
       <field name="g_type_instance">
         <type name="TypeInstance" c:type="GTypeInstance"/>
       </field>
       <field name="ref_count" readable="0" private="1">
-        <type name="guint" c:type="volatile guint"/>
+        <type name="guint" c:type="guint"/>
       </field>
       <field name="qdata" readable="0" private="1">
         <type name="GLib.Data" c:type="GData*"/>
@@ -4410,8 +4585,10 @@ accessed directly.</doc>
     </record>
     <callback name="InstanceInitFunc" c:type="GInstanceInitFunc">
       <doc xml:space="preserve">A callback function used by the type system to initialize a new
-instance of a type. This function initializes all instance members and
-allocates any resources required by it.
+instance of a type.
+
+This function initializes all instance members and allocates any resources
+required by it.
 
 Initialization of a derived instance involves calling all its parent
 types instance initializers, so the class member of the instance
@@ -4437,6 +4614,7 @@ zeros before this function is called.</doc>
     </callback>
     <callback name="InterfaceFinalizeFunc" c:type="GInterfaceFinalizeFunc">
       <doc xml:space="preserve">A callback function used by the type system to finalize an interface.
+
 This function should destroy any internal data and release any resources
 allocated by the corresponding GInterfaceInitFunc() function.</doc>
       <return-value transfer-ownership="none">
@@ -4471,8 +4649,10 @@ used specifically for managing interface types.</doc>
     </record>
     <callback name="InterfaceInitFunc" c:type="GInterfaceInitFunc">
       <doc xml:space="preserve">A callback function used by the type system to initialize a new
-interface.  This function should initialize all internal data and
-allocate any resources required by the interface.
+interface.
+
+This function should initialize all internal data and* allocate any
+resources required by the interface.
 
 The members of @iface_data are guaranteed to have been filled with
 zeros before this function is called.</doc>
@@ -4492,6 +4672,7 @@ zeros before this function is called.</doc>
     </callback>
     <function-macro name="OBJECT" c:identifier="G_OBJECT" introspectable="0">
       <doc xml:space="preserve">Casts a #GObject or derived pointer into a (GObject*) pointer.
+
 Depending on the current debugging level, this function may invoke
 certain runtime checks to identify invalid casts.</doc>
       <parameters>
@@ -4576,8 +4757,10 @@ properties in set_property() and get_property() implementations.</doc>
       </parameters>
     </function-macro>
     <class name="Object" c:symbol-prefix="object" c:type="GObject" glib:type-name="GObject" glib:get-type="g_object_get_type" glib:type-struct="ObjectClass">
-      <doc xml:space="preserve">All the fields in the GObject structure are private
-to the #GObject implementation and should never be accessed directly.</doc>
+      <doc xml:space="preserve">The base object type.
+
+All the fields in the `GObject` structure are private to the implementation
+and should never be accessed directly.</doc>
       <constructor name="new" c:identifier="g_object_new" introspectable="0">
         <doc xml:space="preserve">Creates a new instance of a #GObject subtype and sets its properties.
 
@@ -4990,10 +5173,12 @@ thread. Use #GWeakRef if thread-safety is required.</doc>
       </method>
       <method name="bind_property" c:identifier="g_object_bind_property" version="2.26">
         <doc xml:space="preserve">Creates a binding between @source_property on @source and @target_property
-on @target. Whenever the @source_property is changed the @target_property is
+on @target.
+
+Whenever the @source_property is changed the @target_property is
 updated using the same value. For instance:
 
-|[
+|[&lt;!-- language="C" --&gt;
   g_object_bind_property (action, "active", widget, "sensitive", 0);
 ]|
 
@@ -5683,7 +5868,8 @@ reference count of the object is decreased by one.</doc>
             <type name="ToggleNotify" c:type="GToggleNotify"/>
           </parameter>
           <parameter name="data" transfer-ownership="none" nullable="1" allow-none="1">
-            <doc xml:space="preserve">data to pass to @notify</doc>
+            <doc xml:space="preserve">data to pass to @notify, or %NULL to
+ match any toggle refs with the @notify argument.</doc>
             <type name="gpointer" c:type="gpointer"/>
           </parameter>
         </parameters>
@@ -6102,6 +6288,53 @@ g_object_set_qdata_full().</doc>
           </parameter>
         </parameters>
       </method>
+      <method name="take_ref" c:identifier="g_object_take_ref" version="2.70" introspectable="0">
+        <doc xml:space="preserve">If @object is floating, sink it.  Otherwise, do nothing.
+
+In other words, this function will convert a floating reference (if
+present) into a full reference.
+
+Typically you want to use g_object_ref_sink() in order to
+automatically do the correct thing with respect to floating or
+non-floating references, but there is one specific scenario where
+this function is helpful.
+
+The situation where this function is helpful is when creating an API
+that allows the user to provide a callback function that returns a
+GObject. We certainly want to allow the user the flexibility to
+return a non-floating reference from this callback (for the case
+where the object that is being returned already exists).
+
+At the same time, the API style of some popular GObject-based
+libraries (such as Gtk) make it likely that for newly-created GObject
+instances, the user can be saved some typing if they are allowed to
+return a floating reference.
+
+Using this function on the return value of the user's callback allows
+the user to do whichever is more convenient for them. The caller will
+alway receives exactly one full reference to the value: either the
+one that was returned in the first place, or a floating reference
+that has been converted to a full reference.
+
+This function has an odd interaction when combined with
+g_object_ref_sink() running at the same time in another thread on
+the same #GObject instance. If g_object_ref_sink() runs first then
+the result will be that the floating reference is converted to a hard
+reference. If g_object_take_ref() runs first then the result will be
+that the floating reference is converted to a hard reference and an
+additional reference on top of that one is added. It is best to avoid
+this situation.</doc>
+        <return-value transfer-ownership="full">
+          <doc xml:space="preserve">@object</doc>
+          <type name="Object" c:type="gpointer"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="object" transfer-ownership="none">
+            <doc xml:space="preserve">a #GObject</doc>
+            <type name="Object" c:type="gpointer"/>
+          </instance-parameter>
+        </parameters>
+      </method>
       <method name="thaw_notify" c:identifier="g_object_thaw_notify">
         <doc xml:space="preserve">Reverts the effect of a previous call to
 g_object_freeze_notify(). The freeze count is decreased on @object
@@ -6217,7 +6450,7 @@ Use #GWeakRef if thread-safety is required.</doc>
         <type name="TypeInstance" c:type="GTypeInstance"/>
       </field>
       <field name="ref_count" readable="0" private="1">
-        <type name="guint" c:type="volatile guint"/>
+        <type name="guint" c:type="guint"/>
       </field>
       <field name="qdata" readable="0" private="1">
         <type name="GLib.Data" c:type="GData*"/>
@@ -6238,11 +6471,13 @@ and common practice is to do that only when the value has actually changed.
 This signal is typically used to obtain change notification for a
 single property, by specifying the property name as a detail in the
 g_signal_connect() call, like this:
+
 |[&lt;!-- language="C" --&gt;
 g_signal_connect (text_view-&gt;buffer, "notify::paste-target-list",
                   G_CALLBACK (gtk_text_view_target_list_notify),
                   text_view)
 ]|
+
 It is important to note that you must use
 [canonical parameter names][canonical-parameter-names] as
 detail strings for the notify signal.</doc>
@@ -6619,9 +6854,8 @@ g_param_spec_get_redirect_target().</doc>
       </method>
     </record>
     <record name="ObjectConstructParam" c:type="GObjectConstructParam">
-      <doc xml:space="preserve">The GObjectConstructParam struct is an auxiliary
-structure used to hand #GParamSpec/#GValue pairs to the @constructor of
-a #GObjectClass.</doc>
+      <doc xml:space="preserve">The GObjectConstructParam struct is an auxiliary structure used to hand
+#GParamSpec/#GValue pairs to the @constructor of a #GObjectClass.</doc>
       <field name="pspec" writable="1">
         <doc xml:space="preserve">the #GParamSpec of the construct parameter</doc>
         <type name="ParamSpec" c:type="GParamSpec*"/>
@@ -6946,7 +7180,7 @@ Since 2.13.0</doc>
       <doc xml:space="preserve">Evaluates to the @field_name inside the @inst private data
 structure for @TypeName.
 
-Note that this macro can only be used together with the G_DEFINE_TYPE_*
+Note that this macro can only be used together with the `G_DEFINE_TYPE_*`
 and G_ADD_PRIVATE() macros, since it depends on variable names from
 those macros.</doc>
       <parameters>
@@ -6968,7 +7202,7 @@ those macros.</doc>
       <doc xml:space="preserve">Evaluates to a pointer to the @field_name inside the @inst private data
 structure for @TypeName.
 
-Note that this macro can only be used together with the G_DEFINE_TYPE_*
+Note that this macro can only be used together with the `G_DEFINE_TYPE_*`
 and G_ADD_PRIVATE() macros, since it depends on variable names from
 those macros.</doc>
       <parameters>
@@ -6987,7 +7221,7 @@ those macros.</doc>
       <doc xml:space="preserve">Evaluates to the offset of the @field inside the instance private data
 structure for @TypeName.
 
-Note that this macro can only be used together with the G_DEFINE_TYPE_*
+Note that this macro can only be used together with the `G_DEFINE_TYPE_*`
 and G_ADD_PRIVATE() macros, since it depends on variable names from
 those macros.</doc>
       <parameters>
@@ -7001,7 +7235,9 @@ those macros.</doc>
     </function-macro>
     <bitfield name="ParamFlags" c:type="GParamFlags">
       <doc xml:space="preserve">Through the #GParamFlags flag values, certain aspects of parameters
-can be configured. See also #G_PARAM_STATIC_STRINGS.</doc>
+can be configured.
+
+See also: %G_PARAM_STATIC_STRINGS</doc>
       <member name="readable" value="1" c:identifier="G_PARAM_READABLE">
         <doc xml:space="preserve">the parameter is readable</doc>
       </member>
@@ -7723,11 +7959,14 @@ properties.</doc>
       </field>
     </class>
     <class name="ParamSpecOverride" c:symbol-prefix="param_spec_override" c:type="GParamSpecOverride" version="2.4" parent="ParamSpec" glib:type-name="GParamOverride" glib:get-type="intern" glib:fundamental="1">
-      <doc xml:space="preserve">This is a type of #GParamSpec type that simply redirects operations to
-another paramspec.  All operations other than getting or
-setting the value are redirected, including accessing the nick and
-blurb, validating a value, and so forth. See
-g_param_spec_get_redirect_target() for retrieving the overridden
+      <doc xml:space="preserve">A #GParamSpec derived structure that redirects operations to
+other types of #GParamSpec.
+
+All operations other than getting or setting the value are redirected,
+including accessing the nick and blurb, validating a value, and so
+forth.
+
+See g_param_spec_get_redirect_target() for retrieving the overridden
 property. #GParamSpecOverride is used in implementing
 g_object_class_override_property(), and will not be directly useful
 unless you are implementing a new base type similar to GObject.</doc>
@@ -7755,9 +7994,10 @@ properties.</doc>
     </class>
     <record name="ParamSpecPool" c:type="GParamSpecPool" disguised="1">
       <doc xml:space="preserve">A #GParamSpecPool maintains a collection of #GParamSpecs which can be
-quickly accessed by owner and name. The implementation of the #GObject property
-system uses such a pool to store the #GParamSpecs of the properties all object
-types.</doc>
+quickly accessed by owner and name.
+
+The implementation of the #GObject property system uses such a pool to
+store the #GParamSpecs of the properties all object types.</doc>
       <method name="insert" c:identifier="g_param_spec_pool_insert">
         <doc xml:space="preserve">Inserts a #GParamSpec in the pool.</doc>
         <return-value transfer-ownership="none">
@@ -7924,6 +8164,7 @@ properties.</doc>
       <doc xml:space="preserve">This structure is used to provide the type system with the information
 required to initialize and destruct (finalize) a parameter's class and
 instances thereof.
+
 The initialized structure is passed to the g_param_type_register_static()
 The type system will perform a deep copy of this structure, so its memory
 does not need to be persistent across invocation of
@@ -8165,14 +8406,19 @@ to hand parameter name/value pairs to g_object_newv().</doc>
     <callback name="SignalAccumulator" c:type="GSignalAccumulator">
       <doc xml:space="preserve">The signal accumulator is a special callback function that can be used
 to collect return values of the various callbacks that are called
-during a signal emission. The signal accumulator is specified at signal
-creation time, if it is left %NULL, no accumulation of callback return
-values is performed. The return value of signal emissions is then the
-value returned by the last callback.</doc>
+during a signal emission.
+
+The signal accumulator is specified at signal creation time, if it is
+left %NULL, no accumulation of callback return values is performed.
+The return value of signal emissions is then the value returned by the
+last callback.</doc>
       <return-value transfer-ownership="none">
         <doc xml:space="preserve">The accumulator function returns whether the signal emission
- should be aborted. Returning %FALSE means to abort the
- current emission and %TRUE is returned for continuation.</doc>
+ should be aborted. Returning %TRUE will continue with
+ the signal emission. Returning %FALSE will abort the current emission.
+ Since 2.62, returning %FALSE will skip to the CLEANUP stage. In this case,
+ emission will occur as normal in the CLEANUP stage and the handler's
+ return value will be accumulated.</doc>
         <type name="gboolean" c:type="gboolean"/>
       </return-value>
       <parameters>
@@ -8196,9 +8442,10 @@ value returned by the last callback.</doc>
       </parameters>
     </callback>
     <callback name="SignalEmissionHook" c:type="GSignalEmissionHook">
-      <doc xml:space="preserve">A simple function pointer to get invoked when the signal is emitted. This
-allows you to tie a hook to the signal type, so that it will trap all
-emissions of that signal, from any object.
+      <doc xml:space="preserve">A simple function pointer to get invoked when the signal is emitted.
+
+Emission hooks allow you to tie a hook to the signal type, so that it will
+trap all emissions of that signal, from any object.
 
 You may not attach these to signals created with the #G_SIGNAL_NO_HOOKS flag.</doc>
       <return-value transfer-ownership="none">
@@ -8230,9 +8477,7 @@ You may not attach these to signals created with the #G_SIGNAL_NO_HOOKS flag.</d
       </parameters>
     </callback>
     <bitfield name="SignalFlags" c:type="GSignalFlags">
-      <doc xml:space="preserve">The signal flags are used to specify a signal's behaviour, the overall
-signal description outlines how especially the RUN flags control the
-stages of a signal emission.</doc>
+      <doc xml:space="preserve">The signal flags are used to specify a signal's behaviour.</doc>
       <member name="run_first" value="1" c:identifier="G_SIGNAL_RUN_FIRST">
         <doc xml:space="preserve">Invoke the object method handler in the first emission stage.</doc>
       </member>
@@ -8271,6 +8516,11 @@ stages of a signal emission.</doc>
   in a future version. A warning will be generated if it is connected while
   running with G_ENABLE_DIAGNOSTIC=1.  Since 2.32.</doc>
       </member>
+      <member name="accumulator_first_run" value="131072" c:identifier="G_SIGNAL_ACCUMULATOR_FIRST_RUN">
+        <doc xml:space="preserve">Only used in #GSignalAccumulator accumulator
+  functions for the #GSignalInvocationHint::run_type field to mark the first
+  call to the accumulator function for a signal emission.  Since 2.68.</doc>
+      </member>
     </bitfield>
     <record name="SignalInvocationHint" c:type="GSignalInvocationHint">
       <doc xml:space="preserve">The #GSignalInvocationHint structure is used to pass on additional information
@@ -8286,7 +8536,9 @@ to callbacks during a signal emission.</doc>
       <field name="run_type" writable="1">
         <doc xml:space="preserve">The stage the signal emission is currently in, this
  field will contain one of %G_SIGNAL_RUN_FIRST,
- %G_SIGNAL_RUN_LAST or %G_SIGNAL_RUN_CLEANUP.</doc>
+ %G_SIGNAL_RUN_LAST or %G_SIGNAL_RUN_CLEANUP and %G_SIGNAL_ACCUMULATOR_FIRST_RUN.
+ %G_SIGNAL_ACCUMULATOR_FIRST_RUN is only set for the first run of the accumulator
+ function for a signal emission.</doc>
         <type name="SignalFlags" c:type="GSignalFlags"/>
       </field>
     </record>
@@ -8314,8 +8566,9 @@ match signals by.</doc>
       </member>
     </bitfield>
     <record name="SignalQuery" c:type="GSignalQuery">
-      <doc xml:space="preserve">A structure holding in-depth information for a specific signal. It is
-filled in by the g_signal_query() function.</doc>
+      <doc xml:space="preserve">A structure holding in-depth information for a specific signal.
+
+See also: g_signal_query()</doc>
       <field name="signal_id" writable="1">
         <doc xml:space="preserve">The signal id of the signal being queried, or 0 if the
  signal to be queried was unknown.</doc>
@@ -8473,6 +8726,7 @@ This macro should only be used in type implementations.</doc>
     </function-macro>
     <function-macro name="TYPE_CLASS_GET_PRIVATE" c:identifier="G_TYPE_CLASS_GET_PRIVATE" version="2.24" introspectable="0">
       <doc xml:space="preserve">Gets the private class structure for a particular type.
+
 The private structure must have been registered in the
 get_type() function with g_type_add_class_private().
 
@@ -8525,6 +8779,7 @@ This macro should only be used in type implementations.</doc>
     </function-macro>
     <function-macro name="TYPE_FUNDAMENTAL" c:identifier="G_TYPE_FUNDAMENTAL" introspectable="0">
       <doc xml:space="preserve">The fundamental type which is the ancestor of @type.
+
 Fundamental types are types that serve as ultimate bases for the derived types,
 thus they are the roots of distinct inheritance hierarchies.</doc>
       <parameters>
@@ -8588,6 +8843,7 @@ This macro should only be used in type implementations.</doc>
     </function-macro>
     <function-macro name="TYPE_INSTANCE_GET_PRIVATE" c:identifier="G_TYPE_INSTANCE_GET_PRIVATE" version="2.4" introspectable="0" deprecated="1" deprecated-version="2.58">
       <doc xml:space="preserve">Gets the private structure for a particular type.
+
 The private structure must have been registered in the
 class_init function with g_type_class_add_private().
 
@@ -8666,6 +8922,15 @@ types).</doc>
         </parameter>
       </parameters>
     </function-macro>
+    <function-macro name="TYPE_IS_FINAL" c:identifier="G_TYPE_IS_FINAL" version="2.70" introspectable="0">
+      <doc xml:space="preserve">Checks if @type is a final type. A final type cannot be derived any
+further.</doc>
+      <parameters>
+        <parameter name="type">
+          <doc xml:space="preserve">a #GType value</doc>
+        </parameter>
+      </parameters>
+    </function-macro>
     <function-macro name="TYPE_IS_FLAGS" c:identifier="G_TYPE_IS_FLAGS" introspectable="0">
       <doc xml:space="preserve">Checks whether @type "is a" %G_TYPE_FLAGS.</doc>
       <parameters>
@@ -8693,6 +8958,7 @@ process of creating an instance (object) of this type.</doc>
     </function-macro>
     <function-macro name="TYPE_IS_INTERFACE" c:identifier="G_TYPE_IS_INTERFACE" introspectable="0">
       <doc xml:space="preserve">Checks if @type is an interface type.
+
 An interface type provides a pure API, the implementation
 of which is provided by another type (which is then said to conform
 to the interface).  GLib interfaces are somewhat analogous to Java
@@ -8723,6 +8989,7 @@ g_type_interface_add_prerequisite() for an alternative).</doc>
     </function-macro>
     <function-macro name="TYPE_IS_VALUE" c:identifier="G_TYPE_IS_VALUE" introspectable="0">
       <doc xml:space="preserve">Checks whether the passed in type ID can be used for g_value_init().
+
 That is, this macro checks whether this type provides an implementation
 of the #GTypeValueTable functions required for a type to create a #GValue of.</doc>
       <parameters>
@@ -8751,6 +9018,7 @@ an abstract base type for derived value types.</doc>
     </function-macro>
     <function-macro name="TYPE_MAKE_FUNDAMENTAL" c:identifier="G_TYPE_MAKE_FUNDAMENTAL" introspectable="0">
       <doc xml:space="preserve">Get the type ID for the fundamental type number @x.
+
 Use g_type_fundamental_next() instead of this macro to create new fundamental
 types.</doc>
       <parameters>
@@ -8820,7 +9088,9 @@ type id with G_TYPE_MAKE_FUNDAMENTAL().</doc>
     </constant>
     <callback name="ToggleNotify" c:type="GToggleNotify">
       <doc xml:space="preserve">A callback function used for notification when the state
-of a toggle reference changes. See g_object_add_toggle_ref().</doc>
+of a toggle reference changes.
+
+See also: g_object_add_toggle_ref()</doc>
       <return-value transfer-ownership="none">
         <type name="none" c:type="void"/>
       </return-value>
@@ -9080,10 +9350,11 @@ exist already.</doc>
     </record>
     <callback name="TypeClassCacheFunc" c:type="GTypeClassCacheFunc">
       <doc xml:space="preserve">A callback function which is called when the reference count of a class
-drops to zero. It may use g_type_class_ref() to prevent the class from
-being freed. You should not call g_type_class_unref() from a
-#GTypeClassCacheFunc function to prevent infinite recursion, use
-g_type_class_unref_uncached() instead.
+drops to zero.
+
+It may use g_type_class_ref() to prevent the class from being freed. You
+should not call g_type_class_unref() from a #GTypeClassCacheFunc function
+to prevent infinite recursion, use g_type_class_unref_uncached() instead.
 
 The functions have to check the class id passed in to figure
 whether they actually want to cache the class of this type, since all
@@ -9139,6 +9410,10 @@ environment variable.</doc>
  that introduces a value table, but can't be used for
  g_value_init()</doc>
       </member>
+      <member name="final" value="64" c:identifier="G_TYPE_FLAG_FINAL">
+        <doc xml:space="preserve">Indicates a final type. A final type is a non-derivable
+ leaf node in a deep derivable type hierarchy tree. Since: 2.70</doc>
+      </member>
     </bitfield>
     <bitfield name="TypeFundamentalFlags" c:type="GTypeFundamentalFlags">
       <doc xml:space="preserve">Bit masks used to check or determine specific characteristics of a
@@ -9147,7 +9422,7 @@ fundamental type.</doc>
         <doc xml:space="preserve">Indicates a classed type</doc>
       </member>
       <member name="instantiatable" value="2" c:identifier="G_TYPE_FLAG_INSTANTIATABLE">
-        <doc xml:space="preserve">Indicates an instantiable type (implies classed)</doc>
+        <doc xml:space="preserve">Indicates an instantiatable type (implies classed)</doc>
       </member>
       <member name="derivable" value="4" c:identifier="G_TYPE_FLAG_DERIVABLE">
         <doc xml:space="preserve">Indicates a flat derivable type</doc>
@@ -9310,6 +9585,24 @@ not have a #GTypePlugin structure. See g_type_add_interface_dynamic().</doc>
           </parameter>
         </parameters>
       </function>
+      <function name="instantiatable_prerequisite" c:identifier="g_type_interface_instantiatable_prerequisite" version="2.68">
+        <doc xml:space="preserve">Returns the most specific instantiatable prerequisite of an
+interface type. If the interface type has no instantiatable
+prerequisite, %G_TYPE_INVALID is returned.
+
+See g_type_interface_add_prerequisite() for more information
+about prerequisites.</doc>
+        <return-value transfer-ownership="none">
+          <doc xml:space="preserve">the instantiatable prerequisite type or %G_TYPE_INVALID if none</doc>
+          <type name="GType" c:type="GType"/>
+        </return-value>
+        <parameters>
+          <parameter name="interface_type" transfer-ownership="none">
+            <doc xml:space="preserve">an interface type</doc>
+            <type name="GType" c:type="GType"/>
+          </parameter>
+        </parameters>
+      </function>
       <function name="peek" c:identifier="g_type_interface_peek">
         <doc xml:space="preserve">Returns the #GTypeInterface structure of an interface to which the
 passed in class conforms.</doc>
@@ -9355,6 +9648,7 @@ passed in class conforms.</doc>
     </record>
     <callback name="TypeInterfaceCheckFunc" c:type="GTypeInterfaceCheckFunc" version="2.4">
       <doc xml:space="preserve">A callback called after an interface vtable is initialized.
+
 See g_type_add_interface_check().</doc>
       <return-value transfer-ownership="none">
         <type name="none" c:type="void"/>
@@ -9373,16 +9667,20 @@ See g_type_add_interface_check().</doc>
     </callback>
     <class name="TypeModule" c:symbol-prefix="type_module" c:type="GTypeModule" parent="Object" abstract="1" glib:type-name="GTypeModule" glib:get-type="g_type_module_get_type" glib:type-struct="TypeModuleClass">
       <doc xml:space="preserve">#GTypeModule provides a simple implementation of the #GTypePlugin
-interface. The model of #GTypeModule is a dynamically loaded module
-which implements some number of types and interface implementations.
+interface.
+
+The model of #GTypeModule is a dynamically loaded module which
+implements some number of types and interface implementations.
+
 When the module is loaded, it registers its types and interfaces
 using g_type_module_register_type() and g_type_module_add_interface().
 As long as any instances of these types and interface implementations
 are in use, the module is kept loaded. When the types and interfaces
 are gone, the module may be unloaded. If the types and interfaces
 become used again, the module will be reloaded. Note that the last
-unref cannot happen in module code, since that would lead to the
-caller's code being unloaded before g_object_unref() returns to it.
+reference cannot be released from within the module code, since that
+would lead to the caller's code being unloaded before g_object_unref()
+returns to it.
 
 Keeping track of whether the module should be loaded or not is done by
 using a use count - it starts at zero, and whenever it is greater than
@@ -9690,9 +9988,10 @@ the @load and @unload functions in #GTypeModuleClass must be implemented.</doc>
       </field>
     </record>
     <interface name="TypePlugin" c:symbol-prefix="type_plugin" c:type="GTypePlugin" glib:type-name="GTypePlugin" glib:get-type="g_type_plugin_get_type">
-      <doc xml:space="preserve">The GObject type system supports dynamic loading of types.
-The #GTypePlugin interface is used to handle the lifecycle
-of dynamically loaded types. It goes as follows:
+      <doc xml:space="preserve">An interface that handles the lifecycle of dynamically loaded types.
+
+The GObject type system supports dynamic loading of types.
+It goes as follows:
 
 1. The type is initially introduced (usually upon loading the module
    the first time, or by your main application that knows what modules
@@ -9857,7 +10156,7 @@ the lifecycle of dynamically loaded types.</doc>
           <type name="TypePlugin" c:type="GTypePlugin*"/>
         </parameter>
         <parameter name="instance_type" transfer-ownership="none">
-          <doc xml:space="preserve">the #GType of an instantiable type to which the interface
+          <doc xml:space="preserve">the #GType of an instantiatable type to which the interface
  is added</doc>
           <type name="GType" c:type="GType"/>
         </parameter>
@@ -9922,7 +10221,8 @@ to increase the use count of @plugin.</doc>
     </callback>
     <record name="TypeQuery" c:type="GTypeQuery">
       <doc xml:space="preserve">A structure holding information for a specific type.
-It is filled in by the g_type_query() function.</doc>
+
+See also: g_type_query()</doc>
       <field name="type" writable="1">
         <doc xml:space="preserve">the #GType value of the type</doc>
         <type name="GType" c:type="GType"/>
@@ -10334,10 +10634,12 @@ marshalling the signal argument into GValues.</doc>
     </callback>
     <record name="Value" c:type="GValue" glib:type-name="GValue" glib:get-type="g_value_get_type" c:symbol-prefix="value">
       <doc xml:space="preserve">An opaque structure used to hold different types of values.
+
 The data within the structure has protected scope: it is accessible only
 to functions within a #GTypeValueTable structure, or implementations of
 the g_value_*() API. That is, code portions which implement new fundamental
 types.
+
 #GValue users cannot make any assumptions about how data is stored
 within the 2 element @data union, and the @g_type member should
 only be accessed through the G_VALUE_TYPE() macro.</doc>
@@ -11138,6 +11440,7 @@ the #GValue still exists).</doc>
       </method>
       <method name="set_static_boxed" c:identifier="g_value_set_static_boxed">
         <doc xml:space="preserve">Set the contents of a %G_TYPE_BOXED derived #GValue to @v_boxed.
+
 The boxed value is assumed to be static, and is thus not duplicated
 when setting the #GValue.</doc>
         <return-value transfer-ownership="none">
@@ -11176,7 +11479,7 @@ is more appropriate.</doc>
         </parameters>
       </method>
       <method name="set_string" c:identifier="g_value_set_string">
-        <doc xml:space="preserve">Set the contents of a %G_TYPE_STRING #GValue to @v_string.</doc>
+        <doc xml:space="preserve">Set the contents of a %G_TYPE_STRING #GValue to a copy of @v_string.</doc>
         <return-value transfer-ownership="none">
           <type name="none" c:type="void"/>
         </return-value>
@@ -11716,9 +12019,11 @@ g_value_register_transform_func().
     </callback>
     <callback name="WeakNotify" c:type="GWeakNotify">
       <doc xml:space="preserve">A #GWeakNotify function can be added to an object as a callback that gets
-triggered when the object is finalized. Since the object is already being
-finalized when the #GWeakNotify is called, there's not much you could do
-with the object, apart from e.g. using its address as hash-index or the like.</doc>
+triggered when the object is finalized.
+
+Since the object is already being disposed when the #GWeakNotify is called,
+there's not much you could do with the object, apart from e.g. using its
+address as hash-index or the like.</doc>
       <return-value transfer-ownership="none">
         <type name="none" c:type="void"/>
       </return-value>
@@ -11728,17 +12033,18 @@ with the object, apart from e.g. using its address as hash-index or the like.</d
           <type name="gpointer" c:type="gpointer"/>
         </parameter>
         <parameter name="where_the_object_was" transfer-ownership="none">
-          <doc xml:space="preserve">the object being finalized</doc>
+          <doc xml:space="preserve">the object being disposed</doc>
           <type name="Object" c:type="GObject*"/>
         </parameter>
       </parameters>
     </callback>
     <record name="WeakRef" c:type="GWeakRef">
-      <doc xml:space="preserve">A structure containing a weak reference to a #GObject.  It can either
-be empty (i.e. point to %NULL), or point to an object for as long as
-at least one "strong" reference to that object exists. Before the
-object's #GObjectClass.dispose method is called, every #GWeakRef
-associated with becomes empty (i.e. points to %NULL).
+      <doc xml:space="preserve">A structure containing a weak reference to a #GObject.
+
+A `GWeakRef` can either be empty (i.e. point to %NULL), or point to an
+object for as long as at least one "strong" reference to that object
+exists. Before the object's #GObjectClass.dispose method is called,
+every #GWeakRef associated with becomes empty (i.e. points to %NULL).
 
 Like #GValue, #GWeakRef can be statically allocated, stack- or
 heap-allocated, or embedded in larger structures.
@@ -11924,8 +12230,14 @@ This macro should only be used in regression tests.</doc>
     </function>
     <function name="boxed_type_register_static" c:identifier="g_boxed_type_register_static" introspectable="0">
       <doc xml:space="preserve">This function creates a new %G_TYPE_BOXED derived type id for a new
-boxed type with name @name. Boxed type handling functions have to be
-provided to copy and free opaque boxed structures of this type.</doc>
+boxed type with name @name.
+
+Boxed type handling functions have to be provided to copy and free
+opaque boxed structures of this type.
+
+For the general case, it is recommended to use #G_DEFINE_BOXED_TYPE
+instead of calling g_boxed_type_register_static() directly. The macro
+will create the appropriate `*_get_type()` function for the boxed type.</doc>
       <return-value transfer-ownership="none">
         <doc xml:space="preserve">New %G_TYPE_BOXED derived type id for @name.</doc>
         <type name="GType" c:type="GType"/>
@@ -13187,10 +13499,11 @@ may change in the future.</doc>
       </parameters>
     </function>
     <docsection name="gboxed">
-      <doc xml:space="preserve">#GBoxed is a generic wrapper mechanism for arbitrary C structures. The only
-thing the type system needs to know about the structures is how to copy them
-(a #GBoxedCopyFunc) and how to free them (a #GBoxedFreeFunc) &#x2014; beyond that
-they are treated as opaque chunks of memory.
+      <doc xml:space="preserve">#GBoxed is a generic wrapper mechanism for arbitrary C structures.
+
+The only thing the type system needs to know about the structures is how to
+copy them (a #GBoxedCopyFunc) and how to free them (a #GBoxedFreeFunc);
+beyond that, they are treated as opaque chunks of memory.
 
 Boxed types are useful for simple value-holder structures like rectangles or
 points. They can also be used for wrapping structures defined in non-#GObject
@@ -13209,11 +13522,16 @@ g_bytes_ref(), and the #GBoxedFreeFunc is g_bytes_unref().</doc>
     <docsection name="generic_values">
       <doc xml:space="preserve">The #GValue structure is basically a variable container that consists
 of a type identifier and a specific value of that type.
+
 The type identifier within a #GValue structure always determines the
 type of the associated value.
+
 To create an undefined #GValue structure, simply create a zero-filled
 #GValue structure. To initialize the #GValue, use the g_value_init()
-function. A #GValue cannot be used until it is initialized.
+function. A #GValue cannot be used until it is initialized. Before
+destruction you must always use g_value_unset() to make sure allocated
+memory is freed.
+
 The basic type operations (such as freeing and copying) are determined
 by the #GTypeValueTable associated with the type ID stored in the #GValue.
 Other #GValue operations (such as converting values between types) are
@@ -13275,10 +13593,38 @@ main (int   argc,
   g_printf ("%s\n", g_value_get_string (&amp;b));
   return 0;
 }
+]|
+
+See also [gobject-Standard-Parameter-and-Value-Types] for more information on
+validation of #GValue.
+
+For letting a #GValue own (and memory manage) arbitrary types or pointers,
+they need to become a [boxed type][gboxed]. The example below shows how
+the pointer `mystruct` of type `MyStruct` is used as a [boxed type][gboxed].
+
+|[&lt;!-- language="C" --&gt;
+typedef struct { ... } MyStruct;
+G_DEFINE_BOXED_TYPE (MyStruct, my_struct, my_struct_copy, my_struct_free)
+
+// These two lines normally go in a public header. By GObject convention,
+// the naming scheme is NAMESPACE_TYPE_NAME:
+#define MY_TYPE_STRUCT (my_struct_get_type ())
+GType my_struct_get_type (void);
+
+void
+foo ()
+{
+  GValue *value = g_new0 (GValue, 1);
+  g_value_init (value, MY_TYPE_STRUCT);
+  g_value_set_boxed (value, mystruct);
+  // [... your code ....]
+  g_value_unset (value);
+  g_value_free (value);
+}
 ]|</doc>
     </docsection>
     <docsection name="gtype">
-      <doc xml:space="preserve">The GType API is the foundation of the GObject system.  It provides the
+      <doc xml:space="preserve">The GType API is the foundation of the GObject system. It provides the
 facilities for registering and managing all fundamental data types,
 user-defined object and interface types.
 
@@ -13349,15 +13695,18 @@ as a "floating" reference. This means that it is not specifically
 claimed to be "owned" by any code portion. The main motivation for
 providing floating references is C convenience. In particular, it
 allows code to be written as:
+
 |[&lt;!-- language="C" --&gt;
 container = create_container ();
 container_add_child (container, create_child());
 ]|
+
 If container_add_child() calls g_object_ref_sink() on the passed-in child,
 no reference of the newly created child is leaked. Without floating
 references, container_add_child() can only g_object_ref() the new child,
 so to implement this code without reference leaks, it would have to be
 written as:
+
 |[&lt;!-- language="C" --&gt;
 Child *child;
 container = create_container ();
@@ -13365,6 +13714,7 @@ child = create_child ();
 container_add_child (container, child);
 g_object_unref (child);
 ]|
+
 The floating reference can be converted into an ordinary reference by
 calling g_object_ref_sink(). For already sunken objects (objects that
 don't have a floating reference anymore), g_object_ref_sink() is equivalent
@@ -14222,10 +14572,12 @@ See g_param_spec_internal() for details on property names.</doc>
       </parameters>
     </function>
     <function name="param_type_register_static" c:identifier="g_param_type_register_static">
-      <doc xml:space="preserve">Registers @name as the name of a new static type derived from
-#G_TYPE_PARAM. The type system uses the information contained in
-the #GParamSpecTypeInfo structure pointed to by @info to manage the
-#GParamSpec type and its instances.</doc>
+      <doc xml:space="preserve">Registers @name as the name of a new static type derived
+from #G_TYPE_PARAM.
+
+The type system uses the information contained in the #GParamSpecTypeInfo
+structure pointed to by @info to manage the #GParamSpec type and its
+instances.</doc>
       <return-value transfer-ownership="none">
         <doc xml:space="preserve">The new type identifier.</doc>
         <type name="GType" c:type="GType"/>
@@ -14319,7 +14671,9 @@ operate on #GValue containers.
 
 Parameter names need to start with a letter (a-z or A-Z). Subsequent
 characters can be letters, numbers or a '-'.
-All other characters are replaced by a '-' during construction.</doc>
+All other characters are replaced by a '-' during construction.
+
+See also #GValue for more information.</doc>
     </docsection>
     <function name="param_value_validate" c:identifier="g_param_value_validate">
       <doc xml:space="preserve">Ensures that the contents of @value comply with the specifications
@@ -14381,12 +14735,13 @@ pointer type with name @name.</doc>
       </parameters>
     </function>
     <function-macro name="set_object" c:identifier="g_set_object" version="2.44" introspectable="0">
-      <doc xml:space="preserve">Updates a #GObject pointer to refer to @new_object. It increments the
-reference count of @new_object (if non-%NULL), decrements the reference
-count of the current value of @object_ptr (if non-%NULL), and assigns
-@new_object to @object_ptr. The assignment is not atomic.
+      <doc xml:space="preserve">Updates a #GObject pointer to refer to @new_object.
 
-@object_ptr must not be %NULL.
+It increments the reference count of @new_object (if non-%NULL), decrements
+the reference count of the current value of @object_ptr (if non-%NULL), and
+assigns @new_object to @object_ptr. The assignment is not atomic.
+
+@object_ptr must not be %NULL, but can point to a %NULL value.
 
 A macro is also included that allows this function to be used without
 pointer casts. The function itself is static inline, so its address may vary
@@ -14411,18 +14766,20 @@ One convenient usage of this function is in implementing property setters:
         </parameter>
         <parameter name="new_object">
           <doc xml:space="preserve">a pointer to the new #GObject to
-  assign to it, or %NULL to clear the pointer</doc>
+  assign to @object_ptr, or %NULL to clear the pointer</doc>
         </parameter>
       </parameters>
     </function-macro>
     <function-macro name="set_weak_pointer" c:identifier="g_set_weak_pointer" version="2.56" introspectable="0">
-      <doc xml:space="preserve">Updates a pointer to weakly refer to @new_object. It assigns @new_object
-to @weak_pointer_location and ensures that @weak_pointer_location will
-automatically be set to %NULL if @new_object gets destroyed. The assignment
-is not atomic. The weak reference is not thread-safe, see
-g_object_add_weak_pointer() for details.
+      <doc xml:space="preserve">Updates a pointer to weakly refer to @new_object.
 
-@weak_pointer_location must not be %NULL.
+It assigns @new_object to @weak_pointer_location and ensures
+that @weak_pointer_location will automatically be set to %NULL
+if @new_object gets destroyed. The assignment is not atomic.
+The weak reference is not thread-safe, see g_object_add_weak_pointer()
+for details.
+
+The @weak_pointer_location argument must not be %NULL.
 
 A macro is also included that allows this function to be used without
 pointer casts. The function itself is static inline, so its address may vary
@@ -14854,7 +15211,8 @@ if no handlers are connected, in contrast to g_signal_emitv().</doc>
         <parameter name="..." transfer-ownership="none">
           <doc xml:space="preserve">parameters to be passed to the signal, followed by a
  location for the return value. If the return type of the signal
- is #G_TYPE_NONE, the return value location can be omitted.</doc>
+ is %G_TYPE_NONE, the return value location can be omitted. The
+ number of parameters to pass to this function is defined when creating the signal.</doc>
           <varargs/>
         </parameter>
       </parameters>
@@ -16655,6 +17013,24 @@ not have a #GTypePlugin structure. See g_type_add_interface_dynamic().</doc>
         </parameter>
         <parameter name="interface_type" transfer-ownership="none">
           <doc xml:space="preserve">#GType of an interface type</doc>
+          <type name="GType" c:type="GType"/>
+        </parameter>
+      </parameters>
+    </function>
+    <function name="type_interface_instantiatable_prerequisite" c:identifier="g_type_interface_instantiatable_prerequisite" moved-to="TypeInterface.instantiatable_prerequisite" version="2.68">
+      <doc xml:space="preserve">Returns the most specific instantiatable prerequisite of an
+interface type. If the interface type has no instantiatable
+prerequisite, %G_TYPE_INVALID is returned.
+
+See g_type_interface_add_prerequisite() for more information
+about prerequisites.</doc>
+      <return-value transfer-ownership="none">
+        <doc xml:space="preserve">the instantiatable prerequisite type or %G_TYPE_INVALID if none</doc>
+        <type name="GType" c:type="GType"/>
+      </return-value>
+      <parameters>
+        <parameter name="interface_type" transfer-ownership="none">
+          <doc xml:space="preserve">an interface type</doc>
           <type name="GType" c:type="GType"/>
         </parameter>
       </parameters>
