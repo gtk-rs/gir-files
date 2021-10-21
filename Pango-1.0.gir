@@ -74,14 +74,17 @@ the end of the text.</doc>
 within the available space.
 
 If the `PangoLayout` is set to justify using [method@Pango.Layout.set_justify],
-this only has effect for partial lines.</doc>
-      <member name="left" value="0" c:identifier="PANGO_ALIGN_LEFT" glib:nick="left">
+this only has effect for partial lines.
+
+See [method@Pango.Layout.set_auto_dir] for how text direction affects
+the interpretation of `PangoAlignment values.</doc>
+      <member name="left" value="0" c:identifier="PANGO_ALIGN_LEFT" glib:nick="left" glib:name="PANGO_ALIGN_LEFT">
         <doc xml:space="preserve">Put all available space on the right</doc>
       </member>
-      <member name="center" value="1" c:identifier="PANGO_ALIGN_CENTER" glib:nick="center">
+      <member name="center" value="1" c:identifier="PANGO_ALIGN_CENTER" glib:nick="center" glib:name="PANGO_ALIGN_CENTER">
         <doc xml:space="preserve">Center the line within the available space</doc>
       </member>
-      <member name="right" value="2" c:identifier="PANGO_ALIGN_RIGHT" glib:nick="right">
+      <member name="right" value="2" c:identifier="PANGO_ALIGN_RIGHT" glib:nick="right" glib:name="PANGO_ALIGN_RIGHT">
         <doc xml:space="preserve">Put all available space on the left</doc>
       </member>
     </enumeration>
@@ -288,7 +291,7 @@ alternative glyphs, ligatures, etc. for fonts that support them.</doc>
           <parameter name="features" transfer-ownership="none">
             <doc xml:space="preserve">a string with OpenType font features, with the syntax of the [CSS
 font-feature-settings property](https://www.w3.org/TR/css-fonts-4/#font-rend-desc)</doc>
-            <type name="utf8" c:type="const gchar*"/>
+            <type name="utf8" c:type="const char*"/>
           </parameter>
         </parameters>
       </function>
@@ -453,11 +456,11 @@ a signed integer are clamped to %G_MAXINT.</doc>
           </instance-parameter>
           <parameter name="start" direction="out" caller-allocates="0" transfer-ownership="full">
             <doc xml:space="preserve">location to store the start of the range</doc>
-            <type name="gint" c:type="gint*"/>
+            <type name="gint" c:type="int*"/>
           </parameter>
           <parameter name="end" direction="out" caller-allocates="0" transfer-ownership="full">
             <doc xml:space="preserve">location to store the end of the range</doc>
-            <type name="gint" c:type="gint*"/>
+            <type name="gint" c:type="int*"/>
           </parameter>
         </parameters>
       </method>
@@ -717,13 +720,13 @@ a pre-edit string in the middle of an edit buffer.</doc>
           </parameter>
           <parameter name="pos" transfer-ownership="none">
             <doc xml:space="preserve">the position in @list at which to insert @other</doc>
-            <type name="gint" c:type="gint"/>
+            <type name="gint" c:type="int"/>
           </parameter>
           <parameter name="len" transfer-ownership="none">
             <doc xml:space="preserve">the length of the spliced segment. (Note that this
   must be specified since the attributes in @other may only
   be present at some subsection of this range)</doc>
-            <type name="gint" c:type="gint"/>
+            <type name="gint" c:type="int"/>
           </parameter>
         </parameters>
       </method>
@@ -940,98 +943,118 @@ Along with the predefined values, it is possible to allocate additional
 values for custom attributes using [func@AttrType.register]. The predefined
 values are given below. The type of structure used to store the attribute is
 listed in parentheses after the description.</doc>
-      <member name="invalid" value="0" c:identifier="PANGO_ATTR_INVALID" glib:nick="invalid">
+      <member name="invalid" value="0" c:identifier="PANGO_ATTR_INVALID" glib:nick="invalid" glib:name="PANGO_ATTR_INVALID">
         <doc xml:space="preserve">does not happen</doc>
       </member>
-      <member name="language" value="1" c:identifier="PANGO_ATTR_LANGUAGE" glib:nick="language">
+      <member name="language" value="1" c:identifier="PANGO_ATTR_LANGUAGE" glib:nick="language" glib:name="PANGO_ATTR_LANGUAGE">
         <doc xml:space="preserve">language ([struct@Pango.AttrLanguage])</doc>
       </member>
-      <member name="family" value="2" c:identifier="PANGO_ATTR_FAMILY" glib:nick="family">
+      <member name="family" value="2" c:identifier="PANGO_ATTR_FAMILY" glib:nick="family" glib:name="PANGO_ATTR_FAMILY">
         <doc xml:space="preserve">font family name list ([struct@Pango.AttrString])</doc>
       </member>
-      <member name="style" value="3" c:identifier="PANGO_ATTR_STYLE" glib:nick="style">
+      <member name="style" value="3" c:identifier="PANGO_ATTR_STYLE" glib:nick="style" glib:name="PANGO_ATTR_STYLE">
         <doc xml:space="preserve">font slant style ([struct@Pango.AttrInt])</doc>
       </member>
-      <member name="weight" value="4" c:identifier="PANGO_ATTR_WEIGHT" glib:nick="weight">
+      <member name="weight" value="4" c:identifier="PANGO_ATTR_WEIGHT" glib:nick="weight" glib:name="PANGO_ATTR_WEIGHT">
         <doc xml:space="preserve">font weight ([struct@Pango.AttrInt])</doc>
       </member>
-      <member name="variant" value="5" c:identifier="PANGO_ATTR_VARIANT" glib:nick="variant">
+      <member name="variant" value="5" c:identifier="PANGO_ATTR_VARIANT" glib:nick="variant" glib:name="PANGO_ATTR_VARIANT">
         <doc xml:space="preserve">font variant (normal or small caps) ([struct@Pango.AttrInt])</doc>
       </member>
-      <member name="stretch" value="6" c:identifier="PANGO_ATTR_STRETCH" glib:nick="stretch">
+      <member name="stretch" value="6" c:identifier="PANGO_ATTR_STRETCH" glib:nick="stretch" glib:name="PANGO_ATTR_STRETCH">
         <doc xml:space="preserve">font stretch ([struct@Pango.AttrInt])</doc>
       </member>
-      <member name="size" value="7" c:identifier="PANGO_ATTR_SIZE" glib:nick="size">
+      <member name="size" value="7" c:identifier="PANGO_ATTR_SIZE" glib:nick="size" glib:name="PANGO_ATTR_SIZE">
         <doc xml:space="preserve">font size in points scaled by %PANGO_SCALE ([struct@Pango.AttrInt])</doc>
       </member>
-      <member name="font_desc" value="8" c:identifier="PANGO_ATTR_FONT_DESC" glib:nick="font-desc">
+      <member name="font_desc" value="8" c:identifier="PANGO_ATTR_FONT_DESC" glib:nick="font-desc" glib:name="PANGO_ATTR_FONT_DESC">
         <doc xml:space="preserve">font description ([struct@Pango.AttrFontDesc])</doc>
       </member>
-      <member name="foreground" value="9" c:identifier="PANGO_ATTR_FOREGROUND" glib:nick="foreground">
+      <member name="foreground" value="9" c:identifier="PANGO_ATTR_FOREGROUND" glib:nick="foreground" glib:name="PANGO_ATTR_FOREGROUND">
         <doc xml:space="preserve">foreground color ([struct@Pango.AttrColor])</doc>
       </member>
-      <member name="background" value="10" c:identifier="PANGO_ATTR_BACKGROUND" glib:nick="background">
+      <member name="background" value="10" c:identifier="PANGO_ATTR_BACKGROUND" glib:nick="background" glib:name="PANGO_ATTR_BACKGROUND">
         <doc xml:space="preserve">background color ([struct@Pango.AttrColor])</doc>
       </member>
-      <member name="underline" value="11" c:identifier="PANGO_ATTR_UNDERLINE" glib:nick="underline">
+      <member name="underline" value="11" c:identifier="PANGO_ATTR_UNDERLINE" glib:nick="underline" glib:name="PANGO_ATTR_UNDERLINE">
         <doc xml:space="preserve">whether the text has an underline ([struct@Pango.AttrInt])</doc>
       </member>
-      <member name="strikethrough" value="12" c:identifier="PANGO_ATTR_STRIKETHROUGH" glib:nick="strikethrough">
+      <member name="strikethrough" value="12" c:identifier="PANGO_ATTR_STRIKETHROUGH" glib:nick="strikethrough" glib:name="PANGO_ATTR_STRIKETHROUGH">
         <doc xml:space="preserve">whether the text is struck-through ([struct@Pango.AttrInt])</doc>
       </member>
-      <member name="rise" value="13" c:identifier="PANGO_ATTR_RISE" glib:nick="rise">
+      <member name="rise" value="13" c:identifier="PANGO_ATTR_RISE" glib:nick="rise" glib:name="PANGO_ATTR_RISE">
         <doc xml:space="preserve">baseline displacement ([struct@Pango.AttrInt])</doc>
       </member>
-      <member name="shape" value="14" c:identifier="PANGO_ATTR_SHAPE" glib:nick="shape">
+      <member name="shape" value="14" c:identifier="PANGO_ATTR_SHAPE" glib:nick="shape" glib:name="PANGO_ATTR_SHAPE">
         <doc xml:space="preserve">shape ([struct@Pango.AttrShape])</doc>
       </member>
-      <member name="scale" value="15" c:identifier="PANGO_ATTR_SCALE" glib:nick="scale">
+      <member name="scale" value="15" c:identifier="PANGO_ATTR_SCALE" glib:nick="scale" glib:name="PANGO_ATTR_SCALE">
         <doc xml:space="preserve">font size scale factor ([struct@Pango.AttrFloat])</doc>
       </member>
-      <member name="fallback" value="16" c:identifier="PANGO_ATTR_FALLBACK" glib:nick="fallback">
+      <member name="fallback" value="16" c:identifier="PANGO_ATTR_FALLBACK" glib:nick="fallback" glib:name="PANGO_ATTR_FALLBACK">
         <doc xml:space="preserve">whether fallback is enabled ([struct@Pango.AttrInt])</doc>
       </member>
-      <member name="letter_spacing" value="17" c:identifier="PANGO_ATTR_LETTER_SPACING" glib:nick="letter-spacing">
+      <member name="letter_spacing" value="17" c:identifier="PANGO_ATTR_LETTER_SPACING" glib:nick="letter-spacing" glib:name="PANGO_ATTR_LETTER_SPACING">
         <doc xml:space="preserve">letter spacing ([struct@PangoAttrInt])</doc>
       </member>
-      <member name="underline_color" value="18" c:identifier="PANGO_ATTR_UNDERLINE_COLOR" glib:nick="underline-color">
+      <member name="underline_color" value="18" c:identifier="PANGO_ATTR_UNDERLINE_COLOR" glib:nick="underline-color" glib:name="PANGO_ATTR_UNDERLINE_COLOR">
         <doc xml:space="preserve">underline color ([struct@Pango.AttrColor])</doc>
       </member>
-      <member name="strikethrough_color" value="19" c:identifier="PANGO_ATTR_STRIKETHROUGH_COLOR" glib:nick="strikethrough-color">
+      <member name="strikethrough_color" value="19" c:identifier="PANGO_ATTR_STRIKETHROUGH_COLOR" glib:nick="strikethrough-color" glib:name="PANGO_ATTR_STRIKETHROUGH_COLOR">
         <doc xml:space="preserve">strikethrough color ([struct@Pango.AttrColor])</doc>
       </member>
-      <member name="absolute_size" value="20" c:identifier="PANGO_ATTR_ABSOLUTE_SIZE" glib:nick="absolute-size">
+      <member name="absolute_size" value="20" c:identifier="PANGO_ATTR_ABSOLUTE_SIZE" glib:nick="absolute-size" glib:name="PANGO_ATTR_ABSOLUTE_SIZE">
         <doc xml:space="preserve">font size in pixels scaled by %PANGO_SCALE ([struct@Pango.AttrInt])</doc>
       </member>
-      <member name="gravity" value="21" c:identifier="PANGO_ATTR_GRAVITY" glib:nick="gravity">
+      <member name="gravity" value="21" c:identifier="PANGO_ATTR_GRAVITY" glib:nick="gravity" glib:name="PANGO_ATTR_GRAVITY">
         <doc xml:space="preserve">base text gravity ([struct@Pango.AttrInt])</doc>
       </member>
-      <member name="gravity_hint" value="22" c:identifier="PANGO_ATTR_GRAVITY_HINT" glib:nick="gravity-hint">
+      <member name="gravity_hint" value="22" c:identifier="PANGO_ATTR_GRAVITY_HINT" glib:nick="gravity-hint" glib:name="PANGO_ATTR_GRAVITY_HINT">
         <doc xml:space="preserve">gravity hint ([struct@Pango.AttrInt])</doc>
       </member>
-      <member name="font_features" value="23" c:identifier="PANGO_ATTR_FONT_FEATURES" glib:nick="font-features">
-        <doc xml:space="preserve">OpenType font features ([struct@Pango.AttrString]). Since 1.38</doc>
+      <member name="font_features" value="23" c:identifier="PANGO_ATTR_FONT_FEATURES" glib:nick="font-features" glib:name="PANGO_ATTR_FONT_FEATURES">
+        <doc xml:space="preserve">OpenType font features ([struct@Pango.AttrFontFeatures]). Since 1.38</doc>
       </member>
-      <member name="foreground_alpha" value="24" c:identifier="PANGO_ATTR_FOREGROUND_ALPHA" glib:nick="foreground-alpha">
+      <member name="foreground_alpha" value="24" c:identifier="PANGO_ATTR_FOREGROUND_ALPHA" glib:nick="foreground-alpha" glib:name="PANGO_ATTR_FOREGROUND_ALPHA">
         <doc xml:space="preserve">foreground alpha ([struct@Pango.AttrInt]). Since 1.38</doc>
       </member>
-      <member name="background_alpha" value="25" c:identifier="PANGO_ATTR_BACKGROUND_ALPHA" glib:nick="background-alpha">
+      <member name="background_alpha" value="25" c:identifier="PANGO_ATTR_BACKGROUND_ALPHA" glib:nick="background-alpha" glib:name="PANGO_ATTR_BACKGROUND_ALPHA">
         <doc xml:space="preserve">background alpha ([struct@Pango.AttrInt]). Since 1.38</doc>
       </member>
-      <member name="allow_breaks" value="26" c:identifier="PANGO_ATTR_ALLOW_BREAKS" glib:nick="allow-breaks">
+      <member name="allow_breaks" value="26" c:identifier="PANGO_ATTR_ALLOW_BREAKS" glib:nick="allow-breaks" glib:name="PANGO_ATTR_ALLOW_BREAKS">
         <doc xml:space="preserve">whether breaks are allowed ([struct@Pango.AttrInt]). Since 1.44</doc>
       </member>
-      <member name="show" value="27" c:identifier="PANGO_ATTR_SHOW" glib:nick="show">
+      <member name="show" value="27" c:identifier="PANGO_ATTR_SHOW" glib:nick="show" glib:name="PANGO_ATTR_SHOW">
         <doc xml:space="preserve">how to render invisible characters ([struct@Pango.AttrInt]). Since 1.44</doc>
       </member>
-      <member name="insert_hyphens" value="28" c:identifier="PANGO_ATTR_INSERT_HYPHENS" glib:nick="insert-hyphens">
+      <member name="insert_hyphens" value="28" c:identifier="PANGO_ATTR_INSERT_HYPHENS" glib:nick="insert-hyphens" glib:name="PANGO_ATTR_INSERT_HYPHENS">
         <doc xml:space="preserve">whether to insert hyphens at intra-word line breaks ([struct@Pango.AttrInt]). Since 1.44</doc>
       </member>
-      <member name="overline" value="29" c:identifier="PANGO_ATTR_OVERLINE" glib:nick="overline">
+      <member name="overline" value="29" c:identifier="PANGO_ATTR_OVERLINE" glib:nick="overline" glib:name="PANGO_ATTR_OVERLINE">
         <doc xml:space="preserve">whether the text has an overline ([struct@Pango.AttrInt]). Since 1.46</doc>
       </member>
-      <member name="overline_color" value="30" c:identifier="PANGO_ATTR_OVERLINE_COLOR" glib:nick="overline-color">
+      <member name="overline_color" value="30" c:identifier="PANGO_ATTR_OVERLINE_COLOR" glib:nick="overline-color" glib:name="PANGO_ATTR_OVERLINE_COLOR">
         <doc xml:space="preserve">overline color ([struct@Pango.AttrColor]). Since 1.46</doc>
+      </member>
+      <member name="line_height" value="31" c:identifier="PANGO_ATTR_LINE_HEIGHT" glib:nick="line-height" glib:name="PANGO_ATTR_LINE_HEIGHT">
+        <doc xml:space="preserve">line height factor ([struct@Pango.AttrFloat]). Since: 1.50</doc>
+      </member>
+      <member name="absolute_line_height" value="32" c:identifier="PANGO_ATTR_ABSOLUTE_LINE_HEIGHT" glib:nick="absolute-line-height" glib:name="PANGO_ATTR_ABSOLUTE_LINE_HEIGHT">
+        <doc xml:space="preserve">line height ([struct@Pango.AttrInt]). Since: 1.50</doc>
+      </member>
+      <member name="text_transform" value="33" c:identifier="PANGO_ATTR_TEXT_TRANSFORM" glib:nick="text-transform" glib:name="PANGO_ATTR_TEXT_TRANSFORM">
+      </member>
+      <member name="word" value="34" c:identifier="PANGO_ATTR_WORD" glib:nick="word" glib:name="PANGO_ATTR_WORD">
+        <doc xml:space="preserve">override segmentation to classify the range of the attribute as a single word ([struct@Pango.AttrInt]). Since 1.50</doc>
+      </member>
+      <member name="sentence" value="35" c:identifier="PANGO_ATTR_SENTENCE" glib:nick="sentence" glib:name="PANGO_ATTR_SENTENCE">
+        <doc xml:space="preserve">override segmentation to classify the range of the attribute as a single sentence ([struct@Pango.AttrInt]). Since 1.50</doc>
+      </member>
+      <member name="baseline_shift" value="36" c:identifier="PANGO_ATTR_BASELINE_SHIFT" glib:nick="baseline-shift" glib:name="PANGO_ATTR_BASELINE_SHIFT">
+        <doc xml:space="preserve">baseline displacement ([struct@Pango.AttrInt]). Since 1.50</doc>
+      </member>
+      <member name="font_scale" value="37" c:identifier="PANGO_ATTR_FONT_SCALE" glib:nick="font-scale" glib:name="PANGO_ATTR_FONT_SCALE">
+        <doc xml:space="preserve">font-relative size change ([struct@Pango.AttrInt]). Since 1.50</doc>
       </member>
       <function name="get_name" c:identifier="pango_attr_type_get_name" version="1.22">
         <doc xml:space="preserve">Fetches the attribute type name.
@@ -1068,7 +1091,7 @@ by using [func@Pango.AttrType.get_name].</doc>
         <parameters>
           <parameter name="name" transfer-ownership="none">
             <doc xml:space="preserve">an identifier for the type</doc>
-            <type name="utf8" c:type="const gchar*"/>
+            <type name="utf8" c:type="const char*"/>
           </parameter>
         </parameters>
       </function>
@@ -1092,9 +1115,153 @@ will have an all-inclusive range of [0,%G_MAXUINT].</doc>
       </field>
       <field name="end_index" writable="1">
         <doc xml:space="preserve">end index of the range (in bytes). The character at this index
-is not included in the range.</doc>
+  is not included in the range.</doc>
         <type name="guint" c:type="guint"/>
       </field>
+      <method name="as_color" c:identifier="pango_attribute_as_color" version="1.50">
+        <doc xml:space="preserve">Returns the attribute cast to `PangoAttrColor`.
+
+This is mainly useful for language bindings.</doc>
+        <return-value transfer-ownership="none" nullable="1">
+          <doc xml:space="preserve">The attribute as `PangoAttrColor`,
+  or %NULL if it's not a color attribute</doc>
+          <type name="AttrColor" c:type="PangoAttrColor*"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="attr" transfer-ownership="none">
+            <doc xml:space="preserve">A `PangoAttribute` such as foreground</doc>
+            <type name="Attribute" c:type="PangoAttribute*"/>
+          </instance-parameter>
+        </parameters>
+      </method>
+      <method name="as_float" c:identifier="pango_attribute_as_float" version="1.50">
+        <doc xml:space="preserve">Returns the attribute cast to `PangoAttrFloat`.
+
+This is mainly useful for language bindings.</doc>
+        <return-value transfer-ownership="none" nullable="1">
+          <doc xml:space="preserve">The attribute as `PangoAttrFloat`,
+  or %NULL if it's not a floating point attribute</doc>
+          <type name="AttrFloat" c:type="PangoAttrFloat*"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="attr" transfer-ownership="none">
+            <doc xml:space="preserve">A `PangoAttribute` such as scale</doc>
+            <type name="Attribute" c:type="PangoAttribute*"/>
+          </instance-parameter>
+        </parameters>
+      </method>
+      <method name="as_font_desc" c:identifier="pango_attribute_as_font_desc" version="1.50">
+        <doc xml:space="preserve">Returns the attribute cast to `PangoAttrFontDesc`.
+
+This is mainly useful for language bindings.</doc>
+        <return-value transfer-ownership="none" nullable="1">
+          <doc xml:space="preserve">The attribute as `PangoAttrFontDesc`,
+  or %NULL if it's not a font description attribute</doc>
+          <type name="AttrFontDesc" c:type="PangoAttrFontDesc*"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="attr" transfer-ownership="none">
+            <doc xml:space="preserve">A `PangoAttribute` representing a font description</doc>
+            <type name="Attribute" c:type="PangoAttribute*"/>
+          </instance-parameter>
+        </parameters>
+      </method>
+      <method name="as_font_features" c:identifier="pango_attribute_as_font_features" version="1.50">
+        <doc xml:space="preserve">Returns the attribute cast to `PangoAttrFontFeatures`.
+
+This is mainly useful for language bindings.</doc>
+        <return-value transfer-ownership="none" nullable="1">
+          <doc xml:space="preserve">The attribute as `PangoAttrFontFeatures`,
+  or %NULL if it's not a font features attribute</doc>
+          <type name="AttrFontFeatures" c:type="PangoAttrFontFeatures*"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="attr" transfer-ownership="none">
+            <doc xml:space="preserve">A `PangoAttribute` representing font features</doc>
+            <type name="Attribute" c:type="PangoAttribute*"/>
+          </instance-parameter>
+        </parameters>
+      </method>
+      <method name="as_int" c:identifier="pango_attribute_as_int" version="1.50">
+        <doc xml:space="preserve">Returns the attribute cast to `PangoAttrInt`.
+
+This is mainly useful for language bindings.</doc>
+        <return-value transfer-ownership="none" nullable="1">
+          <doc xml:space="preserve">The attribute as `PangoAttrInt`,
+  or %NULL if it's not an integer attribute</doc>
+          <type name="AttrInt" c:type="PangoAttrInt*"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="attr" transfer-ownership="none">
+            <doc xml:space="preserve">A `PangoAttribute` such as weight</doc>
+            <type name="Attribute" c:type="PangoAttribute*"/>
+          </instance-parameter>
+        </parameters>
+      </method>
+      <method name="as_language" c:identifier="pango_attribute_as_language" version="1.50">
+        <doc xml:space="preserve">Returns the attribute cast to `PangoAttrLanguage`.
+
+This is mainly useful for language bindings.</doc>
+        <return-value transfer-ownership="none" nullable="1">
+          <doc xml:space="preserve">The attribute as `PangoAttrLanguage`,
+  or %NULL if it's not a language attribute</doc>
+          <type name="AttrLanguage" c:type="PangoAttrLanguage*"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="attr" transfer-ownership="none">
+            <doc xml:space="preserve">A `PangoAttribute` representing a language</doc>
+            <type name="Attribute" c:type="PangoAttribute*"/>
+          </instance-parameter>
+        </parameters>
+      </method>
+      <method name="as_shape" c:identifier="pango_attribute_as_shape" version="1.50">
+        <doc xml:space="preserve">Returns the attribute cast to `PangoAttrShape`.
+
+This is mainly useful for language bindings.</doc>
+        <return-value transfer-ownership="none" nullable="1">
+          <doc xml:space="preserve">The attribute as `PangoAttrShape`,
+  or %NULL if it's not a shape attribute</doc>
+          <type name="AttrShape" c:type="PangoAttrShape*"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="attr" transfer-ownership="none">
+            <doc xml:space="preserve">A `PangoAttribute` representing a shape</doc>
+            <type name="Attribute" c:type="PangoAttribute*"/>
+          </instance-parameter>
+        </parameters>
+      </method>
+      <method name="as_size" c:identifier="pango_attribute_as_size" version="1.50">
+        <doc xml:space="preserve">Returns the attribute cast to `PangoAttrSize`.
+
+This is mainly useful for language bindings.</doc>
+        <return-value transfer-ownership="none" nullable="1">
+          <doc xml:space="preserve">The attribute as `PangoAttrSize`,
+  or NULL if it's not a size attribute</doc>
+          <type name="AttrSize" c:type="PangoAttrSize*"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="attr" transfer-ownership="none">
+            <doc xml:space="preserve">A `PangoAttribute` representing a size</doc>
+            <type name="Attribute" c:type="PangoAttribute*"/>
+          </instance-parameter>
+        </parameters>
+      </method>
+      <method name="as_string" c:identifier="pango_attribute_as_string" version="1.50">
+        <doc xml:space="preserve">Returns the attribute cast to `PangoAttrString`.
+
+This is mainly useful for language bindings.</doc>
+        <return-value transfer-ownership="none" nullable="1">
+          <doc xml:space="preserve">The attribute as `PangoAttrString`,
+  or %NULL if it's not a string attribute</doc>
+          <type name="AttrString" c:type="PangoAttrString*"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="attr" transfer-ownership="none">
+            <doc xml:space="preserve">A `PangoAttribute` such as family</doc>
+            <type name="Attribute" c:type="PangoAttribute*"/>
+          </instance-parameter>
+        </parameters>
+      </method>
       <method name="copy" c:identifier="pango_attribute_copy">
         <doc xml:space="preserve">Make a copy of an attribute.</doc>
         <return-value transfer-ownership="full">
@@ -1163,78 +1330,94 @@ to the entire text by default.</doc>
         </parameters>
       </method>
     </record>
+    <enumeration name="BaselineShift" version="1.50" glib:type-name="PangoBaselineShift" glib:get-type="pango_baseline_shift_get_type" c:type="PangoBaselineShift">
+      <doc xml:space="preserve">An enumeration that affects baseline shifts between runs.</doc>
+      <member name="none" value="0" c:identifier="PANGO_BASELINE_SHIFT_NONE" glib:nick="none" glib:name="PANGO_BASELINE_SHIFT_NONE">
+        <doc xml:space="preserve">Leave the baseline unchanged</doc>
+      </member>
+      <member name="superscript" value="1" c:identifier="PANGO_BASELINE_SHIFT_SUPERSCRIPT" glib:nick="superscript" glib:name="PANGO_BASELINE_SHIFT_SUPERSCRIPT">
+        <doc xml:space="preserve">Shift the baseline to the superscript position,
+  relative to the previous run</doc>
+      </member>
+      <member name="subscript" value="2" c:identifier="PANGO_BASELINE_SHIFT_SUBSCRIPT" glib:nick="subscript" glib:name="PANGO_BASELINE_SHIFT_SUBSCRIPT">
+        <doc xml:space="preserve">Shift the baseline to the subscript position,
+  relative to the previous run</doc>
+      </member>
+    </enumeration>
     <enumeration name="BidiType" version="1.22" deprecated="1" deprecated-version="1.44" glib:type-name="PangoBidiType" glib:get-type="pango_bidi_type_get_type" c:type="PangoBidiType">
       <doc xml:space="preserve">`PangoBidiType` represents the bidirectional character
-type of a Unicode character as specified by the
+type of a Unicode character.
+
+The values in this enumeration are specified by the
 [Unicode bidirectional algorithm](http://www.unicode.org/reports/tr9/).</doc>
       <doc-deprecated xml:space="preserve">Use fribidi for this information</doc-deprecated>
-      <member name="l" value="0" c:identifier="PANGO_BIDI_TYPE_L" glib:nick="l">
+      <member name="l" value="0" c:identifier="PANGO_BIDI_TYPE_L" glib:nick="l" glib:name="PANGO_BIDI_TYPE_L">
         <doc xml:space="preserve">Left-to-Right</doc>
       </member>
-      <member name="lre" value="1" c:identifier="PANGO_BIDI_TYPE_LRE" glib:nick="lre">
+      <member name="lre" value="1" c:identifier="PANGO_BIDI_TYPE_LRE" glib:nick="lre" glib:name="PANGO_BIDI_TYPE_LRE">
         <doc xml:space="preserve">Left-to-Right Embedding</doc>
       </member>
-      <member name="lro" value="2" c:identifier="PANGO_BIDI_TYPE_LRO" glib:nick="lro">
+      <member name="lro" value="2" c:identifier="PANGO_BIDI_TYPE_LRO" glib:nick="lro" glib:name="PANGO_BIDI_TYPE_LRO">
         <doc xml:space="preserve">Left-to-Right Override</doc>
       </member>
-      <member name="r" value="3" c:identifier="PANGO_BIDI_TYPE_R" glib:nick="r">
+      <member name="r" value="3" c:identifier="PANGO_BIDI_TYPE_R" glib:nick="r" glib:name="PANGO_BIDI_TYPE_R">
         <doc xml:space="preserve">Right-to-Left</doc>
       </member>
-      <member name="al" value="4" c:identifier="PANGO_BIDI_TYPE_AL" glib:nick="al">
+      <member name="al" value="4" c:identifier="PANGO_BIDI_TYPE_AL" glib:nick="al" glib:name="PANGO_BIDI_TYPE_AL">
         <doc xml:space="preserve">Right-to-Left Arabic</doc>
       </member>
-      <member name="rle" value="5" c:identifier="PANGO_BIDI_TYPE_RLE" glib:nick="rle">
+      <member name="rle" value="5" c:identifier="PANGO_BIDI_TYPE_RLE" glib:nick="rle" glib:name="PANGO_BIDI_TYPE_RLE">
         <doc xml:space="preserve">Right-to-Left Embedding</doc>
       </member>
-      <member name="rlo" value="6" c:identifier="PANGO_BIDI_TYPE_RLO" glib:nick="rlo">
+      <member name="rlo" value="6" c:identifier="PANGO_BIDI_TYPE_RLO" glib:nick="rlo" glib:name="PANGO_BIDI_TYPE_RLO">
         <doc xml:space="preserve">Right-to-Left Override</doc>
       </member>
-      <member name="pdf" value="7" c:identifier="PANGO_BIDI_TYPE_PDF" glib:nick="pdf">
+      <member name="pdf" value="7" c:identifier="PANGO_BIDI_TYPE_PDF" glib:nick="pdf" glib:name="PANGO_BIDI_TYPE_PDF">
         <doc xml:space="preserve">Pop Directional Format</doc>
       </member>
-      <member name="en" value="8" c:identifier="PANGO_BIDI_TYPE_EN" glib:nick="en">
+      <member name="en" value="8" c:identifier="PANGO_BIDI_TYPE_EN" glib:nick="en" glib:name="PANGO_BIDI_TYPE_EN">
         <doc xml:space="preserve">European Number</doc>
       </member>
-      <member name="es" value="9" c:identifier="PANGO_BIDI_TYPE_ES" glib:nick="es">
+      <member name="es" value="9" c:identifier="PANGO_BIDI_TYPE_ES" glib:nick="es" glib:name="PANGO_BIDI_TYPE_ES">
         <doc xml:space="preserve">European Number Separator</doc>
       </member>
-      <member name="et" value="10" c:identifier="PANGO_BIDI_TYPE_ET" glib:nick="et">
+      <member name="et" value="10" c:identifier="PANGO_BIDI_TYPE_ET" glib:nick="et" glib:name="PANGO_BIDI_TYPE_ET">
         <doc xml:space="preserve">European Number Terminator</doc>
       </member>
-      <member name="an" value="11" c:identifier="PANGO_BIDI_TYPE_AN" glib:nick="an">
+      <member name="an" value="11" c:identifier="PANGO_BIDI_TYPE_AN" glib:nick="an" glib:name="PANGO_BIDI_TYPE_AN">
         <doc xml:space="preserve">Arabic Number</doc>
       </member>
-      <member name="cs" value="12" c:identifier="PANGO_BIDI_TYPE_CS" glib:nick="cs">
+      <member name="cs" value="12" c:identifier="PANGO_BIDI_TYPE_CS" glib:nick="cs" glib:name="PANGO_BIDI_TYPE_CS">
         <doc xml:space="preserve">Common Number Separator</doc>
       </member>
-      <member name="nsm" value="13" c:identifier="PANGO_BIDI_TYPE_NSM" glib:nick="nsm">
+      <member name="nsm" value="13" c:identifier="PANGO_BIDI_TYPE_NSM" glib:nick="nsm" glib:name="PANGO_BIDI_TYPE_NSM">
         <doc xml:space="preserve">Nonspacing Mark</doc>
       </member>
-      <member name="bn" value="14" c:identifier="PANGO_BIDI_TYPE_BN" glib:nick="bn">
+      <member name="bn" value="14" c:identifier="PANGO_BIDI_TYPE_BN" glib:nick="bn" glib:name="PANGO_BIDI_TYPE_BN">
         <doc xml:space="preserve">Boundary Neutral</doc>
       </member>
-      <member name="b" value="15" c:identifier="PANGO_BIDI_TYPE_B" glib:nick="b">
+      <member name="b" value="15" c:identifier="PANGO_BIDI_TYPE_B" glib:nick="b" glib:name="PANGO_BIDI_TYPE_B">
         <doc xml:space="preserve">Paragraph Separator</doc>
       </member>
-      <member name="s" value="16" c:identifier="PANGO_BIDI_TYPE_S" glib:nick="s">
+      <member name="s" value="16" c:identifier="PANGO_BIDI_TYPE_S" glib:nick="s" glib:name="PANGO_BIDI_TYPE_S">
         <doc xml:space="preserve">Segment Separator</doc>
       </member>
-      <member name="ws" value="17" c:identifier="PANGO_BIDI_TYPE_WS" glib:nick="ws">
+      <member name="ws" value="17" c:identifier="PANGO_BIDI_TYPE_WS" glib:nick="ws" glib:name="PANGO_BIDI_TYPE_WS">
         <doc xml:space="preserve">Whitespace</doc>
       </member>
-      <member name="on" value="18" c:identifier="PANGO_BIDI_TYPE_ON" glib:nick="on">
+      <member name="on" value="18" c:identifier="PANGO_BIDI_TYPE_ON" glib:nick="on" glib:name="PANGO_BIDI_TYPE_ON">
         <doc xml:space="preserve">Other Neutrals</doc>
       </member>
-      <member name="lri" value="19" c:identifier="PANGO_BIDI_TYPE_LRI" glib:nick="lri">
+      <member name="lri" value="19" c:identifier="PANGO_BIDI_TYPE_LRI" glib:nick="lri" glib:name="PANGO_BIDI_TYPE_LRI">
         <doc xml:space="preserve">Left-to-Right isolate. Since 1.48.6</doc>
       </member>
-      <member name="rli" value="20" c:identifier="PANGO_BIDI_TYPE_RLI" glib:nick="rli">
+      <member name="rli" value="20" c:identifier="PANGO_BIDI_TYPE_RLI" glib:nick="rli" glib:name="PANGO_BIDI_TYPE_RLI">
         <doc xml:space="preserve">Right-to-Left isolate. Since 1.48.6</doc>
       </member>
-      <member name="fsi" value="21" c:identifier="PANGO_BIDI_TYPE_FSI" glib:nick="fsi">
+      <member name="fsi" value="21" c:identifier="PANGO_BIDI_TYPE_FSI" glib:nick="fsi" glib:name="PANGO_BIDI_TYPE_FSI">
         <doc xml:space="preserve">First strong isolate. Since 1.48.6</doc>
       </member>
-      <member name="pdi" value="22" c:identifier="PANGO_BIDI_TYPE_PDI" glib:nick="pdi">
+      <member name="pdi" value="22" c:identifier="PANGO_BIDI_TYPE_PDI" glib:nick="pdi" glib:name="PANGO_BIDI_TYPE_PDI">
         <doc xml:space="preserve">Pop directional isolate. Since 1.48.6</doc>
       </member>
       <function name="for_unichar" c:identifier="pango_bidi_type_for_unichar" version="1.22">
@@ -1393,7 +1576,7 @@ red, green, and blue components respectively.</doc>
         <return-value transfer-ownership="full">
           <doc xml:space="preserve">a newly-allocated text string that must
   be freed with g_free().</doc>
-          <type name="utf8" c:type="gchar*"/>
+          <type name="utf8" c:type="char*"/>
         </return-value>
         <parameters>
           <instance-parameter name="color" transfer-ownership="none">
@@ -2047,23 +2230,23 @@ represent a particular Unicode character for a particular script.
 
 Since 1.44, only %PANGO_COVERAGE_NONE and %PANGO_COVERAGE_EXACT
 will be returned.</doc>
-      <member name="none" value="0" c:identifier="PANGO_COVERAGE_NONE" glib:nick="none">
+      <member name="none" value="0" c:identifier="PANGO_COVERAGE_NONE" glib:nick="none" glib:name="PANGO_COVERAGE_NONE">
         <doc xml:space="preserve">The character is not representable with
   the font.</doc>
       </member>
-      <member name="fallback" value="1" c:identifier="PANGO_COVERAGE_FALLBACK" glib:nick="fallback">
+      <member name="fallback" value="1" c:identifier="PANGO_COVERAGE_FALLBACK" glib:nick="fallback" glib:name="PANGO_COVERAGE_FALLBACK">
         <doc xml:space="preserve">The character is represented in a
   way that may be comprehensible but is not the correct
   graphical form. For instance, a Hangul character represented
   as a a sequence of Jamos, or a Latin transliteration of a
   Cyrillic word.</doc>
       </member>
-      <member name="approximate" value="2" c:identifier="PANGO_COVERAGE_APPROXIMATE" glib:nick="approximate">
+      <member name="approximate" value="2" c:identifier="PANGO_COVERAGE_APPROXIMATE" glib:nick="approximate" glib:name="PANGO_COVERAGE_APPROXIMATE">
         <doc xml:space="preserve">The character is represented as
   basically the correct graphical form, but with a stylistic
   variant inappropriate for the current script.</doc>
       </member>
-      <member name="exact" value="3" c:identifier="PANGO_COVERAGE_EXACT" glib:nick="exact">
+      <member name="exact" value="3" c:identifier="PANGO_COVERAGE_EXACT" glib:nick="exact" glib:name="PANGO_COVERAGE_EXACT">
         <doc xml:space="preserve">The character is represented as the
   correct graphical form.</doc>
       </member>
@@ -2100,27 +2283,27 @@ vertical text is handled in Pango.
 If you are interested in text direction, you should really use fribidi
 directly. `PangoDirection` is only retained because it is used in some
 public apis.</doc>
-      <member name="ltr" value="0" c:identifier="PANGO_DIRECTION_LTR" glib:nick="ltr">
+      <member name="ltr" value="0" c:identifier="PANGO_DIRECTION_LTR" glib:nick="ltr" glib:name="PANGO_DIRECTION_LTR">
         <doc xml:space="preserve">A strong left-to-right direction</doc>
       </member>
-      <member name="rtl" value="1" c:identifier="PANGO_DIRECTION_RTL" glib:nick="rtl">
+      <member name="rtl" value="1" c:identifier="PANGO_DIRECTION_RTL" glib:nick="rtl" glib:name="PANGO_DIRECTION_RTL">
         <doc xml:space="preserve">A strong right-to-left direction</doc>
       </member>
-      <member name="ttb_ltr" value="2" c:identifier="PANGO_DIRECTION_TTB_LTR" glib:nick="ttb-ltr">
+      <member name="ttb_ltr" value="2" c:identifier="PANGO_DIRECTION_TTB_LTR" glib:nick="ttb-ltr" glib:name="PANGO_DIRECTION_TTB_LTR">
         <doc xml:space="preserve">Deprecated value; treated the
   same as %PANGO_DIRECTION_RTL.</doc>
       </member>
-      <member name="ttb_rtl" value="3" c:identifier="PANGO_DIRECTION_TTB_RTL" glib:nick="ttb-rtl">
+      <member name="ttb_rtl" value="3" c:identifier="PANGO_DIRECTION_TTB_RTL" glib:nick="ttb-rtl" glib:name="PANGO_DIRECTION_TTB_RTL">
         <doc xml:space="preserve">Deprecated value; treated the
   same as %PANGO_DIRECTION_LTR</doc>
       </member>
-      <member name="weak_ltr" value="4" c:identifier="PANGO_DIRECTION_WEAK_LTR" glib:nick="weak-ltr">
+      <member name="weak_ltr" value="4" c:identifier="PANGO_DIRECTION_WEAK_LTR" glib:nick="weak-ltr" glib:name="PANGO_DIRECTION_WEAK_LTR">
         <doc xml:space="preserve">A weak left-to-right direction</doc>
       </member>
-      <member name="weak_rtl" value="5" c:identifier="PANGO_DIRECTION_WEAK_RTL" glib:nick="weak-rtl">
+      <member name="weak_rtl" value="5" c:identifier="PANGO_DIRECTION_WEAK_RTL" glib:nick="weak-rtl" glib:name="PANGO_DIRECTION_WEAK_RTL">
         <doc xml:space="preserve">A weak right-to-left direction</doc>
       </member>
-      <member name="neutral" value="6" c:identifier="PANGO_DIRECTION_NEUTRAL" glib:nick="neutral">
+      <member name="neutral" value="6" c:identifier="PANGO_DIRECTION_NEUTRAL" glib:nick="neutral" glib:name="PANGO_DIRECTION_NEUTRAL">
         <doc xml:space="preserve">No direction specified</doc>
       </member>
     </enumeration>
@@ -2131,16 +2314,16 @@ should be applied to text.
 In the ellipsization process characters are removed from the
 text in order to make it fit to a given width and replaced
 with an ellipsis.</doc>
-      <member name="none" value="0" c:identifier="PANGO_ELLIPSIZE_NONE" glib:nick="none">
+      <member name="none" value="0" c:identifier="PANGO_ELLIPSIZE_NONE" glib:nick="none" glib:name="PANGO_ELLIPSIZE_NONE">
         <doc xml:space="preserve">No ellipsization</doc>
       </member>
-      <member name="start" value="1" c:identifier="PANGO_ELLIPSIZE_START" glib:nick="start">
+      <member name="start" value="1" c:identifier="PANGO_ELLIPSIZE_START" glib:nick="start" glib:name="PANGO_ELLIPSIZE_START">
         <doc xml:space="preserve">Omit characters at the start of the text</doc>
       </member>
-      <member name="middle" value="2" c:identifier="PANGO_ELLIPSIZE_MIDDLE" glib:nick="middle">
+      <member name="middle" value="2" c:identifier="PANGO_ELLIPSIZE_MIDDLE" glib:nick="middle" glib:name="PANGO_ELLIPSIZE_MIDDLE">
         <doc xml:space="preserve">Omit characters in the middle of the text</doc>
       </member>
-      <member name="end" value="3" c:identifier="PANGO_ELLIPSIZE_END" glib:nick="end">
+      <member name="end" value="3" c:identifier="PANGO_ELLIPSIZE_END" glib:nick="end" glib:name="PANGO_ELLIPSIZE_END">
         <doc xml:space="preserve">Omit characters at the end of the text</doc>
       </member>
     </enumeration>
@@ -2592,6 +2775,27 @@ use hb_font_create_sub_font().</doc>
           <doc xml:space="preserve">the `hb_font_t` object
   backing the font</doc>
           <type name="HarfBuzz.font_t" c:type="gconstpointer"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="font" transfer-ownership="none">
+            <doc xml:space="preserve">a `PangoFont`</doc>
+            <type name="Font" c:type="PangoFont*"/>
+          </instance-parameter>
+        </parameters>
+      </method>
+      <method name="get_languages" c:identifier="pango_font_get_languages" version="1.50">
+        <doc xml:space="preserve">Returns the languages that are supported by @font.
+
+If the font backend does not provide this information,
+%NULL is returned. For the fontconfig backend, this
+corresponds to the FC_LANG member of the FcPattern.
+
+The returned array is only valid as long as the font
+and its fontmap are valid.</doc>
+        <return-value transfer-ownership="none" nullable="1">
+          <doc xml:space="preserve">a %NULL-terminated
+  array of `PangoLanguage`*</doc>
+          <type name="Language" c:type="PangoLanguage**"/>
         </return-value>
         <parameters>
           <instance-parameter name="font" transfer-ownership="none">
@@ -4598,28 +4802,28 @@ can handle fonts of this fonts loaded with this fontmap.</doc>
     <bitfield name="FontMask" glib:type-name="PangoFontMask" glib:get-type="pango_font_mask_get_type" c:type="PangoFontMask">
       <doc xml:space="preserve">The bits in a `PangoFontMask` correspond to the set fields in a
 `PangoFontDescription`.</doc>
-      <member name="family" value="1" c:identifier="PANGO_FONT_MASK_FAMILY" glib:nick="family">
+      <member name="family" value="1" c:identifier="PANGO_FONT_MASK_FAMILY" glib:nick="family" glib:name="PANGO_FONT_MASK_FAMILY">
         <doc xml:space="preserve">the font family is specified.</doc>
       </member>
-      <member name="style" value="2" c:identifier="PANGO_FONT_MASK_STYLE" glib:nick="style">
+      <member name="style" value="2" c:identifier="PANGO_FONT_MASK_STYLE" glib:nick="style" glib:name="PANGO_FONT_MASK_STYLE">
         <doc xml:space="preserve">the font style is specified.</doc>
       </member>
-      <member name="variant" value="4" c:identifier="PANGO_FONT_MASK_VARIANT" glib:nick="variant">
+      <member name="variant" value="4" c:identifier="PANGO_FONT_MASK_VARIANT" glib:nick="variant" glib:name="PANGO_FONT_MASK_VARIANT">
         <doc xml:space="preserve">the font variant is specified.</doc>
       </member>
-      <member name="weight" value="8" c:identifier="PANGO_FONT_MASK_WEIGHT" glib:nick="weight">
+      <member name="weight" value="8" c:identifier="PANGO_FONT_MASK_WEIGHT" glib:nick="weight" glib:name="PANGO_FONT_MASK_WEIGHT">
         <doc xml:space="preserve">the font weight is specified.</doc>
       </member>
-      <member name="stretch" value="16" c:identifier="PANGO_FONT_MASK_STRETCH" glib:nick="stretch">
+      <member name="stretch" value="16" c:identifier="PANGO_FONT_MASK_STRETCH" glib:nick="stretch" glib:name="PANGO_FONT_MASK_STRETCH">
         <doc xml:space="preserve">the font stretch is specified.</doc>
       </member>
-      <member name="size" value="32" c:identifier="PANGO_FONT_MASK_SIZE" glib:nick="size">
+      <member name="size" value="32" c:identifier="PANGO_FONT_MASK_SIZE" glib:nick="size" glib:name="PANGO_FONT_MASK_SIZE">
         <doc xml:space="preserve">the font size is specified.</doc>
       </member>
-      <member name="gravity" value="64" c:identifier="PANGO_FONT_MASK_GRAVITY" glib:nick="gravity">
+      <member name="gravity" value="64" c:identifier="PANGO_FONT_MASK_GRAVITY" glib:nick="gravity" glib:name="PANGO_FONT_MASK_GRAVITY">
         <doc xml:space="preserve">the font gravity is specified (Since: 1.16.)</doc>
       </member>
-      <member name="variations" value="128" c:identifier="PANGO_FONT_MASK_VARIATIONS" glib:nick="variations">
+      <member name="variations" value="128" c:identifier="PANGO_FONT_MASK_VARIATIONS" glib:nick="variations" glib:name="PANGO_FONT_MASK_VARIATIONS">
         <doc xml:space="preserve">OpenType font variations are specified (Since: 1.42)</doc>
       </member>
     </bitfield>
@@ -4630,7 +4834,14 @@ for a font.
 The information in a `PangoFontMetrics` structure may be restricted
 to a script. The fields of this structure are private to implementations
 of a font backend. See the documentation of the corresponding getters
-for documentation of their meaning.</doc>
+for documentation of their meaning.
+
+For an overview of the most important metrics, see:
+
+&lt;picture&gt;
+  &lt;source srcset="fontmetrics-dark.png" media="(prefers-color-scheme: dark)"&gt;
+  &lt;img alt="Font metrics" src="fontmetrics-light.png"&gt;
+&lt;/picture&gt;</doc>
       <field name="ref_count" readable="0" private="1">
         <type name="guint" c:type="guint"/>
       </field>
@@ -4736,8 +4947,8 @@ to figure where the ink will be.)</doc>
       <method name="get_height" c:identifier="pango_font_metrics_get_height" version="1.44">
         <doc xml:space="preserve">Gets the line height from a font metrics structure.
 
-The line height is the distance between successive baselines
-in wrapped text.
+The line height is the recommended distance between successive
+baselines in wrapped text using this font.
 
 If the line height is not available, 0 is returned.</doc>
         <return-value transfer-ownership="none">
@@ -4837,6 +5048,19 @@ If the result is zero, frees the structure and any associated memory.</doc>
         </parameters>
       </method>
     </record>
+    <enumeration name="FontScale" version="1.50" glib:type-name="PangoFontScale" glib:get-type="pango_font_scale_get_type" c:type="PangoFontScale">
+      <doc xml:space="preserve">An enumeration that affects font sizes for superscript
+and subscript positioning.</doc>
+      <member name="none" value="0" c:identifier="PANGO_FONT_SCALE_NONE" glib:nick="none" glib:name="PANGO_FONT_SCALE_NONE">
+        <doc xml:space="preserve">Leave the font size unchanged</doc>
+      </member>
+      <member name="superscript" value="1" c:identifier="PANGO_FONT_SCALE_SUPERSCRIPT" glib:nick="superscript" glib:name="PANGO_FONT_SCALE_SUPERSCRIPT">
+        <doc xml:space="preserve">Change the font to a size suitable for superscripts</doc>
+      </member>
+      <member name="subscript" value="2" c:identifier="PANGO_FONT_SCALE_SUBSCRIPT" glib:nick="subscript" glib:name="PANGO_FONT_SCALE_SUBSCRIPT">
+        <doc xml:space="preserve">Change the font to a size suitable for subscripts</doc>
+      </member>
+    </enumeration>
     <class name="Fontset" c:symbol-prefix="fontset" c:type="PangoFontset" parent="GObject.Object" abstract="1" glib:type-name="PangoFontset" glib:get-type="pango_fontset_get_type" glib:type-struct="FontsetClass">
       <doc xml:space="preserve">A `PangoFontset` represents a set of `PangoFont` to use when rendering text.
 
@@ -5192,7 +5416,20 @@ of text direction.</doc>
     </function-macro>
     <record name="GlyphGeometry" c:type="PangoGlyphGeometry">
       <doc xml:space="preserve">The `PangoGlyphGeometry` structure contains width and positioning
-information for a single glyph.</doc>
+information for a single glyph.
+
+Note that @width is not guaranteed to be the same as the glyph
+extents. Kerning and other positioning applied during shaping will
+affect both the @width and the @x_offset for the glyphs in the
+glyph string that results from shaping.
+
+The information in this struct is intended for rendering the glyphs,
+as follows:
+
+1. Render the current glyph at (x + x_offset, y + y_offset),
+   where (x, y) is the current point
+2. Advance the current point to (x + xoffset, y)
+3. Render the next glyph...</doc>
       <field name="width" writable="1">
         <doc xml:space="preserve">the logical width to use for the the character.</doc>
         <type name="GlyphUnit" c:type="PangoGlyphUnit"/>
@@ -5236,6 +5473,21 @@ each of which contains a list of `PangoGlyphItem`.</doc>
       <field name="glyphs" writable="1">
         <doc xml:space="preserve">corresponding `PangoGlyphString`</doc>
         <type name="GlyphString" c:type="PangoGlyphString*"/>
+      </field>
+      <field name="y_offset" writable="1">
+        <doc xml:space="preserve">shift of the baseline, relative to the baseline
+  of the containing line. Positive values shift upwards</doc>
+        <type name="gint" c:type="int"/>
+      </field>
+      <field name="start_x_offset" writable="1">
+        <doc xml:space="preserve">horizontal displacement to apply before the
+  glyph item. Positive values shift right</doc>
+        <type name="gint" c:type="int"/>
+      </field>
+      <field name="end_x_offset" writable="1">
+        <doc xml:space="preserve">horizontal displacement to apply after th
+  glyph item. Positive values shift right</doc>
+        <type name="gint" c:type="int"/>
       </field>
       <method name="apply_attrs" c:identifier="pango_glyph_item_apply_attrs" version="1.2">
         <doc xml:space="preserve">Splits a shaped item (`PangoGlyphItem`) into multiple items based
@@ -5582,7 +5834,7 @@ The storage for the glyph information is owned by the structure
 which simplifies memory management.</doc>
       <field name="num_glyphs" writable="1">
         <doc xml:space="preserve">number of the glyphs in this glyph string.</doc>
-        <type name="gint" c:type="gint"/>
+        <type name="gint" c:type="int"/>
       </field>
       <field name="glyphs" writable="1">
         <doc xml:space="preserve">array of glyph information
@@ -5594,10 +5846,10 @@ which simplifies memory management.</doc>
       <field name="log_clusters" writable="1">
         <doc xml:space="preserve">logical cluster info, indexed by the byte index
   within the text corresponding to the glyph string.</doc>
-        <type name="gint" c:type="gint*"/>
+        <type name="gint" c:type="int*"/>
       </field>
       <field name="space" readable="0" private="1">
-        <type name="gint" c:type="gint"/>
+        <type name="gint" c:type="int"/>
       </field>
       <constructor name="new" c:identifier="pango_glyph_string_new">
         <doc xml:space="preserve">Create a new `PangoGlyphString`.</doc>
@@ -5762,8 +6014,14 @@ is in fact only a convenience function that computes the sum of
         <doc xml:space="preserve">Converts from character position to x position.
 
 The X position is measured from the left edge of the run.
-Character positions are computed by dividing up each cluster
-into equal portions.</doc>
+Character positions are obtained using font metrics for ligatures
+where available, and computed by dividing up each cluster
+into equal portions, otherwise.
+
+&lt;picture&gt;
+  &lt;source srcset="glyphstring-positions-dark.png" media="(prefers-color-scheme: dark)"&gt;
+  &lt;img alt="Glyph positions" src="glyphstring-positions-light.png"&gt;
+&lt;/picture&gt;</doc>
         <return-value transfer-ownership="none">
           <type name="none" c:type="void"/>
         </return-value>
@@ -5774,7 +6032,7 @@ into equal portions.</doc>
           </instance-parameter>
           <parameter name="text" transfer-ownership="none">
             <doc xml:space="preserve">the text for the run</doc>
-            <type name="utf8" c:type="char*"/>
+            <type name="utf8" c:type="const char*"/>
           </parameter>
           <parameter name="length" transfer-ownership="none">
             <doc xml:space="preserve">the number of bytes (not characters) in @text.</doc>
@@ -5783,6 +6041,52 @@ into equal portions.</doc>
           <parameter name="analysis" transfer-ownership="none">
             <doc xml:space="preserve">the analysis information return from [func@itemize]</doc>
             <type name="Analysis" c:type="PangoAnalysis*"/>
+          </parameter>
+          <parameter name="index_" transfer-ownership="none">
+            <doc xml:space="preserve">the byte index within @text</doc>
+            <type name="gint" c:type="int"/>
+          </parameter>
+          <parameter name="trailing" transfer-ownership="none">
+            <doc xml:space="preserve">whether we should compute the result for the beginning (%FALSE)
+  or end (%TRUE) of the character.</doc>
+            <type name="gboolean" c:type="gboolean"/>
+          </parameter>
+          <parameter name="x_pos" direction="out" caller-allocates="0" transfer-ownership="full">
+            <doc xml:space="preserve">location to store result</doc>
+            <type name="gint" c:type="int*"/>
+          </parameter>
+        </parameters>
+      </method>
+      <method name="index_to_x_full" c:identifier="pango_glyph_string_index_to_x_full" version="1.50">
+        <doc xml:space="preserve">Converts from character position to x position.
+
+This variant of [method@Pango.GlyphString.index_to_x] additionally
+accepts a `PangoLogAttr` array. The grapheme boundary information
+in it can be used to disambiguate positioning inside some complex
+clusters.</doc>
+        <return-value transfer-ownership="none">
+          <type name="none" c:type="void"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="glyphs" transfer-ownership="none">
+            <doc xml:space="preserve">the glyphs return from [func@shape]</doc>
+            <type name="GlyphString" c:type="PangoGlyphString*"/>
+          </instance-parameter>
+          <parameter name="text" transfer-ownership="none">
+            <doc xml:space="preserve">the text for the run</doc>
+            <type name="utf8" c:type="const char*"/>
+          </parameter>
+          <parameter name="length" transfer-ownership="none">
+            <doc xml:space="preserve">the number of bytes (not characters) in @text.</doc>
+            <type name="gint" c:type="int"/>
+          </parameter>
+          <parameter name="analysis" transfer-ownership="none">
+            <doc xml:space="preserve">the analysis information return from [func@itemize]</doc>
+            <type name="Analysis" c:type="PangoAnalysis*"/>
+          </parameter>
+          <parameter name="attrs" transfer-ownership="none" nullable="1" allow-none="1">
+            <doc xml:space="preserve">`PangoLogAttr` array for @text</doc>
+            <type name="LogAttr" c:type="PangoLogAttr*"/>
           </parameter>
           <parameter name="index_" transfer-ownership="none">
             <doc xml:space="preserve">the byte index within @text</doc>
@@ -5811,7 +6115,7 @@ into equal portions.</doc>
           </instance-parameter>
           <parameter name="new_len" transfer-ownership="none">
             <doc xml:space="preserve">the new length of the string</doc>
-            <type name="gint" c:type="gint"/>
+            <type name="gint" c:type="int"/>
           </parameter>
         </parameters>
       </method>
@@ -5833,7 +6137,7 @@ attributes for the text to compute the valid cursor position.</doc>
           </instance-parameter>
           <parameter name="text" transfer-ownership="none">
             <doc xml:space="preserve">the text for the run</doc>
-            <type name="utf8" c:type="char*"/>
+            <type name="utf8" c:type="const char*"/>
           </parameter>
           <parameter name="length" transfer-ownership="none">
             <doc xml:space="preserve">the number of bytes (not characters) in text.</doc>
@@ -5863,14 +6167,18 @@ attributes for the text to compute the valid cursor position.</doc>
       <doc xml:space="preserve">A `PangoGlyphVisAttr` structure communicates information between
 the shaping and rendering phases.
 
-Currently, it contains only cluster start information. More attributes
-may be added in the future.</doc>
+Currently, it contains cluster start and color information.
+More attributes may be added in the future.</doc>
       <field name="is_cluster_start" writable="1" bits="1">
         <doc xml:space="preserve">set for the first logical glyph in each cluster.
   (Clusters are stored in visual order, within the cluster, glyphs
   are always ordered in logical order, since visual order is meaningless;
   that is, in Arabic text, accent glyphs follow the glyphs for the
   base character.)</doc>
+        <type name="guint" c:type="guint"/>
+      </field>
+      <field name="is_color" writable="1" bits="1">
+        <doc xml:space="preserve">set if the the font will render this glyph with color. Since 1.50</doc>
         <type name="guint" c:type="guint"/>
       </field>
     </record>
@@ -5888,19 +6196,19 @@ Not every value in this enumeration makes sense for every usage of
 [method@Pango.Context.get_base_gravity].
 
 See also: [enum@Pango.GravityHint]</doc>
-      <member name="south" value="0" c:identifier="PANGO_GRAVITY_SOUTH" glib:nick="south">
-        <doc xml:space="preserve">Glyphs stand upright (default)</doc>
+      <member name="south" value="0" c:identifier="PANGO_GRAVITY_SOUTH" glib:nick="south" glib:name="PANGO_GRAVITY_SOUTH">
+        <doc xml:space="preserve">Glyphs stand upright (default) &lt;img align="right" valign="center" src="m-south.png"&gt;</doc>
       </member>
-      <member name="east" value="1" c:identifier="PANGO_GRAVITY_EAST" glib:nick="east">
-        <doc xml:space="preserve">Glyphs are rotated 90 degrees clockwise</doc>
+      <member name="east" value="1" c:identifier="PANGO_GRAVITY_EAST" glib:nick="east" glib:name="PANGO_GRAVITY_EAST">
+        <doc xml:space="preserve">Glyphs are rotated 90 degrees counter-clockwise. &lt;img align="right" valign="center" src="m-east.png"&gt;</doc>
       </member>
-      <member name="north" value="2" c:identifier="PANGO_GRAVITY_NORTH" glib:nick="north">
-        <doc xml:space="preserve">Glyphs are upside-down</doc>
+      <member name="north" value="2" c:identifier="PANGO_GRAVITY_NORTH" glib:nick="north" glib:name="PANGO_GRAVITY_NORTH">
+        <doc xml:space="preserve">Glyphs are upside-down. &lt;img align="right" valign="cener" src="m-north.png"&gt;</doc>
       </member>
-      <member name="west" value="3" c:identifier="PANGO_GRAVITY_WEST" glib:nick="west">
-        <doc xml:space="preserve">Glyphs are rotated 90 degrees counter-clockwise</doc>
+      <member name="west" value="3" c:identifier="PANGO_GRAVITY_WEST" glib:nick="west" glib:name="PANGO_GRAVITY_WEST">
+        <doc xml:space="preserve">Glyphs are rotated 90 degrees clockwise. &lt;img align="right" valign="center" src="m-west.png"&gt;</doc>
       </member>
-      <member name="auto" value="4" c:identifier="PANGO_GRAVITY_AUTO" glib:nick="auto">
+      <member name="auto" value="4" c:identifier="PANGO_GRAVITY_AUTO" glib:nick="auto" glib:name="PANGO_GRAVITY_AUTO">
         <doc xml:space="preserve">Gravity is resolved from the context matrix</doc>
       </member>
       <function name="get_for_matrix" c:identifier="pango_gravity_get_for_matrix" version="1.16">
@@ -6011,15 +6319,15 @@ vertical context.
 That is, English excerpts in a vertical paragraph for example.
 
 See also [enum@Pango.Gravity]</doc>
-      <member name="natural" value="0" c:identifier="PANGO_GRAVITY_HINT_NATURAL" glib:nick="natural">
+      <member name="natural" value="0" c:identifier="PANGO_GRAVITY_HINT_NATURAL" glib:nick="natural" glib:name="PANGO_GRAVITY_HINT_NATURAL">
         <doc xml:space="preserve">scripts will take their natural gravity based
   on the base gravity and the script.  This is the default.</doc>
       </member>
-      <member name="strong" value="1" c:identifier="PANGO_GRAVITY_HINT_STRONG" glib:nick="strong">
+      <member name="strong" value="1" c:identifier="PANGO_GRAVITY_HINT_STRONG" glib:nick="strong" glib:name="PANGO_GRAVITY_HINT_STRONG">
         <doc xml:space="preserve">always use the base gravity set, regardless of
   the script.</doc>
       </member>
-      <member name="line" value="2" c:identifier="PANGO_GRAVITY_HINT_LINE" glib:nick="line">
+      <member name="line" value="2" c:identifier="PANGO_GRAVITY_HINT_LINE" glib:nick="line" glib:name="PANGO_GRAVITY_HINT_LINE">
         <doc xml:space="preserve">for scripts not in their natural direction (eg.
   Latin in East gravity), choose per-script gravity such that every script
   respects the line progression. This means, Latin and Arabic will take
@@ -6135,15 +6443,15 @@ You typically obtain `PangoItems` by itemizing a piece of text
 with [func@itemize].</doc>
       <field name="offset" writable="1">
         <doc xml:space="preserve">byte offset of the start of this item in text.</doc>
-        <type name="gint" c:type="gint"/>
+        <type name="gint" c:type="int"/>
       </field>
       <field name="length" writable="1">
         <doc xml:space="preserve">length of this item in bytes.</doc>
-        <type name="gint" c:type="gint"/>
+        <type name="gint" c:type="int"/>
       </field>
       <field name="num_chars" writable="1">
         <doc xml:space="preserve">number of Unicode characters in the item.</doc>
-        <type name="gint" c:type="gint"/>
+        <type name="gint" c:type="int"/>
       </field>
       <field name="analysis" writable="1">
         <doc xml:space="preserve">analysis results for the item.</doc>
@@ -6480,7 +6788,11 @@ settings to take effect. GTK does this in its initialization
 functions automatically (by calling gtk_set_locale()).
 See the setlocale() manpage for more details.
 
-Note that the default language can change over the life of an application.</doc>
+Note that the default language can change over the life of an application.
+
+Also note that this function will not do the right thing if you
+use per-thread locales with uselocale(). In that case, you should
+just call pango_language_from_string() yourself.</doc>
         <return-value transfer-ownership="none">
           <doc xml:space="preserve">the default language as a `PangoLanguage`</doc>
           <type name="Language" c:type="PangoLanguage*"/>
@@ -6527,7 +6839,20 @@ There are a number of parameters to adjust the formatting of a
 `PangoLayout`. The following image shows adjustable parameters
 (on the left) and font metrics (on the right):
 
-![Pango Layout Parameters](layout.png)
+&lt;picture&gt;
+  &lt;source srcset="layout-dark.png" media="(prefers-color-scheme: dark)"&gt;
+  &lt;img alt="Pango Layout Parameters" src="layout-light.png"&gt;
+&lt;/picture&gt;
+
+The following images demonstrate the effect of alignment and
+justification on the layout of text:
+
+| | |
+| --- | --- |
+| ![align=left](align-left.png) | ![align=left, justify](align-left-justify.png) |
+| ![align=center](align-center.png) | ![align=center, justify](align-center-justify.png) |
+| ![align=right](align-right.png) | ![align=right, justify](align-right-justify.png) |
+
 
 It is possible, as well, to ignore the 2-D setup,
 and simply treat the results of a `PangoLayout` as a list of lines.</doc>
@@ -6634,6 +6959,40 @@ See [method@Pango.Layout.set_auto_dir].</doc>
           </instance-parameter>
         </parameters>
       </method>
+      <method name="get_caret_pos" c:identifier="pango_layout_get_caret_pos" version="1.50">
+        <doc xml:space="preserve">Given an index within a layout, determines the positions that of the
+strong and weak cursors if the insertion point is at that index.
+
+This is a variant of [method@Pango.Layout.get_cursor_pos] that applies
+font metric information about caret slope and offset to the positions
+it returns.
+
+&lt;picture&gt;
+  &lt;source srcset="caret-metrics-dark.png" media="(prefers-color-scheme: dark)"&gt;
+  &lt;img alt="Caret metrics" src="caret-metrics-light.png"&gt;
+&lt;/picture&gt;</doc>
+        <return-value transfer-ownership="none">
+          <type name="none" c:type="void"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="layout" transfer-ownership="none">
+            <doc xml:space="preserve">a `PangoLayout`</doc>
+            <type name="Layout" c:type="PangoLayout*"/>
+          </instance-parameter>
+          <parameter name="index_" transfer-ownership="none">
+            <doc xml:space="preserve">the byte index of the cursor</doc>
+            <type name="gint" c:type="int"/>
+          </parameter>
+          <parameter name="strong_pos" direction="out" caller-allocates="1" transfer-ownership="none" optional="1" allow-none="1">
+            <doc xml:space="preserve">location to store the strong cursor position</doc>
+            <type name="Rectangle" c:type="PangoRectangle*"/>
+          </parameter>
+          <parameter name="weak_pos" direction="out" caller-allocates="1" transfer-ownership="none" optional="1" allow-none="1">
+            <doc xml:space="preserve">location to store the weak cursor position</doc>
+            <type name="Rectangle" c:type="PangoRectangle*"/>
+          </parameter>
+        </parameters>
+      </method>
       <method name="get_character_count" c:identifier="pango_layout_get_character_count" version="1.30">
         <doc xml:space="preserve">Returns the number of Unicode characters in the
 the text of @layout.</doc>
@@ -6666,11 +7025,30 @@ the text of @layout.</doc>
         <doc xml:space="preserve">Given an index within a layout, determines the positions that of the
 strong and weak cursors if the insertion point is at that index.
 
-The position of each cursor is stored as a zero-width rectangle.
+The position of each cursor is stored as a zero-width rectangle
+with the height of the run extents.
+
+&lt;picture&gt;
+  &lt;source srcset="cursor-positions-dark.png" media="(prefers-color-scheme: dark)"&gt;
+  &lt;img alt="Cursor positions" src="cursor-positions-light.png"&gt;
+&lt;/picture&gt;
+
 The strong cursor location is the location where characters of the
 directionality equal to the base direction of the layout are inserted.
 The weak cursor location is the location where characters of the
-directionality opposite to the base direction of the layout are inserted.</doc>
+directionality opposite to the base direction of the layout are inserted.
+
+The following example shows text with both a strong and a weak cursor.
+
+&lt;picture&gt;
+  &lt;source srcset="split-cursor-dark.png" media="(prefers-color-scheme: dark)"&gt;
+  &lt;img alt="Strong and weak cursors" src="split-cursor-light.png"&gt;
+&lt;/picture&gt;
+
+The strong cursor has a little arrow pointing to the right, the weak
+cursor to the left. Typing a 'c' in this situation will insert the
+character after the 'b', and typing another Hebrew character, like '&#x5D2;',
+will insert it at the end.</doc>
         <return-value transfer-ownership="none">
           <type name="none" c:type="void"/>
         </return-value>
@@ -6821,6 +7199,20 @@ A negative value indicates a hanging indentation.</doc>
       <method name="get_justify" c:identifier="pango_layout_get_justify">
         <doc xml:space="preserve">Gets whether each complete line should be stretched to fill the entire
 width of the layout.</doc>
+        <return-value transfer-ownership="none">
+          <doc xml:space="preserve">the justify value</doc>
+          <type name="gboolean" c:type="gboolean"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="layout" transfer-ownership="none">
+            <doc xml:space="preserve">a `PangoLayout`</doc>
+            <type name="Layout" c:type="PangoLayout*"/>
+          </instance-parameter>
+        </parameters>
+      </method>
+      <method name="get_justify_last_line" c:identifier="pango_layout_get_justify_last_line" version="1.50">
+        <doc xml:space="preserve">Gets whether the last line should be stretched
+to fill the entire width of the layout.</doc>
         <return-value transfer-ownership="none">
           <doc xml:space="preserve">the justify value</doc>
           <type name="gboolean" c:type="gboolean"/>
@@ -7318,13 +7710,12 @@ to be wrapped.</doc>
         </parameters>
       </method>
       <method name="move_cursor_visually" c:identifier="pango_layout_move_cursor_visually">
-        <doc xml:space="preserve">Computes a new cursor position from an old position and a count of
-positions to move visually.
+        <doc xml:space="preserve">Computes a new cursor position from an old position and a direction.
 
-If @direction is positive, then the new strong cursor position will be
-one position to the right of the old cursor position. If @direction is
-negative, then the new strong cursor position will be one position to
-the left of the old cursor position.
+If @direction is positive, then the new position will cause the strong
+or weak cursor to be displayed one position to right of where it was
+with the old cursor position. If @direction is negative, it will be
+moved to the left.
 
 In the presence of bidirectional text, the correspondence between
 logical and visual order will depend on the direction of the current
@@ -7332,9 +7723,8 @@ run, and there may be jumps when the cursor is moved off of the end
 of a run.
 
 Motion here is in cursor positions, not in characters, so a single
-call to [method@Pango.Layout.move_cursor_visually] may move the cursor
-over multiple characters when multiple characters combine to form a
-single grapheme.</doc>
+call to this function may move the cursor over multiple characters
+when multiple characters combine to form a single grapheme.</doc>
         <return-value transfer-ownership="none">
           <type name="none" c:type="void"/>
         </return-value>
@@ -7350,7 +7740,7 @@ single grapheme.</doc>
             <type name="gboolean" c:type="gboolean"/>
           </parameter>
           <parameter name="old_index" transfer-ownership="none">
-            <doc xml:space="preserve">the byte index of the grapheme for the old index</doc>
+            <doc xml:space="preserve">the byte index of the current cursor position</doc>
             <type name="gint" c:type="int"/>
           </parameter>
           <parameter name="old_trailing" transfer-ownership="none">
@@ -7578,7 +7968,13 @@ like extending the characters.
 Note that this setting is not implemented and so is ignored in
 Pango older than 1.18.
 
-The default value is %FALSE.</doc>
+Note that tabs and justification conflict with each other:
+Justification will move content away from its tab-aligned
+positions.
+
+The default value is %FALSE.
+
+Also see [method@Pango.Layout.set_justify_last_line].</doc>
         <return-value transfer-ownership="none">
           <type name="none" c:type="void"/>
         </return-value>
@@ -7589,6 +7985,28 @@ The default value is %FALSE.</doc>
           </instance-parameter>
           <parameter name="justify" transfer-ownership="none">
             <doc xml:space="preserve">whether the lines in the layout should be justified</doc>
+            <type name="gboolean" c:type="gboolean"/>
+          </parameter>
+        </parameters>
+      </method>
+      <method name="set_justify_last_line" c:identifier="pango_layout_set_justify_last_line" version="1.50">
+        <doc xml:space="preserve">Sets whether the last line should be stretched to fill the
+entire width of the layout.
+
+This only has an effect if [method@Pango.Layout.set_justify] has
+been called as well.
+
+The default value is %FALSE.</doc>
+        <return-value transfer-ownership="none">
+          <type name="none" c:type="void"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="layout" transfer-ownership="none">
+            <doc xml:space="preserve">a `PangoLayout`</doc>
+            <type name="Layout" c:type="PangoLayout*"/>
+          </instance-parameter>
+          <parameter name="justify" transfer-ownership="none">
+            <doc xml:space="preserve">whether the last line in the layout should be justified</doc>
             <type name="gboolean" c:type="gboolean"/>
           </parameter>
         </parameters>
@@ -7606,7 +8024,10 @@ where height2 is the line height of the second line
 (as determined by the font(s)). In this case, the spacing
 set with [method@Pango.Layout.set_spacing] is ignored.
 
-If @factor is zero (the default), spacing is applied as before.</doc>
+If @factor is zero (the default), spacing is applied as before.
+
+Note: for semantics that are closer to the CSS line-height
+property, see [func@Pango.attr_line_height_new].</doc>
         <return-value transfer-ownership="none">
           <type name="none" c:type="void"/>
         </return-value>
@@ -7725,9 +8146,12 @@ When placing lines with spacing, Pango arranges things so that
 The default value is 0.
 
 Note: Since 1.44, Pango is using the line height (as determined
-by the font) for placing lines when the line height factor is set
+by the font) for placing lines when the line spacing factor is set
 to a non-zero value with [method@Pango.Layout.set_line_spacing].
-In that case, the @spacing set with this function is ignored.</doc>
+In that case, the @spacing set with this function is ignored.
+
+Note: for semantics that are closer to the CSS line-height
+property, see [func@Pango.attr_line_height_new].</doc>
         <return-value transfer-ownership="none">
           <type name="none" c:type="void"/>
         </return-value>
@@ -7745,9 +8169,16 @@ In that case, the @spacing set with this function is ignored.</doc>
       <method name="set_tabs" c:identifier="pango_layout_set_tabs">
         <doc xml:space="preserve">Sets the tabs to use for @layout, overriding the default tabs.
 
+`PangoLayout` will place content at the next tab position
+whenever it meets a Tab character (U+0009).
+
 By default, tabs are every 8 spaces. If @tabs is %NULL, the
 default tabs are reinstated. @tabs is copied into the layout;
-you must free your copy of @tabs yourself.</doc>
+you must free your copy of @tabs yourself.
+
+Note that tabs and justification conflict with each other:
+Justification will move content away from its tab-aligned
+positions.</doc>
         <return-value transfer-ownership="none">
           <type name="none" c:type="void"/>
         </return-value>
@@ -8145,6 +8576,24 @@ plan to modify the contents of the run (glyphs, glyph widths, etc.).</doc>
           </instance-parameter>
         </parameters>
       </method>
+      <method name="get_run_baseline" c:identifier="pango_layout_iter_get_run_baseline" version="1.50">
+        <doc xml:space="preserve">Gets the Y position of the current run's baseline, in layout
+coordinates.
+
+Layout coordinates have the origin at the top left of the entire layout.
+
+The run baseline can be different from the line baseline, for
+example due to superscript or subscript positioning.</doc>
+        <return-value transfer-ownership="none">
+          <type name="gint" c:type="int"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="iter" transfer-ownership="none">
+            <doc xml:space="preserve">a `PangoLayoutIter`</doc>
+            <type name="LayoutIter" c:type="PangoLayoutIter*"/>
+          </instance-parameter>
+        </parameters>
+      </method>
       <method name="get_run_extents" c:identifier="pango_layout_iter_get_run_extents">
         <doc xml:space="preserve">Gets the extents of the current run in layout coordinates.
 
@@ -8311,8 +8760,13 @@ about the interpretation of the rectangles.</doc>
         </parameters>
       </method>
       <method name="get_height" c:identifier="pango_layout_line_get_height" version="1.44">
-        <doc xml:space="preserve">Computes the height of the line, i.e. the distance between
-this and the previous lines baseline.</doc>
+        <doc xml:space="preserve">Computes the height of the line, as the maximum of the heights
+of fonts used in this line.
+
+Note that the actual baseline-to-baseline distance between lines
+of text is influenced by other factors, such as
+[method@Pango.Layout.set_spacing] and
+[method@Pango.Layout.set_line_spacing].</doc>
         <return-value transfer-ownership="none">
           <type name="none" c:type="void"/>
         </return-value>
@@ -8325,6 +8779,19 @@ this and the previous lines baseline.</doc>
             <doc xml:space="preserve">return location for the line height</doc>
             <type name="gint" c:type="int*"/>
           </parameter>
+        </parameters>
+      </method>
+      <method name="get_length" c:identifier="pango_layout_line_get_length" version="1.50">
+        <doc xml:space="preserve">Returns the length of the line, in bytes.</doc>
+        <return-value transfer-ownership="none">
+          <doc xml:space="preserve">the length of the line</doc>
+          <type name="gint" c:type="int"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="line" transfer-ownership="none">
+            <doc xml:space="preserve">a `PangoLayoutLine`</doc>
+            <type name="LayoutLine" c:type="PangoLayoutLine*"/>
+          </instance-parameter>
         </parameters>
       </method>
       <method name="get_pixel_extents" c:identifier="pango_layout_line_get_pixel_extents">
@@ -8352,6 +8819,33 @@ passes them as first argument to [func@extents_to_pixels]).</doc>
   extents of the glyph string</doc>
             <type name="Rectangle" c:type="PangoRectangle*"/>
           </parameter>
+        </parameters>
+      </method>
+      <method name="get_resolved_direction" c:identifier="pango_layout_line_get_resolved_direction" version="1.50">
+        <doc xml:space="preserve">Returns the resolved direction of the line.</doc>
+        <return-value transfer-ownership="none">
+          <doc xml:space="preserve">the resolved direction of the line</doc>
+          <type name="Direction" c:type="PangoDirection"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="line" transfer-ownership="none">
+            <doc xml:space="preserve">a `PangoLayoutLine`</doc>
+            <type name="LayoutLine" c:type="PangoLayoutLine*"/>
+          </instance-parameter>
+        </parameters>
+      </method>
+      <method name="get_start_index" c:identifier="pango_layout_line_get_start_index" version="1.50">
+        <doc xml:space="preserve">Returns the start index of the line, as byte index
+into the text of the layout.</doc>
+        <return-value transfer-ownership="none">
+          <doc xml:space="preserve">the start index of the line</doc>
+          <type name="gint" c:type="int"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="line" transfer-ownership="none">
+            <doc xml:space="preserve">a `PangoLayoutLine`</doc>
+            <type name="LayoutLine" c:type="PangoLayoutLine*"/>
+          </instance-parameter>
         </parameters>
       </method>
       <method name="get_x_ranges" c:identifier="pango_layout_line_get_x_ranges">
@@ -8424,6 +8918,19 @@ layout, not with respect to the line.</doc>
             <doc xml:space="preserve">location to store the x_offset (in Pango units)</doc>
             <type name="gint" c:type="int*"/>
           </parameter>
+        </parameters>
+      </method>
+      <method name="is_paragraph_start" c:identifier="pango_layout_line_is_paragraph_start" version="1.50">
+        <doc xml:space="preserve">Returns whether this is the first line of the paragraph.</doc>
+        <return-value transfer-ownership="none">
+          <doc xml:space="preserve">%TRUE if this is the first line</doc>
+          <type name="gboolean" c:type="gboolean"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="line" transfer-ownership="none">
+            <doc xml:space="preserve">a `PangoLayoutLine`</doc>
+            <type name="LayoutLine" c:type="PangoLayoutLine*"/>
+          </instance-parameter>
         </parameters>
       </method>
       <method name="ref" c:identifier="pango_layout_line_ref" version="1.10">
@@ -8573,6 +9080,16 @@ single character.</doc>
   This flag is particularly useful when selecting text word-by-word. This flag
   implements Unicode's [Word Boundaries](http://www.unicode.org/reports/tr29/)
   semantics. (Since: 1.22)</doc>
+        <type name="guint" c:type="guint"/>
+      </field>
+      <field name="break_inserts_hyphen" writable="1" bits="1">
+        <doc xml:space="preserve">when breaking lines before this char, insert a hyphen.
+  Since: 1.50</doc>
+        <type name="guint" c:type="guint"/>
+      </field>
+      <field name="break_removes_preceding" writable="1" bits="1">
+        <doc xml:space="preserve">when breaking lines before this char, remove the
+  preceding char. Since 1.50</doc>
         <type name="guint" c:type="guint"/>
       </field>
     </record>
@@ -8876,10 +9393,10 @@ then applying the original transformation.</doc>
     <enumeration name="Overline" version="1.46" glib:type-name="PangoOverline" glib:get-type="pango_overline_get_type" c:type="PangoOverline">
       <doc xml:space="preserve">The `PangoOverline` enumeration is used to specify whether text
 should be overlined, and if so, the type of line.</doc>
-      <member name="none" value="0" c:identifier="PANGO_OVERLINE_NONE" glib:nick="none">
+      <member name="none" value="0" c:identifier="PANGO_OVERLINE_NONE" glib:nick="none" glib:name="PANGO_OVERLINE_NONE">
         <doc xml:space="preserve">no overline should be drawn</doc>
       </member>
-      <member name="single" value="1" c:identifier="PANGO_OVERLINE_SINGLE" glib:nick="single">
+      <member name="single" value="1" c:identifier="PANGO_OVERLINE_SINGLE" glib:nick="single" glib:name="PANGO_OVERLINE_SINGLE">
         <doc xml:space="preserve">Draw a single line above the ink
   extents of the text being underlined.</doc>
       </member>
@@ -8966,19 +9483,19 @@ extents of a single glyph or section of text. (See, for instance,
     <enumeration name="RenderPart" version="1.8" glib:type-name="PangoRenderPart" glib:get-type="pango_render_part_get_type" c:type="PangoRenderPart">
       <doc xml:space="preserve">`PangoRenderPart` defines different items to render for such
 purposes as setting colors.</doc>
-      <member name="foreground" value="0" c:identifier="PANGO_RENDER_PART_FOREGROUND" glib:nick="foreground">
+      <member name="foreground" value="0" c:identifier="PANGO_RENDER_PART_FOREGROUND" glib:nick="foreground" glib:name="PANGO_RENDER_PART_FOREGROUND">
         <doc xml:space="preserve">the text itself</doc>
       </member>
-      <member name="background" value="1" c:identifier="PANGO_RENDER_PART_BACKGROUND" glib:nick="background">
+      <member name="background" value="1" c:identifier="PANGO_RENDER_PART_BACKGROUND" glib:nick="background" glib:name="PANGO_RENDER_PART_BACKGROUND">
         <doc xml:space="preserve">the area behind the text</doc>
       </member>
-      <member name="underline" value="2" c:identifier="PANGO_RENDER_PART_UNDERLINE" glib:nick="underline">
+      <member name="underline" value="2" c:identifier="PANGO_RENDER_PART_UNDERLINE" glib:nick="underline" glib:name="PANGO_RENDER_PART_UNDERLINE">
         <doc xml:space="preserve">underlines</doc>
       </member>
-      <member name="strikethrough" value="3" c:identifier="PANGO_RENDER_PART_STRIKETHROUGH" glib:nick="strikethrough">
+      <member name="strikethrough" value="3" c:identifier="PANGO_RENDER_PART_STRIKETHROUGH" glib:nick="strikethrough" glib:name="PANGO_RENDER_PART_STRIKETHROUGH">
         <doc xml:space="preserve">strikethrough lines</doc>
       </member>
-      <member name="overline" value="4" c:identifier="PANGO_RENDER_PART_OVERLINE" glib:nick="overline">
+      <member name="overline" value="4" c:identifier="PANGO_RENDER_PART_OVERLINE" glib:nick="overline" glib:name="PANGO_RENDER_PART_OVERLINE">
         <doc xml:space="preserve">overlines</doc>
       </member>
     </enumeration>
@@ -10152,359 +10669,359 @@ Note that this enumeration is deprecated and will not be updated
 to include values in newer versions of the Unicode standard.
 Applications should use the `GUnicodeScript` enumeration instead,
 whose values are interchangeable with `PangoScript`.</doc>
-      <member name="invalid_code" value="-1" c:identifier="PANGO_SCRIPT_INVALID_CODE" glib:nick="invalid-code">
+      <member name="invalid_code" value="-1" c:identifier="PANGO_SCRIPT_INVALID_CODE" glib:nick="invalid-code" glib:name="PANGO_SCRIPT_INVALID_CODE">
         <doc xml:space="preserve">a value never returned from pango_script_for_unichar()</doc>
       </member>
-      <member name="common" value="0" c:identifier="PANGO_SCRIPT_COMMON" glib:nick="common">
+      <member name="common" value="0" c:identifier="PANGO_SCRIPT_COMMON" glib:nick="common" glib:name="PANGO_SCRIPT_COMMON">
         <doc xml:space="preserve">a character used by multiple different scripts</doc>
       </member>
-      <member name="inherited" value="1" c:identifier="PANGO_SCRIPT_INHERITED" glib:nick="inherited">
+      <member name="inherited" value="1" c:identifier="PANGO_SCRIPT_INHERITED" glib:nick="inherited" glib:name="PANGO_SCRIPT_INHERITED">
         <doc xml:space="preserve">a mark glyph that takes its script from the
 base glyph to which it is attached</doc>
       </member>
-      <member name="arabic" value="2" c:identifier="PANGO_SCRIPT_ARABIC" glib:nick="arabic">
+      <member name="arabic" value="2" c:identifier="PANGO_SCRIPT_ARABIC" glib:nick="arabic" glib:name="PANGO_SCRIPT_ARABIC">
         <doc xml:space="preserve">Arabic</doc>
       </member>
-      <member name="armenian" value="3" c:identifier="PANGO_SCRIPT_ARMENIAN" glib:nick="armenian">
+      <member name="armenian" value="3" c:identifier="PANGO_SCRIPT_ARMENIAN" glib:nick="armenian" glib:name="PANGO_SCRIPT_ARMENIAN">
         <doc xml:space="preserve">Armenian</doc>
       </member>
-      <member name="bengali" value="4" c:identifier="PANGO_SCRIPT_BENGALI" glib:nick="bengali">
+      <member name="bengali" value="4" c:identifier="PANGO_SCRIPT_BENGALI" glib:nick="bengali" glib:name="PANGO_SCRIPT_BENGALI">
         <doc xml:space="preserve">Bengali</doc>
       </member>
-      <member name="bopomofo" value="5" c:identifier="PANGO_SCRIPT_BOPOMOFO" glib:nick="bopomofo">
+      <member name="bopomofo" value="5" c:identifier="PANGO_SCRIPT_BOPOMOFO" glib:nick="bopomofo" glib:name="PANGO_SCRIPT_BOPOMOFO">
         <doc xml:space="preserve">Bopomofo</doc>
       </member>
-      <member name="cherokee" value="6" c:identifier="PANGO_SCRIPT_CHEROKEE" glib:nick="cherokee">
+      <member name="cherokee" value="6" c:identifier="PANGO_SCRIPT_CHEROKEE" glib:nick="cherokee" glib:name="PANGO_SCRIPT_CHEROKEE">
         <doc xml:space="preserve">Cherokee</doc>
       </member>
-      <member name="coptic" value="7" c:identifier="PANGO_SCRIPT_COPTIC" glib:nick="coptic">
+      <member name="coptic" value="7" c:identifier="PANGO_SCRIPT_COPTIC" glib:nick="coptic" glib:name="PANGO_SCRIPT_COPTIC">
         <doc xml:space="preserve">Coptic</doc>
       </member>
-      <member name="cyrillic" value="8" c:identifier="PANGO_SCRIPT_CYRILLIC" glib:nick="cyrillic">
+      <member name="cyrillic" value="8" c:identifier="PANGO_SCRIPT_CYRILLIC" glib:nick="cyrillic" glib:name="PANGO_SCRIPT_CYRILLIC">
         <doc xml:space="preserve">Cyrillic</doc>
       </member>
-      <member name="deseret" value="9" c:identifier="PANGO_SCRIPT_DESERET" glib:nick="deseret">
+      <member name="deseret" value="9" c:identifier="PANGO_SCRIPT_DESERET" glib:nick="deseret" glib:name="PANGO_SCRIPT_DESERET">
         <doc xml:space="preserve">Deseret</doc>
       </member>
-      <member name="devanagari" value="10" c:identifier="PANGO_SCRIPT_DEVANAGARI" glib:nick="devanagari">
+      <member name="devanagari" value="10" c:identifier="PANGO_SCRIPT_DEVANAGARI" glib:nick="devanagari" glib:name="PANGO_SCRIPT_DEVANAGARI">
         <doc xml:space="preserve">Devanagari</doc>
       </member>
-      <member name="ethiopic" value="11" c:identifier="PANGO_SCRIPT_ETHIOPIC" glib:nick="ethiopic">
+      <member name="ethiopic" value="11" c:identifier="PANGO_SCRIPT_ETHIOPIC" glib:nick="ethiopic" glib:name="PANGO_SCRIPT_ETHIOPIC">
         <doc xml:space="preserve">Ethiopic</doc>
       </member>
-      <member name="georgian" value="12" c:identifier="PANGO_SCRIPT_GEORGIAN" glib:nick="georgian">
+      <member name="georgian" value="12" c:identifier="PANGO_SCRIPT_GEORGIAN" glib:nick="georgian" glib:name="PANGO_SCRIPT_GEORGIAN">
         <doc xml:space="preserve">Georgian</doc>
       </member>
-      <member name="gothic" value="13" c:identifier="PANGO_SCRIPT_GOTHIC" glib:nick="gothic">
+      <member name="gothic" value="13" c:identifier="PANGO_SCRIPT_GOTHIC" glib:nick="gothic" glib:name="PANGO_SCRIPT_GOTHIC">
         <doc xml:space="preserve">Gothic</doc>
       </member>
-      <member name="greek" value="14" c:identifier="PANGO_SCRIPT_GREEK" glib:nick="greek">
+      <member name="greek" value="14" c:identifier="PANGO_SCRIPT_GREEK" glib:nick="greek" glib:name="PANGO_SCRIPT_GREEK">
         <doc xml:space="preserve">Greek</doc>
       </member>
-      <member name="gujarati" value="15" c:identifier="PANGO_SCRIPT_GUJARATI" glib:nick="gujarati">
+      <member name="gujarati" value="15" c:identifier="PANGO_SCRIPT_GUJARATI" glib:nick="gujarati" glib:name="PANGO_SCRIPT_GUJARATI">
         <doc xml:space="preserve">Gujarati</doc>
       </member>
-      <member name="gurmukhi" value="16" c:identifier="PANGO_SCRIPT_GURMUKHI" glib:nick="gurmukhi">
+      <member name="gurmukhi" value="16" c:identifier="PANGO_SCRIPT_GURMUKHI" glib:nick="gurmukhi" glib:name="PANGO_SCRIPT_GURMUKHI">
         <doc xml:space="preserve">Gurmukhi</doc>
       </member>
-      <member name="han" value="17" c:identifier="PANGO_SCRIPT_HAN" glib:nick="han">
+      <member name="han" value="17" c:identifier="PANGO_SCRIPT_HAN" glib:nick="han" glib:name="PANGO_SCRIPT_HAN">
         <doc xml:space="preserve">Han</doc>
       </member>
-      <member name="hangul" value="18" c:identifier="PANGO_SCRIPT_HANGUL" glib:nick="hangul">
+      <member name="hangul" value="18" c:identifier="PANGO_SCRIPT_HANGUL" glib:nick="hangul" glib:name="PANGO_SCRIPT_HANGUL">
         <doc xml:space="preserve">Hangul</doc>
       </member>
-      <member name="hebrew" value="19" c:identifier="PANGO_SCRIPT_HEBREW" glib:nick="hebrew">
+      <member name="hebrew" value="19" c:identifier="PANGO_SCRIPT_HEBREW" glib:nick="hebrew" glib:name="PANGO_SCRIPT_HEBREW">
         <doc xml:space="preserve">Hebrew</doc>
       </member>
-      <member name="hiragana" value="20" c:identifier="PANGO_SCRIPT_HIRAGANA" glib:nick="hiragana">
+      <member name="hiragana" value="20" c:identifier="PANGO_SCRIPT_HIRAGANA" glib:nick="hiragana" glib:name="PANGO_SCRIPT_HIRAGANA">
         <doc xml:space="preserve">Hiragana</doc>
       </member>
-      <member name="kannada" value="21" c:identifier="PANGO_SCRIPT_KANNADA" glib:nick="kannada">
+      <member name="kannada" value="21" c:identifier="PANGO_SCRIPT_KANNADA" glib:nick="kannada" glib:name="PANGO_SCRIPT_KANNADA">
         <doc xml:space="preserve">Kannada</doc>
       </member>
-      <member name="katakana" value="22" c:identifier="PANGO_SCRIPT_KATAKANA" glib:nick="katakana">
+      <member name="katakana" value="22" c:identifier="PANGO_SCRIPT_KATAKANA" glib:nick="katakana" glib:name="PANGO_SCRIPT_KATAKANA">
         <doc xml:space="preserve">Katakana</doc>
       </member>
-      <member name="khmer" value="23" c:identifier="PANGO_SCRIPT_KHMER" glib:nick="khmer">
+      <member name="khmer" value="23" c:identifier="PANGO_SCRIPT_KHMER" glib:nick="khmer" glib:name="PANGO_SCRIPT_KHMER">
         <doc xml:space="preserve">Khmer</doc>
       </member>
-      <member name="lao" value="24" c:identifier="PANGO_SCRIPT_LAO" glib:nick="lao">
+      <member name="lao" value="24" c:identifier="PANGO_SCRIPT_LAO" glib:nick="lao" glib:name="PANGO_SCRIPT_LAO">
         <doc xml:space="preserve">Lao</doc>
       </member>
-      <member name="latin" value="25" c:identifier="PANGO_SCRIPT_LATIN" glib:nick="latin">
+      <member name="latin" value="25" c:identifier="PANGO_SCRIPT_LATIN" glib:nick="latin" glib:name="PANGO_SCRIPT_LATIN">
         <doc xml:space="preserve">Latin</doc>
       </member>
-      <member name="malayalam" value="26" c:identifier="PANGO_SCRIPT_MALAYALAM" glib:nick="malayalam">
+      <member name="malayalam" value="26" c:identifier="PANGO_SCRIPT_MALAYALAM" glib:nick="malayalam" glib:name="PANGO_SCRIPT_MALAYALAM">
         <doc xml:space="preserve">Malayalam</doc>
       </member>
-      <member name="mongolian" value="27" c:identifier="PANGO_SCRIPT_MONGOLIAN" glib:nick="mongolian">
+      <member name="mongolian" value="27" c:identifier="PANGO_SCRIPT_MONGOLIAN" glib:nick="mongolian" glib:name="PANGO_SCRIPT_MONGOLIAN">
         <doc xml:space="preserve">Mongolian</doc>
       </member>
-      <member name="myanmar" value="28" c:identifier="PANGO_SCRIPT_MYANMAR" glib:nick="myanmar">
+      <member name="myanmar" value="28" c:identifier="PANGO_SCRIPT_MYANMAR" glib:nick="myanmar" glib:name="PANGO_SCRIPT_MYANMAR">
         <doc xml:space="preserve">Myanmar</doc>
       </member>
-      <member name="ogham" value="29" c:identifier="PANGO_SCRIPT_OGHAM" glib:nick="ogham">
+      <member name="ogham" value="29" c:identifier="PANGO_SCRIPT_OGHAM" glib:nick="ogham" glib:name="PANGO_SCRIPT_OGHAM">
         <doc xml:space="preserve">Ogham</doc>
       </member>
-      <member name="old_italic" value="30" c:identifier="PANGO_SCRIPT_OLD_ITALIC" glib:nick="old-italic">
+      <member name="old_italic" value="30" c:identifier="PANGO_SCRIPT_OLD_ITALIC" glib:nick="old-italic" glib:name="PANGO_SCRIPT_OLD_ITALIC">
         <doc xml:space="preserve">Old Italic</doc>
       </member>
-      <member name="oriya" value="31" c:identifier="PANGO_SCRIPT_ORIYA" glib:nick="oriya">
+      <member name="oriya" value="31" c:identifier="PANGO_SCRIPT_ORIYA" glib:nick="oriya" glib:name="PANGO_SCRIPT_ORIYA">
         <doc xml:space="preserve">Oriya</doc>
       </member>
-      <member name="runic" value="32" c:identifier="PANGO_SCRIPT_RUNIC" glib:nick="runic">
+      <member name="runic" value="32" c:identifier="PANGO_SCRIPT_RUNIC" glib:nick="runic" glib:name="PANGO_SCRIPT_RUNIC">
         <doc xml:space="preserve">Runic</doc>
       </member>
-      <member name="sinhala" value="33" c:identifier="PANGO_SCRIPT_SINHALA" glib:nick="sinhala">
+      <member name="sinhala" value="33" c:identifier="PANGO_SCRIPT_SINHALA" glib:nick="sinhala" glib:name="PANGO_SCRIPT_SINHALA">
         <doc xml:space="preserve">Sinhala</doc>
       </member>
-      <member name="syriac" value="34" c:identifier="PANGO_SCRIPT_SYRIAC" glib:nick="syriac">
+      <member name="syriac" value="34" c:identifier="PANGO_SCRIPT_SYRIAC" glib:nick="syriac" glib:name="PANGO_SCRIPT_SYRIAC">
         <doc xml:space="preserve">Syriac</doc>
       </member>
-      <member name="tamil" value="35" c:identifier="PANGO_SCRIPT_TAMIL" glib:nick="tamil">
+      <member name="tamil" value="35" c:identifier="PANGO_SCRIPT_TAMIL" glib:nick="tamil" glib:name="PANGO_SCRIPT_TAMIL">
         <doc xml:space="preserve">Tamil</doc>
       </member>
-      <member name="telugu" value="36" c:identifier="PANGO_SCRIPT_TELUGU" glib:nick="telugu">
+      <member name="telugu" value="36" c:identifier="PANGO_SCRIPT_TELUGU" glib:nick="telugu" glib:name="PANGO_SCRIPT_TELUGU">
         <doc xml:space="preserve">Telugu</doc>
       </member>
-      <member name="thaana" value="37" c:identifier="PANGO_SCRIPT_THAANA" glib:nick="thaana">
+      <member name="thaana" value="37" c:identifier="PANGO_SCRIPT_THAANA" glib:nick="thaana" glib:name="PANGO_SCRIPT_THAANA">
         <doc xml:space="preserve">Thaana</doc>
       </member>
-      <member name="thai" value="38" c:identifier="PANGO_SCRIPT_THAI" glib:nick="thai">
+      <member name="thai" value="38" c:identifier="PANGO_SCRIPT_THAI" glib:nick="thai" glib:name="PANGO_SCRIPT_THAI">
         <doc xml:space="preserve">Thai</doc>
       </member>
-      <member name="tibetan" value="39" c:identifier="PANGO_SCRIPT_TIBETAN" glib:nick="tibetan">
+      <member name="tibetan" value="39" c:identifier="PANGO_SCRIPT_TIBETAN" glib:nick="tibetan" glib:name="PANGO_SCRIPT_TIBETAN">
         <doc xml:space="preserve">Tibetan</doc>
       </member>
-      <member name="canadian_aboriginal" value="40" c:identifier="PANGO_SCRIPT_CANADIAN_ABORIGINAL" glib:nick="canadian-aboriginal">
+      <member name="canadian_aboriginal" value="40" c:identifier="PANGO_SCRIPT_CANADIAN_ABORIGINAL" glib:nick="canadian-aboriginal" glib:name="PANGO_SCRIPT_CANADIAN_ABORIGINAL">
         <doc xml:space="preserve">Canadian Aboriginal</doc>
       </member>
-      <member name="yi" value="41" c:identifier="PANGO_SCRIPT_YI" glib:nick="yi">
+      <member name="yi" value="41" c:identifier="PANGO_SCRIPT_YI" glib:nick="yi" glib:name="PANGO_SCRIPT_YI">
         <doc xml:space="preserve">Yi</doc>
       </member>
-      <member name="tagalog" value="42" c:identifier="PANGO_SCRIPT_TAGALOG" glib:nick="tagalog">
+      <member name="tagalog" value="42" c:identifier="PANGO_SCRIPT_TAGALOG" glib:nick="tagalog" glib:name="PANGO_SCRIPT_TAGALOG">
         <doc xml:space="preserve">Tagalog</doc>
       </member>
-      <member name="hanunoo" value="43" c:identifier="PANGO_SCRIPT_HANUNOO" glib:nick="hanunoo">
+      <member name="hanunoo" value="43" c:identifier="PANGO_SCRIPT_HANUNOO" glib:nick="hanunoo" glib:name="PANGO_SCRIPT_HANUNOO">
         <doc xml:space="preserve">Hanunoo</doc>
       </member>
-      <member name="buhid" value="44" c:identifier="PANGO_SCRIPT_BUHID" glib:nick="buhid">
+      <member name="buhid" value="44" c:identifier="PANGO_SCRIPT_BUHID" glib:nick="buhid" glib:name="PANGO_SCRIPT_BUHID">
         <doc xml:space="preserve">Buhid</doc>
       </member>
-      <member name="tagbanwa" value="45" c:identifier="PANGO_SCRIPT_TAGBANWA" glib:nick="tagbanwa">
+      <member name="tagbanwa" value="45" c:identifier="PANGO_SCRIPT_TAGBANWA" glib:nick="tagbanwa" glib:name="PANGO_SCRIPT_TAGBANWA">
         <doc xml:space="preserve">Tagbanwa</doc>
       </member>
-      <member name="braille" value="46" c:identifier="PANGO_SCRIPT_BRAILLE" glib:nick="braille">
+      <member name="braille" value="46" c:identifier="PANGO_SCRIPT_BRAILLE" glib:nick="braille" glib:name="PANGO_SCRIPT_BRAILLE">
         <doc xml:space="preserve">Braille</doc>
       </member>
-      <member name="cypriot" value="47" c:identifier="PANGO_SCRIPT_CYPRIOT" glib:nick="cypriot">
+      <member name="cypriot" value="47" c:identifier="PANGO_SCRIPT_CYPRIOT" glib:nick="cypriot" glib:name="PANGO_SCRIPT_CYPRIOT">
         <doc xml:space="preserve">Cypriot</doc>
       </member>
-      <member name="limbu" value="48" c:identifier="PANGO_SCRIPT_LIMBU" glib:nick="limbu">
+      <member name="limbu" value="48" c:identifier="PANGO_SCRIPT_LIMBU" glib:nick="limbu" glib:name="PANGO_SCRIPT_LIMBU">
         <doc xml:space="preserve">Limbu</doc>
       </member>
-      <member name="osmanya" value="49" c:identifier="PANGO_SCRIPT_OSMANYA" glib:nick="osmanya">
+      <member name="osmanya" value="49" c:identifier="PANGO_SCRIPT_OSMANYA" glib:nick="osmanya" glib:name="PANGO_SCRIPT_OSMANYA">
         <doc xml:space="preserve">Osmanya</doc>
       </member>
-      <member name="shavian" value="50" c:identifier="PANGO_SCRIPT_SHAVIAN" glib:nick="shavian">
+      <member name="shavian" value="50" c:identifier="PANGO_SCRIPT_SHAVIAN" glib:nick="shavian" glib:name="PANGO_SCRIPT_SHAVIAN">
         <doc xml:space="preserve">Shavian</doc>
       </member>
-      <member name="linear_b" value="51" c:identifier="PANGO_SCRIPT_LINEAR_B" glib:nick="linear-b">
+      <member name="linear_b" value="51" c:identifier="PANGO_SCRIPT_LINEAR_B" glib:nick="linear-b" glib:name="PANGO_SCRIPT_LINEAR_B">
         <doc xml:space="preserve">Linear B</doc>
       </member>
-      <member name="tai_le" value="52" c:identifier="PANGO_SCRIPT_TAI_LE" glib:nick="tai-le">
+      <member name="tai_le" value="52" c:identifier="PANGO_SCRIPT_TAI_LE" glib:nick="tai-le" glib:name="PANGO_SCRIPT_TAI_LE">
         <doc xml:space="preserve">Tai Le</doc>
       </member>
-      <member name="ugaritic" value="53" c:identifier="PANGO_SCRIPT_UGARITIC" glib:nick="ugaritic">
+      <member name="ugaritic" value="53" c:identifier="PANGO_SCRIPT_UGARITIC" glib:nick="ugaritic" glib:name="PANGO_SCRIPT_UGARITIC">
         <doc xml:space="preserve">Ugaritic</doc>
       </member>
-      <member name="new_tai_lue" value="54" c:identifier="PANGO_SCRIPT_NEW_TAI_LUE" glib:nick="new-tai-lue">
+      <member name="new_tai_lue" value="54" c:identifier="PANGO_SCRIPT_NEW_TAI_LUE" glib:nick="new-tai-lue" glib:name="PANGO_SCRIPT_NEW_TAI_LUE">
         <doc xml:space="preserve">New Tai Lue. Since 1.10</doc>
       </member>
-      <member name="buginese" value="55" c:identifier="PANGO_SCRIPT_BUGINESE" glib:nick="buginese">
+      <member name="buginese" value="55" c:identifier="PANGO_SCRIPT_BUGINESE" glib:nick="buginese" glib:name="PANGO_SCRIPT_BUGINESE">
         <doc xml:space="preserve">Buginese. Since 1.10</doc>
       </member>
-      <member name="glagolitic" value="56" c:identifier="PANGO_SCRIPT_GLAGOLITIC" glib:nick="glagolitic">
+      <member name="glagolitic" value="56" c:identifier="PANGO_SCRIPT_GLAGOLITIC" glib:nick="glagolitic" glib:name="PANGO_SCRIPT_GLAGOLITIC">
         <doc xml:space="preserve">Glagolitic. Since 1.10</doc>
       </member>
-      <member name="tifinagh" value="57" c:identifier="PANGO_SCRIPT_TIFINAGH" glib:nick="tifinagh">
+      <member name="tifinagh" value="57" c:identifier="PANGO_SCRIPT_TIFINAGH" glib:nick="tifinagh" glib:name="PANGO_SCRIPT_TIFINAGH">
         <doc xml:space="preserve">Tifinagh. Since 1.10</doc>
       </member>
-      <member name="syloti_nagri" value="58" c:identifier="PANGO_SCRIPT_SYLOTI_NAGRI" glib:nick="syloti-nagri">
+      <member name="syloti_nagri" value="58" c:identifier="PANGO_SCRIPT_SYLOTI_NAGRI" glib:nick="syloti-nagri" glib:name="PANGO_SCRIPT_SYLOTI_NAGRI">
         <doc xml:space="preserve">Syloti Nagri. Since 1.10</doc>
       </member>
-      <member name="old_persian" value="59" c:identifier="PANGO_SCRIPT_OLD_PERSIAN" glib:nick="old-persian">
+      <member name="old_persian" value="59" c:identifier="PANGO_SCRIPT_OLD_PERSIAN" glib:nick="old-persian" glib:name="PANGO_SCRIPT_OLD_PERSIAN">
         <doc xml:space="preserve">Old Persian. Since 1.10</doc>
       </member>
-      <member name="kharoshthi" value="60" c:identifier="PANGO_SCRIPT_KHAROSHTHI" glib:nick="kharoshthi">
+      <member name="kharoshthi" value="60" c:identifier="PANGO_SCRIPT_KHAROSHTHI" glib:nick="kharoshthi" glib:name="PANGO_SCRIPT_KHAROSHTHI">
         <doc xml:space="preserve">Kharoshthi. Since 1.10</doc>
       </member>
-      <member name="unknown" value="61" c:identifier="PANGO_SCRIPT_UNKNOWN" glib:nick="unknown">
+      <member name="unknown" value="61" c:identifier="PANGO_SCRIPT_UNKNOWN" glib:nick="unknown" glib:name="PANGO_SCRIPT_UNKNOWN">
         <doc xml:space="preserve">an unassigned code point. Since 1.14</doc>
       </member>
-      <member name="balinese" value="62" c:identifier="PANGO_SCRIPT_BALINESE" glib:nick="balinese">
+      <member name="balinese" value="62" c:identifier="PANGO_SCRIPT_BALINESE" glib:nick="balinese" glib:name="PANGO_SCRIPT_BALINESE">
         <doc xml:space="preserve">Balinese. Since 1.14</doc>
       </member>
-      <member name="cuneiform" value="63" c:identifier="PANGO_SCRIPT_CUNEIFORM" glib:nick="cuneiform">
+      <member name="cuneiform" value="63" c:identifier="PANGO_SCRIPT_CUNEIFORM" glib:nick="cuneiform" glib:name="PANGO_SCRIPT_CUNEIFORM">
         <doc xml:space="preserve">Cuneiform. Since 1.14</doc>
       </member>
-      <member name="phoenician" value="64" c:identifier="PANGO_SCRIPT_PHOENICIAN" glib:nick="phoenician">
+      <member name="phoenician" value="64" c:identifier="PANGO_SCRIPT_PHOENICIAN" glib:nick="phoenician" glib:name="PANGO_SCRIPT_PHOENICIAN">
         <doc xml:space="preserve">Phoenician. Since 1.14</doc>
       </member>
-      <member name="phags_pa" value="65" c:identifier="PANGO_SCRIPT_PHAGS_PA" glib:nick="phags-pa">
+      <member name="phags_pa" value="65" c:identifier="PANGO_SCRIPT_PHAGS_PA" glib:nick="phags-pa" glib:name="PANGO_SCRIPT_PHAGS_PA">
         <doc xml:space="preserve">Phags-pa. Since 1.14</doc>
       </member>
-      <member name="nko" value="66" c:identifier="PANGO_SCRIPT_NKO" glib:nick="nko">
+      <member name="nko" value="66" c:identifier="PANGO_SCRIPT_NKO" glib:nick="nko" glib:name="PANGO_SCRIPT_NKO">
         <doc xml:space="preserve">N'Ko. Since 1.14</doc>
       </member>
-      <member name="kayah_li" value="67" c:identifier="PANGO_SCRIPT_KAYAH_LI" glib:nick="kayah-li">
+      <member name="kayah_li" value="67" c:identifier="PANGO_SCRIPT_KAYAH_LI" glib:nick="kayah-li" glib:name="PANGO_SCRIPT_KAYAH_LI">
         <doc xml:space="preserve">Kayah Li. Since 1.20.1</doc>
       </member>
-      <member name="lepcha" value="68" c:identifier="PANGO_SCRIPT_LEPCHA" glib:nick="lepcha">
+      <member name="lepcha" value="68" c:identifier="PANGO_SCRIPT_LEPCHA" glib:nick="lepcha" glib:name="PANGO_SCRIPT_LEPCHA">
         <doc xml:space="preserve">Lepcha. Since 1.20.1</doc>
       </member>
-      <member name="rejang" value="69" c:identifier="PANGO_SCRIPT_REJANG" glib:nick="rejang">
+      <member name="rejang" value="69" c:identifier="PANGO_SCRIPT_REJANG" glib:nick="rejang" glib:name="PANGO_SCRIPT_REJANG">
         <doc xml:space="preserve">Rejang. Since 1.20.1</doc>
       </member>
-      <member name="sundanese" value="70" c:identifier="PANGO_SCRIPT_SUNDANESE" glib:nick="sundanese">
+      <member name="sundanese" value="70" c:identifier="PANGO_SCRIPT_SUNDANESE" glib:nick="sundanese" glib:name="PANGO_SCRIPT_SUNDANESE">
         <doc xml:space="preserve">Sundanese. Since 1.20.1</doc>
       </member>
-      <member name="saurashtra" value="71" c:identifier="PANGO_SCRIPT_SAURASHTRA" glib:nick="saurashtra">
+      <member name="saurashtra" value="71" c:identifier="PANGO_SCRIPT_SAURASHTRA" glib:nick="saurashtra" glib:name="PANGO_SCRIPT_SAURASHTRA">
         <doc xml:space="preserve">Saurashtra. Since 1.20.1</doc>
       </member>
-      <member name="cham" value="72" c:identifier="PANGO_SCRIPT_CHAM" glib:nick="cham">
+      <member name="cham" value="72" c:identifier="PANGO_SCRIPT_CHAM" glib:nick="cham" glib:name="PANGO_SCRIPT_CHAM">
         <doc xml:space="preserve">Cham. Since 1.20.1</doc>
       </member>
-      <member name="ol_chiki" value="73" c:identifier="PANGO_SCRIPT_OL_CHIKI" glib:nick="ol-chiki">
+      <member name="ol_chiki" value="73" c:identifier="PANGO_SCRIPT_OL_CHIKI" glib:nick="ol-chiki" glib:name="PANGO_SCRIPT_OL_CHIKI">
         <doc xml:space="preserve">Ol Chiki. Since 1.20.1</doc>
       </member>
-      <member name="vai" value="74" c:identifier="PANGO_SCRIPT_VAI" glib:nick="vai">
+      <member name="vai" value="74" c:identifier="PANGO_SCRIPT_VAI" glib:nick="vai" glib:name="PANGO_SCRIPT_VAI">
         <doc xml:space="preserve">Vai. Since 1.20.1</doc>
       </member>
-      <member name="carian" value="75" c:identifier="PANGO_SCRIPT_CARIAN" glib:nick="carian">
+      <member name="carian" value="75" c:identifier="PANGO_SCRIPT_CARIAN" glib:nick="carian" glib:name="PANGO_SCRIPT_CARIAN">
         <doc xml:space="preserve">Carian. Since 1.20.1</doc>
       </member>
-      <member name="lycian" value="76" c:identifier="PANGO_SCRIPT_LYCIAN" glib:nick="lycian">
+      <member name="lycian" value="76" c:identifier="PANGO_SCRIPT_LYCIAN" glib:nick="lycian" glib:name="PANGO_SCRIPT_LYCIAN">
         <doc xml:space="preserve">Lycian. Since 1.20.1</doc>
       </member>
-      <member name="lydian" value="77" c:identifier="PANGO_SCRIPT_LYDIAN" glib:nick="lydian">
+      <member name="lydian" value="77" c:identifier="PANGO_SCRIPT_LYDIAN" glib:nick="lydian" glib:name="PANGO_SCRIPT_LYDIAN">
         <doc xml:space="preserve">Lydian. Since 1.20.1</doc>
       </member>
-      <member name="batak" value="78" c:identifier="PANGO_SCRIPT_BATAK" glib:nick="batak">
+      <member name="batak" value="78" c:identifier="PANGO_SCRIPT_BATAK" glib:nick="batak" glib:name="PANGO_SCRIPT_BATAK">
         <doc xml:space="preserve">Batak. Since 1.32</doc>
       </member>
-      <member name="brahmi" value="79" c:identifier="PANGO_SCRIPT_BRAHMI" glib:nick="brahmi">
+      <member name="brahmi" value="79" c:identifier="PANGO_SCRIPT_BRAHMI" glib:nick="brahmi" glib:name="PANGO_SCRIPT_BRAHMI">
         <doc xml:space="preserve">Brahmi. Since 1.32</doc>
       </member>
-      <member name="mandaic" value="80" c:identifier="PANGO_SCRIPT_MANDAIC" glib:nick="mandaic">
+      <member name="mandaic" value="80" c:identifier="PANGO_SCRIPT_MANDAIC" glib:nick="mandaic" glib:name="PANGO_SCRIPT_MANDAIC">
         <doc xml:space="preserve">Mandaic. Since 1.32</doc>
       </member>
-      <member name="chakma" value="81" c:identifier="PANGO_SCRIPT_CHAKMA" glib:nick="chakma">
+      <member name="chakma" value="81" c:identifier="PANGO_SCRIPT_CHAKMA" glib:nick="chakma" glib:name="PANGO_SCRIPT_CHAKMA">
         <doc xml:space="preserve">Chakma. Since: 1.32</doc>
       </member>
-      <member name="meroitic_cursive" value="82" c:identifier="PANGO_SCRIPT_MEROITIC_CURSIVE" glib:nick="meroitic-cursive">
+      <member name="meroitic_cursive" value="82" c:identifier="PANGO_SCRIPT_MEROITIC_CURSIVE" glib:nick="meroitic-cursive" glib:name="PANGO_SCRIPT_MEROITIC_CURSIVE">
         <doc xml:space="preserve">Meroitic Cursive. Since: 1.32</doc>
       </member>
-      <member name="meroitic_hieroglyphs" value="83" c:identifier="PANGO_SCRIPT_MEROITIC_HIEROGLYPHS" glib:nick="meroitic-hieroglyphs">
+      <member name="meroitic_hieroglyphs" value="83" c:identifier="PANGO_SCRIPT_MEROITIC_HIEROGLYPHS" glib:nick="meroitic-hieroglyphs" glib:name="PANGO_SCRIPT_MEROITIC_HIEROGLYPHS">
         <doc xml:space="preserve">Meroitic Hieroglyphs. Since: 1.32</doc>
       </member>
-      <member name="miao" value="84" c:identifier="PANGO_SCRIPT_MIAO" glib:nick="miao">
+      <member name="miao" value="84" c:identifier="PANGO_SCRIPT_MIAO" glib:nick="miao" glib:name="PANGO_SCRIPT_MIAO">
         <doc xml:space="preserve">Miao. Since: 1.32</doc>
       </member>
-      <member name="sharada" value="85" c:identifier="PANGO_SCRIPT_SHARADA" glib:nick="sharada">
+      <member name="sharada" value="85" c:identifier="PANGO_SCRIPT_SHARADA" glib:nick="sharada" glib:name="PANGO_SCRIPT_SHARADA">
         <doc xml:space="preserve">Sharada. Since: 1.32</doc>
       </member>
-      <member name="sora_sompeng" value="86" c:identifier="PANGO_SCRIPT_SORA_SOMPENG" glib:nick="sora-sompeng">
+      <member name="sora_sompeng" value="86" c:identifier="PANGO_SCRIPT_SORA_SOMPENG" glib:nick="sora-sompeng" glib:name="PANGO_SCRIPT_SORA_SOMPENG">
         <doc xml:space="preserve">Sora Sompeng. Since: 1.32</doc>
       </member>
-      <member name="takri" value="87" c:identifier="PANGO_SCRIPT_TAKRI" glib:nick="takri">
+      <member name="takri" value="87" c:identifier="PANGO_SCRIPT_TAKRI" glib:nick="takri" glib:name="PANGO_SCRIPT_TAKRI">
         <doc xml:space="preserve">Takri. Since: 1.32</doc>
       </member>
-      <member name="bassa_vah" value="88" c:identifier="PANGO_SCRIPT_BASSA_VAH" glib:nick="bassa-vah">
+      <member name="bassa_vah" value="88" c:identifier="PANGO_SCRIPT_BASSA_VAH" glib:nick="bassa-vah" glib:name="PANGO_SCRIPT_BASSA_VAH">
         <doc xml:space="preserve">Bassa. Since: 1.40</doc>
       </member>
-      <member name="caucasian_albanian" value="89" c:identifier="PANGO_SCRIPT_CAUCASIAN_ALBANIAN" glib:nick="caucasian-albanian">
+      <member name="caucasian_albanian" value="89" c:identifier="PANGO_SCRIPT_CAUCASIAN_ALBANIAN" glib:nick="caucasian-albanian" glib:name="PANGO_SCRIPT_CAUCASIAN_ALBANIAN">
         <doc xml:space="preserve">Caucasian Albanian. Since: 1.40</doc>
       </member>
-      <member name="duployan" value="90" c:identifier="PANGO_SCRIPT_DUPLOYAN" glib:nick="duployan">
+      <member name="duployan" value="90" c:identifier="PANGO_SCRIPT_DUPLOYAN" glib:nick="duployan" glib:name="PANGO_SCRIPT_DUPLOYAN">
         <doc xml:space="preserve">Duployan. Since: 1.40</doc>
       </member>
-      <member name="elbasan" value="91" c:identifier="PANGO_SCRIPT_ELBASAN" glib:nick="elbasan">
+      <member name="elbasan" value="91" c:identifier="PANGO_SCRIPT_ELBASAN" glib:nick="elbasan" glib:name="PANGO_SCRIPT_ELBASAN">
         <doc xml:space="preserve">Elbasan. Since: 1.40</doc>
       </member>
-      <member name="grantha" value="92" c:identifier="PANGO_SCRIPT_GRANTHA" glib:nick="grantha">
+      <member name="grantha" value="92" c:identifier="PANGO_SCRIPT_GRANTHA" glib:nick="grantha" glib:name="PANGO_SCRIPT_GRANTHA">
         <doc xml:space="preserve">Grantha. Since: 1.40</doc>
       </member>
-      <member name="khojki" value="93" c:identifier="PANGO_SCRIPT_KHOJKI" glib:nick="khojki">
+      <member name="khojki" value="93" c:identifier="PANGO_SCRIPT_KHOJKI" glib:nick="khojki" glib:name="PANGO_SCRIPT_KHOJKI">
         <doc xml:space="preserve">Kjohki. Since: 1.40</doc>
       </member>
-      <member name="khudawadi" value="94" c:identifier="PANGO_SCRIPT_KHUDAWADI" glib:nick="khudawadi">
+      <member name="khudawadi" value="94" c:identifier="PANGO_SCRIPT_KHUDAWADI" glib:nick="khudawadi" glib:name="PANGO_SCRIPT_KHUDAWADI">
         <doc xml:space="preserve">Khudawadi, Sindhi. Since: 1.40</doc>
       </member>
-      <member name="linear_a" value="95" c:identifier="PANGO_SCRIPT_LINEAR_A" glib:nick="linear-a">
+      <member name="linear_a" value="95" c:identifier="PANGO_SCRIPT_LINEAR_A" glib:nick="linear-a" glib:name="PANGO_SCRIPT_LINEAR_A">
         <doc xml:space="preserve">Linear A. Since: 1.40</doc>
       </member>
-      <member name="mahajani" value="96" c:identifier="PANGO_SCRIPT_MAHAJANI" glib:nick="mahajani">
+      <member name="mahajani" value="96" c:identifier="PANGO_SCRIPT_MAHAJANI" glib:nick="mahajani" glib:name="PANGO_SCRIPT_MAHAJANI">
         <doc xml:space="preserve">Mahajani. Since: 1.40</doc>
       </member>
-      <member name="manichaean" value="97" c:identifier="PANGO_SCRIPT_MANICHAEAN" glib:nick="manichaean">
+      <member name="manichaean" value="97" c:identifier="PANGO_SCRIPT_MANICHAEAN" glib:nick="manichaean" glib:name="PANGO_SCRIPT_MANICHAEAN">
         <doc xml:space="preserve">Manichaean. Since: 1.40</doc>
       </member>
-      <member name="mende_kikakui" value="98" c:identifier="PANGO_SCRIPT_MENDE_KIKAKUI" glib:nick="mende-kikakui">
+      <member name="mende_kikakui" value="98" c:identifier="PANGO_SCRIPT_MENDE_KIKAKUI" glib:nick="mende-kikakui" glib:name="PANGO_SCRIPT_MENDE_KIKAKUI">
         <doc xml:space="preserve">Mende Kikakui. Since: 1.40</doc>
       </member>
-      <member name="modi" value="99" c:identifier="PANGO_SCRIPT_MODI" glib:nick="modi">
+      <member name="modi" value="99" c:identifier="PANGO_SCRIPT_MODI" glib:nick="modi" glib:name="PANGO_SCRIPT_MODI">
         <doc xml:space="preserve">Modi. Since: 1.40</doc>
       </member>
-      <member name="mro" value="100" c:identifier="PANGO_SCRIPT_MRO" glib:nick="mro">
+      <member name="mro" value="100" c:identifier="PANGO_SCRIPT_MRO" glib:nick="mro" glib:name="PANGO_SCRIPT_MRO">
         <doc xml:space="preserve">Mro. Since: 1.40</doc>
       </member>
-      <member name="nabataean" value="101" c:identifier="PANGO_SCRIPT_NABATAEAN" glib:nick="nabataean">
+      <member name="nabataean" value="101" c:identifier="PANGO_SCRIPT_NABATAEAN" glib:nick="nabataean" glib:name="PANGO_SCRIPT_NABATAEAN">
         <doc xml:space="preserve">Nabataean. Since: 1.40</doc>
       </member>
-      <member name="old_north_arabian" value="102" c:identifier="PANGO_SCRIPT_OLD_NORTH_ARABIAN" glib:nick="old-north-arabian">
+      <member name="old_north_arabian" value="102" c:identifier="PANGO_SCRIPT_OLD_NORTH_ARABIAN" glib:nick="old-north-arabian" glib:name="PANGO_SCRIPT_OLD_NORTH_ARABIAN">
         <doc xml:space="preserve">Old North Arabian. Since: 1.40</doc>
       </member>
-      <member name="old_permic" value="103" c:identifier="PANGO_SCRIPT_OLD_PERMIC" glib:nick="old-permic">
+      <member name="old_permic" value="103" c:identifier="PANGO_SCRIPT_OLD_PERMIC" glib:nick="old-permic" glib:name="PANGO_SCRIPT_OLD_PERMIC">
         <doc xml:space="preserve">Old Permic. Since: 1.40</doc>
       </member>
-      <member name="pahawh_hmong" value="104" c:identifier="PANGO_SCRIPT_PAHAWH_HMONG" glib:nick="pahawh-hmong">
+      <member name="pahawh_hmong" value="104" c:identifier="PANGO_SCRIPT_PAHAWH_HMONG" glib:nick="pahawh-hmong" glib:name="PANGO_SCRIPT_PAHAWH_HMONG">
         <doc xml:space="preserve">Pahawh Hmong. Since: 1.40</doc>
       </member>
-      <member name="palmyrene" value="105" c:identifier="PANGO_SCRIPT_PALMYRENE" glib:nick="palmyrene">
+      <member name="palmyrene" value="105" c:identifier="PANGO_SCRIPT_PALMYRENE" glib:nick="palmyrene" glib:name="PANGO_SCRIPT_PALMYRENE">
         <doc xml:space="preserve">Palmyrene. Since: 1.40</doc>
       </member>
-      <member name="pau_cin_hau" value="106" c:identifier="PANGO_SCRIPT_PAU_CIN_HAU" glib:nick="pau-cin-hau">
+      <member name="pau_cin_hau" value="106" c:identifier="PANGO_SCRIPT_PAU_CIN_HAU" glib:nick="pau-cin-hau" glib:name="PANGO_SCRIPT_PAU_CIN_HAU">
         <doc xml:space="preserve">Pau Cin Hau. Since: 1.40</doc>
       </member>
-      <member name="psalter_pahlavi" value="107" c:identifier="PANGO_SCRIPT_PSALTER_PAHLAVI" glib:nick="psalter-pahlavi">
+      <member name="psalter_pahlavi" value="107" c:identifier="PANGO_SCRIPT_PSALTER_PAHLAVI" glib:nick="psalter-pahlavi" glib:name="PANGO_SCRIPT_PSALTER_PAHLAVI">
         <doc xml:space="preserve">Psalter Pahlavi. Since: 1.40</doc>
       </member>
-      <member name="siddham" value="108" c:identifier="PANGO_SCRIPT_SIDDHAM" glib:nick="siddham">
+      <member name="siddham" value="108" c:identifier="PANGO_SCRIPT_SIDDHAM" glib:nick="siddham" glib:name="PANGO_SCRIPT_SIDDHAM">
         <doc xml:space="preserve">Siddham. Since: 1.40</doc>
       </member>
-      <member name="tirhuta" value="109" c:identifier="PANGO_SCRIPT_TIRHUTA" glib:nick="tirhuta">
+      <member name="tirhuta" value="109" c:identifier="PANGO_SCRIPT_TIRHUTA" glib:nick="tirhuta" glib:name="PANGO_SCRIPT_TIRHUTA">
         <doc xml:space="preserve">Tirhuta. Since: 1.40</doc>
       </member>
-      <member name="warang_citi" value="110" c:identifier="PANGO_SCRIPT_WARANG_CITI" glib:nick="warang-citi">
+      <member name="warang_citi" value="110" c:identifier="PANGO_SCRIPT_WARANG_CITI" glib:nick="warang-citi" glib:name="PANGO_SCRIPT_WARANG_CITI">
         <doc xml:space="preserve">Warang Citi. Since: 1.40</doc>
       </member>
-      <member name="ahom" value="111" c:identifier="PANGO_SCRIPT_AHOM" glib:nick="ahom">
+      <member name="ahom" value="111" c:identifier="PANGO_SCRIPT_AHOM" glib:nick="ahom" glib:name="PANGO_SCRIPT_AHOM">
         <doc xml:space="preserve">Ahom. Since: 1.40</doc>
       </member>
-      <member name="anatolian_hieroglyphs" value="112" c:identifier="PANGO_SCRIPT_ANATOLIAN_HIEROGLYPHS" glib:nick="anatolian-hieroglyphs">
+      <member name="anatolian_hieroglyphs" value="112" c:identifier="PANGO_SCRIPT_ANATOLIAN_HIEROGLYPHS" glib:nick="anatolian-hieroglyphs" glib:name="PANGO_SCRIPT_ANATOLIAN_HIEROGLYPHS">
         <doc xml:space="preserve">Anatolian Hieroglyphs. Since: 1.40</doc>
       </member>
-      <member name="hatran" value="113" c:identifier="PANGO_SCRIPT_HATRAN" glib:nick="hatran">
+      <member name="hatran" value="113" c:identifier="PANGO_SCRIPT_HATRAN" glib:nick="hatran" glib:name="PANGO_SCRIPT_HATRAN">
         <doc xml:space="preserve">Hatran. Since: 1.40</doc>
       </member>
-      <member name="multani" value="114" c:identifier="PANGO_SCRIPT_MULTANI" glib:nick="multani">
+      <member name="multani" value="114" c:identifier="PANGO_SCRIPT_MULTANI" glib:nick="multani" glib:name="PANGO_SCRIPT_MULTANI">
         <doc xml:space="preserve">Multani. Since: 1.40</doc>
       </member>
-      <member name="old_hungarian" value="115" c:identifier="PANGO_SCRIPT_OLD_HUNGARIAN" glib:nick="old-hungarian">
+      <member name="old_hungarian" value="115" c:identifier="PANGO_SCRIPT_OLD_HUNGARIAN" glib:nick="old-hungarian" glib:name="PANGO_SCRIPT_OLD_HUNGARIAN">
         <doc xml:space="preserve">Old Hungarian. Since: 1.40</doc>
       </member>
-      <member name="signwriting" value="116" c:identifier="PANGO_SCRIPT_SIGNWRITING" glib:nick="signwriting">
+      <member name="signwriting" value="116" c:identifier="PANGO_SCRIPT_SIGNWRITING" glib:nick="signwriting" glib:name="PANGO_SCRIPT_SIGNWRITING">
         <doc xml:space="preserve">Signwriting. Since: 1.40</doc>
       </member>
       <function name="for_unichar" c:identifier="pango_script_for_unichar" version="1.4" deprecated="1" deprecated-version="1.44.">
@@ -10661,33 +11178,33 @@ and %FALSE is returned.</doc>
         </parameters>
       </method>
     </record>
-    <bitfield name="ShapeFlags" glib:type-name="PangoShapeFlags" glib:get-type="pango_shape_flags_get_type" c:type="PangoShapeFlags">
+    <bitfield name="ShapeFlags" version="1.44" glib:type-name="PangoShapeFlags" glib:get-type="pango_shape_flags_get_type" c:type="PangoShapeFlags">
       <doc xml:space="preserve">Flags influencing the shaping process.
 
 `PangoShapeFlags` can be passed to [func@Pango.shape_with_flags].</doc>
-      <member name="none" value="0" c:identifier="PANGO_SHAPE_NONE" glib:nick="none">
+      <member name="none" value="0" c:identifier="PANGO_SHAPE_NONE" glib:nick="none" glib:name="PANGO_SHAPE_NONE">
         <doc xml:space="preserve">Default value.</doc>
       </member>
-      <member name="round_positions" value="1" c:identifier="PANGO_SHAPE_ROUND_POSITIONS" glib:nick="round-positions">
+      <member name="round_positions" value="1" c:identifier="PANGO_SHAPE_ROUND_POSITIONS" glib:nick="round-positions" glib:name="PANGO_SHAPE_ROUND_POSITIONS">
         <doc xml:space="preserve">Round glyph positions
   and widths to whole device units. This option should
   be set if the target renderer can't do subpixel
   positioning of glyphs.</doc>
       </member>
     </bitfield>
-    <bitfield name="ShowFlags" glib:type-name="PangoShowFlags" glib:get-type="pango_show_flags_get_type" c:type="PangoShowFlags">
+    <bitfield name="ShowFlags" version="1.44" glib:type-name="PangoShowFlags" glib:get-type="pango_show_flags_get_type" c:type="PangoShowFlags">
       <doc xml:space="preserve">These flags affect how Pango treats characters that are normally
 not visible in the output.</doc>
-      <member name="none" value="0" c:identifier="PANGO_SHOW_NONE" glib:nick="none">
+      <member name="none" value="0" c:identifier="PANGO_SHOW_NONE" glib:nick="none" glib:name="PANGO_SHOW_NONE">
         <doc xml:space="preserve">No special treatment for invisible characters</doc>
       </member>
-      <member name="spaces" value="1" c:identifier="PANGO_SHOW_SPACES" glib:nick="spaces">
+      <member name="spaces" value="1" c:identifier="PANGO_SHOW_SPACES" glib:nick="spaces" glib:name="PANGO_SHOW_SPACES">
         <doc xml:space="preserve">Render spaces, tabs and newlines visibly</doc>
       </member>
-      <member name="line_breaks" value="2" c:identifier="PANGO_SHOW_LINE_BREAKS" glib:nick="line-breaks">
+      <member name="line_breaks" value="2" c:identifier="PANGO_SHOW_LINE_BREAKS" glib:nick="line-breaks" glib:name="PANGO_SHOW_LINE_BREAKS">
         <doc xml:space="preserve">Render line breaks visibly</doc>
       </member>
-      <member name="ignorables" value="4" c:identifier="PANGO_SHOW_IGNORABLES" glib:nick="ignorables">
+      <member name="ignorables" value="4" c:identifier="PANGO_SHOW_IGNORABLES" glib:nick="ignorables" glib:name="PANGO_SHOW_IGNORABLES">
         <doc xml:space="preserve">Render default-ignorable Unicode
   characters visibly</doc>
       </member>
@@ -10695,49 +11212,49 @@ not visible in the output.</doc>
     <enumeration name="Stretch" glib:type-name="PangoStretch" glib:get-type="pango_stretch_get_type" c:type="PangoStretch">
       <doc xml:space="preserve">An enumeration specifying the width of the font relative to other designs
 within a family.</doc>
-      <member name="ultra_condensed" value="0" c:identifier="PANGO_STRETCH_ULTRA_CONDENSED" glib:nick="ultra-condensed">
+      <member name="ultra_condensed" value="0" c:identifier="PANGO_STRETCH_ULTRA_CONDENSED" glib:nick="ultra-condensed" glib:name="PANGO_STRETCH_ULTRA_CONDENSED">
         <doc xml:space="preserve">ultra condensed width</doc>
       </member>
-      <member name="extra_condensed" value="1" c:identifier="PANGO_STRETCH_EXTRA_CONDENSED" glib:nick="extra-condensed">
+      <member name="extra_condensed" value="1" c:identifier="PANGO_STRETCH_EXTRA_CONDENSED" glib:nick="extra-condensed" glib:name="PANGO_STRETCH_EXTRA_CONDENSED">
         <doc xml:space="preserve">extra condensed width</doc>
       </member>
-      <member name="condensed" value="2" c:identifier="PANGO_STRETCH_CONDENSED" glib:nick="condensed">
+      <member name="condensed" value="2" c:identifier="PANGO_STRETCH_CONDENSED" glib:nick="condensed" glib:name="PANGO_STRETCH_CONDENSED">
         <doc xml:space="preserve">condensed width</doc>
       </member>
-      <member name="semi_condensed" value="3" c:identifier="PANGO_STRETCH_SEMI_CONDENSED" glib:nick="semi-condensed">
+      <member name="semi_condensed" value="3" c:identifier="PANGO_STRETCH_SEMI_CONDENSED" glib:nick="semi-condensed" glib:name="PANGO_STRETCH_SEMI_CONDENSED">
         <doc xml:space="preserve">semi condensed width</doc>
       </member>
-      <member name="normal" value="4" c:identifier="PANGO_STRETCH_NORMAL" glib:nick="normal">
+      <member name="normal" value="4" c:identifier="PANGO_STRETCH_NORMAL" glib:nick="normal" glib:name="PANGO_STRETCH_NORMAL">
         <doc xml:space="preserve">the normal width</doc>
       </member>
-      <member name="semi_expanded" value="5" c:identifier="PANGO_STRETCH_SEMI_EXPANDED" glib:nick="semi-expanded">
+      <member name="semi_expanded" value="5" c:identifier="PANGO_STRETCH_SEMI_EXPANDED" glib:nick="semi-expanded" glib:name="PANGO_STRETCH_SEMI_EXPANDED">
         <doc xml:space="preserve">semi expanded width</doc>
       </member>
-      <member name="expanded" value="6" c:identifier="PANGO_STRETCH_EXPANDED" glib:nick="expanded">
+      <member name="expanded" value="6" c:identifier="PANGO_STRETCH_EXPANDED" glib:nick="expanded" glib:name="PANGO_STRETCH_EXPANDED">
         <doc xml:space="preserve">expanded width</doc>
       </member>
-      <member name="extra_expanded" value="7" c:identifier="PANGO_STRETCH_EXTRA_EXPANDED" glib:nick="extra-expanded">
+      <member name="extra_expanded" value="7" c:identifier="PANGO_STRETCH_EXTRA_EXPANDED" glib:nick="extra-expanded" glib:name="PANGO_STRETCH_EXTRA_EXPANDED">
         <doc xml:space="preserve">extra expanded width</doc>
       </member>
-      <member name="ultra_expanded" value="8" c:identifier="PANGO_STRETCH_ULTRA_EXPANDED" glib:nick="ultra-expanded">
+      <member name="ultra_expanded" value="8" c:identifier="PANGO_STRETCH_ULTRA_EXPANDED" glib:nick="ultra-expanded" glib:name="PANGO_STRETCH_ULTRA_EXPANDED">
         <doc xml:space="preserve">ultra expanded width</doc>
       </member>
     </enumeration>
     <enumeration name="Style" glib:type-name="PangoStyle" glib:get-type="pango_style_get_type" c:type="PangoStyle">
       <doc xml:space="preserve">An enumeration specifying the various slant styles possible for a font.</doc>
-      <member name="normal" value="0" c:identifier="PANGO_STYLE_NORMAL" glib:nick="normal">
+      <member name="normal" value="0" c:identifier="PANGO_STYLE_NORMAL" glib:nick="normal" glib:name="PANGO_STYLE_NORMAL">
         <doc xml:space="preserve">the font is upright.</doc>
       </member>
-      <member name="oblique" value="1" c:identifier="PANGO_STYLE_OBLIQUE" glib:nick="oblique">
+      <member name="oblique" value="1" c:identifier="PANGO_STYLE_OBLIQUE" glib:nick="oblique" glib:name="PANGO_STYLE_OBLIQUE">
         <doc xml:space="preserve">the font is slanted, but in a roman style.</doc>
       </member>
-      <member name="italic" value="2" c:identifier="PANGO_STYLE_ITALIC" glib:nick="italic">
+      <member name="italic" value="2" c:identifier="PANGO_STYLE_ITALIC" glib:nick="italic" glib:name="PANGO_STYLE_ITALIC">
         <doc xml:space="preserve">the font is slanted in an italic style.</doc>
       </member>
     </enumeration>
     <enumeration name="TabAlign" glib:type-name="PangoTabAlign" glib:get-type="pango_tab_align_get_type" c:type="PangoTabAlign">
       <doc xml:space="preserve">`PangoTabAlign` specifies where a tab stop appears relative to the text.</doc>
-      <member name="left" value="0" c:identifier="PANGO_TAB_LEFT" glib:nick="left">
+      <member name="left" value="0" c:identifier="PANGO_TAB_LEFT" glib:nick="left" glib:name="PANGO_TAB_LEFT">
         <doc xml:space="preserve">the tab stop appears to the left of the text.</doc>
       </member>
     </enumeration>
@@ -10952,6 +11469,22 @@ implementation.</doc>
         </parameters>
       </method>
     </record>
+    <enumeration name="TextTransform" version="1.50" glib:type-name="PangoTextTransform" glib:get-type="pango_text_transform_get_type" c:type="PangoTextTransform">
+      <doc xml:space="preserve">An enumeration that affects how Pango treats characters during shaping.</doc>
+      <member name="none" value="0" c:identifier="PANGO_TEXT_TRANSFORM_NONE" glib:nick="none" glib:name="PANGO_TEXT_TRANSFORM_NONE">
+        <doc xml:space="preserve">Leave text unchanged</doc>
+      </member>
+      <member name="lowercase" value="1" c:identifier="PANGO_TEXT_TRANSFORM_LOWERCASE" glib:nick="lowercase" glib:name="PANGO_TEXT_TRANSFORM_LOWERCASE">
+        <doc xml:space="preserve">Display letters and numbers as lowercase</doc>
+      </member>
+      <member name="uppercase" value="2" c:identifier="PANGO_TEXT_TRANSFORM_UPPERCASE" glib:nick="uppercase" glib:name="PANGO_TEXT_TRANSFORM_UPPERCASE">
+        <doc xml:space="preserve">Display letters and numbers as uppercase</doc>
+      </member>
+      <member name="capitalize" value="3" c:identifier="PANGO_TEXT_TRANSFORM_CAPITALIZE" glib:nick="capitalize" glib:name="PANGO_TEXT_TRANSFORM_CAPITALIZE">
+        <doc xml:space="preserve">Display the first character of a word
+  in titlecase</doc>
+      </member>
+    </enumeration>
     <function-macro name="UNITS_ROUND" c:identifier="PANGO_UNITS_ROUND" version="1.18" introspectable="0">
       <doc xml:space="preserve">Rounds a dimension to whole device units, but does not
 convert it to device units.</doc>
@@ -10964,16 +11497,16 @@ convert it to device units.</doc>
     <enumeration name="Underline" glib:type-name="PangoUnderline" glib:get-type="pango_underline_get_type" c:type="PangoUnderline">
       <doc xml:space="preserve">The `PangoUnderline` enumeration is used to specify whether text
 should be underlined, and if so, the type of underlining.</doc>
-      <member name="none" value="0" c:identifier="PANGO_UNDERLINE_NONE" glib:nick="none">
+      <member name="none" value="0" c:identifier="PANGO_UNDERLINE_NONE" glib:nick="none" glib:name="PANGO_UNDERLINE_NONE">
         <doc xml:space="preserve">no underline should be drawn</doc>
       </member>
-      <member name="single" value="1" c:identifier="PANGO_UNDERLINE_SINGLE" glib:nick="single">
+      <member name="single" value="1" c:identifier="PANGO_UNDERLINE_SINGLE" glib:nick="single" glib:name="PANGO_UNDERLINE_SINGLE">
         <doc xml:space="preserve">a single underline should be drawn</doc>
       </member>
-      <member name="double" value="2" c:identifier="PANGO_UNDERLINE_DOUBLE" glib:nick="double">
+      <member name="double" value="2" c:identifier="PANGO_UNDERLINE_DOUBLE" glib:nick="double" glib:name="PANGO_UNDERLINE_DOUBLE">
         <doc xml:space="preserve">a double underline should be drawn</doc>
       </member>
-      <member name="low" value="3" c:identifier="PANGO_UNDERLINE_LOW" glib:nick="low">
+      <member name="low" value="3" c:identifier="PANGO_UNDERLINE_LOW" glib:nick="low" glib:name="PANGO_UNDERLINE_LOW">
         <doc xml:space="preserve">a single underline should be drawn at a
   position beneath the ink extents of the text being
   underlined. This should be used only for underlining
@@ -10981,7 +11514,7 @@ should be underlined, and if so, the type of underlining.</doc>
   %PANGO_UNDERLINE_SINGLE should be used for extended
   portions of text.</doc>
       </member>
-      <member name="error" value="4" c:identifier="PANGO_UNDERLINE_ERROR" glib:nick="error">
+      <member name="error" value="4" c:identifier="PANGO_UNDERLINE_ERROR" glib:nick="error" glib:name="PANGO_UNDERLINE_ERROR">
         <doc xml:space="preserve">an underline indicating an error should
   be drawn below. The exact style of rendering is up to the
   `PangoRenderer` in use, but typical styles include wavy
@@ -10991,17 +11524,17 @@ should be underlined, and if so, the type of underlining.</doc>
   may automatically be used. This type of underlining is
   available since Pango 1.4.</doc>
       </member>
-      <member name="single_line" value="5" c:identifier="PANGO_UNDERLINE_SINGLE_LINE" glib:nick="single-line">
+      <member name="single_line" value="5" c:identifier="PANGO_UNDERLINE_SINGLE_LINE" glib:nick="single-line" glib:name="PANGO_UNDERLINE_SINGLE_LINE">
         <doc xml:space="preserve">Like @PANGO_UNDERLINE_SINGLE, but
   drawn continuously across multiple runs. This type
   of underlining is available since Pango 1.46.</doc>
       </member>
-      <member name="double_line" value="6" c:identifier="PANGO_UNDERLINE_DOUBLE_LINE" glib:nick="double-line">
+      <member name="double_line" value="6" c:identifier="PANGO_UNDERLINE_DOUBLE_LINE" glib:nick="double-line" glib:name="PANGO_UNDERLINE_DOUBLE_LINE">
         <doc xml:space="preserve">Like @PANGO_UNDERLINE_DOUBLE, but
   drawn continuously across multiple runs. This type
   of underlining is available since Pango 1.46.</doc>
       </member>
-      <member name="error_line" value="7" c:identifier="PANGO_UNDERLINE_ERROR_LINE" glib:nick="error-line">
+      <member name="error_line" value="7" c:identifier="PANGO_UNDERLINE_ERROR_LINE" glib:nick="error-line" glib:name="PANGO_UNDERLINE_ERROR_LINE">
         <doc xml:space="preserve">Like @PANGO_UNDERLINE_ERROR, but
   drawn continuously across multiple runs. This type
   of underlining is available since Pango 1.46.</doc>
@@ -11042,24 +11575,24 @@ Two encoded version numbers can be compared as integers.</doc>
       <doc xml:space="preserve">The major component of the version of Pango available at compile-time.</doc>
       <type name="gint" c:type="gint"/>
     </constant>
-    <constant name="VERSION_MICRO" value="10" c:type="PANGO_VERSION_MICRO">
+    <constant name="VERSION_MICRO" value="2" c:type="PANGO_VERSION_MICRO">
       <doc xml:space="preserve">The micro component of the version of Pango available at compile-time.</doc>
       <type name="gint" c:type="gint"/>
     </constant>
-    <constant name="VERSION_MINOR" value="48" c:type="PANGO_VERSION_MINOR">
+    <constant name="VERSION_MINOR" value="49" c:type="PANGO_VERSION_MINOR">
       <doc xml:space="preserve">The minor component of the version of Pango available at compile-time.</doc>
       <type name="gint" c:type="gint"/>
     </constant>
-    <constant name="VERSION_STRING" value="1.48.10" c:type="PANGO_VERSION_STRING">
+    <constant name="VERSION_STRING" value="1.49.2" c:type="PANGO_VERSION_STRING">
       <doc xml:space="preserve">A string literal containing the version of Pango available at compile-time.</doc>
       <type name="utf8" c:type="gchar*"/>
     </constant>
     <enumeration name="Variant" glib:type-name="PangoVariant" glib:get-type="pango_variant_get_type" c:type="PangoVariant">
       <doc xml:space="preserve">An enumeration specifying capitalization variant of the font.</doc>
-      <member name="normal" value="0" c:identifier="PANGO_VARIANT_NORMAL" glib:nick="normal">
+      <member name="normal" value="0" c:identifier="PANGO_VARIANT_NORMAL" glib:nick="normal" glib:name="PANGO_VARIANT_NORMAL">
         <doc xml:space="preserve">A normal font.</doc>
       </member>
-      <member name="small_caps" value="1" c:identifier="PANGO_VARIANT_SMALL_CAPS" glib:nick="small-caps">
+      <member name="small_caps" value="1" c:identifier="PANGO_VARIANT_SMALL_CAPS" glib:nick="small-caps" glib:name="PANGO_VARIANT_SMALL_CAPS">
         <doc xml:space="preserve">A font with the lower case characters
 replaced by smaller variants of the capital characters.</doc>
       </member>
@@ -11069,40 +11602,40 @@ replaced by smaller variants of the capital characters.</doc>
 
 This is a numerical value ranging from 100 to 1000, but there
 are some predefined values.</doc>
-      <member name="thin" value="100" c:identifier="PANGO_WEIGHT_THIN" glib:nick="thin">
+      <member name="thin" value="100" c:identifier="PANGO_WEIGHT_THIN" glib:nick="thin" glib:name="PANGO_WEIGHT_THIN">
         <doc xml:space="preserve">the thin weight (= 100; Since: 1.24)</doc>
       </member>
-      <member name="ultralight" value="200" c:identifier="PANGO_WEIGHT_ULTRALIGHT" glib:nick="ultralight">
+      <member name="ultralight" value="200" c:identifier="PANGO_WEIGHT_ULTRALIGHT" glib:nick="ultralight" glib:name="PANGO_WEIGHT_ULTRALIGHT">
         <doc xml:space="preserve">the ultralight weight (= 200)</doc>
       </member>
-      <member name="light" value="300" c:identifier="PANGO_WEIGHT_LIGHT" glib:nick="light">
+      <member name="light" value="300" c:identifier="PANGO_WEIGHT_LIGHT" glib:nick="light" glib:name="PANGO_WEIGHT_LIGHT">
         <doc xml:space="preserve">the light weight (= 300)</doc>
       </member>
-      <member name="semilight" value="350" c:identifier="PANGO_WEIGHT_SEMILIGHT" glib:nick="semilight">
+      <member name="semilight" value="350" c:identifier="PANGO_WEIGHT_SEMILIGHT" glib:nick="semilight" glib:name="PANGO_WEIGHT_SEMILIGHT">
         <doc xml:space="preserve">the semilight weight (= 350; Since: 1.36.7)</doc>
       </member>
-      <member name="book" value="380" c:identifier="PANGO_WEIGHT_BOOK" glib:nick="book">
+      <member name="book" value="380" c:identifier="PANGO_WEIGHT_BOOK" glib:nick="book" glib:name="PANGO_WEIGHT_BOOK">
         <doc xml:space="preserve">the book weight (= 380; Since: 1.24)</doc>
       </member>
-      <member name="normal" value="400" c:identifier="PANGO_WEIGHT_NORMAL" glib:nick="normal">
+      <member name="normal" value="400" c:identifier="PANGO_WEIGHT_NORMAL" glib:nick="normal" glib:name="PANGO_WEIGHT_NORMAL">
         <doc xml:space="preserve">the default weight (= 400)</doc>
       </member>
-      <member name="medium" value="500" c:identifier="PANGO_WEIGHT_MEDIUM" glib:nick="medium">
+      <member name="medium" value="500" c:identifier="PANGO_WEIGHT_MEDIUM" glib:nick="medium" glib:name="PANGO_WEIGHT_MEDIUM">
         <doc xml:space="preserve">the normal weight (= 500; Since: 1.24)</doc>
       </member>
-      <member name="semibold" value="600" c:identifier="PANGO_WEIGHT_SEMIBOLD" glib:nick="semibold">
+      <member name="semibold" value="600" c:identifier="PANGO_WEIGHT_SEMIBOLD" glib:nick="semibold" glib:name="PANGO_WEIGHT_SEMIBOLD">
         <doc xml:space="preserve">the semibold weight (= 600)</doc>
       </member>
-      <member name="bold" value="700" c:identifier="PANGO_WEIGHT_BOLD" glib:nick="bold">
+      <member name="bold" value="700" c:identifier="PANGO_WEIGHT_BOLD" glib:nick="bold" glib:name="PANGO_WEIGHT_BOLD">
         <doc xml:space="preserve">the bold weight (= 700)</doc>
       </member>
-      <member name="ultrabold" value="800" c:identifier="PANGO_WEIGHT_ULTRABOLD" glib:nick="ultrabold">
+      <member name="ultrabold" value="800" c:identifier="PANGO_WEIGHT_ULTRABOLD" glib:nick="ultrabold" glib:name="PANGO_WEIGHT_ULTRABOLD">
         <doc xml:space="preserve">the ultrabold weight (= 800)</doc>
       </member>
-      <member name="heavy" value="900" c:identifier="PANGO_WEIGHT_HEAVY" glib:nick="heavy">
+      <member name="heavy" value="900" c:identifier="PANGO_WEIGHT_HEAVY" glib:nick="heavy" glib:name="PANGO_WEIGHT_HEAVY">
         <doc xml:space="preserve">the heavy weight (= 900)</doc>
       </member>
-      <member name="ultraheavy" value="1000" c:identifier="PANGO_WEIGHT_ULTRAHEAVY" glib:nick="ultraheavy">
+      <member name="ultraheavy" value="1000" c:identifier="PANGO_WEIGHT_ULTRAHEAVY" glib:nick="ultraheavy" glib:name="PANGO_WEIGHT_ULTRAHEAVY">
         <doc xml:space="preserve">the ultraheavy weight (= 1000; Since: 1.24)</doc>
       </member>
     </enumeration>
@@ -11114,13 +11647,13 @@ For @PANGO_WRAP_WORD, Pango uses break opportunities that are determined
 by the Unicode line breaking algorithm. For @PANGO_WRAP_CHAR, Pango allows
 breaking at grapheme boundaries that are determined by the Unicode text
 segmentation algorithm.</doc>
-      <member name="word" value="0" c:identifier="PANGO_WRAP_WORD" glib:nick="word">
+      <member name="word" value="0" c:identifier="PANGO_WRAP_WORD" glib:nick="word" glib:name="PANGO_WRAP_WORD">
         <doc xml:space="preserve">wrap lines at word boundaries.</doc>
       </member>
-      <member name="char" value="1" c:identifier="PANGO_WRAP_CHAR" glib:nick="char">
+      <member name="char" value="1" c:identifier="PANGO_WRAP_CHAR" glib:nick="char" glib:name="PANGO_WRAP_CHAR">
         <doc xml:space="preserve">wrap lines at character boundaries.</doc>
       </member>
-      <member name="word_char" value="2" c:identifier="PANGO_WRAP_WORD_CHAR" glib:nick="word-char">
+      <member name="word_char" value="2" c:identifier="PANGO_WRAP_WORD_CHAR" glib:nick="word-char" glib:name="PANGO_WRAP_WORD_CHAR">
         <doc xml:space="preserve">wrap lines at word boundaries, but fall back to
   character boundaries if there is not enough space for a full word.</doc>
       </member>
@@ -11178,6 +11711,69 @@ single run, as far as possible.</doc>
         <parameter name="blue" transfer-ownership="none">
           <doc xml:space="preserve">the blue value</doc>
           <type name="guint16" c:type="guint16"/>
+        </parameter>
+      </parameters>
+    </function>
+    <function name="attr_baseline_shift_new" c:identifier="pango_attr_baseline_shift_new" version="1.50">
+      <doc xml:space="preserve">Create a new baseline displacement attribute.
+
+The effect of this attribute is to shift the baseline of a run,
+relative to the run of preceding run.
+
+&lt;picture&gt;
+  &lt;source srcset="baseline-shift-dark.png" media="(prefers-color-scheme: dark)"&gt;
+  &lt;img alt="Baseline Shift" src="baseline-shift-light.png"&gt;
+&lt;/picture&gt;</doc>
+      <return-value transfer-ownership="full">
+        <doc xml:space="preserve">the newly allocated
+  `PangoAttribute`, which should be freed with
+  [method@Pango.Attribute.destroy]</doc>
+        <type name="Attribute" c:type="PangoAttribute*"/>
+      </return-value>
+      <parameters>
+        <parameter name="shift" transfer-ownership="none">
+          <doc xml:space="preserve">either a `PangoBaselineShift` enumeration value or an absolute value (&gt; 1024)
+  in Pango units, relative to the baseline of the previous run.
+  Positive values displace the text upwards.</doc>
+          <type name="gint" c:type="int"/>
+        </parameter>
+      </parameters>
+    </function>
+    <function name="attr_break" c:identifier="pango_attr_break" version="1.50">
+      <doc xml:space="preserve">Apply customization from attributes to the breaks in @attrs.
+
+The line breaks are assumed to have been produced
+by [func@Pango.default_break] and [func@Pango.tailor_break].</doc>
+      <return-value transfer-ownership="none">
+        <type name="none" c:type="void"/>
+      </return-value>
+      <parameters>
+        <parameter name="text" transfer-ownership="none">
+          <doc xml:space="preserve">text to break. Must be valid UTF-8</doc>
+          <type name="utf8" c:type="const char*"/>
+        </parameter>
+        <parameter name="length" transfer-ownership="none">
+          <doc xml:space="preserve">length of text in bytes (may be -1 if @text is nul-terminated)</doc>
+          <type name="gint" c:type="int"/>
+        </parameter>
+        <parameter name="attr_list" transfer-ownership="none">
+          <doc xml:space="preserve">`PangoAttrList` to apply</doc>
+          <type name="AttrList" c:type="PangoAttrList*"/>
+        </parameter>
+        <parameter name="offset" transfer-ownership="none">
+          <doc xml:space="preserve">Byte offset of @text from the beginning of the paragraph</doc>
+          <type name="gint" c:type="int"/>
+        </parameter>
+        <parameter name="attrs" transfer-ownership="none">
+          <doc xml:space="preserve">array with one `PangoLogAttr`
+  per character in @text, plus one extra, to be filled in</doc>
+          <array length="5" zero-terminated="0" c:type="PangoLogAttr*">
+            <type name="LogAttr" c:type="PangoLogAttr"/>
+          </array>
+        </parameter>
+        <parameter name="attrs_len" transfer-ownership="none">
+          <doc xml:space="preserve">length of @attrs array</doc>
+          <type name="gint" c:type="int"/>
         </parameter>
       </parameters>
     </function>
@@ -11250,7 +11846,26 @@ alternative glyphs, ligatures, etc. for fonts that support them.</doc>
         <parameter name="features" transfer-ownership="none">
           <doc xml:space="preserve">a string with OpenType font features, with the syntax of the [CSS
 font-feature-settings property](https://www.w3.org/TR/css-fonts-4/#font-rend-desc)</doc>
-          <type name="utf8" c:type="const gchar*"/>
+          <type name="utf8" c:type="const char*"/>
+        </parameter>
+      </parameters>
+    </function>
+    <function name="attr_font_scale_new" c:identifier="pango_attr_font_scale_new" version="1.50">
+      <doc xml:space="preserve">Create a new font scale attribute.
+
+The effect of this attribute is to change the font size of a run,
+relative to the size of preceding run.</doc>
+      <return-value transfer-ownership="full">
+        <doc xml:space="preserve">the newly allocated
+  `PangoAttribute`, which should be freed with
+  [method@Pango.Attribute.destroy]</doc>
+        <type name="Attribute" c:type="PangoAttribute*"/>
+      </return-value>
+      <parameters>
+        <parameter name="scale" transfer-ownership="none">
+          <doc xml:space="preserve">a `PangoFontScale` value, which indicates font size change relative
+  to the size of the previous run.</doc>
+          <type name="FontScale" c:type="PangoFontScale"/>
         </parameter>
       </parameters>
     </function>
@@ -11372,6 +11987,40 @@ to suppress the hyphen.</doc>
         </parameter>
       </parameters>
     </function>
+    <function name="attr_line_height_new" c:identifier="pango_attr_line_height_new" version="1.50">
+      <doc xml:space="preserve">Modify the height of logical line extents by a factor.
+
+This affects the values returned by
+[method@Pango.LayoutLine.get_extents],
+[method@Pango.LayoutLine.get_pixel_extents] and
+[method@Pango.LayoutIter.get_line_extents].</doc>
+      <return-value transfer-ownership="full">
+        <type name="Attribute" c:type="PangoAttribute*"/>
+      </return-value>
+      <parameters>
+        <parameter name="factor" transfer-ownership="none">
+          <doc xml:space="preserve">the scaling factor to apply to the logical height</doc>
+          <type name="gdouble" c:type="double"/>
+        </parameter>
+      </parameters>
+    </function>
+    <function name="attr_line_height_new_absolute" c:identifier="pango_attr_line_height_new_absolute" version="1.50">
+      <doc xml:space="preserve">Override the height of logical line extents to be @height.
+
+This affects the values returned by
+[method@Pango.LayoutLine.get_extents],
+[method@Pango.LayoutLine.get_pixel_extents] and
+[method@Pango.LayoutIter.get_line_extents].</doc>
+      <return-value transfer-ownership="full">
+        <type name="Attribute" c:type="PangoAttribute*"/>
+      </return-value>
+      <parameters>
+        <parameter name="height" transfer-ownership="none">
+          <doc xml:space="preserve">the line height, in %PANGO_SCALE-ths of a point</doc>
+          <type name="gint" c:type="int"/>
+        </parameter>
+      </parameters>
+    </function>
     <function name="attr_overline_color_new" c:identifier="pango_attr_overline_color_new" version="1.46">
       <doc xml:space="preserve">Create a new overline color attribute.
 
@@ -11446,6 +12095,18 @@ its size multiplied by @scale_factor.</doc>
           <type name="gdouble" c:type="double"/>
         </parameter>
       </parameters>
+    </function>
+    <function name="attr_sentence_new" c:identifier="pango_attr_sentence_new" version="1.50">
+      <doc xml:space="preserve">Marks the range of the attribute as a single sentence.
+
+Note that this may require adjustments to word and
+sentence classification around the range.</doc>
+      <return-value transfer-ownership="full">
+        <doc xml:space="preserve">the newly allocated
+  `PangoAttribute`, which should be freed with
+  [method@Pango.Attribute.destroy]</doc>
+        <type name="Attribute" c:type="PangoAttribute*"/>
+      </return-value>
     </function>
     <function name="attr_shape_new" c:identifier="pango_attr_shape_new" moved-to="AttrShape.new">
       <doc xml:space="preserve">Create a new shape attribute.
@@ -11626,6 +12287,22 @@ If not set, strikethrough lines will use the foreground color.</doc>
         </parameter>
       </parameters>
     </function>
+    <function name="attr_text_transform_new" c:identifier="pango_attr_text_transform_new" version="1.50">
+      <doc xml:space="preserve">Create a new attribute that influences how characters
+are transformed during shaping.</doc>
+      <return-value transfer-ownership="full">
+        <doc xml:space="preserve">the newly allocated
+  `PangoAttribute`, which should be freed with
+  [method@Pango.Attribute.destroy]</doc>
+        <type name="Attribute" c:type="PangoAttribute*"/>
+      </return-value>
+      <parameters>
+        <parameter name="transform" transfer-ownership="none">
+          <doc xml:space="preserve">`PangoTextTransform` to apply</doc>
+          <type name="TextTransform" c:type="PangoTextTransform"/>
+        </parameter>
+      </parameters>
+    </function>
     <function name="attr_type_get_name" c:identifier="pango_attr_type_get_name" moved-to="AttrType.get_name" version="1.22">
       <doc xml:space="preserve">Fetches the attribute type name.
 
@@ -11661,7 +12338,7 @@ by using [func@Pango.AttrType.get_name].</doc>
       <parameters>
         <parameter name="name" transfer-ownership="none">
           <doc xml:space="preserve">an identifier for the type</doc>
-          <type name="utf8" c:type="const gchar*"/>
+          <type name="utf8" c:type="const char*"/>
         </parameter>
       </parameters>
     </function>
@@ -11735,6 +12412,18 @@ If not set, underlines will use the foreground color.</doc>
         </parameter>
       </parameters>
     </function>
+    <function name="attr_word_new" c:identifier="pango_attr_word_new" version="1.50">
+      <doc xml:space="preserve">Marks the range of the attribute as a single word.
+
+Note that this may require adjustments to word and
+sentence classification around the range.</doc>
+      <return-value transfer-ownership="full">
+        <doc xml:space="preserve">the newly allocated
+  `PangoAttribute`, which should be freed with
+  [method@Pango.Attribute.destroy]</doc>
+        <type name="Attribute" c:type="PangoAttribute*"/>
+      </return-value>
+    </function>
     <function name="bidi_type_for_unichar" c:identifier="pango_bidi_type_for_unichar" moved-to="BidiType.for_unichar" version="1.22">
       <doc xml:space="preserve">Determines the bidirectional type of a character.
 
@@ -11759,15 +12448,15 @@ for a string of Unicode text with a single analysis.
 
 For most purposes you may want to use
 [func@Pango.get_log_attrs].</doc>
-      <doc-deprecated xml:space="preserve">Use [func@Pango.default_break] and
-  [func@Pango.tailor_break]</doc-deprecated>
+      <doc-deprecated xml:space="preserve">Use [func@Pango.default_break],
+  [func@Pango.tailor_break] and func@Pango.attr_break].</doc-deprecated>
       <return-value transfer-ownership="none">
         <type name="none" c:type="void"/>
       </return-value>
       <parameters>
         <parameter name="text" transfer-ownership="none">
           <doc xml:space="preserve">the text to process. Must be valid UTF-8</doc>
-          <type name="utf8" c:type="const gchar*"/>
+          <type name="utf8" c:type="const char*"/>
         </parameter>
         <parameter name="length" transfer-ownership="none">
           <doc xml:space="preserve">length of @text in bytes (may be -1 if @text is nul-terminated)</doc>
@@ -11796,14 +12485,16 @@ It applies Unicode rules without language-specific
 tailoring, therefore the @analyis argument is unused
 and can be %NULL.
 
-See [func@Pango.tailor_break] for language-specific breaks.</doc>
+See [func@Pango.tailor_break] for language-specific breaks.
+
+See [func@Pango.attr_break] for attribute-based customization.</doc>
       <return-value transfer-ownership="none">
         <type name="none" c:type="void"/>
       </return-value>
       <parameters>
         <parameter name="text" transfer-ownership="none">
           <doc xml:space="preserve">text to break. Must be valid UTF-8</doc>
-          <type name="utf8" c:type="const gchar*"/>
+          <type name="utf8" c:type="const char*"/>
         </parameter>
         <parameter name="length" transfer-ownership="none">
           <doc xml:space="preserve">length of text in bytes (may be -1 if @text is nul-terminated)</doc>
@@ -11895,21 +12586,21 @@ and @next_paragraph_start are filled with the length of @text
       <parameters>
         <parameter name="text" transfer-ownership="none">
           <doc xml:space="preserve">UTF-8 text</doc>
-          <type name="utf8" c:type="const gchar*"/>
+          <type name="utf8" c:type="const char*"/>
         </parameter>
         <parameter name="length" transfer-ownership="none">
           <doc xml:space="preserve">length of @text in bytes, or -1 if nul-terminated</doc>
-          <type name="gint" c:type="gint"/>
+          <type name="gint" c:type="int"/>
         </parameter>
         <parameter name="paragraph_delimiter_index" direction="out" caller-allocates="0" transfer-ownership="full">
           <doc xml:space="preserve">return location for index of
   delimiter</doc>
-          <type name="gint" c:type="gint*"/>
+          <type name="gint" c:type="int*"/>
         </parameter>
         <parameter name="next_paragraph_start" direction="out" caller-allocates="0" transfer-ownership="full">
           <doc xml:space="preserve">return location for start of next
   paragraph</doc>
-          <type name="gint" c:type="gint*"/>
+          <type name="gint" c:type="int*"/>
         </parameter>
       </parameters>
     </function>
@@ -11971,7 +12662,7 @@ A typical example:
     <function name="get_log_attrs" c:identifier="pango_get_log_attrs">
       <doc xml:space="preserve">Computes a `PangoLogAttr` for each character in @text.
 
-The @log_attrs array must have one `PangoLogAttr` for
+The @attrs array must have one `PangoLogAttr` for
 each position in @text; if @text contains N characters,
 it has N+1 positions, including the last position at the
 end of the text. @text should be an entire paragraph;
@@ -11998,7 +12689,7 @@ a word to know the word is a word).</doc>
           <doc xml:space="preserve">language tag</doc>
           <type name="Language" c:type="PangoLanguage*"/>
         </parameter>
-        <parameter name="log_attrs" transfer-ownership="none">
+        <parameter name="attrs" transfer-ownership="none">
           <doc xml:space="preserve">array with one `PangoLogAttr`
   per character in @text, plus one extra, to be filled in</doc>
           <array length="5" zero-terminated="0" c:type="PangoLogAttr*">
@@ -12006,7 +12697,7 @@ a word to know the word is a word).</doc>
           </array>
         </parameter>
         <parameter name="attrs_len" transfer-ownership="none">
-          <doc xml:space="preserve">length of @log_attrs array</doc>
+          <doc xml:space="preserve">length of @attrs array</doc>
           <type name="gint" c:type="int"/>
         </parameter>
       </parameters>
@@ -12298,7 +12989,11 @@ settings to take effect. GTK does this in its initialization
 functions automatically (by calling gtk_set_locale()).
 See the setlocale() manpage for more details.
 
-Note that the default language can change over the life of an application.</doc>
+Note that the default language can change over the life of an application.
+
+Also note that this function will not do the right thing if you
+use per-thread locales with uselocale(). In that case, you should
+just call pango_language_from_string() yourself.</doc>
       <return-value transfer-ownership="none">
         <doc xml:space="preserve">the default language as a `PangoLanguage`</doc>
         <type name="Language" c:type="PangoLanguage*"/>
@@ -12673,7 +13368,7 @@ levels of the items. The original list is unmodified.
         </type>
       </return-value>
       <parameters>
-        <parameter name="logical_items" transfer-ownership="none">
+        <parameter name="items" transfer-ownership="none">
           <doc xml:space="preserve">a `GList` of `PangoItem`
   in logical order.</doc>
           <type name="GLib.List" c:type="GList*">
@@ -12811,17 +13506,17 @@ context language is not feasible.</doc>
       <doc xml:space="preserve">Convert the characters in @text into glyphs.
 
 Given a segment of text and the corresponding `PangoAnalysis` structure
-returned from [func@itemize], convert the characters into glyphs. You
-may also pass in only a substring of the item from [func@itemize].
+returned from [func@Pango.itemize], convert the characters into glyphs. You
+may also pass in only a substring of the item from [func@Pango.itemize].
 
-It is recommended that you use [func@shape_full] instead, since
+It is recommended that you use [func@Pango.shape_full] instead, since
 that API allows for shaping interaction happening across text item
 boundaries.
 
 Note that the extra attributes in the @analyis that is returned from
-[func@itemize] have indices that are relative to the entire paragraph,
+[func@Pango.itemize] have indices that are relative to the entire paragraph,
 so you need to subtract the item offset from their indices before
-calling [func@shape].</doc>
+calling [func@Pango.shape].</doc>
       <return-value transfer-ownership="none">
         <type name="none" c:type="void"/>
       </return-value>
@@ -12835,7 +13530,7 @@ calling [func@shape].</doc>
           <type name="gint" c:type="int"/>
         </parameter>
         <parameter name="analysis" transfer-ownership="none">
-          <doc xml:space="preserve">`PangoAnalysis` structure from [func@itemize]</doc>
+          <doc xml:space="preserve">`PangoAnalysis` structure from [func@Pango.itemize]</doc>
           <type name="Analysis" c:type="const PangoAnalysis*"/>
         </parameter>
         <parameter name="glyphs" transfer-ownership="none">
@@ -12848,19 +13543,20 @@ calling [func@shape].</doc>
       <doc xml:space="preserve">Convert the characters in @text into glyphs.
 
 Given a segment of text and the corresponding `PangoAnalysis` structure
-returned from [func@itemize], convert the characters into glyphs. You may
-also pass in only a substring of the item from [func@itemize].
+returned from [func@Pango.itemize], convert the characters into glyphs.
+You may also pass in only a substring of the item from [func@Pango.itemize].
 
-This is similar to [func@shape], except it also can optionally take
+This is similar to [func@Pango.shape], except it also can optionally take
 the full paragraph text as input, which will then be used to perform
 certain cross-item shaping interactions. If you have access to the broader
 text of which @item_text is part of, provide the broader text as
 @paragraph_text. If @paragraph_text is %NULL, item text is used instead.
 
 Note that the extra attributes in the @analyis that is returned from
-[func@itemize] have indices that are relative to the entire paragraph,
+[func@Pango.itemize] have indices that are relative to the entire paragraph,
 so you do not pass the full paragraph text as @paragraph_text, you need
-to subtract the item offset from their indices before calling [func@shape_full].</doc>
+to subtract the item offset from their indices before calling
+[func@Pango.shape_full].</doc>
       <return-value transfer-ownership="none">
         <type name="none" c:type="void"/>
       </return-value>
@@ -12874,7 +13570,7 @@ to subtract the item offset from their indices before calling [func@shape_full].
           <type name="gint" c:type="int"/>
         </parameter>
         <parameter name="paragraph_text" transfer-ownership="none" nullable="1" allow-none="1">
-          <doc xml:space="preserve">text of the paragraph (see details).  May be %NULL.</doc>
+          <doc xml:space="preserve">text of the paragraph (see details).</doc>
           <type name="utf8" c:type="const char*"/>
         </parameter>
         <parameter name="paragraph_length" transfer-ownership="none">
@@ -12882,7 +13578,7 @@ to subtract the item offset from their indices before calling [func@shape_full].
           <type name="gint" c:type="int"/>
         </parameter>
         <parameter name="analysis" transfer-ownership="none">
-          <doc xml:space="preserve">`PangoAnalysis` structure from [func@itemize].</doc>
+          <doc xml:space="preserve">`PangoAnalysis` structure from [func@Pango.itemize].</doc>
           <type name="Analysis" c:type="const PangoAnalysis*"/>
         </parameter>
         <parameter name="glyphs" transfer-ownership="none">
@@ -12891,21 +13587,65 @@ to subtract the item offset from their indices before calling [func@shape_full].
         </parameter>
       </parameters>
     </function>
+    <function name="shape_item" c:identifier="pango_shape_item" version="1.50">
+      <doc xml:space="preserve">Convert the characters in @item into glyphs.
+
+This is similar to [func@Pango.shape_with_flags], except it takes a
+`PangoItem` instead of separate @item_text and @analysis arguments.
+It also takes @log_attrs, which may be used in implementing text
+transforms.
+
+Note that the extra attributes in the @analyis that is returned from
+[func@Pango.itemize] have indices that are relative to the entire paragraph,
+so you do not pass the full paragraph text as @paragraph_text, you need
+to subtract the item offset from their indices before calling
+[func@Pango.shape_with_flags].</doc>
+      <return-value transfer-ownership="none">
+        <type name="none" c:type="void"/>
+      </return-value>
+      <parameters>
+        <parameter name="item" transfer-ownership="none">
+          <doc xml:space="preserve">`PangoItem` to shape</doc>
+          <type name="Item" c:type="PangoItem*"/>
+        </parameter>
+        <parameter name="paragraph_text" transfer-ownership="none" nullable="1" allow-none="1">
+          <doc xml:space="preserve">text of the paragraph (see details).</doc>
+          <type name="utf8" c:type="const char*"/>
+        </parameter>
+        <parameter name="paragraph_length" transfer-ownership="none">
+          <doc xml:space="preserve">the length (in bytes) of @paragraph_text.
+    -1 means nul-terminated text.</doc>
+          <type name="gint" c:type="int"/>
+        </parameter>
+        <parameter name="log_attrs" transfer-ownership="none" nullable="1" allow-none="1">
+          <doc xml:space="preserve">array of `PangoLogAttr` for @item</doc>
+          <type name="LogAttr" c:type="PangoLogAttr*"/>
+        </parameter>
+        <parameter name="glyphs" transfer-ownership="none">
+          <doc xml:space="preserve">glyph string in which to store results</doc>
+          <type name="GlyphString" c:type="PangoGlyphString*"/>
+        </parameter>
+        <parameter name="flags" transfer-ownership="none">
+          <doc xml:space="preserve">flags influencing the shaping process</doc>
+          <type name="ShapeFlags" c:type="PangoShapeFlags"/>
+        </parameter>
+      </parameters>
+    </function>
     <function name="shape_with_flags" c:identifier="pango_shape_with_flags" version="1.44">
       <doc xml:space="preserve">Convert the characters in @text into glyphs.
 
 Given a segment of text and the corresponding `PangoAnalysis` structure
-returned from [func@itemize], convert the characters into glyphs. You may
-also pass in only a substring of the item from [func@itemize].
+returned from [func@Pango.itemize], convert the characters into glyphs.
+You may also pass in only a substring of the item from [func@Pango.itemize].
 
-This is similar to [func@shape_full], except it also takes flags that can
-influence the shaping process.
+This is similar to [func@Pango.shape_full], except it also takes flags
+that can influence the shaping process.
 
 Note that the extra attributes in the @analyis that is returned from
-[func@itemize] have indices that are relative to the entire paragraph,
+[func@Pango.itemize] have indices that are relative to the entire paragraph,
 so you do not pass the full paragraph text as @paragraph_text, you need
 to subtract the item offset from their indices before calling
-[func@shape_with_flags].</doc>
+[func@Pango.shape_with_flags].</doc>
       <return-value transfer-ownership="none">
         <type name="none" c:type="void"/>
       </return-value>
@@ -12920,8 +13660,7 @@ to subtract the item offset from their indices before calling
           <type name="gint" c:type="int"/>
         </parameter>
         <parameter name="paragraph_text" transfer-ownership="none" nullable="1" allow-none="1">
-          <doc xml:space="preserve">text of the paragraph (see details).
-    May be %NULL.</doc>
+          <doc xml:space="preserve">text of the paragraph (see details).</doc>
           <type name="utf8" c:type="const char*"/>
         </parameter>
         <parameter name="paragraph_length" transfer-ownership="none">
@@ -12930,7 +13669,7 @@ to subtract the item offset from their indices before calling
           <type name="gint" c:type="int"/>
         </parameter>
         <parameter name="analysis" transfer-ownership="none">
-          <doc xml:space="preserve">`PangoAnalysis` structure from [func@itemize]</doc>
+          <doc xml:space="preserve">`PangoAnalysis` structure from [func@Pango.itemize]</doc>
           <type name="Analysis" c:type="const PangoAnalysis*"/>
         </parameter>
         <parameter name="glyphs" transfer-ownership="none">
@@ -12975,14 +13714,17 @@ white space and substituting ~/ with $HOME/.</doc>
       </parameters>
     </function>
     <function name="tailor_break" c:identifier="pango_tailor_break" version="1.44">
-      <doc xml:space="preserve">Apply language-specific tailoring to the breaks
-in @log_attrs.
+      <doc xml:space="preserve">Apply language-specific tailoring to the breaks in @attrs.
 
 The line breaks are assumed to have been produced
 by [func@Pango.default_break].
 
 If @offset is not -1, it is used to apply attributes
-from @analysis that are relevant to line breaking.</doc>
+from @analysis that are relevant to line breaking.
+
+Note that it is better to pass -1 for @offset and
+use [func@Pango.attr_break] to apply attributes to
+the whole paragraph.</doc>
       <return-value transfer-ownership="none">
         <type name="none" c:type="void"/>
       </return-value>
@@ -13004,15 +13746,15 @@ from @analysis that are relevant to line breaking.</doc>
   paragraph, or -1 to ignore attributes from @analysis</doc>
           <type name="gint" c:type="int"/>
         </parameter>
-        <parameter name="log_attrs" transfer-ownership="none">
+        <parameter name="attrs" transfer-ownership="none">
           <doc xml:space="preserve">array with one `PangoLogAttr`
   per character in @text, plus one extra, to be filled in</doc>
           <array length="5" zero-terminated="0" c:type="PangoLogAttr*">
             <type name="LogAttr" c:type="PangoLogAttr"/>
           </array>
         </parameter>
-        <parameter name="log_attrs_len" transfer-ownership="none">
-          <doc xml:space="preserve">length of @log_attrs array</doc>
+        <parameter name="attrs_len" transfer-ownership="none">
+          <doc xml:space="preserve">length of @attrs array</doc>
           <type name="gint" c:type="int"/>
         </parameter>
       </parameters>

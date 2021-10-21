@@ -328,13 +328,14 @@ the glyph, use [method@PangoFc.Font.has_char].</doc>
           </parameter>
         </parameters>
       </method>
-      <method name="get_languages" c:identifier="pango_fc_font_get_languages" version="1.48">
+      <method name="get_languages" c:identifier="pango_fc_font_get_languages" version="1.48" deprecated="1" deprecated-version="1.50">
         <doc xml:space="preserve">Returns the languages that are supported by @font.
 
 This corresponds to the FC_LANG member of the FcPattern.
 
 The returned array is only valid as long as the font
 and its fontmap are valid.</doc>
+        <doc-deprecated xml:space="preserve">Use pango_font_get_language()</doc-deprecated>
         <return-value transfer-ownership="none" nullable="1">
           <doc xml:space="preserve">a %NULL-terminated
   array of `PangoLanguage`*</doc>
@@ -347,7 +348,7 @@ and its fontmap are valid.</doc>
           </instance-parameter>
         </parameters>
       </method>
-      <method name="get_pattern" c:identifier="pango_fc_font_get_pattern" version="1.48" introspectable="0">
+      <method name="get_pattern" c:identifier="pango_fc_font_get_pattern" glib:get-property="pattern" version="1.48" introspectable="0">
         <doc xml:space="preserve">Returns the FcPattern that @font is based on.</doc>
         <return-value>
           <doc xml:space="preserve">the fontconfig pattern for this font</doc>
@@ -452,7 +453,7 @@ This face will be kept around until you call
         <doc xml:space="preserve">The PangoFc font map this font is associated with.</doc>
         <type name="FontMap"/>
       </property>
-      <property name="pattern" writable="1" construct-only="1" transfer-ownership="none">
+      <property name="pattern" writable="1" construct-only="1" transfer-ownership="none" getter="get_pattern">
         <doc xml:space="preserve">The fontconfig pattern for this font.</doc>
         <type name="gpointer" c:type="gpointer"/>
       </property>

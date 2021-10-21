@@ -164,7 +164,7 @@ node onto the @bottom node.</doc>
             <type name="RenderNode" c:type="GskRenderNode*"/>
           </parameter>
           <parameter name="radius" transfer-ownership="none">
-            <doc xml:space="preserve">the blur radius</doc>
+            <doc xml:space="preserve">the blur radius. Must be positive</doc>
             <type name="gfloat" c:type="float"/>
           </parameter>
         </parameters>
@@ -842,9 +842,8 @@ Adding this node has no visual effect.</doc>
       </method>
     </class>
     <class name="GLRenderer" c:symbol-prefix="gl_renderer" c:type="GskGLRenderer" parent="Renderer" glib:type-name="GskGLRenderer" glib:get-type="gsk_gl_renderer_get_type" glib:type-struct="GLRendererClass">
-      <doc xml:space="preserve">A GSK renderer that is using OpenGL.</doc>
-      <constructor name="new" c:identifier="gsk_gl_renderer_new">
-        <doc xml:space="preserve">Creates a new `GskRenderer` using OpenGL.</doc>
+      <constructor name="new" c:identifier="gsk_gl_renderer_new" version="4.2">
+        <doc xml:space="preserve">Creates a new `GskRenderer` using the new OpenGL renderer.</doc>
         <return-value transfer-ownership="full">
           <doc xml:space="preserve">a new GL renderer</doc>
           <type name="Renderer" c:type="GskRenderer*"/>
@@ -930,7 +929,7 @@ uniform sampler2D u_texture1;
 uniform sampler2D u_texture2;
 ```
 
-GTK uses the the "gsk" namespace in the symbols it uses in the
+GTK uses the "gsk" namespace in the symbols it uses in the
 shader, so your code should not use any symbols with the prefix gsk
 or GSK. There are some helper functions declared that you can use:
 
@@ -1598,18 +1597,6 @@ code, and what the corresponding C type is on the Gtk side.</doc>
         </parameter>
       </parameters>
     </function-macro>
-    <function-macro name="IS_NGL_RENDERER" c:identifier="GSK_IS_NGL_RENDERER" introspectable="0">
-      <parameters>
-        <parameter name="obj">
-        </parameter>
-      </parameters>
-    </function-macro>
-    <function-macro name="IS_NGL_RENDERER_CLASS" c:identifier="GSK_IS_NGL_RENDERER_CLASS" introspectable="0">
-      <parameters>
-        <parameter name="klass">
-        </parameter>
-      </parameters>
-    </function-macro>
     <function-macro name="IS_RENDERER" c:identifier="GSK_IS_RENDERER" introspectable="0">
       <parameters>
         <parameter name="obj">
@@ -1833,34 +1820,16 @@ points and color stops, and render that into the area given by @bounds.</doc>
         </parameters>
       </method>
     </class>
-    <function-macro name="NGL_RENDERER" c:identifier="GSK_NGL_RENDERER" introspectable="0">
-      <parameters>
-        <parameter name="obj">
-        </parameter>
-      </parameters>
-    </function-macro>
-    <function-macro name="NGL_RENDERER_CLASS" c:identifier="GSK_NGL_RENDERER_CLASS" introspectable="0">
-      <parameters>
-        <parameter name="klass">
-        </parameter>
-      </parameters>
-    </function-macro>
-    <function-macro name="NGL_RENDERER_GET_CLASS" c:identifier="GSK_NGL_RENDERER_GET_CLASS" introspectable="0">
-      <parameters>
-        <parameter name="obj">
-        </parameter>
-      </parameters>
-    </function-macro>
-    <class name="NglRenderer" c:symbol-prefix="ngl_renderer" c:type="GskNglRenderer" parent="Renderer" glib:type-name="GskNglRenderer" glib:get-type="gsk_ngl_renderer_get_type" glib:type-struct="NglRendererClass">
-      <constructor name="new" c:identifier="gsk_ngl_renderer_new" version="4.2">
-        <doc xml:space="preserve">Creates a new `GskRenderer` using the new OpenGL renderer.</doc>
+    <class name="NglRenderer" c:symbol-prefix="ngl_renderer" parent="Renderer" glib:type-name="GskNglRenderer" glib:get-type="gsk_ngl_renderer_get_type">
+      <constructor name="new" c:identifier="gsk_ngl_renderer_new" deprecated="1" deprecated-version="4.4">
+        <doc xml:space="preserve">Same as gsk_gl_renderer_new().</doc>
+        <doc-deprecated xml:space="preserve">Use gsk_gl_renderer_new()</doc-deprecated>
         <return-value transfer-ownership="full">
-          <doc xml:space="preserve">a new NGL renderer</doc>
+          <doc xml:space="preserve">a new GL renderer</doc>
           <type name="Renderer" c:type="GskRenderer*"/>
         </return-value>
       </constructor>
     </class>
-    <record name="NglRendererClass" c:type="GskNglRendererClass" disguised="1" glib:is-gtype-struct-for="NglRenderer"/>
     <class name="OpacityNode" c:symbol-prefix="opacity_node" c:type="GskOpacityNode" parent="RenderNode" glib:type-name="GskOpacityNode" glib:get-type="gsk_opacity_node_get_type" glib:fundamental="1">
       <doc xml:space="preserve">A render node controlling the opacity of its single child node.</doc>
       <constructor name="new" c:identifier="gsk_opacity_node_new">
@@ -2245,7 +2214,7 @@ in horizontal orientation and by @vradius in vertial orientation.</doc>
         </parameters>
       </method>
     </class>
-    <class name="RenderNode" c:symbol-prefix="render_node" c:type="GskRenderNode" abstract="1" glib:type-name="GskRenderNode" glib:get-type="gsk_render_node_get_type" glib:fundamental="1" glib:ref-func="gsk_render_node_ref" glib:unref-func="gsk_render_node_unref">
+    <class name="RenderNode" c:symbol-prefix="render_node" c:type="GskRenderNode" abstract="1" glib:type-name="GskRenderNode" glib:get-type="gsk_render_node_get_type" glib:fundamental="1" glib:ref-func="gsk_render_node_ref" glib:unref-func="gsk_render_node_unref" glib:set-value-func="gsk_value_set_render_node" glib:get-value-func="gsk_value_get_render_node">
       <doc xml:space="preserve">`GskRenderNode` is the basic block in a scene graph to be
 rendered using `GskRenderer`.
 
@@ -2553,7 +2522,10 @@ If the renderer has not been realized yet, %NULL will be returned.</doc>
       </method>
       <method name="realize" c:identifier="gsk_renderer_realize" throws="1">
         <doc xml:space="preserve">Creates the resources needed by the @renderer to render the scene
-graph.</doc>
+graph.
+
+Since GTK 4.6, the surface may be `NULL`, which allows using
+renderers without having to create a surface.</doc>
         <return-value transfer-ownership="none">
           <type name="gboolean" c:type="gboolean"/>
         </return-value>
@@ -2562,15 +2534,17 @@ graph.</doc>
             <doc xml:space="preserve">a `GskRenderer`</doc>
             <type name="Renderer" c:type="GskRenderer*"/>
           </instance-parameter>
-          <parameter name="surface" transfer-ownership="none">
+          <parameter name="surface" transfer-ownership="none" nullable="1" allow-none="1">
             <doc xml:space="preserve">the `GdkSurface` renderer will be used on</doc>
             <type name="Gdk.Surface" c:type="GdkSurface*"/>
           </parameter>
         </parameters>
       </method>
       <method name="render" c:identifier="gsk_renderer_render">
-        <doc xml:space="preserve">Renders the scene graph, described by a tree of `GskRenderNode` instances,
-ensuring that the given @region gets redrawn.
+        <doc xml:space="preserve">Renders the scene graph, described by a tree of `GskRenderNode` instances
+to the renderer's surface,  ensuring that the given @region gets redrawn.
+
+If the renderer has no associated surface, this function does nothing.
 
 Renderers must ensure that changes of the contents given by the @root
 node as well as the area given by @region are redrawn. They are however
@@ -2584,7 +2558,7 @@ the rendering is in progress.</doc>
         </return-value>
         <parameters>
           <instance-parameter name="renderer" transfer-ownership="none">
-            <doc xml:space="preserve">a `GskRenderer`</doc>
+            <doc xml:space="preserve">a realized `GskRenderer`</doc>
             <type name="Renderer" c:type="GskRenderer*"/>
           </instance-parameter>
           <parameter name="root" transfer-ownership="none">
@@ -2640,7 +2614,7 @@ transform node and pass that node instead.</doc>
       </method>
       <property name="realized" transfer-ownership="none">
         <attribute name="org.gtk.Property.get" value="gsk_renderer_is_realized"/>
-        <doc xml:space="preserve">Whether the renderer has been associated with a surface.</doc>
+        <doc xml:space="preserve">Whether the renderer has been associated with a surface or draw context.</doc>
         <type name="gboolean" c:type="gboolean"/>
       </property>
       <property name="surface" transfer-ownership="none" getter="get_surface">
@@ -3833,6 +3807,27 @@ Use [method@Gsk.Transform.scale_3d] to scale in all 3 dimensions.</doc>
           </parameter>
         </parameters>
       </method>
+      <method name="skew" c:identifier="gsk_transform_skew" version="4.6">
+        <doc xml:space="preserve">Applies a skew transform.</doc>
+        <return-value transfer-ownership="full">
+          <doc xml:space="preserve">The new transform</doc>
+          <type name="Transform" c:type="GskTransform*"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="next" transfer-ownership="full" nullable="1" allow-none="1">
+            <doc xml:space="preserve">the next transform</doc>
+            <type name="Transform" c:type="GskTransform*"/>
+          </instance-parameter>
+          <parameter name="skew_x" transfer-ownership="none">
+            <doc xml:space="preserve">skew factor, in degrees, on the X axis</doc>
+            <type name="gfloat" c:type="float"/>
+          </parameter>
+          <parameter name="skew_y" transfer-ownership="none">
+            <doc xml:space="preserve">skew factor, in degrees, on the Y axis</doc>
+            <type name="gfloat" c:type="float"/>
+          </parameter>
+        </parameters>
+      </method>
       <method name="to_2d" c:identifier="gsk_transform_to_2d">
         <doc xml:space="preserve">Converts a `GskTransform` to a 2D transformation matrix.
 
@@ -3885,10 +3880,80 @@ Cairo.</doc>
           </parameter>
         </parameters>
       </method>
+      <method name="to_2d_components" c:identifier="gsk_transform_to_2d_components" version="4.6">
+        <doc xml:space="preserve">Converts a `GskTransform` to 2D transformation factors.
+
+To recreate an equivalent transform from the factors returned
+by this function, use
+
+    gsk_transform_skew (
+        gsk_transform_scale (
+            gsk_transform_rotate (
+                gsk_transform_translate (NULL, &amp;GRAPHENE_POINT_T (dx, dy)),
+                angle),
+            scale_x, scale_y),
+        skew_x, skew_y)
+
+@self must be a 2D transformation. If you are not sure, use
+
+    gsk_transform_get_category() &gt;= %GSK_TRANSFORM_CATEGORY_2D
+
+to check.</doc>
+        <return-value transfer-ownership="none">
+          <type name="none" c:type="void"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="self" transfer-ownership="none">
+            <doc xml:space="preserve">a `GskTransform`</doc>
+            <type name="Transform" c:type="GskTransform*"/>
+          </instance-parameter>
+          <parameter name="out_skew_x" direction="out" caller-allocates="0" transfer-ownership="full">
+            <doc xml:space="preserve">return location for the skew factor
+  in the  x direction</doc>
+            <type name="gfloat" c:type="float*"/>
+          </parameter>
+          <parameter name="out_skew_y" direction="out" caller-allocates="0" transfer-ownership="full">
+            <doc xml:space="preserve">return location for the skew factor
+  in the  y direction</doc>
+            <type name="gfloat" c:type="float*"/>
+          </parameter>
+          <parameter name="out_scale_x" direction="out" caller-allocates="0" transfer-ownership="full">
+            <doc xml:space="preserve">return location for the scale
+  factor in the x direction</doc>
+            <type name="gfloat" c:type="float*"/>
+          </parameter>
+          <parameter name="out_scale_y" direction="out" caller-allocates="0" transfer-ownership="full">
+            <doc xml:space="preserve">return location for the scale
+  factor in the y direction</doc>
+            <type name="gfloat" c:type="float*"/>
+          </parameter>
+          <parameter name="out_angle" direction="out" caller-allocates="0" transfer-ownership="full">
+            <doc xml:space="preserve">return location for the rotation angle</doc>
+            <type name="gfloat" c:type="float*"/>
+          </parameter>
+          <parameter name="out_dx" direction="out" caller-allocates="0" transfer-ownership="full">
+            <doc xml:space="preserve">return location for the translation
+  in the x direction</doc>
+            <type name="gfloat" c:type="float*"/>
+          </parameter>
+          <parameter name="out_dy" direction="out" caller-allocates="0" transfer-ownership="full">
+            <doc xml:space="preserve">return location for the translation
+  in the y direction</doc>
+            <type name="gfloat" c:type="float*"/>
+          </parameter>
+        </parameters>
+      </method>
       <method name="to_affine" c:identifier="gsk_transform_to_affine">
         <doc xml:space="preserve">Converts a `GskTransform` to 2D affine transformation factors.
 
-@self must be a 2D transformation. If you are not
+To recreate an equivalent transform from the factors returned
+by this function, use
+
+    gsk_transform_scale (gsk_transform_translate (NULL,
+                                                  &amp;GRAPHENE_POINT_T (dx, dy)),
+                         sx, sy)
+
+@self must be a 2D affine transformation. If you are not
 sure, use
 
     gsk_transform_get_category() &gt;= %GSK_TRANSFORM_CATEGORY_2D_AFFINE
@@ -4210,6 +4275,14 @@ with the given @transform.</doc>
         </parameters>
       </method>
     </class>
+    <function-macro name="VALUE_HOLDS_RENDER_NODE" c:identifier="GSK_VALUE_HOLDS_RENDER_NODE" introspectable="0">
+      <doc xml:space="preserve">Evaluates to %TRUE if @value was initialized with %GSK_TYPE_RENDER_NODE.</doc>
+      <parameters>
+        <parameter name="value">
+          <doc xml:space="preserve">a `GValue`</doc>
+        </parameter>
+      </parameters>
+    </function-macro>
     <function name="serialization_error_quark" c:identifier="gsk_serialization_error_quark" moved-to="SerializationError.quark">
       <return-value transfer-ownership="none">
         <type name="GLib.Quark" c:type="GQuark"/>
@@ -4236,6 +4309,69 @@ returned and %NULL is put in @out_transform.</doc>
         <parameter name="out_transform" direction="out" caller-allocates="0" transfer-ownership="full">
           <doc xml:space="preserve">The location to put the transform in</doc>
           <type name="Transform" c:type="GskTransform**"/>
+        </parameter>
+      </parameters>
+    </function>
+    <function name="value_dup_render_node" c:identifier="gsk_value_dup_render_node" version="4.6">
+      <doc xml:space="preserve">Retrieves the `GskRenderNode` stored inside the given `value`, and acquires
+a reference to it.</doc>
+      <return-value transfer-ownership="full" nullable="1">
+        <doc xml:space="preserve">a `GskRenderNode`</doc>
+        <type name="RenderNode" c:type="GskRenderNode*"/>
+      </return-value>
+      <parameters>
+        <parameter name="value" transfer-ownership="none">
+          <doc xml:space="preserve">a `GValue` initialized with type `GSK_TYPE_RENDER_NODE`</doc>
+          <type name="GObject.Value" c:type="const GValue*"/>
+        </parameter>
+      </parameters>
+    </function>
+    <function name="value_get_render_node" c:identifier="gsk_value_get_render_node" version="4.6">
+      <doc xml:space="preserve">Retrieves the `GskRenderNode` stored inside the given `value`.</doc>
+      <return-value transfer-ownership="none" nullable="1">
+        <doc xml:space="preserve">a `GskRenderNode`</doc>
+        <type name="RenderNode" c:type="GskRenderNode*"/>
+      </return-value>
+      <parameters>
+        <parameter name="value" transfer-ownership="none">
+          <doc xml:space="preserve">a `GValue` initialized with type `GSK_TYPE_RENDER_NODE`</doc>
+          <type name="GObject.Value" c:type="const GValue*"/>
+        </parameter>
+      </parameters>
+    </function>
+    <function name="value_set_render_node" c:identifier="gsk_value_set_render_node" version="4.6">
+      <doc xml:space="preserve">Stores the given `GskRenderNode` inside `value`.
+
+The `GValue` will acquire a reference to the `node`.</doc>
+      <return-value transfer-ownership="none">
+        <type name="none" c:type="void"/>
+      </return-value>
+      <parameters>
+        <parameter name="value" transfer-ownership="none">
+          <doc xml:space="preserve">a `GValue` initialized with type `GSK_TYPE_RENDER_NODE`</doc>
+          <type name="GObject.Value" c:type="GValue*"/>
+        </parameter>
+        <parameter name="node" transfer-ownership="none">
+          <doc xml:space="preserve">a `GskRenderNode`</doc>
+          <type name="RenderNode" c:type="GskRenderNode*"/>
+        </parameter>
+      </parameters>
+    </function>
+    <function name="value_take_render_node" c:identifier="gsk_value_take_render_node" version="4.6">
+      <doc xml:space="preserve">Stores the given `GskRenderNode` inside `value`.
+
+This function transfers the ownership of the `node` to the `GValue`.</doc>
+      <return-value transfer-ownership="none">
+        <type name="none" c:type="void"/>
+      </return-value>
+      <parameters>
+        <parameter name="value" transfer-ownership="none">
+          <doc xml:space="preserve">a `GValue` initialized with type `GSK_TYPE_RENDER_NODE`</doc>
+          <type name="GObject.Value" c:type="GValue*"/>
+        </parameter>
+        <parameter name="node" transfer-ownership="full" nullable="1" allow-none="1">
+          <doc xml:space="preserve">a `GskRenderNode`</doc>
+          <type name="RenderNode" c:type="GskRenderNode*"/>
         </parameter>
       </parameters>
     </function>
