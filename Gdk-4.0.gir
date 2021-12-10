@@ -1759,7 +1759,7 @@ given `GType` is not supported, this operation can fail and
             <doc xml:space="preserve">a `GdkContentProvider`</doc>
             <type name="ContentProvider" c:type="GdkContentProvider*"/>
           </instance-parameter>
-          <parameter name="value" transfer-ownership="none">
+          <parameter name="value" direction="out" caller-allocates="1" transfer-ownership="none">
             <doc xml:space="preserve">the `GValue` to fill</doc>
             <type name="GObject.Value" c:type="GValue*"/>
           </parameter>
@@ -1895,7 +1895,7 @@ given `GType` is not supported, this operation can fail and
             <doc xml:space="preserve">a `GdkContentProvider`</doc>
             <type name="ContentProvider" c:type="GdkContentProvider*"/>
           </instance-parameter>
-          <parameter name="value" transfer-ownership="none">
+          <parameter name="value" direction="out" caller-allocates="1" transfer-ownership="none">
             <doc xml:space="preserve">the `GValue` to fill</doc>
             <type name="GObject.Value" c:type="GValue*"/>
           </parameter>
@@ -2165,7 +2165,7 @@ See [method@Gdk.ContentProvider.write_mime_type_async].</doc>
               <doc xml:space="preserve">a `GdkContentProvider`</doc>
               <type name="ContentProvider" c:type="GdkContentProvider*"/>
             </parameter>
-            <parameter name="value" transfer-ownership="none">
+            <parameter name="value" direction="out" caller-allocates="1" transfer-ownership="none">
               <doc xml:space="preserve">the `GValue` to fill</doc>
               <type name="GObject.Value" c:type="GValue*"/>
             </parameter>
@@ -2941,9 +2941,10 @@ This is only relevant for keyboard devices.</doc>
           </instance-parameter>
         </parameters>
       </method>
-      <method name="get_source" c:identifier="gdk_device_get_source" glib:get-property="source">
+      <method name="get_source" c:identifier="gdk_device_get_source" glib:get-property="source" deprecated="1" deprecated-version="4.6">
         <attribute name="org.gtk.Method.get_property" value="source"/>
         <doc xml:space="preserve">Determines the type of the device.</doc>
+        <doc-deprecated xml:space="preserve">Use gdk_device_tool_get_tool_type() instead</doc-deprecated>
         <return-value transfer-ownership="none">
           <doc xml:space="preserve">a `GdkInputSource`</doc>
           <type name="InputSource" c:type="GdkInputSource"/>
@@ -3139,9 +3140,10 @@ This is only relevant for keyboard devices.</doc>
         <doc xml:space="preserve">`GdkSeat` of this device.</doc>
         <type name="Seat"/>
       </property>
-      <property name="source" writable="1" construct-only="1" transfer-ownership="none" getter="get_source">
+      <property name="source" deprecated="1" deprecated-version="4.6" writable="1" construct-only="1" transfer-ownership="none" getter="get_source">
         <attribute name="org.gtk.Property.get" value="gdk_device_get_source"/>
         <doc xml:space="preserve">Source type for the device.</doc>
+        <doc-deprecated xml:space="preserve">Use GdkDeviceTool:tool-type instead</doc-deprecated>
         <type name="InputSource"/>
       </property>
       <property name="tool" transfer-ownership="none">
@@ -5167,7 +5169,10 @@ If not, this function returns %FALSE.</doc>
         </parameters>
       </method>
       <method name="get_axes" c:identifier="gdk_event_get_axes">
-        <doc xml:space="preserve">Extracts all axis values from an event.</doc>
+        <doc xml:space="preserve">Extracts all axis values from an event.
+
+To find out which axes are used, use [method@Gdk.DeviceTool.get_axes]
+on the device tool returned by [method@Gdk.Event.get_device_tool].</doc>
         <return-value transfer-ownership="none">
           <doc xml:space="preserve">%TRUE on success, otherwise %FALSE</doc>
           <type name="gboolean" c:type="gboolean"/>
@@ -5191,7 +5196,10 @@ If not, this function returns %FALSE.</doc>
       </method>
       <method name="get_axis" c:identifier="gdk_event_get_axis">
         <doc xml:space="preserve">Extract the axis value for a particular axis use from
-an event structure.</doc>
+an event structure.
+
+To find out which axes are used, use [method@Gdk.DeviceTool.get_axes]
+on the device tool returned by [method@Gdk.Event.get_device_tool].</doc>
         <return-value transfer-ownership="none">
           <doc xml:space="preserve">%TRUE if the specified axis was found, otherwise %FALSE</doc>
           <type name="gboolean" c:type="gboolean"/>
@@ -5296,7 +5304,8 @@ The history includes positions that are not delivered as separate events
 to the application because they occurred in the same frame as @event.
 
 Note that only motion and scroll events record history, and motion
-events do it only if one of the mouse buttons is down.</doc>
+events do it only if one of the mouse buttons is down, or the device
+has a tool.</doc>
         <return-value transfer-ownership="container" nullable="1">
           <doc xml:space="preserve">an
   array of time and coordinates</doc>
@@ -16884,8 +16893,7 @@ There are various ways to create `GdkTexture` objects from a
 `GdkPixbuf`, or a Cairo surface, or other pixel data.
 
 The ownership of the pixel data is transferred to the `GdkTexture`
-instance; you can only make a copy of it, via [method@Gdk.Texture.download]
-or [method@Gdk.Texture.download_float].
+instance; you can only make a copy of it, via [method@Gdk.Texture.download].
 
 `GdkTexture` is an immutable object: That means you cannot change
 anything about it other than increasing the reference count via
@@ -17038,45 +17046,6 @@ cairo_surface_mark_dirty (surface);
           </parameter>
           <parameter name="stride" transfer-ownership="none">
             <doc xml:space="preserve">rowstride in bytes</doc>
-            <type name="gsize" c:type="gsize"/>
-          </parameter>
-        </parameters>
-      </method>
-      <method name="download_float" c:identifier="gdk_texture_download_float" version="4.6">
-        <doc xml:space="preserve">Downloads the @texture into local memory in a high dynamic range format.
-
-This may be an expensive operation, as the actual texture data
-may reside on a GPU or on a remote display server and because the data
-may need to be upsampled if it was not already available in this
-format.
-
-You may want to use [method@Gdk.Texture.download] instead if you don't
-need high dynamic range support.
-
-The data format of the downloaded data is equivalent to
-GDK_MEMORY_R32G32B32A32_FLOAT_PREMULTIPLIED, so every downloaded
-pixel requires 16 bytes of memory.
-
-Note that the caller is responsible to provide sufficiently
-aligned memory to access the resulting data directly as floats.</doc>
-        <return-value transfer-ownership="none">
-          <type name="none" c:type="void"/>
-        </return-value>
-        <parameters>
-          <instance-parameter name="texture" transfer-ownership="none">
-            <doc xml:space="preserve">a `GdkTexture`</doc>
-            <type name="Texture" c:type="GdkTexture*"/>
-          </instance-parameter>
-          <parameter name="data" transfer-ownership="none">
-            <doc xml:space="preserve">pointer to enough memory to be filled with the
-  downloaded data of @texture</doc>
-            <array zero-terminated="0" c:type="float*">
-              <type name="gfloat" c:type="float"/>
-            </array>
-          </parameter>
-          <parameter name="stride" transfer-ownership="none">
-            <doc xml:space="preserve">rowstride in elements, will usually be equal to
-  gdk_texture_get_width() * 4</doc>
             <type name="gsize" c:type="gsize"/>
           </parameter>
         </parameters>
