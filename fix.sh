@@ -132,7 +132,25 @@ xmlstarlet ed -L \
 	-u '//_:class[@name="WaylandMonitor"]/_:method[@name="get_wl_output"]//_:type[@name="gpointer"]/@c:type' -v "gpointer" \
 	-u '//_:class[@name="WaylandSeat"]/_:method[@name="get_wl_seat"]//_:type[@name="gpointer"]/@c:type' -v "gpointer" \
 	-u '//_:class[@name="WaylandSurface"]/_:method[@name="get_wl_surface"]//_:type[@name="gpointer"]/@c:type' -v "gpointer" \
+	-u '//_:class[@name="WaylandDevice"]/_:method[@name="get_xkb_keymap"]//_:type[@name="gpointer"]/@c:type' -v "gpointer" \
 	GdkWayland-4.0.gir
+
+# avoid always depending on x11 crate
+xmlstarlet ed -L \
+	-u '//_:class[@name="X11Display"]/_:method[@name="get_xcursor"]//_:type[@name="xlib.Cursor"]/@c:type' -v "gulong" \
+	-u '//_:class[@name="X11Display"]/_:method[@name="get_xdisplay"]//_:type[@name="xlib.Display"]/@c:type' -v "gpointer" \
+	-u '//_:class[@name="X11Display"]/_:method[@name="get_xrootwindow"]//_:type[@name="xlib.Window"]/@c:type' -v "gulong" \
+	-u '//_:class[@name="X11Display"]/_:method[@name="get_xscreen"]//_:type[@name="xlib.Screen"]/@c:type' -v "gpointer" \
+	-u '//_:class[@name="X11Monitor"]/_:method[@name="get_output"]//_:type[@name="xlib.XID"]/@c:type' -v "gulong" \
+	-u '//_:class[@name="X11Screen"]/_:method[@name="get_monitor_output"]//_:type[@name="xlib.XID"]/@c:type' -v "gulong" \
+	-u '//_:class[@name="X11Screen"]/_:method[@name="get_xscreen"]//_:type[@name="xlib.Screen"]/@c:type' -v "gpointer" \
+	-u '//_:class[@name="X11Surface"]/_:method[@name="get_xid"]//_:type[@name="xlib.Window"]/@c:type' -v "gulong" \
+	-u '//_:class[@name="X11Surface"]/_:function[@name="lookup_for_display"]//_:type[@name="xlib.Window"]/@c:type' -v "gulong" \
+	-u '//_:class[@name="get_xid"]/_:method[@name="lookup_for_display"]//_:type[@name="xlib.Window"]/@c:type' -v "gulong" \
+	-u '//_:function[@name="x11_get_xatom_by_name_for_display"]//_:type[@name="xlib.Atom"]/@c:type' -v "gulong" \
+	-u '//_:function[@name="x11_get_xatom_name_for_display"]//_:type[@name="xlib.Atom"]/@c:type' -v "gulong" \
+	-u '//_:function[@name="x11_lookup_xdisplay"]//_:type[@name="xlib.Display"]/@c:type' -v "gpointer" \
+	GdkX11-4.0.gir
 
 # Fix invalid type for GtkImage and GtkStackSwitcher "icon-size" property
 xmlstarlet ed -L \
