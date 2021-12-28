@@ -2894,10 +2894,9 @@ output variables and returns.</doc>
         </parameters>
       </method>
       <method name="has_char" c:identifier="pango_font_has_char" version="1.44">
-        <doc xml:space="preserve">Returns whether the font provides a glyph for this character.
-
-Returns %TRUE if @font can render @wc</doc>
+        <doc xml:space="preserve">Returns whether the font provides a glyph for this character.</doc>
         <return-value transfer-ownership="none">
+          <doc xml:space="preserve">`TRUE` if @font can render @wc</doc>
           <type name="gboolean" c:type="gboolean"/>
         </return-value>
         <parameters>
@@ -3838,9 +3837,9 @@ will be unset.</doc>
       <virtual-method name="get_face_name" invoker="get_face_name">
         <doc xml:space="preserve">Gets a name representing the style of this face.
 
-The name identifies the face among the different faces
-in the `PangoFontFamily` for the face. It is suitable
-for displaying to users.</doc>
+Note that a font family may contain multiple faces
+with the same name (e.g. a variable and a non-variable
+face for the same style).</doc>
         <return-value transfer-ownership="none">
           <doc xml:space="preserve">the face name for the face. This string is
   owned by the face object and must not be modified or freed.</doc>
@@ -3934,9 +3933,9 @@ will be unset.</doc>
       <method name="get_face_name" c:identifier="pango_font_face_get_face_name">
         <doc xml:space="preserve">Gets a name representing the style of this face.
 
-The name identifies the face among the different faces
-in the `PangoFontFamily` for the face. It is suitable
-for displaying to users.</doc>
+Note that a font family may contain multiple faces
+with the same name (e.g. a variable and a non-variable
+face for the same style).</doc>
         <return-value transfer-ownership="none">
           <doc xml:space="preserve">the face name for the face. This string is
   owned by the face object and must not be modified or freed.</doc>
@@ -4206,7 +4205,13 @@ Such axes are also known as _variations_; see
         <doc xml:space="preserve">Lists the different font faces that make up @family.
 
 The faces in a family share a common design, but differ in slant, weight,
-width and other aspects.</doc>
+width and other aspects.
+
+Note that the returned faces are not in any particular order, and
+multiple faces may have the same name or characteristics.
+
+`PangoFontFamily` also implemented the [iface@Gio.ListModel] interface
+for enumerating faces.</doc>
         <return-value transfer-ownership="none">
           <type name="none" c:type="void"/>
         </return-value>
@@ -4315,7 +4320,13 @@ Such axes are also known as _variations_; see
         <doc xml:space="preserve">Lists the different font faces that make up @family.
 
 The faces in a family share a common design, but differ in slant, weight,
-width and other aspects.</doc>
+width and other aspects.
+
+Note that the returned faces are not in any particular order, and
+multiple faces may have the same name or characteristics.
+
+`PangoFontFamily` also implemented the [iface@Gio.ListModel] interface
+for enumerating faces.</doc>
         <return-value transfer-ownership="none">
           <type name="none" c:type="void"/>
         </return-value>
@@ -4524,7 +4535,12 @@ like in `PangoContext`.</doc>
         </parameters>
       </virtual-method>
       <virtual-method name="list_families" invoker="list_families">
-        <doc xml:space="preserve">List all families for a fontmap.</doc>
+        <doc xml:space="preserve">List all families for a fontmap.
+
+Note that the returned families are not in any particular order.
+
+`PangoFontMap` also implemented the [iface@Gio.ListModel] interface
+for enumerating families.</doc>
         <return-value transfer-ownership="none">
           <type name="none" c:type="void"/>
         </return-value>
@@ -4678,7 +4694,12 @@ like in `PangoContext`.</doc>
         </parameters>
       </method>
       <method name="list_families" c:identifier="pango_font_map_list_families">
-        <doc xml:space="preserve">List all families for a fontmap.</doc>
+        <doc xml:space="preserve">List all families for a fontmap.
+
+Note that the returned families are not in any particular order.
+
+`PangoFontMap` also implemented the [iface@Gio.ListModel] interface
+for enumerating families.</doc>
         <return-value transfer-ownership="none">
           <type name="none" c:type="void"/>
         </return-value>
@@ -9447,6 +9468,26 @@ Note that output numbers will always be non-negative.</doc>
             <doc xml:space="preserve">output scale factor perpendicular to the x direction</doc>
             <type name="gdouble" c:type="double*"/>
           </parameter>
+        </parameters>
+      </method>
+      <method name="get_slant_ratio" c:identifier="pango_matrix_get_slant_ratio" version="1.50">
+        <doc xml:space="preserve">Gets the slant ratio of a matrix.
+
+For a simple shear matrix in the form:
+
+    1 &#x3BB;
+    0 1
+
+this is simply &#x3BB;.</doc>
+        <return-value transfer-ownership="none">
+          <doc xml:space="preserve">the slant ratio of @matrix</doc>
+          <type name="gdouble" c:type="double"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="matrix" transfer-ownership="none">
+            <doc xml:space="preserve">a `PangoMatrix`</doc>
+            <type name="Matrix" c:type="const PangoMatrix*"/>
+          </instance-parameter>
         </parameters>
       </method>
       <method name="rotate" c:identifier="pango_matrix_rotate" version="1.6">
