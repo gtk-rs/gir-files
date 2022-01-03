@@ -1,7 +1,7 @@
 name: Redownload & regenerate (monthly)
 on:
-  schedule:
-    - cron: '0 0 1 * *'
+  push:
+    branches: [master]
 jobs:
   regenerate:
     name: Regenerate GIR files
@@ -16,8 +16,11 @@ jobs:
         run: |
           sudo apt-get update > /dev/null
           sudo apt-get -qq upgrade > /dev/null
-          sudo apt-get -qq install binutils wget tar xmlstarlet > /dev/null
-          ./dl.sh
+          sudo apt-get -qq install binutils wget tar xmlstarlet flatpak > /dev/null
+          flatpak remote-add --if-not-exists gnome-nightly https://nightly.gnome.org/gnome-nightly.flatpakrepo 
+          flatpak install org.gnome.Sdk//master -y --noninteractive
+          flatpak run --command=python3 --filesystem=home org.gnome.Sdk//master dl.py
+          ./fix.sh && ./reformat.sh
           echo ::set-output name=pr_title::"Update GIR files ($(date +%Y-%m-%d))"
           echo ::set-output name=pr_body::"This PR was auto-generated on $(date +%Y-%m-%d). Please review and manually edit before merging."
       - name: Create PR
