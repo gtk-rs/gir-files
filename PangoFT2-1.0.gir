@@ -15,13 +15,14 @@ and/or use gtk-doc annotations.  -->
       </parameters>
     </function-macro>
     <class name="FontMap" c:symbol-prefix="font_map" c:type="PangoFT2FontMap" parent="PangoFc.FontMap" glib:type-name="PangoFT2FontMap" glib:get-type="pango_ft2_font_map_get_type">
-      <doc xml:space="preserve">The #PangoFT2FontMap is the #PangoFontMap implementation for FreeType fonts.</doc>
+      <doc xml:space="preserve">The `PangoFT2FontMap` is the `PangoFontMap` implementation for FreeType fonts.</doc>
       <constructor name="new" c:identifier="pango_ft2_font_map_new" version="1.2">
-        <doc xml:space="preserve">Create a new #PangoFT2FontMap object; a fontmap is used
-to cache information about available fonts, and holds
-certain global parameters such as the resolution and
+        <doc xml:space="preserve">Create a new `PangoFT2FontMap` object.
+
+A fontmap is used to cache information about available fonts,
+and holds certain global parameters such as the resolution and
 the default substitute function (see
-pango_ft2_font_map_set_default_substitute()).</doc>
+[method@PangoFT2.FontMap.set_default_substitute]).</doc>
         <return-value transfer-ownership="full">
           <doc xml:space="preserve">the newly created fontmap object. Unref
 with g_object_unref() when you are finished with it.</doc>
@@ -29,19 +30,21 @@ with g_object_unref() when you are finished with it.</doc>
         </return-value>
       </constructor>
       <function name="for_display" c:identifier="pango_ft2_font_map_for_display" introspectable="0">
-        <doc xml:space="preserve">Returns a #PangoFT2FontMap. This font map is cached and should
+        <doc xml:space="preserve">Returns a `PangoFT2FontMap`.
+
+This font map is cached and should
 not be freed. If the font map is no longer needed, it can
 be released with pango_ft2_shutdown_display(). Use of the
 global PangoFT2 fontmap is deprecated; use pango_ft2_font_map_new()
 instead.</doc>
         <return-value transfer-ownership="none">
-          <doc xml:space="preserve">a #PangoFT2FontMap.</doc>
+          <doc xml:space="preserve">a `PangoFT2FontMap`.</doc>
           <type name="Pango.FontMap" c:type="PangoFontMap*"/>
         </return-value>
       </function>
       <method name="create_context" c:identifier="pango_ft2_font_map_create_context" version="1.2" introspectable="0" deprecated="1" deprecated-version="1.22">
-        <doc xml:space="preserve">Create a #PangoContext for the given fontmap.</doc>
-        <doc-deprecated xml:space="preserve">Use pango_font_map_create_context() instead.</doc-deprecated>
+        <doc xml:space="preserve">Create a `PangoContext` for the given fontmap.</doc>
+        <doc-deprecated xml:space="preserve">Use [method@Pango.FontMap.create_context] instead.</doc-deprecated>
         <return-value transfer-ownership="full">
           <doc xml:space="preserve">the newly created context; free with
     g_object_unref().</doc>
@@ -49,22 +52,26 @@ instead.</doc>
         </return-value>
         <parameters>
           <instance-parameter name="fontmap" transfer-ownership="none">
-            <doc xml:space="preserve">a #PangoFT2FontMap</doc>
+            <doc xml:space="preserve">a `PangoFT2FontMap`</doc>
             <type name="FontMap" c:type="PangoFT2FontMap*"/>
           </instance-parameter>
         </parameters>
       </method>
-      <method name="set_default_substitute" c:identifier="pango_ft2_font_map_set_default_substitute" version="1.2">
+      <method name="set_default_substitute" c:identifier="pango_ft2_font_map_set_default_substitute" version="1.2" deprecated="1" deprecated-version="1.46">
         <doc xml:space="preserve">Sets a function that will be called to do final configuration
-substitution on a #FcPattern before it is used to load
-the font. This function can be used to do things like set
+substitution on a `FcPattern` before it is used to load
+the font.
+
+This function can be used to do things like set
 hinting and antialiasing options.</doc>
+        <doc-deprecated xml:space="preserve">Use [method@PangoFc.FontMap.set_default_substitute]
+instead.</doc-deprecated>
         <return-value transfer-ownership="none">
           <type name="none" c:type="void"/>
         </return-value>
         <parameters>
           <instance-parameter name="fontmap" transfer-ownership="none">
-            <doc xml:space="preserve">a #PangoFT2FontMap</doc>
+            <doc xml:space="preserve">a `PangoFT2FontMap`</doc>
             <type name="FontMap" c:type="PangoFT2FontMap*"/>
           </instance-parameter>
           <parameter name="func" transfer-ownership="none" scope="notified" closure="1" destroy="2">
@@ -89,7 +96,7 @@ hinting and antialiasing options.</doc>
         </return-value>
         <parameters>
           <instance-parameter name="fontmap" transfer-ownership="none">
-            <doc xml:space="preserve">a #PangoFT2FontMap</doc>
+            <doc xml:space="preserve">a `PangoFT2FontMap`</doc>
             <type name="FontMap" c:type="PangoFT2FontMap*"/>
           </instance-parameter>
           <parameter name="dpi_x" transfer-ownership="none">
@@ -102,18 +109,21 @@ hinting and antialiasing options.</doc>
           </parameter>
         </parameters>
       </method>
-      <method name="substitute_changed" c:identifier="pango_ft2_font_map_substitute_changed" version="1.2">
+      <method name="substitute_changed" c:identifier="pango_ft2_font_map_substitute_changed" version="1.2" deprecated="1" deprecated-version="1.46">
         <doc xml:space="preserve">Call this function any time the results of the
 default substitution function set with
 pango_ft2_font_map_set_default_substitute() change.
+
 That is, if your substitution function will return different
 results for the same input pattern, you must call this function.</doc>
+        <doc-deprecated xml:space="preserve">Use [method@PangoFc.FontMap.substitute_changed]
+instead.</doc-deprecated>
         <return-value transfer-ownership="none">
           <type name="none" c:type="void"/>
         </return-value>
         <parameters>
           <instance-parameter name="fontmap" transfer-ownership="none">
-            <doc xml:space="preserve">a #PangoFT2FontMap</doc>
+            <doc xml:space="preserve">a `PangoFT2FontMap`</doc>
             <type name="FontMap" c:type="PangoFT2FontMap*"/>
           </instance-parameter>
         </parameters>
@@ -132,7 +142,7 @@ results for the same input pattern, you must call this function.</doc>
       </return-value>
       <parameters>
         <parameter name="pattern" transfer-ownership="none">
-          <doc xml:space="preserve">the &lt;type&gt;FcPattern&lt;/type&gt; to tweak.</doc>
+          <doc xml:space="preserve">the FcPattern to tweak.</doc>
           <type name="fontconfig.Pattern" c:type="FcPattern*"/>
         </parameter>
         <parameter name="data" transfer-ownership="none" nullable="1" allow-none="1">
@@ -142,10 +152,11 @@ results for the same input pattern, you must call this function.</doc>
       </parameters>
     </callback>
     <function name="font_get_coverage" c:identifier="pango_ft2_font_get_coverage">
-      <doc xml:space="preserve">Gets the #PangoCoverage for a `PangoFT2Font`. Use
-pango_font_get_coverage() instead.</doc>
+      <doc xml:space="preserve">Gets the `PangoCoverage` for a `PangoFT2Font`.
+
+Use [method@Pango.Font.get_coverage] instead.</doc>
       <return-value transfer-ownership="full">
-        <doc xml:space="preserve">a #PangoCoverage.</doc>
+        <doc xml:space="preserve">a `PangoCoverage`</doc>
         <type name="Pango.Coverage" c:type="PangoCoverage*"/>
       </return-value>
       <parameters>
@@ -160,20 +171,23 @@ pango_font_get_coverage() instead.</doc>
       </parameters>
     </function>
     <function name="font_get_face" c:identifier="pango_ft2_font_get_face" introspectable="0">
-      <doc xml:space="preserve">Returns the native FreeType2 `FT_Face` structure used for this #PangoFont.
-This may be useful if you want to use FreeType2 functions directly.
+      <doc xml:space="preserve">Returns the native FreeType2 `FT_Face` structure
+used for this `PangoFont`.
 
-Use pango_fc_font_lock_face() instead; when you are done with a
-face from pango_fc_font_lock_face() you must call
-pango_fc_font_unlock_face().</doc>
+This may be useful if you want to use FreeType2
+functions directly.
+
+Use [method@PangoFc.Font.lock_face] instead; when you are
+done with a face from [method@PangoFc.Font.lock_face], you
+must call [method@PangoFc.Font.unlock_face].</doc>
       <return-value nullable="1">
-        <doc xml:space="preserve">a pointer to a `FT_Face` structure, with the
-  size set correctly, or %NULL if @font is %NULL.</doc>
+        <doc xml:space="preserve">a pointer to a `FT_Face` structure,
+  with the size set correctly</doc>
         <type name="freetype2.Face" c:type="FT_Face"/>
       </return-value>
       <parameters>
         <parameter name="font" transfer-ownership="none">
-          <doc xml:space="preserve">a #PangoFont</doc>
+          <doc xml:space="preserve">a `PangoFont`</doc>
           <type name="Pango.Font" c:type="PangoFont*"/>
         </parameter>
       </parameters>
@@ -183,36 +197,32 @@ pango_fc_font_unlock_face().</doc>
 
 Use pango_fc_font_kern_glyphs() instead.</doc>
       <return-value transfer-ownership="none">
-        <doc xml:space="preserve">The amount of kerning (in Pango units) to apply for
-the given combination of glyphs.</doc>
+        <doc xml:space="preserve">The amount of kerning (in Pango units) to
+  apply for the given combination of glyphs.</doc>
         <type name="gint" c:type="int"/>
       </return-value>
       <parameters>
         <parameter name="font" transfer-ownership="none">
-          <doc xml:space="preserve">a #PangoFont</doc>
+          <doc xml:space="preserve">a `PangoFont`</doc>
           <type name="Pango.Font" c:type="PangoFont*"/>
         </parameter>
         <parameter name="left" transfer-ownership="none">
-          <doc xml:space="preserve">the left #PangoGlyph</doc>
+          <doc xml:space="preserve">the left `PangoGlyph`</doc>
           <type name="Pango.Glyph" c:type="PangoGlyph"/>
         </parameter>
         <parameter name="right" transfer-ownership="none">
-          <doc xml:space="preserve">the right #PangoGlyph</doc>
+          <doc xml:space="preserve">the right `PangoGlyph`</doc>
           <type name="Pango.Glyph" c:type="PangoGlyph"/>
         </parameter>
       </parameters>
     </function>
-    <docsection name="freetypefonts">
-      <doc xml:space="preserve">The macros and functions in this section are used to access fonts and render
-text to bitmaps using the FreeType 2 library.</doc>
-    </docsection>
     <function name="get_context" c:identifier="pango_ft2_get_context" introspectable="0" deprecated="1" deprecated-version="1.22">
-      <doc xml:space="preserve">Retrieves a #PangoContext for the default PangoFT2 fontmap
+      <doc xml:space="preserve">Retrieves a `PangoContext` for the default PangoFT2 fontmap
 (see pango_ft2_font_map_for_display()) and sets the resolution
 for the default fontmap to @dpi_x by @dpi_y.</doc>
-      <doc-deprecated xml:space="preserve">Use pango_font_map_create_context() instead.</doc-deprecated>
+      <doc-deprecated xml:space="preserve">Use [method@Pango.FontMap.create_context] instead.</doc-deprecated>
       <return-value transfer-ownership="full">
-        <doc xml:space="preserve">the new #PangoContext</doc>
+        <doc xml:space="preserve">the new `PangoContext`</doc>
         <type name="Pango.Context" c:type="PangoContext*"/>
       </return-value>
       <parameters>
@@ -227,32 +237,26 @@ for the default fontmap to @dpi_x by @dpi_y.</doc>
       </parameters>
     </function>
     <function name="get_unknown_glyph" c:identifier="pango_ft2_get_unknown_glyph">
-      <doc xml:space="preserve">Return the index of a glyph suitable for drawing unknown characters with
-@font, or %PANGO_GLYPH_EMPTY if no suitable glyph found.
+      <doc xml:space="preserve">Return the index of a glyph suitable for drawing unknown
+characters with @font, or %PANGO_GLYPH_EMPTY if no suitable
+glyph found.
 
-If you want to draw an unknown-box for a character that is not covered
-by the font,
-use PANGO_GET_UNKNOWN_GLYPH() instead.</doc>
+If you want to draw an unknown-box for a character that
+is not covered by the font, use PANGO_GET_UNKNOWN_GLYPH()
+instead.</doc>
       <return-value transfer-ownership="none">
         <doc xml:space="preserve">a glyph index into @font, or %PANGO_GLYPH_EMPTY</doc>
         <type name="Pango.Glyph" c:type="PangoGlyph"/>
       </return-value>
       <parameters>
         <parameter name="font" transfer-ownership="none">
-          <doc xml:space="preserve">a #PangoFont</doc>
+          <doc xml:space="preserve">a `PangoFont`</doc>
           <type name="Pango.Font" c:type="PangoFont*"/>
         </parameter>
       </parameters>
     </function>
-    <docsection name="pangorenderer">
-      <doc xml:space="preserve">#PangoRenderer is a base class that contains the necessary logic for
-rendering a #PangoLayout or #PangoLayoutLine. By subclassing
-#PangoRenderer and overriding operations such as @draw_glyphs and
-@draw_rectangle, renderers for particular font backends and
-destinations can be created.</doc>
-    </docsection>
     <function name="render" c:identifier="pango_ft2_render">
-      <doc xml:space="preserve">Renders a #PangoGlyphString onto a FreeType2 bitmap.</doc>
+      <doc xml:space="preserve">Renders a `PangoGlyphString` onto a FreeType2 bitmap.</doc>
       <return-value transfer-ownership="none">
         <type name="none" c:type="void"/>
       </return-value>
@@ -280,17 +284,17 @@ destinations can be created.</doc>
       </parameters>
     </function>
     <function name="render_layout" c:identifier="pango_ft2_render_layout">
-      <doc xml:space="preserve">Render a #PangoLayout onto a FreeType2 bitmap</doc>
+      <doc xml:space="preserve">Render a `PangoLayout` onto a FreeType2 bitmap</doc>
       <return-value transfer-ownership="none">
         <type name="none" c:type="void"/>
       </return-value>
       <parameters>
         <parameter name="bitmap" transfer-ownership="none">
-          <doc xml:space="preserve">a &lt;type&gt;FT_Bitmap&lt;/type&gt; to render the layout onto</doc>
+          <doc xml:space="preserve">a FT_Bitmap to render the layout onto</doc>
           <type name="freetype2.Bitmap" c:type="FT_Bitmap*"/>
         </parameter>
         <parameter name="layout" transfer-ownership="none">
-          <doc xml:space="preserve">a #PangoLayout</doc>
+          <doc xml:space="preserve">a `PangoLayout`</doc>
           <type name="Pango.Layout" c:type="PangoLayout*"/>
         </parameter>
         <parameter name="x" transfer-ownership="none">
@@ -304,17 +308,17 @@ destinations can be created.</doc>
       </parameters>
     </function>
     <function name="render_layout_line" c:identifier="pango_ft2_render_layout_line">
-      <doc xml:space="preserve">Render a #PangoLayoutLine onto a FreeType2 bitmap</doc>
+      <doc xml:space="preserve">Render a `PangoLayoutLine` onto a FreeType2 bitmap</doc>
       <return-value transfer-ownership="none">
         <type name="none" c:type="void"/>
       </return-value>
       <parameters>
         <parameter name="bitmap" transfer-ownership="none">
-          <doc xml:space="preserve">a &lt;type&gt;FT_Bitmap&lt;/type&gt; to render the line onto</doc>
+          <doc xml:space="preserve">a FT_Bitmap to render the line onto</doc>
           <type name="freetype2.Bitmap" c:type="FT_Bitmap*"/>
         </parameter>
         <parameter name="line" transfer-ownership="none">
-          <doc xml:space="preserve">a #PangoLayoutLine</doc>
+          <doc xml:space="preserve">a `PangoLayoutLine`</doc>
           <type name="Pango.LayoutLine" c:type="PangoLayoutLine*"/>
         </parameter>
         <parameter name="x" transfer-ownership="none">
@@ -328,21 +332,23 @@ destinations can be created.</doc>
       </parameters>
     </function>
     <function name="render_layout_line_subpixel" c:identifier="pango_ft2_render_layout_line_subpixel" version="1.6">
-      <doc xml:space="preserve">Render a #PangoLayoutLine onto a FreeType2 bitmap, with he
+      <doc xml:space="preserve">Render a `PangoLayoutLine` onto a FreeType2 bitmap, with he
 location specified in fixed-point Pango units rather than
-pixels. (Using this will avoid extra inaccuracies from
-rounding to integer pixels multiple times, even if the
-final glyph positions are integers.)</doc>
+pixels.
+
+(Using this will avoid extra inaccuracies from rounding
+to integer pixels multiple times, even if the final glyph
+positions are integers.)</doc>
       <return-value transfer-ownership="none">
         <type name="none" c:type="void"/>
       </return-value>
       <parameters>
         <parameter name="bitmap" transfer-ownership="none">
-          <doc xml:space="preserve">a &lt;type&gt;FT_Bitmap&lt;/type&gt; to render the line onto</doc>
+          <doc xml:space="preserve">a FT_Bitmap to render the line onto</doc>
           <type name="freetype2.Bitmap" c:type="FT_Bitmap*"/>
         </parameter>
         <parameter name="line" transfer-ownership="none">
-          <doc xml:space="preserve">a #PangoLayoutLine</doc>
+          <doc xml:space="preserve">a `PangoLayoutLine`</doc>
           <type name="Pango.LayoutLine" c:type="PangoLayoutLine*"/>
         </parameter>
         <parameter name="x" transfer-ownership="none">
@@ -356,21 +362,23 @@ final glyph positions are integers.)</doc>
       </parameters>
     </function>
     <function name="render_layout_subpixel" c:identifier="pango_ft2_render_layout_subpixel" version="1.6">
-      <doc xml:space="preserve">Render a #PangoLayout onto a FreeType2 bitmap, with he
+      <doc xml:space="preserve">Render a `PangoLayout` onto a FreeType2 bitmap, with he
 location specified in fixed-point Pango units rather than
-pixels. (Using this will avoid extra inaccuracies from
-rounding to integer pixels multiple times, even if the
-final glyph positions are integers.)</doc>
+pixels.
+
+(Using this will avoid extra inaccuracies from rounding
+to integer pixels multiple times, even if the final glyph
+positions are integers.)</doc>
       <return-value transfer-ownership="none">
         <type name="none" c:type="void"/>
       </return-value>
       <parameters>
         <parameter name="bitmap" transfer-ownership="none">
-          <doc xml:space="preserve">a &lt;type&gt;FT_Bitmap&lt;/type&gt; to render the layout onto</doc>
+          <doc xml:space="preserve">a FT_Bitmap to render the layout onto</doc>
           <type name="freetype2.Bitmap" c:type="FT_Bitmap*"/>
         </parameter>
         <parameter name="layout" transfer-ownership="none">
-          <doc xml:space="preserve">a #PangoLayout</doc>
+          <doc xml:space="preserve">a `PangoLayout`</doc>
           <type name="Pango.Layout" c:type="PangoLayout*"/>
         </parameter>
         <parameter name="x" transfer-ownership="none">
@@ -384,11 +392,13 @@ final glyph positions are integers.)</doc>
       </parameters>
     </function>
     <function name="render_transformed" c:identifier="pango_ft2_render_transformed" version="1.6">
-      <doc xml:space="preserve">Renders a #PangoGlyphString onto a FreeType2 bitmap, possibly
+      <doc xml:space="preserve">Renders a `PangoGlyphString` onto a FreeType2 bitmap, possibly
 transforming the layed-out coordinates through a transformation
-matrix. Note that the transformation matrix for @font is not
+matrix.
+
+Note that the transformation matrix for @font is not
 changed, so to produce correct rendering results, the @font
-must have been loaded using a #PangoContext with an identical
+must have been loaded using a `PangoContext` with an identical
 transformation matrix to that passed in to this function.</doc>
       <return-value transfer-ownership="none">
         <type name="none" c:type="void"/>
@@ -399,8 +409,7 @@ transformation matrix to that passed in to this function.</doc>
           <type name="freetype2.Bitmap" c:type="FT_Bitmap*"/>
         </parameter>
         <parameter name="matrix" transfer-ownership="none" nullable="1" allow-none="1">
-          <doc xml:space="preserve">a #PangoMatrix, or %NULL to use an identity
-          transformation</doc>
+          <doc xml:space="preserve">a `PangoMatrix`</doc>
           <type name="Pango.Matrix" c:type="const PangoMatrix*"/>
         </parameter>
         <parameter name="font" transfer-ownership="none">
@@ -413,12 +422,12 @@ transformation matrix to that passed in to this function.</doc>
         </parameter>
         <parameter name="x" transfer-ownership="none">
           <doc xml:space="preserve">the x position of the start of the string (in Pango
-          units in user space coordinates)</doc>
+  units in user space coordinates)</doc>
           <type name="gint" c:type="int"/>
         </parameter>
         <parameter name="y" transfer-ownership="none">
           <doc xml:space="preserve">the y position of the baseline (in Pango units
-          in user space coordinates)</doc>
+  in user space coordinates)</doc>
           <type name="gint" c:type="int"/>
         </parameter>
       </parameters>

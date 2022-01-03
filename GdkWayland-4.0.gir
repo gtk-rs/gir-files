@@ -207,6 +207,19 @@ This is most notably implemented for devices of type
           </instance-parameter>
         </parameters>
       </method>
+      <method name="get_xkb_keymap" c:identifier="gdk_wayland_device_get_xkb_keymap" version="4.4">
+        <doc xml:space="preserve">Returns the `xkb_keymap` of a `GdkDevice`.</doc>
+        <return-value transfer-ownership="none" nullable="1">
+          <doc xml:space="preserve">a `struct xkb_keymap`</doc>
+          <type name="gpointer" c:type="gpointer"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="device" transfer-ownership="none">
+            <doc xml:space="preserve">a `GdkDevice`</doc>
+            <type name="WaylandDevice" c:type="GdkDevice*"/>
+          </instance-parameter>
+        </parameters>
+      </method>
     </class>
     <record name="WaylandDeviceClass" c:type="GdkWaylandDeviceClass" disguised="1" glib:is-gtype-struct-for="WaylandDevice"/>
     <class name="WaylandDisplay" c:symbol-prefix="wayland_display" c:type="GdkWaylandDisplay" parent="Gdk.Display" glib:type-name="GdkWaylandDisplay" glib:get-type="gdk_wayland_display_get_type" glib:type-struct="WaylandDisplayClass">
@@ -219,11 +232,24 @@ provides access to Wayland objects such as the `wl_display` with
 
 You can find out what Wayland globals are supported by a display
 with [method@GdkWayland.WaylandDisplay.query_registry].</doc>
+      <method name="get_egl_display" c:identifier="gdk_wayland_display_get_egl_display" version="4.4">
+        <doc xml:space="preserve">Retrieves the EGL display connection object for the given GDK display.</doc>
+        <return-value transfer-ownership="none" nullable="1">
+          <doc xml:space="preserve">the EGL display</doc>
+          <type name="gpointer" c:type="gpointer"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="display" transfer-ownership="none">
+            <doc xml:space="preserve">a Wayland display</doc>
+            <type name="WaylandDisplay" c:type="GdkDisplay*"/>
+          </instance-parameter>
+        </parameters>
+      </method>
       <method name="get_startup_notification_id" c:identifier="gdk_wayland_display_get_startup_notification_id">
         <doc xml:space="preserve">Gets the startup notification ID for a Wayland display, or %NULL
 if no ID has been defined.</doc>
         <return-value transfer-ownership="none" nullable="1">
-          <doc xml:space="preserve">the startup notification ID for @display, or %NULL</doc>
+          <doc xml:space="preserve">the startup notification ID for @display</doc>
           <type name="utf8" c:type="const char*"/>
         </return-value>
         <parameters>
@@ -260,7 +286,7 @@ if no ID has been defined.</doc>
         </parameters>
       </method>
       <method name="query_registry" c:identifier="gdk_wayland_display_query_registry">
-        <doc xml:space="preserve">Returns %TRUE if the the interface was found in the display
+        <doc xml:space="preserve">Returns %TRUE if the interface was found in the display
 `wl_registry.global` handler.</doc>
         <return-value transfer-ownership="none">
           <doc xml:space="preserve">%TRUE if the global is offered by the compositor</doc>
@@ -396,7 +422,7 @@ access to the Wayland `wl_surface` object with
     <class name="WaylandToplevel" c:symbol-prefix="wayland_toplevel" c:type="GdkWaylandToplevel" parent="WaylandSurface" glib:type-name="GdkWaylandToplevel" glib:get-type="gdk_wayland_toplevel_get_type">
       <doc xml:space="preserve">The Wayland implementation of `GdkToplevel`.
 
-Beyond the [interface@Gdk.Toplevel] API, the Wayland implementation
+Beyond the [iface@Gdk.Toplevel] API, the Wayland implementation
 has API to set up cross-process parent-child relationships between
 surfaces with [method@GdkWayland.WaylandToplevel.export_handle] and
 [method@GdkWayland.WaylandToplevel.set_transient_for_exported].</doc>
@@ -421,7 +447,7 @@ Note that this API depends on an unstable Wayland protocol,
 and thus may require changes in the future.</doc>
         <return-value transfer-ownership="none">
           <doc xml:space="preserve">%TRUE if the handle has been requested, %FALSE if
-    an error occurred.</doc>
+  an error occurred.</doc>
           <type name="gboolean" c:type="gboolean"/>
         </return-value>
         <parameters>
@@ -470,7 +496,7 @@ Note that this API depends on an unstable Wayland protocol,
 and thus may require changes in the future.</doc>
         <return-value transfer-ownership="none">
           <doc xml:space="preserve">%TRUE if the surface has been marked as transient,
-    %FALSE if an error occurred.</doc>
+  %FALSE if an error occurred.</doc>
           <type name="gboolean" c:type="gboolean"/>
         </return-value>
         <parameters>

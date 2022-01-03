@@ -85,20 +85,6 @@ xmlstarlet ed -L \
 	-a '//_:method[@c:identifier="gtk_widget_style_get_property"]//_:parameter[@name="value" and not(@caller-allocates)]' -type attr -n "caller-allocates" -v "1" \
 	Gtk-3.0.gir
 
-xmlstarlet tr JavaScriptCore-4.0.xsl JavaScriptCore-4.0.gir | xmlstarlet fo >JavaScriptCore-4.0.gir.tmp
-mv JavaScriptCore-4.0.gir.tmp JavaScriptCore-4.0.gir
-
-# fill in types from JavaScriptCore
-xmlstarlet ed -L \
-	-i '///_:type[not(@name) and @c:type="JSGlobalContextRef"]' -t 'attr' -n 'name' -v "JavaScriptCore.GlobalContextRef" \
-	-i '///_:type[not(@name) and @c:type="JSValueRef"]' -t 'attr' -n 'name' -v "JavaScriptCore.ValueRef" \
-	WebKit2WebExtension-4.0.gir WebKit2-4.0.gir
-
-xmlstarlet ed -L \
-	-u '//_:constant[@name="DOM_NODE_FILTER_SHOW_ALL"]/_:type/@name' -v "guint" \
-	-u '//_:constant[@name="DOM_NODE_FILTER_SHOW_ALL"]/_:type/@c:type' -v "guint" \
-	WebKit2WebExtension-4.0.gir
-
 # remove freetype and graphite methods; GitHub issue #2557
 xmlstarlet ed -L \
 	-d '///_:function[@c:identifier="hb_graphite2_face_get_gr_face"]' \
@@ -125,6 +111,12 @@ xmlstarlet ed -L \
 	-u '//_:type[@c:type="hb_feature_t*"]/@c:type' -v "gconstpointer" \
 	Pango-1.0.gir
 
+# Fix unsupported bitfield (https://github.com/gtk-rs/gir/issues/465) on pango
+xmlstarlet ed -L \
+	-d '//_:record[@c:type="PangoGlyphVisAttr"]/_:field/@bits' \
+	-d '//_:record[@c:type="PangoGlyphVisAttr"]/_:field[@name="is_color"]' \
+	Pango-1.0.gir
+
 #  Remove unstable method from focal release
 xmlstarlet ed -L \
 	-d '///_:method[@c:identifier="atk_plug_set_child"]' \
@@ -140,7 +132,25 @@ xmlstarlet ed -L \
 	-u '//_:class[@name="WaylandMonitor"]/_:method[@name="get_wl_output"]//_:type[@name="gpointer"]/@c:type' -v "gpointer" \
 	-u '//_:class[@name="WaylandSeat"]/_:method[@name="get_wl_seat"]//_:type[@name="gpointer"]/@c:type' -v "gpointer" \
 	-u '//_:class[@name="WaylandSurface"]/_:method[@name="get_wl_surface"]//_:type[@name="gpointer"]/@c:type' -v "gpointer" \
+	-u '//_:class[@name="WaylandDevice"]/_:method[@name="get_xkb_keymap"]//_:type[@name="gpointer"]/@c:type' -v "gpointer" \
 	GdkWayland-4.0.gir
+
+# avoid always depending on x11 crate
+xmlstarlet ed -L \
+	-u '//_:class[@name="X11Display"]/_:method[@name="get_xcursor"]//_:type[@name="xlib.Cursor"]/@c:type' -v "gulong" \
+	-u '//_:class[@name="X11Display"]/_:method[@name="get_xdisplay"]//_:type[@name="xlib.Display"]/@c:type' -v "gpointer" \
+	-u '//_:class[@name="X11Display"]/_:method[@name="get_xrootwindow"]//_:type[@name="xlib.Window"]/@c:type' -v "gulong" \
+	-u '//_:class[@name="X11Display"]/_:method[@name="get_xscreen"]//_:type[@name="xlib.Screen"]/@c:type' -v "gpointer" \
+	-u '//_:class[@name="X11Monitor"]/_:method[@name="get_output"]//_:type[@name="xlib.XID"]/@c:type' -v "gulong" \
+	-u '//_:class[@name="X11Screen"]/_:method[@name="get_monitor_output"]//_:type[@name="xlib.XID"]/@c:type' -v "gulong" \
+	-u '//_:class[@name="X11Screen"]/_:method[@name="get_xscreen"]//_:type[@name="xlib.Screen"]/@c:type' -v "gpointer" \
+	-u '//_:class[@name="X11Surface"]/_:method[@name="get_xid"]//_:type[@name="xlib.Window"]/@c:type' -v "gulong" \
+	-u '//_:class[@name="X11Surface"]/_:function[@name="lookup_for_display"]//_:type[@name="xlib.Window"]/@c:type' -v "gulong" \
+	-u '//_:class[@name="get_xid"]/_:method[@name="lookup_for_display"]//_:type[@name="xlib.Window"]/@c:type' -v "gulong" \
+	-u '//_:function[@name="x11_get_xatom_by_name_for_display"]//_:type[@name="xlib.Atom"]/@c:type' -v "gulong" \
+	-u '//_:function[@name="x11_get_xatom_name_for_display"]//_:type[@name="xlib.Atom"]/@c:type' -v "gulong" \
+	-u '//_:function[@name="x11_lookup_xdisplay"]//_:type[@name="xlib.Display"]/@c:type' -v "gpointer" \
+	GdkX11-4.0.gir
 
 # Fix invalid type for GtkImage and GtkStackSwitcher "icon-size" property
 xmlstarlet ed -L \
@@ -149,3 +159,9 @@ xmlstarlet ed -L \
 	-u '//_:class[@name="StackSwitcher"]/_:property[@name="icon-size"]/_:type/@c:type' -v "GtkIconSize" \
 	-u '//_:class[@name="StackSwitcher"]/_:property[@name="icon-size"]/_:type/@name' -v "IconSize" \
 	Gtk-3.0.gir
+
+# See https://gitlab.gnome.org/GNOME/gtk/-/merge_requests/3738
+xmlstarlet ed -L \
+	-u '//_:constant[@name="INVALID_LIST_POSITION"]/_:type/@name' -v "guint" \
+	-u '//_:constant[@name="INVALID_LIST_POSITION"]/_:type/@c:type' -v "guint" \
+	Gtk-4.0.gir
