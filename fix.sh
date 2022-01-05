@@ -159,9 +159,3 @@ xmlstarlet ed -L \
 	-u '//_:class[@name="StackSwitcher"]/_:property[@name="icon-size"]/_:type/@c:type' -v "GtkIconSize" \
 	-u '//_:class[@name="StackSwitcher"]/_:property[@name="icon-size"]/_:type/@name' -v "IconSize" \
 	Gtk-3.0.gir
-
-# See https://gitlab.gnome.org/GNOME/gtk/-/merge_requests/3738
-xmlstarlet ed -L \
-	-u '//_:constant[@name="INVALID_LIST_POSITION"]/_:type/@name' -v "guint" \
-	-u '//_:constant[@name="INVALID_LIST_POSITION"]/_:type/@c:type' -v "guint" \
-	Gtk-4.0.gir
