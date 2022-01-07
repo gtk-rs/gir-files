@@ -4228,6 +4228,12 @@ in the macro, so you shouldn't use double quotes.</doc>
         </parameter>
       </parameters>
     </function-macro>
+    <function-macro name="DEPRECATED_ENUMERATOR_IN_2_72_FOR" c:identifier="GLIB_DEPRECATED_ENUMERATOR_IN_2_72_FOR" introspectable="0">
+      <parameters>
+        <parameter name="f">
+        </parameter>
+      </parameters>
+    </function-macro>
     <function-macro name="DEPRECATED_FOR" c:identifier="G_DEPRECATED_FOR" version="2.32" introspectable="0">
       <doc xml:space="preserve">This macro is similar to %G_GNUC_DEPRECATED_FOR, and can be used to mark
 functions declarations as deprecated. Unlike %G_GNUC_DEPRECATED_FOR, it
@@ -4382,6 +4388,12 @@ int my_mistake (void);
         </parameter>
       </parameters>
     </function-macro>
+    <function-macro name="DEPRECATED_IN_2_72_FOR" c:identifier="GLIB_DEPRECATED_IN_2_72_FOR" introspectable="0">
+      <parameters>
+        <parameter name="f">
+        </parameter>
+      </parameters>
+    </function-macro>
     <function-macro name="DEPRECATED_MACRO_FOR" c:identifier="GLIB_DEPRECATED_MACRO_FOR" introspectable="0">
       <parameters>
         <parameter name="f">
@@ -4526,6 +4538,12 @@ int my_mistake (void);
         </parameter>
       </parameters>
     </function-macro>
+    <function-macro name="DEPRECATED_MACRO_IN_2_72_FOR" c:identifier="GLIB_DEPRECATED_MACRO_IN_2_72_FOR" introspectable="0">
+      <parameters>
+        <parameter name="f">
+        </parameter>
+      </parameters>
+    </function-macro>
     <function-macro name="DEPRECATED_TYPE_FOR" c:identifier="GLIB_DEPRECATED_TYPE_FOR" introspectable="0">
       <parameters>
         <parameter name="f">
@@ -4665,6 +4683,12 @@ int my_mistake (void);
       </parameters>
     </function-macro>
     <function-macro name="DEPRECATED_TYPE_IN_2_70_FOR" c:identifier="GLIB_DEPRECATED_TYPE_IN_2_70_FOR" introspectable="0">
+      <parameters>
+        <parameter name="f">
+        </parameter>
+      </parameters>
+    </function-macro>
+    <function-macro name="DEPRECATED_TYPE_IN_2_72_FOR" c:identifier="GLIB_DEPRECATED_TYPE_IN_2_72_FOR" introspectable="0">
       <parameters>
         <parameter name="f">
         </parameter>
@@ -13757,7 +13781,7 @@ linked against at application run time.</doc>
       <doc xml:space="preserve">The minimum value which can be held in a #gint8.</doc>
       <type name="gint8" c:type="gint8"/>
     </constant>
-    <constant name="MINOR_VERSION" value="70" c:type="GLIB_MINOR_VERSION">
+    <constant name="MINOR_VERSION" value="71" c:type="GLIB_MINOR_VERSION">
       <doc xml:space="preserve">The minor version number of the GLib library.
 
 Like #gtk_minor_version, but from the headers used at
@@ -13777,6 +13801,16 @@ type representing a set of sources to be handled in a main loop.</doc>
           <doc xml:space="preserve">the new #GMainContext</doc>
           <type name="MainContext" c:type="GMainContext*"/>
         </return-value>
+      </constructor>
+      <constructor name="new_with_flags" c:identifier="g_main_context_new_with_flags">
+        <return-value transfer-ownership="full">
+          <type name="MainContext" c:type="GMainContext*"/>
+        </return-value>
+        <parameters>
+          <parameter name="flags" transfer-ownership="none">
+            <type name="MainContextFlags" c:type="GMainContextFlags"/>
+          </parameter>
+        </parameters>
       </constructor>
       <method name="acquire" c:identifier="g_main_context_acquire">
         <doc xml:space="preserve">Tries to become the owner of the specified context.
@@ -14404,6 +14438,19 @@ is the global default context, this will return that #GMainContext
         </return-value>
       </function>
     </record>
+    <bitfield name="MainContextFlags" version="2.72" c:type="GMainContextFlags">
+      <doc xml:space="preserve">Flags to pass to g_main_context_new_with_flags() which affect the behaviour
+of a #GMainContext.</doc>
+      <member name="none" value="0" c:identifier="G_MAIN_CONTEXT_FLAGS_NONE">
+        <doc xml:space="preserve">Default behaviour.</doc>
+      </member>
+      <member name="ownerless_polling" value="1" c:identifier="G_MAIN_CONTEXT_FLAGS_OWNERLESS_POLLING">
+        <doc xml:space="preserve">Assume that polling for events will
+free the thread to process other jobs. That's useful if you're using
+`g_main_context_{prepare,query,check,dispatch}` to integrate GMainContext in
+other event loops.</doc>
+      </member>
+    </bitfield>
     <record name="MainLoop" c:type="GMainLoop" glib:type-name="GMainLoop" glib:get-type="g_main_loop_get_type" c:symbol-prefix="main_loop">
       <doc xml:space="preserve">The `GMainLoop` struct is an opaque data type
 representing the main event loop of a GLib or GTK+ application.</doc>
@@ -26194,6 +26241,7 @@ guaranteed to be stable API &#x2014; always use a getter function to retrieve th
  - g_get_user_config_dir()
  - g_get_system_data_dirs()
  - g_get_user_data_dir()
+ - g_get_user_state_dir()
  - g_get_user_runtime_dir()
 
 The subdirectories may not be created by the test harness; as with normal
@@ -29449,6 +29497,21 @@ See [Unicode Standard Annex #24: Script names](http://www.unicode.org/reports/tr
       </member>
       <member name="yezidi" value="156" c:identifier="G_UNICODE_SCRIPT_YEZIDI">
         <doc xml:space="preserve">Yezidi. Since: 2.66</doc>
+      </member>
+      <member name="cypro_minoan" value="157" c:identifier="G_UNICODE_SCRIPT_CYPRO_MINOAN">
+        <doc xml:space="preserve">Cypro-Minoan. Since: 2.72</doc>
+      </member>
+      <member name="old_uyghur" value="158" c:identifier="G_UNICODE_SCRIPT_OLD_UYGHUR">
+        <doc xml:space="preserve">Old Uyghur. Since: 2.72</doc>
+      </member>
+      <member name="tangsa" value="159" c:identifier="G_UNICODE_SCRIPT_TANGSA">
+        <doc xml:space="preserve">Tangsa. Since: 2.72</doc>
+      </member>
+      <member name="toto" value="160" c:identifier="G_UNICODE_SCRIPT_TOTO">
+        <doc xml:space="preserve">Toto. Since: 2.72</doc>
+      </member>
+      <member name="vithkuqi" value="161" c:identifier="G_UNICODE_SCRIPT_VITHKUQI">
+        <doc xml:space="preserve">Vithkuqi. Since: 2.72</doc>
       </member>
     </enumeration>
     <enumeration name="UnicodeType" c:type="GUnicodeType">
@@ -35595,6 +35658,17 @@ Thus it provides the same advantages and pitfalls as alloca():
   Stack space allocated with alloca() in the same scope as a variable sized array
   will be freed together with the variable sized array upon exit of that scope, and
   not upon exit of the enclosing function scope.</doc>
+      <parameters>
+        <parameter name="size">
+          <doc xml:space="preserve">number of bytes to allocate.</doc>
+        </parameter>
+      </parameters>
+    </function-macro>
+    <function-macro name="alloca0" c:identifier="g_alloca0" version="2.72" introspectable="0">
+      <doc xml:space="preserve">Wraps g_alloca() and initializes allocated memory to zeroes.
+If @size is `0` it returns %NULL.
+
+Note that the @size argument will be evaluated multiple times.</doc>
       <parameters>
         <parameter name="size">
           <doc xml:space="preserve">number of bytes to allocate.</doc>
@@ -42421,6 +42495,11 @@ will not reflect any change once the special directories are loaded.</doc>
         </parameter>
       </parameters>
     </function>
+    <function name="get_user_state_dir" c:identifier="g_get_user_state_dir">
+      <return-value transfer-ownership="none">
+        <type name="utf8" c:type="const gchar*"/>
+      </return-value>
+    </function>
     <function name="getenv" c:identifier="g_getenv">
       <doc xml:space="preserve">Returns the value of an environment variable.
 
@@ -45923,6 +46002,17 @@ vulnerability.</doc>
         </parameter>
         <parameter name="n_structs">
           <doc xml:space="preserve">Number of chunks to be allocated</doc>
+        </parameter>
+      </parameters>
+    </function-macro>
+    <function-macro name="newa0" c:identifier="g_newa0" version="2.72" introspectable="0">
+      <doc xml:space="preserve">Wraps g_alloca0() in a more typesafe manner.</doc>
+      <parameters>
+        <parameter name="struct_type">
+          <doc xml:space="preserve">the type of the elements to allocate.</doc>
+        </parameter>
+        <parameter name="n_structs">
+          <doc xml:space="preserve">the number of elements to allocate.</doc>
         </parameter>
       </parameters>
     </function-macro>
