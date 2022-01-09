@@ -6616,8 +6616,9 @@ Note that the GL texture must not be modified until @destroy is called,
 which will happen when the GdkTexture object is finalized, or due to
 an explicit call of [method@Gdk.GLTexture.release].</doc>
         <return-value transfer-ownership="full">
-          <doc xml:space="preserve">A newly-created `GdkTexture`</doc>
-          <type name="Texture" c:type="GdkTexture*"/>
+          <doc xml:space="preserve">A newly-created
+  `GdkTexture`</doc>
+          <type name="GLTexture" c:type="GdkTexture*"/>
         </return-value>
         <parameters>
           <parameter name="context" transfer-ownership="none">
@@ -14063,11 +14064,11 @@ for details).</doc>
       <constructor name="new" c:identifier="gdk_memory_texture_new">
         <doc xml:space="preserve">Creates a new texture for a blob of image data.
 
-The `GBytes` must contain @stride x @height pixels
+The `GBytes` must contain @stride &#xD7; @height pixels
 in the given format.</doc>
         <return-value transfer-ownership="full">
           <doc xml:space="preserve">A newly-created `GdkTexture`</doc>
-          <type name="Texture" c:type="GdkTexture*"/>
+          <type name="MemoryTexture" c:type="GdkTexture*"/>
         </return-value>
         <parameters>
           <parameter name="width" transfer-ownership="none">
@@ -16889,14 +16890,14 @@ It is primarily meant for pixel data that will not change over
 multiple frames, and will be used for a long time.
 
 There are various ways to create `GdkTexture` objects from a
-`GdkPixbuf`, or a Cairo surface, or other pixel data.
+[class@GdkPixbuf.Pixbuf], or a Cairo surface, or other pixel data.
 
 The ownership of the pixel data is transferred to the `GdkTexture`
 instance; you can only make a copy of it, via [method@Gdk.Texture.download].
 
 `GdkTexture` is an immutable object: That means you cannot change
 anything about it other than increasing the reference count via
-g_object_ref().</doc>
+[method@GObject.Object.ref], and consequently, it is a thread-safe object.</doc>
       <implements name="Paintable"/>
       <implements name="Gio.Icon"/>
       <implements name="Gio.LoadableIcon"/>
@@ -16904,7 +16905,7 @@ g_object_ref().</doc>
         <doc xml:space="preserve">Creates a new texture object representing the `GdkPixbuf`.
 
 This function is threadsafe, so that you can e.g. use GTask
-and g_task_run_in_thread() to avoid blocking the main thread
+and [method@Gio.Task.run_in_thread] to avoid blocking the main thread
 while loading a big image.</doc>
         <return-value transfer-ownership="full">
           <doc xml:space="preserve">a new `GdkTexture`</doc>
@@ -16926,7 +16927,7 @@ are PNG and JPEG, though more formats might be available.
 If %NULL is returned, then @error will be set.
 
 This function is threadsafe, so that you can e.g. use GTask
-and g_task_run_in_thread() to avoid blocking the main thread
+and [method@Gio.Task.run_in_thread] to avoid blocking the main thread
 while loading a big image.</doc>
         <return-value transfer-ownership="full">
           <doc xml:space="preserve">A newly-created `GdkTexture`</doc>
@@ -16948,7 +16949,7 @@ are PNG and JPEG, though more formats might be available.
 If %NULL is returned, then @error will be set.
 
 This function is threadsafe, so that you can e.g. use GTask
-and g_task_run_in_thread() to avoid blocking the main thread
+and [method@Gio.Task.run_in_thread] to avoid blocking the main thread
 while loading a big image.</doc>
         <return-value transfer-ownership="full">
           <doc xml:space="preserve">A newly-created `GdkTexture`</doc>
@@ -16970,7 +16971,7 @@ are PNG and JPEG, though more formats might be available.
 If %NULL is returned, then @error will be set.
 
 This function is threadsafe, so that you can e.g. use GTask
-and g_task_run_in_thread() to avoid blocking the main thread
+and [method@Gio.Task.run_in_thread] to avoid blocking the main thread
 while loading a big image.</doc>
         <return-value transfer-ownership="full">
           <doc xml:space="preserve">A newly-created `GdkTexture`</doc>
@@ -16995,7 +16996,7 @@ If you are unsure about the validity of a resource, use
 [ctor@Gdk.Texture.new_from_file] to load it.
 
 This function is threadsafe, so that you can e.g. use GTask
-and g_task_run_in_thread() to avoid blocking the main thread
+and [method@Gio.Task.run_in_thread] to avoid blocking the main thread
 while loading a big image.</doc>
         <return-value transfer-ownership="full">
           <doc xml:space="preserve">A newly-created `GdkTexture`</doc>
@@ -17082,7 +17083,7 @@ cairo_surface_mark_dirty (surface);
 
 This is a utility function intended for debugging and testing.
 If you want more control over formats, proper error handling or
-want to store to a `GFile` or other location, you might want to
+want to store to a [iface@Gio.File] or other location, you might want to
 use [method@Gdk.Texture.save_to_png_bytes] or look into the
 gdk-pixbuf library.</doc>
         <return-value transfer-ownership="none">
