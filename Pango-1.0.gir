@@ -704,10 +704,16 @@ This operation is equivalent to stretching every attribute
 that applies at position @pos in @list by an amount @len,
 and then calling [method@Pango.AttrList.change] with a copy
 of each attribute in @other in sequence (offset in position
-by @pos).
+by @pos, and limited in length to @len).
 
 This operation proves useful for, for instance, inserting
-a pre-edit string in the middle of an edit buffer.</doc>
+a pre-edit string in the middle of an edit buffer.
+
+For backwards compatibility, the function behaves differently
+when @len is 0. In this case, the attributes from @other are
+not imited to @len, and are just overlayed on top of @list.
+
+This mode is useful for merging two lists of attributes together.</doc>
         <return-value transfer-ownership="none">
           <type name="none" c:type="void"/>
         </return-value>
@@ -2190,8 +2196,9 @@ the corresponding index in @other.</doc>
           </parameter>
         </parameters>
       </method>
-      <method name="ref" c:identifier="pango_coverage_ref">
+      <method name="ref" c:identifier="pango_coverage_ref" deprecated="1" deprecated-version="1.52">
         <doc xml:space="preserve">Increase the reference count on the `PangoCoverage` by one.</doc>
+        <doc-deprecated xml:space="preserve">Use g_object_ref instead</doc-deprecated>
         <return-value transfer-ownership="full">
           <doc xml:space="preserve">@coverage</doc>
           <type name="Coverage" c:type="PangoCoverage*"/>
@@ -2247,10 +2254,11 @@ the corresponding index in @other.</doc>
           </parameter>
         </parameters>
       </method>
-      <method name="unref" c:identifier="pango_coverage_unref">
+      <method name="unref" c:identifier="pango_coverage_unref" deprecated="1" deprecated-version="1.52">
         <doc xml:space="preserve">Decrease the reference count on the `PangoCoverage` by one.
 
 If the result is zero, free the coverage and all associated memory.</doc>
+        <doc-deprecated xml:space="preserve">Use g_object_unref instead</doc-deprecated>
         <return-value transfer-ownership="none">
           <type name="none" c:type="void"/>
         </return-value>
@@ -11531,25 +11539,22 @@ within a family.</doc>
     </enumeration>
     <enumeration name="TabAlign" glib:type-name="PangoTabAlign" glib:get-type="pango_tab_align_get_type" c:type="PangoTabAlign">
       <doc xml:space="preserve">`PangoTabAlign` specifies where the text appears relative to the tab stop
-position.
-
-Support for tab alignments other than %PANGO_TAB_LEFT was added
-in Pango 1.50.</doc>
+position.</doc>
       <member name="left" value="0" c:identifier="PANGO_TAB_LEFT" glib:nick="left" glib:name="PANGO_TAB_LEFT">
         <doc xml:space="preserve">the text appears to the right of the tab stop position</doc>
       </member>
       <member name="right" value="1" c:identifier="PANGO_TAB_RIGHT" glib:nick="right" glib:name="PANGO_TAB_RIGHT">
         <doc xml:space="preserve">the text appears to the left of the tab stop position
-  until the available space is filled</doc>
+  until the available space is filled. Since: 1.50</doc>
       </member>
       <member name="center" value="2" c:identifier="PANGO_TAB_CENTER" glib:nick="center" glib:name="PANGO_TAB_CENTER">
         <doc xml:space="preserve">the text is centered at the tab stop position
-  until the available space is filled</doc>
+  until the available space is filled. Since: 1.50</doc>
       </member>
       <member name="decimal" value="3" c:identifier="PANGO_TAB_DECIMAL" glib:nick="decimal" glib:name="PANGO_TAB_DECIMAL">
         <doc xml:space="preserve">text before the first occurrence of the decimal point
   character appears to the left of the tab stop position (until the available
-  space is filled), the rest to the right</doc>
+  space is filled), the rest to the right. Since: 1.50</doc>
       </member>
     </enumeration>
     <record name="TabArray" c:type="PangoTabArray" glib:type-name="PangoTabArray" glib:get-type="pango_tab_array_get_type" c:symbol-prefix="tab_array">
@@ -12013,10 +12018,7 @@ Two encoded version numbers can be compared as integers.</doc>
       <type name="utf8" c:type="gchar*"/>
     </constant>
     <enumeration name="Variant" glib:type-name="PangoVariant" glib:get-type="pango_variant_get_type" c:type="PangoVariant">
-      <doc xml:space="preserve">An enumeration specifying capitalization variant of the font.
-
-Values other than `PANGO_VARIANT_NORMAL` and `PANGO_VARIANT_SMALL_CAPS` are
-available since 1.50.</doc>
+      <doc xml:space="preserve">An enumeration specifying capitalization variant of the font.</doc>
       <member name="normal" value="0" c:identifier="PANGO_VARIANT_NORMAL" glib:nick="normal" glib:name="PANGO_VARIANT_NORMAL">
         <doc xml:space="preserve">A normal font.</doc>
       </member>
@@ -12026,25 +12028,25 @@ available since 1.50.</doc>
       </member>
       <member name="all_small_caps" value="2" c:identifier="PANGO_VARIANT_ALL_SMALL_CAPS" glib:nick="all-small-caps" glib:name="PANGO_VARIANT_ALL_SMALL_CAPS">
         <doc xml:space="preserve">A font with all characters
-  replaced by smaller variants of the capital characters.</doc>
+  replaced by smaller variants of the capital characters. Since: 1.50</doc>
       </member>
       <member name="petite_caps" value="3" c:identifier="PANGO_VARIANT_PETITE_CAPS" glib:nick="petite-caps" glib:name="PANGO_VARIANT_PETITE_CAPS">
         <doc xml:space="preserve">A font with the lower case characters
   replaced by smaller variants of the capital characters.
-  Petite Caps can be even smaller than Small Caps.</doc>
+  Petite Caps can be even smaller than Small Caps. Since: 1.50</doc>
       </member>
       <member name="all_petite_caps" value="4" c:identifier="PANGO_VARIANT_ALL_PETITE_CAPS" glib:nick="all-petite-caps" glib:name="PANGO_VARIANT_ALL_PETITE_CAPS">
         <doc xml:space="preserve">A font with all characters
   replaced by smaller variants of the capital characters.
-  Petite Caps can be even smaller than Small Caps.</doc>
+  Petite Caps can be even smaller than Small Caps. Since: 1.50</doc>
       </member>
       <member name="unicase" value="5" c:identifier="PANGO_VARIANT_UNICASE" glib:nick="unicase" glib:name="PANGO_VARIANT_UNICASE">
         <doc xml:space="preserve">A font with the upper case characters
-  replaced by smaller variants of the capital letters.</doc>
+  replaced by smaller variants of the capital letters. Since: 1.50</doc>
       </member>
       <member name="title_caps" value="6" c:identifier="PANGO_VARIANT_TITLE_CAPS" glib:nick="title-caps" glib:name="PANGO_VARIANT_TITLE_CAPS">
         <doc xml:space="preserve">A font with capital letters that
-  are more suitable for all-uppercase titles.</doc>
+  are more suitable for all-uppercase titles. Since: 1.50</doc>
       </member>
     </enumeration>
     <enumeration name="Weight" glib:type-name="PangoWeight" glib:get-type="pango_weight_get_type" c:type="PangoWeight">
