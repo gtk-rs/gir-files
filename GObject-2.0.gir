@@ -4795,7 +4795,13 @@ value that you provide is 64 bit. This means that you should use a cast or
 make use of the %G_GINT64_CONSTANT or %G_GUINT64_CONSTANT macros.
 
 Similarly, #gfloat is promoted to #gdouble, so you must ensure that the value
-you provide is a #gdouble, even for a property of type #gfloat.</doc>
+you provide is a #gdouble, even for a property of type #gfloat.
+
+Since GLib 2.72, all #GObjects are guaranteed to be aligned to at least the
+alignment of the largest basic GLib type (typically this is #guint64 or
+#gdouble). If you need larger alignment for an element in a #GObject, you
+should allocate it on the heap (aligned), or arrange for your #GObject to be
+appropriately padded.</doc>
         <return-value transfer-ownership="full">
           <doc xml:space="preserve">a new instance of
   @object_type</doc>
@@ -12074,11 +12080,14 @@ atomic with respect to invalidation of weak pointers to destroyed
 objects.
 
 If the object's #GObjectClass.dispose method results in additional
-references to the object being held, any #GWeakRefs taken
-before it was disposed will continue to point to %NULL.  If
-#GWeakRefs are taken after the object is disposed and
-re-referenced, they will continue to point to it until its refcount
-goes back to zero, at which point they too will be invalidated.</doc>
+references to the object being held (&#x2018;re-referencing&#x2019;), any #GWeakRefs taken
+before it was disposed will continue to point to %NULL.  Any #GWeakRefs taken
+during disposal and after re-referencing, or after disposal has returned due
+to the re-referencing, will continue to point to the object until its refcount
+goes back to zero, at which point they too will be invalidated.
+
+It is invalid to take a #GWeakRef on an object during #GObjectClass.dispose
+without first having or creating a strong reference to the object.</doc>
       <union name="priv" c:type="priv">
         <field name="p" writable="1">
           <type name="gpointer" c:type="gpointer"/>
@@ -14971,7 +14980,7 @@ g_signal_override_class_handler().</doc>
     <function-macro name="signal_connect" c:identifier="g_signal_connect" introspectable="0">
       <doc xml:space="preserve">Connects a #GCallback function to a signal for a particular object.
 
-The handler will be called before the default handler of the signal.
+The handler will be called synchronously, before the default handler of the signal. g_signal_emit() will not return control until all handlers are called.
 
 See [memory management of signal handlers][signal-memory-management] for
 details on how to handle the return value and memory management of @data.</doc>
@@ -14993,7 +15002,7 @@ details on how to handle the return value and memory management of @data.</doc>
     <function-macro name="signal_connect_after" c:identifier="g_signal_connect_after" introspectable="0">
       <doc xml:space="preserve">Connects a #GCallback function to a signal for a particular object.
 
-The handler will be called after the default handler of the signal.</doc>
+The handler will be called synchronously, after the default handler of the signal.</doc>
       <parameters>
         <parameter name="instance">
           <doc xml:space="preserve">the instance to connect to.</doc>
@@ -15182,7 +15191,8 @@ g_signal_connect (button, "clicked",
       </parameters>
     </function-macro>
     <function name="signal_emit" c:identifier="g_signal_emit" introspectable="0">
-      <doc xml:space="preserve">Emits a signal.
+      <doc xml:space="preserve">Emits a signal. Signal emission is done synchronously.
+The method will only return control after all handlers are called or signal emission was stopped.
 
 Note that g_signal_emit() resets the return value to the default
 if no handlers are connected, in contrast to g_signal_emitv().</doc>
@@ -15211,7 +15221,8 @@ if no handlers are connected, in contrast to g_signal_emitv().</doc>
       </parameters>
     </function>
     <function name="signal_emit_by_name" c:identifier="g_signal_emit_by_name" introspectable="0">
-      <doc xml:space="preserve">Emits a signal.
+      <doc xml:space="preserve">Emits a signal. Signal emission is done synchronously.
+The method will only return control after all handlers are called or signal emission was stopped.
 
 Note that g_signal_emit_by_name() resets the return value to the default
 if no handlers are connected, in contrast to g_signal_emitv().</doc>
@@ -15237,7 +15248,8 @@ if no handlers are connected, in contrast to g_signal_emitv().</doc>
       </parameters>
     </function>
     <function name="signal_emit_valist" c:identifier="g_signal_emit_valist" introspectable="0">
-      <doc xml:space="preserve">Emits a signal.
+      <doc xml:space="preserve">Emits a signal. Signal emission is done synchronously.
+The method will only return control after all handlers are called or signal emission was stopped.
 
 Note that g_signal_emit_valist() resets the return value to the default
 if no handlers are connected, in contrast to g_signal_emitv().</doc>
@@ -15267,7 +15279,8 @@ if no handlers are connected, in contrast to g_signal_emitv().</doc>
       </parameters>
     </function>
     <function name="signal_emitv" c:identifier="g_signal_emitv">
-      <doc xml:space="preserve">Emits a signal.
+      <doc xml:space="preserve">Emits a signal. Signal emission is done synchronously.
+The method will only return control after all handlers are called or signal emission was stopped.
 
 Note that g_signal_emitv() doesn't change @return_value if no handlers are
 connected, in contrast to g_signal_emit() and g_signal_emit_valist().</doc>

@@ -4780,11 +4780,14 @@ represent an existing day). Free the return value with g_date_free().</doc>
         </return-value>
       </constructor>
       <constructor name="new_dmy" c:identifier="g_date_new_dmy">
-        <doc xml:space="preserve">Like g_date_new(), but also sets the value of the date. Assuming the
-day-month-year triplet you pass in represents an existing day, the
-returned date will be valid.</doc>
+        <doc xml:space="preserve">Create a new #GDate representing the given day-month-year triplet.
+
+The triplet you pass in must represent a valid date. Use g_date_valid_dmy()
+if needed to validate it. The returned #GDate is guaranteed to be non-%NULL
+and valid.</doc>
         <return-value transfer-ownership="full">
-          <doc xml:space="preserve">a newly-allocated #GDate initialized with @day, @month, and @year</doc>
+          <doc xml:space="preserve">a newly-allocated #GDate
+  initialized with @day, @month, and @year</doc>
           <type name="Date" c:type="GDate*"/>
         </return-value>
         <parameters>
@@ -4803,11 +4806,14 @@ returned date will be valid.</doc>
         </parameters>
       </constructor>
       <constructor name="new_julian" c:identifier="g_date_new_julian">
-        <doc xml:space="preserve">Like g_date_new(), but also sets the value of the date. Assuming the
-Julian day number you pass in is valid (greater than 0, less than an
-unreasonably large number), the returned date will be valid.</doc>
+        <doc xml:space="preserve">Create a new #GDate representing the given Julian date.
+
+The @julian_day you pass in must be valid. Use g_date_valid_julian() if
+needed to validate it. The returned #GDate is guaranteed to be non-%NULL and
+valid.</doc>
         <return-value transfer-ownership="full">
-          <doc xml:space="preserve">a newly-allocated #GDate initialized with @julian_day</doc>
+          <doc xml:space="preserve">a newly-allocated #GDate initialized
+  with @julian_day</doc>
           <type name="Date" c:type="GDate*"/>
         </return-value>
         <parameters>
@@ -8647,6 +8653,32 @@ g_hash_table_unref().</doc>
     value used when removing the entry from the #GHashTable, or %NULL
     if you don't want to supply such a function.</doc>
             <type name="DestroyNotify" c:type="GDestroyNotify"/>
+          </parameter>
+        </parameters>
+      </function>
+      <function name="new_similar" c:identifier="g_hash_table_new_similar" version="2.72">
+        <doc xml:space="preserve">Creates a new #GHashTable like g_hash_table_new_full() with a reference
+count of 1.
+
+It inherits the hash function, the key equal function, the key destroy function,
+as well as the value destroy function, from @other_hash_table.
+
+The returned hash table will be empty; it will not contain the keys
+or values from @other_hash_table.</doc>
+        <return-value transfer-ownership="full">
+          <doc xml:space="preserve">a new #GHashTable</doc>
+          <type name="GLib.HashTable" c:type="GHashTable*">
+            <type name="gpointer" c:type="gpointer"/>
+            <type name="gpointer" c:type="gpointer"/>
+          </type>
+        </return-value>
+        <parameters>
+          <parameter name="other_hash_table" transfer-ownership="none">
+            <doc xml:space="preserve">Another #GHashTable</doc>
+            <type name="GLib.HashTable" c:type="GHashTable*">
+              <type name="gpointer" c:type="gpointer"/>
+              <type name="gpointer" c:type="gpointer"/>
+            </type>
           </parameter>
         </parameters>
       </function>
@@ -13802,12 +13834,16 @@ type representing a set of sources to be handled in a main loop.</doc>
           <type name="MainContext" c:type="GMainContext*"/>
         </return-value>
       </constructor>
-      <constructor name="new_with_flags" c:identifier="g_main_context_new_with_flags">
+      <constructor name="new_with_flags" c:identifier="g_main_context_new_with_flags" version="2.72">
+        <doc xml:space="preserve">Creates a new #GMainContext structure.</doc>
         <return-value transfer-ownership="full">
+          <doc xml:space="preserve">the new #GMainContext</doc>
           <type name="MainContext" c:type="GMainContext*"/>
         </return-value>
         <parameters>
           <parameter name="flags" transfer-ownership="none">
+            <doc xml:space="preserve">a bitwise-OR combination of #GMainContextFlags flags that can only be
+        set at creation time.</doc>
             <type name="MainContextFlags" c:type="GMainContextFlags"/>
           </parameter>
         </parameters>
@@ -24796,7 +24832,7 @@ is called on its (now invalid) source ID.  This source ID may have
 been reissued, leading to the operation being performed against the
 wrong source.</doc>
         <return-value transfer-ownership="none">
-          <doc xml:space="preserve">For historical reasons, this function always returns %TRUE</doc>
+          <doc xml:space="preserve">%TRUE if the source was found and removed.</doc>
           <type name="gboolean" c:type="gboolean"/>
         </return-value>
         <parameters>
@@ -36053,6 +36089,9 @@ decimal point. To format the number you pass in
 a printf()-style format string. Allowed conversion
 specifiers are 'e', 'E', 'f', 'F', 'g' and 'G'.
 
+The @format must just be a single format specifier
+starting with `%`, expecting a #gdouble argument.
+
 The returned buffer is guaranteed to be nul-terminated.
 
 If you just want to want to serialize the value into a
@@ -36072,7 +36111,7 @@ string, use g_ascii_dtostr().</doc>
         </parameter>
         <parameter name="format" transfer-ownership="none">
           <doc xml:space="preserve">The printf()-style format to use for the
-         code to use for converting.</doc>
+  code to use for converting</doc>
           <type name="utf8" c:type="const gchar*"/>
         </parameter>
         <parameter name="d" transfer-ownership="none">
@@ -36393,7 +36432,9 @@ characters.</doc>
     </function>
     <function name="ascii_strncasecmp" c:identifier="g_ascii_strncasecmp">
       <doc xml:space="preserve">Compare @s1 and @s2, ignoring the case of ASCII characters and any
-characters after the first @n in each string.
+characters after the first @n in each string. If either string is
+less than @n bytes long, comparison will stop at the first nul byte
+encountered.
 
 Unlike the BSD strcasecmp() function, this only recognizes standard
 ASCII letters and ignores the locale, treating all non-ASCII
@@ -38347,8 +38388,8 @@ No attempt is made to force the resulting filename to be an absolute
 path. If the first element is a relative path, the result will
 be a relative path.</doc>
       <return-value transfer-ownership="full">
-        <doc xml:space="preserve">a newly-allocated string that must be freed with
-    g_free().</doc>
+        <doc xml:space="preserve">a newly-allocated string that
+    must be freed with g_free().</doc>
         <type name="filename" c:type="gchar*"/>
       </return-value>
       <parameters>
@@ -38366,8 +38407,8 @@ be a relative path.</doc>
       <doc xml:space="preserve">Behaves exactly like g_build_filename(), but takes the path elements
 as a va_list. This function is mainly meant for language bindings.</doc>
       <return-value transfer-ownership="full">
-        <doc xml:space="preserve">a newly-allocated string that must be freed
-    with g_free().</doc>
+        <doc xml:space="preserve">a newly-allocated string that
+    must be freed with g_free().</doc>
         <type name="filename" c:type="gchar*"/>
       </return-value>
       <parameters>
@@ -38386,8 +38427,8 @@ as a va_list. This function is mainly meant for language bindings.</doc>
 as a string array, instead of varargs. This function is mainly
 meant for language bindings.</doc>
       <return-value transfer-ownership="full">
-        <doc xml:space="preserve">a newly-allocated string that must be freed
-    with g_free().</doc>
+        <doc xml:space="preserve">a newly-allocated string that
+    must be freed with g_free().</doc>
         <type name="filename" c:type="gchar*"/>
       </return-value>
       <parameters>
@@ -38428,8 +38469,8 @@ Other than for determination of the number of leading and trailing
 copies of the separator, elements consisting only of copies
 of the separator are ignored.</doc>
       <return-value transfer-ownership="full">
-        <doc xml:space="preserve">a newly-allocated string that must be freed with
-    g_free().</doc>
+        <doc xml:space="preserve">a newly-allocated string that
+    must be freed with g_free().</doc>
         <type name="filename" c:type="gchar*"/>
       </return-value>
       <parameters>
@@ -38452,8 +38493,8 @@ of the separator are ignored.</doc>
 as a string array, instead of varargs. This function is mainly
 meant for language bindings.</doc>
       <return-value transfer-ownership="full">
-        <doc xml:space="preserve">a newly-allocated string that must be freed
-    with g_free().</doc>
+        <doc xml:space="preserve">a newly-allocated string that
+    must be freed with g_free().</doc>
         <type name="filename" c:type="gchar*"/>
       </return-value>
       <parameters>
@@ -39277,7 +39318,7 @@ name encodings correctly.
    "Unknown file name" in its title bar but still let the user save
    the file, as it would keep the raw file name internally. This
    can happen if the user has not set the `G_FILENAME_ENCODING`
-   environment variable even though he has files whose names are
+   environment variable even though they have files whose names are
    not encoded in UTF-8.
 
 3. If your user interface lets the user type a file name for saving
@@ -39699,7 +39740,7 @@ operation, for a member of @datalist.
 If the previous value was replaced then ownership of the
 old value (@oldval) is passed to the caller, including
 the registered destroy notify for it (passed out in @old_destroy).
-Its up to the caller to free this as he wishes, which may
+Its up to the caller to free this as they wish, which may
 or may not include using @old_destroy as sometimes replacement
 should not destroy the object in the normal way.</doc>
       <return-value transfer-ownership="none">
@@ -40689,7 +40730,7 @@ thus you may use non-string-literals as context and msgid arguments.</doc>
     <function name="environ_getenv" c:identifier="g_environ_getenv" version="2.32">
       <doc xml:space="preserve">Returns the value of the environment variable @variable in the
 provided list @envp.</doc>
-      <return-value transfer-ownership="none">
+      <return-value transfer-ownership="none" nullable="1">
         <doc xml:space="preserve">the value of the environment variable, or %NULL if
     the environment variable is not set in @envp. The returned
     string is owned by @envp, and will be freed if @variable is
@@ -41343,8 +41384,8 @@ name encoding.</doc>
 readlink() function.  The returned string is in the encoding used
 for filenames. Use g_filename_to_utf8() to convert it to UTF-8.</doc>
       <return-value transfer-ownership="full">
-        <doc xml:space="preserve">A newly-allocated string with the contents of
-    the symbolic link, or %NULL if an error occurred.</doc>
+        <doc xml:space="preserve">A newly-allocated string with
+    the contents of the symbolic link, or %NULL if an error occurred.</doc>
         <type name="filename" c:type="gchar*"/>
       </return-value>
       <parameters>
@@ -42482,10 +42523,10 @@ not been set up.
 Depending on the platform, the user might be able to change the path
 of the special directory without requiring the session to restart; GLib
 will not reflect any change once the special directories are loaded.</doc>
-      <return-value transfer-ownership="none">
-        <doc xml:space="preserve">the path to the specified special directory, or
-  %NULL if the logical id was not found. The returned string is owned by
-  GLib and should not be modified or freed.</doc>
+      <return-value transfer-ownership="none" nullable="1">
+        <doc xml:space="preserve">the path to the specified special
+  directory, or %NULL if the logical id was not found. The returned string is
+  owned by GLib and should not be modified or freed.</doc>
         <type name="filename" c:type="const gchar*"/>
       </return-value>
       <parameters>
@@ -42495,9 +42536,28 @@ will not reflect any change once the special directories are loaded.</doc>
         </parameter>
       </parameters>
     </function>
-    <function name="get_user_state_dir" c:identifier="g_get_user_state_dir">
+    <function name="get_user_state_dir" c:identifier="g_get_user_state_dir" version="2.72">
+      <doc xml:space="preserve">Returns a base directory in which to store state files specific to
+particular user.
+
+On UNIX platforms this is determined using the mechanisms described
+in the
+[XDG Base Directory Specification](http://www.freedesktop.org/Standards/basedir-spec).
+In this case the directory retrieved will be `XDG_STATE_HOME`.
+
+On Windows it follows XDG Base Directory Specification if `XDG_STATE_HOME` is defined.
+If `XDG_STATE_HOME` is undefined, the folder to use for local (as opposed
+to roaming) application data is used instead. See the
+[documentation for `FOLDERID_LocalAppData`](https://docs.microsoft.com/en-us/windows/win32/shell/knownfolderid).
+Note that in this case on Windows it will be the same
+as what g_get_user_data_dir() returns.
+
+The return value is cached and modifying it at runtime is not supported, as
+it&#x2019;s not thread-safe to modify environment variables at runtime.</doc>
       <return-value transfer-ownership="none">
-        <type name="utf8" c:type="const gchar*"/>
+        <doc xml:space="preserve">a string owned by GLib that
+  must not be modified or freed.</doc>
+        <type name="filename" c:type="const gchar*"/>
       </return-value>
     </function>
     <function name="getenv" c:identifier="g_getenv">
@@ -42508,7 +42568,7 @@ be in some consistent character set and encoding. On Windows, they are
 in UTF-8.
 On Windows, in case the environment variable's value contains
 references to other environment variables, they are expanded.</doc>
-      <return-value transfer-ownership="none">
+      <return-value transfer-ownership="none" nullable="1">
         <doc xml:space="preserve">the value of the environment variable, or %NULL if
     the environment variable is not found. The returned string
     may be overwritten by the next call to g_getenv(), g_setenv()
@@ -42719,6 +42779,32 @@ of @hash_table are %NULL-safe.</doc>
           <doc xml:space="preserve">return location for the value associated
 with the key</doc>
           <type name="gpointer" c:type="gpointer*"/>
+        </parameter>
+      </parameters>
+    </function>
+    <function name="hash_table_new_similar" c:identifier="g_hash_table_new_similar" moved-to="HashTable.new_similar" version="2.72">
+      <doc xml:space="preserve">Creates a new #GHashTable like g_hash_table_new_full() with a reference
+count of 1.
+
+It inherits the hash function, the key equal function, the key destroy function,
+as well as the value destroy function, from @other_hash_table.
+
+The returned hash table will be empty; it will not contain the keys
+or values from @other_hash_table.</doc>
+      <return-value transfer-ownership="full">
+        <doc xml:space="preserve">a new #GHashTable</doc>
+        <type name="GLib.HashTable" c:type="GHashTable*">
+          <type name="gpointer" c:type="gpointer"/>
+          <type name="gpointer" c:type="gpointer"/>
+        </type>
+      </return-value>
+      <parameters>
+        <parameter name="other_hash_table" transfer-ownership="none">
+          <doc xml:space="preserve">Another #GHashTable</doc>
+          <type name="GLib.HashTable" c:type="GHashTable*">
+            <type name="gpointer" c:type="gpointer"/>
+            <type name="gpointer" c:type="gpointer"/>
+          </type>
         </parameter>
       </parameters>
     </function>
@@ -45013,6 +45099,15 @@ g_main_context_iteration() directly. These functions are
 g_main_context_prepare(), g_main_context_query(),
 g_main_context_check() and g_main_context_dispatch().
 
+If the event loop thread releases #GMainContext ownership until the results
+required by g_main_context_check() are ready you must create a context with
+the flag %G_MAIN_CONTEXT_FLAGS_OWNERLESS_POLLING or else you'll lose
+g_source_attach() notifications. This happens for instance when you integrate
+the GLib event loop into implementations that follow the proactor pattern
+(i.e. in these contexts the `poll()` implementation will reclaim the thread for
+other tasks until the results are ready). One example of the proactor pattern
+is the Boost.Asio library.
+
 ## State of a Main Context # {#mainloop-states}
 
 The operation of these functions can best be seen in terms
@@ -46552,8 +46647,8 @@ before the last slash. If @file_name consists only of directory
 separators (and on Windows, possibly a drive letter), a single
 separator is returned. If @file_name is empty, it gets ".".</doc>
       <return-value transfer-ownership="full">
-        <doc xml:space="preserve">a newly allocated string containing the last
-   component of the filename</doc>
+        <doc xml:space="preserve">a newly allocated string
+   containing the last component of the filename</doc>
         <type name="filename" c:type="gchar*"/>
       </return-value>
       <parameters>
@@ -48552,7 +48647,9 @@ gdk_init(), which is called by gtk_init() and the
 #GtkApplication::startup handler. The program name is found by
 taking the last component of @argv[0].
 
-Note that for thread-safety reasons this function can only be called once.</doc>
+Since GLib 2.72, this function can be called multiple times
+and is fully thread safe. Prior to GLib 2.72, this function
+could only be called once per process.</doc>
       <return-value transfer-ownership="none">
         <type name="none" c:type="void"/>
       </return-value>
@@ -49122,7 +49219,7 @@ is called on its (now invalid) source ID.  This source ID may have
 been reissued, leading to the operation being performed against the
 wrong source.</doc>
       <return-value transfer-ownership="none">
-        <doc xml:space="preserve">For historical reasons, this function always returns %TRUE</doc>
+        <doc xml:space="preserve">%TRUE if the source was found and removed.</doc>
         <type name="gboolean" c:type="gboolean"/>
       </return-value>
       <parameters>
@@ -51698,9 +51795,9 @@ but you don't need to free the return value.</doc>
       <doc xml:space="preserve">Gets the pathname to a data file that is required for a test.
 
 This is the same as g_test_build_filename() with two differences.
-The first difference is that must only use this function from within
+The first difference is that you must only use this function from within
 a testcase function.  The second difference is that you need not free
-the return value -- it will be automatically freed when the testcase
+the return value &#x2014; it will be automatically freed when the testcase
 finishes running.
 
 It is safe to use this function from a thread inside of a testcase
@@ -55555,13 +55652,14 @@ unpaired surrogates or partial character sequences.</doc>
           <doc xml:space="preserve">location to store number of
     words read, or %NULL. If %NULL, then %G_CONVERT_ERROR_PARTIAL_INPUT will
     be returned in case @str contains a trailing partial character. If
-    an error occurs then the index of the invalid input is stored here.</doc>
+    an error occurs then the index of the invalid input is stored here.
+    It&#x2019;s guaranteed to be non-negative.</doc>
           <type name="glong" c:type="glong*"/>
         </parameter>
         <parameter name="items_written" direction="out" caller-allocates="0" transfer-ownership="full" optional="1" allow-none="1">
           <doc xml:space="preserve">location to store number
     of bytes written, or %NULL. The value stored here does not include the
-    trailing 0 byte.</doc>
+    trailing 0 byte. It&#x2019;s guaranteed to be non-negative.</doc>
           <type name="glong" c:type="glong*"/>
         </parameter>
       </parameters>
@@ -56102,7 +56200,10 @@ German ess-zet will be changed to SS.)</doc>
     </function>
     <function name="utf8_substring" c:identifier="g_utf8_substring" version="2.30">
       <doc xml:space="preserve">Copies a substring out of a UTF-8 encoded string.
-The substring will contain @end_pos - @start_pos characters.</doc>
+The substring will contain @end_pos - @start_pos characters.
+
+Since GLib 2.72, `-1` can be passed to @end_pos to indicate the
+end of the string.</doc>
       <return-value transfer-ownership="full">
         <doc xml:space="preserve">a newly allocated copy of the requested
     substring. Free with g_free() when no longer needed.</doc>
@@ -56118,7 +56219,8 @@ The substring will contain @end_pos - @start_pos characters.</doc>
           <type name="glong" c:type="glong"/>
         </parameter>
         <parameter name="end_pos" transfer-ownership="none">
-          <doc xml:space="preserve">another character offset within @str</doc>
+          <doc xml:space="preserve">another character offset within @str,
+  or `-1` to indicate the end of the string</doc>
           <type name="glong" c:type="glong"/>
         </parameter>
       </parameters>
