@@ -121,6 +121,12 @@ names from that macro.</doc>
         </parameter>
       </parameters>
     </function-macro>
+    <function-macro name="BINDING_GROUP" c:identifier="G_BINDING_GROUP" introspectable="0">
+      <parameters>
+        <parameter name="obj">
+        </parameter>
+      </parameters>
+    </function-macro>
     <callback name="BaseFinalizeFunc" c:type="GBaseFinalizeFunc">
       <doc xml:space="preserve">A callback function used by the type system to finalize those portions
 of a derived types class structure that were setup from the corresponding
@@ -444,6 +450,195 @@ This enumeration can be extended at later date.</doc>
   transformation functions to g_object_bind_property_full().</doc>
       </member>
     </bitfield>
+    <class name="BindingGroup" c:symbol-prefix="binding_group" c:type="GBindingGroup" version="2.72" parent="Object" glib:type-name="GBindingGroup" glib:get-type="g_binding_group_get_type">
+      <doc xml:space="preserve">The #GBindingGroup can be used to bind multiple properties
+from an object collectively.
+
+Use the various methods to bind properties from a single source
+object to multiple destination objects. Properties can be bound
+bidirectionally and are connected when the source object is set
+with g_binding_group_set_source().</doc>
+      <constructor name="new" c:identifier="g_binding_group_new" version="2.72">
+        <doc xml:space="preserve">Creates a new #GBindingGroup.</doc>
+        <return-value transfer-ownership="full">
+          <doc xml:space="preserve">a new #GBindingGroup</doc>
+          <type name="BindingGroup" c:type="GBindingGroup*"/>
+        </return-value>
+      </constructor>
+      <method name="bind" c:identifier="g_binding_group_bind" version="2.72">
+        <doc xml:space="preserve">Creates a binding between @source_property on the source object
+and @target_property on @target. Whenever the @source_property
+is changed the @target_property is updated using the same value.
+The binding flag %G_BINDING_SYNC_CREATE is automatically specified.
+
+See g_object_bind_property() for more information.</doc>
+        <return-value transfer-ownership="none">
+          <type name="none" c:type="void"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="self" transfer-ownership="none">
+            <doc xml:space="preserve">the #GBindingGroup</doc>
+            <type name="BindingGroup" c:type="GBindingGroup*"/>
+          </instance-parameter>
+          <parameter name="source_property" transfer-ownership="none">
+            <doc xml:space="preserve">the property on the source to bind</doc>
+            <type name="utf8" c:type="const gchar*"/>
+          </parameter>
+          <parameter name="target" transfer-ownership="none">
+            <doc xml:space="preserve">the target #GObject</doc>
+            <type name="Object" c:type="gpointer"/>
+          </parameter>
+          <parameter name="target_property" transfer-ownership="none">
+            <doc xml:space="preserve">the property on @target to bind</doc>
+            <type name="utf8" c:type="const gchar*"/>
+          </parameter>
+          <parameter name="flags" transfer-ownership="none">
+            <doc xml:space="preserve">the flags used to create the #GBinding</doc>
+            <type name="BindingFlags" c:type="GBindingFlags"/>
+          </parameter>
+        </parameters>
+      </method>
+      <method name="bind_full" c:identifier="g_binding_group_bind_full" shadowed-by="bind_with_closures" version="2.72">
+        <doc xml:space="preserve">Creates a binding between @source_property on the source object and
+@target_property on @target, allowing you to set the transformation
+functions to be used by the binding. The binding flag
+%G_BINDING_SYNC_CREATE is automatically specified.
+
+See g_object_bind_property_full() for more information.</doc>
+        <return-value transfer-ownership="none">
+          <type name="none" c:type="void"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="self" transfer-ownership="none">
+            <doc xml:space="preserve">the #GBindingGroup</doc>
+            <type name="BindingGroup" c:type="GBindingGroup*"/>
+          </instance-parameter>
+          <parameter name="source_property" transfer-ownership="none">
+            <doc xml:space="preserve">the property on the source to bind</doc>
+            <type name="utf8" c:type="const gchar*"/>
+          </parameter>
+          <parameter name="target" transfer-ownership="none">
+            <doc xml:space="preserve">the target #GObject</doc>
+            <type name="Object" c:type="gpointer"/>
+          </parameter>
+          <parameter name="target_property" transfer-ownership="none">
+            <doc xml:space="preserve">the property on @target to bind</doc>
+            <type name="utf8" c:type="const gchar*"/>
+          </parameter>
+          <parameter name="flags" transfer-ownership="none">
+            <doc xml:space="preserve">the flags used to create the #GBinding</doc>
+            <type name="BindingFlags" c:type="GBindingFlags"/>
+          </parameter>
+          <parameter name="transform_to" transfer-ownership="none" nullable="1" allow-none="1" scope="notified">
+            <doc xml:space="preserve">the transformation function
+    from the source object to the @target, or %NULL to use the default</doc>
+            <type name="BindingTransformFunc" c:type="GBindingTransformFunc"/>
+          </parameter>
+          <parameter name="transform_from" transfer-ownership="none" nullable="1" allow-none="1" scope="notified" closure="6" destroy="7">
+            <doc xml:space="preserve">the transformation function
+    from the @target to the source object, or %NULL to use the default</doc>
+            <type name="BindingTransformFunc" c:type="GBindingTransformFunc"/>
+          </parameter>
+          <parameter name="user_data" transfer-ownership="none" nullable="1" allow-none="1">
+            <doc xml:space="preserve">custom data to be passed to the transformation
+            functions, or %NULL</doc>
+            <type name="gpointer" c:type="gpointer"/>
+          </parameter>
+          <parameter name="user_data_destroy" transfer-ownership="none" scope="async">
+            <doc xml:space="preserve">function to be called when disposing the binding,
+    to free the resources used by the transformation functions</doc>
+            <type name="GLib.DestroyNotify" c:type="GDestroyNotify"/>
+          </parameter>
+        </parameters>
+      </method>
+      <method name="bind_with_closures" c:identifier="g_binding_group_bind_with_closures" shadows="bind_full" version="2.72">
+        <doc xml:space="preserve">Creates a binding between @source_property on the source object and
+@target_property on @target, allowing you to set the transformation
+functions to be used by the binding. The binding flag
+%G_BINDING_SYNC_CREATE is automatically specified.
+
+This function is the language bindings friendly version of
+g_binding_group_bind_property_full(), using #GClosures
+instead of function pointers.
+
+See g_object_bind_property_with_closures() for more information.</doc>
+        <return-value transfer-ownership="none">
+          <type name="none" c:type="void"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="self" transfer-ownership="none">
+            <doc xml:space="preserve">the #GBindingGroup</doc>
+            <type name="BindingGroup" c:type="GBindingGroup*"/>
+          </instance-parameter>
+          <parameter name="source_property" transfer-ownership="none">
+            <doc xml:space="preserve">the property on the source to bind</doc>
+            <type name="utf8" c:type="const gchar*"/>
+          </parameter>
+          <parameter name="target" transfer-ownership="none">
+            <doc xml:space="preserve">the target #GObject</doc>
+            <type name="Object" c:type="gpointer"/>
+          </parameter>
+          <parameter name="target_property" transfer-ownership="none">
+            <doc xml:space="preserve">the property on @target to bind</doc>
+            <type name="utf8" c:type="const gchar*"/>
+          </parameter>
+          <parameter name="flags" transfer-ownership="none">
+            <doc xml:space="preserve">the flags used to create the #GBinding</doc>
+            <type name="BindingFlags" c:type="GBindingFlags"/>
+          </parameter>
+          <parameter name="transform_to" transfer-ownership="none" nullable="1" allow-none="1">
+            <doc xml:space="preserve">a #GClosure wrapping the
+    transformation function from the source object to the @target,
+    or %NULL to use the default</doc>
+            <type name="Closure" c:type="GClosure*"/>
+          </parameter>
+          <parameter name="transform_from" transfer-ownership="none" nullable="1" allow-none="1">
+            <doc xml:space="preserve">a #GClosure wrapping the
+    transformation function from the @target to the source object,
+    or %NULL to use the default</doc>
+            <type name="Closure" c:type="GClosure*"/>
+          </parameter>
+        </parameters>
+      </method>
+      <method name="dup_source" c:identifier="g_binding_group_dup_source" version="2.72">
+        <doc xml:space="preserve">Gets the source object used for binding properties.</doc>
+        <return-value transfer-ownership="none" nullable="1">
+          <doc xml:space="preserve">a #GObject or %NULL.</doc>
+          <type name="Object" c:type="gpointer"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="self" transfer-ownership="none">
+            <doc xml:space="preserve">the #GBindingGroup</doc>
+            <type name="BindingGroup" c:type="GBindingGroup*"/>
+          </instance-parameter>
+        </parameters>
+      </method>
+      <method name="set_source" c:identifier="g_binding_group_set_source" glib:set-property="source" version="2.72">
+        <doc xml:space="preserve">Sets @source as the source object used for creating property
+bindings. If there is already a source object all bindings from it
+will be removed.
+
+Note that all properties that have been bound must exist on @source.</doc>
+        <return-value transfer-ownership="none">
+          <type name="none" c:type="void"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="self" transfer-ownership="none">
+            <doc xml:space="preserve">the #GBindingGroup</doc>
+            <type name="BindingGroup" c:type="GBindingGroup*"/>
+          </instance-parameter>
+          <parameter name="source" transfer-ownership="none" nullable="1" allow-none="1">
+            <doc xml:space="preserve">the source #GObject,
+  or %NULL to clear it</doc>
+            <type name="Object" c:type="gpointer"/>
+          </parameter>
+        </parameters>
+      </method>
+      <property name="source" version="2.72" writable="1" transfer-ownership="none" setter="set_source">
+        <doc xml:space="preserve">The source object used for binding properties.</doc>
+        <type name="Object"/>
+      </property>
+    </class>
     <callback name="BindingTransformFunc" c:type="GBindingTransformFunc" version="2.26">
       <doc xml:space="preserve">A function to be called to transform @from_value to @to_value.
 
@@ -4137,6 +4332,12 @@ certain runtime checks to identify invalid casts.</doc>
         </parameter>
       </parameters>
     </function-macro>
+    <function-macro name="IS_BINDING_GROUP" c:identifier="G_IS_BINDING_GROUP" introspectable="0">
+      <parameters>
+        <parameter name="obj">
+        </parameter>
+      </parameters>
+    </function-macro>
     <function-macro name="IS_ENUM_CLASS" c:identifier="G_IS_ENUM_CLASS" introspectable="0">
       <doc xml:space="preserve">Checks whether @class "is a" valid #GEnumClass structure of type %G_TYPE_ENUM
 or derived.</doc>
@@ -4389,6 +4590,12 @@ or derived.</doc>
       <parameters>
         <parameter name="pspec">
           <doc xml:space="preserve">a #GParamSpec</doc>
+        </parameter>
+      </parameters>
+    </function-macro>
+    <function-macro name="IS_SIGNAL_GROUP" c:identifier="G_IS_SIGNAL_GROUP" introspectable="0">
+      <parameters>
+        <parameter name="obj">
         </parameter>
       </parameters>
     </function-macro>
@@ -8419,6 +8626,12 @@ to hand parameter name/value pairs to g_object_newv().</doc>
       <doc xml:space="preserve">A mask for all #GSignalFlags bits.</doc>
       <type name="gint" c:type="gint"/>
     </constant>
+    <function-macro name="SIGNAL_GROUP" c:identifier="G_SIGNAL_GROUP" introspectable="0">
+      <parameters>
+        <parameter name="obj">
+        </parameter>
+      </parameters>
+    </function-macro>
     <constant name="SIGNAL_MATCH_MASK" value="63" c:type="G_SIGNAL_MATCH_MASK">
       <doc xml:space="preserve">A mask for all #GSignalMatchType bits.</doc>
       <type name="gint" c:type="gint"/>
@@ -8542,6 +8755,293 @@ You may not attach these to signals created with the #G_SIGNAL_NO_HOOKS flag.</d
   call to the accumulator function for a signal emission.  Since 2.68.</doc>
       </member>
     </bitfield>
+    <class name="SignalGroup" c:symbol-prefix="signal_group" c:type="GSignalGroup" version="2.72" parent="Object" glib:type-name="GSignalGroup" glib:get-type="g_signal_group_get_type">
+      <doc xml:space="preserve">#GSignalGroup manages to simplify the process of connecting
+many signals to a #GObject as a group. As such there is no API
+to disconnect a signal from the group.
+
+In particular, this allows you to:
+
+ - Change the target instance, which automatically causes disconnection
+   of the signals from the old instance and connecting to the new instance.
+ - Block and unblock signals as a group
+ - Ensuring that blocked state transfers across target instances.
+
+One place you might want to use such a structure is with #GtkTextView and
+#GtkTextBuffer. Often times, you'll need to connect to many signals on
+#GtkTextBuffer from a #GtkTextView subclass. This allows you to create a
+signal group during instance construction, simply bind the
+#GtkTextView:buffer property to #GSignalGroup:target and connect
+all the signals you need. When the #GtkTextView:buffer property changes
+all of the signals will be transitioned correctly.</doc>
+      <constructor name="new" c:identifier="g_signal_group_new" version="2.72">
+        <doc xml:space="preserve">Creates a new #GSignalGroup for target instances of @target_type.</doc>
+        <return-value transfer-ownership="full">
+          <doc xml:space="preserve">a new #GSignalGroup</doc>
+          <type name="SignalGroup" c:type="GSignalGroup*"/>
+        </return-value>
+        <parameters>
+          <parameter name="target_type" transfer-ownership="none">
+            <doc xml:space="preserve">the #GType of the target instance.</doc>
+            <type name="GType" c:type="GType"/>
+          </parameter>
+        </parameters>
+      </constructor>
+      <method name="block" c:identifier="g_signal_group_block" version="2.72">
+        <doc xml:space="preserve">Blocks all signal handlers managed by @self so they will not
+be called during any signal emissions. Must be unblocked exactly
+the same number of times it has been blocked to become active again.
+
+This blocked state will be kept across changes of the target instance.</doc>
+        <return-value transfer-ownership="none">
+          <type name="none" c:type="void"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="self" transfer-ownership="none">
+            <doc xml:space="preserve">the #GSignalGroup</doc>
+            <type name="SignalGroup" c:type="GSignalGroup*"/>
+          </instance-parameter>
+        </parameters>
+      </method>
+      <method name="connect" c:identifier="g_signal_group_connect" version="2.72" introspectable="0">
+        <doc xml:space="preserve">Connects @c_handler to the signal @detailed_signal
+on the target instance of @self.
+
+You cannot connect a signal handler after #GSignalGroup:target has been set.</doc>
+        <return-value transfer-ownership="none">
+          <type name="none" c:type="void"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="self" transfer-ownership="none">
+            <doc xml:space="preserve">a #GSignalGroup</doc>
+            <type name="SignalGroup" c:type="GSignalGroup*"/>
+          </instance-parameter>
+          <parameter name="detailed_signal" transfer-ownership="none">
+            <doc xml:space="preserve">a string of the form "signal-name::detail"</doc>
+            <type name="utf8" c:type="const gchar*"/>
+          </parameter>
+          <parameter name="c_handler" transfer-ownership="none" scope="notified" closure="2">
+            <doc xml:space="preserve">the #GCallback to connect</doc>
+            <type name="Callback" c:type="GCallback"/>
+          </parameter>
+          <parameter name="data" transfer-ownership="none" nullable="1" allow-none="1">
+            <doc xml:space="preserve">the data to pass to @c_handler calls</doc>
+            <type name="gpointer" c:type="gpointer"/>
+          </parameter>
+        </parameters>
+      </method>
+      <method name="connect_after" c:identifier="g_signal_group_connect_after" version="2.72" introspectable="0">
+        <doc xml:space="preserve">Connects @c_handler to the signal @detailed_signal
+on the target instance of @self.
+
+The @c_handler will be called after the default handler of the signal.
+
+You cannot connect a signal handler after #GSignalGroup:target has been set.</doc>
+        <return-value transfer-ownership="none">
+          <type name="none" c:type="void"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="self" transfer-ownership="none">
+            <doc xml:space="preserve">a #GSignalGroup</doc>
+            <type name="SignalGroup" c:type="GSignalGroup*"/>
+          </instance-parameter>
+          <parameter name="detailed_signal" transfer-ownership="none">
+            <doc xml:space="preserve">a string of the form "signal-name::detail"</doc>
+            <type name="utf8" c:type="const gchar*"/>
+          </parameter>
+          <parameter name="c_handler" transfer-ownership="none" scope="notified" closure="2">
+            <doc xml:space="preserve">the #GCallback to connect</doc>
+            <type name="Callback" c:type="GCallback"/>
+          </parameter>
+          <parameter name="data" transfer-ownership="none" nullable="1" allow-none="1">
+            <doc xml:space="preserve">the data to pass to @c_handler calls</doc>
+            <type name="gpointer" c:type="gpointer"/>
+          </parameter>
+        </parameters>
+      </method>
+      <method name="connect_data" c:identifier="g_signal_group_connect_data" version="2.72">
+        <doc xml:space="preserve">Connects @c_handler to the signal @detailed_signal
+on the target instance of @self.
+
+You cannot connect a signal handler after #GSignalGroup:target has been set.</doc>
+        <return-value transfer-ownership="none">
+          <type name="none" c:type="void"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="self" transfer-ownership="none">
+            <doc xml:space="preserve">a #GSignalGroup</doc>
+            <type name="SignalGroup" c:type="GSignalGroup*"/>
+          </instance-parameter>
+          <parameter name="detailed_signal" transfer-ownership="none">
+            <doc xml:space="preserve">a string of the form "signal-name::detail"</doc>
+            <type name="utf8" c:type="const gchar*"/>
+          </parameter>
+          <parameter name="c_handler" transfer-ownership="none" scope="notified" closure="2" destroy="3">
+            <doc xml:space="preserve">the #GCallback to connect</doc>
+            <type name="Callback" c:type="GCallback"/>
+          </parameter>
+          <parameter name="data" transfer-ownership="none" nullable="1" allow-none="1">
+            <doc xml:space="preserve">the data to pass to @c_handler calls</doc>
+            <type name="gpointer" c:type="gpointer"/>
+          </parameter>
+          <parameter name="notify" transfer-ownership="none" scope="notified">
+            <doc xml:space="preserve">function to be called when disposing of @self</doc>
+            <type name="ClosureNotify" c:type="GClosureNotify"/>
+          </parameter>
+          <parameter name="flags" transfer-ownership="none">
+            <doc xml:space="preserve">the flags used to create the signal connection</doc>
+            <type name="ConnectFlags" c:type="GConnectFlags"/>
+          </parameter>
+        </parameters>
+      </method>
+      <method name="connect_object" c:identifier="g_signal_group_connect_object" version="2.72" introspectable="0">
+        <doc xml:space="preserve">Connects @c_handler to the signal @detailed_signal on #GSignalGroup:target.
+
+Ensures that the @object stays alive during the call to @c_handler
+by temporarily adding a reference count. When the @object is destroyed
+the signal handler will automatically be removed.
+
+You cannot connect a signal handler after #GSignalGroup:target has been set.</doc>
+        <return-value transfer-ownership="none">
+          <type name="none" c:type="void"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="self" transfer-ownership="none">
+            <doc xml:space="preserve">a #GSignalGroup</doc>
+            <type name="SignalGroup" c:type="GSignalGroup*"/>
+          </instance-parameter>
+          <parameter name="detailed_signal" transfer-ownership="none">
+            <doc xml:space="preserve">a string of the form `signal-name` with optional `::signal-detail`</doc>
+            <type name="utf8" c:type="const gchar*"/>
+          </parameter>
+          <parameter name="c_handler" transfer-ownership="none" scope="notified">
+            <doc xml:space="preserve">the #GCallback to connect</doc>
+            <type name="Callback" c:type="GCallback"/>
+          </parameter>
+          <parameter name="object" transfer-ownership="none">
+            <doc xml:space="preserve">the #GObject to pass as data to @c_handler calls</doc>
+            <type name="gpointer" c:type="gpointer"/>
+          </parameter>
+          <parameter name="flags" transfer-ownership="none">
+            <doc xml:space="preserve">#GConnectFlags for the signal connection</doc>
+            <type name="ConnectFlags" c:type="GConnectFlags"/>
+          </parameter>
+        </parameters>
+      </method>
+      <method name="connect_swapped" c:identifier="g_signal_group_connect_swapped" version="2.72">
+        <doc xml:space="preserve">Connects @c_handler to the signal @detailed_signal
+on the target instance of @self.
+
+The instance on which the signal is emitted and @data
+will be swapped when calling @c_handler.
+
+You cannot connect a signal handler after #GSignalGroup:target has been set.</doc>
+        <return-value transfer-ownership="none">
+          <type name="none" c:type="void"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="self" transfer-ownership="none">
+            <doc xml:space="preserve">a #GSignalGroup</doc>
+            <type name="SignalGroup" c:type="GSignalGroup*"/>
+          </instance-parameter>
+          <parameter name="detailed_signal" transfer-ownership="none">
+            <doc xml:space="preserve">a string of the form "signal-name::detail"</doc>
+            <type name="utf8" c:type="const gchar*"/>
+          </parameter>
+          <parameter name="c_handler" transfer-ownership="none" scope="async" closure="2">
+            <doc xml:space="preserve">the #GCallback to connect</doc>
+            <type name="Callback" c:type="GCallback"/>
+          </parameter>
+          <parameter name="data" transfer-ownership="none" nullable="1" allow-none="1">
+            <doc xml:space="preserve">the data to pass to @c_handler calls</doc>
+            <type name="gpointer" c:type="gpointer"/>
+          </parameter>
+        </parameters>
+      </method>
+      <method name="dup_target" c:identifier="g_signal_group_dup_target" version="2.72">
+        <doc xml:space="preserve">Gets the target instance used when connecting signals.</doc>
+        <return-value transfer-ownership="full" nullable="1">
+          <doc xml:space="preserve">The target instance</doc>
+          <type name="Object" c:type="gpointer"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="self" transfer-ownership="none">
+            <doc xml:space="preserve">the #GSignalGroup</doc>
+            <type name="SignalGroup" c:type="GSignalGroup*"/>
+          </instance-parameter>
+        </parameters>
+      </method>
+      <method name="set_target" c:identifier="g_signal_group_set_target" glib:set-property="target" version="2.72">
+        <doc xml:space="preserve">Sets the target instance used when connecting signals. Any signal
+that has been registered with g_signal_group_connect_object() or
+similar functions will be connected to this object.
+
+If the target instance was previously set, signals will be
+disconnected from that object prior to connecting to @target.</doc>
+        <return-value transfer-ownership="none">
+          <type name="none" c:type="void"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="self" transfer-ownership="none">
+            <doc xml:space="preserve">the #GSignalGroup.</doc>
+            <type name="SignalGroup" c:type="GSignalGroup*"/>
+          </instance-parameter>
+          <parameter name="target" transfer-ownership="none" nullable="1" allow-none="1">
+            <doc xml:space="preserve">The target instance used
+    when connecting signals.</doc>
+            <type name="Object" c:type="gpointer"/>
+          </parameter>
+        </parameters>
+      </method>
+      <method name="unblock" c:identifier="g_signal_group_unblock" version="2.72">
+        <doc xml:space="preserve">Unblocks all signal handlers managed by @self so they will be
+called again during any signal emissions unless it is blocked
+again. Must be unblocked exactly the same number of times it
+has been blocked to become active again.</doc>
+        <return-value transfer-ownership="none">
+          <type name="none" c:type="void"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="self" transfer-ownership="none">
+            <doc xml:space="preserve">the #GSignalGroup</doc>
+            <type name="SignalGroup" c:type="GSignalGroup*"/>
+          </instance-parameter>
+        </parameters>
+      </method>
+      <property name="target" version="2.72" writable="1" transfer-ownership="none" setter="set_target">
+        <doc xml:space="preserve">The target instance used when connecting signals.</doc>
+        <type name="Object"/>
+      </property>
+      <property name="target-type" version="2.72" writable="1" construct-only="1" transfer-ownership="none">
+        <doc xml:space="preserve">The #GType of the target property.</doc>
+        <type name="GType" c:type="GType"/>
+      </property>
+      <glib:signal name="bind" when="last" version="2.72">
+        <doc xml:space="preserve">This signal is emitted when #GSignalGroup:target is set to a new value
+other than %NULL. It is similar to #GObject::notify on `target` except it
+will not emit when #GSignalGroup:target is %NULL and also allows for
+receiving the #GObject without a data-race.</doc>
+        <return-value transfer-ownership="none">
+          <type name="none" c:type="void"/>
+        </return-value>
+        <parameters>
+          <parameter name="instance" transfer-ownership="none">
+            <doc xml:space="preserve">a #GObject containing the new value for #GSignalGroup:target</doc>
+            <type name="Object"/>
+          </parameter>
+        </parameters>
+      </glib:signal>
+      <glib:signal name="unbind" when="last" version="2.72">
+        <doc xml:space="preserve">This signal is emitted when the target instance of @self is set to a
+new #GObject.
+
+This signal will only be emitted if the previous target of @self is
+non-%NULL.</doc>
+        <return-value transfer-ownership="none">
+          <type name="none" c:type="void"/>
+        </return-value>
+      </glib:signal>
+    </class>
     <record name="SignalInvocationHint" c:type="GSignalInvocationHint">
       <doc xml:space="preserve">The #GSignalInvocationHint structure is used to pass on additional information
 to callbacks during a signal emission.</doc>
