@@ -13789,7 +13789,7 @@ linked against at application run time.</doc>
       <doc xml:space="preserve">The maximum value which can be held in a #guint8.</doc>
       <type name="guint8" c:type="guint8"/>
     </constant>
-    <constant name="MICRO_VERSION" value="0" c:type="GLIB_MICRO_VERSION">
+    <constant name="MICRO_VERSION" value="1" c:type="GLIB_MICRO_VERSION">
       <doc xml:space="preserve">The micro version number of the GLib library.
 
 Like #gtk_micro_version, but from the headers used at
@@ -44261,6 +44261,20 @@ default "" application domain</doc>
         </parameter>
       </parameters>
     </function>
+    <function name="log_get_debug_enabled" c:identifier="g_log_get_debug_enabled" version="2.72">
+      <doc xml:space="preserve">Return whether debug output from the GLib logging system is enabled.
+
+Note that this should not be used to conditionalise calls to g_debug() or
+other logging functions; it should only be used from %GLogWriterFunc
+implementations.
+
+Note also that the value of this does not depend on `G_MESSAGES_DEBUG`, as
+it is domain-dependent.</doc>
+      <return-value transfer-ownership="none">
+        <doc xml:space="preserve">%TRUE if debug output is enabled, %FALSE otherwise</doc>
+        <type name="gboolean" c:type="gboolean"/>
+      </return-value>
+    </function>
     <function name="log_remove_handler" c:identifier="g_log_remove_handler">
       <doc xml:space="preserve">Removes the log handler.
 
@@ -44307,6 +44321,23 @@ are fatal. See [Using Structured Logging][using-structured-logging].</doc>
           <doc xml:space="preserve">the mask containing bits set for each level
     of error which is to be fatal</doc>
           <type name="LogLevelFlags" c:type="GLogLevelFlags"/>
+        </parameter>
+      </parameters>
+    </function>
+    <function name="log_set_debug_enabled" c:identifier="g_log_set_debug_enabled" version="2.72">
+      <doc xml:space="preserve">Enable or disable debug output from the GLib logging system is enabled. This
+value interacts disjunctively with `G_MESSAGES_DEBUG` &#x2014; if either of them
+would allow a debug message to be outputted, it will be.
+
+Note that this should not be used from within library code to enable debug
+output &#x2014; it is intended for external use.</doc>
+      <return-value transfer-ownership="none">
+        <type name="none" c:type="void"/>
+      </return-value>
+      <parameters>
+        <parameter name="enabled" transfer-ownership="none">
+          <doc xml:space="preserve">%TRUE to enable debug output, %FALSE otherwise</doc>
+          <type name="gboolean" c:type="gboolean"/>
         </parameter>
       </parameters>
     </function>
