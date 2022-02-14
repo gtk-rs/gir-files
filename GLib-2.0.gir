@@ -29549,6 +29549,9 @@ See [Unicode Standard Annex #24: Script names](http://www.unicode.org/reports/tr
       <member name="vithkuqi" value="161" c:identifier="G_UNICODE_SCRIPT_VITHKUQI">
         <doc xml:space="preserve">Vithkuqi. Since: 2.72</doc>
       </member>
+      <member name="math" value="162" c:identifier="G_UNICODE_SCRIPT_MATH">
+        <doc xml:space="preserve">Mathematical notation. Since: 2.72</doc>
+      </member>
     </enumeration>
     <enumeration name="UnicodeType" c:type="GUnicodeType">
       <doc xml:space="preserve">These are the possible character classifications from the
@@ -35661,6 +35664,69 @@ See your C library manual for more details about access().</doc>
         <parameter name="mode" transfer-ownership="none">
           <doc xml:space="preserve">as in access()</doc>
           <type name="gint" c:type="int"/>
+        </parameter>
+      </parameters>
+    </function>
+    <function name="aligned_alloc" c:identifier="g_aligned_alloc" version="2.72">
+      <doc xml:space="preserve">This function is similar to g_malloc(), allocating (@n_blocks * @n_block_bytes)
+bytes, but care is taken to align the allocated memory to with the given
+alignment value. Additionally, it will detect possible overflow during
+multiplication.
+
+Aligned memory allocations returned by this function can only be
+freed using g_aligned_free().</doc>
+      <return-value transfer-ownership="full" nullable="1">
+        <doc xml:space="preserve">the allocated memory</doc>
+        <type name="gpointer" c:type="gpointer"/>
+      </return-value>
+      <parameters>
+        <parameter name="n_blocks" transfer-ownership="none">
+          <doc xml:space="preserve">the number of blocks to allocate</doc>
+          <type name="gsize" c:type="gsize"/>
+        </parameter>
+        <parameter name="n_block_bytes" transfer-ownership="none">
+          <doc xml:space="preserve">the size of each block in bytes</doc>
+          <type name="gsize" c:type="gsize"/>
+        </parameter>
+        <parameter name="alignment" transfer-ownership="none">
+          <doc xml:space="preserve">the alignment to be enforced, which must be a positive power of 2
+  and a multiple of `sizeof(void*)`</doc>
+          <type name="gsize" c:type="gsize"/>
+        </parameter>
+      </parameters>
+    </function>
+    <function name="aligned_alloc0" c:identifier="g_aligned_alloc0" version="2.72">
+      <doc xml:space="preserve">This function is similar to g_aligned_alloc(), but it will
+also clear the allocated memory before returning it.</doc>
+      <return-value transfer-ownership="full" nullable="1">
+        <doc xml:space="preserve">the allocated, cleared memory</doc>
+        <type name="gpointer" c:type="gpointer"/>
+      </return-value>
+      <parameters>
+        <parameter name="n_blocks" transfer-ownership="none">
+          <doc xml:space="preserve">the number of blocks to allocate</doc>
+          <type name="gsize" c:type="gsize"/>
+        </parameter>
+        <parameter name="n_block_bytes" transfer-ownership="none">
+          <doc xml:space="preserve">the size of each block in bytes</doc>
+          <type name="gsize" c:type="gsize"/>
+        </parameter>
+        <parameter name="alignment" transfer-ownership="none">
+          <doc xml:space="preserve">the alignment to be enforced, which must be a positive power of 2
+  and a multiple of `sizeof(void*)`</doc>
+          <type name="gsize" c:type="gsize"/>
+        </parameter>
+      </parameters>
+    </function>
+    <function name="aligned_free" c:identifier="g_aligned_free" version="2.72">
+      <doc xml:space="preserve">Frees the memory allocated by g_aligned_alloc().</doc>
+      <return-value transfer-ownership="none">
+        <type name="none" c:type="void"/>
+      </return-value>
+      <parameters>
+        <parameter name="mem" transfer-ownership="none" nullable="1" allow-none="1">
+          <doc xml:space="preserve">the memory to deallocate</doc>
+          <type name="gpointer" c:type="gpointer"/>
         </parameter>
       </parameters>
     </function>
@@ -49678,6 +49744,8 @@ to the spawned process. FD remappings are processed after standard FDs, so
 any target FDs which equal @stdin_fd, @stdout_fd or @stderr_fd will overwrite
 them in the spawned process.
 
+@source_fds is supported on Windows since 2.72.
+
 %G_SPAWN_FILE_AND_ARGV_ZERO means that the first element of @argv is
 the file to execute, while the remaining elements are the actual
 argument vector to pass to the file. Normally g_spawn_async_with_pipes()
@@ -52345,9 +52413,10 @@ See also: g_test_bug()</doc-version>
       </parameters>
     </function>
     <function name="test_timer_elapsed" c:identifier="g_test_timer_elapsed" version="2.16">
-      <doc xml:space="preserve">Get the time since the last start of the timer with g_test_timer_start().</doc>
+      <doc xml:space="preserve">Get the number of seconds since the last start of the timer with
+g_test_timer_start().</doc>
       <return-value transfer-ownership="none">
-        <doc xml:space="preserve">the time since the last start of the timer, as a double</doc>
+        <doc xml:space="preserve">the time since the last start of the timer in seconds, as a double</doc>
         <type name="gdouble" c:type="double"/>
       </return-value>
     </function>
