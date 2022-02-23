@@ -3413,6 +3413,18 @@ GtkWidget *    gtk_frobber_new   (void);
 #endif
 ]|
 
+Since the instance structure is public it is often needed to declare a
+private struct as follow in your C file:
+
+|[&lt;!-- language="C" --&gt;
+typedef struct _GtkFrobberPrivate GtkFrobberPrivate;
+struct _GtkFrobberPrivate
+{
+  ...
+};
+G_DEFINE_TYPE_WITH_PRIVATE (GtkFrobber, gtk_frobber, GTK_TYPE_WIDGET)
+]|
+
 This results in the following things happening:
 
 - the usual `gtk_frobber_get_type()` function is declared with a return type of #GType
@@ -3486,6 +3498,17 @@ MyAppWindow *    my_app_window_new    (void);
 ...
 
 #endif
+]|
+
+And use it as follow in your C file:
+
+|[&lt;!-- language="C" --&gt;
+struct _MyAppWindow
+{
+ GtkWindow parent;
+ ...
+};
+G_DEFINE_TYPE (MyAppWindow, my_app_window, GTK_TYPE_WINDOW)
 ]|
 
 This results in the following things happening:
@@ -3565,6 +3588,18 @@ gpointer my_model_get_item (MyModel *model);
 ...
 
 #endif
+]|
+
+And use it as follow in your C file:
+
+|[&lt;!-- language="C" --&gt;
+G_DEFINE_INTERFACE (MyModel, my_model, G_TYPE_OBJECT);
+
+static void
+my_model_default_init (MyModelInterface *iface)
+{
+  ...
+}
 ]|
 
 This results in the following things happening:
