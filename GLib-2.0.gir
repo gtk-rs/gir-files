@@ -1321,9 +1321,18 @@ the queue is destroyed after the final unref.</doc>
     </record>
     <constant name="BIG_ENDIAN" value="4321" c:type="G_BIG_ENDIAN">
       <doc xml:space="preserve">Specifies one of the possible types of byte order.
-See #G_BYTE_ORDER.</doc>
+See %G_BYTE_ORDER.</doc>
       <type name="gint" c:type="gint"/>
     </constant>
+    <function-macro name="BREAKPOINT" c:identifier="G_BREAKPOINT" introspectable="0">
+      <doc xml:space="preserve">Inserts a breakpoint instruction into the code.
+
+On architectures which support it, this is implemented as a soft interrupt
+and on other architectures it raises a `SIGTRAP` signal.
+
+`SIGTRAP` is used rather than abort() to allow breakpoints to be skipped past
+in a debugger if they are not the desired target of debugging.</doc>
+    </function-macro>
     <record name="BookmarkFile" c:type="GBookmarkFile" disguised="1">
       <doc xml:space="preserve">An opaque data structure representing a set of bookmarks.</doc>
       <method name="add_application" c:identifier="g_bookmark_file_add_application" version="2.12">
@@ -1411,7 +1420,7 @@ If no bookmark for @uri is found then it is created.</doc>
         <doc xml:space="preserve">Gets the time the bookmark for @uri was added to @bookmark
 
 In the event the URI cannot be found, -1 is returned and
-@error is set to #G_BOOKMARK_FILE_ERROR_URI_NOT_FOUND.</doc>
+@error is set to %G_BOOKMARK_FILE_ERROR_URI_NOT_FOUND.</doc>
         <doc-deprecated xml:space="preserve">Use g_bookmark_file_get_added_date_time() instead, as
    `time_t` is deprecated due to the year 2038 problem.</doc-deprecated>
         <return-value transfer-ownership="none">
@@ -1433,7 +1442,7 @@ In the event the URI cannot be found, -1 is returned and
         <doc xml:space="preserve">Gets the time the bookmark for @uri was added to @bookmark
 
 In the event the URI cannot be found, %NULL is returned and
-@error is set to #G_BOOKMARK_FILE_ERROR_URI_NOT_FOUND.</doc>
+@error is set to %G_BOOKMARK_FILE_ERROR_URI_NOT_FOUND.</doc>
         <return-value transfer-ownership="none">
           <doc xml:space="preserve">a #GDateTime</doc>
           <type name="DateTime" c:type="GDateTime*"/>
@@ -1457,11 +1466,11 @@ the returned data.
 The string returned in @app_exec must be freed.
 
 In the event the URI cannot be found, %FALSE is returned and
-@error is set to #G_BOOKMARK_FILE_ERROR_URI_NOT_FOUND.  In the
+@error is set to %G_BOOKMARK_FILE_ERROR_URI_NOT_FOUND.  In the
 event that no application with name @app_name has registered a bookmark
 for @uri,  %FALSE is returned and error is set to
-#G_BOOKMARK_FILE_ERROR_APP_NOT_REGISTERED. In the event that unquoting
-the command line fails, an error of the #G_SHELL_ERROR domain is
+%G_BOOKMARK_FILE_ERROR_APP_NOT_REGISTERED. In the event that unquoting
+the command line fails, an error of the %G_SHELL_ERROR domain is
 set and %FALSE is returned.</doc>
         <doc-deprecated xml:space="preserve">Use g_bookmark_file_get_application_info() instead, as
    `time_t` is deprecated due to the year 2038 problem.</doc-deprecated>
@@ -1504,11 +1513,11 @@ the returned data.
 The string returned in @app_exec must be freed.
 
 In the event the URI cannot be found, %FALSE is returned and
-@error is set to #G_BOOKMARK_FILE_ERROR_URI_NOT_FOUND.  In the
+@error is set to %G_BOOKMARK_FILE_ERROR_URI_NOT_FOUND.  In the
 event that no application with name @app_name has registered a bookmark
 for @uri,  %FALSE is returned and error is set to
-#G_BOOKMARK_FILE_ERROR_APP_NOT_REGISTERED. In the event that unquoting
-the command line fails, an error of the #G_SHELL_ERROR domain is
+%G_BOOKMARK_FILE_ERROR_APP_NOT_REGISTERED. In the event that unquoting
+the command line fails, an error of the %G_SHELL_ERROR domain is
 set and %FALSE is returned.</doc>
         <return-value transfer-ownership="none">
           <doc xml:space="preserve">%TRUE on success.</doc>
@@ -1546,7 +1555,7 @@ set and %FALSE is returned.</doc>
 bookmark for @uri.
 
 In the event the URI cannot be found, %NULL is returned and
-@error is set to #G_BOOKMARK_FILE_ERROR_URI_NOT_FOUND.</doc>
+@error is set to %G_BOOKMARK_FILE_ERROR_URI_NOT_FOUND.</doc>
         <return-value transfer-ownership="full">
           <doc xml:space="preserve">a newly allocated %NULL-terminated array of strings.
   Use g_strfreev() to free it.</doc>
@@ -1573,7 +1582,7 @@ In the event the URI cannot be found, %NULL is returned and
         <doc xml:space="preserve">Retrieves the description of the bookmark for @uri.
 
 In the event the URI cannot be found, %NULL is returned and
-@error is set to #G_BOOKMARK_FILE_ERROR_URI_NOT_FOUND.</doc>
+@error is set to %G_BOOKMARK_FILE_ERROR_URI_NOT_FOUND.</doc>
         <return-value transfer-ownership="full">
           <doc xml:space="preserve">a newly allocated string or %NULL if the specified
   URI cannot be found.</doc>
@@ -1594,7 +1603,7 @@ In the event the URI cannot be found, %NULL is returned and
         <doc xml:space="preserve">Retrieves the list of group names of the bookmark for @uri.
 
 In the event the URI cannot be found, %NULL is returned and
-@error is set to #G_BOOKMARK_FILE_ERROR_URI_NOT_FOUND.
+@error is set to %G_BOOKMARK_FILE_ERROR_URI_NOT_FOUND.
 
 The returned array is %NULL terminated, so @length may optionally
 be %NULL.</doc>
@@ -1624,7 +1633,7 @@ be %NULL.</doc>
         <doc xml:space="preserve">Gets the icon of the bookmark for @uri.
 
 In the event the URI cannot be found, %FALSE is returned and
-@error is set to #G_BOOKMARK_FILE_ERROR_URI_NOT_FOUND.</doc>
+@error is set to %G_BOOKMARK_FILE_ERROR_URI_NOT_FOUND.</doc>
         <return-value transfer-ownership="none">
           <doc xml:space="preserve">%TRUE if the icon for the bookmark for the URI was found.
   You should free the returned strings.</doc>
@@ -1653,9 +1662,9 @@ In the event the URI cannot be found, %FALSE is returned and
         <doc xml:space="preserve">Gets whether the private flag of the bookmark for @uri is set.
 
 In the event the URI cannot be found, %FALSE is returned and
-@error is set to #G_BOOKMARK_FILE_ERROR_URI_NOT_FOUND.  In the
+@error is set to %G_BOOKMARK_FILE_ERROR_URI_NOT_FOUND.  In the
 event that the private flag cannot be found, %FALSE is returned and
-@error is set to #G_BOOKMARK_FILE_ERROR_INVALID_VALUE.</doc>
+@error is set to %G_BOOKMARK_FILE_ERROR_INVALID_VALUE.</doc>
         <return-value transfer-ownership="none">
           <doc xml:space="preserve">%TRUE if the private flag is set, %FALSE otherwise.</doc>
           <type name="gboolean" c:type="gboolean"/>
@@ -1675,9 +1684,9 @@ event that the private flag cannot be found, %FALSE is returned and
         <doc xml:space="preserve">Retrieves the MIME type of the resource pointed by @uri.
 
 In the event the URI cannot be found, %NULL is returned and
-@error is set to #G_BOOKMARK_FILE_ERROR_URI_NOT_FOUND.  In the
+@error is set to %G_BOOKMARK_FILE_ERROR_URI_NOT_FOUND.  In the
 event that the MIME type cannot be found, %NULL is returned and
-@error is set to #G_BOOKMARK_FILE_ERROR_INVALID_VALUE.</doc>
+@error is set to %G_BOOKMARK_FILE_ERROR_INVALID_VALUE.</doc>
         <return-value transfer-ownership="full">
           <doc xml:space="preserve">a newly allocated string or %NULL if the specified
   URI cannot be found.</doc>
@@ -1698,7 +1707,7 @@ event that the MIME type cannot be found, %NULL is returned and
         <doc xml:space="preserve">Gets the time when the bookmark for @uri was last modified.
 
 In the event the URI cannot be found, -1 is returned and
-@error is set to #G_BOOKMARK_FILE_ERROR_URI_NOT_FOUND.</doc>
+@error is set to %G_BOOKMARK_FILE_ERROR_URI_NOT_FOUND.</doc>
         <doc-deprecated xml:space="preserve">Use g_bookmark_file_get_modified_date_time() instead, as
    `time_t` is deprecated due to the year 2038 problem.</doc-deprecated>
         <return-value transfer-ownership="none">
@@ -1720,7 +1729,7 @@ In the event the URI cannot be found, -1 is returned and
         <doc xml:space="preserve">Gets the time when the bookmark for @uri was last modified.
 
 In the event the URI cannot be found, %NULL is returned and
-@error is set to #G_BOOKMARK_FILE_ERROR_URI_NOT_FOUND.</doc>
+@error is set to %G_BOOKMARK_FILE_ERROR_URI_NOT_FOUND.</doc>
         <return-value transfer-ownership="none">
           <doc xml:space="preserve">a #GDateTime</doc>
           <type name="DateTime" c:type="GDateTime*"/>
@@ -1755,7 +1764,7 @@ In the event the URI cannot be found, %NULL is returned and
 If @uri is %NULL, the title of @bookmark is returned.
 
 In the event the URI cannot be found, %NULL is returned and
-@error is set to #G_BOOKMARK_FILE_ERROR_URI_NOT_FOUND.</doc>
+@error is set to %G_BOOKMARK_FILE_ERROR_URI_NOT_FOUND.</doc>
         <return-value transfer-ownership="full">
           <doc xml:space="preserve">a newly allocated string or %NULL if the specified
   URI cannot be found.</doc>
@@ -1798,7 +1807,7 @@ optionally be %NULL.</doc>
         <doc xml:space="preserve">Gets the time the bookmark for @uri was last visited.
 
 In the event the URI cannot be found, -1 is returned and
-@error is set to #G_BOOKMARK_FILE_ERROR_URI_NOT_FOUND.</doc>
+@error is set to %G_BOOKMARK_FILE_ERROR_URI_NOT_FOUND.</doc>
         <doc-deprecated xml:space="preserve">Use g_bookmark_file_get_visited_date_time() instead, as
    `time_t` is deprecated due to the year 2038 problem.</doc-deprecated>
         <return-value transfer-ownership="none">
@@ -1820,7 +1829,7 @@ In the event the URI cannot be found, -1 is returned and
         <doc xml:space="preserve">Gets the time the bookmark for @uri was last visited.
 
 In the event the URI cannot be found, %NULL is returned and
-@error is set to #G_BOOKMARK_FILE_ERROR_URI_NOT_FOUND.</doc>
+@error is set to %G_BOOKMARK_FILE_ERROR_URI_NOT_FOUND.</doc>
         <return-value transfer-ownership="none">
           <doc xml:space="preserve">a #GDateTime</doc>
           <type name="DateTime" c:type="GDateTime*"/>
@@ -1841,7 +1850,7 @@ In the event the URI cannot be found, %NULL is returned and
 registered by application @name.
 
 In the event the URI cannot be found, %FALSE is returned and
-@error is set to #G_BOOKMARK_FILE_ERROR_URI_NOT_FOUND.</doc>
+@error is set to %G_BOOKMARK_FILE_ERROR_URI_NOT_FOUND.</doc>
         <return-value transfer-ownership="none">
           <doc xml:space="preserve">%TRUE if the application @name was found</doc>
           <type name="gboolean" c:type="gboolean"/>
@@ -1866,7 +1875,7 @@ In the event the URI cannot be found, %FALSE is returned and
 the bookmark for @uri belongs to.
 
 In the event the URI cannot be found, %FALSE is returned and
-@error is set to #G_BOOKMARK_FILE_ERROR_URI_NOT_FOUND.</doc>
+@error is set to %G_BOOKMARK_FILE_ERROR_URI_NOT_FOUND.</doc>
         <return-value transfer-ownership="none">
           <doc xml:space="preserve">%TRUE if @group was found.</doc>
           <type name="gboolean" c:type="gboolean"/>
@@ -1981,7 +1990,7 @@ existing bookmark for @new_uri will be overwritten.  If @new_uri is
 %NULL, then the bookmark is removed.
 
 In the event the URI cannot be found, %FALSE is returned and
-@error is set to #G_BOOKMARK_FILE_ERROR_URI_NOT_FOUND.</doc>
+@error is set to %G_BOOKMARK_FILE_ERROR_URI_NOT_FOUND.</doc>
         <return-value transfer-ownership="none">
           <doc xml:space="preserve">%TRUE if the URI was successfully changed</doc>
           <type name="gboolean" c:type="gboolean"/>
@@ -2006,10 +2015,10 @@ In the event the URI cannot be found, %FALSE is returned and
 that have registered a bookmark for @uri inside @bookmark.
 
 In the event the URI cannot be found, %FALSE is returned and
-@error is set to #G_BOOKMARK_FILE_ERROR_URI_NOT_FOUND.
+@error is set to %G_BOOKMARK_FILE_ERROR_URI_NOT_FOUND.
 In the event that no application with name @app_name has registered
 a bookmark for @uri,  %FALSE is returned and error is set to
-#G_BOOKMARK_FILE_ERROR_APP_NOT_REGISTERED.</doc>
+%G_BOOKMARK_FILE_ERROR_APP_NOT_REGISTERED.</doc>
         <return-value transfer-ownership="none">
           <doc xml:space="preserve">%TRUE if the application was successfully removed.</doc>
           <type name="gboolean" c:type="gboolean"/>
@@ -2034,9 +2043,9 @@ a bookmark for @uri,  %FALSE is returned and error is set to
 for @uri belongs to.
 
 In the event the URI cannot be found, %FALSE is returned and
-@error is set to #G_BOOKMARK_FILE_ERROR_URI_NOT_FOUND.
+@error is set to %G_BOOKMARK_FILE_ERROR_URI_NOT_FOUND.
 In the event no group was defined, %FALSE is returned and
-@error is set to #G_BOOKMARK_FILE_ERROR_INVALID_VALUE.</doc>
+@error is set to %G_BOOKMARK_FILE_ERROR_INVALID_VALUE.</doc>
         <return-value transfer-ownership="none">
           <doc xml:space="preserve">%TRUE if @group was successfully removed.</doc>
           <type name="gboolean" c:type="gboolean"/>
@@ -2143,10 +2152,10 @@ current time will be used.
 
 If you try to remove an application by setting its registration count to
 zero, and no bookmark for @uri is found, %FALSE is returned and
-@error is set to #G_BOOKMARK_FILE_ERROR_URI_NOT_FOUND; similarly,
+@error is set to %G_BOOKMARK_FILE_ERROR_URI_NOT_FOUND; similarly,
 in the event that no application @name has registered a bookmark
 for @uri,  %FALSE is returned and error is set to
-#G_BOOKMARK_FILE_ERROR_APP_NOT_REGISTERED.  Otherwise, if no bookmark
+%G_BOOKMARK_FILE_ERROR_APP_NOT_REGISTERED.  Otherwise, if no bookmark
 for @uri is found, one is created.</doc>
         <doc-deprecated xml:space="preserve">Use g_bookmark_file_set_application_info() instead, as
    `time_t` is deprecated due to the year 2038 problem.</doc-deprecated>
@@ -2205,10 +2214,10 @@ the list of registered applications.
 
 If you try to remove an application by setting its registration count to
 zero, and no bookmark for @uri is found, %FALSE is returned and
-@error is set to #G_BOOKMARK_FILE_ERROR_URI_NOT_FOUND; similarly,
+@error is set to %G_BOOKMARK_FILE_ERROR_URI_NOT_FOUND; similarly,
 in the event that no application @name has registered a bookmark
 for @uri,  %FALSE is returned and error is set to
-#G_BOOKMARK_FILE_ERROR_APP_NOT_REGISTERED.  Otherwise, if no bookmark
+%G_BOOKMARK_FILE_ERROR_APP_NOT_REGISTERED.  Otherwise, if no bookmark
 for @uri is found, one is created.</doc>
         <return-value transfer-ownership="none">
           <doc xml:space="preserve">%TRUE if the application's meta-data was successfully
@@ -3961,6 +3970,11 @@ flags &amp; ~G_DATALIST_FLAGS_MASK != 0 is an error.</doc>
       <doc xml:space="preserve">Represents an invalid year.</doc>
       <type name="gint" c:type="gint"/>
     </constant>
+    <function-macro name="DEBUG_HERE" c:identifier="G_DEBUG_HERE" version="2.50" introspectable="0">
+      <doc xml:space="preserve">A convenience form of g_log_structured(), recommended to be added to
+functions when debugging. It prints the current monotonic time and the code
+location using %G_STRLOC.</doc>
+    </function-macro>
     <function-macro name="DEFINE_AUTOPTR_CLEANUP_FUNC" c:identifier="G_DEFINE_AUTOPTR_CLEANUP_FUNC" version="2.44" introspectable="0">
       <doc xml:space="preserve">Defines the appropriate cleanup function for a pointer type.
 
@@ -6874,8 +6888,8 @@ When the reference count reaches zero, the resources allocated by
       </method>
     </record>
     <enumeration name="DateWeekday" c:type="GDateWeekday">
-      <doc xml:space="preserve">Enumeration representing a day of the week; #G_DATE_MONDAY,
-#G_DATE_TUESDAY, etc. #G_DATE_BAD_WEEKDAY is an invalid weekday.</doc>
+      <doc xml:space="preserve">Enumeration representing a day of the week; %G_DATE_MONDAY,
+%G_DATE_TUESDAY, etc. %G_DATE_BAD_WEEKDAY is an invalid weekday.</doc>
       <member name="bad_weekday" value="0" c:identifier="G_DATE_BAD_WEEKDAY">
         <doc xml:space="preserve">invalid value</doc>
       </member>
@@ -7699,13 +7713,13 @@ g_print ("%#" G_GINT16_MODIFIER "x", value);
     </constant>
     <constant name="GINT32_FORMAT" value="i" c:type="G_GINT32_FORMAT">
       <doc xml:space="preserve">This is the platform dependent conversion specifier for scanning
-and printing values of type #gint32. See also #G_GINT16_FORMAT.</doc>
+and printing values of type #gint32. See also %G_GINT16_FORMAT.</doc>
       <type name="utf8" c:type="gchar*"/>
     </constant>
     <constant name="GINT32_MODIFIER" value="" c:type="G_GINT32_MODIFIER" version="2.4">
       <doc xml:space="preserve">The platform dependent length modifier for conversion specifiers
 for scanning and printing values of type #gint32 or #guint32. It
-is a string literal. See also #G_GINT16_MODIFIER.</doc>
+is a string literal. See also %G_GINT16_MODIFIER.</doc>
       <type name="utf8" c:type="gchar*"/>
     </constant>
     <function-macro name="GINT64_CONSTANT" c:identifier="G_GINT64_CONSTANT" introspectable="0">
@@ -7719,7 +7733,7 @@ into the source code.</doc>
     </function-macro>
     <constant name="GINT64_FORMAT" value="li" c:type="G_GINT64_FORMAT">
       <doc xml:space="preserve">This is the platform dependent conversion specifier for scanning
-and printing values of type #gint64. See also #G_GINT16_FORMAT.
+and printing values of type #gint64. See also %G_GINT16_FORMAT.
 
 Some platforms do not support scanning and printing 64-bit integers,
 even though the types are supported. On such platforms %G_GINT64_FORMAT
@@ -7955,7 +7969,7 @@ for details.</doc>
       <doc xml:space="preserve">This macro is used to insert #goffset 64-bit integer literals
 into the source code.
 
-See also #G_GINT64_CONSTANT.</doc>
+See also G_GINT64_CONSTANT().</doc>
       <parameters>
         <parameter name="val">
           <doc xml:space="preserve">a literal integer value, e.g. 0x1d636b02300a7aa7</doc>
@@ -7964,7 +7978,7 @@ See also #G_GINT64_CONSTANT.</doc>
     </function-macro>
     <constant name="GSIZE_FORMAT" value="lu" c:type="G_GSIZE_FORMAT" version="2.6">
       <doc xml:space="preserve">This is the platform dependent conversion specifier for scanning
-and printing values of type #gsize. See also #G_GINT16_FORMAT.</doc>
+and printing values of type #gsize. See also %G_GINT16_FORMAT.</doc>
       <type name="utf8" c:type="gchar*"/>
     </constant>
     <constant name="GSIZE_MODIFIER" value="l" c:type="G_GSIZE_MODIFIER" version="2.6">
@@ -7975,7 +7989,7 @@ is a string literal.</doc>
     </constant>
     <constant name="GSSIZE_FORMAT" value="li" c:type="G_GSSIZE_FORMAT" version="2.6">
       <doc xml:space="preserve">This is the platform dependent conversion specifier for scanning
-and printing values of type #gssize. See also #G_GINT16_FORMAT.</doc>
+and printing values of type #gssize. See also %G_GINT16_FORMAT.</doc>
       <type name="utf8" c:type="gchar*"/>
     </constant>
     <constant name="GSSIZE_MODIFIER" value="l" c:type="G_GSSIZE_MODIFIER" version="2.6">
@@ -7986,12 +8000,12 @@ is a string literal.</doc>
     </constant>
     <constant name="GUINT16_FORMAT" value="hu" c:type="G_GUINT16_FORMAT">
       <doc xml:space="preserve">This is the platform dependent conversion specifier for scanning
-and printing values of type #guint16. See also #G_GINT16_FORMAT</doc>
+and printing values of type #guint16. See also %G_GINT16_FORMAT</doc>
       <type name="utf8" c:type="gchar*"/>
     </constant>
     <constant name="GUINT32_FORMAT" value="u" c:type="G_GUINT32_FORMAT">
       <doc xml:space="preserve">This is the platform dependent conversion specifier for scanning
-and printing values of type #guint32. See also #G_GINT16_FORMAT.</doc>
+and printing values of type #guint32. See also %G_GINT16_FORMAT.</doc>
       <type name="utf8" c:type="gchar*"/>
     </constant>
     <function-macro name="GUINT64_CONSTANT" c:identifier="G_GUINT64_CONSTANT" version="2.10" introspectable="0">
@@ -8005,7 +8019,7 @@ literals into the source code.</doc>
     </function-macro>
     <constant name="GUINT64_FORMAT" value="lu" c:type="G_GUINT64_FORMAT">
       <doc xml:space="preserve">This is the platform dependent conversion specifier for scanning
-and printing values of type #guint64. See also #G_GINT16_FORMAT.
+and printing values of type #guint64. See also %G_GINT16_FORMAT.
 
 Some platforms do not support scanning and printing 64-bit integers,
 even though the types are supported. On such platforms %G_GUINT64_FORMAT
@@ -10116,8 +10130,8 @@ last reference is dropped using g_io_channel_unref().</doc>
         <doc xml:space="preserve">Flushes the write buffer for the GIOChannel.</doc>
         <return-value transfer-ownership="none">
           <doc xml:space="preserve">the status of the operation: One of
-  #G_IO_STATUS_NORMAL, #G_IO_STATUS_AGAIN, or
-  #G_IO_STATUS_ERROR.</doc>
+  %G_IO_STATUS_NORMAL, %G_IO_STATUS_AGAIN, or
+  %G_IO_STATUS_ERROR.</doc>
           <type name="IOStatus" c:type="GIOStatus"/>
         </return-value>
         <parameters>
@@ -11262,9 +11276,9 @@ frees the key file and all its allocated memory.</doc>
 boolean.
 
 If @key cannot be found then %FALSE is returned and @error is set
-to #G_KEY_FILE_ERROR_KEY_NOT_FOUND. Likewise, if the value
+to %G_KEY_FILE_ERROR_KEY_NOT_FOUND. Likewise, if the value
 associated with @key cannot be interpreted as a boolean then %FALSE
-is returned and @error is set to #G_KEY_FILE_ERROR_INVALID_VALUE.</doc>
+is returned and @error is set to %G_KEY_FILE_ERROR_INVALID_VALUE.</doc>
         <return-value transfer-ownership="none">
           <doc xml:space="preserve">the value associated with the key as a boolean,
    or %FALSE if the key was not found or could not be parsed.</doc>
@@ -11290,9 +11304,9 @@ is returned and @error is set to #G_KEY_FILE_ERROR_INVALID_VALUE.</doc>
 booleans.
 
 If @key cannot be found then %NULL is returned and @error is set to
-#G_KEY_FILE_ERROR_KEY_NOT_FOUND. Likewise, if the values associated
+%G_KEY_FILE_ERROR_KEY_NOT_FOUND. Likewise, if the values associated
 with @key cannot be interpreted as booleans then %NULL is returned
-and @error is set to #G_KEY_FILE_ERROR_INVALID_VALUE.</doc>
+and @error is set to %G_KEY_FILE_ERROR_INVALID_VALUE.</doc>
         <return-value transfer-ownership="container">
           <doc xml:space="preserve">
    the values associated with the key as a list of booleans, or %NULL if the
@@ -11354,9 +11368,9 @@ the line breaks between lines, but does not include the final line break.</doc>
 double. If @group_name is %NULL, the start_group is used.
 
 If @key cannot be found then 0.0 is returned and @error is set to
-#G_KEY_FILE_ERROR_KEY_NOT_FOUND. Likewise, if the value associated
+%G_KEY_FILE_ERROR_KEY_NOT_FOUND. Likewise, if the value associated
 with @key cannot be interpreted as a double then 0.0 is returned
-and @error is set to #G_KEY_FILE_ERROR_INVALID_VALUE.</doc>
+and @error is set to %G_KEY_FILE_ERROR_INVALID_VALUE.</doc>
         <return-value transfer-ownership="none">
           <doc xml:space="preserve">the value associated with the key as a double, or
     0.0 if the key was not found or could not be parsed.</doc>
@@ -11382,9 +11396,9 @@ and @error is set to #G_KEY_FILE_ERROR_INVALID_VALUE.</doc>
 doubles.
 
 If @key cannot be found then %NULL is returned and @error is set to
-#G_KEY_FILE_ERROR_KEY_NOT_FOUND. Likewise, if the values associated
+%G_KEY_FILE_ERROR_KEY_NOT_FOUND. Likewise, if the values associated
 with @key cannot be interpreted as doubles then %NULL is returned
-and @error is set to #G_KEY_FILE_ERROR_INVALID_VALUE.</doc>
+and @error is set to %G_KEY_FILE_ERROR_INVALID_VALUE.</doc>
         <return-value transfer-ownership="container">
           <doc xml:space="preserve">
     the values associated with the key as a list of doubles, or %NULL if the
@@ -11464,10 +11478,10 @@ The array of returned groups will be %NULL-terminated, so
 integer.
 
 If @key cannot be found then 0 is returned and @error is set to
-#G_KEY_FILE_ERROR_KEY_NOT_FOUND. Likewise, if the value associated
+%G_KEY_FILE_ERROR_KEY_NOT_FOUND. Likewise, if the value associated
 with @key cannot be interpreted as an integer, or is out of range
 for a #gint, then 0 is returned
-and @error is set to #G_KEY_FILE_ERROR_INVALID_VALUE.</doc>
+and @error is set to %G_KEY_FILE_ERROR_INVALID_VALUE.</doc>
         <return-value transfer-ownership="none">
           <doc xml:space="preserve">the value associated with the key as an integer, or
     0 if the key was not found or could not be parsed.</doc>
@@ -11493,10 +11507,10 @@ and @error is set to #G_KEY_FILE_ERROR_INVALID_VALUE.</doc>
 integers.
 
 If @key cannot be found then %NULL is returned and @error is set to
-#G_KEY_FILE_ERROR_KEY_NOT_FOUND. Likewise, if the values associated
+%G_KEY_FILE_ERROR_KEY_NOT_FOUND. Likewise, if the values associated
 with @key cannot be interpreted as integers, or are out of range for
 #gint, then %NULL is returned
-and @error is set to #G_KEY_FILE_ERROR_INVALID_VALUE.</doc>
+and @error is set to %G_KEY_FILE_ERROR_INVALID_VALUE.</doc>
         <return-value transfer-ownership="container">
           <doc xml:space="preserve">
     the values associated with the key as a list of integers, or %NULL if
@@ -11530,7 +11544,7 @@ and @error is set to #G_KEY_FILE_ERROR_INVALID_VALUE.</doc>
 returned keys will be %NULL-terminated, so @length may
 optionally be %NULL. In the event that the @group_name cannot
 be found, %NULL is returned and @error is set to
-#G_KEY_FILE_ERROR_GROUP_NOT_FOUND.</doc>
+%G_KEY_FILE_ERROR_GROUP_NOT_FOUND.</doc>
         <return-value transfer-ownership="full">
           <doc xml:space="preserve">a newly-allocated %NULL-terminated array of strings.
     Use g_strfreev() to free it.</doc>
@@ -11597,7 +11611,7 @@ the lifetime of the #GKeyFile, it must be loaded with
 %G_KEY_FILE_KEEP_TRANSLATIONS in order to load strings for all locales.
 
 If @key cannot be found then %NULL is returned and @error is set
-to #G_KEY_FILE_ERROR_KEY_NOT_FOUND. If the value associated
+to %G_KEY_FILE_ERROR_KEY_NOT_FOUND. If the value associated
 with @key cannot be interpreted or no suitable translation can
 be found then the untranslated value is returned.</doc>
         <return-value transfer-ownership="full">
@@ -11634,7 +11648,7 @@ the lifetime of the #GKeyFile, it must be loaded with
 %G_KEY_FILE_KEEP_TRANSLATIONS in order to load strings for all locales.
 
 If @key cannot be found then %NULL is returned and @error is set
-to #G_KEY_FILE_ERROR_KEY_NOT_FOUND. If the values associated
+to %G_KEY_FILE_ERROR_KEY_NOT_FOUND. If the values associated
 with @key cannot be interpreted or no suitable translations
 can be found then the untranslated values are returned. The
 returned array is %NULL-terminated, so @length may optionally
@@ -11689,9 +11703,9 @@ Unlike g_key_file_get_value(), this function handles escape sequences
 like \s.
 
 In the event the key cannot be found, %NULL is returned and
-@error is set to #G_KEY_FILE_ERROR_KEY_NOT_FOUND.  In the
+@error is set to %G_KEY_FILE_ERROR_KEY_NOT_FOUND.  In the
 event that the @group_name cannot be found, %NULL is returned
-and @error is set to #G_KEY_FILE_ERROR_GROUP_NOT_FOUND.</doc>
+and @error is set to %G_KEY_FILE_ERROR_GROUP_NOT_FOUND.</doc>
         <return-value transfer-ownership="full">
           <doc xml:space="preserve">a newly allocated string or %NULL if the specified
   key cannot be found.</doc>
@@ -11716,9 +11730,9 @@ and @error is set to #G_KEY_FILE_ERROR_GROUP_NOT_FOUND.</doc>
         <doc xml:space="preserve">Returns the values associated with @key under @group_name.
 
 In the event the key cannot be found, %NULL is returned and
-@error is set to #G_KEY_FILE_ERROR_KEY_NOT_FOUND.  In the
+@error is set to %G_KEY_FILE_ERROR_KEY_NOT_FOUND.  In the
 event that the @group_name cannot be found, %NULL is returned
-and @error is set to #G_KEY_FILE_ERROR_GROUP_NOT_FOUND.</doc>
+and @error is set to %G_KEY_FILE_ERROR_GROUP_NOT_FOUND.</doc>
         <return-value transfer-ownership="full">
           <doc xml:space="preserve">
  a %NULL-terminated string array or %NULL if the specified
@@ -11775,9 +11789,9 @@ or 0 if the key was not found or could not be parsed.</doc>
 Use g_key_file_get_string() to retrieve an unescaped UTF-8 string.
 
 In the event the key cannot be found, %NULL is returned and
-@error is set to #G_KEY_FILE_ERROR_KEY_NOT_FOUND.  In the
+@error is set to %G_KEY_FILE_ERROR_KEY_NOT_FOUND.  In the
 event that the @group_name cannot be found, %NULL is returned
-and @error is set to #G_KEY_FILE_ERROR_GROUP_NOT_FOUND.</doc>
+and @error is set to %G_KEY_FILE_ERROR_GROUP_NOT_FOUND.</doc>
         <return-value transfer-ownership="full">
           <doc xml:space="preserve">a newly allocated string or %NULL if the specified
  key cannot be found.</doc>
@@ -12611,7 +12625,7 @@ if (G_LIKELY (random () != 1))
     </function-macro>
     <constant name="LITTLE_ENDIAN" value="1234" c:type="G_LITTLE_ENDIAN">
       <doc xml:space="preserve">Specifies one of the possible types of byte order.
-See #G_BYTE_ORDER.</doc>
+See %G_BYTE_ORDER.</doc>
       <type name="gint" c:type="gint"/>
     </constant>
     <constant name="LN10" value="2.302585" c:type="G_LN10">
@@ -13789,7 +13803,7 @@ linked against at application run time.</doc>
       <doc xml:space="preserve">The maximum value which can be held in a #guint8.</doc>
       <type name="guint8" c:type="guint8"/>
     </constant>
-    <constant name="MICRO_VERSION" value="3" c:type="GLIB_MICRO_VERSION">
+    <constant name="MICRO_VERSION" value="0" c:type="GLIB_MICRO_VERSION">
       <doc xml:space="preserve">The micro version number of the GLib library.
 
 Like #gtk_micro_version, but from the headers used at
@@ -13813,7 +13827,7 @@ linked against at application run time.</doc>
       <doc xml:space="preserve">The minimum value which can be held in a #gint8.</doc>
       <type name="gint8" c:type="gint8"/>
     </constant>
-    <constant name="MINOR_VERSION" value="71" c:type="GLIB_MINOR_VERSION">
+    <constant name="MINOR_VERSION" value="72" c:type="GLIB_MINOR_VERSION">
       <doc xml:space="preserve">The minor version number of the GLib library.
 
 Like #gtk_minor_version, but from the headers used at
@@ -14613,7 +14627,7 @@ atomically (e.g. using g_file_set_contents()).
 If @filename is the name of an empty, regular file, the function
 will successfully return an empty #GMappedFile. In other cases of
 size 0 (e.g. device files such as /dev/null), @error will be set
-to the #GFileError value #G_FILE_ERROR_INVAL.</doc>
+to the #GFileError value %G_FILE_ERROR_INVAL.</doc>
         <return-value transfer-ownership="full">
           <doc xml:space="preserve">a newly allocated #GMappedFile which must be unref'd
    with g_mapped_file_unref(), or %NULL if the mapping failed.</doc>
@@ -15334,7 +15348,7 @@ references and escape sequences expanded. References refer to the last
 match done with @string against @regex and have the same syntax used by
 g_regex_replace().
 
-The @string_to_expand must be UTF-8 encoded even if #G_REGEX_RAW was
+The @string_to_expand must be UTF-8 encoded even if %G_REGEX_RAW was
 passed to g_regex_new().
 
 The backreferences are extracted from the string passed to the match
@@ -15603,19 +15617,19 @@ check that what has been typed so far is potentially valid, it is
 able to raise an error as soon as a mistake is made.
 
 GRegex supports the concept of partial matching by means of the
-#G_REGEX_MATCH_PARTIAL_SOFT and #G_REGEX_MATCH_PARTIAL_HARD flags.
+%G_REGEX_MATCH_PARTIAL_SOFT and %G_REGEX_MATCH_PARTIAL_HARD flags.
 When they are used, the return code for
 g_regex_match() or g_regex_match_full() is, as usual, %TRUE
 for a complete match, %FALSE otherwise. But, when these functions
 return %FALSE, you can check if the match was partial calling
 g_match_info_is_partial_match().
 
-The difference between #G_REGEX_MATCH_PARTIAL_SOFT and
-#G_REGEX_MATCH_PARTIAL_HARD is that when a partial match is encountered
-with #G_REGEX_MATCH_PARTIAL_SOFT, matching continues to search for a
-possible complete match, while with #G_REGEX_MATCH_PARTIAL_HARD matching
+The difference between %G_REGEX_MATCH_PARTIAL_SOFT and
+%G_REGEX_MATCH_PARTIAL_HARD is that when a partial match is encountered
+with %G_REGEX_MATCH_PARTIAL_SOFT, matching continues to search for a
+possible complete match, while with %G_REGEX_MATCH_PARTIAL_HARD matching
 stops at the partial match.
-When both #G_REGEX_MATCH_PARTIAL_SOFT and #G_REGEX_MATCH_PARTIAL_HARD
+When both %G_REGEX_MATCH_PARTIAL_SOFT and %G_REGEX_MATCH_PARTIAL_HARD
 are set, the latter takes precedence.
 
 There were formerly some restrictions on the pattern for partial matching.
@@ -17207,7 +17221,7 @@ user-visible strings.</doc>
 The @parameter_string can serve multiple purposes. It can be used
 to add descriptions for "rest" arguments, which are not parsed by
 the #GOptionContext, typically something like "FILES" or
-"FILE1 FILE2...". If you are using #G_OPTION_REMAINING for
+"FILE1 FILE2...". If you are using %G_OPTION_REMAINING for
 collecting "rest" arguments, GLib handles this automatically by
 using the @arg_description of the corresponding #GOptionEntry in
 the usage summary.
@@ -17594,7 +17608,7 @@ and all memory allocated by the @group is released.</doc>
     </callback>
     <constant name="PDP_ENDIAN" value="3412" c:type="G_PDP_ENDIAN">
       <doc xml:space="preserve">Specifies one of the possible types of byte order
-(currently unused). See #G_BYTE_ORDER.</doc>
+(currently unused). See %G_BYTE_ORDER.</doc>
       <type name="gint" c:type="gint"/>
     </constant>
     <constant name="PI" value="3.141593" c:type="G_PI">
@@ -18990,7 +19004,7 @@ element from it).</doc>
       <method name="init" c:identifier="g_queue_init" version="2.14">
         <doc xml:space="preserve">A statically-allocated #GQueue must be initialized with this function
 before it can be used. Alternatively you can initialize it with
-#G_QUEUE_INIT. It is not necessary to initialize queues created with
+%G_QUEUE_INIT. It is not necessary to initialize queues created with
 g_queue_new().</doc>
         <return-value transfer-ownership="none">
           <type name="none" c:type="void"/>
@@ -20125,7 +20139,7 @@ expression pattern matching using syntax and semantics similar to
 Perl regular expression.
 
 Some functions accept a @start_position argument, setting it differs
-from just passing over a shortened string and setting #G_REGEX_MATCH_NOTBOL
+from just passing over a shortened string and setting %G_REGEX_MATCH_NOTBOL
 in the case of a pattern that begins with any kind of lookbehind assertion.
 For example, consider the pattern "\Biss\B" which finds occurrences of "iss"
 in the middle of words. ("\B" matches only if the current position in the
@@ -20137,11 +20151,11 @@ boundary. However, if the entire string is passed , but with
 it is able to look behind the starting point to discover that it is
 preceded by a letter.
 
-Note that, unless you set the #G_REGEX_RAW flag, all the strings passed
+Note that, unless you set the %G_REGEX_RAW flag, all the strings passed
 to these functions must be encoded in UTF-8. The lengths and the positions
 inside the strings are in bytes and not in characters, so, for instance,
 "\xc3\xa0" (i.e. "&#xE0;") is two bytes long but it is treated as a
-single character. If you set #G_REGEX_RAW the strings can be non-valid
+single character. If you set %G_REGEX_RAW the strings can be non-valid
 UTF-8 strings and a byte is treated as a character, so "\xc3\xa0" is two
 bytes and two characters long.
 
@@ -20156,11 +20170,11 @@ separator, U+2028), or PS (paragraph separator, U+2029).
 The behaviour of the dot, circumflex, and dollar metacharacters are
 affected by newline characters, the default is to recognize any newline
 character (the same characters recognized by "\R"). This can be changed
-with #G_REGEX_NEWLINE_CR, #G_REGEX_NEWLINE_LF and #G_REGEX_NEWLINE_CRLF
-compile options, and with #G_REGEX_MATCH_NEWLINE_ANY,
-#G_REGEX_MATCH_NEWLINE_CR, #G_REGEX_MATCH_NEWLINE_LF and
-#G_REGEX_MATCH_NEWLINE_CRLF match options. These settings are also
-relevant when compiling a pattern if #G_REGEX_EXTENDED is set, and an
+with %G_REGEX_NEWLINE_CR, %G_REGEX_NEWLINE_LF and %G_REGEX_NEWLINE_CRLF
+compile options, and with %G_REGEX_MATCH_NEWLINE_ANY,
+%G_REGEX_MATCH_NEWLINE_CR, %G_REGEX_MATCH_NEWLINE_LF and
+%G_REGEX_MATCH_NEWLINE_CRLF match options. These settings are also
+relevant when compiling a pattern if %G_REGEX_EXTENDED is set, and an
 unescaped "#" outside a character class is encountered. This indicates
 a comment that lasts until after the next newline.
 
@@ -20455,7 +20469,7 @@ Note that the DFA algorithm is slower than the standard one and it
 is not able to capture substrings, so backreferences do not work.
 
 Setting @start_position differs from just passing over a shortened
-string and setting #G_REGEX_MATCH_NOTBOL in the case of a pattern
+string and setting %G_REGEX_MATCH_NOTBOL in the case of a pattern
 that begins with any kind of lookbehind assertion, such as "\b".
 
 Unless %G_REGEX_RAW is specified in the options, @string must be valid UTF-8.
@@ -20510,7 +20524,7 @@ when the @regex structure was created, letting you have more
 flexibility in reusing #GRegex structures.
 
 Setting @start_position differs from just passing over a shortened
-string and setting #G_REGEX_MATCH_NOTBOL in the case of a pattern
+string and setting %G_REGEX_MATCH_NOTBOL in the case of a pattern
 that begins with any kind of lookbehind assertion, such as "\b".
 
 Unless %G_REGEX_RAW is specified in the options, @string must be valid UTF-8.
@@ -20622,12 +20636,12 @@ There are also escapes that changes the case of the following text:
 
 If you do not need to use backreferences use g_regex_replace_literal().
 
-The @replacement string must be UTF-8 encoded even if #G_REGEX_RAW was
+The @replacement string must be UTF-8 encoded even if %G_REGEX_RAW was
 passed to g_regex_new(). If you want to use not UTF-8 encoded strings
 you can use g_regex_replace_literal().
 
 Setting @start_position differs from just passing over a shortened
-string and setting #G_REGEX_MATCH_NOTBOL in the case of a pattern that
+string and setting %G_REGEX_MATCH_NOTBOL in the case of a pattern that
 begins with any kind of lookbehind assertion, such as "\b".</doc>
         <return-value transfer-ownership="full">
           <doc xml:space="preserve">a newly allocated string containing the replacements</doc>
@@ -20667,7 +20681,7 @@ begins with any kind of lookbehind assertion, such as "\b".</doc>
 @eval for that occurrence.
 
 Setting @start_position differs from just passing over a shortened
-string and setting #G_REGEX_MATCH_NOTBOL in the case of a pattern
+string and setting %G_REGEX_MATCH_NOTBOL in the case of a pattern
 that begins with any kind of lookbehind assertion, such as "\b".
 
 The following example uses g_regex_replace_eval() to replace multiple
@@ -20751,7 +20765,7 @@ replacement text. @replacement is replaced literally, to
 include backreferences use g_regex_replace().
 
 Setting @start_position differs from just passing over a
-shortened string and setting #G_REGEX_MATCH_NOTBOL in the
+shortened string and setting %G_REGEX_MATCH_NOTBOL in the
 case of a pattern that begins with any kind of lookbehind
 assertion, such as "\b".</doc>
         <return-value transfer-ownership="full">
@@ -20847,7 +20861,7 @@ For example splitting "ab c" using as a separator "\s*", you will get
 "a", "b" and "c".
 
 Setting @start_position differs from just passing over a shortened
-string and setting #G_REGEX_MATCH_NOTBOL in the case of a pattern
+string and setting %G_REGEX_MATCH_NOTBOL in the case of a pattern
 that begins with any kind of lookbehind assertion, such as "\b".</doc>
         <return-value transfer-ownership="full">
           <doc xml:space="preserve">a %NULL-terminated gchar ** array. Free
@@ -22941,14 +22955,14 @@ parsing of the next unpeeked token.</doc>
       </field>
       <field name="cset_identifier_first" writable="1">
         <doc xml:space="preserve">specifies the characters which can start
-    identifiers (the default is #G_CSET_a_2_z, "_", and #G_CSET_A_2_Z).</doc>
+    identifiers (the default is %G_CSET_a_2_z, "_", and %G_CSET_A_2_Z).</doc>
         <type name="utf8" c:type="gchar*"/>
       </field>
       <field name="cset_identifier_nth" writable="1">
         <doc xml:space="preserve">specifies the characters which can be used
     in identifiers, after the first character (the default is
-    #G_CSET_a_2_z, "_0123456789", #G_CSET_A_2_Z, #G_CSET_LATINS,
-    #G_CSET_LATINC).</doc>
+    %G_CSET_a_2_z, "_0123456789", %G_CSET_A_2_Z, %G_CSET_LATINS,
+    %G_CSET_LATINC).</doc>
         <type name="utf8" c:type="gchar*"/>
       </field>
       <field name="cpair_comment_single" writable="1">
@@ -23035,7 +23049,7 @@ parsing of the next unpeeked token.</doc>
       </field>
       <field name="numbers_2_int" writable="1" bits="1">
         <doc xml:space="preserve">specifies if binary, octal and hexadecimal numbers
-    are reported as #G_TOKEN_INT (the default is %TRUE).</doc>
+    are reported as %G_TOKEN_INT (the default is %TRUE).</doc>
         <type name="guint" c:type="guint"/>
       </field>
       <field name="int_2_float" writable="1" bits="1">
@@ -35633,9 +35647,33 @@ On non-Windows platforms, expands to nothing.</doc>
         </parameter>
       </parameters>
     </function-macro>
+    <function-macro name="WIN32_HAVE_WIDECHAR_API" c:identifier="G_WIN32_HAVE_WIDECHAR_API" version="2.6" introspectable="0">
+      <doc xml:space="preserve">On Windows, this macro defines an expression which evaluates to
+%TRUE if the code is running on a version of Windows where the wide
+character versions of the Win32 API functions, and the wide character
+versions of the C library functions work. (They are always present in
+the DLLs, but don't work on Windows 9x and Me.)
+
+On non-Windows platforms, it is not defined.</doc>
+    </function-macro>
+    <function-macro name="WIN32_IS_NT_BASED" c:identifier="G_WIN32_IS_NT_BASED" version="2.6" introspectable="0">
+      <doc xml:space="preserve">On Windows, this macro defines an expression which evaluates to
+%TRUE if the code is running on an NT-based Windows operating system.
+
+On non-Windows platforms, it is not defined.</doc>
+    </function-macro>
     <constant name="WIN32_MSG_HANDLE" value="19981206" c:type="G_WIN32_MSG_HANDLE">
       <type name="gint" c:type="gint"/>
     </constant>
+    <function-macro name="abort" c:identifier="g_abort" version="2.50" introspectable="0">
+      <doc xml:space="preserve">A wrapper for the POSIX abort() function.
+
+On Windows it is a function that makes extra effort (including a call
+to abort()) to ensure that a debugger-catchable exception is thrown
+before the program terminates.
+
+See your C library manual for more details about abort().</doc>
+    </function-macro>
     <function name="access" c:identifier="g_access" version="2.8">
       <doc xml:space="preserve">A wrapper for the POSIX access() function. This function is used to
 test a pathname for one or several of read, write or execute
@@ -36128,7 +36166,7 @@ This function generates enough precision that converting
 the string back using g_ascii_strtod() gives the same machine-number
 (on machines with IEEE compatible 64bit doubles). It is
 guaranteed that the size of the resulting string will never
-be larger than @G_ASCII_DTOSTR_BUF_SIZE bytes, including the terminating
+be larger than %G_ASCII_DTOSTR_BUF_SIZE bytes, including the terminating
 nul character, which is always added.</doc>
       <return-value transfer-ownership="full">
         <doc xml:space="preserve">The pointer to the buffer with the converted string.</doc>
@@ -37036,6 +37074,15 @@ See g_test_set_nonfatal_assertions().</doc>
           <doc xml:space="preserve">the expression to check</doc>
         </parameter>
       </parameters>
+    </function-macro>
+    <function-macro name="assert_not_reached" c:identifier="g_assert_not_reached" introspectable="0">
+      <doc xml:space="preserve">Debugging macro to terminate the application if it is ever
+reached. If it is reached, an error message is logged and the
+application is terminated.
+
+The macro can be turned off in final releases of code by defining
+`G_DISABLE_ASSERT` when compiling the application. Hence, it should not be
+used in unit tests, where assertions should always be effective.</doc>
     </function-macro>
     <function-macro name="assert_null" c:identifier="g_assert_null" version="2.38" introspectable="0">
       <doc xml:space="preserve">Debugging macro to check an expression is %NULL.
@@ -39448,7 +39495,7 @@ well) on many platforms.  Consider using g_str_to_ascii() instead.</doc>
                 Even if the conversion was successful, this may be
                 less than @len if there were partial characters
                 at the end of the input. If the error
-                #G_CONVERT_ERROR_ILLEGAL_SEQUENCE occurs, the value
+                %G_CONVERT_ERROR_ILLEGAL_SEQUENCE occurs, the value
                 stored will be the byte offset after the last valid
                 input sequence.</doc>
           <type name="gsize" c:type="gsize*"/>
@@ -39592,7 +39639,7 @@ unrepresentable characters, use g_convert_with_fallback().</doc>
                 Even if the conversion was successful, this may be
                 less than @len if there were partial characters
                 at the end of the input. If the error
-                #G_CONVERT_ERROR_ILLEGAL_SEQUENCE occurs, the value
+                %G_CONVERT_ERROR_ILLEGAL_SEQUENCE occurs, the value
                 stored will be the byte offset after the last valid
                 input sequence.</doc>
           <type name="gsize" c:type="gsize*"/>
@@ -39604,6 +39651,47 @@ unrepresentable characters, use g_convert_with_fallback().</doc>
         </parameter>
       </parameters>
     </function>
+    <function-macro name="critical" c:identifier="g_critical" introspectable="0">
+      <doc xml:space="preserve">Logs a "critical warning" (%G_LOG_LEVEL_CRITICAL).
+
+Critical warnings are intended to be used in the event of an error
+that originated in the current process (a programmer error).
+Logging of a critical error is by definition an indication of a bug
+somewhere in the current program (or its libraries).
+
+g_return_if_fail(), g_return_val_if_fail(), g_return_if_reached() and
+g_return_val_if_reached() log at %G_LOG_LEVEL_CRITICAL.
+
+You can make critical warnings fatal at runtime by
+setting the `G_DEBUG` environment variable (see
+[Running GLib Applications](glib-running.html)):
+
+|[
+  G_DEBUG=fatal-warnings gdb ./my-program
+]|
+
+You can also use g_log_set_always_fatal().
+
+Any unrelated failures can be skipped over in
+[gdb](https://www.gnu.org/software/gdb/) using the `continue` command.
+
+The message should typically *not* be translated to the
+user's language.
+
+If g_log_default_handler() is used as the log handler function, a new-line
+character will automatically be appended to @..., and need not be entered
+manually.
+
+If structured logging is enabled, this will use g_log_structured();
+otherwise it will use g_log(). See
+[Using Structured Logging][using-structured-logging].</doc>
+      <parameters>
+        <parameter name="...">
+          <doc xml:space="preserve">format string, followed by parameters to insert
+    into the format string (as with printf())</doc>
+        </parameter>
+      </parameters>
+    </function-macro>
     <docsection name="datalist">
       <doc xml:space="preserve">Keyed data lists provide lists of arbitrary data elements which can
 be accessed either with a string or with a #GQuark corresponding to
@@ -40541,6 +40629,28 @@ dcgettext() directly.</doc>
         </parameter>
       </parameters>
     </function>
+    <function-macro name="debug" c:identifier="g_debug" version="2.6" introspectable="0">
+      <doc xml:space="preserve">A convenience function/macro to log a debug message. The message should
+typically *not* be translated to the user's language.
+
+If g_log_default_handler() is used as the log handler function, a new-line
+character will automatically be appended to @..., and need not be entered
+manually.
+
+Such messages are suppressed by the g_log_default_handler() and
+g_log_writer_default() unless the `G_MESSAGES_DEBUG` environment variable is
+set appropriately.
+
+If structured logging is enabled, this will use g_log_structured();
+otherwise it will use g_log(). See
+[Using Structured Logging][using-structured-logging].</doc>
+      <parameters>
+        <parameter name="...">
+          <doc xml:space="preserve">format string, followed by parameters to insert
+    into the format string (as with printf())</doc>
+        </parameter>
+      </parameters>
+    </function-macro>
     <function name="dgettext" c:identifier="g_dgettext" version="2.18">
       <doc xml:space="preserve">This function is a wrapper of dgettext() which does not translate
 the message if the default domain as set with textdomain() has no
@@ -40879,6 +40989,34 @@ environment @envp.</doc>
         </parameter>
       </parameters>
     </function>
+    <function-macro name="error" c:identifier="g_error" introspectable="0">
+      <doc xml:space="preserve">A convenience function/macro to log an error message. The message should
+typically *not* be translated to the user's language.
+
+This is not intended for end user error reporting. Use of #GError is
+preferred for that instead, as it allows calling functions to perform actions
+conditional on the type of error.
+
+Error messages are always fatal, resulting in a call to G_BREAKPOINT()
+to terminate the application. This function will
+result in a core dump; don't use it for errors you expect.
+Using this function indicates a bug in your program, i.e.
+an assertion failure.
+
+If g_log_default_handler() is used as the log handler function, a new-line
+character will automatically be appended to @..., and need not be entered
+manually.
+
+If structured logging is enabled, this will use g_log_structured();
+otherwise it will use g_log(). See
+[Using Structured Logging][using-structured-logging].</doc>
+      <parameters>
+        <parameter name="...">
+          <doc xml:space="preserve">format string, followed by parameters to insert
+    into the format string (as with printf())</doc>
+        </parameter>
+      </parameters>
+    </function-macro>
     <docsection name="error_reporting">
       <doc xml:space="preserve">GLib provides a standard method of reporting errors from a called
 function to the calling code. (This is the same problem solved by
@@ -41383,7 +41521,7 @@ If the call was successful, it returns %TRUE and sets @contents to the file
 contents and @length to the length of the file contents in bytes. The string
 stored in @contents will be nul-terminated, so for text files you can pass
 %NULL for the @length argument. If the call was not successful, it returns
-%FALSE and sets @error. The error domain is #G_FILE_ERROR. Possible error
+%FALSE and sets @error. The error domain is %G_FILE_ERROR. Possible error
 codes are those in the #GFileError enumeration. In the error case,
 @contents is set to %NULL and @length is set to zero.</doc>
       <return-value transfer-ownership="none">
@@ -41534,7 +41672,7 @@ Notes:
   @filename already exists and is open.
 
 If the call was successful, it returns %TRUE. If the call was not successful,
-it returns %FALSE and sets @error. The error domain is #G_FILE_ERROR.
+it returns %FALSE and sets @error. The error domain is %G_FILE_ERROR.
 Possible error codes are those in the #GFileError enumeration.
 
 Note that the name for the temporary file is constructed by appending up
@@ -42666,7 +42804,7 @@ used with non-IDN-aware applications and protocols. (For example,
       <doc xml:space="preserve">Most of GLib is intended to be portable; in contrast, this set of
 functions is designed for programs which explicitly target UNIX,
 or are using it to build higher level abstractions which would be
-conditionally compiled if the platform matches G_OS_UNIX.
+conditionally compiled if the platform matches %G_OS_UNIX.
 
 To use these functions, you must explicitly include the
 "glib-unix.h" header.</doc>
@@ -43571,6 +43709,27 @@ have a default priority of %G_PRIORITY_DEFAULT.</doc>
         <type name="Source" c:type="GSource*"/>
       </return-value>
     </function>
+    <function-macro name="info" c:identifier="g_info" version="2.40" introspectable="0">
+      <doc xml:space="preserve">A convenience function/macro to log an informational message. Seldom used.
+
+If g_log_default_handler() is used as the log handler function, a new-line
+character will automatically be appended to @..., and need not be entered
+manually.
+
+Such messages are suppressed by the g_log_default_handler() and
+g_log_writer_default() unless the `G_MESSAGES_DEBUG` environment variable is
+set appropriately.
+
+If structured logging is enabled, this will use g_log_structured();
+otherwise it will use g_log(). See
+[Using Structured Logging][using-structured-logging].</doc>
+      <parameters>
+        <parameter name="...">
+          <doc xml:space="preserve">format string, followed by parameters to insert
+    into the format string (as with printf())</doc>
+        </parameter>
+      </parameters>
+    </function-macro>
     <function name="int64_equal" c:identifier="g_int64_equal" version="2.22">
       <doc xml:space="preserve">Compares the two #gint64 values being pointed to and returns
 %TRUE if they are equal.
@@ -43777,7 +43936,7 @@ You can do these steps manually if you need greater control.</doc>
     </function>
     <function name="io_create_watch" c:identifier="g_io_create_watch">
       <doc xml:space="preserve">Creates a #GSource that's dispatched when @condition is met for the
-given @channel. For example, if condition is #G_IO_IN, the source will
+given @channel. For example, if condition is %G_IO_IN, the source will
 be dispatched when there's data available for reading.
 
 The callback function invoked by the #GSource should be added with
@@ -44334,8 +44493,8 @@ Note that this should not be used to conditionalise calls to g_debug() or
 other logging functions; it should only be used from %GLogWriterFunc
 implementations.
 
-Note also that the value of this does not depend on `G_MESSAGES_DEBUG`, as
-it is domain-dependent.</doc>
+Note also that the value of this does not depend on `G_MESSAGES_DEBUG`; see
+the docs for g_log_set_debug_enabled().</doc>
       <return-value transfer-ownership="none">
         <doc xml:space="preserve">%TRUE if debug output is enabled, %FALSE otherwise</doc>
         <type name="gboolean" c:type="gboolean"/>
@@ -44391,9 +44550,9 @@ are fatal. See [Using Structured Logging][using-structured-logging].</doc>
       </parameters>
     </function>
     <function name="log_set_debug_enabled" c:identifier="g_log_set_debug_enabled" version="2.72">
-      <doc xml:space="preserve">Enable or disable debug output from the GLib logging system is enabled. This
-value interacts disjunctively with `G_MESSAGES_DEBUG` &#x2014; if either of them
-would allow a debug message to be outputted, it will be.
+      <doc xml:space="preserve">Enable or disable debug output from the GLib logging system for all domains.
+This value interacts disjunctively with `G_MESSAGES_DEBUG` &#x2014; if either of
+them would allow a debug message to be outputted, it will be.
 
 Note that this should not be used from within library code to enable debug
 output &#x2014; it is intended for external use.</doc>
@@ -44758,7 +44917,7 @@ The only mandatory item in the @fields dictionary is the "MESSAGE" which must
 contain the text shown to the user.
 
 The values in the @fields dictionary are likely to be of type String
-(#G_VARIANT_TYPE_STRING). Array of bytes (#G_VARIANT_TYPE_BYTESTRING) is also
+(%G_VARIANT_TYPE_STRING). Array of bytes (%G_VARIANT_TYPE_BYTESTRING) is also
 supported. In this case the message is handled as binary and will be forwarded
 to the log writer as such. The size of the array should not be higher than
 %G_MAXSSIZE. Otherwise it will be truncated to this size. For other types
@@ -45143,10 +45302,14 @@ thread-safe.
 Each event source is assigned a priority. The default priority,
 %G_PRIORITY_DEFAULT, is 0. Values less than 0 denote higher priorities.
 Values greater than 0 denote lower priorities. Events from high priority
-sources are always processed before events from lower priority sources.
+sources are always processed before events from lower priority sources: if
+several sources are ready to dispatch, the ones with equal-highest priority
+will be dispatched on the current #GMainContext iteration, and the rest wait
+until a subsequent #GMainContext iteration when they have the highest
+priority of the sources which are ready for dispatch.
 
 Idle functions can also be added, and assigned a priority. These will
-be run whenever no events with a higher priority are ready to be processed.
+be run whenever no events with a higher priority are ready to be dispatched.
 
 The #GMainLoop data type represents a main event loop. A GMainLoop is
 created with g_main_loop_new(). After adding the initial event sources,
@@ -45864,6 +46027,23 @@ array-&gt;elt_size        = elt_size;
 g_slice_free (GRealArray, array);
 ]|</doc>
     </docsection>
+    <function-macro name="message" c:identifier="g_message" introspectable="0">
+      <doc xml:space="preserve">A convenience function/macro to log a normal message.
+
+If g_log_default_handler() is used as the log handler function, a new-line
+character will automatically be appended to @..., and need not be entered
+manually.
+
+If structured logging is enabled, this will use g_log_structured();
+otherwise it will use g_log(). See
+[Using Structured Logging][using-structured-logging].</doc>
+      <parameters>
+        <parameter name="...">
+          <doc xml:space="preserve">format string, followed by parameters to insert
+    into the format string (as with printf())</doc>
+        </parameter>
+      </parameters>
+    </function-macro>
     <docsection name="messages">
       <doc xml:space="preserve">These functions provide support for outputting messages.
 
@@ -46342,7 +46522,7 @@ vulnerability.</doc>
       </return-value>
     </function>
     <docsection name="numerical">
-      <doc xml:space="preserve">GLib offers mathematical constants such as #G_PI for the value of pi;
+      <doc xml:space="preserve">GLib offers mathematical constants such as %G_PI for the value of pi;
 many platforms have these in the C library, but some don't, the GLib
 versions always exist.
 
@@ -47448,7 +47628,7 @@ For a thread-safe queue, use #GAsyncQueue.
 
 To create a new GQueue, use g_queue_new().
 
-To initialize a statically-allocated GQueue, use #G_QUEUE_INIT or
+To initialize a statically-allocated GQueue, use %G_QUEUE_INIT or
 g_queue_init().
 
 To add elements, use g_queue_push_head(), g_queue_push_head_link(),
@@ -47466,6 +47646,10 @@ This corresponds to an unbiased coin toss.</doc>
           <doc xml:space="preserve">a #GRand</doc>
         </parameter>
       </parameters>
+    </function-macro>
+    <function-macro name="random_boolean" c:identifier="g_random_boolean" introspectable="0">
+      <doc xml:space="preserve">Returns a random #gboolean.
+This corresponds to an unbiased coin toss.</doc>
     </function-macro>
     <function name="random_double" c:identifier="g_random_double">
       <doc xml:space="preserve">Returns a random #gdouble equally distributed over the range [0..1).</doc>
@@ -48344,6 +48528,7 @@ and g_return_val_if_fail() macros.</doc>
         </parameter>
       </parameters>
     </function>
+    <function-macro name="return_if_reached" c:identifier="g_return_if_reached" introspectable="0"/>
     <function-macro name="return_val_if_fail" c:identifier="g_return_val_if_fail" introspectable="0">
       <parameters>
         <parameter name="expr">
@@ -48861,6 +49046,11 @@ unsupported shell expansions. If the input does contain such expansions,
 they are passed through literally.
 
 Possible errors are those from the %G_SHELL_ERROR domain.
+
+In particular, if @command_line is an empty string (or a string containing
+only whitespace), %G_SHELL_ERROR_EMPTY_STRING will be returned. It&#x2019;s
+guaranteed that @argvp will be a non-empty array if this function returns
+successfully.
 
 Free the returned vector with g_strfreev().</doc>
       <return-value transfer-ownership="none">
@@ -49539,7 +49729,8 @@ so no FD assignments are used.</doc>
           <type name="filename" c:type="const gchar*"/>
         </parameter>
         <parameter name="argv" transfer-ownership="none">
-          <doc xml:space="preserve">child's argument vector, in the GLib file name encoding</doc>
+          <doc xml:space="preserve">child's argument vector, in the GLib file name encoding;
+  it must be non-empty and %NULL-terminated</doc>
           <array c:type="gchar**">
             <type name="utf8" c:type="gchar*"/>
           </array>
@@ -49595,7 +49786,7 @@ so no FD assignments are used.</doc>
         </parameter>
         <parameter name="argv" transfer-ownership="none">
           <doc xml:space="preserve">child's argument
-    vector, in the GLib file name encoding</doc>
+    vector, in the GLib file name encoding; it must be non-empty and %NULL-terminated</doc>
           <array c:type="gchar**">
             <type name="filename"/>
           </array>
@@ -49798,7 +49989,7 @@ If an error is set, the function returns %FALSE. Errors are reported
 even if they occur in the child (for example if the executable in
 `@argv[0]` is not found). Typically the `message` field of returned
 errors should be displayed to users. Possible errors are those from
-the #G_SPAWN_ERROR domain.
+the %G_SPAWN_ERROR domain.
 
 If an error occurs, @child_pid, @stdin_pipe_out, @stdout_pipe_out,
 and @stderr_pipe_out will not be filled with valid values.
@@ -49839,7 +50030,7 @@ windows on the right screen, you may want to use #GdkAppLaunchContext,
         </parameter>
         <parameter name="argv" transfer-ownership="none">
           <doc xml:space="preserve">child's argument
-    vector, in the GLib file name encoding</doc>
+    vector, in the GLib file name encoding; it must be non-empty and %NULL-terminated</doc>
           <array c:type="const gchar* const*">
             <type name="filename"/>
           </array>
@@ -50126,7 +50317,7 @@ how these functions work on Windows.</doc>
         </parameter>
         <parameter name="argv" transfer-ownership="none">
           <doc xml:space="preserve">
-    child's argument vector</doc>
+    child's argument vector, which must be non-empty and %NULL-terminated</doc>
           <array c:type="gchar**">
             <type name="filename"/>
           </array>
@@ -50682,7 +50873,7 @@ In order to modify a copy, you may use g_strdup():
         </parameter>
         <parameter name="delimiters" transfer-ownership="none" nullable="1" allow-none="1">
           <doc xml:space="preserve">a string containing the current delimiters,
-    or %NULL to use the standard delimiters defined in #G_STR_DELIMITERS</doc>
+    or %NULL to use the standard delimiters defined in %G_STR_DELIMITERS</doc>
           <type name="utf8" c:type="const gchar*"/>
         </parameter>
         <parameter name="new_delimiter" transfer-ownership="none">
@@ -51592,6 +51783,17 @@ do so even if it isn&#x2019;t.</doc>
         </parameter>
       </parameters>
     </function>
+    <function-macro name="test_assert_expected_messages" c:identifier="g_test_assert_expected_messages" version="2.34" introspectable="0">
+      <doc xml:space="preserve">Asserts that all messages previously indicated via
+g_test_expect_message() have been seen and suppressed.
+
+This API may only be used with the old logging API (g_log() without
+%G_LOG_USE_STRUCTURED defined). It will not work with the structured logging
+API. See [Testing for Messages][testing-for-messages].
+
+If messages at %G_LOG_LEVEL_DEBUG are emitted, but not explicitly
+expected via g_test_expect_message() then they will be ignored.</doc>
+    </function-macro>
     <function name="test_assert_expected_messages_internal" c:identifier="g_test_assert_expected_messages_internal">
       <return-value transfer-ownership="none">
         <type name="none" c:type="void"/>
@@ -52045,6 +52247,9 @@ tests are compiled without `G_DISABLE_ASSERT` defined.</doc>
         </parameter>
       </parameters>
     </function>
+    <function-macro name="test_initialized" c:identifier="g_test_initialized" version="2.36" introspectable="0">
+      <doc xml:space="preserve">Returns %TRUE if g_test_init() has been called.</doc>
+    </function-macro>
     <function name="test_log_set_fatal_handler" c:identifier="g_test_log_set_fatal_handler" version="2.22" introspectable="0">
       <doc xml:space="preserve">Installs a non-error fatal log handler which can be
 used to decide whether log messages which are counted
@@ -52155,6 +52360,13 @@ order for test result reports.</doc>
         </parameter>
       </parameters>
     </function>
+    <function-macro name="test_perf" c:identifier="g_test_perf" introspectable="0">
+      <doc xml:space="preserve">Returns %TRUE if tests are run in performance mode.
+
+By default, tests are run in quick mode. In tests that use
+g_test_init(), the option `-m perf` enables performance tests, while
+`-m quick` disables them.</doc>
+    </function-macro>
     <function name="test_queue_destroy" c:identifier="g_test_queue_destroy" version="2.16">
       <doc xml:space="preserve">This function enqueus a callback @destroy_func to be executed
 during the next test case teardown phase. This is most useful
@@ -52199,6 +52411,25 @@ g_test_queue_destroy() with a destroy callback of g_object_unref().</doc>
           <doc xml:space="preserve">the object to unref</doc>
         </parameter>
       </parameters>
+    </function-macro>
+    <function-macro name="test_quick" c:identifier="g_test_quick" introspectable="0">
+      <doc xml:space="preserve">Returns %TRUE if tests are run in quick mode.
+Exactly one of g_test_quick() and g_test_slow() is active in any run;
+there is no "medium speed".
+
+By default, tests are run in quick mode. In tests that use
+g_test_init(), the options `-m quick`, `-m slow` and `-m thorough`
+can be used to change this.</doc>
+    </function-macro>
+    <function-macro name="test_quiet" c:identifier="g_test_quiet" introspectable="0">
+      <doc xml:space="preserve">Returns %TRUE if tests are run in quiet mode.
+In tests that use g_test_init(), the option `-q` or `--quiet` enables
+this, while `--verbose` disables it.
+The default is neither g_test_verbose() nor g_test_quiet().</doc>
+    </function-macro>
+    <function-macro name="test_rand_bit" c:identifier="g_test_rand_bit" version="2.16" introspectable="0">
+      <doc xml:space="preserve">Get a reproducible random bit (0 or 1), see g_test_rand_int()
+for details on test case random numbers.</doc>
     </function-macro>
     <function name="test_rand_double" c:identifier="g_test_rand_double" version="2.16">
       <doc xml:space="preserve">Get a reproducible random floating point number,
@@ -52371,6 +52602,15 @@ as if by g_strdup_printf().</doc>
         </parameter>
       </parameters>
     </function>
+    <function-macro name="test_slow" c:identifier="g_test_slow" introspectable="0">
+      <doc xml:space="preserve">Returns %TRUE if tests are run in slow mode.
+Exactly one of g_test_quick() and g_test_slow() is active in any run;
+there is no "medium speed".
+
+By default, tests are run in quick mode. In tests that use
+g_test_init(), the options `-m quick`, `-m slow` and `-m thorough`
+can be used to change this.</doc>
+    </function-macro>
     <function name="test_subprocess" c:identifier="g_test_subprocess" version="2.38">
       <doc xml:space="preserve">Returns %TRUE (after g_test_init() has been called) if the test
 program is running under g_test_trap_subprocess().</doc>
@@ -52412,6 +52652,14 @@ See also: g_test_bug()</doc-version>
         </parameter>
       </parameters>
     </function>
+    <function-macro name="test_thorough" c:identifier="g_test_thorough" introspectable="0">
+      <doc xml:space="preserve">Returns %TRUE if tests are run in thorough mode, equivalent to
+g_test_slow().
+
+By default, tests are run in quick mode. In tests that use
+g_test_init(), the options `-m quick`, `-m slow` and `-m thorough`
+can be used to change this.</doc>
+    </function-macro>
     <function name="test_timer_elapsed" c:identifier="g_test_timer_elapsed" version="2.16">
       <doc xml:space="preserve">Get the number of seconds since the last start of the timer with
 g_test_timer_start().</doc>
@@ -52434,6 +52682,20 @@ to be done. Call this function again to restart the timer.</doc>
         <type name="none" c:type="void"/>
       </return-value>
     </function>
+    <function-macro name="test_trap_assert_failed" c:identifier="g_test_trap_assert_failed" version="2.16" introspectable="0">
+      <doc xml:space="preserve">Assert that the last test subprocess failed.
+See g_test_trap_subprocess().
+
+This is sometimes used to test situations that are formally considered to
+be undefined behaviour, like inputs that fail a g_return_if_fail()
+check. In these situations you should skip the entire test, including the
+call to g_test_trap_subprocess(), unless g_test_undefined() returns %TRUE
+to indicate that undefined behaviour may be tested.</doc>
+    </function-macro>
+    <function-macro name="test_trap_assert_passed" c:identifier="g_test_trap_assert_passed" version="2.16" introspectable="0">
+      <doc xml:space="preserve">Assert that the last test subprocess passed.
+See g_test_trap_subprocess().</doc>
+    </function-macro>
     <function-macro name="test_trap_assert_stderr" c:identifier="g_test_trap_assert_stderr" version="2.16" introspectable="0">
       <doc xml:space="preserve">Assert that the stderr output of the last test subprocess
 matches @serrpattern. See  g_test_trap_subprocess().
@@ -52643,6 +52905,24 @@ message.
         </parameter>
       </parameters>
     </function>
+    <function-macro name="test_undefined" c:identifier="g_test_undefined" introspectable="0">
+      <doc xml:space="preserve">Returns %TRUE if tests may provoke assertions and other formally-undefined
+behaviour, to verify that appropriate warnings are given. It might, in some
+cases, be useful to turn this off with if running tests under valgrind;
+in tests that use g_test_init(), the option `-m no-undefined` disables
+those tests, while `-m undefined` explicitly enables them (normally
+the default behaviour).
+
+Since GLib 2.68, if GLib was compiled with gcc or clang and
+[AddressSanitizer](https://github.com/google/sanitizers/wiki/AddressSanitizer)
+is enabled, the default changes to not exercising undefined behaviour.</doc>
+    </function-macro>
+    <function-macro name="test_verbose" c:identifier="g_test_verbose" introspectable="0">
+      <doc xml:space="preserve">Returns %TRUE if tests are run in verbose mode.
+In tests that use g_test_init(), the option `--verbose` enables this,
+while `-q` or `--quiet` disables it.
+The default is neither g_test_verbose() nor g_test_quiet().</doc>
+    </function-macro>
     <docsection name="testing">
       <doc xml:space="preserve">GLib provides a framework for writing and maintaining unit tests
 in parallel to the code they are testing. The API is designed according
@@ -54812,7 +55092,7 @@ using g_source_remove().</doc>
       <parameters>
         <parameter name="priority" transfer-ownership="none">
           <doc xml:space="preserve">the priority of the signal source. Typically this will be in
-           the range between #G_PRIORITY_DEFAULT and #G_PRIORITY_HIGH.</doc>
+           the range between %G_PRIORITY_DEFAULT and %G_PRIORITY_HIGH.</doc>
           <type name="gint" c:type="gint"/>
         </parameter>
         <parameter name="signum" transfer-ownership="none">
@@ -55671,7 +55951,7 @@ The returned string should be freed when no longer needed.</doc>
       <doc xml:space="preserve">Pauses the current thread for the given number of microseconds.
 
 There are 1 million microseconds per second (represented by the
-#G_USEC_PER_SEC macro). g_usleep() may have limited precision,
+%G_USEC_PER_SEC macro). g_usleep() may have limited precision,
 depending on hardware and operating system; don't rely on the exact
 length of the sleep.</doc>
       <return-value transfer-ownership="none">
@@ -55798,7 +56078,11 @@ correct rules for the [current locale][setlocale].
 When sorting a large number of strings, it will be significantly
 faster to obtain collation keys with g_utf8_collate_key() and
 compare the keys with strcmp() when sorting instead of sorting
-the original strings.</doc>
+the original strings.
+
+If the two strings are not comparable due to being in different collation
+sequences, the result is undefined. This can happen if the strings are in
+different language scripts, for example.</doc>
       <return-value transfer-ownership="none">
         <doc xml:space="preserve">&lt; 0 if @str1 compares before @str2,
   0 if they compare equal, &gt; 0 if @str1 compares after @str2.</doc>
@@ -56773,12 +57057,13 @@ multibyte representation is available for the given character.
 
 `glib/gprintf.h` must be explicitly included in order to use this function.</doc>
       <return-value transfer-ownership="none">
-        <doc xml:space="preserve">the number of bytes printed.</doc>
+        <doc xml:space="preserve">the number of bytes printed, or `-1` on failure</doc>
         <type name="gint" c:type="gint"/>
       </return-value>
       <parameters>
         <parameter name="string" transfer-ownership="none">
-          <doc xml:space="preserve">the return location for the newly-allocated string.</doc>
+          <doc xml:space="preserve">the return location for the newly-allocated string,
+  which will be %NULL if (and only if) this function fails</doc>
           <type name="utf8" c:type="gchar**"/>
         </parameter>
         <parameter name="format" transfer-ownership="none">
@@ -56932,6 +57217,9 @@ positional parameters, as specified in the Single Unix Specification.
         </parameter>
       </parameters>
     </function-macro>
+    <function-macro name="warn_if_reached" c:identifier="g_warn_if_reached" version="2.16" introspectable="0">
+      <doc xml:space="preserve">Logs a warning.</doc>
+    </function-macro>
     <function name="warn_message" c:identifier="g_warn_message" introspectable="0">
       <doc xml:space="preserve">Internal function used to print messages from the public g_warn_if_reached()
 and g_warn_if_fail() macros.</doc>
@@ -56961,6 +57249,64 @@ and g_warn_if_fail() macros.</doc>
         </parameter>
       </parameters>
     </function>
+    <function-macro name="warning" c:identifier="g_warning" introspectable="0">
+      <doc xml:space="preserve">A convenience function/macro to log a warning message. The message should
+typically *not* be translated to the user's language.
+
+This is not intended for end user error reporting. Use of #GError is
+preferred for that instead, as it allows calling functions to perform actions
+conditional on the type of error.
+
+Warning messages are intended to be used in the event of unexpected
+external conditions (system misconfiguration, missing files,
+other trusted programs violating protocol, invalid contents in
+trusted files, etc.)
+
+If attempting to deal with programmer errors (for example, incorrect function
+parameters) then you should use %G_LOG_LEVEL_CRITICAL instead.
+
+g_warn_if_reached() and g_warn_if_fail() log at %G_LOG_LEVEL_WARNING.
+
+You can make warnings fatal at runtime by setting the `G_DEBUG`
+environment variable (see
+[Running GLib Applications](glib-running.html)):
+
+|[
+  G_DEBUG=fatal-warnings gdb ./my-program
+]|
+
+Any unrelated failures can be skipped over in
+[gdb](https://www.gnu.org/software/gdb/) using the `continue` command.
+
+If g_log_default_handler() is used as the log handler function,
+a newline character will automatically be appended to @..., and
+need not be entered manually.
+
+If structured logging is enabled, this will use g_log_structured();
+otherwise it will use g_log(). See
+[Using Structured Logging][using-structured-logging].</doc>
+      <parameters>
+        <parameter name="...">
+          <doc xml:space="preserve">format string, followed by parameters to insert
+    into the format string (as with printf())</doc>
+        </parameter>
+      </parameters>
+    </function-macro>
+    <function-macro name="warning_once" c:identifier="g_warning_once" version="2.64" introspectable="0">
+      <doc xml:space="preserve">Logs a warning only once.
+
+g_warning_once() calls g_warning() with the passed message the first time
+the statement is executed; subsequent times it is a no-op.
+
+Note! On platforms where the compiler doesn't support variadic macros, the
+warning is printed each time instead of only once.</doc>
+      <parameters>
+        <parameter name="...">
+          <doc xml:space="preserve">format string, followed by parameters to insert
+    into the format string (as with printf())</doc>
+        </parameter>
+      </parameters>
+    </function-macro>
     <docsection name="warnings">
       <doc xml:space="preserve">GLib defines several warning functions and assertions which can be used to
 warn of programmer errors when calling functions, and print error messages
