@@ -15933,7 +15933,10 @@ zero width or height).</doc>
         <doc xml:space="preserve">Extracts the scroll deltas of a scroll event.
 
 The deltas will be zero unless the scroll direction
-is %GDK_SCROLL_SMOOTH.</doc>
+is %GDK_SCROLL_SMOOTH.
+
+For the representation unit of these deltas, see
+[method@Gdk.ScrollEvent.get_unit].</doc>
         <return-value transfer-ownership="none">
           <type name="none" c:type="void"/>
         </return-value>
@@ -15965,6 +15968,22 @@ is %GDK_SCROLL_SMOOTH.</doc>
           </instance-parameter>
         </parameters>
       </method>
+      <method name="get_unit" c:identifier="gdk_scroll_event_get_unit" version="4.8">
+        <doc xml:space="preserve">Extracts the scroll delta unit of a scroll event.
+
+The unit will always be %GDK_SCROLL_UNIT_WHEEL if the scroll direction is not
+%GDK_SCROLL_SMOOTH.</doc>
+        <return-value transfer-ownership="none">
+          <doc xml:space="preserve">the scroll unit.</doc>
+          <type name="ScrollUnit" c:type="GdkScrollUnit"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="event" transfer-ownership="none">
+            <doc xml:space="preserve">a scroll event.</doc>
+            <type name="ScrollEvent" c:type="GdkEvent*"/>
+          </instance-parameter>
+        </parameters>
+      </method>
       <method name="is_stop" c:identifier="gdk_scroll_event_is_stop">
         <doc xml:space="preserve">Check whether a scroll event is a stop scroll event.
 
@@ -15987,6 +16006,31 @@ Stop scroll events always have a delta of 0/0.</doc>
         </parameters>
       </method>
     </class>
+    <enumeration name="ScrollUnit" version="4.8" glib:type-name="GdkScrollUnit" glib:get-type="gdk_scroll_unit_get_type" c:type="GdkScrollUnit">
+      <doc xml:space="preserve">Specifies the unit of scroll deltas.
+
+When you get %GDK_SCROLL_UNIT_WHEEL, a delta of 1.0 means 1 wheel detent
+click in the south direction, 2.0 means 2 wheel detent clicks in the south
+direction... This is the same logic for negative values but in the north
+direction.
+
+If you get %GDK_SCROLL_UNIT_SURFACE, are managing a scrollable view and get a
+value of 123, you have to scroll 123 surface logical pixels right if it's
+@delta_x or down if it's @delta_y. This is the same logic for negative values
+but you have to scroll left instead of right if it's @delta_x and up instead
+of down if it's @delta_y.
+
+1 surface logical pixel is equal to 1 real screen pixel multiplied by the
+final scale factor of your graphical interface (the product of the desktop
+scale factor and eventually a custom scale factor in your app).</doc>
+      <member name="wheel" value="0" c:identifier="GDK_SCROLL_UNIT_WHEEL" glib:nick="wheel" glib:name="GDK_SCROLL_UNIT_WHEEL">
+        <doc xml:space="preserve">The delta is in number of wheel clicks.</doc>
+      </member>
+      <member name="surface" value="1" c:identifier="GDK_SCROLL_UNIT_SURFACE" glib:nick="surface" glib:name="GDK_SCROLL_UNIT_SURFACE">
+        <doc xml:space="preserve">The delta is in surface pixels to scroll directly
+  on screen.</doc>
+      </member>
+    </enumeration>
     <class name="Seat" c:symbol-prefix="seat" c:type="GdkSeat" parent="GObject.Object" abstract="1" glib:type-name="GdkSeat" glib:get-type="gdk_seat_get_type">
       <doc xml:space="preserve">The `GdkSeat` object represents a collection of input devices
 that belong to a user.</doc>
