@@ -3708,14 +3708,49 @@ types, over calling g_boxed_type_register_static() directly. It defines
 a `type_name_get_type()` function which will return the newly defined
 #GType, enabling lazy instantiation.
 
+You might start by putting declarations in a header as follows:
+
 |[&lt;!-- language="C" --&gt;
+#define MY_TYPE_STRUCT my_struct_get_type ()
+GType my_struct_get_type (void) G_GNUC_CONST;
+
+MyStruct *    my_struct_new (void);
+void          my_struct_free (MyStruct *self);
+MyStruct *    my_struct_copy (MyStruct *self);
+]|
+
+And then use this macro and define your implementation in the source file as
+follows:
+
+|[&lt;!-- language="C" --&gt;
+MyStruct *
+my_struct_new (void)
+{
+  // ... your code to allocate a new MyStruct ...
+}
+
+void
+my_struct_free (MyStruct *self)
+{
+  // ... your code to free a MyStruct ...
+}
+
+MyStruct *
+my_struct_copy (MyStruct *self)
+{
+  // ... your code return a newly allocated copy of a MyStruct ...
+}
+
 G_DEFINE_BOXED_TYPE (MyStruct, my_struct, my_struct_copy, my_struct_free)
 
 void
 foo ()
 {
-  GType type = my_struct_get_type ();
+  MyStruct *ms;
+
+  ms = my_struct_new ();
   // ... your code ...
+  my_struct_free (ms);
 }
 ]|</doc>
       <parameters>
@@ -8894,21 +8929,29 @@ You cannot connect a signal handler after #GSignalGroup:target has been set.</do
           </parameter>
         </parameters>
       </method>
-      <method name="connect_closure" c:identifier="g_signal_group_connect_closure">
+      <method name="connect_closure" c:identifier="g_signal_group_connect_closure" version="2.74">
+        <doc xml:space="preserve">Connects @closure to the signal @detailed_signal on #GSignalGroup:target.
+
+You cannot connect a signal handler after #GSignalGroup:target has been set.</doc>
         <return-value transfer-ownership="none">
           <type name="none" c:type="void"/>
         </return-value>
         <parameters>
           <instance-parameter name="self" transfer-ownership="none">
+            <doc xml:space="preserve">a #GSignalGroup</doc>
             <type name="SignalGroup" c:type="GSignalGroup*"/>
           </instance-parameter>
           <parameter name="detailed_signal" transfer-ownership="none">
+            <doc xml:space="preserve">a string of the form `signal-name` with optional `::signal-detail`</doc>
             <type name="utf8" c:type="const gchar*"/>
           </parameter>
           <parameter name="closure" transfer-ownership="none">
+            <doc xml:space="preserve">the closure to connect.</doc>
             <type name="Closure" c:type="GClosure*"/>
           </parameter>
           <parameter name="after" transfer-ownership="none">
+            <doc xml:space="preserve">whether the handler should be called before or after the
+ default handler of the signal.</doc>
             <type name="gboolean" c:type="gboolean"/>
           </parameter>
         </parameters>
