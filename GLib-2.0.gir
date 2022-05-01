@@ -7701,8 +7701,14 @@ as appropriate for a given platform. IEEE floats and doubles are supported
     bytes, and return units in bits. For example, &#x2018;Mb&#x2019; rather than &#x2018;MB&#x2019;.</doc>
       </member>
       <member name="only_value" value="8" c:identifier="G_FORMAT_SIZE_ONLY_VALUE">
+        <doc xml:space="preserve">return only value, without unit; this should
+    not be used together with @G_FORMAT_SIZE_LONG_FORMAT
+    nor @G_FORMAT_SIZE_ONLY_UNIT. Since: 2.74</doc>
       </member>
       <member name="only_unit" value="16" c:identifier="G_FORMAT_SIZE_ONLY_UNIT">
+        <doc xml:space="preserve">return only unit, without value; this should
+    not be used together with @G_FORMAT_SIZE_LONG_FORMAT
+    nor @G_FORMAT_SIZE_ONLY_VALUE. Since: 2.74</doc>
       </member>
     </bitfield>
     <callback name="FreeFunc" c:type="GFreeFunc">
@@ -9977,7 +9983,7 @@ situation.</doc>
             <doc xml:space="preserve">bytes to convert</doc>
             <type name="utf8" c:type="gchar**"/>
           </parameter>
-          <parameter name="inbytes_left" transfer-ownership="none">
+          <parameter name="inbytes_left" direction="inout" caller-allocates="0" transfer-ownership="full">
             <doc xml:space="preserve">inout parameter, bytes remaining to convert in @inbuf</doc>
             <type name="gsize" c:type="gsize*"/>
           </parameter>
@@ -9985,7 +9991,7 @@ situation.</doc>
             <doc xml:space="preserve">converted output bytes</doc>
             <type name="utf8" c:type="gchar**"/>
           </parameter>
-          <parameter name="outbytes_left" transfer-ownership="none">
+          <parameter name="outbytes_left" direction="inout" caller-allocates="0" transfer-ownership="full">
             <doc xml:space="preserve">inout parameter, bytes available to fill in @outbuf</doc>
             <type name="gsize" c:type="gsize*"/>
           </parameter>
@@ -27578,9 +27584,15 @@ when you are done with it.</doc>
 in seconds.
 
 This is equivalent to calling g_time_zone_new() with a string in the form
-`[+|-]hh[:mm[:ss]]`.</doc>
+`[+|-]hh[:mm[:ss]]`.
+
+It is possible for this function to fail if @seconds is too big (greater than
+24 hours), in which case this function will return the UTC timezone for
+backwards compatibility. To detect failures like this, use
+g_time_zone_new_identifier() directly.</doc>
         <return-value transfer-ownership="full">
-          <doc xml:space="preserve">a timezone at the given offset from UTC</doc>
+          <doc xml:space="preserve">a timezone at the given offset from UTC, or UTC on
+  failure</doc>
           <type name="TimeZone" c:type="GTimeZone*"/>
         </return-value>
         <parameters>
@@ -43631,7 +43643,7 @@ situation.</doc>
           <doc xml:space="preserve">bytes to convert</doc>
           <type name="utf8" c:type="gchar**"/>
         </parameter>
-        <parameter name="inbytes_left" transfer-ownership="none">
+        <parameter name="inbytes_left" direction="inout" caller-allocates="0" transfer-ownership="full">
           <doc xml:space="preserve">inout parameter, bytes remaining to convert in @inbuf</doc>
           <type name="gsize" c:type="gsize*"/>
         </parameter>
@@ -43639,7 +43651,7 @@ situation.</doc>
           <doc xml:space="preserve">converted output bytes</doc>
           <type name="utf8" c:type="gchar**"/>
         </parameter>
-        <parameter name="outbytes_left" transfer-ownership="none">
+        <parameter name="outbytes_left" direction="inout" caller-allocates="0" transfer-ownership="full">
           <doc xml:space="preserve">inout parameter, bytes available to fill in @outbuf</doc>
           <type name="gsize" c:type="gsize*"/>
         </parameter>
@@ -56538,7 +56550,7 @@ of characters instead of a given number of bytes. The @src string
 must be valid UTF-8 encoded text. (Use g_utf8_validate() on all
 text before trying to use UTF-8 utility functions with it.)
 
-Note you must ensure @dest is at least 4 * @n to fit the
+Note you must ensure @dest is at least 4 * @n + 1 to fit the
 largest possible UTF-8 characters</doc>
       <return-value transfer-ownership="none">
         <doc xml:space="preserve">@dest</doc>
