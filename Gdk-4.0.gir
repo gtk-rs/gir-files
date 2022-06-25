@@ -6270,7 +6270,10 @@ See [method@Gdk.GLContext.set_forward_compatible].</doc>
         </parameters>
       </method>
       <method name="get_required_version" c:identifier="gdk_gl_context_get_required_version">
-        <doc xml:space="preserve">Retrieves required OpenGL version.
+        <doc xml:space="preserve">Retrieves required OpenGL version set as a requirement for the @context
+realization. It will not change even if a greater OpenGL version is supported
+and used after the @context is realized. See
+[method@Gdk.GLContext.get_version] for the real version in use.
 
 See [method@Gdk.GLContext.set_required_version].</doc>
         <return-value transfer-ownership="none">
@@ -6326,7 +6329,9 @@ anymore, this function has been deprecated and now always returns %NULL.</doc>
       <method name="get_use_es" c:identifier="gdk_gl_context_get_use_es">
         <doc xml:space="preserve">Checks whether the @context is using an OpenGL or OpenGL ES profile.</doc>
         <return-value transfer-ownership="none">
-          <doc xml:space="preserve">%TRUE if the `GdkGLContext` is using an OpenGL ES profile</doc>
+          <doc xml:space="preserve">%TRUE if the `GdkGLContext` is using an OpenGL ES profile;
+%FALSE if other profile is in use of if the @context has not yet
+been realized.</doc>
           <type name="gboolean" c:type="gboolean"/>
         </return-value>
         <parameters>
@@ -6339,7 +6344,10 @@ anymore, this function has been deprecated and now always returns %NULL.</doc>
       <method name="get_version" c:identifier="gdk_gl_context_get_version">
         <doc xml:space="preserve">Retrieves the OpenGL version of the @context.
 
-The @context must be realized prior to calling this function.</doc>
+The @context must be realized prior to calling this function.
+
+If the @context has never been made current, the version cannot
+be known and it will return 0 for both @major and @minor.</doc>
         <return-value transfer-ownership="none">
           <type name="none" c:type="void"/>
         </return-value>
@@ -6515,7 +6523,10 @@ this function.</doc>
 
 Setting @major and @minor to zero will use the default values.
 
-The `GdkGLContext` must not be realized or made current prior to calling
+Setting @major and @minor lower than the minimum versions required
+by GTK will result in the context choosing the minimum version.
+
+The @context must not be realized or made current prior to calling
 this function.</doc>
         <return-value transfer-ownership="none">
           <type name="none" c:type="void"/>
@@ -17252,17 +17263,22 @@ use [method@Gdk.Texture.save_to_png_bytes].</doc>
       </function>
     </enumeration>
     <record name="TimeCoord" c:type="GdkTimeCoord">
-      <doc xml:space="preserve">A `GdkTimeCoord` stores a single event in a motion history.</doc>
+      <doc xml:space="preserve">A `GdkTimeCoord` stores a single event in a motion history.
+
+To check whether an axis is present, check whether the corresponding
+flag from the [flags@Gdk.AxisFlags] enumeration is set in the @flags
+To access individual axis values, use the values of the values of
+the [enum@Gdk.AxisUse] enumerations as indices.</doc>
       <field name="time" writable="1">
         <doc xml:space="preserve">The timestamp for this event</doc>
         <type name="guint32" c:type="guint32"/>
       </field>
       <field name="flags" writable="1">
-        <doc xml:space="preserve">Flags indicating what axes are present</doc>
+        <doc xml:space="preserve">Flags indicating what axes are present, see [flags@Gdk.AxisFlags]</doc>
         <type name="AxisFlags" c:type="GdkAxisFlags"/>
       </field>
       <field name="axes" writable="1">
-        <doc xml:space="preserve">axis values</doc>
+        <doc xml:space="preserve">axis values, indexed by [enum@Gdk.AxisUse]</doc>
         <array zero-terminated="0" fixed-size="12">
           <type name="gdouble" c:type="double"/>
         </array>
