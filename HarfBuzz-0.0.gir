@@ -4,6 +4,7 @@ To affect the contents of this file, edit the original C definitions,
 and/or use gtk-doc annotations.  -->
 <repository xmlns="http://www.gtk.org/introspection/core/1.0" xmlns:c="http://www.gtk.org/introspection/c/1.0" xmlns:glib="http://www.gtk.org/introspection/glib/1.0" version="1.2">
   <include name="GObject" version="2.0"/>
+  <include name="freetype2" version="2.0"/>
   <package name="harfbuzz-gobject"/>
   <c:include name="hb-gobject.h"/>
   <namespace name="HarfBuzz" version="0.0" shared-library="libharfbuzz.so.0,libharfbuzz-gobject.so.0" c:identifier-prefixes="hb_" c:symbol-prefixes="hb,hb_gobject">
@@ -104,7 +105,10 @@ must be returned in an #hb_position_t output parameter.</doc>
     <alias name="ot_name_id_t" c:type="hb_ot_name_id_t">
       <doc xml:space="preserve">An integral type representing an OpenType 'name' table name identifier.
 There are predefined name IDs, as well as name IDs return from other
-API.  These can be used to fetch name strings from a font face.</doc>
+API.  These can be used to fetch name strings from a font face.
+
+For more information on these fields, see the
+[OpenType spec](https://docs.microsoft.com/en-us/typography/opentype/spec/name#name-ids).</doc>
       <type name="guint" c:type="unsigned int"/>
     </alias>
     <alias name="position_t" c:type="hb_position_t">
@@ -301,19 +305,19 @@ as three integer components.</doc>
         </parameter>
       </parameters>
     </function-macro>
-    <constant name="VERSION_MAJOR" value="3" c:type="HB_VERSION_MAJOR">
+    <constant name="VERSION_MAJOR" value="4" c:type="HB_VERSION_MAJOR">
       <doc xml:space="preserve">The major component of the library version available at compile-time.</doc>
       <type name="gint" c:type="gint"/>
     </constant>
-    <constant name="VERSION_MICRO" value="0" c:type="HB_VERSION_MICRO">
+    <constant name="VERSION_MICRO" value="1" c:type="HB_VERSION_MICRO">
       <doc xml:space="preserve">The micro component of the library version available at compile-time.</doc>
       <type name="gint" c:type="gint"/>
     </constant>
-    <constant name="VERSION_MINOR" value="0" c:type="HB_VERSION_MINOR">
+    <constant name="VERSION_MINOR" value="4" c:type="HB_VERSION_MINOR">
       <doc xml:space="preserve">The minor component of the library version available at compile-time.</doc>
       <type name="gint" c:type="gint"/>
     </constant>
-    <constant name="VERSION_STRING" value="3.0.0" c:type="HB_VERSION_STRING">
+    <constant name="VERSION_STRING" value="4.4.1" c:type="HB_VERSION_STRING">
       <doc xml:space="preserve">A string literal containing the library version available at compile-time.</doc>
       <type name="utf8" c:type="gchar*"/>
     </constant>
@@ -1501,7 +1505,7 @@ See TODO:link object types for more information.</doc>
     </function>
     <function name="blob_get_data" c:identifier="hb_blob_get_data" version="0.9.2">
       <doc xml:space="preserve">Fetches the data from a blob.</doc>
-      <return-value transfer-ownership="none">
+      <return-value transfer-ownership="none" nullable="1">
         <doc xml:space="preserve">the byte data of @blob.</doc>
         <array length="1" zero-terminated="0" c:type="const char*">
           <type name="utf8" c:type="char"/>
@@ -1888,7 +1892,7 @@ see hb_buffer_set_replacement_codepoint().</doc>
         </parameter>
         <parameter name="source" transfer-ownership="none">
           <doc xml:space="preserve">source #hb_buffer_t</doc>
-          <type name="buffer_t" c:type="hb_buffer_t*"/>
+          <type name="buffer_t" c:type="const hb_buffer_t*"/>
         </parameter>
         <parameter name="start" transfer-ownership="none">
           <doc xml:space="preserve">start index into source buffer to copy.  Use 0 to copy from start of buffer.</doc>
@@ -1968,6 +1972,21 @@ be allocated, a special #hb_buffer_t object will be returned on which
 hb_buffer_allocation_successful() returns %false.</doc>
         <type name="buffer_t" c:type="hb_buffer_t*"/>
       </return-value>
+    </function>
+    <function name="buffer_create_similar" c:identifier="hb_buffer_create_similar" version="3.3.0">
+      <doc xml:space="preserve">Creates a new #hb_buffer_t, similar to hb_buffer_create(). The only
+difference is that the buffer is configured similarly to @src.</doc>
+      <return-value transfer-ownership="full">
+        <doc xml:space="preserve">
+A newly allocated #hb_buffer_t, similar to hb_buffer_create().</doc>
+        <type name="buffer_t" c:type="hb_buffer_t*"/>
+      </return-value>
+      <parameters>
+        <parameter name="src" transfer-ownership="none">
+          <doc xml:space="preserve">An #hb_buffer_t</doc>
+          <type name="buffer_t" c:type="const hb_buffer_t*"/>
+        </parameter>
+      </parameters>
     </function>
     <function name="buffer_deserialize_glyphs" c:identifier="hb_buffer_deserialize_glyphs" version="0.9.7">
       <doc xml:space="preserve">Deserializes glyphs @buffer from textual representation in the format
@@ -2157,7 +2176,24 @@ report which aspect(s) of the glyph info/position are different.</doc>
       <member name="do_not_insert_dotted_circle" value="16" c:identifier="HB_BUFFER_FLAG_DO_NOT_INSERT_DOTTED_CIRCLE" glib:nick="do-not-insert-dotted-circle" glib:name="HB_BUFFER_FLAG_DO_NOT_INSERT_DOTTED_CIRCLE">
         <doc xml:space="preserve">flag indicating that a dotted circle should
                      not be inserted in the rendering of incorrect
-                     character sequences (such at &lt;0905 093E&gt;). Since: 2.4</doc>
+                     character sequences (such at &lt;0905 093E&gt;). Since: 2.4.0</doc>
+      </member>
+      <member name="verify" value="32" c:identifier="HB_BUFFER_FLAG_VERIFY" glib:nick="verify" glib:name="HB_BUFFER_FLAG_VERIFY">
+        <doc xml:space="preserve">flag indicating that the hb_shape() call and its variants
+                     should perform various verification processes on the results
+                     of the shaping operation on the buffer.  If the verification
+                     fails, then either a buffer message is sent, if a message
+                     handler is installed on the buffer, or a message is written
+                     to standard error.  In either case, the shaping result might
+                     be modified to show the failed output. Since: 3.4.0</doc>
+      </member>
+      <member name="produce_unsafe_to_concat" value="64" c:identifier="HB_BUFFER_FLAG_PRODUCE_UNSAFE_TO_CONCAT" glib:nick="produce-unsafe-to-concat" glib:name="HB_BUFFER_FLAG_PRODUCE_UNSAFE_TO_CONCAT">
+        <doc xml:space="preserve">flag indicating that the @HB_GLYPH_FLAG_UNSAFE_TO_CONCAT
+                     glyph-flag should be produced by the shaper. By default
+                     it will not be produced since it incurs a cost. Since: 4.0.0</doc>
+      </member>
+      <member name="defined" value="127" c:identifier="HB_BUFFER_FLAG_DEFINED" glib:nick="defined" glib:name="HB_BUFFER_FLAG_DEFINED">
+        <doc xml:space="preserve">All currently defined flags: Since: 4.4.0</doc>
       </member>
     </bitfield>
     <function name="buffer_get_cluster_level" c:identifier="hb_buffer_get_cluster_level" version="0.9.42">
@@ -2171,7 +2207,7 @@ during shaping.</doc>
       <parameters>
         <parameter name="buffer" transfer-ownership="none">
           <doc xml:space="preserve">An #hb_buffer_t</doc>
-          <type name="buffer_t" c:type="hb_buffer_t*"/>
+          <type name="buffer_t" c:type="const hb_buffer_t*"/>
         </parameter>
       </parameters>
     </function>
@@ -2185,7 +2221,7 @@ characters (before shaping), or contain glyphs (the result of shaping).</doc>
       <parameters>
         <parameter name="buffer" transfer-ownership="none">
           <doc xml:space="preserve">An #hb_buffer_t</doc>
-          <type name="buffer_t" c:type="hb_buffer_t*"/>
+          <type name="buffer_t" c:type="const hb_buffer_t*"/>
         </parameter>
       </parameters>
     </function>
@@ -2198,7 +2234,7 @@ characters (before shaping), or contain glyphs (the result of shaping).</doc>
       <parameters>
         <parameter name="buffer" transfer-ownership="none">
           <doc xml:space="preserve">An #hb_buffer_t</doc>
-          <type name="buffer_t" c:type="hb_buffer_t*"/>
+          <type name="buffer_t" c:type="const hb_buffer_t*"/>
         </parameter>
       </parameters>
     </function>
@@ -2218,7 +2254,7 @@ characters (before shaping), or contain glyphs (the result of shaping).</doc>
       <parameters>
         <parameter name="buffer" transfer-ownership="none">
           <doc xml:space="preserve">An #hb_buffer_t</doc>
-          <type name="buffer_t" c:type="hb_buffer_t*"/>
+          <type name="buffer_t" c:type="const hb_buffer_t*"/>
         </parameter>
       </parameters>
     </function>
@@ -2280,7 +2316,7 @@ The value valid as long as buffer has not been modified.</doc>
       <parameters>
         <parameter name="buffer" transfer-ownership="none">
           <doc xml:space="preserve">An #hb_buffer_t</doc>
-          <type name="buffer_t" c:type="hb_buffer_t*"/>
+          <type name="buffer_t" c:type="const hb_buffer_t*"/>
         </parameter>
       </parameters>
     </function>
@@ -2294,7 +2330,7 @@ The #hb_language_t of the buffer. Must not be freed by the caller.</doc>
       <parameters>
         <parameter name="buffer" transfer-ownership="none">
           <doc xml:space="preserve">An #hb_buffer_t</doc>
-          <type name="buffer_t" c:type="hb_buffer_t*"/>
+          <type name="buffer_t" c:type="const hb_buffer_t*"/>
         </parameter>
       </parameters>
     </function>
@@ -2308,7 +2344,20 @@ The value valid as long as buffer has not been modified.</doc>
       <parameters>
         <parameter name="buffer" transfer-ownership="none">
           <doc xml:space="preserve">An #hb_buffer_t</doc>
-          <type name="buffer_t" c:type="hb_buffer_t*"/>
+          <type name="buffer_t" c:type="const hb_buffer_t*"/>
+        </parameter>
+      </parameters>
+    </function>
+    <function name="buffer_get_not_found_glyph" c:identifier="hb_buffer_get_not_found_glyph" version="3.1.0">
+      <doc xml:space="preserve">See hb_buffer_set_not_found_glyph().</doc>
+      <return-value transfer-ownership="none">
+        <doc xml:space="preserve">The @buffer not-found #hb_codepoint_t</doc>
+        <type name="codepoint_t" c:type="hb_codepoint_t"/>
+      </return-value>
+      <parameters>
+        <parameter name="buffer" transfer-ownership="none">
+          <doc xml:space="preserve">An #hb_buffer_t</doc>
+          <type name="buffer_t" c:type="const hb_buffer_t*"/>
         </parameter>
       </parameters>
     </function>
@@ -2322,7 +2371,7 @@ when adding text to @buffer.</doc>
       <parameters>
         <parameter name="buffer" transfer-ownership="none">
           <doc xml:space="preserve">An #hb_buffer_t</doc>
-          <type name="buffer_t" c:type="hb_buffer_t*"/>
+          <type name="buffer_t" c:type="const hb_buffer_t*"/>
         </parameter>
       </parameters>
     </function>
@@ -2335,7 +2384,7 @@ when adding text to @buffer.</doc>
       <parameters>
         <parameter name="buffer" transfer-ownership="none">
           <doc xml:space="preserve">An #hb_buffer_t</doc>
-          <type name="buffer_t" c:type="hb_buffer_t*"/>
+          <type name="buffer_t" c:type="const hb_buffer_t*"/>
         </parameter>
       </parameters>
     </function>
@@ -2347,7 +2396,7 @@ when adding text to @buffer.</doc>
       <parameters>
         <parameter name="buffer" transfer-ownership="none">
           <doc xml:space="preserve">An #hb_buffer_t</doc>
-          <type name="buffer_t" c:type="hb_buffer_t*"/>
+          <type name="buffer_t" c:type="const hb_buffer_t*"/>
         </parameter>
         <parameter name="props" direction="out" caller-allocates="1" transfer-ownership="none">
           <doc xml:space="preserve">The output #hb_segment_properties_t</doc>
@@ -2364,7 +2413,7 @@ when adding text to @buffer.</doc>
       <parameters>
         <parameter name="buffer" transfer-ownership="none">
           <doc xml:space="preserve">An #hb_buffer_t</doc>
-          <type name="buffer_t" c:type="hb_buffer_t*"/>
+          <type name="buffer_t" c:type="const hb_buffer_t*"/>
         </parameter>
       </parameters>
     </function>
@@ -2603,12 +2652,12 @@ hb_buffer_serialize_glyphs() for a description of the output format.</doc>
           <type name="guint" c:type="unsigned int"/>
         </parameter>
         <parameter name="buf_consumed" direction="out" caller-allocates="0" transfer-ownership="full" optional="1" allow-none="1">
-          <doc xml:space="preserve">if not %NULL, will be set to the number of byes written into @buf.</doc>
+          <doc xml:space="preserve">if not %NULL, will be set to the number of bytes written into @buf.</doc>
           <type name="guint" c:type="unsigned int*"/>
         </parameter>
         <parameter name="font" transfer-ownership="none" nullable="1" allow-none="1">
           <doc xml:space="preserve">the #hb_font_t used to shape this buffer, needed to
-       read glyph names and extents. If %NULL, and empty font will be used.</doc>
+       read glyph names and extents. If %NULL, an empty font will be used.</doc>
           <type name="font_t" c:type="hb_font_t*"/>
         </parameter>
         <parameter name="format" transfer-ownership="none">
@@ -2645,6 +2694,9 @@ hb_buffer_serialize_glyphs() for a description of the output format.</doc>
       <member name="no_advances" value="32" c:identifier="HB_BUFFER_SERIALIZE_FLAG_NO_ADVANCES" glib:nick="no-advances" glib:name="HB_BUFFER_SERIALIZE_FLAG_NO_ADVANCES">
         <doc xml:space="preserve">do not serialize glyph advances,
  glyph offsets will reflect absolute glyph positions. Since: 1.8.0</doc>
+      </member>
+      <member name="defined" value="63" c:identifier="HB_BUFFER_SERIALIZE_FLAG_DEFINED" glib:nick="defined" glib:name="HB_BUFFER_SERIALIZE_FLAG_DEFINED">
+        <doc xml:space="preserve">All currently defined flags. Since: 4.4.0</doc>
       </member>
     </bitfield>
     <function name="buffer_serialize_format_from_string" c:identifier="hb_buffer_serialize_format_from_string" version="0.9.7">
@@ -2768,12 +2820,12 @@ Each glyph is a JSON object, with the following properties:
           <type name="guint" c:type="unsigned int"/>
         </parameter>
         <parameter name="buf_consumed" direction="out" caller-allocates="0" transfer-ownership="full" optional="1" allow-none="1">
-          <doc xml:space="preserve">if not %NULL, will be set to the number of byes written into @buf.</doc>
+          <doc xml:space="preserve">if not %NULL, will be set to the number of bytes written into @buf.</doc>
           <type name="guint" c:type="unsigned int*"/>
         </parameter>
         <parameter name="font" transfer-ownership="none" nullable="1" allow-none="1">
           <doc xml:space="preserve">the #hb_font_t used to shape this buffer, needed to
-       read glyph names and extents. If %NULL, and empty font will be used.</doc>
+       read glyph names and extents. If %NULL, an empty font will be used.</doc>
           <type name="font_t" c:type="hb_font_t*"/>
         </parameter>
         <parameter name="format" transfer-ownership="none">
@@ -2859,7 +2911,7 @@ For example:
           <type name="guint" c:type="unsigned int"/>
         </parameter>
         <parameter name="buf_consumed" direction="out" caller-allocates="0" transfer-ownership="full" optional="1" allow-none="1">
-          <doc xml:space="preserve">if not %NULL, will be set to the number of byes written into @buf.</doc>
+          <doc xml:space="preserve">if not %NULL, will be set to the number of bytes written into @buf.</doc>
           <type name="guint" c:type="unsigned int*"/>
         </parameter>
         <parameter name="format" transfer-ownership="none">
@@ -3028,6 +3080,26 @@ end.</doc>
         <parameter name="destroy" transfer-ownership="none" nullable="1" allow-none="1" scope="notified">
           <doc xml:space="preserve">The function to call when @user_data is not needed anymore</doc>
           <type name="destroy_func_t" c:type="hb_destroy_func_t"/>
+        </parameter>
+      </parameters>
+    </function>
+    <function name="buffer_set_not_found_glyph" c:identifier="hb_buffer_set_not_found_glyph" version="3.1.0">
+      <doc xml:space="preserve">Sets the #hb_codepoint_t that replaces characters not found in
+the font during shaping.
+
+The not-found glyph defaults to zero, sometimes knows as the
+".notdef" glyph.  This API allows for differentiating the two.</doc>
+      <return-value transfer-ownership="none">
+        <type name="none" c:type="void"/>
+      </return-value>
+      <parameters>
+        <parameter name="buffer" transfer-ownership="none">
+          <doc xml:space="preserve">An #hb_buffer_t</doc>
+          <type name="buffer_t" c:type="hb_buffer_t*"/>
+        </parameter>
+        <parameter name="not_found" transfer-ownership="none">
+          <doc xml:space="preserve">the not-found #hb_codepoint_t</doc>
+          <type name="codepoint_t" c:type="hb_codepoint_t"/>
         </parameter>
       </parameters>
     </function>
@@ -3265,6 +3337,581 @@ HB_DIRECTION_IS_HORIZONTAL() or HB_DIRECTION_IS_VERTICAL().</doc>
         </parameter>
       </parameters>
     </function>
+    <function name="draw_close_path" c:identifier="hb_draw_close_path" version="4.0.0">
+      <doc xml:space="preserve">Perform a "close-path" draw operation.</doc>
+      <return-value transfer-ownership="none">
+        <type name="none" c:type="void"/>
+      </return-value>
+      <parameters>
+        <parameter name="dfuncs" transfer-ownership="none">
+          <doc xml:space="preserve">draw functions</doc>
+          <type name="draw_funcs_t" c:type="hb_draw_funcs_t*"/>
+        </parameter>
+        <parameter name="draw_data" transfer-ownership="none" nullable="1" allow-none="1">
+          <doc xml:space="preserve">associated draw data passed by the caller</doc>
+          <type name="gpointer" c:type="void*"/>
+        </parameter>
+        <parameter name="st" transfer-ownership="none">
+          <doc xml:space="preserve">current draw state</doc>
+          <type name="draw_state_t" c:type="hb_draw_state_t*"/>
+        </parameter>
+      </parameters>
+    </function>
+    <callback name="draw_close_path_func_t" c:type="hb_draw_close_path_func_t" version="4.0.0">
+      <doc xml:space="preserve">A virtual method for the #hb_draw_funcs_t to perform a "close-path" draw
+operation.</doc>
+      <return-value transfer-ownership="none">
+        <type name="none" c:type="void"/>
+      </return-value>
+      <parameters>
+        <parameter name="dfuncs" transfer-ownership="none">
+          <doc xml:space="preserve">draw functions object</doc>
+          <type name="draw_funcs_t" c:type="hb_draw_funcs_t*"/>
+        </parameter>
+        <parameter name="draw_data" transfer-ownership="none" nullable="1" allow-none="1">
+          <doc xml:space="preserve">The data accompanying the draw functions</doc>
+          <type name="gpointer" c:type="void*"/>
+        </parameter>
+        <parameter name="st" transfer-ownership="none">
+          <doc xml:space="preserve">current draw state</doc>
+          <type name="draw_state_t" c:type="hb_draw_state_t*"/>
+        </parameter>
+        <parameter name="user_data" transfer-ownership="none" nullable="1" allow-none="1" closure="3">
+          <doc xml:space="preserve">User data pointer passed by the caller</doc>
+          <type name="gpointer" c:type="void*"/>
+        </parameter>
+      </parameters>
+    </callback>
+    <function name="draw_cubic_to" c:identifier="hb_draw_cubic_to" version="4.0.0">
+      <doc xml:space="preserve">Perform a "cubic-to" draw operation.</doc>
+      <return-value transfer-ownership="none">
+        <type name="none" c:type="void"/>
+      </return-value>
+      <parameters>
+        <parameter name="dfuncs" transfer-ownership="none">
+          <doc xml:space="preserve">draw functions</doc>
+          <type name="draw_funcs_t" c:type="hb_draw_funcs_t*"/>
+        </parameter>
+        <parameter name="draw_data" transfer-ownership="none" nullable="1" allow-none="1">
+          <doc xml:space="preserve">associated draw data passed by the caller</doc>
+          <type name="gpointer" c:type="void*"/>
+        </parameter>
+        <parameter name="st" transfer-ownership="none">
+          <doc xml:space="preserve">current draw state</doc>
+          <type name="draw_state_t" c:type="hb_draw_state_t*"/>
+        </parameter>
+        <parameter name="control1_x" transfer-ownership="none">
+          <doc xml:space="preserve">X component of first control point</doc>
+          <type name="gfloat" c:type="float"/>
+        </parameter>
+        <parameter name="control1_y" transfer-ownership="none">
+          <doc xml:space="preserve">Y component of first control point</doc>
+          <type name="gfloat" c:type="float"/>
+        </parameter>
+        <parameter name="control2_x" transfer-ownership="none">
+          <doc xml:space="preserve">X component of second control point</doc>
+          <type name="gfloat" c:type="float"/>
+        </parameter>
+        <parameter name="control2_y" transfer-ownership="none">
+          <doc xml:space="preserve">Y component of second control point</doc>
+          <type name="gfloat" c:type="float"/>
+        </parameter>
+        <parameter name="to_x" transfer-ownership="none">
+          <doc xml:space="preserve">X component of target point</doc>
+          <type name="gfloat" c:type="float"/>
+        </parameter>
+        <parameter name="to_y" transfer-ownership="none">
+          <doc xml:space="preserve">Y component of target point</doc>
+          <type name="gfloat" c:type="float"/>
+        </parameter>
+      </parameters>
+    </function>
+    <callback name="draw_cubic_to_func_t" c:type="hb_draw_cubic_to_func_t" version="4.0.0">
+      <doc xml:space="preserve">A virtual method for the #hb_draw_funcs_t to perform a "cubic-to" draw
+operation.</doc>
+      <return-value transfer-ownership="none">
+        <type name="none" c:type="void"/>
+      </return-value>
+      <parameters>
+        <parameter name="dfuncs" transfer-ownership="none">
+          <doc xml:space="preserve">draw functions object</doc>
+          <type name="draw_funcs_t" c:type="hb_draw_funcs_t*"/>
+        </parameter>
+        <parameter name="draw_data" transfer-ownership="none" nullable="1" allow-none="1">
+          <doc xml:space="preserve">The data accompanying the draw functions</doc>
+          <type name="gpointer" c:type="void*"/>
+        </parameter>
+        <parameter name="st" transfer-ownership="none">
+          <doc xml:space="preserve">current draw state</doc>
+          <type name="draw_state_t" c:type="hb_draw_state_t*"/>
+        </parameter>
+        <parameter name="control1_x" transfer-ownership="none">
+          <doc xml:space="preserve">X component of first control point</doc>
+          <type name="gfloat" c:type="float"/>
+        </parameter>
+        <parameter name="control1_y" transfer-ownership="none">
+          <doc xml:space="preserve">Y component of first control point</doc>
+          <type name="gfloat" c:type="float"/>
+        </parameter>
+        <parameter name="control2_x" transfer-ownership="none">
+          <doc xml:space="preserve">X component of second control point</doc>
+          <type name="gfloat" c:type="float"/>
+        </parameter>
+        <parameter name="control2_y" transfer-ownership="none">
+          <doc xml:space="preserve">Y component of second control point</doc>
+          <type name="gfloat" c:type="float"/>
+        </parameter>
+        <parameter name="to_x" transfer-ownership="none">
+          <doc xml:space="preserve">X component of target point</doc>
+          <type name="gfloat" c:type="float"/>
+        </parameter>
+        <parameter name="to_y" transfer-ownership="none">
+          <doc xml:space="preserve">Y component of target point</doc>
+          <type name="gfloat" c:type="float"/>
+        </parameter>
+        <parameter name="user_data" transfer-ownership="none" nullable="1" allow-none="1" closure="9">
+          <doc xml:space="preserve">User data pointer passed by the caller</doc>
+          <type name="gpointer" c:type="void*"/>
+        </parameter>
+      </parameters>
+    </callback>
+    <function name="draw_funcs_create" c:identifier="hb_draw_funcs_create" version="4.0.0">
+      <doc xml:space="preserve">Creates a new draw callbacks object.</doc>
+      <return-value transfer-ownership="full">
+        <doc xml:space="preserve">
+A newly allocated #hb_draw_funcs_t with a reference count of 1. The initial
+reference count should be released with hb_draw_funcs_destroy when you are
+done using the #hb_draw_funcs_t. This function never returns %NULL. If
+memory cannot be allocated, a special singleton #hb_draw_funcs_t object will
+be returned.</doc>
+        <type name="draw_funcs_t" c:type="hb_draw_funcs_t*"/>
+      </return-value>
+    </function>
+    <function name="draw_funcs_destroy" c:identifier="hb_draw_funcs_destroy" version="4.0.0" introspectable="0">
+      <doc xml:space="preserve">Deallocate the @dfuncs.
+Decreases the reference count on @dfuncs by one. If the result is zero, then
+@dfuncs and all associated resources are freed. See hb_draw_funcs_reference().</doc>
+      <return-value transfer-ownership="none">
+        <type name="none" c:type="void"/>
+      </return-value>
+      <parameters>
+        <parameter name="dfuncs" transfer-ownership="none">
+          <doc xml:space="preserve">draw functions</doc>
+          <type name="draw_funcs_t" c:type="hb_draw_funcs_t*"/>
+        </parameter>
+      </parameters>
+    </function>
+    <function name="draw_funcs_is_immutable" c:identifier="hb_draw_funcs_is_immutable" version="4.0.0">
+      <doc xml:space="preserve">Checks whether @dfuncs is immutable.</doc>
+      <return-value transfer-ownership="none">
+        <doc xml:space="preserve">%true if @dfuncs is immutable, %false otherwise</doc>
+        <type name="bool_t" c:type="hb_bool_t"/>
+      </return-value>
+      <parameters>
+        <parameter name="dfuncs" transfer-ownership="none">
+          <doc xml:space="preserve">draw functions</doc>
+          <type name="draw_funcs_t" c:type="hb_draw_funcs_t*"/>
+        </parameter>
+      </parameters>
+    </function>
+    <function name="draw_funcs_make_immutable" c:identifier="hb_draw_funcs_make_immutable" version="4.0.0">
+      <doc xml:space="preserve">Makes @dfuncs object immutable.</doc>
+      <return-value transfer-ownership="none">
+        <type name="none" c:type="void"/>
+      </return-value>
+      <parameters>
+        <parameter name="dfuncs" transfer-ownership="none">
+          <doc xml:space="preserve">draw functions</doc>
+          <type name="draw_funcs_t" c:type="hb_draw_funcs_t*"/>
+        </parameter>
+      </parameters>
+    </function>
+    <function name="draw_funcs_reference" c:identifier="hb_draw_funcs_reference" version="4.0.0" introspectable="0">
+      <doc xml:space="preserve">Increases the reference count on @dfuncs by one. This prevents @buffer from
+being destroyed until a matching call to hb_draw_funcs_destroy() is made.</doc>
+      <return-value transfer-ownership="full">
+        <doc xml:space="preserve">
+The referenced #hb_draw_funcs_t.</doc>
+        <type name="draw_funcs_t" c:type="hb_draw_funcs_t*"/>
+      </return-value>
+      <parameters>
+        <parameter name="dfuncs" transfer-ownership="none">
+          <doc xml:space="preserve">draw functions</doc>
+          <type name="draw_funcs_t" c:type="hb_draw_funcs_t*"/>
+        </parameter>
+      </parameters>
+    </function>
+    <function name="draw_funcs_set_close_path_func" c:identifier="hb_draw_funcs_set_close_path_func" version="4.0.0">
+      <doc xml:space="preserve">Sets close-path callback to the draw functions object.</doc>
+      <return-value transfer-ownership="none">
+        <type name="none" c:type="void"/>
+      </return-value>
+      <parameters>
+        <parameter name="dfuncs" transfer-ownership="none">
+          <doc xml:space="preserve">draw functions object</doc>
+          <type name="draw_funcs_t" c:type="hb_draw_funcs_t*"/>
+        </parameter>
+        <parameter name="func" transfer-ownership="none" scope="notified" closure="2" destroy="3">
+          <doc xml:space="preserve">close-path callback</doc>
+          <type name="draw_close_path_func_t" c:type="hb_draw_close_path_func_t"/>
+        </parameter>
+        <parameter name="user_data" transfer-ownership="none" nullable="1" allow-none="1">
+          <doc xml:space="preserve">Data to pass to @func</doc>
+          <type name="gpointer" c:type="void*"/>
+        </parameter>
+        <parameter name="destroy" transfer-ownership="none" nullable="1" allow-none="1" scope="notified">
+          <doc xml:space="preserve">The function to call when @user_data is not needed anymore</doc>
+          <type name="destroy_func_t" c:type="hb_destroy_func_t"/>
+        </parameter>
+      </parameters>
+    </function>
+    <function name="draw_funcs_set_cubic_to_func" c:identifier="hb_draw_funcs_set_cubic_to_func" version="4.0.0">
+      <doc xml:space="preserve">Sets cubic-to callback to the draw functions object.</doc>
+      <return-value transfer-ownership="none">
+        <type name="none" c:type="void"/>
+      </return-value>
+      <parameters>
+        <parameter name="dfuncs" transfer-ownership="none">
+          <doc xml:space="preserve">draw functions</doc>
+          <type name="draw_funcs_t" c:type="hb_draw_funcs_t*"/>
+        </parameter>
+        <parameter name="func" transfer-ownership="none" scope="notified" closure="2" destroy="3">
+          <doc xml:space="preserve">cubic-to callback</doc>
+          <type name="draw_cubic_to_func_t" c:type="hb_draw_cubic_to_func_t"/>
+        </parameter>
+        <parameter name="user_data" transfer-ownership="none" nullable="1" allow-none="1">
+          <doc xml:space="preserve">Data to pass to @func</doc>
+          <type name="gpointer" c:type="void*"/>
+        </parameter>
+        <parameter name="destroy" transfer-ownership="none" nullable="1" allow-none="1" scope="notified">
+          <doc xml:space="preserve">The function to call when @user_data is not needed anymore</doc>
+          <type name="destroy_func_t" c:type="hb_destroy_func_t"/>
+        </parameter>
+      </parameters>
+    </function>
+    <function name="draw_funcs_set_line_to_func" c:identifier="hb_draw_funcs_set_line_to_func" version="4.0.0">
+      <doc xml:space="preserve">Sets line-to callback to the draw functions object.</doc>
+      <return-value transfer-ownership="none">
+        <type name="none" c:type="void"/>
+      </return-value>
+      <parameters>
+        <parameter name="dfuncs" transfer-ownership="none">
+          <doc xml:space="preserve">draw functions object</doc>
+          <type name="draw_funcs_t" c:type="hb_draw_funcs_t*"/>
+        </parameter>
+        <parameter name="func" transfer-ownership="none" scope="notified" closure="2" destroy="3">
+          <doc xml:space="preserve">line-to callback</doc>
+          <type name="draw_line_to_func_t" c:type="hb_draw_line_to_func_t"/>
+        </parameter>
+        <parameter name="user_data" transfer-ownership="none" nullable="1" allow-none="1">
+          <doc xml:space="preserve">Data to pass to @func</doc>
+          <type name="gpointer" c:type="void*"/>
+        </parameter>
+        <parameter name="destroy" transfer-ownership="none" nullable="1" allow-none="1" scope="notified">
+          <doc xml:space="preserve">The function to call when @user_data is not needed anymore</doc>
+          <type name="destroy_func_t" c:type="hb_destroy_func_t"/>
+        </parameter>
+      </parameters>
+    </function>
+    <function name="draw_funcs_set_move_to_func" c:identifier="hb_draw_funcs_set_move_to_func" version="4.0.0">
+      <doc xml:space="preserve">Sets move-to callback to the draw functions object.</doc>
+      <return-value transfer-ownership="none">
+        <type name="none" c:type="void"/>
+      </return-value>
+      <parameters>
+        <parameter name="dfuncs" transfer-ownership="none">
+          <doc xml:space="preserve">draw functions object</doc>
+          <type name="draw_funcs_t" c:type="hb_draw_funcs_t*"/>
+        </parameter>
+        <parameter name="func" transfer-ownership="none" scope="notified" closure="2" destroy="3">
+          <doc xml:space="preserve">move-to callback</doc>
+          <type name="draw_move_to_func_t" c:type="hb_draw_move_to_func_t"/>
+        </parameter>
+        <parameter name="user_data" transfer-ownership="none" nullable="1" allow-none="1">
+          <doc xml:space="preserve">Data to pass to @func</doc>
+          <type name="gpointer" c:type="void*"/>
+        </parameter>
+        <parameter name="destroy" transfer-ownership="none" nullable="1" allow-none="1" scope="notified">
+          <doc xml:space="preserve">The function to call when @user_data is not needed anymore</doc>
+          <type name="destroy_func_t" c:type="hb_destroy_func_t"/>
+        </parameter>
+      </parameters>
+    </function>
+    <function name="draw_funcs_set_quadratic_to_func" c:identifier="hb_draw_funcs_set_quadratic_to_func" version="4.0.0">
+      <doc xml:space="preserve">Sets quadratic-to callback to the draw functions object.</doc>
+      <return-value transfer-ownership="none">
+        <type name="none" c:type="void"/>
+      </return-value>
+      <parameters>
+        <parameter name="dfuncs" transfer-ownership="none">
+          <doc xml:space="preserve">draw functions object</doc>
+          <type name="draw_funcs_t" c:type="hb_draw_funcs_t*"/>
+        </parameter>
+        <parameter name="func" transfer-ownership="none" scope="notified" closure="2" destroy="3">
+          <doc xml:space="preserve">quadratic-to callback</doc>
+          <type name="draw_quadratic_to_func_t" c:type="hb_draw_quadratic_to_func_t"/>
+        </parameter>
+        <parameter name="user_data" transfer-ownership="none" nullable="1" allow-none="1">
+          <doc xml:space="preserve">Data to pass to @func</doc>
+          <type name="gpointer" c:type="void*"/>
+        </parameter>
+        <parameter name="destroy" transfer-ownership="none" nullable="1" allow-none="1" scope="notified">
+          <doc xml:space="preserve">The function to call when @user_data is not needed anymore</doc>
+          <type name="destroy_func_t" c:type="hb_destroy_func_t"/>
+        </parameter>
+      </parameters>
+    </function>
+    <record name="draw_funcs_t" c:type="hb_draw_funcs_t" version="4.0.0" glib:type-name="hb_draw_funcs_t" glib:get-type="hb_gobject_draw_funcs_get_type" c:symbol-prefix="gobject_draw_funcs">
+      <doc xml:space="preserve">Glyph draw callbacks.
+
+#hb_draw_move_to_func_t, #hb_draw_line_to_func_t and
+#hb_draw_cubic_to_func_t calls are necessary to be defined but we translate
+#hb_draw_quadratic_to_func_t calls to #hb_draw_cubic_to_func_t if the
+callback isn't defined.</doc>
+    </record>
+    <function name="draw_line_to" c:identifier="hb_draw_line_to" version="4.0.0">
+      <doc xml:space="preserve">Perform a "line-to" draw operation.</doc>
+      <return-value transfer-ownership="none">
+        <type name="none" c:type="void"/>
+      </return-value>
+      <parameters>
+        <parameter name="dfuncs" transfer-ownership="none">
+          <doc xml:space="preserve">draw functions</doc>
+          <type name="draw_funcs_t" c:type="hb_draw_funcs_t*"/>
+        </parameter>
+        <parameter name="draw_data" transfer-ownership="none" nullable="1" allow-none="1">
+          <doc xml:space="preserve">associated draw data passed by the caller</doc>
+          <type name="gpointer" c:type="void*"/>
+        </parameter>
+        <parameter name="st" transfer-ownership="none">
+          <doc xml:space="preserve">current draw state</doc>
+          <type name="draw_state_t" c:type="hb_draw_state_t*"/>
+        </parameter>
+        <parameter name="to_x" transfer-ownership="none">
+          <doc xml:space="preserve">X component of target point</doc>
+          <type name="gfloat" c:type="float"/>
+        </parameter>
+        <parameter name="to_y" transfer-ownership="none">
+          <doc xml:space="preserve">Y component of target point</doc>
+          <type name="gfloat" c:type="float"/>
+        </parameter>
+      </parameters>
+    </function>
+    <callback name="draw_line_to_func_t" c:type="hb_draw_line_to_func_t" version="4.0.0">
+      <doc xml:space="preserve">A virtual method for the #hb_draw_funcs_t to perform a "line-to" draw
+operation.</doc>
+      <return-value transfer-ownership="none">
+        <type name="none" c:type="void"/>
+      </return-value>
+      <parameters>
+        <parameter name="dfuncs" transfer-ownership="none">
+          <doc xml:space="preserve">draw functions object</doc>
+          <type name="draw_funcs_t" c:type="hb_draw_funcs_t*"/>
+        </parameter>
+        <parameter name="draw_data" transfer-ownership="none" nullable="1" allow-none="1">
+          <doc xml:space="preserve">The data accompanying the draw functions</doc>
+          <type name="gpointer" c:type="void*"/>
+        </parameter>
+        <parameter name="st" transfer-ownership="none">
+          <doc xml:space="preserve">current draw state</doc>
+          <type name="draw_state_t" c:type="hb_draw_state_t*"/>
+        </parameter>
+        <parameter name="to_x" transfer-ownership="none">
+          <doc xml:space="preserve">X component of target point</doc>
+          <type name="gfloat" c:type="float"/>
+        </parameter>
+        <parameter name="to_y" transfer-ownership="none">
+          <doc xml:space="preserve">Y component of target point</doc>
+          <type name="gfloat" c:type="float"/>
+        </parameter>
+        <parameter name="user_data" transfer-ownership="none" nullable="1" allow-none="1" closure="5">
+          <doc xml:space="preserve">User data pointer passed by the caller</doc>
+          <type name="gpointer" c:type="void*"/>
+        </parameter>
+      </parameters>
+    </callback>
+    <function name="draw_move_to" c:identifier="hb_draw_move_to" version="4.0.0">
+      <doc xml:space="preserve">Perform a "move-to" draw operation.</doc>
+      <return-value transfer-ownership="none">
+        <type name="none" c:type="void"/>
+      </return-value>
+      <parameters>
+        <parameter name="dfuncs" transfer-ownership="none">
+          <doc xml:space="preserve">draw functions</doc>
+          <type name="draw_funcs_t" c:type="hb_draw_funcs_t*"/>
+        </parameter>
+        <parameter name="draw_data" transfer-ownership="none" nullable="1" allow-none="1">
+          <doc xml:space="preserve">associated draw data passed by the caller</doc>
+          <type name="gpointer" c:type="void*"/>
+        </parameter>
+        <parameter name="st" transfer-ownership="none">
+          <doc xml:space="preserve">current draw state</doc>
+          <type name="draw_state_t" c:type="hb_draw_state_t*"/>
+        </parameter>
+        <parameter name="to_x" transfer-ownership="none">
+          <doc xml:space="preserve">X component of target point</doc>
+          <type name="gfloat" c:type="float"/>
+        </parameter>
+        <parameter name="to_y" transfer-ownership="none">
+          <doc xml:space="preserve">Y component of target point</doc>
+          <type name="gfloat" c:type="float"/>
+        </parameter>
+      </parameters>
+    </function>
+    <callback name="draw_move_to_func_t" c:type="hb_draw_move_to_func_t" version="4.0.0">
+      <doc xml:space="preserve">A virtual method for the #hb_draw_funcs_t to perform a "move-to" draw
+operation.</doc>
+      <return-value transfer-ownership="none">
+        <type name="none" c:type="void"/>
+      </return-value>
+      <parameters>
+        <parameter name="dfuncs" transfer-ownership="none">
+          <doc xml:space="preserve">draw functions object</doc>
+          <type name="draw_funcs_t" c:type="hb_draw_funcs_t*"/>
+        </parameter>
+        <parameter name="draw_data" transfer-ownership="none" nullable="1" allow-none="1">
+          <doc xml:space="preserve">The data accompanying the draw functions</doc>
+          <type name="gpointer" c:type="void*"/>
+        </parameter>
+        <parameter name="st" transfer-ownership="none">
+          <doc xml:space="preserve">current draw state</doc>
+          <type name="draw_state_t" c:type="hb_draw_state_t*"/>
+        </parameter>
+        <parameter name="to_x" transfer-ownership="none">
+          <doc xml:space="preserve">X component of target point</doc>
+          <type name="gfloat" c:type="float"/>
+        </parameter>
+        <parameter name="to_y" transfer-ownership="none">
+          <doc xml:space="preserve">Y component of target point</doc>
+          <type name="gfloat" c:type="float"/>
+        </parameter>
+        <parameter name="user_data" transfer-ownership="none" nullable="1" allow-none="1" closure="5">
+          <doc xml:space="preserve">User data pointer passed by the caller</doc>
+          <type name="gpointer" c:type="void*"/>
+        </parameter>
+      </parameters>
+    </callback>
+    <function name="draw_quadratic_to" c:identifier="hb_draw_quadratic_to" version="4.0.0">
+      <doc xml:space="preserve">Perform a "quadratic-to" draw operation.</doc>
+      <return-value transfer-ownership="none">
+        <type name="none" c:type="void"/>
+      </return-value>
+      <parameters>
+        <parameter name="dfuncs" transfer-ownership="none">
+          <doc xml:space="preserve">draw functions</doc>
+          <type name="draw_funcs_t" c:type="hb_draw_funcs_t*"/>
+        </parameter>
+        <parameter name="draw_data" transfer-ownership="none" nullable="1" allow-none="1">
+          <doc xml:space="preserve">associated draw data passed by the caller</doc>
+          <type name="gpointer" c:type="void*"/>
+        </parameter>
+        <parameter name="st" transfer-ownership="none">
+          <doc xml:space="preserve">current draw state</doc>
+          <type name="draw_state_t" c:type="hb_draw_state_t*"/>
+        </parameter>
+        <parameter name="control_x" transfer-ownership="none">
+          <doc xml:space="preserve">X component of control point</doc>
+          <type name="gfloat" c:type="float"/>
+        </parameter>
+        <parameter name="control_y" transfer-ownership="none">
+          <doc xml:space="preserve">Y component of control point</doc>
+          <type name="gfloat" c:type="float"/>
+        </parameter>
+        <parameter name="to_x" transfer-ownership="none">
+          <doc xml:space="preserve">X component of target point</doc>
+          <type name="gfloat" c:type="float"/>
+        </parameter>
+        <parameter name="to_y" transfer-ownership="none">
+          <doc xml:space="preserve">Y component of target point</doc>
+          <type name="gfloat" c:type="float"/>
+        </parameter>
+      </parameters>
+    </function>
+    <callback name="draw_quadratic_to_func_t" c:type="hb_draw_quadratic_to_func_t" version="4.0.0">
+      <doc xml:space="preserve">A virtual method for the #hb_draw_funcs_t to perform a "quadratic-to" draw
+operation.</doc>
+      <return-value transfer-ownership="none">
+        <type name="none" c:type="void"/>
+      </return-value>
+      <parameters>
+        <parameter name="dfuncs" transfer-ownership="none">
+          <doc xml:space="preserve">draw functions object</doc>
+          <type name="draw_funcs_t" c:type="hb_draw_funcs_t*"/>
+        </parameter>
+        <parameter name="draw_data" transfer-ownership="none" nullable="1" allow-none="1">
+          <doc xml:space="preserve">The data accompanying the draw functions</doc>
+          <type name="gpointer" c:type="void*"/>
+        </parameter>
+        <parameter name="st" transfer-ownership="none">
+          <doc xml:space="preserve">current draw state</doc>
+          <type name="draw_state_t" c:type="hb_draw_state_t*"/>
+        </parameter>
+        <parameter name="control_x" transfer-ownership="none">
+          <doc xml:space="preserve">X component of control point</doc>
+          <type name="gfloat" c:type="float"/>
+        </parameter>
+        <parameter name="control_y" transfer-ownership="none">
+          <doc xml:space="preserve">Y component of control point</doc>
+          <type name="gfloat" c:type="float"/>
+        </parameter>
+        <parameter name="to_x" transfer-ownership="none">
+          <doc xml:space="preserve">X component of target point</doc>
+          <type name="gfloat" c:type="float"/>
+        </parameter>
+        <parameter name="to_y" transfer-ownership="none">
+          <doc xml:space="preserve">Y component of target point</doc>
+          <type name="gfloat" c:type="float"/>
+        </parameter>
+        <parameter name="user_data" transfer-ownership="none" nullable="1" allow-none="1" closure="7">
+          <doc xml:space="preserve">User data pointer passed by the caller</doc>
+          <type name="gpointer" c:type="void*"/>
+        </parameter>
+      </parameters>
+    </callback>
+    <record name="draw_state_t" c:type="hb_draw_state_t" version="4.0.0">
+      <doc xml:space="preserve">Current drawing state.</doc>
+      <field name="path_open" writable="1">
+        <doc xml:space="preserve">Whether there is an open path</doc>
+        <type name="bool_t" c:type="hb_bool_t"/>
+      </field>
+      <field name="path_start_x" writable="1">
+        <doc xml:space="preserve">X component of the start of current path</doc>
+        <type name="gfloat" c:type="float"/>
+      </field>
+      <field name="path_start_y" writable="1">
+        <doc xml:space="preserve">Y component of the start of current path</doc>
+        <type name="gfloat" c:type="float"/>
+      </field>
+      <field name="current_x" writable="1">
+        <doc xml:space="preserve">X component of current point</doc>
+        <type name="gfloat" c:type="float"/>
+      </field>
+      <field name="current_y" writable="1">
+        <doc xml:space="preserve">Y component of current point</doc>
+        <type name="gfloat" c:type="float"/>
+      </field>
+      <field name="reserved1" readable="0" private="1">
+        <type name="var_num_t" c:type="hb_var_num_t"/>
+      </field>
+      <field name="reserved2" readable="0" private="1">
+        <type name="var_num_t" c:type="hb_var_num_t"/>
+      </field>
+      <field name="reserved3" readable="0" private="1">
+        <type name="var_num_t" c:type="hb_var_num_t"/>
+      </field>
+      <field name="reserved4" readable="0" private="1">
+        <type name="var_num_t" c:type="hb_var_num_t"/>
+      </field>
+      <field name="reserved5" readable="0" private="1">
+        <type name="var_num_t" c:type="hb_var_num_t"/>
+      </field>
+      <field name="reserved6" readable="0" private="1">
+        <type name="var_num_t" c:type="hb_var_num_t"/>
+      </field>
+      <field name="reserved7" readable="0" private="1">
+        <type name="var_num_t" c:type="hb_var_num_t"/>
+      </field>
+    </record>
     <function name="face_builder_add_table" c:identifier="hb_face_builder_add_table" version="1.9.0">
       <doc xml:space="preserve">Add table for @tag with data provided by @blob to the face.  @face must
 be created using hb_face_builder_create().</doc>
@@ -3365,9 +4012,19 @@ them to the #hb_set_t set @out.</doc>
     </function>
     <function name="face_create" c:identifier="hb_face_create" version="0.9.2">
       <doc xml:space="preserve">Constructs a new face object from the specified blob and
-a face index into that blob. This is used for blobs of
-file formats such as Dfont and TTC that can contain more
-than one face.</doc>
+a face index into that blob.
+
+The face index is used for blobs of file formats such as TTC and
+and DFont that can contain more than one face.  Face indices within
+such collections are zero-based.
+
+&lt;note&gt;Note: If the blob font format is not a collection, @index
+is ignored.  Otherwise, only the lower 16-bits of @index are used.
+The unmodified @index can be accessed via hb_face_get_index().&lt;/note&gt;
+
+&lt;note&gt;Note: The high 16-bits of @index, if non-zero, are used by
+hb_font_create() to load named-instances in variable fonts.  See
+hb_font_create() for details.&lt;/note&gt;</doc>
       <return-value transfer-ownership="full">
         <doc xml:space="preserve">The new face object</doc>
         <type name="face_t" c:type="hb_face_t*"/>
@@ -3511,7 +4168,7 @@ attached to the specified face object.</doc>
       <parameters>
         <parameter name="face" transfer-ownership="none">
           <doc xml:space="preserve">A face object</doc>
-          <type name="face_t" c:type="const hb_face_t*"/>
+          <type name="face_t" c:type="hb_face_t*"/>
         </parameter>
         <parameter name="key" transfer-ownership="none">
           <doc xml:space="preserve">The user-data key to query</doc>
@@ -3610,7 +4267,8 @@ the specified face.</doc>
       <doc xml:space="preserve">Assigns the specified face-index to @face. Fails if the
 face is immutable.
 
-&lt;note&gt;Note: face indices within a collection are zero-based.&lt;/note&gt;</doc>
+&lt;note&gt;Note: changing the index has no effect on the face itself
+This only changes the value returned by hb_face_get_index().&lt;/note&gt;</doc>
       <return-value transfer-ownership="none">
         <type name="none" c:type="void"/>
       </return-value>
@@ -3839,8 +4497,29 @@ or vertical) depending on the value of @direction.</doc>
         </parameter>
       </parameters>
     </function>
+    <function name="font_changed" c:identifier="hb_font_changed" version="4.4.0.">
+      <doc xml:space="preserve">Notifies the @font that underlying font data has changed.
+This has the effect of increasing the serial as returned
+by hb_font_get_serial(), which invalidates internal caches.</doc>
+      <return-value transfer-ownership="none">
+        <type name="none" c:type="void"/>
+      </return-value>
+      <parameters>
+        <parameter name="font" transfer-ownership="none">
+          <doc xml:space="preserve">#hb_font_t to work upon</doc>
+          <type name="font_t" c:type="hb_font_t*"/>
+        </parameter>
+      </parameters>
+    </function>
     <function name="font_create" c:identifier="hb_font_create" version="0.9.2">
-      <doc xml:space="preserve">Constructs a new font object from the specified face.</doc>
+      <doc xml:space="preserve">Constructs a new font object from the specified face.
+
+&lt;note&gt;Note: If @face's index value (as passed to hb_face_create()
+has non-zero top 16-bits, those bits minus one are passed to
+hb_font_set_var_named_instance(), effectively loading a named-instance
+of a variable font, instead of the default-instance.  This allows
+specifying which named-instance to load by default when creating the
+face.&lt;/note&gt;</doc>
       <return-value transfer-ownership="full">
         <doc xml:space="preserve">The new font object</doc>
         <type name="font_t" c:type="hb_font_t*"/>
@@ -4263,6 +4942,30 @@ hb_font_funcs_set_variation_glyph_func() instead.</doc>
         <parameter name="func" transfer-ownership="none" scope="notified" closure="2" destroy="3">
           <doc xml:space="preserve">The callback function to assign</doc>
           <type name="font_get_glyph_name_func_t" c:type="hb_font_get_glyph_name_func_t"/>
+        </parameter>
+        <parameter name="user_data" transfer-ownership="none" nullable="1" allow-none="1">
+          <doc xml:space="preserve">Data to pass to @func</doc>
+          <type name="gpointer" c:type="void*"/>
+        </parameter>
+        <parameter name="destroy" transfer-ownership="none" nullable="1" allow-none="1" scope="notified">
+          <doc xml:space="preserve">The function to call when @user_data is not needed anymore</doc>
+          <type name="destroy_func_t" c:type="hb_destroy_func_t"/>
+        </parameter>
+      </parameters>
+    </function>
+    <function name="font_funcs_set_glyph_shape_func" c:identifier="hb_font_funcs_set_glyph_shape_func" version="4.0.0">
+      <doc xml:space="preserve">Sets the implementation function for #hb_font_get_glyph_shape_func_t.</doc>
+      <return-value transfer-ownership="none">
+        <type name="none" c:type="void"/>
+      </return-value>
+      <parameters>
+        <parameter name="ffuncs" transfer-ownership="none">
+          <doc xml:space="preserve">A font-function structure</doc>
+          <type name="font_funcs_t" c:type="hb_font_funcs_t*"/>
+        </parameter>
+        <parameter name="func" transfer-ownership="none" scope="notified" closure="2" destroy="3">
+          <doc xml:space="preserve">The callback function to assign</doc>
+          <type name="font_get_glyph_shape_func_t" c:type="hb_font_get_glyph_shape_func_t"/>
         </parameter>
         <parameter name="user_data" transfer-ownership="none" nullable="1" allow-none="1">
           <doc xml:space="preserve">Data to pass to @func</doc>
@@ -5316,6 +6019,64 @@ output parameter.</doc>
         </parameter>
       </parameters>
     </callback>
+    <function name="font_get_glyph_shape" c:identifier="hb_font_get_glyph_shape" version="4.0.0">
+      <doc xml:space="preserve">Fetches the glyph shape that corresponds to a glyph in the specified @font.
+The shape is returned by way of calls to the callsbacks of the @dfuncs
+objects, with @draw_data passed to them.</doc>
+      <return-value transfer-ownership="none">
+        <type name="none" c:type="void"/>
+      </return-value>
+      <parameters>
+        <parameter name="font" transfer-ownership="none">
+          <doc xml:space="preserve">#hb_font_t to work upon</doc>
+          <type name="font_t" c:type="hb_font_t*"/>
+        </parameter>
+        <parameter name="glyph" transfer-ownership="none">
+          <doc xml:space="preserve">The glyph ID</doc>
+          <type name="codepoint_t" c:type="hb_codepoint_t"/>
+        </parameter>
+        <parameter name="dfuncs" transfer-ownership="none">
+          <doc xml:space="preserve">#hb_draw_funcs_t to draw to</doc>
+          <type name="draw_funcs_t" c:type="hb_draw_funcs_t*"/>
+        </parameter>
+        <parameter name="draw_data" transfer-ownership="none" nullable="1" allow-none="1">
+          <doc xml:space="preserve">User data to pass to draw callbacks</doc>
+          <type name="gpointer" c:type="void*"/>
+        </parameter>
+      </parameters>
+    </function>
+    <callback name="font_get_glyph_shape_func_t" c:type="hb_font_get_glyph_shape_func_t" version="4.0.0">
+      <doc xml:space="preserve">A virtual method for the #hb_font_funcs_t of an #hb_font_t object.</doc>
+      <return-value transfer-ownership="none">
+        <type name="none" c:type="void"/>
+      </return-value>
+      <parameters>
+        <parameter name="font" transfer-ownership="none">
+          <doc xml:space="preserve">#hb_font_t to work upon</doc>
+          <type name="font_t" c:type="hb_font_t*"/>
+        </parameter>
+        <parameter name="font_data" transfer-ownership="none" nullable="1" allow-none="1">
+          <doc xml:space="preserve">@font user data pointer</doc>
+          <type name="gpointer" c:type="void*"/>
+        </parameter>
+        <parameter name="glyph" transfer-ownership="none">
+          <doc xml:space="preserve">The glyph ID to query</doc>
+          <type name="codepoint_t" c:type="hb_codepoint_t"/>
+        </parameter>
+        <parameter name="draw_funcs" transfer-ownership="none">
+          <doc xml:space="preserve">The draw functions to send the shape data to</doc>
+          <type name="draw_funcs_t" c:type="hb_draw_funcs_t*"/>
+        </parameter>
+        <parameter name="draw_data" transfer-ownership="none" nullable="1" allow-none="1">
+          <doc xml:space="preserve">The data accompanying the draw functions</doc>
+          <type name="gpointer" c:type="void*"/>
+        </parameter>
+        <parameter name="user_data" transfer-ownership="none" nullable="1" allow-none="1" closure="5">
+          <doc xml:space="preserve">User data pointer passed by the caller</doc>
+          <type name="gpointer" c:type="void*"/>
+        </parameter>
+      </parameters>
+    </callback>
     <function name="font_get_glyph_v_advance" c:identifier="hb_font_get_glyph_v_advance" version="0.9.2">
       <doc xml:space="preserve">Fetches the advance for a glyph ID in the specified font,
 for vertical text segments.</doc>
@@ -5606,7 +6367,7 @@ output parameter.</doc>
         </parameter>
       </parameters>
     </function>
-    <function name="font_get_ptem" c:identifier="hb_font_get_ptem" version="0.9.2">
+    <function name="font_get_ptem" c:identifier="hb_font_get_ptem" version="1.6.0">
       <doc xml:space="preserve">Fetches the "point size" of a font. Used in CoreText to
 implement optical sizing.</doc>
       <return-value transfer-ownership="none">
@@ -5637,6 +6398,34 @@ implement optical sizing.</doc>
         <parameter name="y_scale" direction="out" caller-allocates="0" transfer-ownership="full">
           <doc xml:space="preserve">Vertical scale value</doc>
           <type name="gint" c:type="int*"/>
+        </parameter>
+      </parameters>
+    </function>
+    <function name="font_get_serial" c:identifier="hb_font_get_serial" version="4.4.0.">
+      <doc xml:space="preserve">Returns the internal serial number of the font. The serial
+number is increased every time a setting on the font is
+changed, using a setter function.</doc>
+      <return-value transfer-ownership="none">
+        <doc xml:space="preserve">serial number</doc>
+        <type name="guint" c:type="unsigned int"/>
+      </return-value>
+      <parameters>
+        <parameter name="font" transfer-ownership="none">
+          <doc xml:space="preserve">#hb_font_t to work upon</doc>
+          <type name="font_t" c:type="hb_font_t*"/>
+        </parameter>
+      </parameters>
+    </function>
+    <function name="font_get_synthetic_slant" c:identifier="hb_font_get_synthetic_slant" version="3.3.0">
+      <doc xml:space="preserve">Fetches the "synthetic slant" of a font.</doc>
+      <return-value transfer-ownership="none">
+        <doc xml:space="preserve">Synthetic slant.  By default is zero.</doc>
+        <type name="gfloat" c:type="float"/>
+      </return-value>
+      <parameters>
+        <parameter name="font" transfer-ownership="none">
+          <doc xml:space="preserve">#hb_font_t to work upon</doc>
+          <type name="font_t" c:type="hb_font_t*"/>
         </parameter>
       </parameters>
     </function>
@@ -5676,13 +6465,42 @@ text segments.</doc>
         </parameter>
       </parameters>
     </function>
-    <function name="font_get_var_coords_normalized" c:identifier="hb_font_get_var_coords_normalized" version="1.4.2">
-      <doc xml:space="preserve">Fetches the list of normalized variation coordinates currently
+    <function name="font_get_var_coords_design" c:identifier="hb_font_get_var_coords_design" version="3.3.0">
+      <doc xml:space="preserve">Fetches the list of variation coordinates (in design-space units) currently
 set on a font.
+
+Note that this returned array may only contain values for some
+(or none) of the axes; omitted axes effectively have their default
+values.
 
 Return value is valid as long as variation coordinates of the font
 are not modified.</doc>
       <return-value transfer-ownership="none">
+        <doc xml:space="preserve">coordinates array</doc>
+        <type name="gfloat" c:type="const float*"/>
+      </return-value>
+      <parameters>
+        <parameter name="font" transfer-ownership="none">
+          <doc xml:space="preserve">#hb_font_t to work upon</doc>
+          <type name="font_t" c:type="hb_font_t*"/>
+        </parameter>
+        <parameter name="length" direction="out" caller-allocates="0" transfer-ownership="full">
+          <doc xml:space="preserve">Number of coordinates retrieved</doc>
+          <type name="guint" c:type="unsigned int*"/>
+        </parameter>
+      </parameters>
+    </function>
+    <function name="font_get_var_coords_normalized" c:identifier="hb_font_get_var_coords_normalized" version="1.4.2">
+      <doc xml:space="preserve">Fetches the list of normalized variation coordinates currently
+set on a font.
+
+Note that this returned array may only contain values for some
+(or none) of the axes; omitted axes effectively have zero values.
+
+Return value is valid as long as variation coordinates of the font
+are not modified.</doc>
+      <return-value transfer-ownership="none">
+        <doc xml:space="preserve">coordinates array</doc>
         <type name="gint" c:type="const int*"/>
       </return-value>
       <parameters>
@@ -5690,7 +6508,7 @@ are not modified.</doc>
           <doc xml:space="preserve">#hb_font_t to work upon</doc>
           <type name="font_t" c:type="hb_font_t*"/>
         </parameter>
-        <parameter name="length" transfer-ownership="none">
+        <parameter name="length" direction="out" caller-allocates="0" transfer-ownership="full">
           <doc xml:space="preserve">Number of coordinates retrieved</doc>
           <type name="guint" c:type="unsigned int*"/>
         </parameter>
@@ -5995,6 +6813,34 @@ Used in CoreText to implement optical sizing.
         </parameter>
       </parameters>
     </function>
+    <function name="font_set_synthetic_slant" c:identifier="hb_font_set_synthetic_slant" version="3.3.0">
+      <doc xml:space="preserve">Sets the "synthetic slant" of a font.  By default is zero.
+Synthetic slant is the graphical skew applied to the font
+at rendering time.
+
+HarfBuzz needs to know this value to adjust shaping results,
+metrics, and style values to match the slanted rendering.
+
+&lt;note&gt;Note: The glyph shape fetched via the
+hb_font_get_glyph_shape() is slanted to reflect this value
+as well.&lt;/note&gt;
+
+&lt;note&gt;Note: The slant value is a ratio.  For example, a
+20% slant would be represented as a 0.2 value.&lt;/note&gt;</doc>
+      <return-value transfer-ownership="none">
+        <type name="none" c:type="void"/>
+      </return-value>
+      <parameters>
+        <parameter name="font" transfer-ownership="none">
+          <doc xml:space="preserve">#hb_font_t to work upon</doc>
+          <type name="font_t" c:type="hb_font_t*"/>
+        </parameter>
+        <parameter name="slant" transfer-ownership="none">
+          <doc xml:space="preserve">synthetic slant value.</doc>
+          <type name="gfloat" c:type="float"/>
+        </parameter>
+      </parameters>
+    </function>
     <function name="font_set_user_data" c:identifier="hb_font_set_user_data" version="0.9.2" introspectable="0">
       <doc xml:space="preserve">Attaches a user-data key/data pair to the specified font object.</doc>
       <return-value transfer-ownership="none">
@@ -6026,7 +6872,11 @@ Used in CoreText to implement optical sizing.
     </function>
     <function name="font_set_var_coords_design" c:identifier="hb_font_set_var_coords_design" version="1.4.2">
       <doc xml:space="preserve">Applies a list of variation coordinates (in design-space units)
-to a font.</doc>
+to a font.
+
+Note that this overrides all existing variations set on @font.
+Axes not included in @coords will be effectively set to their
+default values.</doc>
       <return-value transfer-ownership="none">
         <type name="none" c:type="void"/>
       </return-value>
@@ -6050,6 +6900,10 @@ to a font.</doc>
     <function name="font_set_var_coords_normalized" c:identifier="hb_font_set_var_coords_normalized" version="1.4.2">
       <doc xml:space="preserve">Applies a list of variation coordinates (in normalized units)
 to a font.
+
+Note that this overrides all existing variations set on @font.
+Axes not included in @coords will be effectively set to their
+default values.
 
 &lt;note&gt;Note: Coordinates should be normalized to 2.14.&lt;/note&gt;</doc>
       <return-value transfer-ownership="none">
@@ -6089,7 +6943,11 @@ to a font.
       </parameters>
     </function>
     <function name="font_set_variations" c:identifier="hb_font_set_variations" version="1.4.2">
-      <doc xml:space="preserve">Applies a list of font-variation settings to a font.</doc>
+      <doc xml:space="preserve">Applies a list of font-variation settings to a font.
+
+Note that this overrides all existing variations set on @font.
+Axes not included in @variations will be effectively set to their
+default values.</doc>
       <return-value transfer-ownership="none">
         <type name="none" c:type="void"/>
       </return-value>
@@ -6234,6 +7092,23 @@ https://www.freetype.org/freetype2/docs/reference/ft2-base_interface.html#ft_loa
         </parameter>
       </parameters>
     </function>
+    <function name="ft_hb_font_changed" c:identifier="hb_ft_hb_font_changed" version="4.4.0">
+      <doc xml:space="preserve">Refreshes the state of the underlying FT_Face of @font when the hb_font_t
+@font has changed.
+This function should be called after changing the size or
+variation-axis settings on the @font.
+This call is fast if nothing has changed on @font.</doc>
+      <return-value transfer-ownership="none">
+        <doc xml:space="preserve">true if changed, false otherwise</doc>
+        <type name="bool_t" c:type="hb_bool_t"/>
+      </return-value>
+      <parameters>
+        <parameter name="font" transfer-ownership="none">
+          <doc xml:space="preserve">#hb_font_t to work upon</doc>
+          <type name="font_t" c:type="hb_font_t*"/>
+        </parameter>
+      </parameters>
+    </function>
     <function name="glib_blob_create" c:identifier="hb_glib_blob_create" version="0.9.38">
       <doc xml:space="preserve">Creates an #hb_blob_t blob from the specified
 GBytes data structure.</doc>
@@ -6311,20 +7186,76 @@ Note that @height is negative, in coordinate systems that grow up.</doc>
         <doc xml:space="preserve">Indicates that if input text is broken at the
 				   beginning of the cluster this glyph is part of,
 				   then both sides need to be re-shaped, as the
-				   result might be different.  On the flip side,
-				   it means that when this flag is not present,
-				   then it's safe to break the glyph-run at the
-				   beginning of this cluster, and the two sides
-				   represent the exact same result one would get
-				   if breaking input text at the beginning of
-				   this cluster and shaping the two sides
-				   separately.  This can be used to optimize
-				   paragraph layout, by avoiding re-shaping
-				   of each line after line-breaking, or limiting
-				   the reshaping to a small piece around the
-				   breaking point only.</doc>
+				   result might be different.
+				   On the flip side, it means that when this
+				   flag is not present, then it is safe to break
+				   the glyph-run at the beginning of this
+				   cluster, and the two sides will represent the
+				   exact same result one would get if breaking
+				   input text at the beginning of this cluster
+				   and shaping the two sides separately.
+				   This can be used to optimize paragraph
+				   layout, by avoiding re-shaping of each line
+				   after line-breaking.</doc>
       </member>
-      <member name="defined" value="1" c:identifier="HB_GLYPH_FLAG_DEFINED" glib:nick="defined" glib:name="HB_GLYPH_FLAG_DEFINED">
+      <member name="unsafe_to_concat" value="2" c:identifier="HB_GLYPH_FLAG_UNSAFE_TO_CONCAT" glib:nick="unsafe-to-concat" glib:name="HB_GLYPH_FLAG_UNSAFE_TO_CONCAT">
+        <doc xml:space="preserve">Indicates that if input text is changed on one
+				   side of the beginning of the cluster this glyph
+				   is part of, then the shaping results for the
+				   other side might change.
+				   Note that the absence of this flag will NOT by
+				   itself mean that it IS safe to concat text.
+				   Only two pieces of text both of which clear of
+				   this flag can be concatenated safely.
+				   This can be used to optimize paragraph
+				   layout, by avoiding re-shaping of each line
+				   after line-breaking, by limiting the
+				   reshaping to a small piece around the
+				   breaking positin only, even if the breaking
+				   position carries the
+				   #HB_GLYPH_FLAG_UNSAFE_TO_BREAK or when
+				   hyphenation or other text transformation
+				   happens at line-break position, in the following
+				   way:
+				   1. Iterate back from the line-break position
+				   until the first cluster start position that is
+				   NOT unsafe-to-concat, 2. shape the segment from
+				   there till the end of line, 3. check whether the
+				   resulting glyph-run also is clear of the
+				   unsafe-to-concat at its start-of-text position;
+				   if it is, just splice it into place and the line
+				   is shaped; If not, move on to a position further
+				   back that is clear of unsafe-to-concat and retry
+				   from there, and repeat.
+				   At the start of next line a similar algorithm can
+				   be implemented. That is: 1. Iterate forward from
+				   the line-break position until the first cluster
+				   start position that is NOT unsafe-to-concat, 2.
+				   shape the segment from beginning of the line to
+				   that position, 3. check whether the resulting
+				   glyph-run also is clear of the unsafe-to-concat
+				   at its end-of-text position; if it is, just splice
+				   it into place and the beginning is shaped; If not,
+				   move on to a position further forward that is clear
+				   of unsafe-to-concat and retry up to there, and repeat.
+				   A slight complication will arise in the
+				   implementation of the algorithm above,
+				   because while our buffer API has a way to
+				   return flags for position corresponding to
+				   start-of-text, there is currently no position
+				   corresponding to end-of-text.  This limitation
+				   can be alleviated by shaping more text than needed
+				   and looking for unsafe-to-concat flag within text
+				   clusters.
+				   The #HB_GLYPH_FLAG_UNSAFE_TO_BREAK flag will
+				   always imply this flag.
+			   To use this flag, you must enable the buffer flag
+			   @HB_BUFFER_FLAG_PRODUCE_UNSAFE_TO_CONCAT during
+			   shaping, otherwise the buffer flag will not be
+			   reliably produced.
+				   Since: 4.0.0</doc>
+      </member>
+      <member name="defined" value="3" c:identifier="HB_GLYPH_FLAG_DEFINED" glib:nick="defined" glib:name="HB_GLYPH_FLAG_DEFINED">
         <doc xml:space="preserve">All the currently defined flags.</doc>
       </member>
     </bitfield>
@@ -6424,6 +7355,9 @@ shaping they hold the output glyphs.</doc>
     <docsection name="hb-deprecated">
       <doc xml:space="preserve">These API have been deprecated in favor of newer API, or because they
 were deemed unnecessary.</doc>
+    </docsection>
+    <docsection name="hb-draw">
+      <doc xml:space="preserve">Functions for drawing (extracting) glyph shapes.</doc>
     </docsection>
     <docsection name="hb-face">
       <doc xml:space="preserve">A font face is an object that represents a single face from within a
@@ -6666,6 +7600,19 @@ the caller.</doc>
         </parameter>
       </parameters>
     </function>
+    <function name="map_copy" c:identifier="hb_map_copy" version="4.4.0">
+      <doc xml:space="preserve">Allocate a copy of @map.</doc>
+      <return-value transfer-ownership="full">
+        <doc xml:space="preserve">Newly-allocated map.</doc>
+        <type name="map_t" c:type="hb_map_t*"/>
+      </return-value>
+      <parameters>
+        <parameter name="map" transfer-ownership="none">
+          <doc xml:space="preserve">A map</doc>
+          <type name="map_t" c:type="const hb_map_t*"/>
+        </parameter>
+      </parameters>
+    </function>
     <function name="map_create" c:identifier="hb_map_create" version="1.7.7">
       <doc xml:space="preserve">Creates a new, initially empty map.</doc>
       <return-value transfer-ownership="full">
@@ -6774,6 +7721,19 @@ attached to the specified map.</doc>
         </parameter>
       </parameters>
     </function>
+    <function name="map_hash" c:identifier="hb_map_hash" version="4.4.0">
+      <doc xml:space="preserve">Creates a hash representing @map.</doc>
+      <return-value transfer-ownership="none">
+        <doc xml:space="preserve">A hash of @map.</doc>
+        <type name="guint" c:type="unsigned int"/>
+      </return-value>
+      <parameters>
+        <parameter name="map" transfer-ownership="none">
+          <doc xml:space="preserve">A map</doc>
+          <type name="map_t" c:type="const hb_map_t*"/>
+        </parameter>
+      </parameters>
+    </function>
     <function name="map_is_empty" c:identifier="hb_map_is_empty" version="1.7.7">
       <doc xml:space="preserve">Tests whether @map is empty (contains no elements).</doc>
       <return-value transfer-ownership="none">
@@ -6783,6 +7743,24 @@ attached to the specified map.</doc>
       <parameters>
         <parameter name="map" transfer-ownership="none">
           <doc xml:space="preserve">A map</doc>
+          <type name="map_t" c:type="const hb_map_t*"/>
+        </parameter>
+      </parameters>
+    </function>
+    <function name="map_is_equal" c:identifier="hb_map_is_equal" version="4.3.0">
+      <doc xml:space="preserve">Tests whether @map and @other are equal (contain the same
+elements).</doc>
+      <return-value transfer-ownership="none">
+        <doc xml:space="preserve">%true if the two maps are equal, %false otherwise.</doc>
+        <type name="bool_t" c:type="hb_bool_t"/>
+      </return-value>
+      <parameters>
+        <parameter name="map" transfer-ownership="none">
+          <doc xml:space="preserve">A map</doc>
+          <type name="map_t" c:type="const hb_map_t*"/>
+        </parameter>
+        <parameter name="other" transfer-ownership="none">
+          <doc xml:space="preserve">Another map</doc>
           <type name="map_t" c:type="const hb_map_t*"/>
         </parameter>
       </parameters>
@@ -6924,7 +7902,9 @@ face. The list returned will begin at the offset provided.</doc>
     <function name="ot_color_glyph_reference_png" c:identifier="hb_ot_color_glyph_reference_png" version="2.1.0">
       <doc xml:space="preserve">Fetches the PNG image for a glyph. This function takes a font object, not a face object,
 as input. To get an optimally sized PNG blob, the UPEM value must be set on the @font
-object. If UPEM is unset, the blob returned will be the largest PNG available.</doc>
+object. If UPEM is unset, the blob returned will be the largest PNG available.
+
+If the glyph has no PNG image, the singleton empty blob is returned.</doc>
       <return-value transfer-ownership="full">
         <doc xml:space="preserve">An #hb_blob_t containing the PNG image for the glyph, if available</doc>
         <type name="blob_t" c:type="hb_blob_t*"/>
@@ -6941,7 +7921,9 @@ object. If UPEM is unset, the blob returned will be the largest PNG available.</
       </parameters>
     </function>
     <function name="ot_color_glyph_reference_svg" c:identifier="hb_ot_color_glyph_reference_svg" version="2.1.0">
-      <doc xml:space="preserve">Fetches the SVG document for a glyph. The blob may be either plain text or gzip-encoded.</doc>
+      <doc xml:space="preserve">Fetches the SVG document for a glyph. The blob may be either plain text or gzip-encoded.
+
+If the glyph has no SVG document, the singleton empty blob is returned.</doc>
       <return-value transfer-ownership="full">
         <doc xml:space="preserve">An #hb_blob_t containing the SVG document of the glyph, if available</doc>
         <type name="blob_t" c:type="hb_blob_t*"/>
@@ -7022,7 +8004,7 @@ object. If UPEM is unset, the blob returned will be the largest PNG available.</
     </record>
     <function name="ot_color_palette_color_get_name_id" c:identifier="hb_ot_color_palette_color_get_name_id" version="2.1.0">
       <doc xml:space="preserve">Fetches the `name` table Name ID that provides display names for
-the specificed color in a face's `CPAL` color palette.
+the specified color in a face's `CPAL` color palette.
 
 Display names can be generic (e.g., "Background") or specific
 (e.g., "Eye color").</doc>
@@ -7179,12 +8161,18 @@ if the direction is horizontal or vertical, respectively.</doc>
         <doc xml:space="preserve">Ideographic character face top or right edge,
 if the direction is horizontal or vertical, respectively.</doc>
       </member>
+      <member name="ideo_face_central" value="1231251043" c:identifier="HB_OT_LAYOUT_BASELINE_TAG_IDEO_FACE_CENTRAL" glib:nick="ideo-face-central" glib:name="HB_OT_LAYOUT_BASELINE_TAG_IDEO_FACE_CENTRAL">
+        <doc xml:space="preserve">The center of the ideographic character face. Since: 4.0.0</doc>
+      </member>
       <member name="ideo_embox_bottom_or_left" value="1768187247" c:identifier="HB_OT_LAYOUT_BASELINE_TAG_IDEO_EMBOX_BOTTOM_OR_LEFT" glib:nick="ideo-embox-bottom-or-left" glib:name="HB_OT_LAYOUT_BASELINE_TAG_IDEO_EMBOX_BOTTOM_OR_LEFT">
         <doc xml:space="preserve">Ideographic em-box bottom or left edge,
 if the direction is horizontal or vertical, respectively.</doc>
       </member>
       <member name="ideo_embox_top_or_right" value="1768191088" c:identifier="HB_OT_LAYOUT_BASELINE_TAG_IDEO_EMBOX_TOP_OR_RIGHT" glib:nick="ideo-embox-top-or-right" glib:name="HB_OT_LAYOUT_BASELINE_TAG_IDEO_EMBOX_TOP_OR_RIGHT">
-        <doc xml:space="preserve">Ideographic em-box top or right edge baseline,
+        <doc xml:space="preserve">Ideographic em-box top or right edge baseline,</doc>
+      </member>
+      <member name="ideo_embox_central" value="1231315813" c:identifier="HB_OT_LAYOUT_BASELINE_TAG_IDEO_EMBOX_CENTRAL" glib:nick="ideo-embox-central" glib:name="HB_OT_LAYOUT_BASELINE_TAG_IDEO_EMBOX_CENTRAL">
+        <doc xml:space="preserve">The center of the ideographic em-box. Since: 4.0.0
 if the direction is horizontal or vertical, respectively.</doc>
       </member>
       <member name="math" value="1835103336" c:identifier="HB_OT_LAYOUT_BASELINE_TAG_MATH" glib:nick="math" glib:name="HB_OT_LAYOUT_BASELINE_TAG_MATH">
@@ -7493,6 +8481,39 @@ Useful if the client program wishes to cache the list.</doc>
           <doc xml:space="preserve">language tag, currently unused.</doc>
           <type name="tag_t" c:type="hb_tag_t"/>
         </parameter>
+        <parameter name="coord" direction="out" caller-allocates="0" transfer-ownership="full" nullable="1">
+          <doc xml:space="preserve">baseline value if found.</doc>
+          <type name="position_t" c:type="hb_position_t*"/>
+        </parameter>
+      </parameters>
+    </function>
+    <function name="ot_layout_get_baseline_with_fallback" c:identifier="hb_ot_layout_get_baseline_with_fallback" version="4.0.0">
+      <doc xml:space="preserve">Fetches a baseline value from the face, and synthesizes
+it if the font does not have it.</doc>
+      <return-value transfer-ownership="none">
+        <type name="none" c:type="void"/>
+      </return-value>
+      <parameters>
+        <parameter name="font" transfer-ownership="none">
+          <doc xml:space="preserve">a font</doc>
+          <type name="font_t" c:type="hb_font_t*"/>
+        </parameter>
+        <parameter name="baseline_tag" transfer-ownership="none">
+          <doc xml:space="preserve">a baseline tag</doc>
+          <type name="ot_layout_baseline_tag_t" c:type="hb_ot_layout_baseline_tag_t"/>
+        </parameter>
+        <parameter name="direction" transfer-ownership="none">
+          <doc xml:space="preserve">text direction.</doc>
+          <type name="direction_t" c:type="hb_direction_t"/>
+        </parameter>
+        <parameter name="script_tag" transfer-ownership="none">
+          <doc xml:space="preserve">script tag.</doc>
+          <type name="tag_t" c:type="hb_tag_t"/>
+        </parameter>
+        <parameter name="language_tag" transfer-ownership="none">
+          <doc xml:space="preserve">language tag, currently unused.</doc>
+          <type name="tag_t" c:type="hb_tag_t"/>
+        </parameter>
         <parameter name="coord" direction="out" caller-allocates="0" transfer-ownership="full">
           <doc xml:space="preserve">baseline value if found.</doc>
           <type name="position_t" c:type="hb_position_t*"/>
@@ -7539,9 +8560,29 @@ glyph class in the face's GDEF table.</doc>
         </parameter>
       </parameters>
     </function>
+    <function name="ot_layout_get_horizontal_baseline_tag_for_script" c:identifier="hb_ot_layout_get_horizontal_baseline_tag_for_script" version="4.0.0">
+      <doc xml:space="preserve">Fetches the dominant horizontal baseline tag used by @script.</doc>
+      <return-value transfer-ownership="none">
+        <doc xml:space="preserve">dominant baseline tag for the @script.</doc>
+        <type name="ot_layout_baseline_tag_t" c:type="hb_ot_layout_baseline_tag_t"/>
+      </return-value>
+      <parameters>
+        <parameter name="script" transfer-ownership="none">
+          <doc xml:space="preserve">a script tag.</doc>
+          <type name="script_t" c:type="hb_script_t"/>
+        </parameter>
+      </parameters>
+    </function>
     <function name="ot_layout_get_ligature_carets" c:identifier="hb_ot_layout_get_ligature_carets">
       <doc xml:space="preserve">Fetches a list of the caret positions defined for a ligature glyph in the GDEF
-table of the font. The list returned will begin at the offset provided.</doc>
+table of the font. The list returned will begin at the offset provided.
+
+Note that a ligature that is formed from n characters will have n-1
+caret positions. The first character is not represented in the array,
+since its caret position is the glyph position.
+
+The positions returned by this function are 'unshaped', and will have to
+be fixed up for kerning that may be applied to the ligature glyph.</doc>
       <return-value transfer-ownership="none">
         <doc xml:space="preserve">Total number of ligature caret positions for @glyph.</doc>
         <type name="guint" c:type="unsigned int"/>
@@ -8002,11 +9043,9 @@ provided lookups.</doc>
         </parameter>
       </parameters>
     </function>
-    <function name="ot_layout_script_find_language" c:identifier="hb_ot_layout_script_find_language" deprecated="1">
+    <function name="ot_layout_script_find_language" c:identifier="hb_ot_layout_script_find_language" version="0.6.0" deprecated="1" deprecated-version="2.0.0">
       <doc xml:space="preserve">Fetches the index of a given language tag in the specified face's GSUB table
 or GPOS table, underneath the specified script tag.</doc>
-      <doc-version xml:space="preserve">??</doc-version>
-      <doc-deprecated xml:space="preserve">??</doc-deprecated>
       <return-value transfer-ownership="none">
         <doc xml:space="preserve">%true if the language tag is found, %false otherwise</doc>
         <type name="bool_t" c:type="hb_bool_t"/>
@@ -8072,10 +9111,14 @@ the specified script index. The list returned will begin at the offset provided.
       </parameters>
     </function>
     <function name="ot_layout_script_select_language" c:identifier="hb_ot_layout_script_select_language" version="2.0.0">
-      <doc xml:space="preserve">Fetches the index of a given language tag in the specified face's GSUB table
-or GPOS table, underneath the specified script index.</doc>
+      <doc xml:space="preserve">Fetches the index of the first language tag fom @language_tags that is present
+in the specified face's GSUB or GPOS table, underneath the specified script
+index.
+
+If none of the given language tags is found, %false is returned and
+@language_index is set to the default language index.</doc>
       <return-value transfer-ownership="none">
-        <doc xml:space="preserve">%true if the language tag is found, %false otherwise</doc>
+        <doc xml:space="preserve">%true if one of the given language tags is found, %false otherwise</doc>
         <type name="bool_t" c:type="hb_bool_t"/>
       </return-value>
       <parameters>
@@ -8604,6 +9647,55 @@ no such height value is found, the last kerning value is returned.</doc>
         </parameter>
       </parameters>
     </function>
+    <function name="ot_math_get_glyph_kernings" c:identifier="hb_ot_math_get_glyph_kernings" version="3.4.0">
+      <doc xml:space="preserve">Fetches the raw MathKern (cut-in) data for the specified font, glyph index,
+and @kern. The corresponding list of kern values and correction heights is
+returned as a list of #hb_ot_math_kern_entry_t structs.
+
+See also #hb_ot_math_get_glyph_kerning, which handles selecting the
+appropriate kern value for a given correction height.
+
+&lt;note&gt;For a glyph with @n defined kern values (where @n &gt; 0), there are only
+@n&#x2212;1 defined correction heights, as each correction height defines a boundary
+past which the next kern value should be selected. Therefore, only the
+#hb_ot_math_kern_entry_t.kern_value of the uppermost #hb_ot_math_kern_entry_t
+actually comes from the font; its corresponding
+#hb_ot_math_kern_entry_t.max_correction_height is always set to
+&lt;code&gt;INT32_MAX&lt;/code&gt;.&lt;/note&gt;</doc>
+      <return-value transfer-ownership="none">
+        <doc xml:space="preserve">the total number of kern values available or zero</doc>
+        <type name="guint" c:type="unsigned int"/>
+      </return-value>
+      <parameters>
+        <parameter name="font" transfer-ownership="none">
+          <doc xml:space="preserve">#hb_font_t to work upon</doc>
+          <type name="font_t" c:type="hb_font_t*"/>
+        </parameter>
+        <parameter name="glyph" transfer-ownership="none">
+          <doc xml:space="preserve">The glyph index from which to retrieve the kernings</doc>
+          <type name="codepoint_t" c:type="hb_codepoint_t"/>
+        </parameter>
+        <parameter name="kern" transfer-ownership="none">
+          <doc xml:space="preserve">The #hb_ot_math_kern_t from which to retrieve the kernings</doc>
+          <type name="ot_math_kern_t" c:type="hb_ot_math_kern_t"/>
+        </parameter>
+        <parameter name="start_offset" transfer-ownership="none">
+          <doc xml:space="preserve">offset of the first kern entry to retrieve</doc>
+          <type name="guint" c:type="unsigned int"/>
+        </parameter>
+        <parameter name="entries_count" direction="out" caller-allocates="0" transfer-ownership="full" optional="1" allow-none="1">
+          <doc xml:space="preserve">Input = the maximum number of kern entries to return;
+                                    Output = the actual number of kern entries returned</doc>
+          <type name="guint" c:type="unsigned int*"/>
+        </parameter>
+        <parameter name="kern_entries" direction="out" caller-allocates="1" transfer-ownership="none">
+          <doc xml:space="preserve">array of kern entries returned</doc>
+          <array length="4" zero-terminated="0" c:type="hb_ot_math_kern_entry_t*">
+            <type name="ot_math_kern_entry_t" c:type="hb_ot_math_kern_entry_t"/>
+          </array>
+        </parameter>
+      </parameters>
+    </function>
     <function name="ot_math_get_glyph_top_accent_attachment" c:identifier="hb_ot_math_get_glyph_top_accent_attachment" version="1.3.3">
       <doc xml:space="preserve">Fetches a top-accent-attachment value (if one exists) for the specified
 glyph index.
@@ -8769,6 +9861,17 @@ on the fly from parts.</doc>
         </parameter>
       </parameters>
     </function>
+    <record name="ot_math_kern_entry_t" c:type="hb_ot_math_kern_entry_t" version="3.4.0">
+      <doc xml:space="preserve">Data type to hold math kerning (cut-in) information for a glyph.</doc>
+      <field name="max_correction_height" writable="1">
+        <doc xml:space="preserve">The maximum height at which this entry should be used</doc>
+        <type name="position_t" c:type="hb_position_t"/>
+      </field>
+      <field name="kern_value" writable="1">
+        <doc xml:space="preserve">The kern value of the entry</doc>
+        <type name="position_t" c:type="hb_position_t"/>
+      </field>
+    </record>
     <enumeration name="ot_math_kern_t" version="1.3.3" glib:type-name="hb_ot_math_kern_t" glib:get-type="hb_gobject_ot_math_kern_get_type" c:type="hb_ot_math_kern_t">
       <doc xml:space="preserve">The math kerning-table types defined for the four corners
 of a glyph.</doc>
@@ -8847,6 +9950,27 @@ that the font is declared to be capable of supporting.</doc>
       <return-value transfer-ownership="none">
         <doc xml:space="preserve">Whether found the requested metrics in the font.</doc>
         <type name="bool_t" c:type="hb_bool_t"/>
+      </return-value>
+      <parameters>
+        <parameter name="font" transfer-ownership="none">
+          <doc xml:space="preserve">an #hb_font_t object.</doc>
+          <type name="font_t" c:type="hb_font_t*"/>
+        </parameter>
+        <parameter name="metrics_tag" transfer-ownership="none">
+          <doc xml:space="preserve">tag of metrics value you like to fetch.</doc>
+          <type name="ot_metrics_tag_t" c:type="hb_ot_metrics_tag_t"/>
+        </parameter>
+        <parameter name="position" direction="out" caller-allocates="0" transfer-ownership="full" optional="1" allow-none="1">
+          <doc xml:space="preserve">result of metrics value from the font.</doc>
+          <type name="position_t" c:type="hb_position_t*"/>
+        </parameter>
+      </parameters>
+    </function>
+    <function name="ot_metrics_get_position_with_fallback" c:identifier="hb_ot_metrics_get_position_with_fallback" version="4.0.0">
+      <doc xml:space="preserve">Fetches metrics value corresponding to @metrics_tag from @font,
+and synthesizes a value if it the value is missing in the font.</doc>
+      <return-value transfer-ownership="none">
+        <type name="none" c:type="void"/>
       </return-value>
       <parameters>
         <parameter name="font" transfer-ownership="none">
@@ -9343,7 +10467,7 @@ The minimum, default, and maximum values are in un-normalized, user scales.
         <type name="ot_var_axis_flags_t" c:type="hb_ot_var_axis_flags_t"/>
       </field>
       <field name="min_value" writable="1">
-        <doc xml:space="preserve">The mininum value on the variation axis that the font covers</doc>
+        <doc xml:space="preserve">The minimum value on the variation axis that the font covers</doc>
         <type name="gfloat" c:type="float"/>
       </field>
       <field name="default_value" writable="1">
@@ -9595,6 +10719,9 @@ the "Subfamily name" defined for the given named instance in the face.</doc>
       <doc xml:space="preserve">Normalizes the given design-space coordinates. The minimum and maximum
 values for the axis are mapped to the interval [-1,1], with the default
 axis value mapped to 0.
+
+The normalized values have 14 bits of fixed-point sub-integer precision as per
+OpenType specification.
 
 Any additional scaling defined in the face's `avar` table is also
 applied, as described at https://docs.microsoft.com/en-us/typography/opentype/spec/avar</doc>
@@ -10215,6 +11342,9 @@ See also the Script (sc) property of the Unicode Character Database.</doc>
       <member name="vithkuqi" value="1449751656" c:identifier="HB_SCRIPT_VITHKUQI" glib:nick="vithkuqi" glib:name="HB_SCRIPT_VITHKUQI">
         <doc xml:space="preserve">`Vith`, Since: 3.0.0</doc>
       </member>
+      <member name="math" value="1517122664" c:identifier="HB_SCRIPT_MATH" glib:nick="math" glib:name="HB_SCRIPT_MATH">
+        <doc xml:space="preserve">`Zmth`, Since: 3.4.0</doc>
+      </member>
       <member name="invalid" value="0" c:identifier="HB_SCRIPT_INVALID" glib:nick="invalid" glib:name="HB_SCRIPT_INVALID">
         <doc xml:space="preserve">No script set</doc>
       </member>
@@ -10258,6 +11388,31 @@ See also the Script (sc) property of the Unicode Character Database.</doc>
       <parameters>
         <parameter name="p" transfer-ownership="none">
           <doc xml:space="preserve">#hb_segment_properties_t to hash.</doc>
+          <type name="segment_properties_t" c:type="const hb_segment_properties_t*"/>
+        </parameter>
+      </parameters>
+    </function>
+    <function name="segment_properties_overlay" c:identifier="hb_segment_properties_overlay" version="3.3.0">
+      <doc xml:space="preserve">Fills in missing fields of @p from @src in a considered manner.
+
+First, if @p does not have direction set, direction is copied from @src.
+
+Next, if @p and @src have the same direction (which can be unset), if @p
+does not have script set, script is copied from @src.
+
+Finally, if @p and @src have the same direction and script (which either
+can be unset), if @p does not have language set, language is copied from
+@src.</doc>
+      <return-value transfer-ownership="none">
+        <type name="none" c:type="void"/>
+      </return-value>
+      <parameters>
+        <parameter name="p" transfer-ownership="none">
+          <doc xml:space="preserve">#hb_segment_properties_t to fill in.</doc>
+          <type name="segment_properties_t" c:type="hb_segment_properties_t*"/>
+        </parameter>
+        <parameter name="src" transfer-ownership="none">
+          <doc xml:space="preserve">#hb_segment_properties_t to fill in from.</doc>
           <type name="segment_properties_t" c:type="const hb_segment_properties_t*"/>
         </parameter>
       </parameters>
@@ -10319,6 +11474,30 @@ hb_buffer_get_segment_properties(), respectively.</doc>
         <parameter name="last" transfer-ownership="none">
           <doc xml:space="preserve">The final element to add to @set</doc>
           <type name="codepoint_t" c:type="hb_codepoint_t"/>
+        </parameter>
+      </parameters>
+    </function>
+    <function name="set_add_sorted_array" c:identifier="hb_set_add_sorted_array" version="4.1.0">
+      <doc xml:space="preserve">Adds @num_codepoints codepoints to a set at once.
+The codepoints array must be in increasing order,
+with size at least @num_codepoints.</doc>
+      <return-value transfer-ownership="none">
+        <type name="none" c:type="void"/>
+      </return-value>
+      <parameters>
+        <parameter name="set" transfer-ownership="none">
+          <doc xml:space="preserve">A set</doc>
+          <type name="set_t" c:type="hb_set_t*"/>
+        </parameter>
+        <parameter name="sorted_codepoints" transfer-ownership="none">
+          <doc xml:space="preserve">Array of codepoints to add</doc>
+          <array length="2" zero-terminated="0" c:type="const hb_codepoint_t*">
+            <type name="codepoint_t" c:type="hb_codepoint_t"/>
+          </array>
+        </parameter>
+        <parameter name="num_codepoints" transfer-ownership="none">
+          <doc xml:space="preserve">Length of @sorted_codepoints</doc>
+          <type name="guint" c:type="unsigned int"/>
         </parameter>
       </parameters>
     </function>
@@ -10502,6 +11681,19 @@ attached to the specified set.</doc>
         </parameter>
       </parameters>
     </function>
+    <function name="set_hash" c:identifier="hb_set_hash" version="4.4.0">
+      <doc xml:space="preserve">Creates a hash representing @set.</doc>
+      <return-value transfer-ownership="none">
+        <doc xml:space="preserve">A hash of @set.</doc>
+        <type name="guint" c:type="unsigned int"/>
+      </return-value>
+      <parameters>
+        <parameter name="set" transfer-ownership="none">
+          <doc xml:space="preserve">A set</doc>
+          <type name="set_t" c:type="const hb_set_t*"/>
+        </parameter>
+      </parameters>
+    </function>
     <function name="set_intersect" c:identifier="hb_set_intersect" version="0.9.2">
       <doc xml:space="preserve">Makes @set the intersection of @set and @other.</doc>
       <return-value transfer-ownership="none">
@@ -10595,6 +11787,36 @@ Set @codepoint to #HB_SET_VALUE_INVALID to get started.</doc>
           <doc xml:space="preserve">Input = Code point to query
             Output = Code point retrieved</doc>
           <type name="codepoint_t" c:type="hb_codepoint_t*"/>
+        </parameter>
+      </parameters>
+    </function>
+    <function name="set_next_many" c:identifier="hb_set_next_many" version="4.2.0">
+      <doc xml:space="preserve">Finds the next element in @set that is greater than @codepoint. Writes out
+codepoints to @out, until either the set runs out of elements, or @size
+codepoints are written, whichever comes first.</doc>
+      <return-value transfer-ownership="none">
+        <doc xml:space="preserve">the number of values written.</doc>
+        <type name="guint" c:type="unsigned int"/>
+      </return-value>
+      <parameters>
+        <parameter name="set" transfer-ownership="none">
+          <doc xml:space="preserve">A set</doc>
+          <type name="set_t" c:type="const hb_set_t*"/>
+        </parameter>
+        <parameter name="codepoint" transfer-ownership="none">
+          <doc xml:space="preserve">Outputting codepoints starting after this one.
+            Use #HB_SET_VALUE_INVALID to get started.</doc>
+          <type name="codepoint_t" c:type="hb_codepoint_t"/>
+        </parameter>
+        <parameter name="out" transfer-ownership="none">
+          <doc xml:space="preserve">An array of codepoints to write to.</doc>
+          <array length="3" zero-terminated="0" c:type="hb_codepoint_t*">
+            <type name="codepoint_t" c:type="hb_codepoint_t"/>
+          </array>
+        </parameter>
+        <parameter name="size" transfer-ownership="none">
+          <doc xml:space="preserve">The maximum number of codepoints to write out.</doc>
+          <type name="guint" c:type="unsigned int"/>
         </parameter>
       </parameters>
     </function>
@@ -11189,10 +12411,12 @@ Non-zero. Values can be interpreted as text size, in points.</doc>
         <doc xml:space="preserve">Used to vary between upright and slanted text. Values
 must be greater than -90 and less than +90. Values can be interpreted as
 the angle, in counter-clockwise degrees, of oblique slant from whatever the
-designer considers to be upright for that font design.</doc>
+designer considers to be upright for that font design. Typical right-leaning
+Italic fonts have a negative slant angle (typically around -12)</doc>
       </member>
       <member name="slant_ratio" value="1399615092" c:identifier="HB_STYLE_TAG_SLANT_RATIO" glib:nick="slant-ratio" glib:name="HB_STYLE_TAG_SLANT_RATIO">
-        <doc xml:space="preserve">same as @HB_STYLE_TAG_SLANT_ANGLE expression as ratio.</doc>
+        <doc xml:space="preserve">same as @HB_STYLE_TAG_SLANT_ANGLE expression as ratio.
+Typical right-leaning Italic fonts have a positive slant ratio (typically around 0.2)</doc>
       </member>
       <member name="width" value="2003072104" c:identifier="HB_STYLE_TAG_WIDTH" glib:nick="width" glib:name="HB_STYLE_TAG_WIDTH">
         <doc xml:space="preserve">Used to vary width of text from narrower to wider.
@@ -12260,6 +13484,37 @@ specified Unicode code point.</doc>
       </field>
     </record>
     <union name="var_int_t" c:type="hb_var_int_t">
+      <field name="u32" writable="1">
+        <type name="guint32" c:type="uint32_t"/>
+      </field>
+      <field name="i32" writable="1">
+        <type name="gint32" c:type="int32_t"/>
+      </field>
+      <field name="u16" writable="1">
+        <array zero-terminated="0" fixed-size="2">
+          <type name="guint16" c:type="uint16_t"/>
+        </array>
+      </field>
+      <field name="i16" writable="1">
+        <array zero-terminated="0" fixed-size="2">
+          <type name="gint16" c:type="int16_t"/>
+        </array>
+      </field>
+      <field name="u8" writable="1">
+        <array zero-terminated="0" fixed-size="4">
+          <type name="guint8" c:type="uint8_t"/>
+        </array>
+      </field>
+      <field name="i8" writable="1">
+        <array zero-terminated="0" fixed-size="4">
+          <type name="gint8" c:type="int8_t"/>
+        </array>
+      </field>
+    </union>
+    <union name="var_num_t" c:type="hb_var_num_t">
+      <field name="f" writable="1">
+        <type name="gfloat" c:type="float"/>
+      </field>
       <field name="u32" writable="1">
         <type name="guint32" c:type="uint32_t"/>
       </field>

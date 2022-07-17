@@ -3361,8 +3361,10 @@ data is copied.</doc>
       </method>
     </record>
     <function-macro name="CHECK_VERSION" c:identifier="GLIB_CHECK_VERSION" introspectable="0">
-      <doc xml:space="preserve">Checks the version of the GLib library that is being compiled
-against. See glib_check_version() for a runtime check.</doc>
+      <doc xml:space="preserve">Checks whether the version of the GLib library that is being compiled
+against is greater than or equal to the given one.
+
+See glib_check_version() for a runtime check.</doc>
       <parameters>
         <parameter name="major">
           <doc xml:space="preserve">the major version to check for</doc>
@@ -3946,7 +3948,7 @@ when doing a deep-copy of a tree.</doc>
           <doc xml:space="preserve">A pointer to the data which should be copied</doc>
           <type name="gpointer" c:type="gconstpointer"/>
         </parameter>
-        <parameter name="data" transfer-ownership="none" nullable="1" allow-none="1">
+        <parameter name="user_data" transfer-ownership="none" nullable="1" allow-none="1" closure="1">
           <doc xml:space="preserve">Additional data</doc>
           <type name="gpointer" c:type="gpointer"/>
         </parameter>
@@ -6350,7 +6352,8 @@ The following format specifiers are supported:
 - \%c: the preferred date and time representation for the current locale
 - \%C: the century number (year/100) as a 2-digit integer (00-99)
 - \%d: the day of the month as a decimal number (range 01 to 31)
-- \%e: the day of the month as a decimal number (range  1 to 31)
+- \%e: the day of the month as a decimal number (range 1 to 31);
+  single digits are preceded by a figure space
 - \%F: equivalent to `%Y-%m-%d` (the ISO 8601 date format)
 - \%g: the last two digits of the ISO 8601 week-based year as a
   decimal number (00-99). This works well with \%V and \%u.
@@ -6361,9 +6364,9 @@ The following format specifiers are supported:
 - \%I: the hour as a decimal number using a 12-hour clock (range 01 to 12)
 - \%j: the day of the year as a decimal number (range 001 to 366)
 - \%k: the hour (24-hour clock) as a decimal number (range 0 to 23);
-  single digits are preceded by a blank
+  single digits are preceded by a figure space
 - \%l: the hour (12-hour clock) as a decimal number (range 1 to 12);
-  single digits are preceded by a blank
+  single digits are preceded by a figure space
 - \%m: the month as a decimal number (range 01 to 12)
 - \%M: the minute as a decimal number (range 00 to 59)
 - \%f: the microsecond as a decimal number (range 000000 to 999999)
@@ -9699,7 +9702,7 @@ by g_hook_list_invoke_check().</doc>
           <doc xml:space="preserve">a #GHook</doc>
           <type name="Hook" c:type="GHook*"/>
         </parameter>
-        <parameter name="marshal_data" transfer-ownership="none" nullable="1" allow-none="1">
+        <parameter name="user_data" transfer-ownership="none" nullable="1" allow-none="1" closure="1">
           <doc xml:space="preserve">user data</doc>
           <type name="gpointer" c:type="gpointer"/>
         </parameter>
@@ -9751,7 +9754,7 @@ list of hooks gets finalized.</doc>
           <doc xml:space="preserve">a #GHook</doc>
           <type name="Hook" c:type="GHook*"/>
         </parameter>
-        <parameter name="data" transfer-ownership="none" nullable="1" allow-none="1">
+        <parameter name="user_data" transfer-ownership="none" nullable="1" allow-none="1" closure="1">
           <doc xml:space="preserve">user data passed to g_hook_find_func()</doc>
           <type name="gpointer" c:type="gpointer"/>
         </parameter>
@@ -9947,7 +9950,7 @@ function returns %FALSE.</doc>
           <doc xml:space="preserve">a #GHook</doc>
           <type name="Hook" c:type="GHook*"/>
         </parameter>
-        <parameter name="marshal_data" transfer-ownership="none" nullable="1" allow-none="1">
+        <parameter name="user_data" transfer-ownership="none" nullable="1" allow-none="1" closure="1">
           <doc xml:space="preserve">user data</doc>
           <type name="gpointer" c:type="gpointer"/>
         </parameter>
@@ -10940,6 +10943,9 @@ g_io_channel_read(), g_io_channel_write(), and g_io_channel_seek().</doc>
       <doc xml:space="preserve">Specifies properties of a #GIOChannel. Some of the flags can only be
 read with g_io_channel_get_flags(), but not changed with
 g_io_channel_set_flags().</doc>
+      <member name="none" value="0" c:identifier="G_IO_FLAG_NONE">
+        <doc xml:space="preserve">no special flags set. Since: 2.74</doc>
+      </member>
       <member name="append" value="1" c:identifier="G_IO_FLAG_APPEND">
         <doc xml:space="preserve">turns on append mode, corresponds to %O_APPEND
     (see the documentation of the UNIX open() syscall)</doc>
@@ -10997,7 +11003,7 @@ on a #GIOChannel is satisfied.</doc>
           <doc xml:space="preserve">the condition which has been satisfied</doc>
           <type name="IOCondition" c:type="GIOCondition"/>
         </parameter>
-        <parameter name="data" transfer-ownership="none" nullable="1" allow-none="1">
+        <parameter name="user_data" transfer-ownership="none" nullable="1" allow-none="1" closure="2">
           <doc xml:space="preserve">user data set in g_io_add_watch() or g_io_add_watch_full()</doc>
           <type name="gpointer" c:type="gpointer"/>
         </parameter>
@@ -13863,7 +13869,7 @@ linked against at application run time.</doc>
       <doc xml:space="preserve">The maximum value which can be held in a #guint8.</doc>
       <type name="guint8" c:type="guint8"/>
     </constant>
-    <constant name="MICRO_VERSION" value="0" c:type="GLIB_MICRO_VERSION">
+    <constant name="MICRO_VERSION" value="2" c:type="GLIB_MICRO_VERSION">
       <doc xml:space="preserve">The micro version number of the GLib library.
 
 Like #gtk_micro_version, but from the headers used at
@@ -15264,6 +15270,9 @@ drops to 0, it is freed.</doc>
     </record>
     <bitfield name="MarkupParseFlags" c:type="GMarkupParseFlags">
       <doc xml:space="preserve">Flags that affect the behaviour of the parser.</doc>
+      <member name="parse_flags_none" value="0" c:identifier="G_MARKUP_PARSE_FLAGS_NONE">
+        <doc xml:space="preserve">No special behaviour. Since: 2.74</doc>
+      </member>
       <member name="do_not_use_this_unsupported_flag" value="1" c:identifier="G_MARKUP_DO_NOT_USE_THIS_UNSUPPORTED_FLAG">
         <doc xml:space="preserve">flag you should not use</doc>
       </member>
@@ -15907,16 +15916,14 @@ A #GMutex should only be accessed via g_mutex_ functions.</doc>
           <type name="guint" c:type="guint"/>
         </array>
       </field>
-      <method name="clear" c:identifier="g_mutex_clear">
+      <method name="clear" c:identifier="g_mutex_clear" version="2.32">
         <doc xml:space="preserve">Frees the resources allocated to a mutex with g_mutex_init().
 
 This function should not be used with a #GMutex that has been
 statically allocated.
 
 Calling g_mutex_clear() on a locked mutex leads to undefined
-behaviour.
-
-Sine: 2.32</doc>
+behaviour.</doc>
         <return-value transfer-ownership="none">
           <type name="none" c:type="void"/>
         </return-value>
@@ -16565,7 +16572,7 @@ data passed to g_node_children_foreach().</doc>
           <doc xml:space="preserve">a #GNode.</doc>
           <type name="Node" c:type="GNode*"/>
         </parameter>
-        <parameter name="data" transfer-ownership="none" nullable="1" allow-none="1">
+        <parameter name="user_data" transfer-ownership="none" nullable="1" allow-none="1" closure="1">
           <doc xml:space="preserve">user data passed to g_node_children_foreach().</doc>
           <type name="gpointer" c:type="gpointer"/>
         </parameter>
@@ -16585,7 +16592,7 @@ user data passed to g_node_traverse(). If the function returns
           <doc xml:space="preserve">a #GNode.</doc>
           <type name="Node" c:type="GNode*"/>
         </parameter>
-        <parameter name="data" transfer-ownership="none" nullable="1" allow-none="1">
+        <parameter name="user_data" transfer-ownership="none" nullable="1" allow-none="1" closure="1">
           <doc xml:space="preserve">user data passed to g_node_traverse().</doc>
           <type name="gpointer" c:type="gpointer"/>
         </parameter>
@@ -16818,9 +16825,9 @@ options.</doc>
           <doc xml:space="preserve">The value to be parsed.</doc>
           <type name="utf8" c:type="const gchar*"/>
         </parameter>
-        <parameter name="data" transfer-ownership="none" nullable="1" allow-none="1">
-          <doc xml:space="preserve">User data added to the #GOptionGroup containing the option when it
- was created with g_option_group_new()</doc>
+        <parameter name="user_data" transfer-ownership="none" nullable="1" allow-none="1" closure="2">
+          <doc xml:space="preserve">User data added to the #GOptionGroup containing the option when
+ it was created with g_option_group_new()</doc>
           <type name="gpointer" c:type="gpointer"/>
         </parameter>
       </parameters>
@@ -17399,9 +17406,9 @@ or g_option_group_add_entries().</doc>
           <doc xml:space="preserve">The group to which the function belongs</doc>
           <type name="OptionGroup" c:type="GOptionGroup*"/>
         </parameter>
-        <parameter name="data" transfer-ownership="none" nullable="1" allow-none="1">
-          <doc xml:space="preserve">User data added to the #GOptionGroup containing the option when it
- was created with g_option_group_new()</doc>
+        <parameter name="user_data" transfer-ownership="none" nullable="1" allow-none="1" closure="2">
+          <doc xml:space="preserve">User data added to the #GOptionGroup containing the option when
+ it was created with g_option_group_new()</doc>
           <type name="gpointer" c:type="gpointer"/>
         </parameter>
       </parameters>
@@ -17659,9 +17666,9 @@ and all memory allocated by the @group is released.</doc>
           <doc xml:space="preserve">The group to which the function belongs</doc>
           <type name="OptionGroup" c:type="GOptionGroup*"/>
         </parameter>
-        <parameter name="data" transfer-ownership="none" nullable="1" allow-none="1">
-          <doc xml:space="preserve">User data added to the #GOptionGroup containing the option when it
- was created with g_option_group_new()</doc>
+        <parameter name="user_data" transfer-ownership="none" nullable="1" allow-none="1" closure="2">
+          <doc xml:space="preserve">User data added to the #GOptionGroup containing the option when
+ it was created with g_option_group_new()</doc>
           <type name="gpointer" c:type="gpointer"/>
         </parameter>
       </parameters>
@@ -18091,7 +18098,8 @@ If @func is %NULL, then only the pointers (and not what they are
 pointing to) are copied to the new #GPtrArray.
 
 The copy of @array will have the same #GDestroyNotify for its elements as
-@array.</doc>
+@array. The copy will also be %NULL terminated if (and only if) the source
+array is.</doc>
         <return-value transfer-ownership="full">
           <doc xml:space="preserve">a deep copy of the initial #GPtrArray.</doc>
           <array name="GLib.PtrArray" c:type="GPtrArray*">
@@ -18127,7 +18135,9 @@ may get compiler warnings from this though if compiling with GCC&#x2019;s
 `-Wcast-function-type` warning.
 
 If @func is %NULL, then only the pointers (and not what they are
-pointing to) are copied to the new #GPtrArray.</doc>
+pointing to) are copied to the new #GPtrArray.
+
+Whether @array_to_extend is %NULL terminated stays unchanged by this function.</doc>
         <return-value transfer-ownership="none">
           <type name="none" c:type="void"/>
         </return-value>
@@ -18284,6 +18294,10 @@ If array contents point to dynamically-allocated memory, they should
 be freed separately if @free_seg is %TRUE and no #GDestroyNotify
 function has been set for @array.
 
+Note that if the array is %NULL terminated and @free_seg is %FALSE
+then this will always return an allocated %NULL terminated buffer.
+If pdata is previously %NULL, a new buffer will be allocated.
+
 This function is not thread-safe. If using a #GPtrArray from multiple
 threads, use only the atomic g_ptr_array_ref() and g_ptr_array_unref()
 functions.</doc>
@@ -18328,6 +18342,26 @@ array will grow in size automatically if necessary.</doc>
           </parameter>
         </parameters>
       </function>
+      <function name="is_null_terminated" c:identifier="g_ptr_array_is_null_terminated" version="2.74" introspectable="0">
+        <doc xml:space="preserve">Gets whether the @array was constructed as %NULL-terminated.
+
+This will only return %TRUE for arrays constructed by passing %TRUE to the
+`null_terminated` argument of g_ptr_array_new_null_terminated(). It will not
+return %TRUE for normal arrays which have had a %NULL element appended to
+them.</doc>
+        <return-value transfer-ownership="none">
+          <doc xml:space="preserve">%TRUE if the array is made to be %NULL terminated.</doc>
+          <type name="gboolean" c:type="gboolean"/>
+        </return-value>
+        <parameters>
+          <parameter name="array" transfer-ownership="none">
+            <doc xml:space="preserve">the #GPtrArray</doc>
+            <array name="GLib.PtrArray" c:type="GPtrArray*">
+              <type name="gpointer" c:type="gpointer"/>
+            </array>
+          </parameter>
+        </parameters>
+      </function>
       <function name="new" c:identifier="g_ptr_array_new" introspectable="0">
         <doc xml:space="preserve">Creates a new #GPtrArray with a reference count of 1.</doc>
         <return-value>
@@ -18345,7 +18379,7 @@ the size of the array is still 0. It also set @element_free_func
 for freeing each element when the array is destroyed either via
 g_ptr_array_unref(), when g_ptr_array_free() is called with
 @free_segment set to %TRUE or when removing elements.</doc>
-        <return-value>
+        <return-value transfer-ownership="full">
           <doc xml:space="preserve">A new #GPtrArray</doc>
           <array name="GLib.PtrArray" c:type="GPtrArray*">
             <type name="gpointer" c:type="gpointer"/>
@@ -18363,12 +18397,53 @@ g_ptr_array_unref(), when g_ptr_array_free() is called with
           </parameter>
         </parameters>
       </function>
+      <function name="new_null_terminated" c:identifier="g_ptr_array_new_null_terminated" version="2.74" introspectable="0">
+        <doc xml:space="preserve">Like g_ptr_array_new_full() but also allows to set the array to
+be %NULL terminated. A %NULL terminated pointer array has an
+additional %NULL pointer after the last element, beyond the
+current length.
+
+#GPtrArray created by other constructors are not automatically %NULL
+terminated.
+
+Note that if the @array's length is zero and currently no
+data array is allocated, then pdata will still be %NULL.
+%GPtrArray will only %NULL terminate pdata, if an actual
+array is allocated. It does not guarantee that an array
+is always allocated. In other words, if the length is zero,
+then pdata may either point to a %NULL terminated array of length
+zero or be %NULL.</doc>
+        <return-value transfer-ownership="full">
+          <doc xml:space="preserve">A new #GPtrArray</doc>
+          <array name="GLib.PtrArray" c:type="GPtrArray*">
+            <type name="gpointer" c:type="gpointer"/>
+          </array>
+        </return-value>
+        <parameters>
+          <parameter name="reserved_size" transfer-ownership="none">
+            <doc xml:space="preserve">number of pointers preallocated.
+    If @null_terminated is %TRUE, the actually allocated
+    buffer size is @reserved_size plus 1, unless @reserved_size
+    is zero, in which case no initial buffer gets allocated.</doc>
+            <type name="guint" c:type="guint"/>
+          </parameter>
+          <parameter name="element_free_func" transfer-ownership="none" nullable="1" allow-none="1" scope="async">
+            <doc xml:space="preserve">A function to free elements with
+    destroy @array or %NULL</doc>
+            <type name="DestroyNotify" c:type="GDestroyNotify"/>
+          </parameter>
+          <parameter name="null_terminated" transfer-ownership="none">
+            <doc xml:space="preserve">whether to make the array as %NULL terminated.</doc>
+            <type name="gboolean" c:type="gboolean"/>
+          </parameter>
+        </parameters>
+      </function>
       <function name="new_with_free_func" c:identifier="g_ptr_array_new_with_free_func" version="2.22" introspectable="0">
         <doc xml:space="preserve">Creates a new #GPtrArray with a reference count of 1 and use
 @element_free_func for freeing each element when the array is destroyed
 either via g_ptr_array_unref(), when g_ptr_array_free() is called with
 @free_segment set to %TRUE or when removing elements.</doc>
-        <return-value>
+        <return-value transfer-ownership="full">
           <doc xml:space="preserve">A new #GPtrArray</doc>
           <array name="GLib.PtrArray" c:type="GPtrArray*">
             <type name="gpointer" c:type="gpointer"/>
@@ -18719,6 +18794,10 @@ This is guaranteed to be a stable sort since version 2.32.</doc>
 the underlying array is preserved for use elsewhere and returned
 to the caller.
 
+Note that if the array is %NULL terminated this may still return
+%NULL if the length of the array was zero and pdata was not yet
+allocated.
+
 Even if set, the #GDestroyNotify function will never be called
 on the current contents of the array and the caller is
 responsible for freeing the array elements.
@@ -18757,7 +18836,8 @@ g_assert (chunk_buffer-&gt;len == 0);
 ]|</doc>
         <return-value transfer-ownership="full" nullable="1">
           <doc xml:space="preserve">the element data, which should be
-    freed using g_free().</doc>
+    freed using g_free(). This may be %NULL if the array doesn&#x2019;t have any
+    elements (i.e. if `*len` is zero).</doc>
           <type name="gpointer" c:type="gpointer*"/>
         </return-value>
         <parameters>
@@ -19719,16 +19799,14 @@ A GRWLock should only be accessed with the g_rw_lock_ functions.</doc>
           <type name="guint" c:type="guint"/>
         </array>
       </field>
-      <method name="clear" c:identifier="g_rw_lock_clear">
+      <method name="clear" c:identifier="g_rw_lock_clear" version="2.32">
         <doc xml:space="preserve">Frees the resources allocated to a lock with g_rw_lock_init().
 
 This function should not be used with a #GRWLock that has been
 statically allocated.
 
 Calling g_rw_lock_clear() when any thread holds the lock
-leads to undefined behaviour.
-
-Sine: 2.32</doc>
+leads to undefined behaviour.</doc>
         <return-value transfer-ownership="none">
           <type name="none" c:type="void"/>
         </return-value>
@@ -20085,7 +20163,7 @@ g_rec_mutex_ functions.</doc>
           <type name="guint" c:type="guint"/>
         </array>
       </field>
-      <method name="clear" c:identifier="g_rec_mutex_clear">
+      <method name="clear" c:identifier="g_rec_mutex_clear" version="2.32">
         <doc xml:space="preserve">Frees the resources allocated to a recursive mutex with
 g_rec_mutex_init().
 
@@ -20093,9 +20171,7 @@ This function should not be used with a #GRecMutex that has been
 statically allocated.
 
 Calling g_rec_mutex_clear() on a locked recursive mutex leads
-to undefined behaviour.
-
-Sine: 2.32</doc>
+to undefined behaviour.</doc>
         <return-value transfer-ownership="none">
           <type name="none" c:type="void"/>
         </return-value>
@@ -20424,7 +20500,7 @@ print_uppercase_words (const gchar *string)
   GRegex *regex;
   GMatchInfo *match_info;
  
-  regex = g_regex_new ("[A-Z]+", 0, 0, NULL);
+  regex = g_regex_new ("[A-Z]+", G_REGEX_DEFAULT, G_REGEX_MATCH_DEFAULT, NULL);
   g_regex_match (regex, string, 0, &amp;match_info);
   while (g_match_info_matches (match_info))
     {
@@ -20611,7 +20687,7 @@ print_uppercase_words (const gchar *string)
   GMatchInfo *match_info;
   GError *error = NULL;
   
-  regex = g_regex_new ("[A-Z]+", 0, 0, NULL);
+  regex = g_regex_new ("[A-Z]+", G_REGEX_DEFAULT, G_REGEX_MATCH_DEFAULT, NULL);
   g_regex_match_full (regex, string, -1, 0, 0, &amp;match_info, &amp;error);
   while (g_match_info_matches (match_info))
     {
@@ -20776,7 +20852,7 @@ g_hash_table_insert (h, "2", "TWO");
 g_hash_table_insert (h, "3", "THREE");
 g_hash_table_insert (h, "4", "FOUR");
 
-reg = g_regex_new ("1|2|3|4", 0, 0, NULL);
+reg = g_regex_new ("1|2|3|4", G_REGEX_DEFAULT, G_REGEX_MATCH_DEFAULT, NULL);
 res = g_regex_replace_eval (reg, text, -1, 0, 0, eval_cb, h, NULL);
 g_hash_table_destroy (h);
 
@@ -21141,6 +21217,9 @@ it using g_strfreev()</doc>
     </record>
     <bitfield name="RegexCompileFlags" version="2.14" c:type="GRegexCompileFlags">
       <doc xml:space="preserve">Flags specifying compile-time options.</doc>
+      <member name="default" value="0" c:identifier="G_REGEX_DEFAULT">
+        <doc xml:space="preserve">No special options set. Since: 2.74</doc>
+      </member>
       <member name="caseless" value="1" c:identifier="G_REGEX_CASELESS">
         <doc xml:space="preserve">Letters in the pattern match both upper- and
     lowercase letters. This option can be changed within a pattern
@@ -21205,7 +21284,9 @@ it using g_strfreev()</doc>
       <member name="optimize" value="8192" c:identifier="G_REGEX_OPTIMIZE">
         <doc xml:space="preserve">Optimize the regular expression. If the pattern will
     be used many times, then it may be worth the effort to optimize it
-    to improve the speed of matches.</doc>
+    to improve the speed of matches. Deprecated in GLib 2.74 which now uses
+    libpcre2, which doesn&#x2019;t require separate optimization of queries. This
+    option is now a no-op. Deprecated: 2.74</doc>
       </member>
       <member name="firstline" value="262144" c:identifier="G_REGEX_FIRSTLINE">
         <doc xml:space="preserve">Limits an unanchored pattern to match before (or at) the
@@ -21244,7 +21325,8 @@ it using g_strfreev()</doc>
       </member>
       <member name="javascript_compat" value="33554432" c:identifier="G_REGEX_JAVASCRIPT_COMPAT">
         <doc xml:space="preserve">Changes behaviour so that it is compatible with
-    JavaScript rather than PCRE. Since: 2.34</doc>
+    JavaScript rather than PCRE. Since GLib 2.74 this is no longer supported,
+    as libpcre2 does not support it. Since: 2.34 Deprecated: 2.74</doc>
       </member>
     </bitfield>
     <enumeration name="RegexError" version="2.14" c:type="GRegexError" glib:error-domain="g-regex-error-quark">
@@ -21492,6 +21574,9 @@ to g_regex_replace_eval(), and it should append the replacement to
     </callback>
     <bitfield name="RegexMatchFlags" version="2.14" c:type="GRegexMatchFlags">
       <doc xml:space="preserve">Flags specifying match-time options.</doc>
+      <member name="default" value="0" c:identifier="G_REGEX_MATCH_DEFAULT">
+        <doc xml:space="preserve">No special options set. Since: 2.74</doc>
+      </member>
       <member name="anchored" value="16" c:identifier="G_REGEX_MATCH_ANCHORED">
         <doc xml:space="preserve">The pattern is forced to be "anchored", that is,
     it is constrained to match only at the first matching point in the
@@ -24016,7 +24101,7 @@ if @a comes before @b, and a positive value if @b comes before @a.</doc>
           <doc xml:space="preserve">a #GSequenceIter</doc>
           <type name="SequenceIter" c:type="GSequenceIter*"/>
         </parameter>
-        <parameter name="data" transfer-ownership="none" nullable="1" allow-none="1">
+        <parameter name="user_data" transfer-ownership="none" nullable="1" allow-none="1" closure="2">
           <doc xml:space="preserve">user data</doc>
           <type name="gpointer" c:type="gpointer"/>
         </parameter>
@@ -25156,6 +25241,22 @@ required condition has been met, and returns %TRUE if so.</doc>
         <type name="SourceDummyMarshal" c:type="GSourceDummyMarshal"/>
       </field>
     </record>
+    <callback name="SourceOnceFunc" c:type="GSourceOnceFunc" version="2.74">
+      <doc xml:space="preserve">A source function that is only called once before being removed from the main
+context automatically.
+
+See: g_idle_add_once(), g_timeout_add_once()</doc>
+      <return-value transfer-ownership="none">
+        <type name="none" c:type="void"/>
+      </return-value>
+      <parameters>
+        <parameter name="user_data" transfer-ownership="none" nullable="1" allow-none="1" closure="0">
+          <doc xml:space="preserve">data passed to the function, set when the source was
+  created</doc>
+          <type name="gpointer" c:type="gpointer"/>
+        </parameter>
+      </parameters>
+    </callback>
     <record name="SourcePrivate" c:type="GSourcePrivate" disguised="1"/>
     <callback name="SpawnChildSetupFunc" c:type="GSpawnChildSetupFunc">
       <doc xml:space="preserve">Specifies the type of the setup function passed to g_spawn_async(),
@@ -25309,6 +25410,15 @@ list to the `g_spawn...` function.</doc>
       <member name="cloexec_pipes" value="256" c:identifier="G_SPAWN_CLOEXEC_PIPES">
         <doc xml:space="preserve">create all pipes with the `O_CLOEXEC` flag set.
     Since: 2.40</doc>
+      </member>
+      <member name="child_inherits_stdout" value="512" c:identifier="G_SPAWN_CHILD_INHERITS_STDOUT" version="2.74">
+        <doc xml:space="preserve">The child will inherit the parent's standard output.</doc>
+      </member>
+      <member name="child_inherits_stderr" value="1024" c:identifier="G_SPAWN_CHILD_INHERITS_STDERR" version="2.74">
+        <doc xml:space="preserve">The child will inherit the parent's standard error.</doc>
+      </member>
+      <member name="stdin_from_dev_null" value="2048" c:identifier="G_SPAWN_STDIN_FROM_DEV_NULL" version="2.74">
+        <doc xml:space="preserve">The child's standard input is attached to `/dev/null`.</doc>
       </member>
     </bitfield>
     <record name="StatBuf" c:type="GStatBuf" disguised="1">
@@ -26640,18 +26750,21 @@ zero then @fixture will be equal to @user_data.</doc>
 
 Note that in contrast with g_test_trap_fork(), the default is to
 not show stdout and stderr.</doc>
-      <member name="stdin" value="1" c:identifier="G_TEST_SUBPROCESS_INHERIT_STDIN">
+      <member name="default" value="0" c:identifier="G_TEST_SUBPROCESS_DEFAULT">
+        <doc xml:space="preserve">Default behaviour. Since: 2.74</doc>
+      </member>
+      <member name="inherit_stdin" value="1" c:identifier="G_TEST_SUBPROCESS_INHERIT_STDIN">
         <doc xml:space="preserve">If this flag is given, the child
     process will inherit the parent's stdin. Otherwise, the child's
     stdin is redirected to `/dev/null`.</doc>
       </member>
-      <member name="stdout" value="2" c:identifier="G_TEST_SUBPROCESS_INHERIT_STDOUT">
+      <member name="inherit_stdout" value="2" c:identifier="G_TEST_SUBPROCESS_INHERIT_STDOUT">
         <doc xml:space="preserve">If this flag is given, the child
     process will inherit the parent's stdout. Otherwise, the child's
     stdout will not be visible, but it will be captured to allow
     later tests with g_test_trap_assert_stdout().</doc>
       </member>
-      <member name="stderr" value="4" c:identifier="G_TEST_SUBPROCESS_INHERIT_STDERR">
+      <member name="inherit_stderr" value="4" c:identifier="G_TEST_SUBPROCESS_INHERIT_STDERR">
         <doc xml:space="preserve">If this flag is given, the child
     process will inherit the parent's stderr. Otherwise, the child's
     stderr will not be visible, but it will be captured to allow
@@ -26711,6 +26824,9 @@ These flags determine what traps to set.</doc>
       <doc-deprecated xml:space="preserve">#GTestTrapFlags is used only with g_test_trap_fork(),
 which is deprecated. g_test_trap_subprocess() uses
 #GTestSubprocessFlags.</doc-deprecated>
+      <member name="default" value="0" c:identifier="G_TEST_TRAP_DEFAULT">
+        <doc xml:space="preserve">Default behaviour. Since: 2.74</doc>
+      </member>
       <member name="silence_stdout" value="128" c:identifier="G_TEST_TRAP_SILENCE_STDOUT">
         <doc xml:space="preserve">Redirect stdout of the test child to
     `/dev/null` so it cannot be observed on the console during test
@@ -26942,7 +27058,7 @@ or g_thread_try_new().</doc>
         <type name="gpointer" c:type="gpointer"/>
       </return-value>
       <parameters>
-        <parameter name="data" transfer-ownership="none" nullable="1" allow-none="1">
+        <parameter name="user_data" transfer-ownership="none" nullable="1" allow-none="1" closure="0">
           <doc xml:space="preserve">data passed to the thread</doc>
           <type name="gpointer" c:type="gpointer"/>
         </parameter>
@@ -28052,7 +28168,7 @@ strings, for &lt;option&gt;--help&lt;/option&gt; output.</doc>
           <doc xml:space="preserve">the untranslated string</doc>
           <type name="utf8" c:type="const gchar*"/>
         </parameter>
-        <parameter name="data" transfer-ownership="none" nullable="1" allow-none="1">
+        <parameter name="user_data" transfer-ownership="none" nullable="1" allow-none="1" closure="1">
           <doc xml:space="preserve">user data specified when installing the function, e.g.
  in g_option_group_set_translate_func()</doc>
           <type name="gpointer" c:type="gpointer"/>
@@ -28177,7 +28293,7 @@ parameter passed to g_tree_traverse(). If the function returns
           <doc xml:space="preserve">the value corresponding to the key</doc>
           <type name="gpointer" c:type="gpointer"/>
         </parameter>
-        <parameter name="data" transfer-ownership="none" nullable="1" allow-none="1">
+        <parameter name="user_data" transfer-ownership="none" nullable="1" allow-none="1" closure="2">
           <doc xml:space="preserve">user data passed to g_tree_traverse()</doc>
           <type name="gpointer" c:type="gpointer"/>
         </parameter>
@@ -28197,7 +28313,7 @@ stopped.</doc>
           <doc xml:space="preserve">a #GTreeNode</doc>
           <type name="TreeNode" c:type="GTreeNode*"/>
         </parameter>
-        <parameter name="data" transfer-ownership="none" nullable="1" allow-none="1">
+        <parameter name="user_data" transfer-ownership="none" nullable="1" allow-none="1" closure="1">
           <doc xml:space="preserve">user data passed to g_tree_foreach_node()</doc>
           <type name="gpointer" c:type="gpointer"/>
         </parameter>
@@ -34518,7 +34634,7 @@ returned.
 If the key is found and the value has the correct type, it is
 returned.  If @expected_type was specified then any non-%NULL return
 value will have this type.</doc>
-        <return-value transfer-ownership="full">
+        <return-value transfer-ownership="full" nullable="1">
           <doc xml:space="preserve">the value of the dictionary key, or %NULL</doc>
           <type name="Variant" c:type="GVariant*"/>
         </return-value>
@@ -37557,6 +37673,42 @@ the pointer passed to it should not be `volatile`.</doc>
         </parameter>
       </parameters>
     </function>
+    <function name="atomic_int_compare_and_exchange_full" c:identifier="g_atomic_int_compare_and_exchange_full" version="2.74">
+      <doc xml:space="preserve">Compares @atomic to @oldval and, if equal, sets it to @newval.
+If @atomic was not equal to @oldval then no change occurs.
+In any case the value of @atomic before this operation is stored in @preval.
+
+This compare and exchange is done atomically.
+
+Think of this operation as an atomic version of
+`{ *preval = *atomic; if (*atomic == oldval) { *atomic = newval; return TRUE; } else return FALSE; }`.
+
+This call acts as a full compiler and hardware memory barrier.
+
+See also g_atomic_int_compare_and_exchange()</doc>
+      <return-value transfer-ownership="none">
+        <doc xml:space="preserve">%TRUE if the exchange took place</doc>
+        <type name="gboolean" c:type="gboolean"/>
+      </return-value>
+      <parameters>
+        <parameter name="atomic" transfer-ownership="none">
+          <doc xml:space="preserve">a pointer to a #gint or #guint</doc>
+          <type name="gint" c:type="gint*"/>
+        </parameter>
+        <parameter name="oldval" transfer-ownership="none">
+          <doc xml:space="preserve">the value to compare with</doc>
+          <type name="gint" c:type="gint"/>
+        </parameter>
+        <parameter name="newval" transfer-ownership="none">
+          <doc xml:space="preserve">the value to conditionally replace with</doc>
+          <type name="gint" c:type="gint"/>
+        </parameter>
+        <parameter name="preval" direction="out" caller-allocates="0" transfer-ownership="full">
+          <doc xml:space="preserve">the contents of @atomic before this operation</doc>
+          <type name="gint" c:type="gint*"/>
+        </parameter>
+      </parameters>
+    </function>
     <function name="atomic_int_dec_and_test" c:identifier="g_atomic_int_dec_and_test" version="2.4">
       <doc xml:space="preserve">Decrements the value of @atomic by 1.
 
@@ -37575,6 +37727,30 @@ the pointer passed to it should not be `volatile`.</doc>
         <parameter name="atomic" transfer-ownership="none">
           <doc xml:space="preserve">a pointer to a #gint or #guint</doc>
           <type name="gint" c:type="volatile gint*"/>
+        </parameter>
+      </parameters>
+    </function>
+    <function name="atomic_int_exchange" c:identifier="g_atomic_int_exchange" version="2.74">
+      <doc xml:space="preserve">Sets the @atomic to @newval and returns the old value from @atomic.
+
+This exchange is done atomically.
+
+Think of this operation as an atomic version of
+`{ tmp = *atomic; *atomic = val; return tmp; }`.
+
+This call acts as a full compiler and hardware memory barrier.</doc>
+      <return-value transfer-ownership="none">
+        <doc xml:space="preserve">the value of @atomic before the exchange, signed</doc>
+        <type name="gint" c:type="gint"/>
+      </return-value>
+      <parameters>
+        <parameter name="atomic" transfer-ownership="none">
+          <doc xml:space="preserve">a pointer to a #gint or #guint</doc>
+          <type name="gint" c:type="gint*"/>
+        </parameter>
+        <parameter name="newval" transfer-ownership="none">
+          <doc xml:space="preserve">the value to replace with</doc>
+          <type name="gint" c:type="gint"/>
         </parameter>
       </parameters>
     </function>
@@ -37826,6 +38002,66 @@ the pointer passed to it should not be `volatile`.</doc>
         </parameter>
         <parameter name="newval" transfer-ownership="none" nullable="1" allow-none="1">
           <doc xml:space="preserve">the value to conditionally replace with</doc>
+          <type name="gpointer" c:type="gpointer"/>
+        </parameter>
+      </parameters>
+    </function>
+    <function name="atomic_pointer_compare_and_exchange_full" c:identifier="g_atomic_pointer_compare_and_exchange_full" version="2.74">
+      <doc xml:space="preserve">Compares @atomic to @oldval and, if equal, sets it to @newval.
+If @atomic was not equal to @oldval then no change occurs.
+In any case the value of @atomic before this operation is stored in @preval.
+
+This compare and exchange is done atomically.
+
+Think of this operation as an atomic version of
+`{ *preval = *atomic; if (*atomic == oldval) { *atomic = newval; return TRUE; } else return FALSE; }`.
+
+This call acts as a full compiler and hardware memory barrier.
+
+See also g_atomic_pointer_compare_and_exchange()</doc>
+      <return-value transfer-ownership="none">
+        <doc xml:space="preserve">%TRUE if the exchange took place</doc>
+        <type name="gboolean" c:type="gboolean"/>
+      </return-value>
+      <parameters>
+        <parameter name="atomic" transfer-ownership="none">
+          <doc xml:space="preserve">a pointer to a #gpointer-sized value</doc>
+          <type name="gpointer" c:type="void*"/>
+        </parameter>
+        <parameter name="oldval" transfer-ownership="none" nullable="1" allow-none="1">
+          <doc xml:space="preserve">the value to compare with</doc>
+          <type name="gpointer" c:type="gpointer"/>
+        </parameter>
+        <parameter name="newval" transfer-ownership="none" nullable="1" allow-none="1">
+          <doc xml:space="preserve">the value to conditionally replace with</doc>
+          <type name="gpointer" c:type="gpointer"/>
+        </parameter>
+        <parameter name="preval" direction="out" caller-allocates="0" transfer-ownership="full">
+          <doc xml:space="preserve">the contents of @atomic before this operation</doc>
+          <type name="gpointer" c:type="void*"/>
+        </parameter>
+      </parameters>
+    </function>
+    <function name="atomic_pointer_exchange" c:identifier="g_atomic_pointer_exchange" version="2.74">
+      <doc xml:space="preserve">Sets the @atomic to @newval and returns the old value from @atomic.
+
+This exchange is done atomically.
+
+Think of this operation as an atomic version of
+`{ tmp = *atomic; *atomic = val; return tmp; }`.
+
+This call acts as a full compiler and hardware memory barrier.</doc>
+      <return-value transfer-ownership="none" nullable="1">
+        <doc xml:space="preserve">the value of @atomic before the exchange</doc>
+        <type name="gpointer" c:type="gpointer"/>
+      </return-value>
+      <parameters>
+        <parameter name="atomic" transfer-ownership="none" nullable="1" allow-none="1">
+          <doc xml:space="preserve">a pointer to a #gpointer-sized value</doc>
+          <type name="gpointer" c:type="void*"/>
+        </parameter>
+        <parameter name="newval" transfer-ownership="none" nullable="1" allow-none="1">
+          <doc xml:space="preserve">the value to replace with</doc>
           <type name="gpointer" c:type="gpointer"/>
         </parameter>
       </parameters>
@@ -39930,6 +40166,31 @@ threads are using the same datalist and the same key.</doc>
         </parameter>
       </parameters>
     </function-macro>
+    <function name="datalist_id_remove_multiple" c:identifier="g_datalist_id_remove_multiple" version="2.74">
+      <doc xml:space="preserve">Removes multiple keys from a datalist.
+
+This is more efficient than calling g_datalist_id_remove_data()
+multiple times in a row.</doc>
+      <return-value transfer-ownership="none">
+        <type name="none" c:type="void"/>
+      </return-value>
+      <parameters>
+        <parameter name="datalist" transfer-ownership="none">
+          <doc xml:space="preserve">a datalist</doc>
+          <type name="Data" c:type="GData**"/>
+        </parameter>
+        <parameter name="keys" transfer-ownership="none">
+          <doc xml:space="preserve">keys to remove</doc>
+          <array length="2" zero-terminated="0" c:type="GQuark*">
+            <type name="Quark" c:type="GQuark"/>
+          </array>
+        </parameter>
+        <parameter name="n_keys" transfer-ownership="none">
+          <doc xml:space="preserve">length of @keys, must be &lt;= 16</doc>
+          <type name="gsize" c:type="gsize"/>
+        </parameter>
+      </parameters>
+    </function>
     <function name="datalist_id_remove_no_notify" c:identifier="g_datalist_id_remove_no_notify" introspectable="0">
       <doc xml:space="preserve">Removes an element, without calling its destroy notification
 function.</doc>
@@ -43746,6 +44007,30 @@ use a custom main context.</doc>
         <parameter name="notify" transfer-ownership="none" nullable="1" allow-none="1" scope="async">
           <doc xml:space="preserve">function to call when the idle is removed, or %NULL</doc>
           <type name="DestroyNotify" c:type="GDestroyNotify"/>
+        </parameter>
+      </parameters>
+    </function>
+    <function name="idle_add_once" c:identifier="g_idle_add_once" version="2.74" introspectable="0">
+      <doc xml:space="preserve">Adds a function to be called whenever there are no higher priority
+events pending to the default main loop. The function is given the
+default idle priority, %G_PRIORITY_DEFAULT_IDLE.
+
+The function will only be called once and then the source will be
+automatically removed from the main context.
+
+This function otherwise behaves like g_idle_add().</doc>
+      <return-value transfer-ownership="none">
+        <doc xml:space="preserve">the ID (greater than 0) of the event source</doc>
+        <type name="guint" c:type="guint"/>
+      </return-value>
+      <parameters>
+        <parameter name="function" transfer-ownership="none" closure="1">
+          <doc xml:space="preserve">function to call</doc>
+          <type name="SourceOnceFunc" c:type="GSourceOnceFunc"/>
+        </parameter>
+        <parameter name="data" transfer-ownership="none" nullable="1" allow-none="1">
+          <doc xml:space="preserve">data to pass to @function</doc>
+          <type name="gpointer" c:type="gpointer"/>
         </parameter>
       </parameters>
     </function>
@@ -49976,17 +50261,23 @@ absolute path, it will be looked for in the `PATH` variable from
 @envp. If both %G_SPAWN_SEARCH_PATH and %G_SPAWN_SEARCH_PATH_FROM_ENVP
 are used, the value from @envp takes precedence over the environment.
 
-%G_SPAWN_STDOUT_TO_DEV_NULL means that the child's standard output
-will be discarded, instead of going to the same location as the parent's
-standard output. If you use this flag, @stdout_pipe_out must be %NULL.
-
-%G_SPAWN_STDERR_TO_DEV_NULL means that the child's standard error
-will be discarded, instead of going to the same location as the parent's
-standard error. If you use this flag, @stderr_pipe_out must be %NULL.
-
 %G_SPAWN_CHILD_INHERITS_STDIN means that the child will inherit the parent's
 standard input (by default, the child's standard input is attached to
-`/dev/null`). If you use this flag, @stdin_pipe_out must be %NULL.
+`/dev/null`). %G_SPAWN_STDIN_FROM_DEV_NULL explicitly imposes the default
+behavior. Both flags cannot be enabled at the same time and, in both cases,
+the @stdin_pipe_out argument is ignored.
+
+%G_SPAWN_STDOUT_TO_DEV_NULL means that the child's standard output
+will be discarded (by default, it goes to the same location as the parent's
+standard output). %G_SPAWN_CHILD_INHERITS_STDOUT explicitly imposes the
+default behavior. Both flags cannot be enabled at the same time and, in
+both cases, the @stdout_pipe_out argument is ignored.
+
+%G_SPAWN_STDERR_TO_DEV_NULL means that the child's standard error
+will be discarded (by default, it goes to the same location as the parent's
+standard error). %G_SPAWN_CHILD_INHERITS_STDERR explicitly imposes the
+default behavior. Both flags cannot be enabled at the same time and, in
+both cases, the @stderr_pipe_out argument is ignored.
 
 It is valid to pass the same FD in multiple parameters (e.g. you can pass
 a single FD for both @stdout_fd and @stderr_fd, and include it in
@@ -51071,7 +51362,7 @@ as soon as the call returns:
 ]|</doc>
       <return-value transfer-ownership="none">
         <doc xml:space="preserve">a UTF-8 string describing the error code. If the error code
-    is unknown, it returns a string like "unknown error (&lt;code&gt;)".</doc>
+    is unknown, it returns a string like "Unknown error: &lt;code&gt;".</doc>
         <type name="utf8" c:type="const gchar*"/>
       </return-value>
       <parameters>
@@ -52938,7 +53229,7 @@ message.
       }
 
     // Reruns this same test in a subprocess
-    g_test_trap_subprocess (NULL, 0, 0);
+    g_test_trap_subprocess (NULL, 0, G_TEST_SUBPROCESS_DEFAULT);
     g_test_trap_assert_failed ();
     g_test_trap_assert_stderr ("*ERROR*too large*");
   }
@@ -53554,6 +53845,34 @@ See g_get_monotonic_time().</doc>
         <parameter name="notify" transfer-ownership="none" nullable="1" allow-none="1" scope="async">
           <doc xml:space="preserve">function to call when the timeout is removed, or %NULL</doc>
           <type name="DestroyNotify" c:type="GDestroyNotify"/>
+        </parameter>
+      </parameters>
+    </function>
+    <function name="timeout_add_once" c:identifier="g_timeout_add_once" version="2.74" introspectable="0">
+      <doc xml:space="preserve">Sets a function to be called after @interval milliseconds have elapsed,
+with the default priority, %G_PRIORITY_DEFAULT.
+
+The given @function is called once and then the source will be automatically
+removed from the main context.
+
+This function otherwise behaves like g_timeout_add().</doc>
+      <return-value transfer-ownership="none">
+        <doc xml:space="preserve">the ID (greater than 0) of the event source</doc>
+        <type name="guint" c:type="guint"/>
+      </return-value>
+      <parameters>
+        <parameter name="interval" transfer-ownership="none">
+          <doc xml:space="preserve">the time after which the function will be called, in
+  milliseconds (1/1000ths of a second)</doc>
+          <type name="guint" c:type="guint"/>
+        </parameter>
+        <parameter name="function" transfer-ownership="none" closure="2">
+          <doc xml:space="preserve">function to call</doc>
+          <type name="SourceOnceFunc" c:type="GSourceOnceFunc"/>
+        </parameter>
+        <parameter name="data" transfer-ownership="none" nullable="1" allow-none="1">
+          <doc xml:space="preserve">data to pass to @function</doc>
+          <type name="gpointer" c:type="gpointer"/>
         </parameter>
       </parameters>
     </function>
@@ -55097,7 +55416,9 @@ for fcntl(); these are different on Linux/glibc.</doc>
       <parameters>
         <parameter name="fds" transfer-ownership="none">
           <doc xml:space="preserve">Array of two integers</doc>
-          <type name="gint" c:type="gint*"/>
+          <array zero-terminated="0" c:type="gint*" fixed-size="2">
+            <type name="gint" c:type="gint"/>
+          </array>
         </parameter>
         <parameter name="flags" transfer-ownership="none">
           <doc xml:space="preserve">Bitfield of file descriptor flags, as for fcntl()</doc>
