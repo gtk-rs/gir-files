@@ -3337,7 +3337,7 @@ destroyed and freed.</doc>
  last argument to g_closure_invoke()</doc>
           <type name="gpointer" c:type="gpointer"/>
         </parameter>
-        <parameter name="marshal_data" transfer-ownership="none" nullable="1" allow-none="1">
+        <parameter name="user_data" transfer-ownership="none" nullable="1" allow-none="1" closure="5">
           <doc xml:space="preserve">additional data specified when
  registering the marshaller, see g_closure_set_marshal() and
  g_closure_set_meta_marshal()</doc>
@@ -3373,12 +3373,16 @@ on closures.</doc>
     <bitfield name="ConnectFlags" c:type="GConnectFlags">
       <doc xml:space="preserve">The connection flags are used to specify the behaviour of a signal's
 connection.</doc>
+      <member name="default" value="0" c:identifier="G_CONNECT_DEFAULT">
+        <doc xml:space="preserve">Default behaviour (no special flags). Since: 2.74</doc>
+      </member>
       <member name="after" value="1" c:identifier="G_CONNECT_AFTER">
-        <doc xml:space="preserve">whether the handler should be called before or after the
- default handler of the signal.</doc>
+        <doc xml:space="preserve">If set, the handler should be called after the
+ default handler of the signal. Normally, the handler is called before
+ the default handler.</doc>
       </member>
       <member name="swapped" value="2" c:identifier="G_CONNECT_SWAPPED">
-        <doc xml:space="preserve">whether the instance and data should be swapped when
+        <doc xml:space="preserve">If set, the instance and data should be swapped when
  calling the handler; see g_signal_connect_swapped() for an example.</doc>
       </member>
     </bitfield>
@@ -3909,6 +3913,47 @@ gtk_gadget_register_type (GTypeModule *type_module)
         </parameter>
       </parameters>
     </function-macro>
+    <function-macro name="DEFINE_ENUM_TYPE" c:identifier="G_DEFINE_ENUM_TYPE" version="2.74" introspectable="0">
+      <doc xml:space="preserve">A convenience macro for defining enumeration types.
+
+This macro will generate a `*_get_type()` function for the
+given @TypeName, using @type_name as the function prefix.
+
+|[&lt;!-- language="C" --&gt;
+G_DEFINE_ENUM_TYPE (GtkOrientation, gtk_orientation,
+  G_DEFINE_ENUM_VALUE (GTK_ORIENTATION_HORIZONTAL, "horizontal"),
+  G_DEFINE_ENUM_VALUE (GTK_ORIENTATION_VERTICAL, "vertical"))
+]|
+
+For projects that have multiple enumeration types, or enumeration
+types with many values, you should consider using glib-mkenums to
+generate the type function.</doc>
+      <parameters>
+        <parameter name="TypeName">
+          <doc xml:space="preserve">the enumeration type, in `CamelCase`</doc>
+        </parameter>
+        <parameter name="type_name">
+          <doc xml:space="preserve">the enumeration type prefixed, in `snake_case`</doc>
+        </parameter>
+        <parameter name="...">
+          <doc xml:space="preserve">a list of enumeration values, defined using G_DEFINE_ENUM_VALUE()</doc>
+        </parameter>
+      </parameters>
+    </function-macro>
+    <function-macro name="DEFINE_ENUM_VALUE" c:identifier="G_DEFINE_ENUM_VALUE" version="2.74" introspectable="0">
+      <doc xml:space="preserve">Defines an enumeration value, and maps it to a "nickname".
+
+This macro can only be used with G_DEFINE_ENUM_TYPE() and
+G_DEFINE_FLAGS_TYPE().</doc>
+      <parameters>
+        <parameter name="EnumValue">
+          <doc xml:space="preserve">an enumeration value</doc>
+        </parameter>
+        <parameter name="EnumNick">
+          <doc xml:space="preserve">a short string representing the enumeration value</doc>
+        </parameter>
+      </parameters>
+    </function-macro>
     <function-macro name="DEFINE_FINAL_TYPE" c:identifier="G_DEFINE_FINAL_TYPE" version="2.70" introspectable="0">
       <doc xml:space="preserve">A convenience macro for type implementations.
 
@@ -3968,6 +4013,37 @@ See G_DEFINE_TYPE_EXTENDED() for an example.</doc>
         </parameter>
         <parameter name="T_P">
           <doc xml:space="preserve">the #GType of the parent type</doc>
+        </parameter>
+      </parameters>
+    </function-macro>
+    <function-macro name="DEFINE_FLAGS_TYPE" c:identifier="G_DEFINE_FLAGS_TYPE" version="2.74" introspectable="0">
+      <doc xml:space="preserve">A convenience macro for defining flag types.
+
+This macro will generate a `*_get_type()` function for the
+given @TypeName, using @type_name as the function prefix.
+
+|[&lt;!-- language="C" --&gt;
+G_DEFINE_FLAGS_TYPE (GSettingsBindFlags, g_settings_bind_flags,
+  G_DEFINE_ENUM_VALUE (G_SETTINGS_BIND_DEFAULT, "default"),
+  G_DEFINE_ENUM_VALUE (G_SETTINGS_BIND_GET, "get"),
+  G_DEFINE_ENUM_VALUE (G_SETTINGS_BIND_SET, "set"),
+  G_DEFINE_ENUM_VALUE (G_SETTINGS_BIND_NO_SENSITIVITY, "no-sensitivity"),
+  G_DEFINE_ENUM_VALUE (G_SETTINGS_BIND_GET_NO_CHANGES, "get-no-changes"),
+  G_DEFINE_ENUM_VALUE (G_SETTINGS_BIND_INVERT_BOOLEAN, "invert-boolean"))
+]|
+
+For projects that have multiple enumeration types, or enumeration
+types with many values, you should consider using glib-mkenums to
+generate the type function.</doc>
+      <parameters>
+        <parameter name="TypeName">
+          <doc xml:space="preserve">the enumeration type, in `CamelCase`</doc>
+        </parameter>
+        <parameter name="type_name">
+          <doc xml:space="preserve">the enumeration type prefixed, in `snake_case`</doc>
+        </parameter>
+        <parameter name="...">
+          <doc xml:space="preserve">a list of enumeration values, defined using G_DEFINE_ENUM_VALUE()</doc>
         </parameter>
       </parameters>
     </function-macro>
@@ -4860,8 +4936,17 @@ implementation and should never be accessed directly.</doc>
       <field name="flags" readable="0" private="1">
         <type name="gsize" c:type="gsize"/>
       </field>
+      <field name="n_construct_properties" readable="0" private="1">
+        <type name="gsize" c:type="gsize"/>
+      </field>
+      <field name="pspecs" readable="0" private="1">
+        <type name="gpointer" c:type="gpointer"/>
+      </field>
+      <field name="n_pspecs" readable="0" private="1">
+        <type name="gsize" c:type="gsize"/>
+      </field>
       <field name="pdummy" readable="0" private="1">
-        <array zero-terminated="0" fixed-size="6">
+        <array zero-terminated="0" fixed-size="3">
           <type name="gpointer" c:type="gpointer"/>
         </array>
       </field>
@@ -5656,8 +5741,8 @@ function pointers.</doc>
 
 The signal specs expected by this function have the form
 "modifier::signal_name", where modifier can be one of the following:
-- signal: equivalent to g_signal_connect_data (..., NULL, 0)
-- object-signal, object_signal: equivalent to g_signal_connect_object (..., 0)
+- signal: equivalent to g_signal_connect_data (..., NULL, G_CONNECT_DEFAULT)
+- object-signal, object_signal: equivalent to g_signal_connect_object (..., G_CONNECT_DEFAULT)
 - swapped-signal, swapped_signal: equivalent to g_signal_connect_data (..., NULL, G_CONNECT_SWAPPED)
 - swapped_object_signal, swapped-object-signal: equivalent to g_signal_connect_object (..., G_CONNECT_SWAPPED)
 - signal_after, signal-after: equivalent to g_signal_connect_data (..., NULL, G_CONNECT_AFTER)
@@ -6065,12 +6150,11 @@ instead, is to store the GParamSpec used with
 g_object_class_install_property() inside a static array, e.g.:
 
 |[&lt;!-- language="C" --&gt;
-  enum
+  typedef enum
   {
-    PROP_0,
-    PROP_FOO,
+    PROP_FOO = 1,
     PROP_LAST
-  };
+  } MyObjectProperty;
 
   static GParamSpec *properties[PROP_LAST];
 
@@ -6080,7 +6164,7 @@ g_object_class_install_property() inside a static array, e.g.:
     properties[PROP_FOO] = g_param_spec_int ("foo", "Foo", "The foo",
                                              0, 100,
                                              50,
-                                             G_PARAM_READWRITE);
+                                             G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS);
     g_object_class_install_property (gobject_class,
                                      PROP_FOO,
                                      properties[PROP_FOO]);
@@ -6958,8 +7042,17 @@ my_singleton_constructor (GType                  type,
       <field name="flags" readable="0" private="1">
         <type name="gsize" c:type="gsize"/>
       </field>
+      <field name="n_construct_properties" readable="0" private="1">
+        <type name="gsize" c:type="gsize"/>
+      </field>
+      <field name="pspecs" readable="0" private="1">
+        <type name="gpointer" c:type="gpointer"/>
+      </field>
+      <field name="n_pspecs" readable="0" private="1">
+        <type name="gsize" c:type="gsize"/>
+      </field>
       <field name="pdummy" readable="0" private="1">
-        <array zero-terminated="0" fixed-size="6">
+        <array zero-terminated="0" fixed-size="3">
           <type name="gpointer" c:type="gpointer"/>
         </array>
       </field>
@@ -7000,9 +7093,11 @@ This function should be used if you plan to use a static array of
 class initialization:
 
 |[&lt;!-- language="C" --&gt;
-enum {
-  PROP_0, PROP_FOO, PROP_BAR, N_PROPERTIES
-};
+typedef enum {
+  PROP_FOO = 1,
+  PROP_BAR,
+  N_PROPERTIES
+} MyObjectProperty;
 
 static GParamSpec *obj_properties[N_PROPERTIES] = { NULL, };
 
@@ -7015,17 +7110,17 @@ my_object_class_init (MyObjectClass *klass)
     g_param_spec_int ("foo", "Foo", "Foo",
                       -1, G_MAXINT,
                       0,
-                      G_PARAM_READWRITE);
+                      G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS);
 
   obj_properties[PROP_BAR] =
     g_param_spec_string ("bar", "Bar", "Bar",
                          NULL,
-                         G_PARAM_READWRITE);
+                         G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS);
 
   gobject_class-&gt;set_property = my_object_set_property;
   gobject_class-&gt;get_property = my_object_get_property;
   g_object_class_install_properties (gobject_class,
-                                     N_PROPERTIES,
+                                     G_N_ELEMENTS (obj_properties),
                                      obj_properties);
 }
 ]|
@@ -7465,6 +7560,12 @@ a #GParamSpec object.</doc>
     <constant name="PARAM_STATIC_STRINGS" value="224" c:type="G_PARAM_STATIC_STRINGS">
       <doc xml:space="preserve">#GParamFlags value alias for %G_PARAM_STATIC_NAME | %G_PARAM_STATIC_NICK | %G_PARAM_STATIC_BLURB.
 
+It is recommended to use this for all properties by default, as it allows for
+internal performance improvements in GObject.
+
+It is very rare that a property would have a dynamically constructed name,
+nickname or blurb.
+
 Since 2.13.0</doc>
       <type name="gint" c:type="gint"/>
     </constant>
@@ -7668,6 +7769,19 @@ the rules for valid names.</doc>
           <instance-parameter name="pspec" transfer-ownership="none">
             <type name="ParamSpec" c:type="GParamSpec*"/>
           </instance-parameter>
+        </parameters>
+      </virtual-method>
+      <virtual-method name="value_is_valid">
+        <return-value transfer-ownership="none">
+          <type name="gboolean" c:type="gboolean"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="pspec" transfer-ownership="none">
+            <type name="ParamSpec" c:type="GParamSpec*"/>
+          </instance-parameter>
+          <parameter name="value" transfer-ownership="none">
+            <type name="Value" c:type="const GValue*"/>
+          </parameter>
         </parameters>
       </virtual-method>
       <virtual-method name="value_set_default">
@@ -8094,8 +8208,23 @@ g_param_type_register_static().</doc>
           </parameters>
         </callback>
       </field>
+      <field name="value_is_valid">
+        <callback name="value_is_valid">
+          <return-value transfer-ownership="none">
+            <type name="gboolean" c:type="gboolean"/>
+          </return-value>
+          <parameters>
+            <parameter name="pspec" transfer-ownership="none">
+              <type name="ParamSpec" c:type="GParamSpec*"/>
+            </parameter>
+            <parameter name="value" transfer-ownership="none">
+              <type name="Value" c:type="const GValue*"/>
+            </parameter>
+          </parameters>
+        </callback>
+      </field>
       <field name="dummy" readable="0" private="1">
-        <array zero-terminated="0" fixed-size="4">
+        <array zero-terminated="0" fixed-size="3">
           <type name="gpointer" c:type="gpointer"/>
         </array>
       </field>
@@ -8738,7 +8867,7 @@ last callback.</doc>
           <doc xml:space="preserve">A #GValue holding the return value of the signal handler.</doc>
           <type name="Value" c:type="const GValue*"/>
         </parameter>
-        <parameter name="data" transfer-ownership="none" nullable="1" allow-none="1">
+        <parameter name="user_data" transfer-ownership="none" nullable="1" allow-none="1" closure="3">
           <doc xml:space="preserve">Callback data that was specified when creating the signal.</doc>
           <type name="gpointer" c:type="gpointer"/>
         </parameter>
@@ -8773,7 +8902,7 @@ You may not attach these to signals created with the %G_SIGNAL_NO_HOOKS flag.</d
             <type name="Value" c:type="GValue"/>
           </array>
         </parameter>
-        <parameter name="data" transfer-ownership="none" nullable="1" allow-none="1">
+        <parameter name="user_data" transfer-ownership="none" nullable="1" allow-none="1" closure="3">
           <doc xml:space="preserve">user data associated with the hook.</doc>
           <type name="gpointer" c:type="gpointer"/>
         </parameter>
@@ -10018,6 +10147,9 @@ environment variable.</doc>
     </bitfield>
     <bitfield name="TypeFlags" c:type="GTypeFlags">
       <doc xml:space="preserve">Bit masks used to check or determine characteristics of a type.</doc>
+      <member name="none" value="0" c:identifier="G_TYPE_FLAG_NONE">
+        <doc xml:space="preserve">No special flags. Since: 2.74</doc>
+      </member>
       <member name="abstract" value="16" c:identifier="G_TYPE_FLAG_ABSTRACT">
         <doc xml:space="preserve">Indicates an abstract type. No instances can be
  created for an abstract type</doc>
@@ -15255,6 +15387,25 @@ without modifications</doc>
       <doc xml:space="preserve">Checks whether @value contains the default value as specified in @pspec.</doc>
       <return-value transfer-ownership="none">
         <doc xml:space="preserve">whether @value contains the canonical default for this @pspec</doc>
+        <type name="gboolean" c:type="gboolean"/>
+      </return-value>
+      <parameters>
+        <parameter name="pspec" transfer-ownership="none">
+          <doc xml:space="preserve">a valid #GParamSpec</doc>
+          <type name="ParamSpec" c:type="GParamSpec*"/>
+        </parameter>
+        <parameter name="value" transfer-ownership="none">
+          <doc xml:space="preserve">a #GValue of correct type for @pspec</doc>
+          <type name="Value" c:type="const GValue*"/>
+        </parameter>
+      </parameters>
+    </function>
+    <function name="param_value_is_valid" c:identifier="g_param_value_is_valid" version="2.74">
+      <doc xml:space="preserve">Return whether the contents of @value comply with the specifications
+set out by @pspec.</doc>
+      <return-value transfer-ownership="none">
+        <doc xml:space="preserve">whether the contents of @value comply with the specifications
+  set out by @pspec.</doc>
         <type name="gboolean" c:type="gboolean"/>
       </return-value>
       <parameters>
