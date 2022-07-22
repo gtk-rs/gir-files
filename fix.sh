@@ -117,6 +117,15 @@ xmlstarlet ed -L \
 	-d '//_:record[@c:type="PangoGlyphVisAttr"]/_:field[@name="is_color"]' \
 	Pango-1.0.gir
 
+# fix glyphstring methods that are unnecessarily &mut
+xmlstarlet ed -L \
+	-u '//_:record[@c:type="PangoGlyphString"]/_:method[@name="get_width"]//_:instance-parameter[@name="glyphs"]/_:type/@c:type' -v "const PangoGlyphString *" \
+	-u '//_:record[@c:type="PangoGlyphString"]/_:method[@name="get_logical_widths"]//_:instance-parameter[@name="glyphs"]/_:type/@c:type' -v "const PangoGlyphString *" \
+	-u '//_:record[@c:type="PangoGlyphString"]/_:method[@name="index_to_x"]//_:instance-parameter[@name="glyphs"]/_:type/@c:type' -v "const PangoGlyphString *" \
+	-u '//_:record[@c:type="PangoGlyphString"]/_:method[@name="index_to_x_full"]//_:instance-parameter[@name="glyphs"]/_:type/@c:type' -v "const PangoGlyphString *" \
+	-u '//_:record[@c:type="PangoGlyphString"]/_:method[@name="x_to_index"]//_:instance-parameter[@name="glyphs"]/_:type/@c:type' -v "const PangoGlyphString *" \
+	Pango-1.0.gir
+
 #  Remove unstable method from focal release
 xmlstarlet ed -L \
 	-d '///_:method[@c:identifier="atk_plug_set_child"]' \
