@@ -15270,7 +15270,7 @@ drops to 0, it is freed.</doc>
     </record>
     <bitfield name="MarkupParseFlags" c:type="GMarkupParseFlags">
       <doc xml:space="preserve">Flags that affect the behaviour of the parser.</doc>
-      <member name="parse_flags_none" value="0" c:identifier="G_MARKUP_PARSE_FLAGS_NONE">
+      <member name="default_flags" value="0" c:identifier="G_MARKUP_DEFAULT_FLAGS">
         <doc xml:space="preserve">No special behaviour. Since: 2.74</doc>
       </member>
       <member name="do_not_use_this_unsupported_flag" value="1" c:identifier="G_MARKUP_DO_NOT_USE_THIS_UNSUPPORTED_FLAG">
@@ -16770,7 +16770,7 @@ options expect to find. If an option expects an extra argument, it can
 be specified in several ways; with a short option: `-x arg`, with a long
 option: `--name arg` or combined in a single argument: `--name=arg`.</doc>
       <member name="none" value="0" c:identifier="G_OPTION_ARG_NONE">
-        <doc xml:space="preserve">No extra argument. This is useful for simple flags.</doc>
+        <doc xml:space="preserve">No extra argument. This is useful for simple flags or booleans.</doc>
       </member>
       <member name="string" value="1" c:identifier="G_OPTION_ARG_STRING">
         <doc xml:space="preserve">The option takes a UTF-8 string argument.</doc>
@@ -17427,7 +17427,8 @@ or g_option_group_add_entries().</doc>
       </member>
       <member name="reverse" value="4" c:identifier="G_OPTION_FLAG_REVERSE">
         <doc xml:space="preserve">For options of the %G_OPTION_ARG_NONE kind, this
-    flag indicates that the sense of the option is reversed.</doc>
+    flag indicates that the sense of the option is reversed. i.e. %FALSE will
+    be stored into the argument rather than %TRUE.</doc>
       </member>
       <member name="no_arg" value="8" c:identifier="G_OPTION_FLAG_NO_ARG">
         <doc xml:space="preserve">For options of the %G_OPTION_ARG_CALLBACK kind,
@@ -21282,11 +21283,13 @@ it using g_strfreev()</doc>
     in the usual way).</doc>
       </member>
       <member name="optimize" value="8192" c:identifier="G_REGEX_OPTIMIZE">
-        <doc xml:space="preserve">Optimize the regular expression. If the pattern will
-    be used many times, then it may be worth the effort to optimize it
-    to improve the speed of matches. Deprecated in GLib 2.74 which now uses
-    libpcre2, which doesn&#x2019;t require separate optimization of queries. This
-    option is now a no-op. Deprecated: 2.74</doc>
+        <doc xml:space="preserve">Since 2.74 and the port to pcre2, requests JIT
+    compilation, which, if the just-in-time compiler is available, further
+    processes a compiled pattern into machine code that executes much
+    faster. However, it comes at the cost of extra processing before the
+    match is performed, so it is most beneficial to use this when the same
+    compiled pattern is used for matching many times. Before 2.74 this
+    option used the built-in non-JIT optimizations in pcre1.</doc>
       </member>
       <member name="firstline" value="262144" c:identifier="G_REGEX_FIRSTLINE">
         <doc xml:space="preserve">Limits an unanchored pattern to match before (or at) the
