@@ -5585,6 +5585,45 @@ of related touch events.</doc>
     </function-macro>
     <record name="FileList" c:type="GdkFileList" version="4.6" glib:type-name="GdkFileList" glib:get-type="gdk_file_list_get_type" c:symbol-prefix="file_list">
       <doc xml:space="preserve">An opaque type representing a list of files.</doc>
+      <constructor name="new_from_array" c:identifier="gdk_file_list_new_from_array" version="4.8">
+        <doc xml:space="preserve">Creates a new `GdkFileList` for the given array of files.
+
+This function is meant to be used by language bindings.</doc>
+        <return-value transfer-ownership="full">
+          <doc xml:space="preserve">the newly create files list</doc>
+          <type name="FileList" c:type="GdkFileList*"/>
+        </return-value>
+        <parameters>
+          <parameter name="files" transfer-ownership="none">
+            <doc xml:space="preserve">the files to add to the list</doc>
+            <array length="1" zero-terminated="0" c:type="GFile**">
+              <type name="Gio.File" c:type="GFile*"/>
+            </array>
+          </parameter>
+          <parameter name="n_files" transfer-ownership="none">
+            <doc xml:space="preserve">the number of files in the array</doc>
+            <type name="gsize" c:type="gsize"/>
+          </parameter>
+        </parameters>
+      </constructor>
+      <constructor name="new_from_list" c:identifier="gdk_file_list_new_from_list" version="4.8">
+        <doc xml:space="preserve">Creates a new files list container from a singly linked list of
+`GFile` instances.
+
+This function is meant to be used by language bindings</doc>
+        <return-value transfer-ownership="full">
+          <doc xml:space="preserve">the newly created files list</doc>
+          <type name="FileList" c:type="GdkFileList*"/>
+        </return-value>
+        <parameters>
+          <parameter name="files" transfer-ownership="none">
+            <doc xml:space="preserve">a list of files</doc>
+            <type name="GLib.SList" c:type="GSList*">
+              <type name="Gio.File"/>
+            </type>
+          </parameter>
+        </parameters>
+      </constructor>
       <method name="get_files" c:identifier="gdk_file_list_get_files" version="4.6">
         <doc xml:space="preserve">Retrieves the list of files inside a `GdkFileList`.
 
