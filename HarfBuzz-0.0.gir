@@ -309,15 +309,15 @@ as three integer components.</doc>
       <doc xml:space="preserve">The major component of the library version available at compile-time.</doc>
       <type name="gint" c:type="gint"/>
     </constant>
-    <constant name="VERSION_MICRO" value="1" c:type="HB_VERSION_MICRO">
+    <constant name="VERSION_MICRO" value="0" c:type="HB_VERSION_MICRO">
       <doc xml:space="preserve">The micro component of the library version available at compile-time.</doc>
       <type name="gint" c:type="gint"/>
     </constant>
-    <constant name="VERSION_MINOR" value="0" c:type="HB_VERSION_MINOR">
+    <constant name="VERSION_MINOR" value="1" c:type="HB_VERSION_MINOR">
       <doc xml:space="preserve">The minor component of the library version available at compile-time.</doc>
       <type name="gint" c:type="gint"/>
     </constant>
-    <constant name="VERSION_STRING" value="5.0.1" c:type="HB_VERSION_STRING">
+    <constant name="VERSION_STRING" value="5.1.0" c:type="HB_VERSION_STRING">
       <doc xml:space="preserve">A string literal containing the library version available at compile-time.</doc>
       <type name="utf8" c:type="gchar*"/>
     </constant>
@@ -1578,7 +1578,7 @@ attached to the specified font-functions structure.</doc>
       <parameters>
         <parameter name="blob" transfer-ownership="none">
           <doc xml:space="preserve">a blob</doc>
-          <type name="blob_t" c:type="hb_blob_t*"/>
+          <type name="blob_t" c:type="const hb_blob_t*"/>
         </parameter>
         <parameter name="key" transfer-ownership="none">
           <doc xml:space="preserve">The user-data key to query</doc>
@@ -2192,7 +2192,12 @@ report which aspect(s) of the glyph info/position are different.</doc>
                      glyph-flag should be produced by the shaper. By default
                      it will not be produced since it incurs a cost. Since: 4.0.0</doc>
       </member>
-      <member name="defined" value="127" c:identifier="HB_BUFFER_FLAG_DEFINED" glib:nick="defined" glib:name="HB_BUFFER_FLAG_DEFINED">
+      <member name="produce_safe_to_insert_tatweel" value="128" c:identifier="HB_BUFFER_FLAG_PRODUCE_SAFE_TO_INSERT_TATWEEL" glib:nick="produce-safe-to-insert-tatweel" glib:name="HB_BUFFER_FLAG_PRODUCE_SAFE_TO_INSERT_TATWEEL">
+        <doc xml:space="preserve">flag indicating that the @HB_GLYPH_FLAG_SAFE_TO_INSERT_TATWEEL
+                     glyph-flag should be produced by the shaper. By default
+                     it will not be produced. Since: 5.1.0</doc>
+      </member>
+      <member name="defined" value="255" c:identifier="HB_BUFFER_FLAG_DEFINED" glib:nick="defined" glib:name="HB_BUFFER_FLAG_DEFINED">
         <doc xml:space="preserve">All currently defined flags: Since: 4.4.0</doc>
       </member>
     </bitfield>
@@ -2427,7 +2432,7 @@ attached to the specified buffer.</doc>
       <parameters>
         <parameter name="buffer" transfer-ownership="none">
           <doc xml:space="preserve">An #hb_buffer_t</doc>
-          <type name="buffer_t" c:type="hb_buffer_t*"/>
+          <type name="buffer_t" c:type="const hb_buffer_t*"/>
         </parameter>
         <parameter name="key" transfer-ownership="none">
           <doc xml:space="preserve">The user-data key to query</doc>
@@ -4168,7 +4173,7 @@ attached to the specified face object.</doc>
       <parameters>
         <parameter name="face" transfer-ownership="none">
           <doc xml:space="preserve">A face object</doc>
-          <type name="face_t" c:type="hb_face_t*"/>
+          <type name="face_t" c:type="const hb_face_t*"/>
         </parameter>
         <parameter name="key" transfer-ownership="none">
           <doc xml:space="preserve">The user-data key to query</doc>
@@ -4642,7 +4647,7 @@ attached to the specified font-functions structure.</doc>
       <parameters>
         <parameter name="ffuncs" transfer-ownership="none">
           <doc xml:space="preserve">The font-functions structure</doc>
-          <type name="font_funcs_t" c:type="hb_font_funcs_t*"/>
+          <type name="font_funcs_t" c:type="const hb_font_funcs_t*"/>
         </parameter>
         <parameter name="key" transfer-ownership="none">
           <doc xml:space="preserve">The user-data key to query</doc>
@@ -6439,7 +6444,7 @@ attached to the specified font object.</doc>
       <parameters>
         <parameter name="font" transfer-ownership="none">
           <doc xml:space="preserve">#hb_font_t to work upon</doc>
-          <type name="font_t" c:type="hb_font_t*"/>
+          <type name="font_t" c:type="const hb_font_t*"/>
         </parameter>
         <parameter name="key" transfer-ownership="none">
           <doc xml:space="preserve">The user-data key to query</doc>
@@ -7255,7 +7260,18 @@ Note that @height is negative, in coordinate systems that grow up.</doc>
 			   reliably produced.
 				   Since: 4.0.0</doc>
       </member>
-      <member name="defined" value="3" c:identifier="HB_GLYPH_FLAG_DEFINED" glib:nick="defined" glib:name="HB_GLYPH_FLAG_DEFINED">
+      <member name="safe_to_insert_tatweel" value="4" c:identifier="HB_GLYPH_FLAG_SAFE_TO_INSERT_TATWEEL" glib:nick="safe-to-insert-tatweel" glib:name="HB_GLYPH_FLAG_SAFE_TO_INSERT_TATWEEL">
+        <doc xml:space="preserve">In scripts that use elongation (Arabic,
+				   Mongolian, Syriac, etc.), this flag signifies
+				   that it is safe to insert a U+0640 TATWEEL
+before* this cluster for elongation.
+				   This flag does not determine the
+				   script-specific elongation places, but only
+				   when it is safe to do the elongation without
+				   interrupting text shaping.
+				   Since: 5.1.0</doc>
+      </member>
+      <member name="defined" value="7" c:identifier="HB_GLYPH_FLAG_DEFINED" glib:nick="defined" glib:name="HB_GLYPH_FLAG_DEFINED">
         <doc xml:space="preserve">All the currently defined flags.</doc>
       </member>
     </bitfield>
@@ -7715,7 +7731,7 @@ attached to the specified map.</doc>
       <parameters>
         <parameter name="map" transfer-ownership="none">
           <doc xml:space="preserve">A map</doc>
-          <type name="map_t" c:type="hb_map_t*"/>
+          <type name="map_t" c:type="const hb_map_t*"/>
         </parameter>
         <parameter name="key" transfer-ownership="none">
           <doc xml:space="preserve">The user-data key to query</doc>
@@ -11679,7 +11695,7 @@ attached to the specified set.</doc>
       <parameters>
         <parameter name="set" transfer-ownership="none">
           <doc xml:space="preserve">A set</doc>
-          <type name="set_t" c:type="hb_set_t*"/>
+          <type name="set_t" c:type="const hb_set_t*"/>
         </parameter>
         <parameter name="key" transfer-ownership="none">
           <doc xml:space="preserve">The user-data key to query</doc>
@@ -12339,7 +12355,7 @@ attached to the specified shaping plan.</doc>
       <parameters>
         <parameter name="shape_plan" transfer-ownership="none">
           <doc xml:space="preserve">A shaping plan</doc>
-          <type name="shape_plan_t" c:type="hb_shape_plan_t*"/>
+          <type name="shape_plan_t" c:type="const hb_shape_plan_t*"/>
         </parameter>
         <parameter name="key" transfer-ownership="none">
           <doc xml:space="preserve">The user-data key to query</doc>
@@ -12997,7 +13013,7 @@ attached to the specified Unicode-functions structure.</doc>
       <parameters>
         <parameter name="ufuncs" transfer-ownership="none">
           <doc xml:space="preserve">The Unicode-functions structure</doc>
-          <type name="unicode_funcs_t" c:type="hb_unicode_funcs_t*"/>
+          <type name="unicode_funcs_t" c:type="const hb_unicode_funcs_t*"/>
         </parameter>
         <parameter name="key" transfer-ownership="none">
           <doc xml:space="preserve">The user-data key to query</doc>
