@@ -35896,6 +35896,9 @@ bytes, but care is taken to align the allocated memory to with the given
 alignment value. Additionally, it will detect possible overflow during
 multiplication.
 
+If the allocation fails (because the system is out of memory),
+the program is terminated.
+
 Aligned memory allocations returned by this function can only be
 freed using g_aligned_free().</doc>
       <return-value transfer-ownership="full" nullable="1">
@@ -45919,7 +45922,10 @@ following techniques:
     </function>
     <function name="malloc" c:identifier="g_malloc">
       <doc xml:space="preserve">Allocates @n_bytes bytes of memory.
-If @n_bytes is 0 it returns %NULL.</doc>
+If @n_bytes is 0 it returns %NULL.
+
+If the allocation fails (because the system is out of memory),
+the program is terminated.</doc>
       <return-value transfer-ownership="none" nullable="1">
         <doc xml:space="preserve">a pointer to the allocated memory</doc>
         <type name="gpointer" c:type="gpointer"/>
@@ -45933,7 +45939,10 @@ If @n_bytes is 0 it returns %NULL.</doc>
     </function>
     <function name="malloc0" c:identifier="g_malloc0">
       <doc xml:space="preserve">Allocates @n_bytes bytes of memory, initialized to 0's.
-If @n_bytes is 0 it returns %NULL.</doc>
+If @n_bytes is 0 it returns %NULL.
+
+If the allocation fails (because the system is out of memory),
+the program is terminated.</doc>
       <return-value transfer-ownership="none" nullable="1">
         <doc xml:space="preserve">a pointer to the allocated memory</doc>
         <type name="gpointer" c:type="gpointer"/>
@@ -45947,7 +45956,10 @@ If @n_bytes is 0 it returns %NULL.</doc>
     </function>
     <function name="malloc0_n" c:identifier="g_malloc0_n" version="2.24">
       <doc xml:space="preserve">This function is similar to g_malloc0(), allocating (@n_blocks * @n_block_bytes) bytes,
-but care is taken to detect possible overflow during multiplication.</doc>
+but care is taken to detect possible overflow during multiplication.
+
+If the allocation fails (because the system is out of memory),
+the program is terminated.</doc>
       <return-value transfer-ownership="none" nullable="1">
         <doc xml:space="preserve">a pointer to the allocated memory</doc>
         <type name="gpointer" c:type="gpointer"/>
@@ -45965,7 +45977,10 @@ but care is taken to detect possible overflow during multiplication.</doc>
     </function>
     <function name="malloc_n" c:identifier="g_malloc_n" version="2.24">
       <doc xml:space="preserve">This function is similar to g_malloc(), allocating (@n_blocks * @n_block_bytes) bytes,
-but care is taken to detect possible overflow during multiplication.</doc>
+but care is taken to detect possible overflow during multiplication.
+
+If the allocation fails (because the system is out of memory),
+the program is terminated.</doc>
       <return-value transfer-ownership="none" nullable="1">
         <doc xml:space="preserve">a pointer to the allocated memory</doc>
         <type name="gpointer" c:type="gpointer"/>
@@ -48393,7 +48408,10 @@ G_DEFINE_AUTOPTR_CLEANUP_FUNC (MyDataStruct, my_data_struct_release)
 @n_bytes bytes of memory. It returns the new address of the memory, which may
 have been moved. @mem may be %NULL, in which case it's considered to
 have zero-length. @n_bytes may be 0, in which case %NULL will be returned
-and @mem will be freed unless it is %NULL.</doc>
+and @mem will be freed unless it is %NULL.
+
+If the allocation fails (because the system is out of memory),
+the program is terminated.</doc>
       <return-value transfer-ownership="none" nullable="1">
         <doc xml:space="preserve">the new address of the allocated memory</doc>
         <type name="gpointer" c:type="gpointer"/>
@@ -48411,7 +48429,10 @@ and @mem will be freed unless it is %NULL.</doc>
     </function>
     <function name="realloc_n" c:identifier="g_realloc_n" version="2.24">
       <doc xml:space="preserve">This function is similar to g_realloc(), allocating (@n_blocks * @n_block_bytes) bytes,
-but care is taken to detect possible overflow during multiplication.</doc>
+but care is taken to detect possible overflow during multiplication.
+
+If the allocation fails (because the system is out of memory),
+the program is terminated.</doc>
       <return-value transfer-ownership="none" nullable="1">
         <doc xml:space="preserve">the new address of the allocated memory</doc>
         <type name="gpointer" c:type="gpointer"/>
