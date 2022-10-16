@@ -1652,9 +1652,9 @@ If you are using Pango as part of a higher-level system,
 that system may have it's own way of create a `PangoContext`.
 For instance, the GTK toolkit has, among others,
 `gtk_widget_get_pango_context()`. Use those instead.</doc>
-        <return-value transfer-ownership="full">
-          <doc xml:space="preserve">the newly allocated `PangoContext`, which should
-  be freed with g_object_unref().</doc>
+        <return-value transfer-ownership="full" nullable="1">
+          <doc xml:space="preserve">the newly allocated `PangoContext`,
+  which should be freed with g_object_unref().</doc>
           <type name="Context" c:type="PangoContext*"/>
         </return-value>
       </constructor>
@@ -1708,7 +1708,7 @@ See [method@Pango.Context.set_base_gravity].</doc>
       </method>
       <method name="get_font_description" c:identifier="pango_context_get_font_description">
         <doc xml:space="preserve">Retrieve the default font description for the context.</doc>
-        <return-value transfer-ownership="none">
+        <return-value transfer-ownership="none" nullable="1">
           <doc xml:space="preserve">a pointer to the context's default font
   description. This value must not be modified or freed.</doc>
           <type name="FontDescription" c:type="PangoFontDescription*"/>
@@ -1722,9 +1722,10 @@ See [method@Pango.Context.set_base_gravity].</doc>
       </method>
       <method name="get_font_map" c:identifier="pango_context_get_font_map" version="1.6">
         <doc xml:space="preserve">Gets the `PangoFontMap` used to look up fonts for this context.</doc>
-        <return-value transfer-ownership="none">
-          <doc xml:space="preserve">the font map for the `PangoContext`.
-  This value is owned by Pango and should not be unreferenced.</doc>
+        <return-value transfer-ownership="none" nullable="1">
+          <doc xml:space="preserve">the font map for the.
+  `PangoContext` This value is owned by Pango and should not be
+  unreferenced.</doc>
           <type name="FontMap" c:type="PangoFontMap*"/>
         </return-value>
         <parameters>
@@ -1769,7 +1770,7 @@ See [method@Pango.Context.set_gravity_hint] for details.</doc>
       </method>
       <method name="get_language" c:identifier="pango_context_get_language">
         <doc xml:space="preserve">Retrieves the global language tag for the context.</doc>
-        <return-value transfer-ownership="full">
+        <return-value transfer-ownership="none">
           <doc xml:space="preserve">the global language tag.</doc>
           <type name="Language" c:type="PangoLanguage*"/>
         </return-value>
@@ -1786,9 +1787,10 @@ rendering with this context.
 
 See [method@Pango.Context.set_matrix].</doc>
         <return-value transfer-ownership="none" nullable="1">
-          <doc xml:space="preserve">the matrix, or %NULL if no matrix has
-  been set (which is the same as the identity matrix). The returned
-  matrix is owned by Pango and must not be modified or freed.</doc>
+          <doc xml:space="preserve">the matrix, or %NULL if no
+  matrix has been set (which is the same as the identity matrix).
+  The returned matrix is owned by Pango and must not be modified
+  or freed.</doc>
           <type name="Matrix" c:type="const PangoMatrix*"/>
         </return-value>
         <parameters>
@@ -1810,9 +1812,9 @@ and the family name may be a comma separated list of names. If characters
 from multiple of these families would be used to render the string, then
 the returned fonts would be a composite of the metrics for the fonts loaded
 for the individual families.</doc>
-        <return-value transfer-ownership="full">
-          <doc xml:space="preserve">a `PangoFontMetrics` object. The caller must call
-  [method@Pango.FontMetrics.unref] when finished using the object.</doc>
+        <return-value transfer-ownership="full" nullable="1">
+          <doc xml:space="preserve">a `PangoFontMetrics` object. The caller
+  must call [method@Pango.FontMetrics.unref] when finished using the object.</doc>
           <type name="FontMetrics" c:type="PangoFontMetrics*"/>
         </return-value>
         <parameters>
@@ -1989,7 +1991,7 @@ The base gravity is used in laying vertical text out.</doc>
             <doc xml:space="preserve">a `PangoContext`</doc>
             <type name="Context" c:type="PangoContext*"/>
           </instance-parameter>
-          <parameter name="desc" transfer-ownership="none">
+          <parameter name="desc" transfer-ownership="none" nullable="1" allow-none="1">
             <doc xml:space="preserve">the new pango font description</doc>
             <type name="FontDescription" c:type="const PangoFontDescription*"/>
           </parameter>
@@ -2010,7 +2012,7 @@ suitable font map.</doc>
             <doc xml:space="preserve">a `PangoContext`</doc>
             <type name="Context" c:type="PangoContext*"/>
           </instance-parameter>
-          <parameter name="font_map" transfer-ownership="none">
+          <parameter name="font_map" transfer-ownership="none" nullable="1" allow-none="1">
             <doc xml:space="preserve">the `PangoFontMap` to set.</doc>
             <type name="FontMap" c:type="PangoFontMap*"/>
           </parameter>
@@ -2050,7 +2052,7 @@ can be found using [func@Pango.Language.get_default].</doc>
             <doc xml:space="preserve">a `PangoContext`</doc>
             <type name="Context" c:type="PangoContext*"/>
           </instance-parameter>
-          <parameter name="language" transfer-ownership="none">
+          <parameter name="language" transfer-ownership="none" nullable="1" allow-none="1">
             <doc xml:space="preserve">the new language tag.</doc>
             <type name="Language" c:type="PangoLanguage*"/>
           </parameter>
@@ -3102,8 +3104,8 @@ a font to load.</doc>
       <constructor name="new" c:identifier="pango_font_description_new">
         <doc xml:space="preserve">Creates a new font description structure with all fields unset.</doc>
         <return-value transfer-ownership="full">
-          <doc xml:space="preserve">the newly allocated `PangoFontDescription`, which
-  should be freed using [method@Pango.FontDescription.free].</doc>
+          <doc xml:space="preserve">the newly allocated `PangoFontDescription`,
+  which should be freed using [method@Pango.FontDescription.free].</doc>
           <type name="FontDescription" c:type="PangoFontDescription*"/>
         </return-value>
       </constructor>
@@ -3214,8 +3216,8 @@ result in identical fonts being loaded, but still compare %FALSE.)</doc>
 
 See [method@Pango.FontDescription.set_family].</doc>
         <return-value transfer-ownership="none" nullable="1">
-          <doc xml:space="preserve">the family name field for the font
-  description, or %NULL if not previously set. This has the same
+          <doc xml:space="preserve">the family name field for the
+  font description, or %NULL if not previously set. This has the same
   life-time as the font description itself and should not be freed.</doc>
           <type name="utf8" c:type="const char*"/>
         </return-value>
@@ -3717,7 +3719,7 @@ The filename is identical to the result from calling
 [method@Pango.FontDescription.to_string], but with underscores
 instead of characters that are untypical in filenames, and in
 lower case only.</doc>
-        <return-value transfer-ownership="full">
+        <return-value transfer-ownership="full" nullable="1">
           <doc xml:space="preserve">a new string that must be freed with g_free().</doc>
           <type name="utf8" c:type="char*"/>
         </return-value>
@@ -5791,9 +5793,9 @@ assigned to each item, you can't create a zero-length item).
 
 This function is similar in function to pango_item_split() (and uses
 it internally.)</doc>
-        <return-value transfer-ownership="full">
-          <doc xml:space="preserve">the newly allocated item representing text before
-  @split_index, which should be freed
+        <return-value transfer-ownership="full" nullable="1">
+          <doc xml:space="preserve">the newly allocated item
+  representing text before @split_index, which should be freed
   with pango_glyph_item_free().</doc>
           <type name="GlyphItem" c:type="PangoGlyphItem*"/>
         </return-value>
@@ -7830,7 +7832,7 @@ The X position is measured from the left edge of the line.</doc>
         <doc xml:space="preserve">Converts from an index within a `PangoLayout` to the onscreen position
 corresponding to the grapheme at that index.
 
-The return value is represented as rectangle. Note that `pos-&gt;x` is
+The returns is represented as rectangle. Note that `pos-&gt;x` is
 always the leading edge of the grapheme and `pos-&gt;x + pos-&gt;width` the
 trailing edge of the grapheme. If the directionality of the grapheme
 is right-to-left, then `pos-&gt;width` will be negative.</doc>
@@ -8700,7 +8702,7 @@ layout, if on the %NULL run (see [method@Pango.LayoutIter.get_run]).</doc>
       </method>
       <method name="get_layout" c:identifier="pango_layout_iter_get_layout" version="1.20">
         <doc xml:space="preserve">Gets the layout associated with a `PangoLayoutIter`.</doc>
-        <return-value transfer-ownership="none">
+        <return-value transfer-ownership="none" nullable="1">
           <doc xml:space="preserve">the layout associated with @iter</doc>
           <type name="Layout" c:type="PangoLayout*"/>
         </return-value>
@@ -8737,7 +8739,7 @@ layout, if on the %NULL run (see [method@Pango.LayoutIter.get_run]).</doc>
 Use the faster [method@Pango.LayoutIter.get_line_readonly] if
 you do not plan to modify the contents of the line (glyphs,
 glyph widths, etc.).</doc>
-        <return-value transfer-ownership="none">
+        <return-value transfer-ownership="none" nullable="1">
           <doc xml:space="preserve">the current line</doc>
           <type name="LayoutLine" c:type="PangoLayoutLine*"/>
         </return-value>
@@ -8779,7 +8781,7 @@ as the extents returned from [method@Pango.LayoutLine.get_extents].</doc>
 This is a faster alternative to [method@Pango.LayoutIter.get_line],
 but the user is not expected to modify the contents of the line
 (glyphs, glyph widths, etc.).</doc>
-        <return-value transfer-ownership="none">
+        <return-value transfer-ownership="none" nullable="1">
           <doc xml:space="preserve">the current line, that should not be
   modified</doc>
           <type name="LayoutLine" c:type="PangoLayoutLine*"/>
@@ -9201,7 +9203,7 @@ layout, not with respect to the line.</doc>
       </method>
       <method name="ref" c:identifier="pango_layout_line_ref" version="1.10">
         <doc xml:space="preserve">Increase the reference count of a `PangoLayoutLine` by one.</doc>
-        <return-value transfer-ownership="full">
+        <return-value transfer-ownership="full" nullable="1">
           <doc xml:space="preserve">the line passed in.</doc>
           <type name="LayoutLine" c:type="PangoLayoutLine*"/>
         </return-value>
