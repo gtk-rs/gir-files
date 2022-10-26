@@ -22,6 +22,7 @@ jobs:
           flatpak remote-add --user --if-not-exists gnome-nightly https://nightly.gnome.org/gnome-nightly.flatpakrepo 
           flatpak install org.gnome.Sdk//master -y --noninteractive
           flatpak run --command=python3 --filesystem=home org.gnome.Sdk//master dl.py
+          ./dl-win32.sh
           ./reformat.sh && ./fix.sh
           echo ::set-output name=pr_title::"Update GIR files ($(date +%Y-%m-%d))"
           echo ::set-output name=pr_body::"This PR was auto-generated on $(date +%Y-%m-%d). Please review and manually edit before merging."
