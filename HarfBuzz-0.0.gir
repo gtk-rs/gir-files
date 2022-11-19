@@ -313,11 +313,11 @@ as three integer components.</doc>
       <doc xml:space="preserve">The micro component of the library version available at compile-time.</doc>
       <type name="gint" c:type="gint"/>
     </constant>
-    <constant name="VERSION_MINOR" value="1" c:type="HB_VERSION_MINOR">
+    <constant name="VERSION_MINOR" value="2" c:type="HB_VERSION_MINOR">
       <doc xml:space="preserve">The minor component of the library version available at compile-time.</doc>
       <type name="gint" c:type="gint"/>
     </constant>
-    <constant name="VERSION_STRING" value="5.1.0" c:type="HB_VERSION_STRING">
+    <constant name="VERSION_STRING" value="5.2.0" c:type="HB_VERSION_STRING">
       <doc xml:space="preserve">A string literal containing the library version available at compile-time.</doc>
       <type name="utf8" c:type="gchar*"/>
     </constant>
@@ -7264,7 +7264,7 @@ Note that @height is negative, in coordinate systems that grow up.</doc>
         <doc xml:space="preserve">In scripts that use elongation (Arabic,
 				   Mongolian, Syriac, etc.), this flag signifies
 				   that it is safe to insert a U+0640 TATWEEL
-before* this cluster for elongation.
+				   character before this cluster for elongation.
 				   This flag does not determine the
 				   script-specific elongation places, but only
 				   when it is safe to do the elongation without
@@ -8237,17 +8237,26 @@ features is provided, all features will be queried.</doc>
           <doc xml:space="preserve">#HB_OT_TAG_GSUB or #HB_OT_TAG_GPOS</doc>
           <type name="tag_t" c:type="hb_tag_t"/>
         </parameter>
-        <parameter name="scripts" transfer-ownership="none">
-          <doc xml:space="preserve">The array of scripts to collect features for</doc>
-          <type name="tag_t" c:type="const hb_tag_t*"/>
+        <parameter name="scripts" transfer-ownership="none" nullable="1" allow-none="1">
+          <doc xml:space="preserve">The array of scripts to collect features for,
+  terminated by %HB_TAG_NONE</doc>
+          <array c:type="const hb_tag_t*">
+            <type name="tag_t" c:type="hb_tag_t"/>
+          </array>
         </parameter>
-        <parameter name="languages" transfer-ownership="none">
-          <doc xml:space="preserve">The array of languages to collect features for</doc>
-          <type name="tag_t" c:type="const hb_tag_t*"/>
+        <parameter name="languages" transfer-ownership="none" nullable="1" allow-none="1">
+          <doc xml:space="preserve">The array of languages to collect features for,
+  terminated by %HB_TAG_NONE</doc>
+          <array c:type="const hb_tag_t*">
+            <type name="tag_t" c:type="hb_tag_t"/>
+          </array>
         </parameter>
-        <parameter name="features" transfer-ownership="none">
-          <doc xml:space="preserve">The array of features to collect</doc>
-          <type name="tag_t" c:type="const hb_tag_t*"/>
+        <parameter name="features" transfer-ownership="none" nullable="1" allow-none="1">
+          <doc xml:space="preserve">The array of features to collect,
+  terminated by %HB_TAG_NONE</doc>
+          <array c:type="const hb_tag_t*">
+            <type name="tag_t" c:type="hb_tag_t"/>
+          </array>
         </parameter>
         <parameter name="feature_indexes" direction="out" caller-allocates="1" transfer-ownership="none">
           <doc xml:space="preserve">The array of feature indexes found for the query</doc>
@@ -8273,17 +8282,26 @@ list of features is provided, all features will be queried.</doc>
           <doc xml:space="preserve">#HB_OT_TAG_GSUB or #HB_OT_TAG_GPOS</doc>
           <type name="tag_t" c:type="hb_tag_t"/>
         </parameter>
-        <parameter name="scripts" transfer-ownership="none">
-          <doc xml:space="preserve">The array of scripts to collect lookups for</doc>
-          <type name="tag_t" c:type="const hb_tag_t*"/>
+        <parameter name="scripts" transfer-ownership="none" nullable="1" allow-none="1">
+          <doc xml:space="preserve">The array of scripts to collect lookups for,
+  terminated by %HB_TAG_NONE</doc>
+          <array c:type="const hb_tag_t*">
+            <type name="tag_t" c:type="hb_tag_t"/>
+          </array>
         </parameter>
-        <parameter name="languages" transfer-ownership="none">
-          <doc xml:space="preserve">The array of languages to collect lookups for</doc>
-          <type name="tag_t" c:type="const hb_tag_t*"/>
+        <parameter name="languages" transfer-ownership="none" nullable="1" allow-none="1">
+          <doc xml:space="preserve">The array of languages to collect lookups for,
+  terminated by %HB_TAG_NONE</doc>
+          <array c:type="const hb_tag_t*">
+            <type name="tag_t" c:type="hb_tag_t"/>
+          </array>
         </parameter>
-        <parameter name="features" transfer-ownership="none">
-          <doc xml:space="preserve">The array of features to collect lookups for</doc>
-          <type name="tag_t" c:type="const hb_tag_t*"/>
+        <parameter name="features" transfer-ownership="none" nullable="1" allow-none="1">
+          <doc xml:space="preserve">The array of features to collect lookups for,
+  terminated by %HB_TAG_NONE</doc>
+          <array c:type="const hb_tag_t*">
+            <type name="tag_t" c:type="hb_tag_t"/>
+          </array>
         </parameter>
         <parameter name="lookup_indexes" direction="out" caller-allocates="1" transfer-ownership="none">
           <doc xml:space="preserve">The array of lookup indexes found for the query</doc>
@@ -8416,7 +8434,7 @@ begin at the offset provided.</doc>
         </parameter>
       </parameters>
     </function>
-    <function name="ot_layout_feature_with_variations_get_lookups" c:identifier="hb_ot_layout_feature_with_variations_get_lookups">
+    <function name="ot_layout_feature_with_variations_get_lookups" c:identifier="hb_ot_layout_feature_with_variations_get_lookups" version="1.4.0">
       <doc xml:space="preserve">Fetches a list of all lookups enumerated for the specified feature, in
 the specified face's GSUB table or GPOS table, enabled at the specified
 variations index. The list returned will begin at the offset provided.</doc>
@@ -8740,7 +8758,7 @@ https://docs.microsoft.com/en-us/typography/opentype/spec/features_pt#tag-size).
         </parameter>
       </parameters>
     </function>
-    <function name="ot_layout_has_substitution" c:identifier="hb_ot_layout_has_substitution">
+    <function name="ot_layout_has_substitution" c:identifier="hb_ot_layout_has_substitution" version="0.6.0">
       <doc xml:space="preserve">Tests whether the specified face includes any GSUB substitutions.</doc>
       <return-value transfer-ownership="none">
         <doc xml:space="preserve">`true` if data found, `false` otherwise</doc>
@@ -8753,7 +8771,7 @@ https://docs.microsoft.com/en-us/typography/opentype/spec/features_pt#tag-size).
         </parameter>
       </parameters>
     </function>
-    <function name="ot_layout_language_find_feature" c:identifier="hb_ot_layout_language_find_feature">
+    <function name="ot_layout_language_find_feature" c:identifier="hb_ot_layout_language_find_feature" version="0.6.0">
       <doc xml:space="preserve">Fetches the index of a given feature tag in the specified face's GSUB table
 or GPOS table, underneath the specified script and language.</doc>
       <return-value transfer-ownership="none">
@@ -8787,7 +8805,7 @@ or GPOS table, underneath the specified script and language.</doc>
         </parameter>
       </parameters>
     </function>
-    <function name="ot_layout_language_get_feature_indexes" c:identifier="hb_ot_layout_language_get_feature_indexes">
+    <function name="ot_layout_language_get_feature_indexes" c:identifier="hb_ot_layout_language_get_feature_indexes" version="0.6.0">
       <doc xml:space="preserve">Fetches a list of all features in the specified face's GSUB table
 or GPOS table, underneath the specified script and language. The list
 returned will begin at the offset provided.</doc>
@@ -8829,7 +8847,7 @@ returned will begin at the offset provided.</doc>
         </parameter>
       </parameters>
     </function>
-    <function name="ot_layout_language_get_feature_tags" c:identifier="hb_ot_layout_language_get_feature_tags">
+    <function name="ot_layout_language_get_feature_tags" c:identifier="hb_ot_layout_language_get_feature_tags" version="0.6.0">
       <doc xml:space="preserve">Fetches a list of all features in the specified face's GSUB table
 or GPOS table, underneath the specified script and language. The list
 returned will begin at the offset provided.</doc>
@@ -8905,7 +8923,7 @@ underneath the specified script and language.</doc>
         </parameter>
       </parameters>
     </function>
-    <function name="ot_layout_language_get_required_feature_index" c:identifier="hb_ot_layout_language_get_required_feature_index">
+    <function name="ot_layout_language_get_required_feature_index" c:identifier="hb_ot_layout_language_get_required_feature_index" version="0.6.0">
       <doc xml:space="preserve">Fetches the index of a requested feature in the given face's GSUB or GPOS table,
 underneath the specified script and language.</doc>
       <return-value transfer-ownership="none">
@@ -9112,7 +9130,7 @@ or GPOS table, underneath the specified script tag.</doc>
         </parameter>
       </parameters>
     </function>
-    <function name="ot_layout_script_get_language_tags" c:identifier="hb_ot_layout_script_get_language_tags">
+    <function name="ot_layout_script_get_language_tags" c:identifier="hb_ot_layout_script_get_language_tags" version="0.6.0">
       <doc xml:space="preserve">Fetches a list of language tags in the given face's GSUB or GPOS table, underneath
 the specified script index. The list returned will begin at the offset provided.</doc>
       <return-value transfer-ownership="none">
@@ -9215,7 +9233,7 @@ If none of the given language tags is found, `false` is returned and
         </parameter>
       </parameters>
     </function>
-    <function name="ot_layout_table_find_feature_variations" c:identifier="hb_ot_layout_table_find_feature_variations">
+    <function name="ot_layout_table_find_feature_variations" c:identifier="hb_ot_layout_table_find_feature_variations" version="1.4.0">
       <doc xml:space="preserve">Fetches a list of feature variations in the specified face's GSUB table
 or GPOS table, at the specified variation coordinates.</doc>
       <return-value transfer-ownership="none">
@@ -9271,8 +9289,10 @@ or GPOS table.</doc>
         </parameter>
       </parameters>
     </function>
-    <function name="ot_layout_table_get_feature_tags" c:identifier="hb_ot_layout_table_get_feature_tags">
-      <doc xml:space="preserve">Fetches a list of all feature tags in the given face's GSUB or GPOS table.</doc>
+    <function name="ot_layout_table_get_feature_tags" c:identifier="hb_ot_layout_table_get_feature_tags" version="0.6.0">
+      <doc xml:space="preserve">Fetches a list of all feature tags in the given face's GSUB or GPOS table.
+Note that there might be duplicate feature tags, belonging to different
+script/language-system pairs of the table.</doc>
       <return-value transfer-ownership="none">
         <doc xml:space="preserve">Total number of feature tags.</doc>
         <type name="guint" c:type="unsigned int"/>
@@ -11383,6 +11403,12 @@ See also the Script (sc) property of the Unicode Character Database.</doc>
       </member>
       <member name="math" value="1517122664" c:identifier="HB_SCRIPT_MATH" glib:nick="math" glib:name="HB_SCRIPT_MATH">
         <doc xml:space="preserve">`Zmth`, Since: 3.4.0</doc>
+      </member>
+      <member name="kawi" value="1264678761" c:identifier="HB_SCRIPT_KAWI" glib:nick="kawi" glib:name="HB_SCRIPT_KAWI">
+        <doc xml:space="preserve">`Kawi`, Since: 5.2.0</doc>
+      </member>
+      <member name="nag_mundari" value="1315006317" c:identifier="HB_SCRIPT_NAG_MUNDARI" glib:nick="nag-mundari" glib:name="HB_SCRIPT_NAG_MUNDARI">
+        <doc xml:space="preserve">`Nagm`, Since: 5.2.0</doc>
       </member>
       <member name="invalid" value="0" c:identifier="HB_SCRIPT_INVALID" glib:nick="invalid" glib:name="HB_SCRIPT_INVALID">
         <doc xml:space="preserve">No script set</doc>

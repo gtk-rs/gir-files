@@ -742,12 +742,38 @@ This mode is useful for merging two lists of attributes together.</doc>
       <method name="to_string" c:identifier="pango_attr_list_to_string" version="1.50">
         <doc xml:space="preserve">Serializes a `PangoAttrList` to a string.
 
-No guarantees are made about the format of the string,
-it may change between Pango versions.
+In the resulting string, serialized attributes are separated by newlines or commas.
+Individual attributes are serialized to a string of the form
 
-The intended use of this function is testing and
-debugging. The format is not meant as a permanent
-storage format.</doc>
+  START END TYPE VALUE
+
+Where START and END are the indices (with -1 being accepted in place
+of MAXUINT), TYPE is the nickname of the attribute value type, e.g.
+_weight_ or _stretch_, and the value is serialized according to its type:
+
+- enum values as nick or numeric value
+- boolean values as _true_ or _false_
+- integers and floats as numbers
+- strings as string, optionally quoted
+- font features as quoted string
+- PangoLanguage as string
+- PangoFontDescription as serialized by [method@Pango.FontDescription.to_string], quoted
+- PangoColor as serialized by [method@Pango.Color.to_string]
+
+Examples:
+
+```
+0 10 foreground red, 5 15 weight bold, 0 200 font-desc "Sans 10"
+```
+
+```
+0 -1 weight 700
+0 100 family Times
+```
+
+To parse the returned value, use [func@Pango.AttrList.from_string].
+
+Note that shape attributes can not be serialized.</doc>
         <return-value transfer-ownership="full">
           <doc xml:space="preserve">a newly allocated string</doc>
           <type name="utf8" c:type="char*"/>
@@ -1652,9 +1678,9 @@ If you are using Pango as part of a higher-level system,
 that system may have it's own way of create a `PangoContext`.
 For instance, the GTK toolkit has, among others,
 `gtk_widget_get_pango_context()`. Use those instead.</doc>
-        <return-value transfer-ownership="full" nullable="1">
-          <doc xml:space="preserve">the newly allocated `PangoContext`,
-  which should be freed with g_object_unref().</doc>
+        <return-value transfer-ownership="full">
+          <doc xml:space="preserve">the newly allocated `PangoContext`, which should
+  be freed with g_object_unref().</doc>
           <type name="Context" c:type="PangoContext*"/>
         </return-value>
       </constructor>
@@ -1812,9 +1838,9 @@ and the family name may be a comma separated list of names. If characters
 from multiple of these families would be used to render the string, then
 the returned fonts would be a composite of the metrics for the fonts loaded
 for the individual families.</doc>
-        <return-value transfer-ownership="full" nullable="1">
-          <doc xml:space="preserve">a `PangoFontMetrics` object. The caller
-  must call [method@Pango.FontMetrics.unref] when finished using the object.</doc>
+        <return-value transfer-ownership="full">
+          <doc xml:space="preserve">a `PangoFontMetrics` object. The caller must call
+  [method@Pango.FontMetrics.unref] when finished using the object.</doc>
           <type name="FontMetrics" c:type="PangoFontMetrics*"/>
         </return-value>
         <parameters>
@@ -6815,9 +6841,8 @@ may have more values. Callers need to handle unknown values.</doc>
             <doc xml:space="preserve">a `PangoLanguage`</doc>
             <type name="Language" c:type="PangoLanguage*"/>
           </instance-parameter>
-          <parameter name="num_scripts" direction="out" caller-allocates="1" transfer-ownership="full" optional="1" allow-none="1">
-            <doc xml:space="preserve">location to
-  return number of scripts</doc>
+          <parameter name="num_scripts" direction="out" caller-allocates="0" transfer-ownership="full" optional="1" allow-none="1">
+            <doc xml:space="preserve">location to return number of scripts</doc>
             <type name="gint" c:type="int*"/>
           </parameter>
         </parameters>
@@ -6969,7 +6994,9 @@ languages returned by this function.</doc>
         <return-value transfer-ownership="none" nullable="1">
           <doc xml:space="preserve">a %NULL-terminated array
   of `PangoLanguage`*</doc>
-          <type name="Language" c:type="PangoLanguage**"/>
+          <array c:type="PangoLanguage**">
+            <type name="Language" c:type="PangoLanguage*"/>
+          </array>
         </return-value>
       </function>
     </record>
@@ -13504,7 +13531,9 @@ languages returned by this function.</doc>
       <return-value transfer-ownership="none" nullable="1">
         <doc xml:space="preserve">a %NULL-terminated array
   of `PangoLanguage`*</doc>
-        <type name="Language" c:type="PangoLanguage**"/>
+        <array c:type="PangoLanguage**">
+          <type name="Language" c:type="PangoLanguage*"/>
+        </array>
       </return-value>
     </function>
     <function name="layout_deserialize_error_quark" c:identifier="pango_layout_deserialize_error_quark" moved-to="LayoutDeserializeError.quark">
