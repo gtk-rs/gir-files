@@ -12,6 +12,13 @@ xmlstarlet ed -L \
 	-u '//*[@glib:error-domain="g-option-context-error-quark"]/@glib:error-domain' -v g-option-error-quark \
 	GLib-2.0.gir
 
+# fix layout checks
+xmlstarlet ed -L \
+	-d '//_:constant[@name="LOG_DOMAIN"]' \
+	-d '//_:constant[@name="macro__has_attribute___noreturn__"]' \
+	-u '//_:member[@c:identifier="G_LOG_LEVEL_MASK"]/@value' -v "4294967292" \
+	GLib-2.0.gir
+
 # GtkEntry icon signals incorrect assume GdkEventButton when other variants may be passed
 xmlstarlet ed -L \
 	-u '//_:class[@name="Entry"]/glib:signal[@name="icon-press"]//_:parameter[@name="event"]/_:type[@name="Gdk.EventButton"]/@name' -v "Gdk.Event" \
