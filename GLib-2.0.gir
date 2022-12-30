@@ -386,6 +386,45 @@ function is a no-op.</doc>
           </parameter>
         </parameters>
       </function>
+      <function name="new_take" c:identifier="g_array_new_take" introspectable="0">
+        <return-value>
+          <array name="GLib.Array" c:type="GArray*">
+            <type name="gpointer" c:type="gpointer"/>
+          </array>
+        </return-value>
+        <parameters>
+          <parameter name="data" transfer-ownership="none" nullable="1" allow-none="1">
+            <type name="gpointer" c:type="gpointer"/>
+          </parameter>
+          <parameter name="len" transfer-ownership="none">
+            <type name="gsize" c:type="gsize"/>
+          </parameter>
+          <parameter name="clear" transfer-ownership="none">
+            <type name="gboolean" c:type="gboolean"/>
+          </parameter>
+          <parameter name="element_size" transfer-ownership="none">
+            <type name="gsize" c:type="gsize"/>
+          </parameter>
+        </parameters>
+      </function>
+      <function name="new_take_zero_terminated" c:identifier="g_array_new_take_zero_terminated" introspectable="0">
+        <return-value>
+          <array name="GLib.Array" c:type="GArray*">
+            <type name="gpointer" c:type="gpointer"/>
+          </array>
+        </return-value>
+        <parameters>
+          <parameter name="data" transfer-ownership="none" nullable="1" allow-none="1">
+            <type name="gpointer" c:type="gpointer"/>
+          </parameter>
+          <parameter name="clear" transfer-ownership="none">
+            <type name="gboolean" c:type="gboolean"/>
+          </parameter>
+          <parameter name="element_size" transfer-ownership="none">
+            <type name="gsize" c:type="gsize"/>
+          </parameter>
+        </parameters>
+      </function>
       <function name="prepend_vals" c:identifier="g_array_prepend_vals" introspectable="0">
         <doc xml:space="preserve">Adds @len elements onto the start of the array.
 
@@ -8663,6 +8702,21 @@ first to transfer ownership of the keys.</doc>
           </parameter>
         </parameters>
       </function>
+      <function name="get_keys_as_ptr_array" c:identifier="g_hash_table_get_keys_as_ptr_array" introspectable="0">
+        <return-value>
+          <array name="GLib.PtrArray" c:type="GPtrArray*">
+            <type name="gpointer" c:type="gpointer"/>
+          </array>
+        </return-value>
+        <parameters>
+          <parameter name="hash_table" transfer-ownership="none">
+            <type name="GLib.HashTable" c:type="GHashTable*">
+              <type name="gpointer" c:type="gpointer"/>
+              <type name="gpointer" c:type="gpointer"/>
+            </type>
+          </parameter>
+        </parameters>
+      </function>
       <function name="get_values" c:identifier="g_hash_table_get_values" version="2.14" introspectable="0">
         <doc xml:space="preserve">Retrieves every value inside @hash_table. The returned data
 is valid until @hash_table is modified.
@@ -8682,6 +8736,21 @@ To iterate over the entries in a #GHashTable more efficiently, use a
         <parameters>
           <parameter name="hash_table" transfer-ownership="none">
             <doc xml:space="preserve">a #GHashTable</doc>
+            <type name="GLib.HashTable" c:type="GHashTable*">
+              <type name="gpointer" c:type="gpointer"/>
+              <type name="gpointer" c:type="gpointer"/>
+            </type>
+          </parameter>
+        </parameters>
+      </function>
+      <function name="get_values_as_ptr_array" c:identifier="g_hash_table_get_values_as_ptr_array" introspectable="0">
+        <return-value>
+          <array name="GLib.PtrArray" c:type="GPtrArray*">
+            <type name="gpointer" c:type="gpointer"/>
+          </array>
+        </return-value>
+        <parameters>
+          <parameter name="hash_table" transfer-ownership="none">
             <type name="GLib.HashTable" c:type="GHashTable*">
               <type name="gpointer" c:type="gpointer"/>
               <type name="gpointer" c:type="gpointer"/>
@@ -9031,6 +9100,36 @@ without calling the key and value destroy functions.</doc>
         <parameters>
           <parameter name="hash_table" transfer-ownership="none">
             <doc xml:space="preserve">a #GHashTable</doc>
+            <type name="GLib.HashTable" c:type="GHashTable*">
+              <type name="gpointer" c:type="gpointer"/>
+              <type name="gpointer" c:type="gpointer"/>
+            </type>
+          </parameter>
+        </parameters>
+      </function>
+      <function name="steal_all_keys" c:identifier="g_hash_table_steal_all_keys" introspectable="0">
+        <return-value>
+          <array name="GLib.PtrArray" c:type="GPtrArray*">
+            <type name="gpointer" c:type="gpointer"/>
+          </array>
+        </return-value>
+        <parameters>
+          <parameter name="hash_table" transfer-ownership="none">
+            <type name="GLib.HashTable" c:type="GHashTable*">
+              <type name="gpointer" c:type="gpointer"/>
+              <type name="gpointer" c:type="gpointer"/>
+            </type>
+          </parameter>
+        </parameters>
+      </function>
+      <function name="steal_all_values" c:identifier="g_hash_table_steal_all_values" introspectable="0">
+        <return-value>
+          <array name="GLib.PtrArray" c:type="GPtrArray*">
+            <type name="gpointer" c:type="gpointer"/>
+          </array>
+        </return-value>
+        <parameters>
+          <parameter name="hash_table" transfer-ownership="none">
             <type name="GLib.HashTable" c:type="GHashTable*">
               <type name="gpointer" c:type="gpointer"/>
               <type name="gpointer" c:type="gpointer"/>
@@ -18526,6 +18625,51 @@ them.</doc>
           </array>
         </return-value>
       </function>
+      <function name="new_from_array" c:identifier="g_ptr_array_new_from_array" introspectable="0">
+        <return-value>
+          <array name="GLib.PtrArray" c:type="GPtrArray*">
+            <type name="gpointer" c:type="gpointer"/>
+          </array>
+        </return-value>
+        <parameters>
+          <parameter name="data" transfer-ownership="none" nullable="1" allow-none="1">
+            <type name="gpointer" c:type="gpointer*"/>
+          </parameter>
+          <parameter name="len" transfer-ownership="none">
+            <type name="gsize" c:type="gsize"/>
+          </parameter>
+          <parameter name="copy_func" transfer-ownership="none" scope="notified" closure="3" destroy="4">
+            <type name="CopyFunc" c:type="GCopyFunc"/>
+          </parameter>
+          <parameter name="copy_func_user_data" transfer-ownership="none" nullable="1" allow-none="1">
+            <type name="gpointer" c:type="gpointer"/>
+          </parameter>
+          <parameter name="element_free_func" transfer-ownership="none" scope="async">
+            <type name="DestroyNotify" c:type="GDestroyNotify"/>
+          </parameter>
+        </parameters>
+      </function>
+      <function name="new_from_null_terminated_array" c:identifier="g_ptr_array_new_from_null_terminated_array" introspectable="0">
+        <return-value>
+          <array name="GLib.PtrArray" c:type="GPtrArray*">
+            <type name="gpointer" c:type="gpointer"/>
+          </array>
+        </return-value>
+        <parameters>
+          <parameter name="data" transfer-ownership="none" nullable="1" allow-none="1">
+            <type name="gpointer" c:type="gpointer*"/>
+          </parameter>
+          <parameter name="copy_func" transfer-ownership="none" scope="notified" closure="2" destroy="3">
+            <type name="CopyFunc" c:type="GCopyFunc"/>
+          </parameter>
+          <parameter name="copy_func_user_data" transfer-ownership="none" nullable="1" allow-none="1">
+            <type name="gpointer" c:type="gpointer"/>
+          </parameter>
+          <parameter name="element_free_func" transfer-ownership="none" scope="async">
+            <type name="DestroyNotify" c:type="GDestroyNotify"/>
+          </parameter>
+        </parameters>
+      </function>
       <function name="new_full" c:identifier="g_ptr_array_new_full" version="2.30" introspectable="0">
         <doc xml:space="preserve">Creates a new #GPtrArray with @reserved_size pointers preallocated
 and a reference count of 1. This avoids frequent reallocation, if
@@ -18590,6 +18734,39 @@ zero or be %NULL.</doc>
           <parameter name="null_terminated" transfer-ownership="none">
             <doc xml:space="preserve">whether to make the array as %NULL terminated.</doc>
             <type name="gboolean" c:type="gboolean"/>
+          </parameter>
+        </parameters>
+      </function>
+      <function name="new_take" c:identifier="g_ptr_array_new_take" introspectable="0">
+        <return-value>
+          <array name="GLib.PtrArray" c:type="GPtrArray*">
+            <type name="gpointer" c:type="gpointer"/>
+          </array>
+        </return-value>
+        <parameters>
+          <parameter name="data" transfer-ownership="none" nullable="1" allow-none="1">
+            <type name="gpointer" c:type="gpointer*"/>
+          </parameter>
+          <parameter name="len" transfer-ownership="none">
+            <type name="gsize" c:type="gsize"/>
+          </parameter>
+          <parameter name="element_free_func" transfer-ownership="none" scope="async">
+            <type name="DestroyNotify" c:type="GDestroyNotify"/>
+          </parameter>
+        </parameters>
+      </function>
+      <function name="new_take_null_terminated" c:identifier="g_ptr_array_new_take_null_terminated" introspectable="0">
+        <return-value>
+          <array name="GLib.PtrArray" c:type="GPtrArray*">
+            <type name="gpointer" c:type="gpointer"/>
+          </array>
+        </return-value>
+        <parameters>
+          <parameter name="data" transfer-ownership="none" nullable="1" allow-none="1">
+            <type name="gpointer" c:type="gpointer*"/>
+          </parameter>
+          <parameter name="element_free_func" transfer-ownership="none" scope="async">
+            <type name="DestroyNotify" c:type="GDestroyNotify"/>
           </parameter>
         </parameters>
       </function>
