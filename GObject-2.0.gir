@@ -394,7 +394,7 @@ g_object_bind_property() and is owned by the binding.</doc>
           </instance-parameter>
         </parameters>
       </method>
-      <property name="flags" version="2.26" writable="1" construct-only="1" transfer-ownership="none" getter="get_flags">
+      <property name="flags" version="2.26" writable="1" construct-only="1" transfer-ownership="none" getter="get_flags" default-value="G_BINDING_DEFAULT">
         <doc xml:space="preserve">Flags to be used to control the #GBinding</doc>
         <type name="BindingFlags"/>
       </property>
@@ -402,7 +402,7 @@ g_object_bind_property() and is owned by the binding.</doc>
         <doc xml:space="preserve">The #GObject that should be used as the source of the binding</doc>
         <type name="Object"/>
       </property>
-      <property name="source-property" version="2.26" writable="1" construct-only="1" transfer-ownership="none" getter="get_source_property">
+      <property name="source-property" version="2.26" writable="1" construct-only="1" transfer-ownership="none" getter="get_source_property" default-value="NULL">
         <doc xml:space="preserve">The name of the property of #GBinding:source that should be used
 as the source of the binding.
 
@@ -414,7 +414,7 @@ best performance.</doc>
         <doc xml:space="preserve">The #GObject that should be used as the target of the binding</doc>
         <type name="Object"/>
       </property>
-      <property name="target-property" version="2.26" writable="1" construct-only="1" transfer-ownership="none" getter="get_target_property">
+      <property name="target-property" version="2.26" writable="1" construct-only="1" transfer-ownership="none" getter="get_target_property" default-value="NULL">
         <doc xml:space="preserve">The name of the property of #GBinding:target that should be used
 as the target of the binding.
 
@@ -2517,7 +2517,7 @@ but used automatically by GLib when specifying a %NULL marshaller.</doc>
 the last parameter.
 
 @destroy_data will be called as a finalize notifier on the #GClosure.</doc>
-        <return-value transfer-ownership="none">
+        <return-value transfer-ownership="full">
           <doc xml:space="preserve">a floating reference to a new #GCClosure</doc>
           <type name="Closure" c:type="GClosure*"/>
         </return-value>
@@ -2583,7 +2583,7 @@ after the object is is freed.</doc>
 the first parameter.
 
 @destroy_data will be called as a finalize notifier on the #GClosure.</doc>
-        <return-value transfer-ownership="none">
+        <return-value transfer-ownership="full">
           <doc xml:space="preserve">a floating reference to a new #GCClosure</doc>
           <type name="Closure" c:type="GClosure*"/>
         </return-value>
@@ -2945,7 +2945,7 @@ MyClosure *my_closure_new (gpointer data)
   return my_closure;
 }
 ]|</doc>
-        <return-value transfer-ownership="none">
+        <return-value transfer-ownership="full">
           <doc xml:space="preserve">a floating reference to a new #GClosure</doc>
           <type name="Closure" c:type="GClosure*"/>
         </return-value>
@@ -3337,7 +3337,7 @@ destroyed and freed.</doc>
  last argument to g_closure_invoke()</doc>
           <type name="gpointer" c:type="gpointer"/>
         </parameter>
-        <parameter name="user_data" transfer-ownership="none" nullable="1" allow-none="1" closure="5">
+        <parameter name="marshal_data" transfer-ownership="none" nullable="1" allow-none="1">
           <doc xml:space="preserve">additional data specified when
  registering the marshaller, see g_closure_set_marshal() and
  g_closure_set_meta_marshal()</doc>
@@ -5146,22 +5146,22 @@ private data for the object is guaranteed to be initialized with zeros, as
 per g_type_create_instance().
 
 Note that in C, small integer types in variable argument lists are promoted
-up to #gint or #guint as appropriate, and read back accordingly. #gint is 32
-bits on every platform on which GLib is currently supported. This means that
-you can use C expressions of type #gint with g_object_new() and properties of
-type #gint or #guint or smaller. Specifically, you can use integer literals
+up to `gint` or `guint` as appropriate, and read back accordingly. `gint` is
+32 bits on every platform on which GLib is currently supported. This means that
+you can use C expressions of type `gint` with g_object_new() and properties of
+type `gint` or `guint` or smaller. Specifically, you can use integer literals
 with these property types.
 
-When using property types of #gint64 or #guint64, you must ensure that the
+When using property types of `gint64` or `guint64`, you must ensure that the
 value that you provide is 64 bit. This means that you should use a cast or
 make use of the %G_GINT64_CONSTANT or %G_GUINT64_CONSTANT macros.
 
-Similarly, #gfloat is promoted to #gdouble, so you must ensure that the value
-you provide is a #gdouble, even for a property of type #gfloat.
+Similarly, `gfloat` is promoted to `gdouble`, so you must ensure that the value
+you provide is a `gdouble`, even for a property of type `gfloat`.
 
 Since GLib 2.72, all #GObjects are guaranteed to be aligned to at least the
-alignment of the largest basic GLib type (typically this is #guint64 or
-#gdouble). If you need larger alignment for an element in a #GObject, you
+alignment of the largest basic GLib type (typically this is `guint64` or
+`gdouble`). If you need larger alignment for an element in a #GObject, you
 should allocate it on the heap (aligned), or arrange for your #GObject to be
 appropriately padded.</doc>
         <return-value transfer-ownership="full">
@@ -5180,7 +5180,7 @@ appropriately padded.</doc>
           </parameter>
           <parameter name="..." transfer-ownership="none">
             <doc xml:space="preserve">the value of the first property, followed optionally by more
- name/value pairs, followed by %NULL</doc>
+  name/value pairs, followed by %NULL</doc>
             <varargs/>
           </parameter>
         </parameters>
@@ -8419,7 +8419,7 @@ properties.</doc>
         <type name="ParamSpec" c:type="GParamSpec"/>
       </field>
     </class>
-    <record name="ParamSpecPool" c:type="GParamSpecPool" disguised="1">
+    <record name="ParamSpecPool" c:type="GParamSpecPool" disguised="1" opaque="1">
       <doc xml:space="preserve">A #GParamSpecPool maintains a collection of #GParamSpecs which can be
 quickly accessed by owner and name.
 
@@ -8868,7 +8868,7 @@ last callback.</doc>
           <doc xml:space="preserve">A #GValue holding the return value of the signal handler.</doc>
           <type name="Value" c:type="const GValue*"/>
         </parameter>
-        <parameter name="user_data" transfer-ownership="none" nullable="1" allow-none="1" closure="3">
+        <parameter name="data" transfer-ownership="none" nullable="1" allow-none="1">
           <doc xml:space="preserve">Callback data that was specified when creating the signal.</doc>
           <type name="gpointer" c:type="gpointer"/>
         </parameter>
@@ -8903,7 +8903,7 @@ You may not attach these to signals created with the %G_SIGNAL_NO_HOOKS flag.</d
             <type name="Value" c:type="GValue"/>
           </array>
         </parameter>
-        <parameter name="user_data" transfer-ownership="none" nullable="1" allow-none="1" closure="3">
+        <parameter name="data" transfer-ownership="none" nullable="1" allow-none="1">
           <doc xml:space="preserve">user data associated with the hook.</doc>
           <type name="gpointer" c:type="gpointer"/>
         </parameter>
@@ -13830,7 +13830,7 @@ but used automatically by GLib when specifying a %NULL marshaller.</doc>
 the last parameter.
 
 @destroy_data will be called as a finalize notifier on the #GClosure.</doc>
-      <return-value transfer-ownership="none">
+      <return-value transfer-ownership="full">
         <doc xml:space="preserve">a floating reference to a new #GCClosure</doc>
         <type name="Closure" c:type="GClosure*"/>
       </return-value>
@@ -13896,7 +13896,7 @@ after the object is is freed.</doc>
 the first parameter.
 
 @destroy_data will be called as a finalize notifier on the #GClosure.</doc>
-      <return-value transfer-ownership="none">
+      <return-value transfer-ownership="full">
         <doc xml:space="preserve">a floating reference to a new #GCClosure</doc>
         <type name="Closure" c:type="GClosure*"/>
       </return-value>
@@ -15782,7 +15782,10 @@ The handler will be called synchronously, after the default handler of the signa
       </parameters>
     </function-macro>
     <function name="signal_connect_closure" c:identifier="g_signal_connect_closure">
-      <doc xml:space="preserve">Connects a closure to a signal for a particular object.</doc>
+      <doc xml:space="preserve">Connects a closure to a signal for a particular object.
+
+If @closure is a floating reference (see g_closure_sink()), this function
+takes ownership of @closure.</doc>
       <return-value transfer-ownership="none">
         <doc xml:space="preserve">the handler ID (always greater than 0 for successful connections)</doc>
         <type name="gulong" c:type="gulong"/>
@@ -15808,7 +15811,10 @@ The handler will be called synchronously, after the default handler of the signa
       </parameters>
     </function>
     <function name="signal_connect_closure_by_id" c:identifier="g_signal_connect_closure_by_id">
-      <doc xml:space="preserve">Connects a closure to a signal for a particular object.</doc>
+      <doc xml:space="preserve">Connects a closure to a signal for a particular object.
+
+If @closure is a floating reference (see g_closure_sink()), this function
+takes ownership of @closure.</doc>
       <return-value transfer-ownership="none">
         <doc xml:space="preserve">the handler ID (always greater than 0 for successful connections)</doc>
         <type name="gulong" c:type="gulong"/>
@@ -17012,7 +17018,7 @@ signal id for you.</doc>
       <doc xml:space="preserve">Creates a new closure which invokes the function found at the offset
 @struct_offset in the class structure of the interface or classed type
 identified by @itype.</doc>
-      <return-value transfer-ownership="none">
+      <return-value transfer-ownership="full">
         <doc xml:space="preserve">a floating reference to a new #GCClosure</doc>
         <type name="Closure" c:type="GClosure*"/>
       </return-value>
