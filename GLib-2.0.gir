@@ -386,41 +386,88 @@ function is a no-op.</doc>
           </parameter>
         </parameters>
       </function>
-      <function name="new_take" c:identifier="g_array_new_take" introspectable="0">
-        <return-value>
+      <function name="new_take" c:identifier="g_array_new_take" version="2.76" introspectable="0">
+        <doc xml:space="preserve">Creates a new #GArray with @data as array data, @len as length and a
+reference count of 1.
+
+This avoids having to copy the data manually, when it can just be
+inherited. @data will eventually be freed using g_free(), so must
+have been allocated with a suitable allocator.
+
+In case the elements need to be cleared when the array is freed, use
+g_array_set_clear_func() to set a #GDestroyNotify function to perform
+such task.
+
+Do not use it if @len or @element_size are greater than %G_MAXUINT.
+#GArray stores the length of its data in #guint, which may be shorter
+than #gsize.</doc>
+        <return-value transfer-ownership="full">
+          <doc xml:space="preserve">A new #GArray</doc>
           <array name="GLib.Array" c:type="GArray*">
             <type name="gpointer" c:type="gpointer"/>
           </array>
         </return-value>
         <parameters>
-          <parameter name="data" transfer-ownership="none" nullable="1" allow-none="1">
-            <type name="gpointer" c:type="gpointer"/>
+          <parameter name="data" transfer-ownership="full" nullable="1" allow-none="1">
+            <doc xml:space="preserve">an array of
+  elements of @element_size, or %NULL for an empty array</doc>
+            <array length="1" zero-terminated="0" c:type="gpointer">
+              <type name="gpointer" c:type="gpointer"/>
+            </array>
           </parameter>
           <parameter name="len" transfer-ownership="none">
+            <doc xml:space="preserve">the number of elements in @data</doc>
             <type name="gsize" c:type="gsize"/>
           </parameter>
           <parameter name="clear" transfer-ownership="none">
+            <doc xml:space="preserve">%TRUE if #GArray elements should be automatically cleared
+    to 0 when they are allocated</doc>
             <type name="gboolean" c:type="gboolean"/>
           </parameter>
           <parameter name="element_size" transfer-ownership="none">
+            <doc xml:space="preserve">the size of each element in bytes</doc>
             <type name="gsize" c:type="gsize"/>
           </parameter>
         </parameters>
       </function>
-      <function name="new_take_zero_terminated" c:identifier="g_array_new_take_zero_terminated" introspectable="0">
-        <return-value>
+      <function name="new_take_zero_terminated" c:identifier="g_array_new_take_zero_terminated" version="2.76" introspectable="0">
+        <doc xml:space="preserve">Creates a new #GArray with @data as array data, computing the length of it
+and setting the reference count to 1.
+
+This avoids having to copy the data manually, when it can just be
+inherited. @data will eventually be freed using g_free(), so must
+have been allocated with a suitable allocator.
+
+The length is calculated by iterating through @data until the first %NULL
+element is found.
+
+In case the elements need to be cleared when the array is freed, use
+g_array_set_clear_func() to set a #GDestroyNotify function to perform
+such task.
+
+Do not use it if @data length or @element_size are greater than %G_MAXUINT.
+#GArray stores the length of its data in #guint, which may be shorter
+than #gsize.</doc>
+        <return-value transfer-ownership="full">
+          <doc xml:space="preserve">A new #GArray</doc>
           <array name="GLib.Array" c:type="GArray*">
             <type name="gpointer" c:type="gpointer"/>
           </array>
         </return-value>
         <parameters>
-          <parameter name="data" transfer-ownership="none" nullable="1" allow-none="1">
-            <type name="gpointer" c:type="gpointer"/>
+          <parameter name="data" transfer-ownership="none">
+            <doc xml:space="preserve">an array of elements of @element_size</doc>
+            <array c:type="gpointer">
+              <type name="gpointer" c:type="gpointer"/>
+            </array>
           </parameter>
           <parameter name="clear" transfer-ownership="none">
+            <doc xml:space="preserve">%TRUE if #GArray elements should be automatically cleared
+    to 0 when they are allocated</doc>
             <type name="gboolean" c:type="gboolean"/>
           </parameter>
           <parameter name="element_size" transfer-ownership="none">
+            <doc xml:space="preserve">the size of each element in bytes</doc>
             <type name="gsize" c:type="gsize"/>
           </parameter>
         </parameters>
@@ -781,7 +828,7 @@ thread.</doc>
       <member name="xdigit" value="1024" c:identifier="G_ASCII_XDIGIT">
       </member>
     </bitfield>
-    <record name="AsyncQueue" c:type="GAsyncQueue" disguised="1">
+    <record name="AsyncQueue" c:type="GAsyncQueue" disguised="1" opaque="1">
       <doc xml:space="preserve">An opaque data structure which represents an asynchronous queue.
 
 It should only be accessed through the `g_async_queue_*` functions.</doc>
@@ -1376,7 +1423,7 @@ and on other architectures it raises a `SIGTRAP` signal.
 `SIGTRAP` is used rather than abort() to allow breakpoints to be skipped past
 in a debugger if they are not the desired target of debugging.</doc>
     </function-macro>
-    <record name="BookmarkFile" c:type="GBookmarkFile" glib:type-name="GBookmarkFile" glib:get-type="g_bookmark_file_get_type" c:symbol-prefix="bookmark_file">
+    <record name="BookmarkFile" c:type="GBookmarkFile" opaque="1" glib:type-name="GBookmarkFile" glib:get-type="g_bookmark_file_get_type" c:symbol-prefix="bookmark_file">
       <doc xml:space="preserve">An opaque data structure representing a set of bookmarks.</doc>
       <constructor name="new" c:identifier="g_bookmark_file_new" version="2.12">
         <doc xml:space="preserve">Creates a new empty #GBookmarkFile object.
@@ -3022,7 +3069,7 @@ thread.</doc>
         </parameters>
       </function>
     </record>
-    <record name="Bytes" c:type="GBytes" version="2.32" glib:type-name="GBytes" glib:get-type="g_bytes_get_type" c:symbol-prefix="bytes">
+    <record name="Bytes" c:type="GBytes" opaque="1" version="2.32" glib:type-name="GBytes" glib:get-type="g_bytes_get_type" c:symbol-prefix="bytes">
       <doc xml:space="preserve">A simple refcounted data type representing an immutable sequence of zero or
 more bytes from an unspecified origin.
 
@@ -3452,22 +3499,63 @@ Used for specifying valid identifier characters
 in #GScannerConfig.</doc>
       <type name="utf8" c:type="gchar*"/>
     </constant>
-    <function-macro name="CXX_STD_CHECK_VERSION" c:identifier="G_CXX_STD_CHECK_VERSION" introspectable="0">
+    <function-macro name="CXX_STD_CHECK_VERSION" c:identifier="G_CXX_STD_CHECK_VERSION" version="2.76" introspectable="0">
+      <doc xml:space="preserve">Macro to check if the current compiler supports a specified @version
+of the C++ standard. Such value must be numeric and can be provided both
+in the short form for the well-known versions (e.g. `11`, `17`...) or in
+the complete form otherwise (e.g. `201103L`, `201703L`, `205503L`...).
+
+When a C compiler is used, the macro is defined and returns always %FALSE.
+
+This value is compared against %G_CXX_STD_VERSION.
+
+|[&lt;!-- language="C" --&gt;
+#if G_CXX_STD_CHECK_VERSION(20)
+#endif
+]|
+
+See also: %G_C_STD_CHECK_VERSION</doc>
       <parameters>
         <parameter name="version">
+          <doc xml:space="preserve">The C++ version to be checked for compatibility</doc>
         </parameter>
       </parameters>
     </function-macro>
-    <function-macro name="C_STD_CHECK_VERSION" c:identifier="G_C_STD_CHECK_VERSION" introspectable="0">
+    <function-macro name="C_STD_CHECK_VERSION" c:identifier="G_C_STD_CHECK_VERSION" version="2.76" introspectable="0">
+      <doc xml:space="preserve">Macro to check if the current compiler supports a specified @version
+of the C standard. Such value must be numeric and can be provided both
+in the short form for the well-known versions (e.g. `90`, `99`...) or in
+the complete form otherwise (e.g. `199000L`, `199901L`, `205503L`...).
+
+When a C++ compiler is used, the macro is defined and returns always %FALSE.
+
+This value is compared against %G_C_STD_VERSION.
+
+|[&lt;!-- language="C" --&gt;
+#if G_C_STD_CHECK_VERSION(17)
+#endif
+]|
+
+See also: %G_CXX_STD_CHECK_VERSION</doc>
       <parameters>
         <parameter name="version">
+          <doc xml:space="preserve">The C version to be checked for compatibility</doc>
         </parameter>
       </parameters>
     </function-macro>
-    <constant name="C_STD_VERSION" value="199000" c:type="G_C_STD_VERSION">
+    <constant name="C_STD_VERSION" value="199000" c:type="G_C_STD_VERSION" version="2.76">
+      <doc xml:space="preserve">The C standard version the code is compiling against, it's normally
+defined with the same value of `__STDC_VERSION__` for C standard
+compatible compilers, while it uses the lowest standard version
+in pure MSVC, given that in such compiler the definition depends on
+a compilation flag.
+
+This is granted to be undefined when compiling with a C++ compiler.
+
+See also: %G_C_STD_CHECK_VERSION and %G_CXX_STD_VERSION</doc>
       <type name="gint" c:type="gint"/>
     </constant>
-    <record name="Checksum" c:type="GChecksum" version="2.16" glib:type-name="GChecksum" glib:get-type="g_checksum_get_type" c:symbol-prefix="checksum">
+    <record name="Checksum" c:type="GChecksum" opaque="1" version="2.16" glib:type-name="GChecksum" glib:get-type="g_checksum_get_type" c:symbol-prefix="checksum">
       <doc xml:space="preserve">An opaque structure representing a checksumming operation.
 
 To create a new GChecksum, use g_checksum_new(). To free
@@ -4020,7 +4108,7 @@ when doing a deep-copy of a tree.</doc>
           <doc xml:space="preserve">A pointer to the data which should be copied</doc>
           <type name="gpointer" c:type="gconstpointer"/>
         </parameter>
-        <parameter name="user_data" transfer-ownership="none" nullable="1" allow-none="1" closure="1">
+        <parameter name="data" transfer-ownership="none" nullable="1" allow-none="1">
           <doc xml:space="preserve">Additional data</doc>
           <type name="gpointer" c:type="gpointer"/>
         </parameter>
@@ -4830,7 +4918,7 @@ This is '/' on UNIX machines and '\' under Windows.</doc>
 This is "/" on UNIX machines and "\" under Windows.</doc>
       <type name="utf8" c:type="gchar*"/>
     </constant>
-    <record name="Data" c:type="GData" disguised="1">
+    <record name="Data" c:type="GData" disguised="1" opaque="1">
       <doc xml:space="preserve">An opaque data structure that represents a keyed data list.
 
 See also: [Keyed data lists][glib-Keyed-Data-Lists].</doc>
@@ -5821,7 +5909,7 @@ to mark a number as a day, month, or year.</doc>
         <doc xml:space="preserve">December</doc>
       </member>
     </enumeration>
-    <record name="DateTime" c:type="GDateTime" version="2.26" glib:type-name="GDateTime" glib:get-type="g_date_time_get_type" c:symbol-prefix="date_time">
+    <record name="DateTime" c:type="GDateTime" opaque="1" version="2.26" glib:type-name="GDateTime" glib:get-type="g_date_time_get_type" c:symbol-prefix="date_time">
       <doc xml:space="preserve">An opaque structure that represents a date and time, including a time zone.</doc>
       <constructor name="new" c:identifier="g_date_time_new" version="2.26">
         <doc xml:space="preserve">Creates a new #GDateTime corresponding to the given date and time in
@@ -7054,7 +7142,7 @@ should free any memory and resources allocated for it.</doc>
         </parameter>
       </parameters>
     </callback>
-    <record name="Dir" c:type="GDir" disguised="1">
+    <record name="Dir" c:type="GDir" disguised="1" opaque="1">
       <doc xml:space="preserve">An opaque structure representing an opened directory.</doc>
       <method name="close" c:identifier="g_dir_close">
         <doc xml:space="preserve">Closes the directory and deallocates all related resources.</doc>
@@ -8426,7 +8514,7 @@ must be an element of randomness that an attacker is unable to guess.</doc>
         </parameter>
       </parameters>
     </callback>
-    <record name="HashTable" c:type="GHashTable" glib:type-name="GHashTable" glib:get-type="g_hash_table_get_type" c:symbol-prefix="hash_table">
+    <record name="HashTable" c:type="GHashTable" opaque="1" glib:type-name="GHashTable" glib:get-type="g_hash_table_get_type" c:symbol-prefix="hash_table">
       <doc xml:space="preserve">The #GHashTable struct is an opaque data structure to represent a
 [Hash Table][glib-Hash-Tables]. It should only be accessed via the
 following functions.</doc>
@@ -8702,14 +8790,25 @@ first to transfer ownership of the keys.</doc>
           </parameter>
         </parameters>
       </function>
-      <function name="get_keys_as_ptr_array" c:identifier="g_hash_table_get_keys_as_ptr_array" introspectable="0">
-        <return-value>
+      <function name="get_keys_as_ptr_array" c:identifier="g_hash_table_get_keys_as_ptr_array" version="2.76" introspectable="0">
+        <doc xml:space="preserve">Retrieves every key inside @hash_table, as a #GPtrArray.
+The returned data is valid until changes to the hash release those keys.
+
+This iterates over every entry in the hash table to build its return value.
+To iterate over the entries in a #GHashTable more efficiently, use a
+#GHashTableIter.
+
+You should always unref the returned array with g_ptr_array_unref().</doc>
+        <return-value transfer-ownership="container">
+          <doc xml:space="preserve">a #GPtrArray containing each key from
+the table. Unref with with g_ptr_array_unref() when done.</doc>
           <array name="GLib.PtrArray" c:type="GPtrArray*">
             <type name="gpointer" c:type="gpointer"/>
           </array>
         </return-value>
         <parameters>
           <parameter name="hash_table" transfer-ownership="none">
+            <doc xml:space="preserve">a #GHashTable</doc>
             <type name="GLib.HashTable" c:type="GHashTable*">
               <type name="gpointer" c:type="gpointer"/>
               <type name="gpointer" c:type="gpointer"/>
@@ -8743,14 +8842,25 @@ To iterate over the entries in a #GHashTable more efficiently, use a
           </parameter>
         </parameters>
       </function>
-      <function name="get_values_as_ptr_array" c:identifier="g_hash_table_get_values_as_ptr_array" introspectable="0">
-        <return-value>
+      <function name="get_values_as_ptr_array" c:identifier="g_hash_table_get_values_as_ptr_array" version="2.76" introspectable="0">
+        <doc xml:space="preserve">Retrieves every value inside @hash_table, as a #GPtrArray.
+The returned data is valid until changes to the hash release those values.
+
+This iterates over every entry in the hash table to build its return value.
+To iterate over the entries in a #GHashTable more efficiently, use a
+#GHashTableIter.
+
+You should always unref the returned array with g_ptr_array_unref().</doc>
+        <return-value transfer-ownership="container">
+          <doc xml:space="preserve">a #GPtrArray containing each value from
+the table. Unref with with g_ptr_array_unref() when done.</doc>
           <array name="GLib.PtrArray" c:type="GPtrArray*">
             <type name="gpointer" c:type="gpointer"/>
           </array>
         </return-value>
         <parameters>
           <parameter name="hash_table" transfer-ownership="none">
+            <doc xml:space="preserve">a #GHashTable</doc>
             <type name="GLib.HashTable" c:type="GHashTable*">
               <type name="gpointer" c:type="gpointer"/>
               <type name="gpointer" c:type="gpointer"/>
@@ -9107,14 +9217,21 @@ without calling the key and value destroy functions.</doc>
           </parameter>
         </parameters>
       </function>
-      <function name="steal_all_keys" c:identifier="g_hash_table_steal_all_keys" introspectable="0">
-        <return-value>
+      <function name="steal_all_keys" c:identifier="g_hash_table_steal_all_keys" version="2.76" introspectable="0">
+        <doc xml:space="preserve">Removes all keys and their associated values from a #GHashTable
+without calling the key destroy functions, returning the keys
+as a #GPtrArray with the free func set to the @hash_table key
+destroy function.</doc>
+        <return-value transfer-ownership="container">
+          <doc xml:space="preserve">a #GPtrArray containing each key of
+the table. Unref with with g_ptr_array_unref() when done.</doc>
           <array name="GLib.PtrArray" c:type="GPtrArray*">
             <type name="gpointer" c:type="gpointer"/>
           </array>
         </return-value>
         <parameters>
           <parameter name="hash_table" transfer-ownership="none">
+            <doc xml:space="preserve">a #GHashTable</doc>
             <type name="GLib.HashTable" c:type="GHashTable*">
               <type name="gpointer" c:type="gpointer"/>
               <type name="gpointer" c:type="gpointer"/>
@@ -9122,14 +9239,21 @@ without calling the key and value destroy functions.</doc>
           </parameter>
         </parameters>
       </function>
-      <function name="steal_all_values" c:identifier="g_hash_table_steal_all_values" introspectable="0">
-        <return-value>
+      <function name="steal_all_values" c:identifier="g_hash_table_steal_all_values" version="2.76" introspectable="0">
+        <doc xml:space="preserve">Removes all keys and their associated values from a #GHashTable
+without calling the value destroy functions, returning the values
+as a #GPtrArray with the free func set to the @hash_table value
+destroy function.</doc>
+        <return-value transfer-ownership="container">
+          <doc xml:space="preserve">a #GPtrArray containing each value of
+the table. Unref with with g_ptr_array_unref() when done.</doc>
           <array name="GLib.PtrArray" c:type="GPtrArray*">
             <type name="gpointer" c:type="gpointer"/>
           </array>
         </return-value>
         <parameters>
           <parameter name="hash_table" transfer-ownership="none">
+            <doc xml:space="preserve">a #GHashTable</doc>
             <type name="GLib.HashTable" c:type="GHashTable*">
               <type name="gpointer" c:type="gpointer"/>
               <type name="gpointer" c:type="gpointer"/>
@@ -9368,7 +9492,7 @@ be called more than once for the same key/value pair.</doc>
         </parameters>
       </method>
     </record>
-    <record name="Hmac" c:type="GHmac" disguised="1" version="2.30">
+    <record name="Hmac" c:type="GHmac" disguised="1" opaque="1" version="2.30">
       <doc xml:space="preserve">An opaque structure representing a HMAC operation.
 To create a new GHmac, use g_hmac_new(). To free
 a GHmac, use g_hmac_unref().</doc>
@@ -9934,8 +10058,7 @@ by g_hook_list_invoke_check().</doc>
           <doc xml:space="preserve">a #GHook</doc>
           <type name="Hook" c:type="GHook*"/>
         </parameter>
-        <parameter name="user_data" transfer-ownership="none" nullable="1" allow-none="1" closure="1">
-          <doc xml:space="preserve">user data</doc>
+        <parameter name="marshal_data" transfer-ownership="none" nullable="1" allow-none="1">
           <type name="gpointer" c:type="gpointer"/>
         </parameter>
       </parameters>
@@ -9986,8 +10109,7 @@ list of hooks gets finalized.</doc>
           <doc xml:space="preserve">a #GHook</doc>
           <type name="Hook" c:type="GHook*"/>
         </parameter>
-        <parameter name="user_data" transfer-ownership="none" nullable="1" allow-none="1" closure="1">
-          <doc xml:space="preserve">user data passed to g_hook_find_func()</doc>
+        <parameter name="data" transfer-ownership="none" nullable="1" allow-none="1">
           <type name="gpointer" c:type="gpointer"/>
         </parameter>
       </parameters>
@@ -10182,13 +10304,12 @@ function returns %FALSE.</doc>
           <doc xml:space="preserve">a #GHook</doc>
           <type name="Hook" c:type="GHook*"/>
         </parameter>
-        <parameter name="user_data" transfer-ownership="none" nullable="1" allow-none="1" closure="1">
-          <doc xml:space="preserve">user data</doc>
+        <parameter name="marshal_data" transfer-ownership="none" nullable="1" allow-none="1">
           <type name="gpointer" c:type="gpointer"/>
         </parameter>
       </parameters>
     </callback>
-    <record name="IConv" c:type="GIConv" disguised="1" introspectable="0">
+    <record name="IConv" c:type="GIConv" disguised="1" pointer="1" introspectable="0">
       <doc xml:space="preserve">The GIConv struct wraps an iconv() conversion descriptor. It contains
 private data and should only be accessed using the following functions.</doc>
       <method name="" c:identifier="g_iconv" moved-to="iconv" introspectable="0">
@@ -11235,8 +11356,7 @@ on a #GIOChannel is satisfied.</doc>
           <doc xml:space="preserve">the condition which has been satisfied</doc>
           <type name="IOCondition" c:type="GIOCondition"/>
         </parameter>
-        <parameter name="user_data" transfer-ownership="none" nullable="1" allow-none="1" closure="2">
-          <doc xml:space="preserve">user data set in g_io_add_watch() or g_io_add_watch_full()</doc>
+        <parameter name="data" transfer-ownership="none" nullable="1" allow-none="1">
           <type name="gpointer" c:type="gpointer"/>
         </parameter>
       </parameters>
@@ -11542,7 +11662,7 @@ entries representing directories.</doc>
 entries representing links to documents.</doc>
       <type name="utf8" c:type="gchar*"/>
     </constant>
-    <record name="KeyFile" c:type="GKeyFile" glib:type-name="GKeyFile" glib:get-type="g_key_file_get_type" c:symbol-prefix="key_file">
+    <record name="KeyFile" c:type="GKeyFile" opaque="1" glib:type-name="GKeyFile" glib:get-type="g_key_file_get_type" c:symbol-prefix="key_file">
       <doc xml:space="preserve">The GKeyFile struct contains only private data
 and should not be accessed directly.</doc>
       <constructor name="new" c:identifier="g_key_file_new" version="2.6">
@@ -14122,7 +14242,7 @@ This is the same as standard C `UINT8_MAX`, which should be
 preferred in new code.</doc>
       <type name="guint8" c:type="guint8"/>
     </constant>
-    <constant name="MICRO_VERSION" value="1" c:type="GLIB_MICRO_VERSION">
+    <constant name="MICRO_VERSION" value="2" c:type="GLIB_MICRO_VERSION">
       <doc xml:space="preserve">The micro version number of the GLib library.
 
 Like #gtk_micro_version, but from the headers used at
@@ -14157,7 +14277,7 @@ linked against at application run time.</doc>
     <constant name="MODULE_SUFFIX" value="so" c:type="G_MODULE_SUFFIX">
       <type name="utf8" c:type="gchar*"/>
     </constant>
-    <record name="MainContext" c:type="GMainContext" glib:type-name="GMainContext" glib:get-type="g_main_context_get_type" c:symbol-prefix="main_context">
+    <record name="MainContext" c:type="GMainContext" opaque="1" glib:type-name="GMainContext" glib:get-type="g_main_context_get_type" c:symbol-prefix="main_context">
       <doc xml:space="preserve">The `GMainContext` struct is an opaque data
 type representing a set of sources to be handled in a main loop.</doc>
       <constructor name="new" c:identifier="g_main_context_new">
@@ -14820,7 +14940,7 @@ free the thread to process other jobs. That's useful if you're using
 other event loops.</doc>
       </member>
     </bitfield>
-    <record name="MainLoop" c:type="GMainLoop" glib:type-name="GMainLoop" glib:get-type="g_main_loop_get_type" c:symbol-prefix="main_loop">
+    <record name="MainLoop" c:type="GMainLoop" opaque="1" glib:type-name="GMainLoop" glib:get-type="g_main_loop_get_type" c:symbol-prefix="main_loop">
       <doc xml:space="preserve">The `GMainLoop` struct is an opaque data type
 representing the main event loop of a GLib or GTK+ application.</doc>
       <constructor name="new" c:identifier="g_main_loop_new">
@@ -14926,7 +15046,7 @@ the result is zero, free the loop and free all associated memory.</doc>
         </parameters>
       </method>
     </record>
-    <record name="MappedFile" c:type="GMappedFile" glib:type-name="GMappedFile" glib:get-type="g_mapped_file_get_type" c:symbol-prefix="mapped_file">
+    <record name="MappedFile" c:type="GMappedFile" opaque="1" glib:type-name="GMappedFile" glib:get-type="g_mapped_file_get_type" c:symbol-prefix="mapped_file">
       <doc xml:space="preserve">The #GMappedFile represents a file mapping created with
 g_mapped_file_new(). It has only private members and should
 not be accessed directly.</doc>
@@ -15154,7 +15274,7 @@ support other types.</doc>
     functions; a required attribute was missing</doc>
       </member>
     </enumeration>
-    <record name="MarkupParseContext" c:type="GMarkupParseContext" glib:type-name="GMarkupParseContext" glib:get-type="g_markup_parse_context_get_type" c:symbol-prefix="markup_parse_context">
+    <record name="MarkupParseContext" c:type="GMarkupParseContext" opaque="1" glib:type-name="GMarkupParseContext" glib:get-type="g_markup_parse_context_get_type" c:symbol-prefix="markup_parse_context">
       <doc xml:space="preserve">A parse context is used to parse a stream of bytes that
 you expect to contain marked-up text.
 
@@ -15661,7 +15781,7 @@ back to its caller.</doc>
         </callback>
       </field>
     </record>
-    <record name="MatchInfo" c:type="GMatchInfo" glib:type-name="GMatchInfo" glib:get-type="g_match_info_get_type" c:symbol-prefix="match_info">
+    <record name="MatchInfo" c:type="GMatchInfo" opaque="1" glib:type-name="GMatchInfo" glib:get-type="g_match_info_get_type" c:symbol-prefix="match_info">
       <doc xml:space="preserve">A GMatchInfo is an opaque struct used to return information about
 matches.</doc>
       <method name="expand_references" c:identifier="g_match_info_expand_references" version="2.14" throws="1">
@@ -16825,8 +16945,7 @@ data passed to g_node_children_foreach().</doc>
           <doc xml:space="preserve">a #GNode.</doc>
           <type name="Node" c:type="GNode*"/>
         </parameter>
-        <parameter name="user_data" transfer-ownership="none" nullable="1" allow-none="1" closure="1">
-          <doc xml:space="preserve">user data passed to g_node_children_foreach().</doc>
+        <parameter name="data" transfer-ownership="none" nullable="1" allow-none="1">
           <type name="gpointer" c:type="gpointer"/>
         </parameter>
       </parameters>
@@ -16845,8 +16964,7 @@ user data passed to g_node_traverse(). If the function returns
           <doc xml:space="preserve">a #GNode.</doc>
           <type name="Node" c:type="GNode*"/>
         </parameter>
-        <parameter name="user_data" transfer-ownership="none" nullable="1" allow-none="1" closure="1">
-          <doc xml:space="preserve">user data passed to g_node_traverse().</doc>
+        <parameter name="data" transfer-ownership="none" nullable="1" allow-none="1">
           <type name="gpointer" c:type="gpointer"/>
         </parameter>
       </parameters>
@@ -17078,14 +17196,14 @@ options.</doc>
           <doc xml:space="preserve">The value to be parsed.</doc>
           <type name="utf8" c:type="const gchar*"/>
         </parameter>
-        <parameter name="user_data" transfer-ownership="none" nullable="1" allow-none="1" closure="2">
-          <doc xml:space="preserve">User data added to the #GOptionGroup containing the option when
- it was created with g_option_group_new()</doc>
+        <parameter name="data" transfer-ownership="none" nullable="1" allow-none="1">
+          <doc xml:space="preserve">User data added to the #GOptionGroup containing the option when it
+ was created with g_option_group_new()</doc>
           <type name="gpointer" c:type="gpointer"/>
         </parameter>
       </parameters>
     </callback>
-    <record name="OptionContext" c:type="GOptionContext" disguised="1">
+    <record name="OptionContext" c:type="GOptionContext" disguised="1" opaque="1">
       <doc xml:space="preserve">A `GOptionContext` struct defines which options
 are accepted by the commandline option parser. The struct has only private
 fields and should not be directly accessed.</doc>
@@ -17659,9 +17777,9 @@ or g_option_group_add_entries().</doc>
           <doc xml:space="preserve">The group to which the function belongs</doc>
           <type name="OptionGroup" c:type="GOptionGroup*"/>
         </parameter>
-        <parameter name="user_data" transfer-ownership="none" nullable="1" allow-none="1" closure="2">
-          <doc xml:space="preserve">User data added to the #GOptionGroup containing the option when
- it was created with g_option_group_new()</doc>
+        <parameter name="data" transfer-ownership="none" nullable="1" allow-none="1">
+          <doc xml:space="preserve">User data added to the #GOptionGroup containing the option when it
+ was created with g_option_group_new()</doc>
           <type name="gpointer" c:type="gpointer"/>
         </parameter>
       </parameters>
@@ -17708,7 +17826,7 @@ or g_option_group_add_entries().</doc>
     your direct control. Since 2.8.</doc>
       </member>
     </bitfield>
-    <record name="OptionGroup" c:type="GOptionGroup" glib:type-name="GOptionGroup" glib:get-type="g_option_group_get_type" c:symbol-prefix="option_group">
+    <record name="OptionGroup" c:type="GOptionGroup" opaque="1" glib:type-name="GOptionGroup" glib:get-type="g_option_group_get_type" c:symbol-prefix="option_group">
       <doc xml:space="preserve">A `GOptionGroup` struct defines the options in a single
 group. The struct has only private fields and should not be directly accessed.
 
@@ -17920,9 +18038,9 @@ and all memory allocated by the @group is released.</doc>
           <doc xml:space="preserve">The group to which the function belongs</doc>
           <type name="OptionGroup" c:type="GOptionGroup*"/>
         </parameter>
-        <parameter name="user_data" transfer-ownership="none" nullable="1" allow-none="1" closure="2">
-          <doc xml:space="preserve">User data added to the #GOptionGroup containing the option when
- it was created with g_option_group_new()</doc>
+        <parameter name="data" transfer-ownership="none" nullable="1" allow-none="1">
+          <doc xml:space="preserve">User data added to the #GOptionGroup containing the option when it
+ was created with g_option_group_new()</doc>
           <type name="gpointer" c:type="gpointer"/>
         </parameter>
       </parameters>
@@ -18043,7 +18161,7 @@ set_local_count (gint count)
         </parameter>
       </parameters>
     </function-macro>
-    <record name="PatternSpec" c:type="GPatternSpec" glib:type-name="GPatternSpec" glib:get-type="g_pattern_spec_get_type" c:symbol-prefix="pattern_spec">
+    <record name="PatternSpec" c:type="GPatternSpec" opaque="1" glib:type-name="GPatternSpec" glib:get-type="g_pattern_spec_get_type" c:symbol-prefix="pattern_spec">
       <doc xml:space="preserve">A GPatternSpec struct is the 'compiled' form of a pattern. This
 structure is opaque and its fields cannot be accessed directly.</doc>
       <constructor name="new" c:identifier="g_pattern_spec_new">
@@ -18625,47 +18743,96 @@ them.</doc>
           </array>
         </return-value>
       </function>
-      <function name="new_from_array" c:identifier="g_ptr_array_new_from_array" introspectable="0">
-        <return-value>
+      <function name="new_from_array" c:identifier="g_ptr_array_new_from_array" version="2.76" introspectable="0">
+        <doc xml:space="preserve">Creates a new #GPtrArray, copying @len pointers from @data, and setting
+the array&#x2019;s reference count to 1.
+
+This avoids having to manually add each element one by one.
+
+If @copy_func is provided, then it is used to copy each element before
+adding them to the new array. If it is %NULL then the pointers are copied
+directly.
+
+It also sets @element_free_func for freeing each element when the array is
+destroyed either via g_ptr_array_unref(), when g_ptr_array_free() is called
+with @free_segment set to %TRUE or when removing elements.
+
+Do not use it if @len is greater than %G_MAXUINT. #GPtrArray
+stores the length of its data in #guint, which may be shorter than
+#gsize.</doc>
+        <return-value transfer-ownership="full">
+          <doc xml:space="preserve">A new #GPtrArray</doc>
           <array name="GLib.PtrArray" c:type="GPtrArray*">
             <type name="gpointer" c:type="gpointer"/>
           </array>
         </return-value>
         <parameters>
           <parameter name="data" transfer-ownership="none" nullable="1" allow-none="1">
-            <type name="gpointer" c:type="gpointer*"/>
+            <doc xml:space="preserve">an array of pointers,
+or %NULL for an empty array</doc>
+            <array length="1" zero-terminated="0" c:type="gpointer*">
+              <type name="gpointer" c:type="gpointer"/>
+            </array>
           </parameter>
           <parameter name="len" transfer-ownership="none">
+            <doc xml:space="preserve">the number of pointers in @data</doc>
             <type name="gsize" c:type="gsize"/>
           </parameter>
-          <parameter name="copy_func" transfer-ownership="none" scope="notified" closure="3" destroy="4">
+          <parameter name="copy_func" transfer-ownership="none" nullable="1" allow-none="1" scope="notified" closure="3" destroy="4">
+            <doc xml:space="preserve">a copy function used to copy every element in the
+  array or %NULL.</doc>
             <type name="CopyFunc" c:type="GCopyFunc"/>
           </parameter>
           <parameter name="copy_func_user_data" transfer-ownership="none" nullable="1" allow-none="1">
+            <doc xml:space="preserve">user data passed to @copy_func, or %NULL</doc>
             <type name="gpointer" c:type="gpointer"/>
           </parameter>
-          <parameter name="element_free_func" transfer-ownership="none" scope="async">
+          <parameter name="element_free_func" transfer-ownership="none" nullable="1" allow-none="1" scope="async">
+            <doc xml:space="preserve">a function to free elements on @array
+  destruction or %NULL</doc>
             <type name="DestroyNotify" c:type="GDestroyNotify"/>
           </parameter>
         </parameters>
       </function>
-      <function name="new_from_null_terminated_array" c:identifier="g_ptr_array_new_from_null_terminated_array" introspectable="0">
-        <return-value>
+      <function name="new_from_null_terminated_array" c:identifier="g_ptr_array_new_from_null_terminated_array" version="2.76" introspectable="0">
+        <doc xml:space="preserve">Creates a new #GPtrArray copying the pointers from @data after having
+computed the length of it and with a reference count of 1.
+This avoids having to manually add each element one by one.
+If @copy_func is provided, then it is used to copy the data in the new
+array.
+It also set @element_free_func for freeing each element when the array is
+destroyed either via g_ptr_array_unref(), when g_ptr_array_free() is called
+with @free_segment set to %TRUE or when removing elements.
+
+Do not use it if the @data has more than %G_MAXUINT elements. #GPtrArray
+stores the length of its data in #guint, which may be shorter than
+#gsize.</doc>
+        <return-value transfer-ownership="full">
+          <doc xml:space="preserve">A new #GPtrArray</doc>
           <array name="GLib.PtrArray" c:type="GPtrArray*">
             <type name="gpointer" c:type="gpointer"/>
           </array>
         </return-value>
         <parameters>
           <parameter name="data" transfer-ownership="none" nullable="1" allow-none="1">
-            <type name="gpointer" c:type="gpointer*"/>
+            <doc xml:space="preserve">an array of
+  pointers, %NULL terminated; or %NULL for an empty array</doc>
+            <array c:type="gpointer*">
+              <type name="gpointer" c:type="gpointer"/>
+            </array>
           </parameter>
-          <parameter name="copy_func" transfer-ownership="none" scope="notified" closure="2" destroy="3">
+          <parameter name="copy_func" transfer-ownership="none" nullable="1" allow-none="1" scope="notified" closure="2" destroy="3">
+            <doc xml:space="preserve">a copy function used to copy every element in the
+  array or %NULL.</doc>
             <type name="CopyFunc" c:type="GCopyFunc"/>
           </parameter>
           <parameter name="copy_func_user_data" transfer-ownership="none" nullable="1" allow-none="1">
+            <doc xml:space="preserve">user data passed to @copy_func, or %NULL</doc>
             <type name="gpointer" c:type="gpointer"/>
           </parameter>
-          <parameter name="element_free_func" transfer-ownership="none" scope="async">
+          <parameter name="element_free_func" transfer-ownership="none" nullable="1" allow-none="1" scope="async">
+            <doc xml:space="preserve">a function to free elements on @array
+  destruction or %NULL</doc>
             <type name="DestroyNotify" c:type="GDestroyNotify"/>
           </parameter>
         </parameters>
@@ -18737,35 +18904,79 @@ zero or be %NULL.</doc>
           </parameter>
         </parameters>
       </function>
-      <function name="new_take" c:identifier="g_ptr_array_new_take" introspectable="0">
-        <return-value>
+      <function name="new_take" c:identifier="g_ptr_array_new_take" version="2.76" introspectable="0">
+        <doc xml:space="preserve">Creates a new #GPtrArray with @data as pointers, @len as length and a
+reference count of 1.
+
+This avoids having to copy such data manually. @data will eventually be
+freed using g_free(), so must have been allocated with a suitable allocator.
+
+It also sets @element_free_func for freeing each element when the array is
+destroyed either via g_ptr_array_unref(), when g_ptr_array_free() is called
+with @free_segment set to %TRUE or when removing elements.
+
+Do not use it if @len is greater than %G_MAXUINT. #GPtrArray
+stores the length of its data in #guint, which may be shorter than
+#gsize.</doc>
+        <return-value transfer-ownership="full">
+          <doc xml:space="preserve">A new #GPtrArray</doc>
           <array name="GLib.PtrArray" c:type="GPtrArray*">
             <type name="gpointer" c:type="gpointer"/>
           </array>
         </return-value>
         <parameters>
-          <parameter name="data" transfer-ownership="none" nullable="1" allow-none="1">
-            <type name="gpointer" c:type="gpointer*"/>
+          <parameter name="data" transfer-ownership="full" nullable="1" allow-none="1">
+            <doc xml:space="preserve">an array of pointers,
+   or %NULL for an empty array</doc>
+            <array length="1" zero-terminated="0" c:type="gpointer*">
+              <type name="gpointer" c:type="gpointer"/>
+            </array>
           </parameter>
           <parameter name="len" transfer-ownership="none">
+            <doc xml:space="preserve">the number of pointers in @data</doc>
             <type name="gsize" c:type="gsize"/>
           </parameter>
-          <parameter name="element_free_func" transfer-ownership="none" scope="async">
+          <parameter name="element_free_func" transfer-ownership="none" nullable="1" allow-none="1" scope="async">
+            <doc xml:space="preserve">A function to free elements on @array
+  destruction or %NULL</doc>
             <type name="DestroyNotify" c:type="GDestroyNotify"/>
           </parameter>
         </parameters>
       </function>
-      <function name="new_take_null_terminated" c:identifier="g_ptr_array_new_take_null_terminated" introspectable="0">
-        <return-value>
+      <function name="new_take_null_terminated" c:identifier="g_ptr_array_new_take_null_terminated" version="2.76" introspectable="0">
+        <doc xml:space="preserve">Creates a new #GPtrArray with @data as pointers, computing the length of it
+and setting the reference count to 1.
+
+This avoids having to copy such data manually. @data will eventually be
+freed using g_free(), so must have been allocated with a suitable allocator.
+
+The length is calculated by iterating through @data until the first %NULL
+element is found.
+
+It also sets @element_free_func for freeing each element when the array is
+destroyed either via g_ptr_array_unref(), when g_ptr_array_free() is called
+with @free_segment set to %TRUE or when removing elements.
+
+Do not use it if the @data length is greater than %G_MAXUINT. #GPtrArray
+stores the length of its data in #guint, which may be shorter than
+#gsize.</doc>
+        <return-value transfer-ownership="full">
+          <doc xml:space="preserve">A new #GPtrArray</doc>
           <array name="GLib.PtrArray" c:type="GPtrArray*">
             <type name="gpointer" c:type="gpointer"/>
           </array>
         </return-value>
         <parameters>
-          <parameter name="data" transfer-ownership="none" nullable="1" allow-none="1">
-            <type name="gpointer" c:type="gpointer*"/>
+          <parameter name="data" transfer-ownership="full" nullable="1" allow-none="1">
+            <doc xml:space="preserve">an array
+ of pointers, %NULL terminated, or %NULL for an empty array</doc>
+            <array c:type="gpointer*">
+              <type name="gpointer" c:type="gpointer"/>
+            </array>
           </parameter>
-          <parameter name="element_free_func" transfer-ownership="none" scope="async">
+          <parameter name="element_free_func" transfer-ownership="none" nullable="1" allow-none="1" scope="async">
+            <doc xml:space="preserve">a function to free elements on @array
+  destruction or %NULL</doc>
             <type name="DestroyNotify" c:type="GDestroyNotify"/>
           </parameter>
         </parameters>
@@ -18998,12 +19209,15 @@ the size of the array is still 0.</doc>
       <function name="sort" c:identifier="g_ptr_array_sort" introspectable="0">
         <doc xml:space="preserve">Sorts the array, using @compare_func which should be a qsort()-style
 comparison function (returns less than zero for first arg is less
-than second arg, zero for equal, greater than zero if irst arg is
+than second arg, zero for equal, greater than zero if first arg is
 greater than second arg).
 
 Note that the comparison function for g_ptr_array_sort() doesn't
 take the pointers from the array as arguments, it takes pointers to
-the pointers in the array. Here is a full example of usage:
+the pointers in the array.
+
+Use g_ptr_array_sort_with_data() if you want to use normal
+#GCompareFuncs, otherwise here is a full example of use:
 
 |[&lt;!-- language="C" --&gt;
 typedef struct
@@ -19047,13 +19261,64 @@ This is guaranteed to be a stable sort since version 2.32.</doc>
           </parameter>
         </parameters>
       </function>
+      <function name="sort_values" c:identifier="g_ptr_array_sort_values" version="2.76" introspectable="0">
+        <doc xml:space="preserve">Sorts the array, using @compare_func which should be a qsort()-style
+comparison function (returns less than zero for first arg is less
+than second arg, zero for equal, greater than zero if first arg is
+greater than second arg).
+
+This is guaranteed to be a stable sort.</doc>
+        <return-value transfer-ownership="none">
+          <type name="none" c:type="void"/>
+        </return-value>
+        <parameters>
+          <parameter name="array" transfer-ownership="none">
+            <doc xml:space="preserve">a #GPtrArray</doc>
+            <array name="GLib.PtrArray" c:type="GPtrArray*">
+              <type name="gpointer" c:type="gpointer"/>
+            </array>
+          </parameter>
+          <parameter name="compare_func" transfer-ownership="none">
+            <doc xml:space="preserve">a #GCompareFunc comparison function</doc>
+            <type name="CompareFunc" c:type="GCompareFunc"/>
+          </parameter>
+        </parameters>
+      </function>
+      <function name="sort_values_with_data" c:identifier="g_ptr_array_sort_values_with_data" version="2.76" introspectable="0">
+        <doc xml:space="preserve">Like g_ptr_array_sort_values(), but the comparison function has an extra
+user data argument.
+
+This is guaranteed to be a stable sort.</doc>
+        <return-value transfer-ownership="none">
+          <type name="none" c:type="void"/>
+        </return-value>
+        <parameters>
+          <parameter name="array" transfer-ownership="none">
+            <doc xml:space="preserve">a #GPtrArray</doc>
+            <array name="GLib.PtrArray" c:type="GPtrArray*">
+              <type name="gpointer" c:type="gpointer"/>
+            </array>
+          </parameter>
+          <parameter name="compare_func" transfer-ownership="none" closure="2">
+            <doc xml:space="preserve">a #GCompareDataFunc comparison function</doc>
+            <type name="CompareDataFunc" c:type="GCompareDataFunc"/>
+          </parameter>
+          <parameter name="user_data" transfer-ownership="none" nullable="1" allow-none="1">
+            <doc xml:space="preserve">data to pass to @compare_func</doc>
+            <type name="gpointer" c:type="gpointer"/>
+          </parameter>
+        </parameters>
+      </function>
       <function name="sort_with_data" c:identifier="g_ptr_array_sort_with_data" introspectable="0">
         <doc xml:space="preserve">Like g_ptr_array_sort(), but the comparison function has an extra
 user data argument.
 
 Note that the comparison function for g_ptr_array_sort_with_data()
 doesn't take the pointers from the array as arguments, it takes
-pointers to the pointers in the array. Here is a full example of use:
+pointers to the pointers in the array.
+
+Use g_ptr_array_sort_with_data() if you want to use normal
+#GCompareDataFuncs, otherwise here is a full example of use:
 
 |[&lt;!-- language="C" --&gt;
 typedef enum { SORT_NAME, SORT_SIZE } SortMode;
@@ -20289,7 +20554,7 @@ by the current thread leads to undefined behaviour.</doc>
         </parameters>
       </method>
     </record>
-    <record name="Rand" c:type="GRand" disguised="1">
+    <record name="Rand" c:type="GRand" disguised="1" opaque="1">
       <doc xml:space="preserve">The GRand struct is an opaque data structure. It should only be
 accessed through the g_rand_* functions.</doc>
       <method name="copy" c:identifier="g_rand_copy" version="2.4" introspectable="0">
@@ -20601,7 +20866,7 @@ locked by the current thread leads to undefined behaviour.</doc>
         </parameters>
       </method>
     </record>
-    <record name="Regex" c:type="GRegex" version="2.14" glib:type-name="GRegex" glib:get-type="g_regex_get_type" c:symbol-prefix="regex">
+    <record name="Regex" c:type="GRegex" opaque="1" version="2.14" glib:type-name="GRegex" glib:get-type="g_regex_get_type" c:symbol-prefix="regex">
       <doc xml:space="preserve">The g_regex_*() functions implement regular
 expression pattern matching using syntax and semantics similar to
 Perl regular expression.
@@ -23590,7 +23855,7 @@ g_io_channel_seek_position() operation.</doc>
         <doc xml:space="preserve">the end of the file.</doc>
       </member>
     </enumeration>
-    <record name="Sequence" c:type="GSequence" disguised="1">
+    <record name="Sequence" c:type="GSequence" disguised="1" opaque="1">
       <doc xml:space="preserve">The #GSequence struct is an opaque data type representing a
 [sequence][glib-Sequences] data type.</doc>
       <method name="append" c:identifier="g_sequence_append" version="2.14">
@@ -24282,7 +24547,7 @@ to point into difference sequences.</doc>
         </parameters>
       </function>
     </record>
-    <record name="SequenceIter" c:type="GSequenceIter" disguised="1">
+    <record name="SequenceIter" c:type="GSequenceIter" disguised="1" opaque="1">
       <doc xml:space="preserve">The #GSequenceIter struct is an opaque data type representing an
 iterator pointing into a #GSequence.</doc>
       <method name="compare" c:identifier="g_sequence_iter_compare" version="2.14">
@@ -24427,8 +24692,7 @@ if @a comes before @b, and a positive value if @b comes before @a.</doc>
           <doc xml:space="preserve">a #GSequenceIter</doc>
           <type name="SequenceIter" c:type="GSequenceIter*"/>
         </parameter>
-        <parameter name="user_data" transfer-ownership="none" nullable="1" allow-none="1" closure="2">
-          <doc xml:space="preserve">user data</doc>
+        <parameter name="data" transfer-ownership="none" nullable="1" allow-none="1">
           <type name="gpointer" c:type="gpointer"/>
         </parameter>
       </parameters>
@@ -25583,7 +25847,7 @@ See: g_idle_add_once(), g_timeout_add_once()</doc>
         </parameter>
       </parameters>
     </callback>
-    <record name="SourcePrivate" c:type="GSourcePrivate" disguised="1"/>
+    <record name="SourcePrivate" c:type="GSourcePrivate" disguised="1" opaque="1"/>
     <callback name="SpawnChildSetupFunc" c:type="GSpawnChildSetupFunc">
       <doc xml:space="preserve">Specifies the type of the setup function passed to g_spawn_async(),
 g_spawn_sync() and g_spawn_async_with_pipes(), which can, in very
@@ -25619,8 +25883,8 @@ list to the `g_spawn...` function.</doc>
         <type name="none" c:type="void"/>
       </return-value>
       <parameters>
-        <parameter name="user_data" transfer-ownership="none" nullable="1" allow-none="1" closure="0">
-          <doc xml:space="preserve">user data to pass to the function.</doc>
+        <parameter name="data" transfer-ownership="none" nullable="1" allow-none="1">
+          <doc xml:space="preserve">user data passed to the function.</doc>
           <type name="gpointer" c:type="gpointer"/>
         </parameter>
       </parameters>
@@ -25747,7 +26011,7 @@ list to the `g_spawn...` function.</doc>
         <doc xml:space="preserve">The child's standard input is attached to `/dev/null`.</doc>
       </member>
     </bitfield>
-    <record name="StatBuf" c:type="GStatBuf" disguised="1">
+    <record name="StatBuf" c:type="GStatBuf" disguised="1" opaque="1">
       <doc xml:space="preserve">A type corresponding to the appropriate struct type for the stat()
 system call, depending on the platform and/or compiler being used.
 
@@ -26508,7 +26772,7 @@ the arguments to the format string are passed as a va_list.</doc>
         </parameters>
       </method>
     </record>
-    <record name="StringChunk" c:type="GStringChunk" disguised="1">
+    <record name="StringChunk" c:type="GStringChunk" disguised="1" opaque="1">
       <doc xml:space="preserve">An opaque data structure representing String Chunks.
 It should only be accessed by using the following functions.</doc>
       <method name="clear" c:identifier="g_string_chunk_clear" version="2.14">
@@ -26644,7 +26908,7 @@ though you should not change anything after the end of the string.</doc>
         </parameters>
       </function>
     </record>
-    <record name="StrvBuilder" c:type="GStrvBuilder" disguised="1" version="2.68">
+    <record name="StrvBuilder" c:type="GStrvBuilder" disguised="1" opaque="1" version="2.68">
       <doc xml:space="preserve">#GStrvBuilder is a method of easily building dynamically sized
 NULL-terminated string arrays.
 
@@ -26824,7 +27088,7 @@ to create the directory if it doesn&#x2019;t exist.</doc>
         </parameter>
       </parameters>
     </function-macro>
-    <record name="TestCase" c:type="GTestCase" disguised="1">
+    <record name="TestCase" c:type="GTestCase" disguised="1" opaque="1">
       <doc xml:space="preserve">An opaque structure representing a test case.</doc>
       <method name="free" c:identifier="g_test_case_free" version="2.70">
         <doc xml:space="preserve">Free the @test_case.</doc>
@@ -27097,7 +27361,7 @@ not show stdout and stderr.</doc>
     later tests with g_test_trap_assert_stderr().</doc>
       </member>
     </bitfield>
-    <record name="TestSuite" c:type="GTestSuite" disguised="1">
+    <record name="TestSuite" c:type="GTestSuite" disguised="1" opaque="1">
       <doc xml:space="preserve">An opaque structure representing a test suite.</doc>
       <method name="add" c:identifier="g_test_suite_add" version="2.16">
         <doc xml:space="preserve">Adds @test_case to @suite.</doc>
@@ -27171,7 +27435,7 @@ which is deprecated. g_test_trap_subprocess() uses
     It is redirected to `/dev/null` otherwise.</doc>
       </member>
     </bitfield>
-    <record name="Thread" c:type="GThread" glib:type-name="GThread" glib:get-type="g_thread_get_type" c:symbol-prefix="thread">
+    <record name="Thread" c:type="GThread" opaque="1" glib:type-name="GThread" glib:get-type="g_thread_get_type" c:symbol-prefix="thread">
       <doc xml:space="preserve">The #GThread struct represents a running thread. This struct
 is returned by g_thread_new() or g_thread_try_new(). You can
 obtain the #GThread struct representing the current thread by
@@ -27384,8 +27648,7 @@ or g_thread_try_new().</doc>
         <type name="gpointer" c:type="gpointer"/>
       </return-value>
       <parameters>
-        <parameter name="user_data" transfer-ownership="none" nullable="1" allow-none="1" closure="0">
-          <doc xml:space="preserve">data passed to the thread</doc>
+        <parameter name="data" transfer-ownership="none" nullable="1" allow-none="1">
           <type name="gpointer" c:type="gpointer"/>
         </parameter>
       </parameters>
@@ -27905,7 +28168,7 @@ g_date_time_unref (dt);
         </parameters>
       </function>
     </record>
-    <record name="TimeZone" c:type="GTimeZone" version="2.26" glib:type-name="GTimeZone" glib:get-type="g_time_zone_get_type" c:symbol-prefix="time_zone">
+    <record name="TimeZone" c:type="GTimeZone" opaque="1" version="2.26" glib:type-name="GTimeZone" glib:get-type="g_time_zone_get_type" c:symbol-prefix="time_zone">
       <doc xml:space="preserve">#GTimeZone is an opaque structure whose members cannot be accessed
 directly.</doc>
       <constructor name="new" c:identifier="g_time_zone_new" version="2.26" deprecated="1" deprecated-version="2.68">
@@ -28240,7 +28503,7 @@ west of GMT, positive numbers for east).</doc>
         </parameters>
       </method>
     </record>
-    <record name="Timer" c:type="GTimer" disguised="1">
+    <record name="Timer" c:type="GTimer" disguised="1" opaque="1">
       <doc xml:space="preserve">Opaque datatype that records a start time.</doc>
       <method name="continue" c:identifier="g_timer_continue" version="2.4">
         <doc xml:space="preserve">Resumes a timer that has previously been stopped with
@@ -28494,7 +28757,7 @@ strings, for &lt;option&gt;--help&lt;/option&gt; output.</doc>
           <doc xml:space="preserve">the untranslated string</doc>
           <type name="utf8" c:type="const gchar*"/>
         </parameter>
-        <parameter name="user_data" transfer-ownership="none" nullable="1" allow-none="1" closure="1">
+        <parameter name="data" transfer-ownership="none" nullable="1" allow-none="1">
           <doc xml:space="preserve">user data specified when installing the function, e.g.
  in g_option_group_set_translate_func()</doc>
           <type name="gpointer" c:type="gpointer"/>
@@ -28619,8 +28882,7 @@ parameter passed to g_tree_traverse(). If the function returns
           <doc xml:space="preserve">the value corresponding to the key</doc>
           <type name="gpointer" c:type="gpointer"/>
         </parameter>
-        <parameter name="user_data" transfer-ownership="none" nullable="1" allow-none="1" closure="2">
-          <doc xml:space="preserve">user data passed to g_tree_traverse()</doc>
+        <parameter name="data" transfer-ownership="none" nullable="1" allow-none="1">
           <type name="gpointer" c:type="gpointer"/>
         </parameter>
       </parameters>
@@ -28639,7 +28901,7 @@ stopped.</doc>
           <doc xml:space="preserve">a #GTreeNode</doc>
           <type name="TreeNode" c:type="GTreeNode*"/>
         </parameter>
-        <parameter name="user_data" transfer-ownership="none" nullable="1" allow-none="1" closure="1">
+        <parameter name="data" transfer-ownership="none" nullable="1" allow-none="1">
           <doc xml:space="preserve">user data passed to g_tree_foreach_node()</doc>
           <type name="gpointer" c:type="gpointer"/>
         </parameter>
@@ -28678,7 +28940,7 @@ illustrated here:
              efficient than the other orders.</doc>
       </member>
     </enumeration>
-    <record name="Tree" c:type="GTree" glib:type-name="GTree" glib:get-type="g_tree_get_type" c:symbol-prefix="tree">
+    <record name="Tree" c:type="GTree" opaque="1" glib:type-name="GTree" glib:get-type="g_tree_get_type" c:symbol-prefix="tree">
       <doc xml:space="preserve">The GTree struct is an opaque data structure representing a
 [balanced binary tree][glib-Balanced-Binary-Trees]. It should be
 accessed only by using the following functions.</doc>
@@ -29285,7 +29547,7 @@ than the searched key.</doc>
         </parameters>
       </method>
     </record>
-    <record name="TreeNode" c:type="GTreeNode" disguised="1" version="2.68">
+    <record name="TreeNode" c:type="GTreeNode" disguised="1" opaque="1" version="2.68">
       <doc xml:space="preserve">An opaque type which identifies a specific node in a #GTree.</doc>
       <method name="key" c:identifier="g_tree_node_key" version="2.68">
         <doc xml:space="preserve">Gets the key stored at a particular tree node.</doc>
@@ -30193,7 +30455,7 @@ triggers.</doc>
         </parameter>
       </parameters>
     </callback>
-    <record name="Uri" c:type="GUri" version="2.66" glib:type-name="GUri" glib:get-type="g_uri_get_type" c:symbol-prefix="uri">
+    <record name="Uri" c:type="GUri" opaque="1" version="2.66" glib:type-name="GUri" glib:get-type="g_uri_get_type" c:symbol-prefix="uri">
       <doc xml:space="preserve">The #GUri type and related functions can be used to parse URIs into
 their components, and build valid URIs from individual components.
 
@@ -31693,7 +31955,7 @@ functions, then using functions that were deprecated in version
 using functions deprecated in later releases will not).</doc>
       <type name="gint" c:type="gint"/>
     </constant>
-    <record name="Variant" c:type="GVariant" version="2.24" glib:type-name="GVariant" glib:get-type="intern" c:symbol-prefix="variant">
+    <record name="Variant" c:type="GVariant" opaque="1" version="2.24" glib:type-name="GVariant" glib:get-type="intern" c:symbol-prefix="variant">
       <doc xml:space="preserve">#GVariant is a variant datatype; it can contain one or more values
 along with information about the type of the values.
 
@@ -32707,6 +32969,11 @@ This function is an identity mapping on any value that does not
 contain multi-byte numeric data.  That include strings, booleans,
 bytes and containers containing only these things (recursively).
 
+While this function can safely handle untrusted, non-normal data, it is
+recommended to check whether the input is in normal form beforehand, using
+g_variant_is_normal_form(), and to reject non-normal inputs if your
+application can be strict about what inputs it rejects.
+
 The returned value is always in normal form and is marked as trusted.
 A full, not floating, reference is returned.</doc>
         <return-value transfer-ownership="full">
@@ -33365,7 +33632,9 @@ is in normal form.  If it is found to be in normal form then it is
 marked as trusted and a new reference to it is returned.
 
 If @value is found not to be in normal form then a new trusted
-#GVariant is created with the same value as @value.
+#GVariant is created with the same value as @value. The non-normal parts of
+@value will be replaced with default values which are guaranteed to be in
+normal form.
 
 It makes sense to call this function if you've received #GVariant
 data from untrusted sources and you want to ensure your serialized
@@ -35342,7 +35611,7 @@ Here is an example for iterating with g_variant_iter_next_value():
         <doc xml:space="preserve">variant was too deeply nested; #GVariant is only guaranteed to handle nesting up to 64 levels (Since: 2.64)</doc>
       </member>
     </enumeration>
-    <record name="VariantType" c:type="GVariantType" glib:type-name="GVariantType" glib:get-type="g_variant_type_get_gtype" c:symbol-prefix="variant_type">
+    <record name="VariantType" c:type="GVariantType" opaque="1" glib:type-name="GVariantType" glib:get-type="g_variant_type_get_gtype" c:symbol-prefix="variant_type">
       <doc xml:space="preserve">This section introduces the GVariant type system. It is based, in
 large part, on the D-Bus type system, with two major changes and
 some minor lifting of restrictions. The
@@ -36500,6 +36769,92 @@ such as "27". You must use variables.</doc>
         </parameter>
       </parameters>
     </function-macro>
+    <function name="array_new_take" c:identifier="g_array_new_take" moved-to="Array.new_take" version="2.76" introspectable="0">
+      <doc xml:space="preserve">Creates a new #GArray with @data as array data, @len as length and a
+reference count of 1.
+
+This avoids having to copy the data manually, when it can just be
+inherited. @data will eventually be freed using g_free(), so must
+have been allocated with a suitable allocator.
+
+In case the elements need to be cleared when the array is freed, use
+g_array_set_clear_func() to set a #GDestroyNotify function to perform
+such task.
+
+Do not use it if @len or @element_size are greater than %G_MAXUINT.
+#GArray stores the length of its data in #guint, which may be shorter
+than #gsize.</doc>
+      <return-value transfer-ownership="full">
+        <doc xml:space="preserve">A new #GArray</doc>
+        <array name="GLib.Array" c:type="GArray*">
+          <type name="gpointer" c:type="gpointer"/>
+        </array>
+      </return-value>
+      <parameters>
+        <parameter name="data" transfer-ownership="full" nullable="1" allow-none="1">
+          <doc xml:space="preserve">an array of
+  elements of @element_size, or %NULL for an empty array</doc>
+          <array length="1" zero-terminated="0" c:type="gpointer">
+            <type name="gpointer" c:type="gpointer"/>
+          </array>
+        </parameter>
+        <parameter name="len" transfer-ownership="none">
+          <doc xml:space="preserve">the number of elements in @data</doc>
+          <type name="gsize" c:type="gsize"/>
+        </parameter>
+        <parameter name="clear" transfer-ownership="none">
+          <doc xml:space="preserve">%TRUE if #GArray elements should be automatically cleared
+    to 0 when they are allocated</doc>
+          <type name="gboolean" c:type="gboolean"/>
+        </parameter>
+        <parameter name="element_size" transfer-ownership="none">
+          <doc xml:space="preserve">the size of each element in bytes</doc>
+          <type name="gsize" c:type="gsize"/>
+        </parameter>
+      </parameters>
+    </function>
+    <function name="array_new_take_zero_terminated" c:identifier="g_array_new_take_zero_terminated" moved-to="Array.new_take_zero_terminated" version="2.76" introspectable="0">
+      <doc xml:space="preserve">Creates a new #GArray with @data as array data, computing the length of it
+and setting the reference count to 1.
+
+This avoids having to copy the data manually, when it can just be
+inherited. @data will eventually be freed using g_free(), so must
+have been allocated with a suitable allocator.
+
+The length is calculated by iterating through @data until the first %NULL
+element is found.
+
+In case the elements need to be cleared when the array is freed, use
+g_array_set_clear_func() to set a #GDestroyNotify function to perform
+such task.
+
+Do not use it if @data length or @element_size are greater than %G_MAXUINT.
+#GArray stores the length of its data in #guint, which may be shorter
+than #gsize.</doc>
+      <return-value transfer-ownership="full">
+        <doc xml:space="preserve">A new #GArray</doc>
+        <array name="GLib.Array" c:type="GArray*">
+          <type name="gpointer" c:type="gpointer"/>
+        </array>
+      </return-value>
+      <parameters>
+        <parameter name="data" transfer-ownership="none">
+          <doc xml:space="preserve">an array of elements of @element_size</doc>
+          <array c:type="gpointer">
+            <type name="gpointer" c:type="gpointer"/>
+          </array>
+        </parameter>
+        <parameter name="clear" transfer-ownership="none">
+          <doc xml:space="preserve">%TRUE if #GArray elements should be automatically cleared
+    to 0 when they are allocated</doc>
+          <type name="gboolean" c:type="gboolean"/>
+        </parameter>
+        <parameter name="element_size" transfer-ownership="none">
+          <doc xml:space="preserve">the size of each element in bytes</doc>
+          <type name="gsize" c:type="gsize"/>
+        </parameter>
+      </parameters>
+    </function>
     <function-macro name="array_prepend_val" c:identifier="g_array_prepend_val" introspectable="0">
       <doc xml:space="preserve">Adds the value on to the start of the array. The array will grow in
 size automatically if necessary.
@@ -39735,9 +40090,9 @@ will experience undefined behaviour.</doc>
         <type name="none" c:type="void"/>
       </return-value>
       <parameters>
-        <parameter name="pp" transfer-ownership="none">
-          <doc xml:space="preserve">a pointer to a variable, struct member etc. holding a
-   pointer</doc>
+        <parameter name="pp" direction="inout" caller-allocates="0" transfer-ownership="full">
+          <doc xml:space="preserve">a pointer to a
+  variable, struct member etc. holding a pointer</doc>
           <type name="gpointer" c:type="gpointer*"/>
         </parameter>
         <parameter name="destroy" transfer-ownership="none" scope="async">
@@ -43557,6 +43912,58 @@ release of GLib. It does nothing.</doc>
         </parameter>
       </parameters>
     </function-macro>
+    <function name="hash_table_get_keys_as_ptr_array" c:identifier="g_hash_table_get_keys_as_ptr_array" moved-to="HashTable.get_keys_as_ptr_array" version="2.76" introspectable="0">
+      <doc xml:space="preserve">Retrieves every key inside @hash_table, as a #GPtrArray.
+The returned data is valid until changes to the hash release those keys.
+
+This iterates over every entry in the hash table to build its return value.
+To iterate over the entries in a #GHashTable more efficiently, use a
+#GHashTableIter.
+
+You should always unref the returned array with g_ptr_array_unref().</doc>
+      <return-value transfer-ownership="container">
+        <doc xml:space="preserve">a #GPtrArray containing each key from
+the table. Unref with with g_ptr_array_unref() when done.</doc>
+        <array name="GLib.PtrArray" c:type="GPtrArray*">
+          <type name="gpointer" c:type="gpointer"/>
+        </array>
+      </return-value>
+      <parameters>
+        <parameter name="hash_table" transfer-ownership="none">
+          <doc xml:space="preserve">a #GHashTable</doc>
+          <type name="GLib.HashTable" c:type="GHashTable*">
+            <type name="gpointer" c:type="gpointer"/>
+            <type name="gpointer" c:type="gpointer"/>
+          </type>
+        </parameter>
+      </parameters>
+    </function>
+    <function name="hash_table_get_values_as_ptr_array" c:identifier="g_hash_table_get_values_as_ptr_array" moved-to="HashTable.get_values_as_ptr_array" version="2.76" introspectable="0">
+      <doc xml:space="preserve">Retrieves every value inside @hash_table, as a #GPtrArray.
+The returned data is valid until changes to the hash release those values.
+
+This iterates over every entry in the hash table to build its return value.
+To iterate over the entries in a #GHashTable more efficiently, use a
+#GHashTableIter.
+
+You should always unref the returned array with g_ptr_array_unref().</doc>
+      <return-value transfer-ownership="container">
+        <doc xml:space="preserve">a #GPtrArray containing each value from
+the table. Unref with with g_ptr_array_unref() when done.</doc>
+        <array name="GLib.PtrArray" c:type="GPtrArray*">
+          <type name="gpointer" c:type="gpointer"/>
+        </array>
+      </return-value>
+      <parameters>
+        <parameter name="hash_table" transfer-ownership="none">
+          <doc xml:space="preserve">a #GHashTable</doc>
+          <type name="GLib.HashTable" c:type="GHashTable*">
+            <type name="gpointer" c:type="gpointer"/>
+            <type name="gpointer" c:type="gpointer"/>
+          </type>
+        </parameter>
+      </parameters>
+    </function>
     <function name="hash_table_insert" c:identifier="g_hash_table_insert" moved-to="HashTable.insert">
       <doc xml:space="preserve">Inserts a new key and value into a #GHashTable.
 
@@ -43798,6 +44205,50 @@ calling the key and value destroy functions.</doc>
 without calling the key and value destroy functions.</doc>
       <return-value transfer-ownership="none">
         <type name="none" c:type="void"/>
+      </return-value>
+      <parameters>
+        <parameter name="hash_table" transfer-ownership="none">
+          <doc xml:space="preserve">a #GHashTable</doc>
+          <type name="GLib.HashTable" c:type="GHashTable*">
+            <type name="gpointer" c:type="gpointer"/>
+            <type name="gpointer" c:type="gpointer"/>
+          </type>
+        </parameter>
+      </parameters>
+    </function>
+    <function name="hash_table_steal_all_keys" c:identifier="g_hash_table_steal_all_keys" moved-to="HashTable.steal_all_keys" version="2.76" introspectable="0">
+      <doc xml:space="preserve">Removes all keys and their associated values from a #GHashTable
+without calling the key destroy functions, returning the keys
+as a #GPtrArray with the free func set to the @hash_table key
+destroy function.</doc>
+      <return-value transfer-ownership="container">
+        <doc xml:space="preserve">a #GPtrArray containing each key of
+the table. Unref with with g_ptr_array_unref() when done.</doc>
+        <array name="GLib.PtrArray" c:type="GPtrArray*">
+          <type name="gpointer" c:type="gpointer"/>
+        </array>
+      </return-value>
+      <parameters>
+        <parameter name="hash_table" transfer-ownership="none">
+          <doc xml:space="preserve">a #GHashTable</doc>
+          <type name="GLib.HashTable" c:type="GHashTable*">
+            <type name="gpointer" c:type="gpointer"/>
+            <type name="gpointer" c:type="gpointer"/>
+          </type>
+        </parameter>
+      </parameters>
+    </function>
+    <function name="hash_table_steal_all_values" c:identifier="g_hash_table_steal_all_values" moved-to="HashTable.steal_all_values" version="2.76" introspectable="0">
+      <doc xml:space="preserve">Removes all keys and their associated values from a #GHashTable
+without calling the value destroy functions, returning the values
+as a #GPtrArray with the free func set to the @hash_table value
+destroy function.</doc>
+      <return-value transfer-ownership="container">
+        <doc xml:space="preserve">a #GPtrArray containing each value of
+the table. Unref with with g_ptr_array_unref() when done.</doc>
+        <array name="GLib.PtrArray" c:type="GPtrArray*">
+          <type name="gpointer" c:type="gpointer"/>
+        </array>
       </return-value>
       <parameters>
         <parameter name="hash_table" transfer-ownership="none">
@@ -48190,6 +48641,177 @@ so you are responsible for checking it against the array length.</doc>
         </parameter>
       </parameters>
     </function-macro>
+    <function name="ptr_array_new_from_array" c:identifier="g_ptr_array_new_from_array" moved-to="PtrArray.new_from_array" version="2.76" introspectable="0">
+      <doc xml:space="preserve">Creates a new #GPtrArray, copying @len pointers from @data, and setting
+the array&#x2019;s reference count to 1.
+
+This avoids having to manually add each element one by one.
+
+If @copy_func is provided, then it is used to copy each element before
+adding them to the new array. If it is %NULL then the pointers are copied
+directly.
+
+It also sets @element_free_func for freeing each element when the array is
+destroyed either via g_ptr_array_unref(), when g_ptr_array_free() is called
+with @free_segment set to %TRUE or when removing elements.
+
+Do not use it if @len is greater than %G_MAXUINT. #GPtrArray
+stores the length of its data in #guint, which may be shorter than
+#gsize.</doc>
+      <return-value transfer-ownership="full">
+        <doc xml:space="preserve">A new #GPtrArray</doc>
+        <array name="GLib.PtrArray" c:type="GPtrArray*">
+          <type name="gpointer" c:type="gpointer"/>
+        </array>
+      </return-value>
+      <parameters>
+        <parameter name="data" transfer-ownership="none" nullable="1" allow-none="1">
+          <doc xml:space="preserve">an array of pointers,
+or %NULL for an empty array</doc>
+          <array length="1" zero-terminated="0" c:type="gpointer*">
+            <type name="gpointer" c:type="gpointer"/>
+          </array>
+        </parameter>
+        <parameter name="len" transfer-ownership="none">
+          <doc xml:space="preserve">the number of pointers in @data</doc>
+          <type name="gsize" c:type="gsize"/>
+        </parameter>
+        <parameter name="copy_func" transfer-ownership="none" nullable="1" allow-none="1" scope="notified" closure="3" destroy="4">
+          <doc xml:space="preserve">a copy function used to copy every element in the
+  array or %NULL.</doc>
+          <type name="CopyFunc" c:type="GCopyFunc"/>
+        </parameter>
+        <parameter name="copy_func_user_data" transfer-ownership="none" nullable="1" allow-none="1">
+          <doc xml:space="preserve">user data passed to @copy_func, or %NULL</doc>
+          <type name="gpointer" c:type="gpointer"/>
+        </parameter>
+        <parameter name="element_free_func" transfer-ownership="none" nullable="1" allow-none="1" scope="async">
+          <doc xml:space="preserve">a function to free elements on @array
+  destruction or %NULL</doc>
+          <type name="DestroyNotify" c:type="GDestroyNotify"/>
+        </parameter>
+      </parameters>
+    </function>
+    <function name="ptr_array_new_from_null_terminated_array" c:identifier="g_ptr_array_new_from_null_terminated_array" moved-to="PtrArray.new_from_null_terminated_array" version="2.76" introspectable="0">
+      <doc xml:space="preserve">Creates a new #GPtrArray copying the pointers from @data after having
+computed the length of it and with a reference count of 1.
+This avoids having to manually add each element one by one.
+If @copy_func is provided, then it is used to copy the data in the new
+array.
+It also set @element_free_func for freeing each element when the array is
+destroyed either via g_ptr_array_unref(), when g_ptr_array_free() is called
+with @free_segment set to %TRUE or when removing elements.
+
+Do not use it if the @data has more than %G_MAXUINT elements. #GPtrArray
+stores the length of its data in #guint, which may be shorter than
+#gsize.</doc>
+      <return-value transfer-ownership="full">
+        <doc xml:space="preserve">A new #GPtrArray</doc>
+        <array name="GLib.PtrArray" c:type="GPtrArray*">
+          <type name="gpointer" c:type="gpointer"/>
+        </array>
+      </return-value>
+      <parameters>
+        <parameter name="data" transfer-ownership="none" nullable="1" allow-none="1">
+          <doc xml:space="preserve">an array of
+  pointers, %NULL terminated; or %NULL for an empty array</doc>
+          <array c:type="gpointer*">
+            <type name="gpointer" c:type="gpointer"/>
+          </array>
+        </parameter>
+        <parameter name="copy_func" transfer-ownership="none" nullable="1" allow-none="1" scope="notified" closure="2" destroy="3">
+          <doc xml:space="preserve">a copy function used to copy every element in the
+  array or %NULL.</doc>
+          <type name="CopyFunc" c:type="GCopyFunc"/>
+        </parameter>
+        <parameter name="copy_func_user_data" transfer-ownership="none" nullable="1" allow-none="1">
+          <doc xml:space="preserve">user data passed to @copy_func, or %NULL</doc>
+          <type name="gpointer" c:type="gpointer"/>
+        </parameter>
+        <parameter name="element_free_func" transfer-ownership="none" nullable="1" allow-none="1" scope="async">
+          <doc xml:space="preserve">a function to free elements on @array
+  destruction or %NULL</doc>
+          <type name="DestroyNotify" c:type="GDestroyNotify"/>
+        </parameter>
+      </parameters>
+    </function>
+    <function name="ptr_array_new_take" c:identifier="g_ptr_array_new_take" moved-to="PtrArray.new_take" version="2.76" introspectable="0">
+      <doc xml:space="preserve">Creates a new #GPtrArray with @data as pointers, @len as length and a
+reference count of 1.
+
+This avoids having to copy such data manually. @data will eventually be
+freed using g_free(), so must have been allocated with a suitable allocator.
+
+It also sets @element_free_func for freeing each element when the array is
+destroyed either via g_ptr_array_unref(), when g_ptr_array_free() is called
+with @free_segment set to %TRUE or when removing elements.
+
+Do not use it if @len is greater than %G_MAXUINT. #GPtrArray
+stores the length of its data in #guint, which may be shorter than
+#gsize.</doc>
+      <return-value transfer-ownership="full">
+        <doc xml:space="preserve">A new #GPtrArray</doc>
+        <array name="GLib.PtrArray" c:type="GPtrArray*">
+          <type name="gpointer" c:type="gpointer"/>
+        </array>
+      </return-value>
+      <parameters>
+        <parameter name="data" transfer-ownership="full" nullable="1" allow-none="1">
+          <doc xml:space="preserve">an array of pointers,
+   or %NULL for an empty array</doc>
+          <array length="1" zero-terminated="0" c:type="gpointer*">
+            <type name="gpointer" c:type="gpointer"/>
+          </array>
+        </parameter>
+        <parameter name="len" transfer-ownership="none">
+          <doc xml:space="preserve">the number of pointers in @data</doc>
+          <type name="gsize" c:type="gsize"/>
+        </parameter>
+        <parameter name="element_free_func" transfer-ownership="none" nullable="1" allow-none="1" scope="async">
+          <doc xml:space="preserve">A function to free elements on @array
+  destruction or %NULL</doc>
+          <type name="DestroyNotify" c:type="GDestroyNotify"/>
+        </parameter>
+      </parameters>
+    </function>
+    <function name="ptr_array_new_take_null_terminated" c:identifier="g_ptr_array_new_take_null_terminated" moved-to="PtrArray.new_take_null_terminated" version="2.76" introspectable="0">
+      <doc xml:space="preserve">Creates a new #GPtrArray with @data as pointers, computing the length of it
+and setting the reference count to 1.
+
+This avoids having to copy such data manually. @data will eventually be
+freed using g_free(), so must have been allocated with a suitable allocator.
+
+The length is calculated by iterating through @data until the first %NULL
+element is found.
+
+It also sets @element_free_func for freeing each element when the array is
+destroyed either via g_ptr_array_unref(), when g_ptr_array_free() is called
+with @free_segment set to %TRUE or when removing elements.
+
+Do not use it if the @data length is greater than %G_MAXUINT. #GPtrArray
+stores the length of its data in #guint, which may be shorter than
+#gsize.</doc>
+      <return-value transfer-ownership="full">
+        <doc xml:space="preserve">A new #GPtrArray</doc>
+        <array name="GLib.PtrArray" c:type="GPtrArray*">
+          <type name="gpointer" c:type="gpointer"/>
+        </array>
+      </return-value>
+      <parameters>
+        <parameter name="data" transfer-ownership="full" nullable="1" allow-none="1">
+          <doc xml:space="preserve">an array
+ of pointers, %NULL terminated, or %NULL for an empty array</doc>
+          <array c:type="gpointer*">
+            <type name="gpointer" c:type="gpointer"/>
+          </array>
+        </parameter>
+        <parameter name="element_free_func" transfer-ownership="none" nullable="1" allow-none="1" scope="async">
+          <doc xml:space="preserve">a function to free elements on @array
+  destruction or %NULL</doc>
+          <type name="DestroyNotify" c:type="GDestroyNotify"/>
+        </parameter>
+      </parameters>
+    </function>
     <function name="qsort_with_data" c:identifier="g_qsort_with_data" introspectable="0">
       <doc xml:space="preserve">This is just like the standard C qsort() function, but
 the comparison routine accepts a user data argument.
@@ -51172,12 +51794,12 @@ early error case and also in the case that %NULL was given for
       </parameters>
     </function-macro>
     <function name="stpcpy" c:identifier="g_stpcpy">
-      <doc xml:space="preserve">Copies a nul-terminated string into the dest buffer, include the
-trailing nul, and return a pointer to the trailing nul byte.
-This is useful for concatenating multiple strings together
-without having to repeatedly scan for the end.</doc>
+      <doc xml:space="preserve">Copies a nul-terminated string into the destination buffer, including
+the trailing nul byte, and returns a pointer to the trailing nul byte
+in `dest`.  The return value is useful for concatenating multiple
+strings without having to repeatedly scan for the end.</doc>
       <return-value transfer-ownership="full">
-        <doc xml:space="preserve">a pointer to trailing nul byte.</doc>
+        <doc xml:space="preserve">a pointer to the trailing nul byte in `dest`.</doc>
         <type name="utf8" c:type="gchar*"/>
       </return-value>
       <parameters>
@@ -52855,7 +53477,9 @@ joined).</doc>
 In essence, it will be the same string passed as the first argument to
 e.g. g_test_add() when the test was added.
 
-This function returns a valid string only within a test function.</doc>
+This function returns a valid string only within a test function.
+
+Note that this is a test path, not a file system path.</doc>
       <return-value transfer-ownership="none">
         <doc xml:space="preserve">the test path for the test currently being run</doc>
         <type name="utf8" c:type="const char*"/>

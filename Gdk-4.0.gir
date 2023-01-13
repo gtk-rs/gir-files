@@ -909,7 +909,7 @@ provided otherwise.</doc>
         <doc xml:space="preserve">The possible formats that the clipboard can provide its data in.</doc>
         <type name="ContentFormats"/>
       </property>
-      <property name="local" transfer-ownership="none">
+      <property name="local" transfer-ownership="none" default-value="TRUE">
         <attribute name="org.gtk.Property.get" value="gdk_clipboard_is_local"/>
         <doc xml:space="preserve">%TRUE if the contents of the clipboard are owned by this process.</doc>
         <type name="gboolean" c:type="gboolean"/>
@@ -1113,7 +1113,7 @@ This function consumes @error.</doc>
         </parameters>
       </method>
     </class>
-    <record name="ContentFormats" c:type="GdkContentFormats" glib:type-name="GdkContentFormats" glib:get-type="gdk_content_formats_get_type" c:symbol-prefix="content_formats">
+    <record name="ContentFormats" c:type="GdkContentFormats" opaque="1" glib:type-name="GdkContentFormats" glib:get-type="gdk_content_formats_get_type" c:symbol-prefix="content_formats">
       <doc xml:space="preserve">The `GdkContentFormats` structure is used to advertise and negotiate the
 format of content.
 
@@ -1482,7 +1482,7 @@ is returned.</doc>
         </parameters>
       </function>
     </record>
-    <record name="ContentFormatsBuilder" c:type="GdkContentFormatsBuilder" glib:type-name="GdkContentFormatsBuilder" glib:get-type="gdk_content_formats_builder_get_type" c:symbol-prefix="content_formats_builder">
+    <record name="ContentFormatsBuilder" c:type="GdkContentFormatsBuilder" opaque="1" glib:type-name="GdkContentFormatsBuilder" glib:get-type="gdk_content_formats_builder_get_type" c:symbol-prefix="content_formats_builder">
       <doc xml:space="preserve">A `GdkContentFormatsBuilder` is an auxiliary struct used to create
 new `GdkContentFormats`, and should not be kept around.</doc>
       <constructor name="new" c:identifier="gdk_content_formats_builder_new">
@@ -2644,17 +2644,17 @@ If the cursor is a named cursor, %NULL will be returned.</doc>
         <doc xml:space="preserve">Cursor to fall back to if this cursor cannot be displayed.</doc>
         <type name="Cursor"/>
       </property>
-      <property name="hotspot-x" writable="1" construct-only="1" transfer-ownership="none" getter="get_hotspot_x">
+      <property name="hotspot-x" writable="1" construct-only="1" transfer-ownership="none" getter="get_hotspot_x" default-value="0">
         <attribute name="org.gtk.Property.get" value="gdk_cursor_get_hotspot_x"/>
         <doc xml:space="preserve">X position of the cursor hotspot in the cursor image.</doc>
         <type name="gint" c:type="gint"/>
       </property>
-      <property name="hotspot-y" writable="1" construct-only="1" transfer-ownership="none" getter="get_hotspot_y">
+      <property name="hotspot-y" writable="1" construct-only="1" transfer-ownership="none" getter="get_hotspot_y" default-value="0">
         <attribute name="org.gtk.Property.get" value="gdk_cursor_get_hotspot_y"/>
         <doc xml:space="preserve">Y position of the cursor hotspot in the cursor image.</doc>
         <type name="gint" c:type="gint"/>
       </property>
-      <property name="name" writable="1" construct-only="1" transfer-ownership="none" getter="get_name">
+      <property name="name" writable="1" construct-only="1" transfer-ownership="none" getter="get_name" default-value="NULL">
         <attribute name="org.gtk.Property.get" value="gdk_cursor_get_name"/>
         <doc xml:space="preserve">Name of this this cursor.
 
@@ -3059,14 +3059,14 @@ This is only relevant for keyboard devices.</doc>
           </instance-parameter>
         </parameters>
       </method>
-      <property name="caps-lock-state" transfer-ownership="none" getter="get_caps_lock_state">
+      <property name="caps-lock-state" transfer-ownership="none" getter="get_caps_lock_state" default-value="FALSE">
         <attribute name="org.gtk.Property.get" value="gdk_device_get_caps_lock_state"/>
         <doc xml:space="preserve">Whether Caps Lock is on.
 
 This is only relevant for keyboard devices.</doc>
         <type name="gboolean" c:type="gboolean"/>
       </property>
-      <property name="direction" transfer-ownership="none" getter="get_direction">
+      <property name="direction" transfer-ownership="none" getter="get_direction" default-value="PANGO_DIRECTION_NEUTRAL">
         <attribute name="org.gtk.Property.get" value="gdk_device_get_direction"/>
         <doc xml:space="preserve">The direction of the current layout.
 
@@ -3078,42 +3078,42 @@ This is only relevant for keyboard devices.</doc>
         <doc xml:space="preserve">The `GdkDisplay` the `GdkDevice` pertains to.</doc>
         <type name="Display"/>
       </property>
-      <property name="has-bidi-layouts" transfer-ownership="none" getter="has_bidi_layouts">
+      <property name="has-bidi-layouts" transfer-ownership="none" getter="has_bidi_layouts" default-value="FALSE">
         <attribute name="org.gtk.Property.get" value="gdk_device_has_bidi_layouts"/>
         <doc xml:space="preserve">Whether the device has both right-to-left and left-to-right layouts.
 
 This is only relevant for keyboard devices.</doc>
         <type name="gboolean" c:type="gboolean"/>
       </property>
-      <property name="has-cursor" writable="1" construct-only="1" transfer-ownership="none" getter="get_has_cursor">
+      <property name="has-cursor" writable="1" construct-only="1" transfer-ownership="none" getter="get_has_cursor" default-value="FALSE">
         <attribute name="org.gtk.Property.get" value="gdk_device_get_has_cursor"/>
         <doc xml:space="preserve">Whether the device is represented by a cursor on the screen.</doc>
         <type name="gboolean" c:type="gboolean"/>
       </property>
-      <property name="modifier-state" transfer-ownership="none" getter="get_modifier_state">
+      <property name="modifier-state" transfer-ownership="none" getter="get_modifier_state" default-value="0">
         <attribute name="org.gtk.Property.get" value="gdk_device_get_modifier_state"/>
         <doc xml:space="preserve">The current modifier state of the device.
 
 This is only relevant for keyboard devices.</doc>
         <type name="ModifierType"/>
       </property>
-      <property name="n-axes" transfer-ownership="none">
+      <property name="n-axes" transfer-ownership="none" default-value="0">
         <doc xml:space="preserve">Number of axes in the device.</doc>
         <type name="guint" c:type="guint"/>
       </property>
-      <property name="name" writable="1" construct-only="1" transfer-ownership="none" getter="get_name">
+      <property name="name" writable="1" construct-only="1" transfer-ownership="none" getter="get_name" default-value="NULL">
         <attribute name="org.gtk.Property.get" value="gdk_device_get_name"/>
         <doc xml:space="preserve">The device name.</doc>
         <type name="utf8" c:type="gchar*"/>
       </property>
-      <property name="num-lock-state" transfer-ownership="none" getter="get_num_lock_state">
+      <property name="num-lock-state" transfer-ownership="none" getter="get_num_lock_state" default-value="FALSE">
         <attribute name="org.gtk.Property.get" value="gdk_device_get_num_lock_state"/>
         <doc xml:space="preserve">Whether Num Lock is on.
 
 This is only relevant for keyboard devices.</doc>
         <type name="gboolean" c:type="gboolean"/>
       </property>
-      <property name="num-touches" writable="1" construct-only="1" transfer-ownership="none" getter="get_num_touches">
+      <property name="num-touches" writable="1" construct-only="1" transfer-ownership="none" getter="get_num_touches" default-value="0">
         <attribute name="org.gtk.Property.get" value="gdk_device_get_num_touches"/>
         <doc xml:space="preserve">The maximal number of concurrent touches on a touch device.
 
@@ -3121,14 +3121,14 @@ Will be 0 if the device is not a touch device or if the number
 of touches is unknown.</doc>
         <type name="guint" c:type="guint"/>
       </property>
-      <property name="product-id" writable="1" construct-only="1" transfer-ownership="none" getter="get_product_id">
+      <property name="product-id" writable="1" construct-only="1" transfer-ownership="none" getter="get_product_id" default-value="NULL">
         <attribute name="org.gtk.Property.get" value="gdk_device_get_product_id"/>
         <doc xml:space="preserve">Product ID of this device.
 
 See [method@Gdk.Device.get_product_id].</doc>
         <type name="utf8" c:type="gchar*"/>
       </property>
-      <property name="scroll-lock-state" transfer-ownership="none" getter="get_scroll_lock_state">
+      <property name="scroll-lock-state" transfer-ownership="none" getter="get_scroll_lock_state" default-value="FALSE">
         <attribute name="org.gtk.Property.get" value="gdk_device_get_scroll_lock_state"/>
         <doc xml:space="preserve">Whether Scroll Lock is on.
 
@@ -3140,7 +3140,7 @@ This is only relevant for keyboard devices.</doc>
         <doc xml:space="preserve">`GdkSeat` of this device.</doc>
         <type name="Seat"/>
       </property>
-      <property name="source" writable="1" construct-only="1" transfer-ownership="none" getter="get_source">
+      <property name="source" writable="1" construct-only="1" transfer-ownership="none" getter="get_source" default-value="GDK_SOURCE_MOUSE">
         <attribute name="org.gtk.Property.get" value="gdk_device_get_source"/>
         <doc xml:space="preserve">Source type for the device.</doc>
         <type name="InputSource"/>
@@ -3150,7 +3150,7 @@ This is only relevant for keyboard devices.</doc>
         <doc xml:space="preserve">The `GdkDeviceTool` that is currently used with this device.</doc>
         <type name="DeviceTool"/>
       </property>
-      <property name="vendor-id" writable="1" construct-only="1" transfer-ownership="none" getter="get_vendor_id">
+      <property name="vendor-id" writable="1" construct-only="1" transfer-ownership="none" getter="get_vendor_id" default-value="NULL">
         <attribute name="org.gtk.Property.get" value="gdk_device_get_vendor_id"/>
         <doc xml:space="preserve">Vendor ID of this device.
 
@@ -3288,7 +3288,7 @@ current mode.</doc>
         <doc xml:space="preserve">a straight interactive area</doc>
       </member>
     </enumeration>
-    <record name="DevicePadInterface" c:type="GdkDevicePadInterface" disguised="1" glib:is-gtype-struct-for="DevicePad"/>
+    <record name="DevicePadInterface" c:type="GdkDevicePadInterface" disguised="1" opaque="1" glib:is-gtype-struct-for="DevicePad"/>
     <class name="DeviceTool" c:symbol-prefix="device_tool" c:type="GdkDeviceTool" parent="GObject.Object" glib:type-name="GdkDeviceTool" glib:get-type="gdk_device_tool_get_type">
       <doc xml:space="preserve">A physical tool associated to a `GdkDevice`.</doc>
       <method name="get_axes" c:identifier="gdk_device_tool_get_axes" glib:get-property="axes">
@@ -3362,22 +3362,22 @@ This value can be used to identify a physical tool
           </instance-parameter>
         </parameters>
       </method>
-      <property name="axes" writable="1" construct-only="1" transfer-ownership="none" getter="get_axes">
+      <property name="axes" writable="1" construct-only="1" transfer-ownership="none" getter="get_axes" default-value="0">
         <attribute name="org.gtk.Property.get" value="gdk_device_tool_get_axes"/>
         <doc xml:space="preserve">The axes of the tool.</doc>
         <type name="AxisFlags"/>
       </property>
-      <property name="hardware-id" writable="1" construct-only="1" transfer-ownership="none" getter="get_hardware_id">
+      <property name="hardware-id" writable="1" construct-only="1" transfer-ownership="none" getter="get_hardware_id" default-value="0">
         <attribute name="org.gtk.Property.get" value="gdk_device_tool_get_hardware_id"/>
         <doc xml:space="preserve">The hardware ID of the tool.</doc>
         <type name="guint64" c:type="guint64"/>
       </property>
-      <property name="serial" writable="1" construct-only="1" transfer-ownership="none" getter="get_serial">
+      <property name="serial" writable="1" construct-only="1" transfer-ownership="none" getter="get_serial" default-value="0">
         <attribute name="org.gtk.Property.get" value="gdk_device_tool_get_serial"/>
         <doc xml:space="preserve">The serial number of the tool.</doc>
         <type name="guint64" c:type="guint64"/>
       </property>
-      <property name="tool-type" writable="1" construct-only="1" transfer-ownership="none" getter="get_tool_type">
+      <property name="tool-type" writable="1" construct-only="1" transfer-ownership="none" getter="get_tool_type" default-value="GDK_DEVICE_TOOL_TYPE_UNKNOWN">
         <attribute name="org.gtk.Property.get" value="gdk_device_tool_get_tool_type"/>
         <doc xml:space="preserve">The type of the tool.</doc>
         <type name="DeviceToolType"/>
@@ -3447,7 +3447,7 @@ If opening the display fails, `NULL` is returned.</doc>
           <type name="Display" c:type="GdkDisplay*"/>
         </return-value>
         <parameters>
-          <parameter name="display_name" transfer-ownership="none">
+          <parameter name="display_name" transfer-ownership="none" nullable="1" allow-none="1">
             <doc xml:space="preserve">the name of the display to open</doc>
             <type name="utf8" c:type="const char*"/>
           </parameter>
@@ -3583,11 +3583,8 @@ this function will return %NULL.</doc>
       </method>
       <method name="get_monitor_at_surface" c:identifier="gdk_display_get_monitor_at_surface">
         <doc xml:space="preserve">Gets the monitor in which the largest area of @surface
-resides.
-
-Returns a monitor close to @surface if it is outside
-of all monitors.</doc>
-        <return-value transfer-ownership="none">
+resides.</doc>
+        <return-value transfer-ownership="none" nullable="1">
           <doc xml:space="preserve">the monitor with the largest
   overlap with @surface</doc>
           <type name="Monitor" c:type="GdkMonitor*"/>
@@ -3853,7 +3850,7 @@ The returned array should be freed with g_free().</doc>
           </parameter>
         </parameters>
       </method>
-      <method name="notify_startup_complete" c:identifier="gdk_display_notify_startup_complete">
+      <method name="notify_startup_complete" c:identifier="gdk_display_notify_startup_complete" deprecated="1" deprecated-version="4.10.">
         <doc xml:space="preserve">Indicates to the GUI environment that the application has
 finished loading, using a given identifier.
 
@@ -3861,6 +3858,7 @@ GTK will call this function automatically for [class@Gtk.Window]
 with custom startup-notification identifier unless
 [method@Gtk.Window.set_auto_startup_notification]
 is called to disable that feature.</doc>
+        <doc-deprecated xml:space="preserve">Using gdk_toplevel_set_startup_id() is sufficient.</doc-deprecated>
         <return-value transfer-ownership="none">
           <type name="none" c:type="void"/>
         </return-value>
@@ -3902,12 +3900,11 @@ might make use of OpenGL.</doc>
           </instance-parameter>
         </parameters>
       </method>
-      <method name="put_event" c:identifier="gdk_display_put_event">
+      <method name="put_event" c:identifier="gdk_display_put_event" deprecated="1" deprecated-version="4.10">
         <doc xml:space="preserve">Appends the given event onto the front of the event
-queue for @display.
-
-This function is only useful in very special situations
-and should not be used by applications.</doc>
+queue for @display.</doc>
+        <doc-deprecated xml:space="preserve">This function is only useful in very
+special situations and should not be used by applications.</doc-deprecated>
         <return-value transfer-ownership="none">
           <type name="none" c:type="void"/>
         </return-value>
@@ -4022,17 +4019,17 @@ virtualized test environments.</doc>
           </parameter>
         </parameters>
       </method>
-      <property name="composited" transfer-ownership="none">
+      <property name="composited" transfer-ownership="none" default-value="TRUE">
         <attribute name="org.gtk.Property.get" value="gdk_display_is_composited"/>
         <doc xml:space="preserve">%TRUE if the display properly composites the alpha channel.</doc>
         <type name="gboolean" c:type="gboolean"/>
       </property>
-      <property name="input-shapes" transfer-ownership="none">
+      <property name="input-shapes" transfer-ownership="none" default-value="TRUE">
         <attribute name="org.gtk.Property.get" value="gdk_display_supports_input_shapes"/>
         <doc xml:space="preserve">%TRUE if the display supports input shapes.</doc>
         <type name="gboolean" c:type="gboolean"/>
       </property>
-      <property name="rgba" transfer-ownership="none">
+      <property name="rgba" transfer-ownership="none" default-value="TRUE">
         <attribute name="org.gtk.Property.get" value="gdk_display_is_rgba"/>
         <doc xml:space="preserve">%TRUE if the display supports an alpha channel.</doc>
         <type name="gboolean" c:type="gboolean"/>
@@ -4455,7 +4452,7 @@ Initially, the hotspot is at the top left corner of the drag surface.</doc>
           </parameter>
         </parameters>
       </method>
-      <property name="actions" writable="1" transfer-ownership="none" getter="get_actions">
+      <property name="actions" writable="1" transfer-ownership="none" getter="get_actions" default-value="0">
         <attribute name="org.gtk.Property.get" value="gdk_drag_get_actions"/>
         <doc xml:space="preserve">The possible actions of this drag.</doc>
         <type name="DragAction"/>
@@ -4480,7 +4477,7 @@ Initially, the hotspot is at the top left corner of the drag surface.</doc>
         <doc xml:space="preserve">The possible formats that the drag can provide its data in.</doc>
         <type name="ContentFormats"/>
       </property>
-      <property name="selected-action" writable="1" transfer-ownership="none" getter="get_selected_action">
+      <property name="selected-action" writable="1" transfer-ownership="none" getter="get_selected_action" default-value="0">
         <attribute name="org.gtk.Property.get" value="gdk_drag_get_selected_action"/>
         <doc xml:space="preserve">The currently selected action of the drag.</doc>
         <type name="DragAction"/>
@@ -4590,7 +4587,7 @@ is returned.</doc>
         </parameters>
       </method>
     </interface>
-    <record name="DragSurfaceInterface" c:type="GdkDragSurfaceInterface" disguised="1" glib:is-gtype-struct-for="DragSurface">
+    <record name="DragSurfaceInterface" c:type="GdkDragSurfaceInterface" disguised="1" opaque="1" glib:is-gtype-struct-for="DragSurface">
       <doc xml:space="preserve">The `GdkDragSurfaceInterface` implementation is private to GDK.</doc>
     </record>
     <class name="DrawContext" c:symbol-prefix="draw_context" c:type="GdkDrawContext" parent="GObject.Object" abstract="1" glib:type-name="GdkDrawContext" glib:get-type="gdk_draw_context_get_type">
@@ -5033,7 +5030,7 @@ actions first and then later call this function again.</doc>
           </parameter>
         </parameters>
       </method>
-      <property name="actions" writable="1" construct-only="1" transfer-ownership="none" getter="get_actions">
+      <property name="actions" writable="1" construct-only="1" transfer-ownership="none" getter="get_actions" default-value="GDK_ACTION_COPY | GDK_ACTION_MOVE | GDK_ACTION_LINK">
         <attribute name="org.gtk.Property.get" value="gdk_drop_get_actions"/>
         <doc xml:space="preserve">The possible actions for this drop</doc>
         <type name="DragAction"/>
@@ -5460,7 +5457,7 @@ If the last reference is dropped, the structure is freed.</doc>
         </parameters>
       </method>
     </class>
-    <record name="EventSequence" c:type="GdkEventSequence" glib:type-name="GdkEventSequence" glib:get-type="gdk_event_sequence_get_type" c:symbol-prefix="event_sequence">
+    <record name="EventSequence" c:type="GdkEventSequence" opaque="1" glib:type-name="GdkEventSequence" glib:get-type="gdk_event_sequence_get_type" c:symbol-prefix="event_sequence">
       <doc xml:space="preserve">`GdkEventSequence` is an opaque type representing a sequence
 of related touch events.</doc>
     </record>
@@ -5583,7 +5580,7 @@ of related touch events.</doc>
         </parameter>
       </parameters>
     </function-macro>
-    <record name="FileList" c:type="GdkFileList" version="4.6" glib:type-name="GdkFileList" glib:get-type="gdk_file_list_get_type" c:symbol-prefix="file_list">
+    <record name="FileList" c:type="GdkFileList" opaque="1" version="4.6" glib:type-name="GdkFileList" glib:get-type="gdk_file_list_get_type" c:symbol-prefix="file_list">
       <doc xml:space="preserve">An opaque type representing a list of files.</doc>
       <constructor name="new_from_array" c:identifier="gdk_file_list_new_from_array" version="4.8">
         <doc xml:space="preserve">Creates a new `GdkFileList` for the given array of files.
@@ -5964,7 +5961,7 @@ Applications can connect directly to this signal, or use
         </return-value>
       </glib:signal>
     </class>
-    <record name="FrameClockClass" c:type="GdkFrameClockClass" disguised="1" glib:is-gtype-struct-for="FrameClock"/>
+    <record name="FrameClockClass" c:type="GdkFrameClockClass" disguised="1" opaque="1" glib:is-gtype-struct-for="FrameClock"/>
     <bitfield name="FrameClockPhase" glib:type-name="GdkFrameClockPhase" glib:get-type="gdk_frame_clock_phase_get_type" c:type="GdkFrameClockPhase">
       <doc xml:space="preserve">Used to represent the different paint clock phases that can be requested.
 
@@ -5994,8 +5991,8 @@ The elements of the enumeration correspond to the signals of `GdkFrameClock`.</d
         <doc xml:space="preserve">corresponds to GdkFrameClock::after-paint. Should not be handled by applications.</doc>
       </member>
     </bitfield>
-    <record name="FrameClockPrivate" c:type="GdkFrameClockPrivate" disguised="1"/>
-    <record name="FrameTimings" c:type="GdkFrameTimings" glib:type-name="GdkFrameTimings" glib:get-type="gdk_frame_timings_get_type" c:symbol-prefix="frame_timings">
+    <record name="FrameClockPrivate" c:type="GdkFrameClockPrivate" disguised="1" opaque="1"/>
+    <record name="FrameTimings" c:type="GdkFrameTimings" opaque="1" glib:type-name="GdkFrameTimings" glib:get-type="gdk_frame_timings_get_type" c:symbol-prefix="frame_timings">
       <doc xml:space="preserve">A `GdkFrameTimings` object holds timing information for a single frame
 of the application&#x2019;s displays.
 
@@ -6614,12 +6611,12 @@ the OpenGL or OpenGL ES API, extensions, or shaders.</doc>
           </parameter>
         </parameters>
       </method>
-      <property name="allowed-apis" version="4.6" writable="1" transfer-ownership="none" setter="set_allowed_apis" getter="get_allowed_apis">
+      <property name="allowed-apis" version="4.6" writable="1" transfer-ownership="none" setter="set_allowed_apis" getter="get_allowed_apis" default-value="GDK_GL_API_GL | GDK_GL_API_GLES">
         <attribute name="org.gtk.Property.get" value="gdk_gl_context_get_allowed_apis"/>
         <doc xml:space="preserve">The allowed APIs.</doc>
         <type name="GLAPI"/>
       </property>
-      <property name="api" version="4.6" transfer-ownership="none" getter="get_api">
+      <property name="api" version="4.6" transfer-ownership="none" getter="get_api" default-value="0">
         <attribute name="org.gtk.Property.get" value="gdk_gl_context_get_api"/>
         <doc xml:space="preserve">The API currently in use.</doc>
         <type name="GLAPI"/>
@@ -6719,7 +6716,7 @@ function has been called.</doc>
         </parameters>
       </method>
     </class>
-    <record name="GLTextureClass" c:type="GdkGLTextureClass" disguised="1" glib:is-gtype-struct-for="GLTexture"/>
+    <record name="GLTextureClass" c:type="GdkGLTextureClass" disguised="1" opaque="1" glib:is-gtype-struct-for="GLTexture"/>
     <function-macro name="GL_CONTEXT" c:identifier="GDK_GL_CONTEXT" introspectable="0">
       <parameters>
         <parameter name="obj">
@@ -14148,7 +14145,7 @@ in the given format.</doc>
         </parameters>
       </constructor>
     </class>
-    <record name="MemoryTextureClass" c:type="GdkMemoryTextureClass" disguised="1" glib:is-gtype-struct-for="MemoryTexture"/>
+    <record name="MemoryTextureClass" c:type="GdkMemoryTextureClass" disguised="1" opaque="1" glib:is-gtype-struct-for="MemoryTexture"/>
     <bitfield name="ModifierType" glib:type-name="GdkModifierType" glib:get-type="gdk_modifier_type_get_type" c:type="GdkModifierType">
       <doc xml:space="preserve">Flags to indicate the state of modifier keys and mouse buttons
 in events.
@@ -14390,7 +14387,7 @@ is unplugged or removed.</doc>
           </instance-parameter>
         </parameters>
       </method>
-      <property name="connector" transfer-ownership="none" getter="get_connector">
+      <property name="connector" transfer-ownership="none" getter="get_connector" default-value="NULL">
         <attribute name="org.gtk.Property.get" value="gdk_monitor_get_connector"/>
         <doc xml:space="preserve">The connector name.</doc>
         <type name="utf8" c:type="gchar*"/>
@@ -14405,42 +14402,42 @@ is unplugged or removed.</doc>
         <doc xml:space="preserve">The geometry of the monitor.</doc>
         <type name="Rectangle"/>
       </property>
-      <property name="height-mm" transfer-ownership="none" getter="get_height_mm">
+      <property name="height-mm" transfer-ownership="none" getter="get_height_mm" default-value="0">
         <attribute name="org.gtk.Property.get" value="gdk_monitor_get_height_mm"/>
         <doc xml:space="preserve">The height of the monitor, in millimeters.</doc>
         <type name="gint" c:type="gint"/>
       </property>
-      <property name="manufacturer" transfer-ownership="none" getter="get_manufacturer">
+      <property name="manufacturer" transfer-ownership="none" getter="get_manufacturer" default-value="NULL">
         <attribute name="org.gtk.Property.get" value="gdk_monitor_get_manufacturer"/>
         <doc xml:space="preserve">The manufacturer name.</doc>
         <type name="utf8" c:type="gchar*"/>
       </property>
-      <property name="model" transfer-ownership="none" getter="get_model">
+      <property name="model" transfer-ownership="none" getter="get_model" default-value="NULL">
         <attribute name="org.gtk.Property.get" value="gdk_monitor_get_model"/>
         <doc xml:space="preserve">The model name.</doc>
         <type name="utf8" c:type="gchar*"/>
       </property>
-      <property name="refresh-rate" transfer-ownership="none" getter="get_refresh_rate">
+      <property name="refresh-rate" transfer-ownership="none" getter="get_refresh_rate" default-value="0">
         <attribute name="org.gtk.Property.get" value="gdk_monitor_get_refresh_rate"/>
         <doc xml:space="preserve">The refresh rate, in milli-Hertz.</doc>
         <type name="gint" c:type="gint"/>
       </property>
-      <property name="scale-factor" transfer-ownership="none" getter="get_scale_factor">
+      <property name="scale-factor" transfer-ownership="none" getter="get_scale_factor" default-value="1">
         <attribute name="org.gtk.Property.get" value="gdk_monitor_get_scale_factor"/>
         <doc xml:space="preserve">The scale factor.</doc>
         <type name="gint" c:type="gint"/>
       </property>
-      <property name="subpixel-layout" transfer-ownership="none" getter="get_subpixel_layout">
+      <property name="subpixel-layout" transfer-ownership="none" getter="get_subpixel_layout" default-value="GDK_SUBPIXEL_LAYOUT_UNKNOWN">
         <attribute name="org.gtk.Property.get" value="gdk_monitor_get_subpixel_layout"/>
         <doc xml:space="preserve">The subpixel layout.</doc>
         <type name="SubpixelLayout"/>
       </property>
-      <property name="valid" transfer-ownership="none">
+      <property name="valid" transfer-ownership="none" default-value="TRUE">
         <attribute name="org.gtk.Property.get" value="gdk_monitor_is_valid"/>
         <doc xml:space="preserve">Whether the object is still valid.</doc>
         <type name="gboolean" c:type="gboolean"/>
       </property>
-      <property name="width-mm" transfer-ownership="none" getter="get_width_mm">
+      <property name="width-mm" transfer-ownership="none" getter="get_width_mm" default-value="0">
         <attribute name="org.gtk.Property.get" value="gdk_monitor_get_width_mm"/>
         <doc xml:space="preserve">The width of the monitor, in millimeters.</doc>
         <type name="gint" c:type="gint"/>
@@ -14452,7 +14449,7 @@ is unplugged or removed.</doc>
         </return-value>
       </glib:signal>
     </class>
-    <record name="MonitorClass" c:type="GdkMonitorClass" disguised="1" glib:is-gtype-struct-for="Monitor"/>
+    <record name="MonitorClass" c:type="GdkMonitorClass" disguised="1" opaque="1" glib:is-gtype-struct-for="Monitor"/>
     <class name="MotionEvent" c:symbol-prefix="motion_event" c:type="GdkMotionEvent" parent="Event" glib:type-name="GdkMotionEvent" glib:get-type="gdk_motion_event_get_type" glib:fundamental="1">
       <doc xml:space="preserve">An event related to a pointer or touch device motion.</doc>
     </class>
@@ -15266,7 +15263,7 @@ the [signal@Gdk.Surface::layout] signal will not me emitted.</doc>
           </parameter>
         </parameters>
       </method>
-      <property name="autohide" writable="1" construct-only="1" transfer-ownership="none" getter="get_autohide">
+      <property name="autohide" writable="1" construct-only="1" transfer-ownership="none" getter="get_autohide" default-value="FALSE">
         <attribute name="org.gtk.Property.get" value="gdk_popup_get_autohide"/>
         <doc xml:space="preserve">Whether to hide on outside clicks.</doc>
         <type name="gboolean" c:type="gboolean"/>
@@ -15277,8 +15274,8 @@ the [signal@Gdk.Surface::layout] signal will not me emitted.</doc>
         <type name="Surface"/>
       </property>
     </interface>
-    <record name="PopupInterface" c:type="GdkPopupInterface" disguised="1" glib:is-gtype-struct-for="Popup"/>
-    <record name="PopupLayout" c:type="GdkPopupLayout" glib:type-name="GdkPopupLayout" glib:get-type="gdk_popup_layout_get_type" c:symbol-prefix="popup_layout">
+    <record name="PopupInterface" c:type="GdkPopupInterface" disguised="1" opaque="1" glib:is-gtype-struct-for="Popup"/>
+    <record name="PopupLayout" c:type="GdkPopupLayout" opaque="1" glib:type-name="GdkPopupLayout" glib:get-type="gdk_popup_layout_get_type" c:symbol-prefix="popup_layout">
       <doc xml:space="preserve">The `GdkPopupLayout` struct contains information that is
 necessary position a [iface@Gdk.Popup] relative to its parent.
 
@@ -16272,7 +16269,7 @@ A same tool may be used by several devices.</doc>
 
 The subclass of `GdkSnapshot` used by GTK is [class@Gtk.Snapshot].</doc>
     </class>
-    <record name="SnapshotClass" c:type="GdkSnapshotClass" disguised="1" glib:is-gtype-struct-for="Snapshot"/>
+    <record name="SnapshotClass" c:type="GdkSnapshotClass" disguised="1" opaque="1" glib:is-gtype-struct-for="Snapshot"/>
     <enumeration name="SubpixelLayout" glib:type-name="GdkSubpixelLayout" glib:get-type="gdk_subpixel_layout_get_type" c:type="GdkSubpixelLayout">
       <doc xml:space="preserve">This enumeration describes how the red, green and blue components
 of physical pixels on an output device are laid out.</doc>
@@ -16856,22 +16853,22 @@ transient-for to the same toplevel (directly or indirectly).</doc>
         <doc xml:space="preserve">The `GdkFrameClock` of the surface.</doc>
         <type name="FrameClock"/>
       </property>
-      <property name="height" transfer-ownership="none" getter="get_height">
+      <property name="height" transfer-ownership="none" getter="get_height" default-value="0">
         <attribute name="org.gtk.Property.get" value="gdk_surface_get_height"/>
         <doc xml:space="preserve">The height of the surface, in pixels.</doc>
         <type name="gint" c:type="gint"/>
       </property>
-      <property name="mapped" transfer-ownership="none" getter="get_mapped">
+      <property name="mapped" transfer-ownership="none" getter="get_mapped" default-value="FALSE">
         <attribute name="org.gtk.Property.get" value="gdk_surface_get_mapped"/>
         <doc xml:space="preserve">Whether the surface is mapped.</doc>
         <type name="gboolean" c:type="gboolean"/>
       </property>
-      <property name="scale-factor" transfer-ownership="none" getter="get_scale_factor">
+      <property name="scale-factor" transfer-ownership="none" getter="get_scale_factor" default-value="1">
         <attribute name="org.gtk.Property.get" value="gdk_surface_get_scale_factor"/>
         <doc xml:space="preserve">The scale factor of the surface.</doc>
         <type name="gint" c:type="gint"/>
       </property>
-      <property name="width" transfer-ownership="none" getter="get_width">
+      <property name="width" transfer-ownership="none" getter="get_width" default-value="0">
         <attribute name="org.gtk.Property.get" value="gdk_surface_get_width"/>
         <doc xml:space="preserve">The width of the surface in pixels.</doc>
         <type name="gint" c:type="gint"/>
@@ -16947,7 +16944,7 @@ Surface size is reported in &#x201D;application pixels&#x201D;, not
         </parameters>
       </glib:signal>
     </class>
-    <record name="SurfaceClass" c:type="GdkSurfaceClass" disguised="1" glib:is-gtype-struct-for="Surface"/>
+    <record name="SurfaceClass" c:type="GdkSurfaceClass" disguised="1" opaque="1" glib:is-gtype-struct-for="Surface"/>
     <enumeration name="SurfaceEdge" glib:type-name="GdkSurfaceEdge" glib:get-type="gdk_surface_edge_get_type" c:type="GdkSurfaceEdge">
       <doc xml:space="preserve">Determines a surface edge or corner.</doc>
       <member name="north_west" value="0" c:identifier="GDK_SURFACE_EDGE_NORTH_WEST" glib:nick="north-west" glib:name="GDK_SURFACE_EDGE_NORTH_WEST">
@@ -17268,18 +17265,18 @@ use [method@Gdk.Texture.save_to_png_bytes].</doc>
           </instance-parameter>
         </parameters>
       </method>
-      <property name="height" writable="1" construct-only="1" transfer-ownership="none" getter="get_height">
+      <property name="height" writable="1" construct-only="1" transfer-ownership="none" getter="get_height" default-value="1">
         <attribute name="org.gtk.Property.get" value="gdk_texture_get_height"/>
         <doc xml:space="preserve">The height of the texture, in pixels.</doc>
         <type name="gint" c:type="gint"/>
       </property>
-      <property name="width" writable="1" construct-only="1" transfer-ownership="none" getter="get_width">
+      <property name="width" writable="1" construct-only="1" transfer-ownership="none" getter="get_width" default-value="1">
         <attribute name="org.gtk.Property.get" value="gdk_texture_get_width"/>
         <doc xml:space="preserve">The width of the texture, in pixels.</doc>
         <type name="gint" c:type="gint"/>
       </property>
     </class>
-    <record name="TextureClass" c:type="GdkTextureClass" disguised="1" glib:is-gtype-struct-for="Texture"/>
+    <record name="TextureClass" c:type="GdkTextureClass" disguised="1" opaque="1" glib:is-gtype-struct-for="Texture"/>
     <enumeration name="TextureError" version="4.6" glib:type-name="GdkTextureError" glib:get-type="gdk_texture_error_get_type" c:type="GdkTextureError" glib:error-domain="gdk-texture-error-quark">
       <doc xml:space="preserve">Possible errors that can be returned by `GdkTexture` constructors.</doc>
       <member name="too_large" value="0" c:identifier="GDK_TEXTURE_ERROR_TOO_LARGE" glib:nick="too-large" glib:name="GDK_TEXTURE_ERROR_TOO_LARGE">
@@ -17765,17 +17762,17 @@ tiled window states.</doc>
           </parameter>
         </parameters>
       </method>
-      <property name="decorated" writable="1" transfer-ownership="none" setter="set_decorated">
+      <property name="decorated" writable="1" transfer-ownership="none" setter="set_decorated" default-value="FALSE">
         <attribute name="org.gtk.Property.set" value="gdk_toplevel_set_decorated"/>
         <doc xml:space="preserve">Whether the window manager should add decorations.</doc>
         <type name="gboolean" c:type="gboolean"/>
       </property>
-      <property name="deletable" writable="1" transfer-ownership="none" setter="set_deletable">
+      <property name="deletable" writable="1" transfer-ownership="none" setter="set_deletable" default-value="FALSE">
         <attribute name="org.gtk.Property.set" value="gdk_toplevel_set_deletable"/>
         <doc xml:space="preserve">Whether the window manager should allow to close the surface.</doc>
         <type name="gboolean" c:type="gboolean"/>
       </property>
-      <property name="fullscreen-mode" writable="1" transfer-ownership="none">
+      <property name="fullscreen-mode" writable="1" transfer-ownership="none" default-value="GDK_FULLSCREEN_ON_CURRENT_MONITOR">
         <doc xml:space="preserve">The fullscreen mode of the surface.</doc>
         <type name="FullscreenMode"/>
       </property>
@@ -17784,16 +17781,16 @@ tiled window states.</doc>
         <doc xml:space="preserve">A list of textures to use as icon.</doc>
         <type name="gpointer" c:type="gpointer"/>
       </property>
-      <property name="modal" writable="1" transfer-ownership="none" setter="set_modal">
+      <property name="modal" writable="1" transfer-ownership="none" setter="set_modal" default-value="FALSE">
         <attribute name="org.gtk.Property.set" value="gdk_toplevel_set_modal"/>
         <doc xml:space="preserve">Whether the surface is modal.</doc>
         <type name="gboolean" c:type="gboolean"/>
       </property>
-      <property name="shortcuts-inhibited" transfer-ownership="none">
+      <property name="shortcuts-inhibited" transfer-ownership="none" default-value="FALSE">
         <doc xml:space="preserve">Whether the surface should inhibit keyboard shortcuts.</doc>
         <type name="gboolean" c:type="gboolean"/>
       </property>
-      <property name="startup-id" writable="1" transfer-ownership="none" setter="set_startup_id">
+      <property name="startup-id" writable="1" transfer-ownership="none" setter="set_startup_id" default-value="NULL">
         <attribute name="org.gtk.Property.set" value="gdk_toplevel_set_startup_id"/>
         <doc xml:space="preserve">The startup ID of the surface.
 
@@ -17801,12 +17798,12 @@ See [class@Gdk.AppLaunchContext] for more information about
 startup feedback.</doc>
         <type name="utf8" c:type="gchar*"/>
       </property>
-      <property name="state" transfer-ownership="none" getter="get_state">
+      <property name="state" transfer-ownership="none" getter="get_state" default-value="0">
         <attribute name="org.gtk.Property.get" value="gdk_toplevel_get_state"/>
         <doc xml:space="preserve">The state of the toplevel.</doc>
         <type name="ToplevelState"/>
       </property>
-      <property name="title" writable="1" transfer-ownership="none" setter="set_title">
+      <property name="title" writable="1" transfer-ownership="none" setter="set_title" default-value="NULL">
         <attribute name="org.gtk.Property.set" value="gdk_toplevel_set_title"/>
         <doc xml:space="preserve">The title of the surface.</doc>
         <type name="utf8" c:type="gchar*"/>
@@ -17840,8 +17837,8 @@ will result in an arbitrary size being used as a result.</doc>
         </parameters>
       </glib:signal>
     </interface>
-    <record name="ToplevelInterface" c:type="GdkToplevelInterface" disguised="1" glib:is-gtype-struct-for="Toplevel"/>
-    <record name="ToplevelLayout" c:type="GdkToplevelLayout" glib:type-name="GdkToplevelLayout" glib:get-type="gdk_toplevel_layout_get_type" c:symbol-prefix="toplevel_layout">
+    <record name="ToplevelInterface" c:type="GdkToplevelInterface" disguised="1" opaque="1" glib:is-gtype-struct-for="Toplevel"/>
+    <record name="ToplevelLayout" c:type="GdkToplevelLayout" opaque="1" glib:type-name="GdkToplevelLayout" glib:get-type="gdk_toplevel_layout_get_type" c:symbol-prefix="toplevel_layout">
       <doc xml:space="preserve">The `GdkToplevelLayout` struct contains information that
 is necessary to present a sovereign window on screen.
 
@@ -18042,7 +18039,7 @@ to resize the surface after it has been presented.</doc>
         </parameters>
       </method>
     </record>
-    <record name="ToplevelSize" c:type="GdkToplevelSize" disguised="1">
+    <record name="ToplevelSize" c:type="GdkToplevelSize" disguised="1" opaque="1">
       <doc xml:space="preserve">The `GdkToplevelSize` struct contains information that is useful
 to compute the size of a toplevel.</doc>
       <method name="get_bounds" c:identifier="gdk_toplevel_size_get_bounds">
