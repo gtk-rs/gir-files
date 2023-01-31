@@ -214,7 +214,7 @@ result (if not, the function may produce false-negative).
 
 This example defines a comparison function and search an element in a #GArray:
 |[&lt;!-- language="C" --&gt;
-static gint*
+static gint
 cmpint (gconstpointer a, gconstpointer b)
 {
   const gint *_a = a;
@@ -10059,6 +10059,7 @@ by g_hook_list_invoke_check().</doc>
           <type name="Hook" c:type="GHook*"/>
         </parameter>
         <parameter name="marshal_data" transfer-ownership="none" nullable="1" allow-none="1">
+          <doc xml:space="preserve">user data</doc>
           <type name="gpointer" c:type="gpointer"/>
         </parameter>
       </parameters>
@@ -10110,6 +10111,7 @@ list of hooks gets finalized.</doc>
           <type name="Hook" c:type="GHook*"/>
         </parameter>
         <parameter name="data" transfer-ownership="none" nullable="1" allow-none="1">
+          <doc xml:space="preserve">user data passed to g_hook_find_func()</doc>
           <type name="gpointer" c:type="gpointer"/>
         </parameter>
       </parameters>
@@ -10305,6 +10307,7 @@ function returns %FALSE.</doc>
           <type name="Hook" c:type="GHook*"/>
         </parameter>
         <parameter name="marshal_data" transfer-ownership="none" nullable="1" allow-none="1">
+          <doc xml:space="preserve">user data</doc>
           <type name="gpointer" c:type="gpointer"/>
         </parameter>
       </parameters>
@@ -10665,7 +10668,7 @@ indicates autodetection.</doc>
             <doc xml:space="preserve">a #GIOChannel</doc>
             <type name="IOChannel" c:type="GIOChannel*"/>
           </instance-parameter>
-          <parameter name="length" transfer-ownership="none">
+          <parameter name="length" direction="out" caller-allocates="0" transfer-ownership="full" optional="1" allow-none="1">
             <doc xml:space="preserve">a location to return the length of the line terminator</doc>
             <type name="gint" c:type="gint*"/>
           </parameter>
@@ -11357,6 +11360,7 @@ on a #GIOChannel is satisfied.</doc>
           <type name="IOCondition" c:type="GIOCondition"/>
         </parameter>
         <parameter name="data" transfer-ownership="none" nullable="1" allow-none="1">
+          <doc xml:space="preserve">user data set in g_io_add_watch() or g_io_add_watch_full()</doc>
           <type name="gpointer" c:type="gpointer"/>
         </parameter>
       </parameters>
@@ -14311,15 +14315,19 @@ is called as many times as g_main_context_acquire().
 
 You must be the owner of a context before you
 can call g_main_context_prepare(), g_main_context_query(),
-g_main_context_check(), g_main_context_dispatch().</doc>
+g_main_context_check(), g_main_context_dispatch().
+
+Since 2.76 @context can be %NULL to use the global-default
+main context.</doc>
         <return-value transfer-ownership="none">
           <doc xml:space="preserve">%TRUE if the operation succeeded, and
   this thread is now the owner of @context.</doc>
           <type name="gboolean" c:type="gboolean"/>
         </return-value>
         <parameters>
-          <instance-parameter name="context" transfer-ownership="none">
-            <doc xml:space="preserve">a #GMainContext</doc>
+          <instance-parameter name="context" transfer-ownership="none" nullable="1" allow-none="1">
+            <doc xml:space="preserve">a #GMainContext (if %NULL, the global-default
+  main context will be used)</doc>
             <type name="MainContext" c:type="GMainContext*"/>
           </instance-parameter>
         </parameters>
@@ -14333,7 +14341,8 @@ a typical event source will use g_source_add_unix_fd() instead.</doc>
         </return-value>
         <parameters>
           <instance-parameter name="context" transfer-ownership="none" nullable="1" allow-none="1">
-            <doc xml:space="preserve">a #GMainContext (or %NULL for the default context)</doc>
+            <doc xml:space="preserve">a #GMainContext (or %NULL for the global-default
+  main context)</doc>
             <type name="MainContext" c:type="GMainContext*"/>
           </instance-parameter>
           <parameter name="fd" transfer-ownership="none">
@@ -14356,14 +14365,18 @@ g_main_context_query(), as this functions relies on assumptions
 on how @fds is filled.
 
 You must have successfully acquired the context with
-g_main_context_acquire() before you may call this function.</doc>
+g_main_context_acquire() before you may call this function.
+
+Since 2.76 @context can be %NULL to use the global-default
+main context.</doc>
         <return-value transfer-ownership="none">
           <doc xml:space="preserve">%TRUE if some sources are ready to be dispatched.</doc>
           <type name="gboolean" c:type="gboolean"/>
         </return-value>
         <parameters>
-          <instance-parameter name="context" transfer-ownership="none">
-            <doc xml:space="preserve">a #GMainContext</doc>
+          <instance-parameter name="context" transfer-ownership="none" nullable="1" allow-none="1">
+            <doc xml:space="preserve">a #GMainContext (if %NULL, the global-default
+  main context will be used)</doc>
             <type name="MainContext" c:type="GMainContext*"/>
           </instance-parameter>
           <parameter name="max_priority" transfer-ownership="none">
@@ -14387,13 +14400,17 @@ g_main_context_acquire() before you may call this function.</doc>
         <doc xml:space="preserve">Dispatches all pending sources.
 
 You must have successfully acquired the context with
-g_main_context_acquire() before you may call this function.</doc>
+g_main_context_acquire() before you may call this function.
+
+Since 2.76 @context can be %NULL to use the global-default
+main context.</doc>
         <return-value transfer-ownership="none">
           <type name="none" c:type="void"/>
         </return-value>
         <parameters>
-          <instance-parameter name="context" transfer-ownership="none">
-            <doc xml:space="preserve">a #GMainContext</doc>
+          <instance-parameter name="context" transfer-ownership="none" nullable="1" allow-none="1">
+            <doc xml:space="preserve">a #GMainContext (if %NULL, the global-default
+  main context will be used)</doc>
             <type name="MainContext" c:type="GMainContext*"/>
           </instance-parameter>
         </parameters>
@@ -14408,7 +14425,8 @@ the first one found will be returned.</doc>
         </return-value>
         <parameters>
           <instance-parameter name="context" transfer-ownership="none" nullable="1" allow-none="1">
-            <doc xml:space="preserve">a #GMainContext (if %NULL, the default context will be used).</doc>
+            <doc xml:space="preserve">a #GMainContext (if %NULL, the global-default
+  main context will be used).</doc>
             <type name="MainContext" c:type="GMainContext*"/>
           </instance-parameter>
           <parameter name="funcs" transfer-ownership="none">
@@ -14440,7 +14458,8 @@ wrong source.</doc>
         </return-value>
         <parameters>
           <instance-parameter name="context" transfer-ownership="none" nullable="1" allow-none="1">
-            <doc xml:space="preserve">a #GMainContext (if %NULL, the default context will be used)</doc>
+            <doc xml:space="preserve">a #GMainContext (if %NULL, the global-default
+  main context will be used)</doc>
             <type name="MainContext" c:type="GMainContext*"/>
           </instance-parameter>
           <parameter name="source_id" transfer-ownership="none">
@@ -14458,8 +14477,9 @@ one found will be returned.</doc>
           <type name="Source" c:type="GSource*"/>
         </return-value>
         <parameters>
-          <instance-parameter name="context" transfer-ownership="none">
-            <doc xml:space="preserve">a #GMainContext</doc>
+          <instance-parameter name="context" transfer-ownership="none" nullable="1" allow-none="1">
+            <doc xml:space="preserve">a #GMainContext (if %NULL, the global-default
+  main context will be used)</doc>
             <type name="MainContext" c:type="GMainContext*"/>
           </instance-parameter>
           <parameter name="user_data" transfer-ownership="none" nullable="1" allow-none="1">
@@ -14475,8 +14495,9 @@ one found will be returned.</doc>
           <type name="PollFunc" c:type="GPollFunc"/>
         </return-value>
         <parameters>
-          <instance-parameter name="context" transfer-ownership="none">
-            <doc xml:space="preserve">a #GMainContext</doc>
+          <instance-parameter name="context" transfer-ownership="none" nullable="1" allow-none="1">
+            <doc xml:space="preserve">a #GMainContext (if %NULL, the global-default
+  main context will be used)</doc>
             <type name="MainContext" c:type="GMainContext*"/>
           </instance-parameter>
         </parameters>
@@ -14485,7 +14506,7 @@ one found will be returned.</doc>
         <doc xml:space="preserve">Invokes a function in such a way that @context is owned during the
 invocation of @function.
 
-If @context is %NULL then the global default main context &#x2014; as
+If @context is %NULL then the global-default main context &#x2014; as
 returned by g_main_context_default() &#x2014; is used.
 
 If @context is owned by the current thread, @function is called
@@ -14508,7 +14529,8 @@ loop (and may prevent this call from returning).</doc>
         </return-value>
         <parameters>
           <instance-parameter name="context" transfer-ownership="none" nullable="1" allow-none="1">
-            <doc xml:space="preserve">a #GMainContext, or %NULL</doc>
+            <doc xml:space="preserve">a #GMainContext, or %NULL for the global-default
+  main context</doc>
             <type name="MainContext" c:type="GMainContext*"/>
           </instance-parameter>
           <parameter name="function" transfer-ownership="none" closure="1">
@@ -14536,7 +14558,8 @@ thread or with any particular context acquired.</doc>
         </return-value>
         <parameters>
           <instance-parameter name="context" transfer-ownership="none" nullable="1" allow-none="1">
-            <doc xml:space="preserve">a #GMainContext, or %NULL</doc>
+            <doc xml:space="preserve">a #GMainContext, or %NULL for the global-default
+  main context</doc>
             <type name="MainContext" c:type="GMainContext*"/>
           </instance-parameter>
           <parameter name="priority" transfer-ownership="none">
@@ -14567,8 +14590,9 @@ blocking to get ownership of @context.</doc>
           <type name="gboolean" c:type="gboolean"/>
         </return-value>
         <parameters>
-          <instance-parameter name="context" transfer-ownership="none">
-            <doc xml:space="preserve">a #GMainContext</doc>
+          <instance-parameter name="context" transfer-ownership="none" nullable="1" allow-none="1">
+            <doc xml:space="preserve">a #GMainContext (if %NULL, the global-default
+  main context will be used)</doc>
             <type name="MainContext" c:type="GMainContext*"/>
           </instance-parameter>
         </parameters>
@@ -14592,7 +14616,8 @@ be interrupted for other reasons than an event source becoming ready.</doc>
         </return-value>
         <parameters>
           <instance-parameter name="context" transfer-ownership="none" nullable="1" allow-none="1">
-            <doc xml:space="preserve">a #GMainContext (if %NULL, the default context will be used)</doc>
+            <doc xml:space="preserve">a #GMainContext (if %NULL, the global-default
+  main context will be used)</doc>
             <type name="MainContext" c:type="GMainContext*"/>
           </instance-parameter>
           <parameter name="may_block" transfer-ownership="none">
@@ -14609,7 +14634,8 @@ be interrupted for other reasons than an event source becoming ready.</doc>
         </return-value>
         <parameters>
           <instance-parameter name="context" transfer-ownership="none" nullable="1" allow-none="1">
-            <doc xml:space="preserve">a #GMainContext (if %NULL, the default context will be used)</doc>
+            <doc xml:space="preserve">a #GMainContext (if %NULL, the global-default
+  main context will be used)</doc>
             <type name="MainContext" c:type="GMainContext*"/>
           </instance-parameter>
         </parameters>
@@ -14622,7 +14648,8 @@ it was on the top of the stack).</doc>
         </return-value>
         <parameters>
           <instance-parameter name="context" transfer-ownership="none" nullable="1" allow-none="1">
-            <doc xml:space="preserve">a #GMainContext object, or %NULL</doc>
+            <doc xml:space="preserve">a #GMainContext, or %NULL for the global-default
+  main context</doc>
             <type name="MainContext" c:type="GMainContext*"/>
           </instance-parameter>
         </parameters>
@@ -14639,8 +14666,9 @@ g_main_context_acquire() before you may call this function.</doc>
           <type name="gboolean" c:type="gboolean"/>
         </return-value>
         <parameters>
-          <instance-parameter name="context" transfer-ownership="none">
-            <doc xml:space="preserve">a #GMainContext</doc>
+          <instance-parameter name="context" transfer-ownership="none" nullable="1" allow-none="1">
+            <doc xml:space="preserve">a #GMainContext (if %NULL, the global-default
+  main context will be used)</doc>
             <type name="MainContext" c:type="GMainContext*"/>
           </instance-parameter>
           <parameter name="priority" direction="out" caller-allocates="0" transfer-ownership="full" optional="1" allow-none="1">
@@ -14656,7 +14684,7 @@ current thread. This will cause certain asynchronous operations
 (such as most [gio][gio]-based I/O) which are
 started in this thread to run under @context and deliver their
 results to its main loop, rather than running under the global
-default context in the main thread. Note that calling this function
+default main context in the main thread. Note that calling this function
 changes the context returned by g_main_context_get_thread_default(),
 not the one returned by g_main_context_default(), so it does not affect
 the context used by functions like g_idle_add().
@@ -14694,7 +14722,8 @@ see g_file_supports_thread_contexts().</doc>
         </return-value>
         <parameters>
           <instance-parameter name="context" transfer-ownership="none" nullable="1" allow-none="1">
-            <doc xml:space="preserve">a #GMainContext, or %NULL for the global default context</doc>
+            <doc xml:space="preserve">a #GMainContext, or %NULL for the global-default
+  main context</doc>
             <type name="MainContext" c:type="GMainContext*"/>
           </instance-parameter>
         </parameters>
@@ -14714,8 +14743,9 @@ g_main_context_acquire() before you may call this function.</doc>
           <type name="gint" c:type="gint"/>
         </return-value>
         <parameters>
-          <instance-parameter name="context" transfer-ownership="none">
-            <doc xml:space="preserve">a #GMainContext</doc>
+          <instance-parameter name="context" transfer-ownership="none" nullable="1" allow-none="1">
+            <doc xml:space="preserve">a #GMainContext (if %NULL, the global-default
+  main context will be used)</doc>
             <type name="MainContext" c:type="GMainContext*"/>
           </instance-parameter>
           <parameter name="max_priority" transfer-ownership="none">
@@ -14761,8 +14791,9 @@ is called as many times as it was acquired.</doc>
           <type name="none" c:type="void"/>
         </return-value>
         <parameters>
-          <instance-parameter name="context" transfer-ownership="none">
-            <doc xml:space="preserve">a #GMainContext</doc>
+          <instance-parameter name="context" transfer-ownership="none" nullable="1" allow-none="1">
+            <doc xml:space="preserve">a #GMainContext (if %NULL, the global-default
+  main context will be used)</doc>
             <type name="MainContext" c:type="GMainContext*"/>
           </instance-parameter>
         </parameters>
@@ -14774,8 +14805,9 @@ polled for a particular context.</doc>
           <type name="none" c:type="void"/>
         </return-value>
         <parameters>
-          <instance-parameter name="context" transfer-ownership="none">
-            <doc xml:space="preserve">a #GMainContext</doc>
+          <instance-parameter name="context" transfer-ownership="none" nullable="1" allow-none="1">
+            <doc xml:space="preserve">a #GMainContext (if %NULL, the global-default
+  main context will be used)</doc>
             <type name="MainContext" c:type="GMainContext*"/>
           </instance-parameter>
           <parameter name="fd" transfer-ownership="none">
@@ -14796,8 +14828,9 @@ loop with an external event loop.</doc>
           <type name="none" c:type="void"/>
         </return-value>
         <parameters>
-          <instance-parameter name="context" transfer-ownership="none">
-            <doc xml:space="preserve">a #GMainContext</doc>
+          <instance-parameter name="context" transfer-ownership="none" nullable="1" allow-none="1">
+            <doc xml:space="preserve">a #GMainContext (if %NULL, the global-default
+  main context will be used)</doc>
             <type name="MainContext" c:type="GMainContext*"/>
           </instance-parameter>
           <parameter name="func" transfer-ownership="none">
@@ -14832,8 +14865,9 @@ try again (once) to become the owner.</doc>
           <type name="gboolean" c:type="gboolean"/>
         </return-value>
         <parameters>
-          <instance-parameter name="context" transfer-ownership="none">
-            <doc xml:space="preserve">a #GMainContext</doc>
+          <instance-parameter name="context" transfer-ownership="none" nullable="1" allow-none="1">
+            <doc xml:space="preserve">a #GMainContext (if %NULL, the global-default
+  main context will be used)</doc>
             <type name="MainContext" c:type="GMainContext*"/>
           </instance-parameter>
           <parameter name="cond" transfer-ownership="none">
@@ -14879,19 +14913,20 @@ Then in a thread:
           <type name="none" c:type="void"/>
         </return-value>
         <parameters>
-          <instance-parameter name="context" transfer-ownership="none">
-            <doc xml:space="preserve">a #GMainContext</doc>
+          <instance-parameter name="context" transfer-ownership="none" nullable="1" allow-none="1">
+            <doc xml:space="preserve">a #GMainContext (if %NULL, the global-default
+  main context will be used)</doc>
             <type name="MainContext" c:type="GMainContext*"/>
           </instance-parameter>
         </parameters>
       </method>
       <function name="default" c:identifier="g_main_context_default">
-        <doc xml:space="preserve">Returns the global default main context. This is the main context
+        <doc xml:space="preserve">Returns the global-default main context. This is the main context
 used for main loop functions when a main loop is not explicitly
 specified, and corresponds to the "main" main loop. See also
 g_main_context_get_thread_default().</doc>
         <return-value transfer-ownership="none">
-          <doc xml:space="preserve">the global default main context.</doc>
+          <doc xml:space="preserve">the global-default main context.</doc>
           <type name="MainContext" c:type="GMainContext*"/>
         </return-value>
       </function>
@@ -14909,7 +14944,7 @@ If you need to hold a reference on the context, use
 g_main_context_ref_thread_default() instead.</doc>
         <return-value transfer-ownership="none" nullable="1">
           <doc xml:space="preserve">the thread-default #GMainContext, or
-%NULL if the thread-default context is the global default context.</doc>
+%NULL if the thread-default context is the global-default main context.</doc>
           <type name="MainContext" c:type="GMainContext*"/>
         </return-value>
       </function>
@@ -14918,7 +14953,7 @@ g_main_context_ref_thread_default() instead.</doc>
 g_main_context_get_thread_default(), but also adds a reference to
 it with g_main_context_ref(). In addition, unlike
 g_main_context_get_thread_default(), if the thread-default context
-is the global default context, this will return that #GMainContext
+is the global-default context, this will return that #GMainContext
 (with a ref added to it) rather than returning %NULL.</doc>
         <return-value transfer-ownership="full">
           <doc xml:space="preserve">the thread-default #GMainContext. Unref
@@ -14951,7 +14986,8 @@ representing the main event loop of a GLib or GTK+ application.</doc>
         </return-value>
         <parameters>
           <parameter name="context" transfer-ownership="none" nullable="1" allow-none="1">
-            <doc xml:space="preserve">a #GMainContext  (if %NULL, the default context will be used).</doc>
+            <doc xml:space="preserve">a #GMainContext  (if %NULL, the global-default
+  main context will be used).</doc>
             <type name="MainContext" c:type="GMainContext*"/>
           </parameter>
           <parameter name="is_running" transfer-ownership="none">
@@ -16946,6 +16982,7 @@ data passed to g_node_children_foreach().</doc>
           <type name="Node" c:type="GNode*"/>
         </parameter>
         <parameter name="data" transfer-ownership="none" nullable="1" allow-none="1">
+          <doc xml:space="preserve">user data passed to g_node_children_foreach().</doc>
           <type name="gpointer" c:type="gpointer"/>
         </parameter>
       </parameters>
@@ -16965,6 +17002,7 @@ user data passed to g_node_traverse(). If the function returns
           <type name="Node" c:type="GNode*"/>
         </parameter>
         <parameter name="data" transfer-ownership="none" nullable="1" allow-none="1">
+          <doc xml:space="preserve">user data passed to g_node_traverse().</doc>
           <type name="gpointer" c:type="gpointer"/>
         </parameter>
       </parameters>
@@ -21701,9 +21739,7 @@ in @length.</doc>
         <parameters>
           <parameter name="string" transfer-ownership="none">
             <doc xml:space="preserve">the string to escape</doc>
-            <array length="1" zero-terminated="0" c:type="const gchar*">
-              <type name="utf8" c:type="gchar"/>
-            </array>
+            <type name="utf8" c:type="const gchar*"/>
           </parameter>
           <parameter name="length" transfer-ownership="none">
             <doc xml:space="preserve">the length of @string, in bytes, or -1 if @string is nul-terminated</doc>
@@ -24693,6 +24729,7 @@ if @a comes before @b, and a positive value if @b comes before @a.</doc>
           <type name="SequenceIter" c:type="GSequenceIter*"/>
         </parameter>
         <parameter name="data" transfer-ownership="none" nullable="1" allow-none="1">
+          <doc xml:space="preserve">user data</doc>
           <type name="gpointer" c:type="gpointer"/>
         </parameter>
       </parameters>
@@ -24902,7 +24939,8 @@ the @context is running in.</doc>
             <type name="Source" c:type="GSource*"/>
           </instance-parameter>
           <parameter name="context" transfer-ownership="none" nullable="1" allow-none="1">
-            <doc xml:space="preserve">a #GMainContext (if %NULL, the default context will be used)</doc>
+            <doc xml:space="preserve">a #GMainContext (if %NULL, the global-default
+  main context will be used)</doc>
             <type name="MainContext" c:type="GMainContext*"/>
           </parameter>
         </parameters>
@@ -26356,7 +26394,10 @@ The rest of the #GString is shifted down to fill the gap.</doc>
         <doc xml:space="preserve">Frees the memory allocated for the #GString.
 If @free_segment is %TRUE it also frees the character data.  If
 it's %FALSE, the caller gains ownership of the buffer and must
-free it after use with g_free().</doc>
+free it after use with g_free().
+
+Instead of passing %FALSE to this function, consider using
+g_string_free_and_steal().</doc>
         <return-value transfer-ownership="full" nullable="1">
           <doc xml:space="preserve">the character data of @string
          (i.e. %NULL if @free_segment is %TRUE)</doc>
@@ -26371,6 +26412,22 @@ free it after use with g_free().</doc>
             <doc xml:space="preserve">if %TRUE, the actual character data is freed as well</doc>
             <type name="gboolean" c:type="gboolean"/>
           </parameter>
+        </parameters>
+      </method>
+      <method name="free_and_steal" c:identifier="g_string_free_and_steal" version="2.76">
+        <doc xml:space="preserve">Frees the memory allocated for the #GString.
+
+The caller gains ownership of the buffer and
+must free it after use with g_free().</doc>
+        <return-value transfer-ownership="full">
+          <doc xml:space="preserve">the character data of @string</doc>
+          <type name="utf8" c:type="gchar*"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="string" transfer-ownership="full">
+            <doc xml:space="preserve">a #GString</doc>
+            <type name="String" c:type="GString*"/>
+          </instance-parameter>
         </parameters>
       </method>
       <method name="free_to_bytes" c:identifier="g_string_free_to_bytes" version="2.34">
@@ -27649,6 +27706,7 @@ or g_thread_try_new().</doc>
       </return-value>
       <parameters>
         <parameter name="data" transfer-ownership="none" nullable="1" allow-none="1">
+          <doc xml:space="preserve">data passed to the thread</doc>
           <type name="gpointer" c:type="gpointer"/>
         </parameter>
       </parameters>
@@ -27913,6 +27971,11 @@ not be -1 for exclusive thread pools. Besides, exclusive thread
 pools are not affected by g_thread_pool_set_max_idle_time()
 since their threads are never considered idle and returned to the
 global pool.
+
+Note that the threads used by exclusive threadpools will all inherit the
+scheduler settings of the current thread while the threads used by
+non-exclusive threadpools will inherit the scheduler settings from the
+first thread that created such a threadpool.
 
 @error can be %NULL to ignore errors, or non-%NULL to report
 errors. An error can only occur when @exclusive is set to %TRUE
@@ -28350,7 +28413,7 @@ adjusted time.</doc>
             <doc xml:space="preserve">the #GTimeType of @time_</doc>
             <type name="TimeType" c:type="GTimeType"/>
           </parameter>
-          <parameter name="time_" transfer-ownership="none">
+          <parameter name="time_" direction="inout" caller-allocates="0" transfer-ownership="full">
             <doc xml:space="preserve">a pointer to a number of seconds since January 1, 1970</doc>
             <type name="gint64" c:type="gint64*"/>
           </parameter>
@@ -28883,6 +28946,7 @@ parameter passed to g_tree_traverse(). If the function returns
           <type name="gpointer" c:type="gpointer"/>
         </parameter>
         <parameter name="data" transfer-ownership="none" nullable="1" allow-none="1">
+          <doc xml:space="preserve">user data passed to g_tree_traverse()</doc>
           <type name="gpointer" c:type="gpointer"/>
         </parameter>
       </parameters>
@@ -43182,7 +43246,8 @@ used by the C library's current locale.
 
 On Linux, the character set is found by consulting nl_langinfo() if
 available. If not, the environment variables `LC_ALL`, `LC_CTYPE`, `LANG`
-and `CHARSET` are queried in order.
+and `CHARSET` are queried in order. nl_langinfo() returns the C locale if
+no locale has been loaded by setlocale().
 
 The return value is %TRUE if the locale's encoding is UTF-8, in that
 case you can perhaps avoid calling g_convert().
@@ -46561,12 +46626,12 @@ alive indefinitely if the main loop is stopped before the #GSource is
 invoked, which may be undesirable.</doc>
     </docsection>
     <function name="main_context_default" c:identifier="g_main_context_default" moved-to="MainContext.default">
-      <doc xml:space="preserve">Returns the global default main context. This is the main context
+      <doc xml:space="preserve">Returns the global-default main context. This is the main context
 used for main loop functions when a main loop is not explicitly
 specified, and corresponds to the "main" main loop. See also
 g_main_context_get_thread_default().</doc>
       <return-value transfer-ownership="none">
-        <doc xml:space="preserve">the global default main context.</doc>
+        <doc xml:space="preserve">the global-default main context.</doc>
         <type name="MainContext" c:type="GMainContext*"/>
       </return-value>
     </function>
@@ -46584,7 +46649,7 @@ If you need to hold a reference on the context, use
 g_main_context_ref_thread_default() instead.</doc>
       <return-value transfer-ownership="none" nullable="1">
         <doc xml:space="preserve">the thread-default #GMainContext, or
-%NULL if the thread-default context is the global default context.</doc>
+%NULL if the thread-default context is the global-default main context.</doc>
         <type name="MainContext" c:type="GMainContext*"/>
       </return-value>
     </function>
@@ -46593,7 +46658,7 @@ g_main_context_ref_thread_default() instead.</doc>
 g_main_context_get_thread_default(), but also adds a reference to
 it with g_main_context_ref(). In addition, unlike
 g_main_context_get_thread_default(), if the thread-default context
-is the global default context, this will return that #GMainContext
+is the global-default context, this will return that #GMainContext
 (with a ref added to it) rather than returning %NULL.</doc>
       <return-value transfer-ownership="full">
         <doc xml:space="preserve">the thread-default #GMainContext. Unref
@@ -47119,37 +47184,18 @@ Since GLib 2.46 g_malloc() is hardcoded to always use the system malloc
 implementation.</doc>
     </docsection>
     <docsection name="memory_slices">
-      <doc xml:space="preserve">Memory slices provide a space-efficient and multi-processing scalable
-way to allocate equal-sized pieces of memory, just like the original
-#GMemChunks (from GLib 2.8), while avoiding their excessive
-memory-waste, scalability and performance problems.
+      <doc xml:space="preserve">GSlice was a space-efficient and multi-processing scalable way to allocate
+equal sized pieces of memory. Since GLib 2.76, its implementation has been
+removed and it calls g_malloc() and g_free(), because the performance of the
+system-default allocators has improved on all platforms since GSlice was
+written.
 
-To achieve these goals, the slice allocator uses a sophisticated,
-layered design that has been inspired by Bonwick's slab allocator
-([Bonwick94](http://citeseer.ist.psu.edu/bonwick94slab.html)
-Jeff Bonwick, The slab allocator: An object-caching kernel
-memory allocator. USENIX 1994, and
-[Bonwick01](http://citeseer.ist.psu.edu/bonwick01magazines.html)
-Bonwick and Jonathan Adams, Magazines and vmem: Extending the
-slab allocator to many cpu's and arbitrary resources. USENIX 2001)
+The GSlice APIs have not been deprecated, as they are widely in use and doing
+so would be very disruptive for little benefit.
 
-It uses posix_memalign() to optimize allocations of many equally-sized
-chunks, and has per-thread free lists (the so-called magazine layer)
-to quickly satisfy allocation requests of already known structure sizes.
-This is accompanied by extra caching logic to keep freed memory around
-for some time before returning it to the system. Memory that is unused
-due to alignment constraints is used for cache colorization (random
-distribution of chunk addresses) to improve CPU cache utilization. The
-caching layer of the slice allocator adapts itself to high lock contention
-to improve scalability.
-
-The slice allocator can allocate blocks as small as two pointers, and
-unlike malloc(), it does not reserve extra space per block. For large block
-sizes, g_slice_new() and g_slice_alloc() will automatically delegate to the
-system malloc() implementation. For newly written code it is recommended
-to use the new `g_slice` API instead of g_malloc() and
-friends, as long as objects are not resized during their lifetime and the
-object size used at allocation time is still available when freeing.
+New code should be written using g_new()/g_malloc() and g_free(). There is no
+particular benefit in porting existing code away from
+g_slice_new()/g_slice_free() unless it&#x2019;s being rewritten anyway.
 
 Here is an example for using the slice allocator:
 |[&lt;!-- language="C" --&gt;
@@ -48421,7 +48467,7 @@ error condition) then also do nothing.</doc>
     </function>
     <function name="print" c:identifier="g_print" introspectable="0">
       <doc xml:space="preserve">Outputs a formatted message via the print handler.
-The default print handler simply outputs the message to stdout, without
+The default print handler outputs the encoded message to stdout, without
 appending a trailing new-line character. Typically, @format should end with
 its own new-line character.
 
@@ -48446,7 +48492,7 @@ g_warning() and g_error().</doc>
     </function>
     <function name="printerr" c:identifier="g_printerr" introspectable="0">
       <doc xml:space="preserve">Outputs a formatted message via the error message handler.
-The default handler simply outputs the message to stderr, without appending
+The default handler outputs the encoded message to stderr, without appending
 a trailing new-line character. Typically, @format should end with its own
 new-line character.
 
@@ -49714,9 +49760,7 @@ in @length.</doc>
       <parameters>
         <parameter name="string" transfer-ownership="none">
           <doc xml:space="preserve">the string to escape</doc>
-          <array length="1" zero-terminated="0" c:type="const gchar*">
-            <type name="utf8" c:type="gchar"/>
-          </array>
+          <type name="utf8" c:type="const gchar*"/>
         </parameter>
         <parameter name="length" transfer-ownership="none">
           <doc xml:space="preserve">the length of @string, in bytes, or -1 if @string is nul-terminated</doc>
@@ -50284,39 +50328,57 @@ could only be called once per process.</doc>
       </parameters>
     </function>
     <function name="set_print_handler" c:identifier="g_set_print_handler" introspectable="0">
-      <doc xml:space="preserve">Sets the print handler.
+      <doc xml:space="preserve">Sets the print handler to @func, or resets it to the
+default GLib handler if %NULL.
 
 Any messages passed to g_print() will be output via
-the new handler. The default handler simply outputs
-the message to stdout. By providing your own handler
+the new handler. The default handler outputs
+the encoded message to stdout. By providing your own handler
 you can redirect the output, to a GTK+ widget or a
-log file for example.</doc>
+log file for example.
+
+Since 2.76 this functions always returns a valid
+#GPrintFunc, and never returns %NULL. If no custom
+print handler was set, it will return the GLib
+default print handler and that can be re-used to
+decorate its output and/or to write to stderr
+in all platforms. Before GLib 2.76, this was %NULL.</doc>
       <return-value>
         <doc xml:space="preserve">the old print handler</doc>
         <type name="PrintFunc" c:type="GPrintFunc"/>
       </return-value>
       <parameters>
-        <parameter name="func" transfer-ownership="none">
-          <doc xml:space="preserve">the new print handler</doc>
+        <parameter name="func" transfer-ownership="none" nullable="1" allow-none="1">
+          <doc xml:space="preserve">the new print handler or %NULL to
+  reset to the default</doc>
           <type name="PrintFunc" c:type="GPrintFunc"/>
         </parameter>
       </parameters>
     </function>
     <function name="set_printerr_handler" c:identifier="g_set_printerr_handler" introspectable="0">
-      <doc xml:space="preserve">Sets the handler for printing error messages.
+      <doc xml:space="preserve">Sets the handler for printing error messages to @func,
+or resets it to the default GLib handler if %NULL.
 
 Any messages passed to g_printerr() will be output via
-the new handler. The default handler simply outputs the
+the new handler. The default handler outputs the encoded
 message to stderr. By providing your own handler you can
 redirect the output, to a GTK+ widget or a log file for
-example.</doc>
+example.
+
+Since 2.76 this functions always returns a valid
+#GPrintFunc, and never returns %NULL. If no custom error
+print handler was set, it will return the GLib default
+error print handler and that can be re-used to decorate
+its output and/or to write to stderr in all platforms.
+Before GLib 2.76, this was %NULL.</doc>
       <return-value>
         <doc xml:space="preserve">the old error message handler</doc>
         <type name="PrintFunc" c:type="GPrintFunc"/>
       </return-value>
       <parameters>
-        <parameter name="func" transfer-ownership="none">
-          <doc xml:space="preserve">the new error message handler</doc>
+        <parameter name="func" transfer-ownership="none" nullable="1" allow-none="1">
+          <doc xml:space="preserve">he new error message handler or %NULL
+ to reset to the default</doc>
           <type name="PrintFunc" c:type="GPrintFunc"/>
         </parameter>
       </parameters>
@@ -50516,17 +50578,13 @@ returned.</doc>
       </parameters>
     </function-macro>
     <function name="slice_alloc" c:identifier="g_slice_alloc" version="2.10">
-      <doc xml:space="preserve">Allocates a block of memory from the slice allocator.
+      <doc xml:space="preserve">Allocates a block of memory from the libc allocator.
 
 The block address handed out can be expected to be aligned
-to at least `1 * sizeof (void*)`, though in general slices
-are `2 * sizeof (void*)` bytes aligned; if a `malloc()`
-fallback implementation is used instead, the alignment may
-be reduced in a libc dependent fashion.
+to at least `1 * sizeof (void*)`.
 
-Note that the underlying slice allocation mechanism can
-be changed with the [`G_SLICE=always-malloc`][G_SLICE]
-environment variable.</doc>
+Since GLib 2.76 this always uses the system malloc() implementation
+internally.</doc>
       <return-value transfer-ownership="none" nullable="1">
         <doc xml:space="preserve">a pointer to the allocated memory block, which will
   be %NULL if and only if @mem_size is 0</doc>
@@ -50541,9 +50599,10 @@ environment variable.</doc>
     </function>
     <function name="slice_alloc0" c:identifier="g_slice_alloc0" version="2.10">
       <doc xml:space="preserve">Allocates a block of memory via g_slice_alloc() and initializes
-the returned memory to 0. Note that the underlying slice allocation
-mechanism can be changed with the [`G_SLICE=always-malloc`][G_SLICE]
-environment variable.</doc>
+the returned memory to 0.
+
+Since GLib 2.76 this always uses the system malloc() implementation
+internally.</doc>
       <return-value transfer-ownership="none" nullable="1">
         <doc xml:space="preserve">a pointer to the allocated block, which will be %NULL if and only
    if @mem_size is 0</doc>
@@ -50560,7 +50619,10 @@ environment variable.</doc>
       <doc xml:space="preserve">Allocates a block of memory from the slice allocator
 and copies @block_size bytes into it from @mem_block.
 
-@mem_block must be non-%NULL if @block_size is non-zero.</doc>
+@mem_block must be non-%NULL if @block_size is non-zero.
+
+Since GLib 2.76 this always uses the system malloc() implementation
+internally.</doc>
       <return-value transfer-ownership="none" nullable="1">
         <doc xml:space="preserve">a pointer to the allocated memory block, which will be %NULL if and
    only if @mem_size is 0</doc>
@@ -50584,11 +50646,11 @@ the slice allocator.
 It calls g_slice_copy() with `sizeof (@type)`
 and casts the returned pointer to a pointer of the given type,
 avoiding a type cast in the source code.
-Note that the underlying slice allocation mechanism can
-be changed with the [`G_SLICE=always-malloc`][G_SLICE]
-environment variable.
 
-This can never return %NULL.</doc>
+This can never return %NULL.
+
+Since GLib 2.76 this always uses the system malloc() implementation
+internally.</doc>
       <parameters>
         <parameter name="type">
           <doc xml:space="preserve">the type to duplicate, typically a structure name</doc>
@@ -50605,10 +50667,11 @@ been allocated from the slice allocator.
 It calls g_slice_free1() using `sizeof (type)`
 as the block size.
 Note that the exact release behaviour can be changed with the
-[`G_DEBUG=gc-friendly`][G_DEBUG] environment variable, also see
-[`G_SLICE`][G_SLICE] for related debugging options.
+[`G_DEBUG=gc-friendly`][G_DEBUG] environment variable.
 
-If @mem is %NULL, this macro does nothing.</doc>
+If @mem is %NULL, this macro does nothing.
+
+Since GLib 2.76 this always uses the system free() implementation internally.</doc>
       <parameters>
         <parameter name="type">
           <doc xml:space="preserve">the type of the block to free, typically a structure name</doc>
@@ -50625,9 +50688,11 @@ The memory must have been allocated via g_slice_alloc() or
 g_slice_alloc0() and the @block_size has to match the size
 specified upon allocation. Note that the exact release behaviour
 can be changed with the [`G_DEBUG=gc-friendly`][G_DEBUG] environment
-variable, also see [`G_SLICE`][G_SLICE] for related debugging options.
+variable.
 
-If @mem_block is %NULL, this function does nothing.</doc>
+If @mem_block is %NULL, this function does nothing.
+
+Since GLib 2.76 this always uses the system free() implementation internally.</doc>
       <return-value transfer-ownership="none">
         <type name="none" c:type="void"/>
       </return-value>
@@ -50650,10 +50715,11 @@ g_slice_alloc() or g_slice_alloc0() and linked together by
 a @next pointer (similar to #GSList). The name of the
 @next field in @type is passed as third argument.
 Note that the exact release behaviour can be changed with the
-[`G_DEBUG=gc-friendly`][G_DEBUG] environment variable, also see
-[`G_SLICE`][G_SLICE] for related debugging options.
+[`G_DEBUG=gc-friendly`][G_DEBUG] environment variable.
 
-If @mem_chain is %NULL, this function does nothing.</doc>
+If @mem_chain is %NULL, this function does nothing.
+
+Since GLib 2.76 this always uses the system free() implementation internally.</doc>
       <parameters>
         <parameter name="type">
           <doc xml:space="preserve">the type of the @mem_chain blocks</doc>
@@ -50674,10 +50740,11 @@ g_slice_alloc() or g_slice_alloc0() and linked together by a
 @next pointer (similar to #GSList). The offset of the @next
 field in each block is passed as third argument.
 Note that the exact release behaviour can be changed with the
-[`G_DEBUG=gc-friendly`][G_DEBUG] environment variable, also see
-[`G_SLICE`][G_SLICE] for related debugging options.
+[`G_DEBUG=gc-friendly`][G_DEBUG] environment variable.
 
-If @mem_chain is %NULL, this function does nothing.</doc>
+If @mem_chain is %NULL, this function does nothing.
+
+Since GLib 2.76 this always uses the system free() implementation internally.</doc>
       <return-value transfer-ownership="none">
         <type name="none" c:type="void"/>
       </return-value>
@@ -50728,12 +50795,13 @@ slice allocator.
 
 It calls g_slice_alloc() with `sizeof (@type)` and casts the
 returned pointer to a pointer of the given type, avoiding a type
-cast in the source code. Note that the underlying slice allocation
-mechanism can be changed with the [`G_SLICE=always-malloc`][G_SLICE]
-environment variable.
+cast in the source code.
 
 This can never return %NULL as the minimum allocation size from
-`sizeof (@type)` is 1 byte.</doc>
+`sizeof (@type)` is 1 byte.
+
+Since GLib 2.76 this always uses the system malloc() implementation
+internally.</doc>
       <parameters>
         <parameter name="type">
           <doc xml:space="preserve">the type to allocate, typically a structure name</doc>
@@ -50747,12 +50815,12 @@ slice allocator and set the memory to 0.
 It calls g_slice_alloc0() with `sizeof (@type)`
 and casts the returned pointer to a pointer of the given type,
 avoiding a type cast in the source code.
-Note that the underlying slice allocation mechanism can
-be changed with the [`G_SLICE=always-malloc`][G_SLICE]
-environment variable.
 
 This can never return %NULL as the minimum allocation size from
-`sizeof (@type)` is 1 byte.</doc>
+`sizeof (@type)` is 1 byte.
+
+Since GLib 2.76 this always uses the system malloc() implementation
+internally.</doc>
       <parameters>
         <parameter name="type">
           <doc xml:space="preserve">the type to allocate, typically a structure name</doc>
@@ -55426,7 +55494,9 @@ added to the result after the converted text.</doc>
       <parameters>
         <parameter name="str" transfer-ownership="none">
           <doc xml:space="preserve">a UCS-4 encoded string</doc>
-          <type name="gunichar" c:type="const gunichar*"/>
+          <array length="1" zero-terminated="0" c:type="const gunichar*">
+            <type name="gunichar"/>
+          </array>
         </parameter>
         <parameter name="len" transfer-ownership="none">
           <doc xml:space="preserve">the maximum length (number of characters) of @str to use.
@@ -55460,7 +55530,9 @@ to UTF-8. The result will be terminated with a 0 byte.</doc>
       <parameters>
         <parameter name="str" transfer-ownership="none">
           <doc xml:space="preserve">a UCS-4 encoded string</doc>
-          <type name="gunichar" c:type="const gunichar*"/>
+          <array length="1" zero-terminated="0" c:type="const gunichar*">
+            <type name="gunichar"/>
+          </array>
         </parameter>
         <parameter name="len" transfer-ownership="none">
           <doc xml:space="preserve">the maximum length (number of characters) of @str to use.
@@ -56214,7 +56286,9 @@ manual for more information.</doc>
       <parameters>
         <parameter name="string" transfer-ownership="none">
           <doc xml:space="preserve">a UCS-4 encoded string.</doc>
-          <type name="gunichar" c:type="gunichar*"/>
+          <array length="1" zero-terminated="0" c:type="gunichar*">
+            <type name="gunichar"/>
+          </array>
         </parameter>
         <parameter name="len" transfer-ownership="none">
           <doc xml:space="preserve">the maximum length of @string to use.</doc>
@@ -57355,7 +57429,9 @@ nul-terminated.</doc>
       <parameters>
         <parameter name="str" transfer-ownership="none">
           <doc xml:space="preserve">a UTF-16 encoded string</doc>
-          <type name="guint16" c:type="const gunichar2*"/>
+          <array length="1" zero-terminated="0" c:type="const gunichar2*">
+            <type name="guint16"/>
+          </array>
         </parameter>
         <parameter name="len" transfer-ownership="none">
           <doc xml:space="preserve">the maximum length (number of #gunichar2) of @str to use.
@@ -57400,7 +57476,9 @@ unpaired surrogates or partial character sequences.</doc>
       <parameters>
         <parameter name="str" transfer-ownership="none">
           <doc xml:space="preserve">a UTF-16 encoded string</doc>
-          <type name="guint16" c:type="const gunichar2*"/>
+          <array length="1" zero-terminated="0" c:type="const gunichar2*">
+            <type name="guint16"/>
+          </array>
         </parameter>
         <parameter name="len" transfer-ownership="none">
           <doc xml:space="preserve">the maximum length (number of #gunichar2) of @str to use.
@@ -58721,11 +58799,18 @@ g_dtls_connection_shutdown (GDtlsConnection  *conn,
 }
 ]|
 
-g_print(), g_printerr() and g_set_print_handler() are intended to be used for
+g_print() and g_printerr() are intended to be used for
 output from command line applications, since they output to standard output
 and standard error by default &#x2014; whereas functions like g_message() and
 g_log() may be redirected to special purpose message windows, files, or the
-system journal.</doc>
+system journal.
+
+If the console encoding is not UTF-8 (as specified by g_get_console_charset())
+then these functions convert the message first. Any Unicode
+characters not defined by that charset are replaced by `'?'`. On Linux,
+setlocale() must be called early in main() to load the encoding. This behaviour
+can be changed by providing custom handlers to g_set_print_handler(),
+g_set_printerr_handler() and g_log_set_handler().</doc>
     </docsection>
     <docsection name="windows">
       <doc xml:space="preserve">These functions provide some level of UNIX emulation on the
