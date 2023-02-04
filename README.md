@@ -1,6 +1,6 @@
 # gir-files
 
-This repository contains the [GIR](https://developer.gnome.org/programming-guidelines/stable/introspection.html.en)
+This repository contains the [GIR](https://developer.gnome.org/documentation/guidelines/programming/introspection.html)
 files used to generate all [`gtk-rs`](https://github.com/gtk-rs/gtk-rs) crates.
 
 ## Updating all files
