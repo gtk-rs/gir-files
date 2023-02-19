@@ -1820,6 +1820,90 @@ points and color stops, and render that into the area given by @bounds.</doc>
         </parameters>
       </method>
     </class>
+    <enumeration name="MaskMode" version="4.10" glib:type-name="GskMaskMode" glib:get-type="gsk_mask_mode_get_type" c:type="GskMaskMode">
+      <doc xml:space="preserve">The mask modes available for mask nodes.</doc>
+      <member name="alpha" value="0" c:identifier="GSK_MASK_MODE_ALPHA" glib:nick="alpha" glib:name="GSK_MASK_MODE_ALPHA">
+        <doc xml:space="preserve">Use the alpha channel of the mask</doc>
+      </member>
+      <member name="inverted_alpha" value="1" c:identifier="GSK_MASK_MODE_INVERTED_ALPHA" glib:nick="inverted-alpha" glib:name="GSK_MASK_MODE_INVERTED_ALPHA">
+        <doc xml:space="preserve">Use the inverted alpha channel of the mask</doc>
+      </member>
+      <member name="luminance" value="2" c:identifier="GSK_MASK_MODE_LUMINANCE" glib:nick="luminance" glib:name="GSK_MASK_MODE_LUMINANCE">
+        <doc xml:space="preserve">Use the luminance of the mask,
+    multiplied by mask alpha</doc>
+      </member>
+      <member name="inverted_luminance" value="3" c:identifier="GSK_MASK_MODE_INVERTED_LUMINANCE" glib:nick="inverted-luminance" glib:name="GSK_MASK_MODE_INVERTED_LUMINANCE">
+        <doc xml:space="preserve">Use the inverted luminance of the mask,
+    multiplied by mask alpha</doc>
+      </member>
+    </enumeration>
+    <class name="MaskNode" c:symbol-prefix="mask_node" c:type="GskMaskNode" version="4.10" parent="RenderNode" glib:type-name="GskMaskNode" glib:get-type="gsk_mask_node_get_type" glib:fundamental="1">
+      <doc xml:space="preserve">A render node masking one child node with another.</doc>
+      <constructor name="new" c:identifier="gsk_mask_node_new" version="4.10">
+        <doc xml:space="preserve">Creates a `GskRenderNode` that will mask a given node by another.
+
+The @mask_mode determines how the 'mask values' are derived from
+the colors of the @mask. Applying the mask consists of multiplying
+the 'mask value' with the alpha of the source.</doc>
+        <return-value transfer-ownership="full">
+          <doc xml:space="preserve">A new `GskRenderNode`</doc>
+          <type name="MaskNode" c:type="GskRenderNode*"/>
+        </return-value>
+        <parameters>
+          <parameter name="source" transfer-ownership="none">
+            <doc xml:space="preserve">The source node to be drawn</doc>
+            <type name="RenderNode" c:type="GskRenderNode*"/>
+          </parameter>
+          <parameter name="mask" transfer-ownership="none">
+            <doc xml:space="preserve">The node to be used as mask</doc>
+            <type name="RenderNode" c:type="GskRenderNode*"/>
+          </parameter>
+          <parameter name="mask_mode" transfer-ownership="none">
+            <doc xml:space="preserve">The mask mode to use</doc>
+            <type name="MaskMode" c:type="GskMaskMode"/>
+          </parameter>
+        </parameters>
+      </constructor>
+      <method name="get_mask" c:identifier="gsk_mask_node_get_mask" version="4.10">
+        <doc xml:space="preserve">Retrieves the mask `GskRenderNode` child of the @node.</doc>
+        <return-value transfer-ownership="none">
+          <doc xml:space="preserve">the mask child node</doc>
+          <type name="RenderNode" c:type="GskRenderNode*"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="node" transfer-ownership="none">
+            <doc xml:space="preserve">a mask `GskRenderNode`</doc>
+            <type name="MaskNode" c:type="const GskRenderNode*"/>
+          </instance-parameter>
+        </parameters>
+      </method>
+      <method name="get_mask_mode" c:identifier="gsk_mask_node_get_mask_mode" version="4.10">
+        <doc xml:space="preserve">Retrieves the mask mode used by @node.</doc>
+        <return-value transfer-ownership="none">
+          <doc xml:space="preserve">the mask mode</doc>
+          <type name="MaskMode" c:type="GskMaskMode"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="node" transfer-ownership="none">
+            <doc xml:space="preserve">a blending `GskRenderNode`</doc>
+            <type name="MaskNode" c:type="const GskRenderNode*"/>
+          </instance-parameter>
+        </parameters>
+      </method>
+      <method name="get_source" c:identifier="gsk_mask_node_get_source" version="4.10">
+        <doc xml:space="preserve">Retrieves the source `GskRenderNode` child of the @node.</doc>
+        <return-value transfer-ownership="none">
+          <doc xml:space="preserve">the source child node</doc>
+          <type name="RenderNode" c:type="GskRenderNode*"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="node" transfer-ownership="none">
+            <doc xml:space="preserve">a mask `GskRenderNode`</doc>
+            <type name="MaskNode" c:type="const GskRenderNode*"/>
+          </instance-parameter>
+        </parameters>
+      </method>
+    </class>
     <class name="NglRenderer" c:symbol-prefix="ngl_renderer" parent="Renderer" glib:type-name="GskNglRenderer" glib:get-type="gsk_ngl_renderer_get_type">
       <constructor name="new" c:identifier="gsk_ngl_renderer_new" deprecated="1" deprecated-version="4.4">
         <doc xml:space="preserve">Same as gsk_gl_renderer_new().</doc>
@@ -2457,6 +2541,12 @@ node to a file for later inspection.</doc>
       </member>
       <member name="gl_shader_node" value="25" c:identifier="GSK_GL_SHADER_NODE" glib:nick="gl-shader-node" glib:name="GSK_GL_SHADER_NODE">
         <doc xml:space="preserve">A node that uses OpenGL fragment shaders to render</doc>
+      </member>
+      <member name="texture_scale_node" value="26" c:identifier="GSK_TEXTURE_SCALE_NODE" glib:nick="texture-scale-node" glib:name="GSK_TEXTURE_SCALE_NODE">
+        <doc xml:space="preserve">A node drawing a `GdkTexture` scaled and filtered (Since: 4.10)</doc>
+      </member>
+      <member name="mask_node" value="27" c:identifier="GSK_MASK_NODE" glib:nick="mask-node" glib:name="GSK_MASK_NODE">
+        <doc xml:space="preserve">A node that masks one child with another (Since: 4.10)</doc>
       </member>
     </enumeration>
     <class name="Renderer" c:symbol-prefix="renderer" c:type="GskRenderer" parent="GObject.Object" abstract="1" glib:type-name="GskRenderer" glib:get-type="gsk_renderer_get_type" glib:type-struct="RendererClass">
@@ -3584,6 +3674,63 @@ color glyphs.</doc>
           </instance-parameter>
         </parameters>
       </method>
+    </class>
+    <class name="TextureScaleNode" c:symbol-prefix="texture_scale_node" c:type="GskTextureScaleNode" parent="RenderNode" glib:type-name="GskTextureScaleNode" glib:get-type="gsk_texture_scale_node_get_type" glib:fundamental="1">
+      <doc xml:space="preserve">A render node for a `GdkTexture`.</doc>
+      <constructor name="new" c:identifier="gsk_texture_scale_node_new" version="4.10">
+        <doc xml:space="preserve">Creates a node that scales the texture to the size given by the
+bounds and the filter and then places it at the bounds' position.
+
+This node is intended for tight control over scaling applied
+to a texture, such as in image editors and requires the
+application to be aware of the whole render tree as further
+transforms may be applied that conflict with the desired effect
+of this node.</doc>
+        <return-value transfer-ownership="full">
+          <doc xml:space="preserve">A new `GskRenderNode`</doc>
+          <type name="TextureScaleNode" c:type="GskRenderNode*"/>
+        </return-value>
+        <parameters>
+          <parameter name="texture" transfer-ownership="none">
+            <doc xml:space="preserve">the texture to scale</doc>
+            <type name="Gdk.Texture" c:type="GdkTexture*"/>
+          </parameter>
+          <parameter name="bounds" transfer-ownership="none">
+            <doc xml:space="preserve">the size of the texture to scale to</doc>
+            <type name="Graphene.Rect" c:type="const graphene_rect_t*"/>
+          </parameter>
+          <parameter name="filter" transfer-ownership="none">
+            <doc xml:space="preserve">how to scale the texture</doc>
+            <type name="ScalingFilter" c:type="GskScalingFilter"/>
+          </parameter>
+        </parameters>
+      </constructor>
+      <function name="get_filter" c:identifier="gsk_texture_scale_node_get_filter" version="4.10">
+        <doc xml:space="preserve">Retrieves the `GskScalingFilter` used when creating this `GskRenderNode`.</doc>
+        <return-value transfer-ownership="none">
+          <doc xml:space="preserve">the `GskScalingFilter`</doc>
+          <type name="ScalingFilter" c:type="GskScalingFilter"/>
+        </return-value>
+        <parameters>
+          <parameter name="node" transfer-ownership="none">
+            <doc xml:space="preserve">a `GskRenderNode` of type %GSK_TEXTURE_SCALE_NODE</doc>
+            <type name="TextureNode" c:type="const GskRenderNode*"/>
+          </parameter>
+        </parameters>
+      </function>
+      <function name="get_texture" c:identifier="gsk_texture_scale_node_get_texture" version="4.10">
+        <doc xml:space="preserve">Retrieves the `GdkTexture` used when creating this `GskRenderNode`.</doc>
+        <return-value transfer-ownership="none">
+          <doc xml:space="preserve">the `GdkTexture`</doc>
+          <type name="Gdk.Texture" c:type="GdkTexture*"/>
+        </return-value>
+        <parameters>
+          <parameter name="node" transfer-ownership="none">
+            <doc xml:space="preserve">a `GskRenderNode` of type %GSK_TEXTURE_SCALE_NODE</doc>
+            <type name="TextureNode" c:type="const GskRenderNode*"/>
+          </parameter>
+        </parameters>
+      </function>
     </class>
     <record name="Transform" c:type="GskTransform" opaque="1" glib:type-name="GskTransform" glib:get-type="gsk_transform_get_type" c:symbol-prefix="transform">
       <doc xml:space="preserve">`GskTransform` is an object to describe transform matrices.
