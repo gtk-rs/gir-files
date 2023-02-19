@@ -3672,7 +3672,7 @@ for the @display.</doc>
           </parameter>
         </parameters>
       </method>
-      <method name="get_startup_notification_id" c:identifier="gdk_display_get_startup_notification_id">
+      <method name="get_startup_notification_id" c:identifier="gdk_display_get_startup_notification_id" deprecated="1" deprecated-version="4.10">
         <doc xml:space="preserve">Gets the startup notification ID for a Wayland display, or %NULL
 if no ID has been defined.</doc>
         <return-value transfer-ownership="none" nullable="1">
@@ -3850,7 +3850,7 @@ The returned array should be freed with g_free().</doc>
           </parameter>
         </parameters>
       </method>
-      <method name="notify_startup_complete" c:identifier="gdk_display_notify_startup_complete" deprecated="1" deprecated-version="4.10.">
+      <method name="notify_startup_complete" c:identifier="gdk_display_notify_startup_complete" deprecated="1" deprecated-version="4.10">
         <doc xml:space="preserve">Indicates to the GUI environment that the application has
 finished loading, using a given identifier.
 
@@ -3858,7 +3858,7 @@ GTK will call this function automatically for [class@Gtk.Window]
 with custom startup-notification identifier unless
 [method@Gtk.Window.set_auto_startup_notification]
 is called to disable that feature.</doc>
-        <doc-deprecated xml:space="preserve">Using gdk_toplevel_set_startup_id() is sufficient.</doc-deprecated>
+        <doc-deprecated xml:space="preserve">Using [method@Gdk.Toplevel.set_startup_id] is sufficient</doc-deprecated>
         <return-value transfer-ownership="none">
           <type name="none" c:type="void"/>
         </return-value>
@@ -14206,9 +14206,29 @@ monitors with [method@Gdk.Display.get_monitors]. You can use
 monitor.</doc>
       <method name="get_connector" c:identifier="gdk_monitor_get_connector" glib:get-property="connector">
         <attribute name="org.gtk.Method.get_property" value="connector"/>
-        <doc xml:space="preserve">Gets the name of the monitor's connector, if available.</doc>
+        <doc xml:space="preserve">Gets the name of the monitor's connector, if available.
+
+These are strings such as "eDP-1", or "HDMI-2". They depend
+on software and hardware configuration, and should not be
+relied on as stable identifiers of a specific monitor.</doc>
         <return-value transfer-ownership="none" nullable="1">
           <doc xml:space="preserve">the name of the connector</doc>
+          <type name="utf8" c:type="const char*"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="monitor" transfer-ownership="none">
+            <doc xml:space="preserve">a `GdkMonitor`</doc>
+            <type name="Monitor" c:type="GdkMonitor*"/>
+          </instance-parameter>
+        </parameters>
+      </method>
+      <method name="get_description" c:identifier="gdk_monitor_get_description" glib:get-property="description" version="4.10">
+        <attribute name="org.gtk.Method.get_property" value="description"/>
+        <doc xml:space="preserve">Gets a string describing the monitor, if available.
+
+This can be used to identify a monitor in the UI.</doc>
+        <return-value transfer-ownership="none" nullable="1">
+          <doc xml:space="preserve">the monitor description</doc>
           <type name="utf8" c:type="const char*"/>
         </return-value>
         <parameters>
@@ -14390,6 +14410,11 @@ is unplugged or removed.</doc>
       <property name="connector" transfer-ownership="none" getter="get_connector" default-value="NULL">
         <attribute name="org.gtk.Property.get" value="gdk_monitor_get_connector"/>
         <doc xml:space="preserve">The connector name.</doc>
+        <type name="utf8" c:type="gchar*"/>
+      </property>
+      <property name="description" version="4.10" transfer-ownership="none" getter="get_description" default-value="NULL">
+        <attribute name="org.gtk.Property.get" value="gdk_monitor_get_description"/>
+        <doc xml:space="preserve">A short description of the monitor, meant for display to the user.</doc>
         <type name="utf8" c:type="gchar*"/>
       </property>
       <property name="display" writable="1" construct-only="1" transfer-ownership="none" getter="get_display">
@@ -17123,7 +17148,10 @@ gdk_texture_download (texture,
                       cairo_image_surface_get_data (surface),
                       cairo_image_surface_get_stride (surface));
 cairo_surface_mark_dirty (surface);
-```</doc>
+```
+
+For more flexible download capabilites, see
+[struct@Gdk.TextureDownloader].</doc>
         <return-value transfer-ownership="none">
           <type name="none" c:type="void"/>
         </return-value>
@@ -17143,6 +17171,27 @@ cairo_surface_mark_dirty (surface);
             <doc xml:space="preserve">rowstride in bytes</doc>
             <type name="gsize" c:type="gsize"/>
           </parameter>
+        </parameters>
+      </method>
+      <method name="get_format" c:identifier="gdk_texture_get_format" version="4.10">
+        <doc xml:space="preserve">Gets the memory format most closely associated with the data of
+the texture.
+
+Note that it may not be an exact match for texture data
+stored on the GPU or with compression.
+
+The format can give an indication about the bit depth and opacity
+of the texture and is useful to determine the best format for
+downloading the texture.</doc>
+        <return-value transfer-ownership="none">
+          <doc xml:space="preserve">the preferred format for the texture's data</doc>
+          <type name="MemoryFormat" c:type="GdkMemoryFormat"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="self" transfer-ownership="none">
+            <doc xml:space="preserve">a GdkTexture</doc>
+            <type name="Texture" c:type="GdkTexture*"/>
+          </instance-parameter>
         </parameters>
       </method>
       <method name="get_height" c:identifier="gdk_texture_get_height" glib:get-property="height">
@@ -17277,6 +17326,164 @@ use [method@Gdk.Texture.save_to_png_bytes].</doc>
       </property>
     </class>
     <record name="TextureClass" c:type="GdkTextureClass" disguised="1" opaque="1" glib:is-gtype-struct-for="Texture"/>
+    <record name="TextureDownloader" c:type="GdkTextureDownloader" opaque="1" version="4.10" glib:type-name="GdkTextureDownloader" glib:get-type="gdk_texture_downloader_get_type" c:symbol-prefix="texture_downloader">
+      <doc xml:space="preserve">The `GdkTextureDownloader` is used to download the contents of a
+[class@Gdk.Texture].
+
+It is intended to be created as a short-term object for a single download,
+but can be used for multipe downloads of different textures or with different
+settings.
+
+`GdkTextureDownloader` can be used to convert data between different formats.
+Create a `GdkTexture` for the existing format and then download it in a
+different format.</doc>
+      <constructor name="new" c:identifier="gdk_texture_downloader_new" version="4.10">
+        <doc xml:space="preserve">Creates a new texture downloader for @texture.</doc>
+        <return-value transfer-ownership="full">
+          <doc xml:space="preserve">A new texture downloader</doc>
+          <type name="TextureDownloader" c:type="GdkTextureDownloader*"/>
+        </return-value>
+        <parameters>
+          <parameter name="texture" transfer-ownership="none">
+            <doc xml:space="preserve">texture to download</doc>
+            <type name="Texture" c:type="GdkTexture*"/>
+          </parameter>
+        </parameters>
+      </constructor>
+      <method name="copy" c:identifier="gdk_texture_downloader_copy" version="4.10">
+        <doc xml:space="preserve">Creates a copy of the downloader.
+
+This function is meant for language bindings.</doc>
+        <return-value transfer-ownership="full">
+          <doc xml:space="preserve">A copy of the downloader</doc>
+          <type name="TextureDownloader" c:type="GdkTextureDownloader*"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="self" transfer-ownership="none">
+            <doc xml:space="preserve">the downloader to copy</doc>
+            <type name="TextureDownloader" c:type="const GdkTextureDownloader*"/>
+          </instance-parameter>
+        </parameters>
+      </method>
+      <method name="download_bytes" c:identifier="gdk_texture_downloader_download_bytes" version="4.10">
+        <doc xml:space="preserve">Downloads the given texture pixels into a `GBytes`. The rowstride will
+be stored in the stride value.
+
+This function will abort if it tries to download a large texture and
+fails to allocate memory. If you think that may happen, you should
+handle memory allocation yourself and use
+gdk_texture_downloader_download_into() once allocation succeeded.</doc>
+        <return-value transfer-ownership="full">
+          <doc xml:space="preserve">The downloaded pixels.</doc>
+          <type name="GLib.Bytes" c:type="GBytes*"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="self" transfer-ownership="none">
+            <doc xml:space="preserve">the downloader</doc>
+            <type name="TextureDownloader" c:type="const GdkTextureDownloader*"/>
+          </instance-parameter>
+          <parameter name="out_stride" direction="out" caller-allocates="0" transfer-ownership="full">
+            <doc xml:space="preserve">The stride of the resulting data in bytes.</doc>
+            <type name="gsize" c:type="gsize*"/>
+          </parameter>
+        </parameters>
+      </method>
+      <method name="download_into" c:identifier="gdk_texture_downloader_download_into" version="4.10">
+        <doc xml:space="preserve">Downloads the @texture into local memory.</doc>
+        <return-value transfer-ownership="none">
+          <type name="none" c:type="void"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="self" transfer-ownership="none">
+            <doc xml:space="preserve">a texture downloader</doc>
+            <type name="TextureDownloader" c:type="const GdkTextureDownloader*"/>
+          </instance-parameter>
+          <parameter name="data" transfer-ownership="none">
+            <doc xml:space="preserve">pointer to enough memory to be filled with the
+  downloaded data of the texture</doc>
+            <array zero-terminated="0" c:type="guchar*">
+              <type name="guint8" c:type="guchar"/>
+            </array>
+          </parameter>
+          <parameter name="stride" transfer-ownership="none">
+            <doc xml:space="preserve">rowstride in bytes</doc>
+            <type name="gsize" c:type="gsize"/>
+          </parameter>
+        </parameters>
+      </method>
+      <method name="free" c:identifier="gdk_texture_downloader_free" version="4.10">
+        <doc xml:space="preserve">Frees the given downloader and all its associated resources.</doc>
+        <return-value transfer-ownership="none">
+          <type name="none" c:type="void"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="self" transfer-ownership="none">
+            <doc xml:space="preserve">texture downloader to free</doc>
+            <type name="TextureDownloader" c:type="GdkTextureDownloader*"/>
+          </instance-parameter>
+        </parameters>
+      </method>
+      <method name="get_format" c:identifier="gdk_texture_downloader_get_format" version="4.10">
+        <doc xml:space="preserve">Gets the format that the data will be downloaded in.</doc>
+        <return-value transfer-ownership="none">
+          <doc xml:space="preserve">The format of the download</doc>
+          <type name="MemoryFormat" c:type="GdkMemoryFormat"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="self" transfer-ownership="none">
+            <doc xml:space="preserve">a texture downloader</doc>
+            <type name="TextureDownloader" c:type="const GdkTextureDownloader*"/>
+          </instance-parameter>
+        </parameters>
+      </method>
+      <method name="get_texture" c:identifier="gdk_texture_downloader_get_texture" version="4.10">
+        <doc xml:space="preserve">Gets the texture that the downloader will download.</doc>
+        <return-value transfer-ownership="none">
+          <doc xml:space="preserve">The texture to download</doc>
+          <type name="Texture" c:type="GdkTexture*"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="self" transfer-ownership="none">
+            <doc xml:space="preserve">a texture downloader</doc>
+            <type name="TextureDownloader" c:type="const GdkTextureDownloader*"/>
+          </instance-parameter>
+        </parameters>
+      </method>
+      <method name="set_format" c:identifier="gdk_texture_downloader_set_format" version="4.10">
+        <doc xml:space="preserve">Sets the format the downloader will download.
+
+By default, GDK_MEMORY_DEFAULT is set.</doc>
+        <return-value transfer-ownership="none">
+          <type name="none" c:type="void"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="self" transfer-ownership="none">
+            <doc xml:space="preserve">a texture downloader</doc>
+            <type name="TextureDownloader" c:type="GdkTextureDownloader*"/>
+          </instance-parameter>
+          <parameter name="format" transfer-ownership="none">
+            <doc xml:space="preserve">the format to use</doc>
+            <type name="MemoryFormat" c:type="GdkMemoryFormat"/>
+          </parameter>
+        </parameters>
+      </method>
+      <method name="set_texture" c:identifier="gdk_texture_downloader_set_texture" version="4.10">
+        <doc xml:space="preserve">Changes the texture the downloader will download.</doc>
+        <return-value transfer-ownership="none">
+          <type name="none" c:type="void"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="self" transfer-ownership="none">
+            <doc xml:space="preserve">a texture downloader</doc>
+            <type name="TextureDownloader" c:type="GdkTextureDownloader*"/>
+          </instance-parameter>
+          <parameter name="texture" transfer-ownership="none">
+            <doc xml:space="preserve">the new texture to download</doc>
+            <type name="Texture" c:type="GdkTexture*"/>
+          </parameter>
+        </parameters>
+      </method>
+    </record>
     <enumeration name="TextureError" version="4.6" glib:type-name="GdkTextureError" glib:get-type="gdk_texture_error_get_type" c:type="GdkTextureError" glib:error-domain="gdk-texture-error-quark">
       <doc xml:space="preserve">Possible errors that can be returned by `GdkTexture` constructors.</doc>
       <member name="too_large" value="0" c:identifier="GDK_TEXTURE_ERROR_TOO_LARGE" glib:nick="too-large" glib:name="GDK_TEXTURE_ERROR_TOO_LARGE">
