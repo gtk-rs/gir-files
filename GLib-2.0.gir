@@ -7210,15 +7210,15 @@ Note that in contrast to g_mkdtemp() (and mkdtemp()) @tmpl is not
 modified, and might thus be a read-only literal string.</doc>
         <return-value transfer-ownership="full">
           <doc xml:space="preserve">The actual name used. This string
-    should be freed with g_free() when not needed any longer and is
-    is in the GLib file name encoding. In case of errors, %NULL is
-    returned and @error will be set.</doc>
+  should be freed with g_free() when not needed any longer and is
+  is in the GLib file name encoding. In case of errors, %NULL is
+  returned and @error will be set.</doc>
           <type name="filename" c:type="gchar*"/>
         </return-value>
         <parameters>
           <parameter name="tmpl" transfer-ownership="none" nullable="1" allow-none="1">
             <doc xml:space="preserve">Template for directory name,
-    as in g_mkdtemp(), basename only, or %NULL for a default template</doc>
+  as in g_mkdtemp(), basename only, or %NULL for a default template</doc>
             <type name="filename" c:type="const gchar*"/>
           </parameter>
         </parameters>
@@ -14246,7 +14246,7 @@ This is the same as standard C `UINT8_MAX`, which should be
 preferred in new code.</doc>
       <type name="guint8" c:type="guint8"/>
     </constant>
-    <constant name="MICRO_VERSION" value="2" c:type="GLIB_MICRO_VERSION">
+    <constant name="MICRO_VERSION" value="3" c:type="GLIB_MICRO_VERSION">
       <doc xml:space="preserve">The micro version number of the GLib library.
 
 Like #gtk_micro_version, but from the headers used at
@@ -18199,6 +18199,361 @@ set_local_count (gint count)
         </parameter>
       </parameters>
     </function-macro>
+    <record name="PathBuf" c:type="GPathBuf" copy-function="g_path_buf_copy" free-function="g_path_buf_free" version="2.76">
+      <doc xml:space="preserve">`GPathBuf` is a helper type that allows you to easily build paths from
+individual elements, using the platform specific conventions for path
+separators.
+
+|[&lt;!-- language="C" --&gt;
+g_auto (GPathBuf) path;
+
+g_path_buf_init (&amp;path);
+
+g_path_buf_push (&amp;path, "usr");
+g_path_buf_push (&amp;path, "bin");
+g_path_buf_push (&amp;path, "echo");
+
+g_autofree char *echo = g_path_buf_to_path (&amp;path);
+g_assert_cmpstr (echo, ==, "/usr/bin/echo");
+]|
+
+You can also load a full path and then operate on its components:
+
+|[&lt;!-- language="C" --&gt;
+g_auto (GPathBuf) path;
+
+g_path_buf_init_from_path (&amp;path, "/usr/bin/echo");
+
+g_path_buf_pop (&amp;path);
+g_path_buf_push (&amp;path, "sh");
+
+g_autofree char *sh = g_path_buf_to_path (&amp;path);
+g_assert_cmpstr (sh, ==, "/usr/bin/sh");
+]|
+
+`GPathBuf` is available since GLib 2.76.</doc>
+      <field name="dummy" readable="0" private="1">
+        <array zero-terminated="0" fixed-size="8">
+          <type name="gpointer" c:type="gpointer"/>
+        </array>
+      </field>
+      <method name="clear" c:identifier="g_path_buf_clear" version="2.76">
+        <doc xml:space="preserve">Clears the contents of the path buffer.
+
+This function should be use to free the resources in a stack-allocated
+`GPathBuf` initialized using g_path_buf_init() or
+g_path_buf_init_from_path().</doc>
+        <return-value transfer-ownership="none">
+          <type name="none" c:type="void"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="buf" transfer-ownership="none">
+            <doc xml:space="preserve">a path buffer</doc>
+            <type name="PathBuf" c:type="GPathBuf*"/>
+          </instance-parameter>
+        </parameters>
+      </method>
+      <method name="clear_to_path" c:identifier="g_path_buf_clear_to_path" version="2.76">
+        <doc xml:space="preserve">Clears the contents of the path buffer and returns the built path.
+
+This function returns `NULL` if the `GPathBuf` is empty.
+
+See also: g_path_buf_to_path()</doc>
+        <return-value transfer-ownership="full" nullable="1">
+          <doc xml:space="preserve">the built path</doc>
+          <type name="filename" c:type="char*"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="buf" transfer-ownership="none">
+            <doc xml:space="preserve">a path buffer</doc>
+            <type name="PathBuf" c:type="GPathBuf*"/>
+          </instance-parameter>
+        </parameters>
+      </method>
+      <method name="copy" c:identifier="g_path_buf_copy" version="2.76" introspectable="0">
+        <doc xml:space="preserve">Copies the contents of a path buffer into a new `GPathBuf`.</doc>
+        <return-value transfer-ownership="full">
+          <doc xml:space="preserve">the newly allocated path buffer</doc>
+          <type name="PathBuf" c:type="GPathBuf*"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="buf" transfer-ownership="none">
+            <doc xml:space="preserve">a path buffer</doc>
+            <type name="PathBuf" c:type="GPathBuf*"/>
+          </instance-parameter>
+        </parameters>
+      </method>
+      <method name="free" c:identifier="g_path_buf_free" version="2.76">
+        <doc xml:space="preserve">Frees a `GPathBuf` allocated by g_path_buf_new().</doc>
+        <return-value transfer-ownership="none">
+          <type name="none" c:type="void"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="buf" transfer-ownership="full">
+            <doc xml:space="preserve">a path buffer</doc>
+            <type name="PathBuf" c:type="GPathBuf*"/>
+          </instance-parameter>
+        </parameters>
+      </method>
+      <method name="free_to_path" c:identifier="g_path_buf_free_to_path" version="2.76">
+        <doc xml:space="preserve">Frees a `GPathBuf` allocated by g_path_buf_new(), and
+returns the path inside the buffer.
+
+This function returns `NULL` if the `GPathBuf` is empty.
+
+See also: g_path_buf_to_path()</doc>
+        <return-value transfer-ownership="full" nullable="1">
+          <doc xml:space="preserve">the path</doc>
+          <type name="filename" c:type="char*"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="buf" transfer-ownership="full">
+            <doc xml:space="preserve">a path buffer</doc>
+            <type name="PathBuf" c:type="GPathBuf*"/>
+          </instance-parameter>
+        </parameters>
+      </method>
+      <method name="init" c:identifier="g_path_buf_init" version="2.76">
+        <doc xml:space="preserve">Initializes a `GPathBuf` instance.</doc>
+        <return-value transfer-ownership="none">
+          <doc xml:space="preserve">the initialized path builder</doc>
+          <type name="PathBuf" c:type="GPathBuf*"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="buf" transfer-ownership="none">
+            <doc xml:space="preserve">a path buffer</doc>
+            <type name="PathBuf" c:type="GPathBuf*"/>
+          </instance-parameter>
+        </parameters>
+      </method>
+      <method name="init_from_path" c:identifier="g_path_buf_init_from_path" version="2.76">
+        <doc xml:space="preserve">Initializes a `GPathBuf` instance with the given path.</doc>
+        <return-value transfer-ownership="none">
+          <doc xml:space="preserve">the initialized path builder</doc>
+          <type name="PathBuf" c:type="GPathBuf*"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="buf" transfer-ownership="none">
+            <doc xml:space="preserve">a path buffer</doc>
+            <type name="PathBuf" c:type="GPathBuf*"/>
+          </instance-parameter>
+          <parameter name="path" transfer-ownership="none" nullable="1" allow-none="1">
+            <doc xml:space="preserve">a file system path</doc>
+            <type name="filename" c:type="const char*"/>
+          </parameter>
+        </parameters>
+      </method>
+      <method name="pop" c:identifier="g_path_buf_pop" version="2.76">
+        <doc xml:space="preserve">Removes the last element of the path buffer.
+
+If there is only one element in the path buffer (for example, `/` on
+Unix-like operating systems or the drive on Windows systems), it will
+not be removed and %FALSE will be returned instead.
+
+|[&lt;!-- language="C" --&gt;
+GPathBuf buf, cmp;
+
+g_path_buf_init_from_path (&amp;buf, "/bin/sh");
+
+g_path_buf_pop (&amp;buf);
+g_path_buf_init_from_path (&amp;cmp, "/bin");
+g_assert_true (g_path_buf_equal (&amp;buf, &amp;cmp));
+g_path_buf_clear (&amp;cmp);
+
+g_path_buf_pop (&amp;buf);
+g_path_buf_init_from_path (&amp;cmp, "/");
+g_assert_true (g_path_buf_equal (&amp;buf, &amp;cmp));
+g_path_buf_clear (&amp;cmp);
+
+g_path_buf_clear (&amp;buf);
+]|</doc>
+        <return-value transfer-ownership="none">
+          <doc xml:space="preserve">`TRUE` if the buffer was modified and `FALSE` otherwise</doc>
+          <type name="gboolean" c:type="gboolean"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="buf" transfer-ownership="none">
+            <doc xml:space="preserve">a path buffer</doc>
+            <type name="PathBuf" c:type="GPathBuf*"/>
+          </instance-parameter>
+        </parameters>
+      </method>
+      <method name="push" c:identifier="g_path_buf_push" version="2.76">
+        <doc xml:space="preserve">Extends the given path buffer with @path.
+
+If @path is absolute, it replaces the current path.
+
+If @path contains a directory separator, the buffer is extended by
+as many elements the path provides.
+
+On Windows, both forward slashes and backslashes are treated as
+directory separators. On other platforms, %G_DIR_SEPARATOR_S is the
+only directory separator.
+
+|[&lt;!-- language="C" --&gt;
+GPathBuf buf, cmp;
+
+g_path_buf_init_from_path (&amp;buf, "/tmp");
+g_path_buf_push (&amp;buf, ".X11-unix/X0");
+g_path_buf_init_from_path (&amp;cmp, "/tmp/.X11-unix/X0");
+g_assert_true (g_path_buf_equal (&amp;buf, &amp;cmp));
+g_path_buf_clear (&amp;cmp);
+
+g_path_buf_push (&amp;buf, "/etc/locale.conf");
+g_path_buf_init_from_path (&amp;cmp, "/etc/locale.conf");
+g_assert_true (g_path_buf_equal (&amp;buf, &amp;cmp));
+g_path_buf_clear (&amp;cmp);
+
+g_path_buf_clear (&amp;buf);
+]|</doc>
+        <return-value transfer-ownership="none">
+          <doc xml:space="preserve">the same pointer to @buf, for convenience</doc>
+          <type name="PathBuf" c:type="GPathBuf*"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="buf" transfer-ownership="none">
+            <doc xml:space="preserve">a path buffer</doc>
+            <type name="PathBuf" c:type="GPathBuf*"/>
+          </instance-parameter>
+          <parameter name="path" transfer-ownership="none">
+            <doc xml:space="preserve">a path</doc>
+            <type name="filename" c:type="const char*"/>
+          </parameter>
+        </parameters>
+      </method>
+      <method name="set_extension" c:identifier="g_path_buf_set_extension" version="2.76">
+        <doc xml:space="preserve">Adds an extension to the file name in the path buffer.
+
+If @extension is `NULL`, the extension will be unset.
+
+If the path buffer does not have a file name set, this function returns
+`FALSE` and leaves the path buffer unmodified.</doc>
+        <return-value transfer-ownership="none">
+          <doc xml:space="preserve">`TRUE` if the extension was replaced, and `FALSE` otherwise</doc>
+          <type name="gboolean" c:type="gboolean"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="buf" transfer-ownership="none">
+            <doc xml:space="preserve">a path buffer</doc>
+            <type name="PathBuf" c:type="GPathBuf*"/>
+          </instance-parameter>
+          <parameter name="extension" transfer-ownership="none" nullable="1" allow-none="1">
+            <doc xml:space="preserve">the file extension</doc>
+            <type name="filename" c:type="const char*"/>
+          </parameter>
+        </parameters>
+      </method>
+      <method name="set_filename" c:identifier="g_path_buf_set_filename" version="2.76">
+        <doc xml:space="preserve">Sets the file name of the path.
+
+If the path buffer is empty, the filename is left unset and this
+function returns `FALSE`.
+
+If the path buffer only contains the root element (on Unix-like operating
+systems) or the drive (on Windows), this is the equivalent of pushing
+the new @file_name.
+
+If the path buffer contains a path, this is the equivalent of
+popping the path buffer and pushing @file_name, creating a
+sibling of the original path.
+
+|[&lt;!-- language="C" --&gt;
+GPathBuf buf, cmp;
+
+g_path_buf_init_from_path (&amp;buf, "/");
+
+g_path_buf_set_filename (&amp;buf, "bar");
+g_path_buf_init_from_path (&amp;cmp, "/bar");
+g_assert_true (g_path_buf_equal (&amp;buf, &amp;cmp));
+g_path_buf_clear (&amp;cmp);
+
+g_path_buf_set_filename (&amp;buf, "baz.txt");
+g_path_buf_init_from_path (&amp;cmp, "/baz.txt");
+g_assert_true (g_path_buf_equal (&amp;buf, &amp;cmp);
+g_path_buf_clear (&amp;cmp);
+
+g_path_buf_clear (&amp;buf);
+]|</doc>
+        <return-value transfer-ownership="none">
+          <doc xml:space="preserve">`TRUE` if the file name was replaced, and `FALSE` otherwise</doc>
+          <type name="gboolean" c:type="gboolean"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="buf" transfer-ownership="none">
+            <doc xml:space="preserve">a path buffer</doc>
+            <type name="PathBuf" c:type="GPathBuf*"/>
+          </instance-parameter>
+          <parameter name="file_name" transfer-ownership="none">
+            <doc xml:space="preserve">the file name in the path</doc>
+            <type name="filename" c:type="const char*"/>
+          </parameter>
+        </parameters>
+      </method>
+      <method name="to_path" c:identifier="g_path_buf_to_path" version="2.76">
+        <doc xml:space="preserve">Retrieves the built path from the path buffer.
+
+On Windows, the result contains backslashes as directory separators,
+even if forward slashes were used in input.
+
+If the path buffer is empty, this function returns `NULL`.</doc>
+        <return-value transfer-ownership="full" nullable="1">
+          <doc xml:space="preserve">the path</doc>
+          <type name="filename" c:type="char*"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="buf" transfer-ownership="none">
+            <doc xml:space="preserve">a path buffer</doc>
+            <type name="PathBuf" c:type="GPathBuf*"/>
+          </instance-parameter>
+        </parameters>
+      </method>
+      <function name="equal" c:identifier="g_path_buf_equal" version="2.76">
+        <doc xml:space="preserve">Compares two path buffers for equality and returns `TRUE`
+if they are equal.
+
+The path inside the paths buffers are not going to be normalized,
+so `X/Y/Z/A/..`, `X/./Y/Z` and `X/Y/Z` are not going to be considered
+equal.
+
+This function can be passed to g_hash_table_new() as the
+`key_equal_func` parameter.</doc>
+        <return-value transfer-ownership="none">
+          <doc xml:space="preserve">`TRUE` if the two path buffers are equal,
+  and `FALSE` otherwise</doc>
+          <type name="gboolean" c:type="gboolean"/>
+        </return-value>
+        <parameters>
+          <parameter name="v1" transfer-ownership="none">
+            <doc xml:space="preserve">a path buffer to compare</doc>
+            <type name="gpointer" c:type="gconstpointer"/>
+          </parameter>
+          <parameter name="v2" transfer-ownership="none">
+            <doc xml:space="preserve">a path buffer to compare</doc>
+            <type name="gpointer" c:type="gconstpointer"/>
+          </parameter>
+        </parameters>
+      </function>
+      <function name="new" c:identifier="g_path_buf_new" version="2.76" introspectable="0">
+        <doc xml:space="preserve">Allocates a new `GPathBuf`.</doc>
+        <return-value transfer-ownership="full">
+          <doc xml:space="preserve">the newly allocated path buffer</doc>
+          <type name="PathBuf" c:type="GPathBuf*"/>
+        </return-value>
+      </function>
+      <function name="new_from_path" c:identifier="g_path_buf_new_from_path" version="2.76" introspectable="0">
+        <doc xml:space="preserve">Allocates a new `GPathBuf` with the given @path.</doc>
+        <return-value transfer-ownership="full">
+          <doc xml:space="preserve">the newly allocated path buffer</doc>
+          <type name="PathBuf" c:type="GPathBuf*"/>
+        </return-value>
+        <parameters>
+          <parameter name="path" transfer-ownership="none" nullable="1" allow-none="1">
+            <doc xml:space="preserve">the path used to initialize the buffer</doc>
+            <type name="filename" c:type="const char*"/>
+          </parameter>
+        </parameters>
+      </function>
+    </record>
     <record name="PatternSpec" c:type="GPatternSpec" opaque="1" glib:type-name="GPatternSpec" glib:get-type="g_pattern_spec_get_type" c:symbol-prefix="pattern_spec">
       <doc xml:space="preserve">A GPatternSpec struct is the 'compiled' form of a pattern. This
 structure is opaque and its fields cannot be accessed directly.</doc>
@@ -36540,7 +36895,7 @@ If the allocation fails (because the system is out of memory),
 the program is terminated.
 
 Aligned memory allocations returned by this function can only be
-freed using g_aligned_free().</doc>
+freed using g_aligned_free_sized() or g_aligned_free().</doc>
       <return-value transfer-ownership="full" nullable="1">
         <doc xml:space="preserve">the allocated memory</doc>
         <type name="gpointer" c:type="gpointer"/>
@@ -36593,6 +36948,34 @@ also clear the allocated memory before returning it.</doc>
         <parameter name="mem" transfer-ownership="none" nullable="1" allow-none="1">
           <doc xml:space="preserve">the memory to deallocate</doc>
           <type name="gpointer" c:type="gpointer"/>
+        </parameter>
+      </parameters>
+    </function>
+    <function name="aligned_free_sized" c:identifier="g_aligned_free_sized" version="2.76">
+      <doc xml:space="preserve">Frees the memory pointed to by @mem, assuming it is has the given @size and
+@alignment.
+
+If @mem is %NULL this is a no-op (and @size is ignored).
+
+It is an error if @size doesn&#x2019;t match the size, or @alignment doesn&#x2019;t match
+the alignment, passed when @mem was allocated. @size and @alignment are
+passed to this function to allow optimizations in the allocator. If you
+don&#x2019;t know either of them, use g_aligned_free() instead.</doc>
+      <return-value transfer-ownership="none">
+        <type name="none" c:type="void"/>
+      </return-value>
+      <parameters>
+        <parameter name="mem" transfer-ownership="none" nullable="1" allow-none="1">
+          <doc xml:space="preserve">the memory to free</doc>
+          <type name="gpointer" c:type="gpointer"/>
+        </parameter>
+        <parameter name="alignment" transfer-ownership="none">
+          <doc xml:space="preserve">alignment of @mem</doc>
+          <type name="gsize" c:type="size_t"/>
+        </parameter>
+        <parameter name="size" transfer-ownership="none">
+          <doc xml:space="preserve">size of @mem, in bytes</doc>
+          <type name="gsize" c:type="size_t"/>
         </parameter>
       </parameters>
     </function>
@@ -39320,12 +39703,12 @@ or certain other protocols.</doc>
 components. It returns a pointer into the given file name
 string.</doc>
       <doc-deprecated xml:space="preserve">Use g_path_get_basename() instead, but notice
-    that g_path_get_basename() allocates new memory for the
-    returned string, unlike this function which returns a pointer
-    into the argument.</doc-deprecated>
+  that g_path_get_basename() allocates new memory for the
+  returned string, unlike this function which returns a pointer
+  into the argument.</doc-deprecated>
       <return-value transfer-ownership="none">
         <doc xml:space="preserve">the name of the file without any leading
-    directory components</doc>
+  directory components</doc>
         <type name="filename" c:type="const gchar*"/>
       </return-value>
       <parameters>
@@ -39520,7 +39903,7 @@ The #GBookmarkFile parser was added in GLib 2.12.</doc>
     </docsection>
     <function name="build_filename" c:identifier="g_build_filename" introspectable="0">
       <doc xml:space="preserve">Creates a filename from a series of elements using the correct
-separator for filenames.
+separator for the current platform.
 
 On Unix, this function behaves identically to `g_build_path
 (G_DIR_SEPARATOR_S, first_element, ....)`.
@@ -39533,10 +39916,12 @@ parameters (reading from left to right) is used.
 
 No attempt is made to force the resulting filename to be an absolute
 path. If the first element is a relative path, the result will
-be a relative path.</doc>
+be a relative path.
+
+If you are building a path programmatically you may want to use
+#GPathBuf instead.</doc>
       <return-value transfer-ownership="full">
-        <doc xml:space="preserve">a newly-allocated string that
-    must be freed with g_free().</doc>
+        <doc xml:space="preserve">the newly allocated path</doc>
         <type name="filename" c:type="gchar*"/>
       </return-value>
       <parameters>
@@ -39551,11 +39936,16 @@ be a relative path.</doc>
       </parameters>
     </function>
     <function name="build_filename_valist" c:identifier="g_build_filename_valist" version="2.56" introspectable="0">
-      <doc xml:space="preserve">Behaves exactly like g_build_filename(), but takes the path elements
-as a va_list. This function is mainly meant for language bindings.</doc>
+      <doc xml:space="preserve">Creates a filename from a list of elements using the correct
+separator for the current platform.
+
+Behaves exactly like g_build_filename(), but takes the path elements
+as a va_list.
+
+This function is mainly meant for implementing other variadic arguments
+functions.</doc>
       <return-value transfer-ownership="full">
-        <doc xml:space="preserve">a newly-allocated string that
-    must be freed with g_free().</doc>
+        <doc xml:space="preserve">the newly allocated path</doc>
         <type name="filename" c:type="gchar*"/>
       </return-value>
       <parameters>
@@ -39570,18 +39960,23 @@ as a va_list. This function is mainly meant for language bindings.</doc>
       </parameters>
     </function>
     <function name="build_filenamev" c:identifier="g_build_filenamev" version="2.8">
-      <doc xml:space="preserve">Behaves exactly like g_build_filename(), but takes the path elements
-as a string array, instead of varargs. This function is mainly
-meant for language bindings.</doc>
+      <doc xml:space="preserve">Creates a filename from a vector of elements using the correct
+separator for the current platform.
+
+This function behaves exactly like g_build_filename(), but takes the path
+elements as a string array, instead of varargs. This function is mainly
+meant for language bindings.
+
+If you are building a path programmatically you may want to use
+#GPathBuf instead.</doc>
       <return-value transfer-ownership="full">
-        <doc xml:space="preserve">a newly-allocated string that
-    must be freed with g_free().</doc>
+        <doc xml:space="preserve">the newly allocated path</doc>
         <type name="filename" c:type="gchar*"/>
       </return-value>
       <parameters>
         <parameter name="args" transfer-ownership="none">
           <doc xml:space="preserve">%NULL-terminated
-    array of strings containing the path elements.</doc>
+  array of strings containing the path elements.</doc>
           <array c:type="gchar**">
             <type name="filename"/>
           </array>
@@ -39590,10 +39985,12 @@ meant for language bindings.</doc>
     </function>
     <function name="build_path" c:identifier="g_build_path" introspectable="0">
       <doc xml:space="preserve">Creates a path from a series of elements using @separator as the
-separator between elements. At the boundary between two elements,
-any trailing occurrences of separator in the first element, or
-leading occurrences of separator in the second element are removed
-and exactly one copy of the separator is inserted.
+separator between elements.
+
+At the boundary between two elements, any trailing occurrences of
+separator in the first element, or leading occurrences of separator
+in the second element are removed and exactly one copy of the
+separator is inserted.
 
 Empty elements are ignored.
 
@@ -39616,8 +40013,7 @@ Other than for determination of the number of leading and trailing
 copies of the separator, elements consisting only of copies
 of the separator are ignored.</doc>
       <return-value transfer-ownership="full">
-        <doc xml:space="preserve">a newly-allocated string that
-    must be freed with g_free().</doc>
+        <doc xml:space="preserve">the newly allocated path</doc>
         <type name="filename" c:type="gchar*"/>
       </return-value>
       <parameters>
@@ -39637,8 +40033,9 @@ of the separator are ignored.</doc>
     </function>
     <function name="build_pathv" c:identifier="g_build_pathv" version="2.8">
       <doc xml:space="preserve">Behaves exactly like g_build_path(), but takes the path elements
-as a string array, instead of varargs. This function is mainly
-meant for language bindings.</doc>
+as a string array, instead of variadic arguments.
+
+This function is mainly meant for language bindings.</doc>
       <return-value transfer-ownership="full">
         <doc xml:space="preserve">a newly-allocated string that
     must be freed with g_free().</doc>
@@ -39651,7 +40048,7 @@ meant for language bindings.</doc>
         </parameter>
         <parameter name="args" transfer-ownership="none">
           <doc xml:space="preserve">%NULL-terminated
-    array of strings containing the path elements.</doc>
+  array of strings containing the path elements.</doc>
           <array c:type="gchar**">
             <type name="filename"/>
           </array>
@@ -39826,7 +40223,7 @@ exist.
 No file system I/O is done.</doc>
       <return-value transfer-ownership="full">
         <doc xml:space="preserve">a newly allocated string with the
-canonical file path</doc>
+  canonical file path</doc>
         <type name="filename" c:type="gchar*"/>
       </return-value>
       <parameters>
@@ -41779,15 +42176,15 @@ Note that in contrast to g_mkdtemp() (and mkdtemp()) @tmpl is not
 modified, and might thus be a read-only literal string.</doc>
       <return-value transfer-ownership="full">
         <doc xml:space="preserve">The actual name used. This string
-    should be freed with g_free() when not needed any longer and is
-    is in the GLib file name encoding. In case of errors, %NULL is
-    returned and @error will be set.</doc>
+  should be freed with g_free() when not needed any longer and is
+  is in the GLib file name encoding. In case of errors, %NULL is
+  returned and @error will be set.</doc>
         <type name="filename" c:type="gchar*"/>
       </return-value>
       <parameters>
         <parameter name="tmpl" transfer-ownership="none" nullable="1" allow-none="1">
           <doc xml:space="preserve">Template for directory name,
-    as in g_mkdtemp(), basename only, or %NULL for a default template</doc>
+  as in g_mkdtemp(), basename only, or %NULL for a default template</doc>
           <type name="filename" c:type="const gchar*"/>
         </parameter>
       </parameters>
@@ -42630,34 +43027,35 @@ when not needed any longer. The returned name is in the GLib file
 name encoding.</doc>
       <return-value transfer-ownership="none">
         <doc xml:space="preserve">A file handle (as from open()) to the file opened for
-    reading and writing. The file is opened in binary mode on platforms
-    where there is a difference. The file handle should be closed with
-    close(). In case of errors, -1 is returned and @error will be set.</doc>
+  reading and writing. The file is opened in binary mode on platforms
+  where there is a difference. The file handle should be closed with
+  close(). In case of errors, -1 is returned and @error will be set.</doc>
         <type name="gint" c:type="gint"/>
       </return-value>
       <parameters>
         <parameter name="tmpl" transfer-ownership="none" nullable="1" allow-none="1">
           <doc xml:space="preserve">Template for file name, as in
-    g_mkstemp(), basename only, or %NULL for a default template</doc>
+  g_mkstemp(), basename only, or %NULL for a default template</doc>
           <type name="filename" c:type="const gchar*"/>
         </parameter>
         <parameter name="name_used" direction="out" caller-allocates="0" transfer-ownership="full">
           <doc xml:space="preserve">location to store actual name used,
-    or %NULL</doc>
+  or %NULL</doc>
           <type name="filename" c:type="gchar**"/>
         </parameter>
       </parameters>
     </function>
     <function name="file_read_link" c:identifier="g_file_read_link" version="2.4" throws="1">
       <doc xml:space="preserve">Reads the contents of the symbolic link @filename like the POSIX
-readlink() function.
+`readlink()` function.
 
-The returned string is in the encoding used
-for filenames. Use g_filename_to_utf8() to convert it to UTF-8.
+The returned string is in the encoding used for filenames. Use
+g_filename_to_utf8() to convert it to UTF-8.
 
-The returned string may also be a relative path. Use g_build_filename() to
-convert it to an absolute path:
-|[
+The returned string may also be a relative path. Use g_build_filename()
+to convert it to an absolute path:
+
+|[&lt;!-- language="C" --&gt;
 g_autoptr(GError) local_error = NULL;
 g_autofree gchar *link_target = g_file_read_link ("/etc/localtime", &amp;local_error);
 
@@ -42673,7 +43071,7 @@ if (!g_path_is_absolute (link_target))
 ]|</doc>
       <return-value transfer-ownership="full">
         <doc xml:space="preserve">A newly-allocated string with
-    the contents of the symbolic link, or %NULL if an error occurred.</doc>
+  the contents of the symbolic link, or %NULL if an error occurred.</doc>
         <type name="filename" c:type="gchar*"/>
       </return-value>
       <parameters>
@@ -42812,15 +43210,33 @@ Note, that for a dangling symbolic link g_file_test() will return
 
 You should never use g_file_test() to test whether it is safe
 to perform an operation, because there is always the possibility
-of the condition changing before you actually perform the operation.
+of the condition changing before you actually perform the operation,
+see [TOCTOU](https://en.wikipedia.org/wiki/Time-of-check_to_time-of-use).
+
 For example, you might think you could use %G_FILE_TEST_IS_SYMLINK
 to know whether it is safe to write to a file without being
 tricked into writing into a different location. It doesn't work!
+
 |[&lt;!-- language="C" --&gt;
  // DON'T DO THIS
  if (!g_file_test (filename, G_FILE_TEST_IS_SYMLINK))
    {
      fd = g_open (filename, O_WRONLY);
+     // write to fd
+   }
+
+ // DO THIS INSTEAD
+ fd = g_open (filename, O_WRONLY | O_NOFOLLOW);
+ if (fd == -1)
+   {
+     // check error
+     if (errno == ELOOP)
+       // file is a symlink and can be ignored
+     else
+       // handle errors as before
+   }
+ else
+   {
      // write to fd
    }
 ]|
@@ -43206,6 +43622,9 @@ positional parameters, as specified in the Single Unix Specification.
     <function name="free" c:identifier="g_free">
       <doc xml:space="preserve">Frees the memory pointed to by @mem.
 
+If you know the allocated size of @mem, calling g_free_sized() may be faster,
+depending on the libc implementation in use.
+
 If @mem is %NULL it simply returns, so there is no need to check @mem
 against %NULL before calling this function.</doc>
       <return-value transfer-ownership="none">
@@ -43215,6 +43634,28 @@ against %NULL before calling this function.</doc>
         <parameter name="mem" transfer-ownership="none" nullable="1" allow-none="1">
           <doc xml:space="preserve">the memory to free</doc>
           <type name="gpointer" c:type="gpointer"/>
+        </parameter>
+      </parameters>
+    </function>
+    <function name="free_sized" c:identifier="g_free_sized" version="2.76">
+      <doc xml:space="preserve">Frees the memory pointed to by @mem, assuming it is has the given @size.
+
+If @mem is %NULL this is a no-op (and @size is ignored).
+
+It is an error if @size doesn&#x2019;t match the size passed when @mem was
+allocated. @size is passed to this function to allow optimizations in the
+allocator. If you don&#x2019;t know the allocation size, use g_free() instead.</doc>
+      <return-value transfer-ownership="none">
+        <type name="none" c:type="void"/>
+      </return-value>
+      <parameters>
+        <parameter name="mem" transfer-ownership="none" nullable="1" allow-none="1">
+          <doc xml:space="preserve">the memory to free</doc>
+          <type name="gpointer" c:type="gpointer"/>
+        </parameter>
+        <parameter name="size" transfer-ownership="none">
+          <doc xml:space="preserve">size of @mem, in bytes</doc>
+          <type name="gsize" c:type="size_t"/>
         </parameter>
       </parameters>
     </function>
@@ -47186,15 +47627,15 @@ implementation.</doc>
     <docsection name="memory_slices">
       <doc xml:space="preserve">GSlice was a space-efficient and multi-processing scalable way to allocate
 equal sized pieces of memory. Since GLib 2.76, its implementation has been
-removed and it calls g_malloc() and g_free(), because the performance of the
-system-default allocators has improved on all platforms since GSlice was
-written.
+removed and it calls g_malloc() and g_free_sized(), because the performance
+of the system-default allocators has improved on all platforms since GSlice
+was written.
 
 The GSlice APIs have not been deprecated, as they are widely in use and doing
 so would be very disruptive for little benefit.
 
-New code should be written using g_new()/g_malloc() and g_free(). There is no
-particular benefit in porting existing code away from
+New code should be written using g_new()/g_malloc() and g_free_sized() or
+g_free(). There is no particular benefit in porting existing code away from
 g_slice_new()/g_slice_free() unless it&#x2019;s being rewritten anyway.
 
 Here is an example for using the slice allocator:
@@ -47429,8 +47870,8 @@ directory returned by g_get_tmp_dir(), you might want to use
 g_dir_make_tmp() instead.</doc>
       <return-value transfer-ownership="full" nullable="1">
         <doc xml:space="preserve">A pointer to @tmpl, which has been
-    modified to hold the directory name.  In case of errors, %NULL is
-    returned and %errno will be set.</doc>
+  modified to hold the directory name.  In case of errors, %NULL is
+  returned and %errno will be set.</doc>
         <type name="filename" c:type="gchar*"/>
       </return-value>
       <parameters>
@@ -47458,8 +47899,8 @@ directory returned by g_get_tmp_dir(), you might want to use
 g_dir_make_tmp() instead.</doc>
       <return-value transfer-ownership="full" nullable="1">
         <doc xml:space="preserve">A pointer to @tmpl, which has been
-    modified to hold the directory name. In case of errors, %NULL is
-    returned, and %errno will be set.</doc>
+  modified to hold the directory name. In case of errors, %NULL is
+  returned, and %errno will be set.</doc>
         <type name="filename" c:type="gchar*"/>
       </return-value>
       <parameters>
@@ -47486,10 +47927,10 @@ didn't exist. The string should be in the GLib file name encoding.
 Most importantly, on Windows it should be in UTF-8.</doc>
       <return-value transfer-ownership="none">
         <doc xml:space="preserve">A file handle (as from open()) to the file
-    opened for reading and writing. The file is opened in binary
-    mode on platforms where there is a difference. The file handle
-    should be closed with close(). In case of errors, -1 is
-    returned and %errno will be set.</doc>
+  opened for reading and writing. The file is opened in binary
+  mode on platforms where there is a difference. The file handle
+  should be closed with close(). In case of errors, -1 is
+  returned and %errno will be set.</doc>
         <type name="gint" c:type="gint"/>
       </return-value>
       <parameters>
@@ -47513,9 +47954,9 @@ The string should be in the GLib file name encoding. Most importantly,
 on Windows it should be in UTF-8.</doc>
       <return-value transfer-ownership="none">
         <doc xml:space="preserve">A file handle (as from open()) to the file
-    opened for reading and writing. The file handle should be
-    closed with close(). In case of errors, -1 is returned
-    and %errno will be set.</doc>
+  opened for reading and writing. The file handle should be
+  closed with close(). In case of errors, -1 is returned
+  and %errno will be set.</doc>
         <type name="gint" c:type="gint"/>
       </return-value>
       <parameters>
@@ -47525,7 +47966,7 @@ on Windows it should be in UTF-8.</doc>
         </parameter>
         <parameter name="flags" transfer-ownership="none">
           <doc xml:space="preserve">flags to pass to an open() call in addition to O_EXCL
-    and O_CREAT, which are passed automatically</doc>
+  and O_CREAT, which are passed automatically</doc>
           <type name="gint" c:type="gint"/>
         </parameter>
         <parameter name="mode" transfer-ownership="none">
@@ -48126,6 +48567,32 @@ commas, or %NULL.</doc>
         </parameter>
       </parameters>
     </function>
+    <function name="path_buf_equal" c:identifier="g_path_buf_equal" moved-to="PathBuf.equal" version="2.76">
+      <doc xml:space="preserve">Compares two path buffers for equality and returns `TRUE`
+if they are equal.
+
+The path inside the paths buffers are not going to be normalized,
+so `X/Y/Z/A/..`, `X/./Y/Z` and `X/Y/Z` are not going to be considered
+equal.
+
+This function can be passed to g_hash_table_new() as the
+`key_equal_func` parameter.</doc>
+      <return-value transfer-ownership="none">
+        <doc xml:space="preserve">`TRUE` if the two path buffers are equal,
+  and `FALSE` otherwise</doc>
+        <type name="gboolean" c:type="gboolean"/>
+      </return-value>
+      <parameters>
+        <parameter name="v1" transfer-ownership="none">
+          <doc xml:space="preserve">a path buffer to compare</doc>
+          <type name="gpointer" c:type="gconstpointer"/>
+        </parameter>
+        <parameter name="v2" transfer-ownership="none">
+          <doc xml:space="preserve">a path buffer to compare</doc>
+          <type name="gpointer" c:type="gconstpointer"/>
+        </parameter>
+      </parameters>
+    </function>
     <function name="path_get_basename" c:identifier="g_path_get_basename">
       <doc xml:space="preserve">Gets the last component of the filename.
 
@@ -48135,7 +48602,7 @@ separators (and on Windows, possibly a drive letter), a single
 separator is returned. If @file_name is empty, it gets ".".</doc>
       <return-value transfer-ownership="full">
         <doc xml:space="preserve">a newly allocated string
-   containing the last component of the filename</doc>
+  containing the last component of the filename</doc>
         <type name="filename" c:type="gchar*"/>
       </return-value>
       <parameters>
@@ -50604,8 +51071,8 @@ the returned memory to 0.
 Since GLib 2.76 this always uses the system malloc() implementation
 internally.</doc>
       <return-value transfer-ownership="none" nullable="1">
-        <doc xml:space="preserve">a pointer to the allocated block, which will be %NULL if and only
-   if @mem_size is 0</doc>
+        <doc xml:space="preserve">a pointer to the allocated block, which will be %NULL
+   if and only if @mem_size is 0</doc>
         <type name="gpointer" c:type="gpointer"/>
       </return-value>
       <parameters>
@@ -50624,8 +51091,8 @@ and copies @block_size bytes into it from @mem_block.
 Since GLib 2.76 this always uses the system malloc() implementation
 internally.</doc>
       <return-value transfer-ownership="none" nullable="1">
-        <doc xml:space="preserve">a pointer to the allocated memory block, which will be %NULL if and
-   only if @mem_size is 0</doc>
+        <doc xml:space="preserve">a pointer to the allocated memory block,
+   which will be %NULL if and only if @mem_size is 0</doc>
         <type name="gpointer" c:type="gpointer"/>
       </return-value>
       <parameters>
@@ -50692,7 +51159,8 @@ variable.
 
 If @mem_block is %NULL, this function does nothing.
 
-Since GLib 2.76 this always uses the system free() implementation internally.</doc>
+Since GLib 2.76 this always uses the system free_sized() implementation
+internally.</doc>
       <return-value transfer-ownership="none">
         <type name="none" c:type="void"/>
       </return-value>
@@ -50744,7 +51212,8 @@ Note that the exact release behaviour can be changed with the
 
 If @mem_chain is %NULL, this function does nothing.
 
-Since GLib 2.76 this always uses the system free() implementation internally.</doc>
+Since GLib 2.76 this always uses the system free_sized() implementation
+internally.</doc>
       <return-value transfer-ownership="none">
         <type name="none" c:type="void"/>
       </return-value>
