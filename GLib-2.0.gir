@@ -14246,7 +14246,7 @@ This is the same as standard C `UINT8_MAX`, which should be
 preferred in new code.</doc>
       <type name="guint8" c:type="guint8"/>
     </constant>
-    <constant name="MICRO_VERSION" value="0" c:type="GLIB_MICRO_VERSION">
+    <constant name="MICRO_VERSION" value="1" c:type="GLIB_MICRO_VERSION">
       <doc xml:space="preserve">The micro version number of the GLib library.
 
 Like #gtk_micro_version, but from the headers used at
@@ -43226,7 +43226,7 @@ tricked into writing into a different location. It doesn't work!
    }
 
  // DO THIS INSTEAD
- fd = g_open (filename, O_WRONLY | O_NOFOLLOW);
+ fd = g_open (filename, O_WRONLY | O_NOFOLLOW | O_CLOEXEC);
  if (fd == -1)
    {
      // check error
@@ -54680,8 +54680,9 @@ termination and validates child program outputs.
   }
 ]|</doc>
       <doc-deprecated xml:space="preserve">This function is implemented only on Unix platforms,
-and is not always reliable due to problems inherent in
-fork-without-exec. Use g_test_trap_subprocess() instead.</doc-deprecated>
+is not always reliable due to problems inherent in fork-without-exec
+and doesn't set close-on-exec flag on its file descriptors.
+Use g_test_trap_subprocess() instead.</doc-deprecated>
       <return-value transfer-ownership="none">
         <doc xml:space="preserve">%TRUE for the forked child and %FALSE for the executing parent process.</doc>
         <type name="gboolean" c:type="gboolean"/>

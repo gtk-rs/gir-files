@@ -3645,7 +3645,11 @@ color glyphs.</doc>
       <doc xml:space="preserve">A render node for a `GdkTexture`.</doc>
       <constructor name="new" c:identifier="gsk_texture_node_new">
         <doc xml:space="preserve">Creates a `GskRenderNode` that will render the given
-@texture into the area given by @bounds.</doc>
+@texture into the area given by @bounds.
+
+Note that GSK applies linear filtering when textures are
+scaled and transformed. See [class@Gsk.TextureScaleNode]
+for a way to influence filtering.</doc>
         <return-value transfer-ownership="full">
           <doc xml:space="preserve">A new `GskRenderNode`</doc>
           <type name="TextureNode" c:type="GskRenderNode*"/>
@@ -3679,7 +3683,11 @@ color glyphs.</doc>
       <doc xml:space="preserve">A render node for a `GdkTexture`.</doc>
       <constructor name="new" c:identifier="gsk_texture_scale_node_new" version="4.10">
         <doc xml:space="preserve">Creates a node that scales the texture to the size given by the
-bounds and the filter and then places it at the bounds' position.
+bounds using the filter and then places it at the bounds' position.
+
+Note that further scaling and other transformations which are
+applied to the node will apply linear filtering to the resulting
+texture, as usual.
 
 This node is intended for tight control over scaling applied
 to a texture, such as in image editors and requires the
