@@ -16456,7 +16456,7 @@ call [method@Gdk.GLContext.make_current] or [method@Gdk.GLContext.realize].</doc
           </instance-parameter>
         </parameters>
       </method>
-      <method name="create_similar_surface" c:identifier="gdk_surface_create_similar_surface">
+      <method name="create_similar_surface" c:identifier="gdk_surface_create_similar_surface" deprecated="1" deprecated-version="4.12">
         <doc xml:space="preserve">Create a new Cairo surface that is as compatible as possible with the
 given @surface.
 
@@ -16472,6 +16472,7 @@ have transparency, black otherwise.)
 This function always returns a valid pointer, but it will return a
 pointer to a &#x201C;nil&#x201D; surface if @other is already in an error state
 or any other error occurs.</doc>
+        <doc-deprecated xml:space="preserve">Create a suitable cairo image surface yourself</doc-deprecated>
         <return-value transfer-ownership="full">
           <doc xml:space="preserve">a pointer to the newly allocated surface. The caller
   owns the surface and should call cairo_surface_destroy() when done
@@ -16673,6 +16674,30 @@ or [method@Gdk.Popup.present].</doc>
           </instance-parameter>
         </parameters>
       </method>
+      <method name="get_scale" c:identifier="gdk_surface_get_scale" glib:get-property="scale" version="4.12">
+        <attribute name="org.gtk.Method.get_property" value="scale"/>
+        <doc xml:space="preserve">Returns the internal scale that maps from surface coordinates
+to the actual device pixels.
+
+When the scale is bigger than 1, the windowing system prefers to get
+buffers with a resolution that is bigger than the surface size (e.g.
+to show the surface on a high-resolution display, or in a magnifier).
+
+Compare with [method@Gdk.Surface.get_scale_factor], which returns the
+next larger integer.
+
+The scale may change during the lifetime of the surface.</doc>
+        <return-value transfer-ownership="none">
+          <doc xml:space="preserve">the scale</doc>
+          <type name="gdouble" c:type="double"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="surface" transfer-ownership="none">
+            <doc xml:space="preserve">surface to get scale for</doc>
+            <type name="Surface" c:type="GdkSurface*"/>
+          </instance-parameter>
+        </parameters>
+      </method>
       <method name="get_scale_factor" c:identifier="gdk_surface_get_scale_factor" glib:get-property="scale-factor">
         <attribute name="org.gtk.Method.get_property" value="scale-factor"/>
         <doc xml:space="preserve">Returns the internal scale factor that maps from surface coordinates
@@ -16685,7 +16710,7 @@ drawing will automatically look nicer. However, if you are supplying
 pixel-based data the scale value can be used to determine whether to
 use a pixel resource with higher resolution data.
 
-The scale of a surface may change during runtime.</doc>
+The scale factor may change during the lifetime of the surface.</doc>
         <return-value transfer-ownership="none">
           <doc xml:space="preserve">the scale factor</doc>
           <type name="gint" c:type="int"/>
@@ -16938,9 +16963,17 @@ transient-for to the same toplevel (directly or indirectly).</doc>
         <doc xml:space="preserve">Whether the surface is mapped.</doc>
         <type name="gboolean" c:type="gboolean"/>
       </property>
+      <property name="scale" version="4.12" transfer-ownership="none" getter="get_scale" default-value="1.000000">
+        <attribute name="org.gtk.Property.get" value="gdk_surface_get_scale"/>
+        <doc xml:space="preserve">The scale of the surface.</doc>
+        <type name="gdouble" c:type="gdouble"/>
+      </property>
       <property name="scale-factor" transfer-ownership="none" getter="get_scale_factor" default-value="1">
         <attribute name="org.gtk.Property.get" value="gdk_surface_get_scale_factor"/>
-        <doc xml:space="preserve">The scale factor of the surface.</doc>
+        <doc xml:space="preserve">The scale factor of the surface.
+
+The scale factor is the next larger integer,
+compared to [property@Gdk.Surface:scale].</doc>
         <type name="gint" c:type="gint"/>
       </property>
       <property name="width" transfer-ownership="none" getter="get_width" default-value="0">
