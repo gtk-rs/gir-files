@@ -105,10 +105,7 @@ must be returned in an #hb_position_t output parameter.</doc>
     <alias name="ot_name_id_t" c:type="hb_ot_name_id_t">
       <doc xml:space="preserve">An integral type representing an OpenType 'name' table name identifier.
 There are predefined name IDs, as well as name IDs return from other
-API.  These can be used to fetch name strings from a font face.
-
-For more information on these fields, see the
-[OpenType spec](https://docs.microsoft.com/en-us/typography/opentype/spec/name#name-ids).</doc>
+API.  These can be used to fetch name strings from a font face.</doc>
       <type name="guint" c:type="unsigned int"/>
     </alias>
     <alias name="position_t" c:type="hb_position_t">
@@ -217,6 +214,12 @@ be valid.</doc>
 of the buffer.</doc>
       <type name="gint" c:type="gint"/>
     </constant>
+    <constant name="FONT_NO_VAR_NAMED_INSTANCE" value="4294967295" c:type="HB_FONT_NO_VAR_NAMED_INSTANCE" version="7.0.0">
+      <doc xml:space="preserve">Constant signifying that a font does not have any
+named-instance index set.  This is the default of
+a font.</doc>
+      <type name="gint" c:type="gint"/>
+    </constant>
     <constant name="LANGUAGE_INVALID" value="0" c:type="HB_LANGUAGE_INVALID" version="0.6.0">
       <doc xml:space="preserve">An unset #hb_language_t.</doc>
       <type name="language_t" c:type="hb_language_t"/>
@@ -305,7 +308,7 @@ as three integer components.</doc>
         </parameter>
       </parameters>
     </function-macro>
-    <constant name="VERSION_MAJOR" value="5" c:type="HB_VERSION_MAJOR">
+    <constant name="VERSION_MAJOR" value="7" c:type="HB_VERSION_MAJOR">
       <doc xml:space="preserve">The major component of the library version available at compile-time.</doc>
       <type name="gint" c:type="gint"/>
     </constant>
@@ -313,11 +316,11 @@ as three integer components.</doc>
       <doc xml:space="preserve">The micro component of the library version available at compile-time.</doc>
       <type name="gint" c:type="gint"/>
     </constant>
-    <constant name="VERSION_MINOR" value="2" c:type="HB_VERSION_MINOR">
+    <constant name="VERSION_MINOR" value="1" c:type="HB_VERSION_MINOR">
       <doc xml:space="preserve">The minor component of the library version available at compile-time.</doc>
       <type name="gint" c:type="gint"/>
     </constant>
-    <constant name="VERSION_STRING" value="5.2.0" c:type="HB_VERSION_STRING">
+    <constant name="VERSION_STRING" value="7.1.0" c:type="HB_VERSION_STRING">
       <doc xml:space="preserve">A string literal containing the library version available at compile-time.</doc>
       <type name="utf8" c:type="gchar*"/>
     </constant>
@@ -1655,7 +1658,7 @@ See TODO:link object types for more information.</doc>
         </parameter>
       </parameters>
     </function>
-    <record name="blob_t" c:type="hb_blob_t" glib:type-name="hb_blob_t" glib:get-type="hb_gobject_blob_get_type" c:symbol-prefix="gobject_blob">
+    <record name="blob_t" c:type="hb_blob_t" opaque="1" glib:type-name="hb_blob_t" glib:get-type="hb_gobject_blob_get_type" c:symbol-prefix="gobject_blob">
       <doc xml:space="preserve">Data type for blobs. A blob wraps a chunk of binary
 data and facilitates its lifecycle management between
 a client program and HarfBuzz.</doc>
@@ -1699,7 +1702,9 @@ for example, to do cross-run Arabic shaping or properly handle combining
 marks at stat of run.
 
 This function does not check the validity of @text, it is up to the caller
-to ensure it contains a valid Unicode code points.</doc>
+to ensure it contains a valid Unicode scalar values.  In contrast,
+hb_buffer_add_utf32() can be used that takes similar input but performs
+sanity-check on the input.</doc>
       <return-value transfer-ownership="none">
         <type name="none" c:type="void"/>
       </return-value>
@@ -1992,7 +1997,8 @@ A newly allocated #hb_buffer_t, similar to hb_buffer_create().</doc>
       <doc xml:space="preserve">Deserializes glyphs @buffer from textual representation in the format
 produced by hb_buffer_serialize_glyphs().</doc>
       <return-value transfer-ownership="none">
-        <doc xml:space="preserve">`true` if @buf is not fully consumed, `false` otherwise.</doc>
+        <doc xml:space="preserve">`true` if parse was successful, `false` if an error
+occurred.</doc>
         <type name="bool_t" c:type="hb_bool_t"/>
       </return-value>
       <parameters>
@@ -2029,7 +2035,8 @@ produced by hb_buffer_serialize_glyphs().</doc>
       <doc xml:space="preserve">Deserializes Unicode @buffer from textual representation in the format
 produced by hb_buffer_serialize_unicode().</doc>
       <return-value transfer-ownership="none">
-        <doc xml:space="preserve">`true` if @buf is not fully consumed, `false` otherwise.</doc>
+        <doc xml:space="preserve">`true` if parse was successful, `false` if an error
+occurred.</doc>
         <type name="bool_t" c:type="hb_bool_t"/>
       </return-value>
       <parameters>
@@ -2950,7 +2957,33 @@ during shaping.</doc>
     </function>
     <function name="buffer_set_content_type" c:identifier="hb_buffer_set_content_type" version="0.9.5">
       <doc xml:space="preserve">Sets the type of @buffer contents. Buffers are either empty, contain
-characters (before shaping), or contain glyphs (the result of shaping).</doc>
+characters (before shaping), or contain glyphs (the result of shaping).
+
+You rarely need to call this function, since a number of other
+functions transition the content type for you. Namely:
+
+- A newly created buffer starts with content type
+  %HB_BUFFER_CONTENT_TYPE_INVALID. Calling hb_buffer_reset(),
+  hb_buffer_clear_contents(), as well as calling hb_buffer_set_length()
+  with an argument of zero all set the buffer content type to invalid
+  as well.
+
+- Calling hb_buffer_add_utf8(), hb_buffer_add_utf16(),
+  hb_buffer_add_utf32(), hb_buffer_add_codepoints() and
+  hb_buffer_add_latin1() expect that buffer is either empty and
+  have a content type of invalid, or that buffer content type is
+  %HB_BUFFER_CONTENT_TYPE_UNICODE, and they also set the content
+  type to Unicode if they added anything to an empty buffer.
+
+- Finally hb_shape() and hb_shape_full() expect that the buffer
+  is either empty and have content type of invalid, or that buffer
+  content type is %HB_BUFFER_CONTENT_TYPE_UNICODE, and upon
+  success they set the buffer content type to
+  %HB_BUFFER_CONTENT_TYPE_GLYPHS.
+
+The above transitions are designed such that one can use a buffer
+in a loop of "reset : add-text : shape" without needing to ever
+modify the content type manually.</doc>
       <return-value transfer-ownership="none">
         <type name="none" c:type="void"/>
       </return-value>
@@ -3215,7 +3248,7 @@ hb_buffer_set_language() individually.</doc>
         </parameter>
       </parameters>
     </function>
-    <record name="buffer_t" c:type="hb_buffer_t" glib:type-name="hb_buffer_t" glib:get-type="hb_gobject_buffer_get_type" c:symbol-prefix="gobject_buffer">
+    <record name="buffer_t" c:type="hb_buffer_t" opaque="1" glib:type-name="hb_buffer_t" glib:get-type="hb_gobject_buffer_get_type" c:symbol-prefix="gobject_buffer">
       <doc xml:space="preserve">The main structure holding the input text and its properties before shaping,
 and output glyphs and their information after shaping.</doc>
     </record>
@@ -3271,6 +3304,173 @@ and output glyphs and their information after shaping.</doc>
         </parameter>
       </parameters>
     </function>
+    <function name="color_line_get_color_stops" c:identifier="hb_color_line_get_color_stops" version="7.0.0">
+      <doc xml:space="preserve">Fetches a list of color stops from the given color line object.
+
+Note that due to variations being applied, the returned color stops
+may be out of order. It is the callers responsibility to ensure that
+color stops are sorted by their offset before they are used.</doc>
+      <return-value transfer-ownership="none">
+        <doc xml:space="preserve">the total number of color stops in @color_line</doc>
+        <type name="guint" c:type="unsigned int"/>
+      </return-value>
+      <parameters>
+        <parameter name="color_line" transfer-ownership="none">
+          <doc xml:space="preserve">a #hb_color_line_t object</doc>
+          <type name="color_line_t" c:type="hb_color_line_t*"/>
+        </parameter>
+        <parameter name="start" transfer-ownership="none">
+          <doc xml:space="preserve">the index of the first color stop to return</doc>
+          <type name="guint" c:type="unsigned int"/>
+        </parameter>
+        <parameter name="count" direction="out" caller-allocates="0" transfer-ownership="full" optional="1" allow-none="1">
+          <doc xml:space="preserve">Input = the maximum number of feature tags to return;
+    Output = the actual number of feature tags returned (may be zero)</doc>
+          <type name="guint" c:type="unsigned int*"/>
+        </parameter>
+        <parameter name="color_stops" direction="out" caller-allocates="1" transfer-ownership="none" optional="1" allow-none="1">
+          <doc xml:space="preserve">Array of #hb_color_stop_t to populate</doc>
+          <array length="2" zero-terminated="0" c:type="hb_color_stop_t*">
+            <type name="color_stop_t" c:type="hb_color_stop_t"/>
+          </array>
+        </parameter>
+      </parameters>
+    </function>
+    <callback name="color_line_get_color_stops_func_t" c:type="hb_color_line_get_color_stops_func_t" version="7.0.0">
+      <doc xml:space="preserve">A virtual method for the #hb_color_line_t to fetch color stops.</doc>
+      <return-value transfer-ownership="none">
+        <doc xml:space="preserve">the total number of color stops in @color_line</doc>
+        <type name="guint" c:type="unsigned int"/>
+      </return-value>
+      <parameters>
+        <parameter name="color_line" transfer-ownership="none">
+          <doc xml:space="preserve">a #hb_color_line_t object</doc>
+          <type name="color_line_t" c:type="hb_color_line_t*"/>
+        </parameter>
+        <parameter name="color_line_data" transfer-ownership="none" nullable="1" allow-none="1">
+          <doc xml:space="preserve">the data accompanying @color_line</doc>
+          <type name="gpointer" c:type="void*"/>
+        </parameter>
+        <parameter name="start" transfer-ownership="none">
+          <doc xml:space="preserve">the index of the first color stop to return</doc>
+          <type name="guint" c:type="unsigned int"/>
+        </parameter>
+        <parameter name="count" direction="out" caller-allocates="0" transfer-ownership="full" optional="1" allow-none="1">
+          <doc xml:space="preserve">Input = the maximum number of feature tags to return;
+    Output = the actual number of feature tags returned (may be zero)</doc>
+          <type name="guint" c:type="unsigned int*"/>
+        </parameter>
+        <parameter name="color_stops" direction="out" caller-allocates="1" transfer-ownership="none" optional="1" allow-none="1">
+          <doc xml:space="preserve">Array of #hb_color_stop_t to populate</doc>
+          <array length="3" zero-terminated="0" c:type="hb_color_stop_t*">
+            <type name="color_stop_t" c:type="hb_color_stop_t"/>
+          </array>
+        </parameter>
+        <parameter name="user_data" transfer-ownership="none" nullable="1" allow-none="1" closure="5">
+          <doc xml:space="preserve">the data accompanying this method</doc>
+          <type name="gpointer" c:type="void*"/>
+        </parameter>
+      </parameters>
+    </callback>
+    <function name="color_line_get_extend" c:identifier="hb_color_line_get_extend" version="7.0.0">
+      <doc xml:space="preserve">Fetches the extend mode of the color line object.</doc>
+      <return-value transfer-ownership="none">
+        <doc xml:space="preserve">the extend mode of @color_line</doc>
+        <type name="paint_extend_t" c:type="hb_paint_extend_t"/>
+      </return-value>
+      <parameters>
+        <parameter name="color_line" transfer-ownership="none">
+          <doc xml:space="preserve">a #hb_color_line_t object</doc>
+          <type name="color_line_t" c:type="hb_color_line_t*"/>
+        </parameter>
+      </parameters>
+    </function>
+    <callback name="color_line_get_extend_func_t" c:type="hb_color_line_get_extend_func_t" version="7.0.0">
+      <doc xml:space="preserve">A virtual method for the @hb_color_line_t to fetches the extend mode.</doc>
+      <return-value transfer-ownership="none">
+        <doc xml:space="preserve">the extend mode of @color_line</doc>
+        <type name="paint_extend_t" c:type="hb_paint_extend_t"/>
+      </return-value>
+      <parameters>
+        <parameter name="color_line" transfer-ownership="none">
+          <doc xml:space="preserve">a #hb_color_line_t object</doc>
+          <type name="color_line_t" c:type="hb_color_line_t*"/>
+        </parameter>
+        <parameter name="color_line_data" transfer-ownership="none" nullable="1" allow-none="1">
+          <doc xml:space="preserve">the data accompanying @color_line</doc>
+          <type name="gpointer" c:type="void*"/>
+        </parameter>
+        <parameter name="user_data" transfer-ownership="none" nullable="1" allow-none="1" closure="2">
+          <doc xml:space="preserve">the data accompanying this method</doc>
+          <type name="gpointer" c:type="void*"/>
+        </parameter>
+      </parameters>
+    </callback>
+    <record name="color_line_t" c:type="hb_color_line_t" version="7.0.0" glib:type-name="hb_color_line_t" glib:get-type="hb_gobject_color_line_get_type" c:symbol-prefix="gobject_color_line">
+      <doc xml:space="preserve">A struct containing color information for a gradient.</doc>
+      <field name="data" writable="1">
+        <type name="gpointer" c:type="void*"/>
+      </field>
+      <field name="get_color_stops" writable="1">
+        <type name="color_line_get_color_stops_func_t" c:type="hb_color_line_get_color_stops_func_t"/>
+      </field>
+      <field name="get_color_stops_user_data" writable="1">
+        <type name="gpointer" c:type="void*"/>
+      </field>
+      <field name="get_extend" writable="1">
+        <type name="color_line_get_extend_func_t" c:type="hb_color_line_get_extend_func_t"/>
+      </field>
+      <field name="get_extend_user_data" writable="1">
+        <type name="gpointer" c:type="void*"/>
+      </field>
+      <field name="reserved0" writable="1">
+        <type name="gpointer" c:type="void*"/>
+      </field>
+      <field name="reserved1" writable="1">
+        <type name="gpointer" c:type="void*"/>
+      </field>
+      <field name="reserved2" writable="1">
+        <type name="gpointer" c:type="void*"/>
+      </field>
+      <field name="reserved3" writable="1">
+        <type name="gpointer" c:type="void*"/>
+      </field>
+      <field name="reserved5" writable="1">
+        <type name="gpointer" c:type="void*"/>
+      </field>
+      <field name="reserved6" writable="1">
+        <type name="gpointer" c:type="void*"/>
+      </field>
+      <field name="reserved7" writable="1">
+        <type name="gpointer" c:type="void*"/>
+      </field>
+      <field name="reserved8" writable="1">
+        <type name="gpointer" c:type="void*"/>
+      </field>
+    </record>
+    <record name="color_stop_t" c:type="hb_color_stop_t" version="7.0.0" glib:type-name="hb_color_stop_t" glib:get-type="hb_gobject_color_stop_get_type" c:symbol-prefix="gobject_color_stop">
+      <doc xml:space="preserve">Information about a color stop on a color line.
+
+Color lines typically have offsets ranging between 0 and 1,
+but that is not required.
+
+Note: despite @color being unpremultiplied here, interpolation in
+gradients shall happen in premultiplied space. See the OpenType spec
+[COLR](https://learn.microsoft.com/en-us/typography/opentype/spec/colr)
+section for details.</doc>
+      <field name="offset" writable="1">
+        <doc xml:space="preserve">the offset of the color stop</doc>
+        <type name="gfloat" c:type="float"/>
+      </field>
+      <field name="is_foreground" writable="1">
+        <doc xml:space="preserve">whether the color is the foreground</doc>
+        <type name="bool_t" c:type="hb_bool_t"/>
+      </field>
+      <field name="color" writable="1">
+        <doc xml:space="preserve">the color, unpremultiplied</doc>
+        <type name="color_t" c:type="hb_color_t"/>
+      </field>
+    </record>
     <callback name="destroy_func_t" c:type="hb_destroy_func_t">
       <doc xml:space="preserve">A virtual method for destroy user-data callbacks.</doc>
       <return-value transfer-ownership="none">
@@ -3374,7 +3574,7 @@ operation.</doc>
           <type name="draw_funcs_t" c:type="hb_draw_funcs_t*"/>
         </parameter>
         <parameter name="draw_data" transfer-ownership="none" nullable="1" allow-none="1">
-          <doc xml:space="preserve">The data accompanying the draw functions</doc>
+          <doc xml:space="preserve">The data accompanying the draw functions in hb_font_draw_glyph()</doc>
           <type name="gpointer" c:type="void*"/>
         </parameter>
         <parameter name="st" transfer-ownership="none">
@@ -3382,7 +3582,7 @@ operation.</doc>
           <type name="draw_state_t" c:type="hb_draw_state_t*"/>
         </parameter>
         <parameter name="user_data" transfer-ownership="none" nullable="1" allow-none="1" closure="3">
-          <doc xml:space="preserve">User data pointer passed by the caller</doc>
+          <doc xml:space="preserve">User data pointer passed to hb_draw_funcs_set_close_path_func()</doc>
           <type name="gpointer" c:type="void*"/>
         </parameter>
       </parameters>
@@ -3443,7 +3643,7 @@ operation.</doc>
           <type name="draw_funcs_t" c:type="hb_draw_funcs_t*"/>
         </parameter>
         <parameter name="draw_data" transfer-ownership="none" nullable="1" allow-none="1">
-          <doc xml:space="preserve">The data accompanying the draw functions</doc>
+          <doc xml:space="preserve">The data accompanying the draw functions in hb_font_draw_glyph()</doc>
           <type name="gpointer" c:type="void*"/>
         </parameter>
         <parameter name="st" transfer-ownership="none">
@@ -3475,7 +3675,7 @@ operation.</doc>
           <type name="gfloat" c:type="float"/>
         </parameter>
         <parameter name="user_data" transfer-ownership="none" nullable="1" allow-none="1" closure="9">
-          <doc xml:space="preserve">User data pointer passed by the caller</doc>
+          <doc xml:space="preserve">User data pointer passed to hb_draw_funcs_set_cubic_to_func()</doc>
           <type name="gpointer" c:type="void*"/>
         </parameter>
       </parameters>
@@ -3506,6 +3706,31 @@ Decreases the reference count on @dfuncs by one. If the result is zero, then
         </parameter>
       </parameters>
     </function>
+    <function name="draw_funcs_get_empty" c:identifier="hb_draw_funcs_get_empty" version="7.0.0">
+      <doc xml:space="preserve">Fetches the singleton empty draw-functions structure.</doc>
+      <return-value transfer-ownership="full">
+        <doc xml:space="preserve">The empty draw-functions structure</doc>
+        <type name="draw_funcs_t" c:type="hb_draw_funcs_t*"/>
+      </return-value>
+    </function>
+    <function name="draw_funcs_get_user_data" c:identifier="hb_draw_funcs_get_user_data" version="7.0.0" introspectable="0">
+      <doc xml:space="preserve">Fetches the user-data associated with the specified key,
+attached to the specified draw-functions structure.</doc>
+      <return-value transfer-ownership="none" nullable="1">
+        <doc xml:space="preserve">A pointer to the user data</doc>
+        <type name="gpointer" c:type="void*"/>
+      </return-value>
+      <parameters>
+        <parameter name="dfuncs" transfer-ownership="none">
+          <doc xml:space="preserve">The draw-functions structure</doc>
+          <type name="draw_funcs_t" c:type="const hb_draw_funcs_t*"/>
+        </parameter>
+        <parameter name="key" transfer-ownership="none">
+          <doc xml:space="preserve">The user-data key to query</doc>
+          <type name="user_data_key_t" c:type="hb_user_data_key_t*"/>
+        </parameter>
+      </parameters>
+    </function>
     <function name="draw_funcs_is_immutable" c:identifier="hb_draw_funcs_is_immutable" version="4.0.0">
       <doc xml:space="preserve">Checks whether @dfuncs is immutable.</doc>
       <return-value transfer-ownership="none">
@@ -3532,8 +3757,10 @@ Decreases the reference count on @dfuncs by one. If the result is zero, then
       </parameters>
     </function>
     <function name="draw_funcs_reference" c:identifier="hb_draw_funcs_reference" version="4.0.0" introspectable="0">
-      <doc xml:space="preserve">Increases the reference count on @dfuncs by one. This prevents @buffer from
-being destroyed until a matching call to hb_draw_funcs_destroy() is made.</doc>
+      <doc xml:space="preserve">Increases the reference count on @dfuncs by one.
+
+This prevents @dfuncs from being destroyed until a matching
+call to hb_draw_funcs_destroy() is made.</doc>
       <return-value transfer-ownership="full">
         <doc xml:space="preserve">
 The referenced #hb_draw_funcs_t.</doc>
@@ -3666,7 +3893,36 @@ The referenced #hb_draw_funcs_t.</doc>
         </parameter>
       </parameters>
     </function>
-    <record name="draw_funcs_t" c:type="hb_draw_funcs_t" version="4.0.0" glib:type-name="hb_draw_funcs_t" glib:get-type="hb_gobject_draw_funcs_get_type" c:symbol-prefix="gobject_draw_funcs">
+    <function name="draw_funcs_set_user_data" c:identifier="hb_draw_funcs_set_user_data" version="7.0.0" introspectable="0">
+      <doc xml:space="preserve">Attaches a user-data key/data pair to the specified draw-functions structure.</doc>
+      <return-value transfer-ownership="none">
+        <doc xml:space="preserve">`true` if success, `false` otherwise</doc>
+        <type name="bool_t" c:type="hb_bool_t"/>
+      </return-value>
+      <parameters>
+        <parameter name="dfuncs" transfer-ownership="none">
+          <doc xml:space="preserve">The draw-functions structure</doc>
+          <type name="draw_funcs_t" c:type="hb_draw_funcs_t*"/>
+        </parameter>
+        <parameter name="key" transfer-ownership="none">
+          <doc xml:space="preserve">The user-data key</doc>
+          <type name="user_data_key_t" c:type="hb_user_data_key_t*"/>
+        </parameter>
+        <parameter name="data" transfer-ownership="none" nullable="1" allow-none="1">
+          <doc xml:space="preserve">A pointer to the user data</doc>
+          <type name="gpointer" c:type="void*"/>
+        </parameter>
+        <parameter name="destroy" transfer-ownership="none" nullable="1" allow-none="1">
+          <doc xml:space="preserve">A callback to call when @data is not needed anymore</doc>
+          <type name="destroy_func_t" c:type="hb_destroy_func_t"/>
+        </parameter>
+        <parameter name="replace" transfer-ownership="none">
+          <doc xml:space="preserve">Whether to replace an existing data with the same key</doc>
+          <type name="bool_t" c:type="hb_bool_t"/>
+        </parameter>
+      </parameters>
+    </function>
+    <record name="draw_funcs_t" c:type="hb_draw_funcs_t" opaque="1" version="4.0.0" glib:type-name="hb_draw_funcs_t" glib:get-type="hb_gobject_draw_funcs_get_type" c:symbol-prefix="gobject_draw_funcs">
       <doc xml:space="preserve">Glyph draw callbacks.
 
 #hb_draw_move_to_func_t, #hb_draw_line_to_func_t and
@@ -3714,7 +3970,7 @@ operation.</doc>
           <type name="draw_funcs_t" c:type="hb_draw_funcs_t*"/>
         </parameter>
         <parameter name="draw_data" transfer-ownership="none" nullable="1" allow-none="1">
-          <doc xml:space="preserve">The data accompanying the draw functions</doc>
+          <doc xml:space="preserve">The data accompanying the draw functions in hb_font_draw_glyph()</doc>
           <type name="gpointer" c:type="void*"/>
         </parameter>
         <parameter name="st" transfer-ownership="none">
@@ -3730,7 +3986,7 @@ operation.</doc>
           <type name="gfloat" c:type="float"/>
         </parameter>
         <parameter name="user_data" transfer-ownership="none" nullable="1" allow-none="1" closure="5">
-          <doc xml:space="preserve">User data pointer passed by the caller</doc>
+          <doc xml:space="preserve">User data pointer passed to hb_draw_funcs_set_line_to_func()</doc>
           <type name="gpointer" c:type="void*"/>
         </parameter>
       </parameters>
@@ -3775,7 +4031,7 @@ operation.</doc>
           <type name="draw_funcs_t" c:type="hb_draw_funcs_t*"/>
         </parameter>
         <parameter name="draw_data" transfer-ownership="none" nullable="1" allow-none="1">
-          <doc xml:space="preserve">The data accompanying the draw functions</doc>
+          <doc xml:space="preserve">The data accompanying the draw functions in hb_font_draw_glyph()</doc>
           <type name="gpointer" c:type="void*"/>
         </parameter>
         <parameter name="st" transfer-ownership="none">
@@ -3791,7 +4047,7 @@ operation.</doc>
           <type name="gfloat" c:type="float"/>
         </parameter>
         <parameter name="user_data" transfer-ownership="none" nullable="1" allow-none="1" closure="5">
-          <doc xml:space="preserve">User data pointer passed by the caller</doc>
+          <doc xml:space="preserve">User data pointer passed to hb_draw_funcs_set_move_to_func()</doc>
           <type name="gpointer" c:type="void*"/>
         </parameter>
       </parameters>
@@ -3844,7 +4100,7 @@ operation.</doc>
           <type name="draw_funcs_t" c:type="hb_draw_funcs_t*"/>
         </parameter>
         <parameter name="draw_data" transfer-ownership="none" nullable="1" allow-none="1">
-          <doc xml:space="preserve">The data accompanying the draw functions</doc>
+          <doc xml:space="preserve">The data accompanying the draw functions in hb_font_draw_glyph()</doc>
           <type name="gpointer" c:type="void*"/>
         </parameter>
         <parameter name="st" transfer-ownership="none">
@@ -3868,12 +4124,12 @@ operation.</doc>
           <type name="gfloat" c:type="float"/>
         </parameter>
         <parameter name="user_data" transfer-ownership="none" nullable="1" allow-none="1" closure="7">
-          <doc xml:space="preserve">User data pointer passed by the caller</doc>
+          <doc xml:space="preserve">User data pointer passed to hb_draw_funcs_set_quadratic_to_func()</doc>
           <type name="gpointer" c:type="void*"/>
         </parameter>
       </parameters>
     </callback>
-    <record name="draw_state_t" c:type="hb_draw_state_t" version="4.0.0">
+    <record name="draw_state_t" c:type="hb_draw_state_t" version="4.0.0" glib:type-name="hb_draw_state_t" glib:get-type="hb_gobject_draw_state_get_type" c:symbol-prefix="gobject_draw_state">
       <doc xml:space="preserve">Current drawing state.</doc>
       <field name="path_open" writable="1">
         <doc xml:space="preserve">Whether there is an open path</doc>
@@ -3947,6 +4203,48 @@ font file by calling hb_face_reference_blob().</doc>
         <type name="face_t" c:type="hb_face_t*"/>
       </return-value>
     </function>
+    <function name="face_builder_sort_tables" c:identifier="hb_face_builder_sort_tables" version="5.3.0">
+      <doc xml:space="preserve">Set the ordering of tables for serialization. Any tables not
+specified in the tags list will be ordered after the tables in
+tags, ordered by the default sort ordering.</doc>
+      <return-value transfer-ownership="none">
+        <type name="none" c:type="void"/>
+      </return-value>
+      <parameters>
+        <parameter name="face" transfer-ownership="none">
+          <doc xml:space="preserve">A face object created with hb_face_builder_create()</doc>
+          <type name="face_t" c:type="hb_face_t*"/>
+        </parameter>
+        <parameter name="tags" transfer-ownership="none">
+          <doc xml:space="preserve">ordered list of table tags terminated by
+  %HB_TAG_NONE</doc>
+          <array c:type="const hb_tag_t*">
+            <type name="tag_t" c:type="hb_tag_t"/>
+          </array>
+        </parameter>
+      </parameters>
+    </function>
+    <function name="face_collect_nominal_glyph_mapping" c:identifier="hb_face_collect_nominal_glyph_mapping" version="7.0.0">
+      <doc xml:space="preserve">Collects the mapping from Unicode characters to nominal glyphs of the @face,
+and optionally all of the Unicode characters covered by @face.</doc>
+      <return-value transfer-ownership="none">
+        <type name="none" c:type="void"/>
+      </return-value>
+      <parameters>
+        <parameter name="face" transfer-ownership="none">
+          <doc xml:space="preserve">A face object</doc>
+          <type name="face_t" c:type="hb_face_t*"/>
+        </parameter>
+        <parameter name="mapping" direction="out" caller-allocates="1" transfer-ownership="none">
+          <doc xml:space="preserve">The map to add Unicode-to-glyph mapping to</doc>
+          <type name="map_t" c:type="hb_map_t*"/>
+        </parameter>
+        <parameter name="unicodes" direction="out" caller-allocates="1" transfer-ownership="none" nullable="1">
+          <doc xml:space="preserve">The set to add Unicode characters to, or `NULL`</doc>
+          <type name="set_t" c:type="hb_set_t*"/>
+        </parameter>
+      </parameters>
+    </function>
     <function name="face_collect_unicodes" c:identifier="hb_face_collect_unicodes" version="1.9.0">
       <doc xml:space="preserve">Collects all of the Unicode characters covered by @face and adds
 them to the #hb_set_t set @out.</doc>
@@ -3958,7 +4256,7 @@ them to the #hb_set_t set @out.</doc>
           <doc xml:space="preserve">A face object</doc>
           <type name="face_t" c:type="hb_face_t*"/>
         </parameter>
-        <parameter name="out" transfer-ownership="none">
+        <parameter name="out" direction="out" caller-allocates="1" transfer-ownership="none">
           <doc xml:space="preserve">The set to add Unicode characters to</doc>
           <type name="set_t" c:type="hb_set_t*"/>
         </parameter>
@@ -3975,7 +4273,7 @@ them to the #hb_set_t set @out.</doc>
           <doc xml:space="preserve">A face object</doc>
           <type name="face_t" c:type="hb_face_t*"/>
         </parameter>
-        <parameter name="out" transfer-ownership="none">
+        <parameter name="out" direction="out" caller-allocates="1" transfer-ownership="none">
           <doc xml:space="preserve">The set to add Variation Selector characters to</doc>
           <type name="set_t" c:type="hb_set_t*"/>
         </parameter>
@@ -3996,7 +4294,7 @@ them to the #hb_set_t set @out.</doc>
           <doc xml:space="preserve">The Variation Selector to query</doc>
           <type name="codepoint_t" c:type="hb_codepoint_t"/>
         </parameter>
-        <parameter name="out" transfer-ownership="none">
+        <parameter name="out" direction="out" caller-allocates="1" transfer-ownership="none">
           <doc xml:space="preserve">The set to add Unicode characters to</doc>
           <type name="set_t" c:type="hb_set_t*"/>
         </parameter>
@@ -4151,7 +4449,10 @@ begin at the offset provided</doc>
       </parameters>
     </function>
     <function name="face_get_upem" c:identifier="hb_face_get_upem" version="0.9.2">
-      <doc xml:space="preserve">Fetches the units-per-em (upem) value of the specified face object.</doc>
+      <doc xml:space="preserve">Fetches the units-per-em (UPEM) value of the specified face object.
+
+Typical UPEM values for fonts are 1000, or 2048, but any value
+in between 16 and 16,384 is allowed for OpenType fonts.</doc>
       <return-value transfer-ownership="none">
         <doc xml:space="preserve">The upem value of @face</doc>
         <type name="guint" c:type="unsigned int"/>
@@ -4253,7 +4554,9 @@ the specified face.</doc>
       </parameters>
     </function>
     <function name="face_set_glyph_count" c:identifier="hb_face_set_glyph_count" version="0.9.7">
-      <doc xml:space="preserve">Sets the glyph count for a face object to the specified value.</doc>
+      <doc xml:space="preserve">Sets the glyph count for a face object to the specified value.
+
+This API is used in rare circumstances.</doc>
       <return-value transfer-ownership="none">
         <type name="none" c:type="void"/>
       </return-value>
@@ -4289,7 +4592,9 @@ This only changes the value returned by hb_face_get_index().&lt;/note&gt;</doc>
       </parameters>
     </function>
     <function name="face_set_upem" c:identifier="hb_face_set_upem" version="0.9.2">
-      <doc xml:space="preserve">Sets the units-per-em (upem) for a face object to the specified value.</doc>
+      <doc xml:space="preserve">Sets the units-per-em (upem) for a face object to the specified value.
+
+This API is used in rare circumstances.</doc>
       <return-value transfer-ownership="none">
         <type name="none" c:type="void"/>
       </return-value>
@@ -4333,7 +4638,7 @@ This only changes the value returned by hb_face_get_index().&lt;/note&gt;</doc>
         </parameter>
       </parameters>
     </function>
-    <record name="face_t" c:type="hb_face_t" glib:type-name="hb_face_t" glib:get-type="hb_gobject_face_get_type" c:symbol-prefix="gobject_face">
+    <record name="face_t" c:type="hb_face_t" opaque="1" glib:type-name="hb_face_t" glib:get-type="hb_gobject_face_get_type" c:symbol-prefix="gobject_face">
       <doc xml:space="preserve">Data type for holding font faces.</doc>
     </record>
     <function name="feature_from_string" c:identifier="hb_feature_from_string" version="0.9.5">
@@ -4564,6 +4869,65 @@ freeing all memory.</doc>
         </parameter>
       </parameters>
     </function>
+    <function name="font_draw_glyph" c:identifier="hb_font_draw_glyph" version="7.0.0">
+      <doc xml:space="preserve">Draws the outline that corresponds to a glyph in the specified @font.
+
+The outline is returned by way of calls to the callbacks of the @dfuncs
+objects, with @draw_data passed to them.</doc>
+      <return-value transfer-ownership="none">
+        <type name="none" c:type="void"/>
+      </return-value>
+      <parameters>
+        <parameter name="font" transfer-ownership="none">
+          <doc xml:space="preserve">#hb_font_t to work upon</doc>
+          <type name="font_t" c:type="hb_font_t*"/>
+        </parameter>
+        <parameter name="glyph" transfer-ownership="none">
+          <doc xml:space="preserve">The glyph ID</doc>
+          <type name="codepoint_t" c:type="hb_codepoint_t"/>
+        </parameter>
+        <parameter name="dfuncs" transfer-ownership="none">
+          <doc xml:space="preserve">#hb_draw_funcs_t to draw to</doc>
+          <type name="draw_funcs_t" c:type="hb_draw_funcs_t*"/>
+        </parameter>
+        <parameter name="draw_data" transfer-ownership="none" nullable="1" allow-none="1">
+          <doc xml:space="preserve">User data to pass to draw callbacks</doc>
+          <type name="gpointer" c:type="void*"/>
+        </parameter>
+      </parameters>
+    </function>
+    <callback name="font_draw_glyph_func_t" c:type="hb_font_draw_glyph_func_t" version="7.0.0">
+      <doc xml:space="preserve">A virtual method for the #hb_font_funcs_t of an #hb_font_t object.</doc>
+      <return-value transfer-ownership="none">
+        <type name="none" c:type="void"/>
+      </return-value>
+      <parameters>
+        <parameter name="font" transfer-ownership="none">
+          <doc xml:space="preserve">#hb_font_t to work upon</doc>
+          <type name="font_t" c:type="hb_font_t*"/>
+        </parameter>
+        <parameter name="font_data" transfer-ownership="none" nullable="1" allow-none="1">
+          <doc xml:space="preserve">@font user data pointer</doc>
+          <type name="gpointer" c:type="void*"/>
+        </parameter>
+        <parameter name="glyph" transfer-ownership="none">
+          <doc xml:space="preserve">The glyph ID to query</doc>
+          <type name="codepoint_t" c:type="hb_codepoint_t"/>
+        </parameter>
+        <parameter name="draw_funcs" transfer-ownership="none">
+          <doc xml:space="preserve">The draw functions to send the shape data to</doc>
+          <type name="draw_funcs_t" c:type="hb_draw_funcs_t*"/>
+        </parameter>
+        <parameter name="draw_data" transfer-ownership="none" nullable="1" allow-none="1">
+          <doc xml:space="preserve">The data accompanying the draw functions</doc>
+          <type name="gpointer" c:type="void*"/>
+        </parameter>
+        <parameter name="user_data" transfer-ownership="none" nullable="1" allow-none="1" closure="5">
+          <doc xml:space="preserve">User data pointer passed by the caller</doc>
+          <type name="gpointer" c:type="void*"/>
+        </parameter>
+      </parameters>
+    </callback>
     <record name="font_extents_t" c:type="hb_font_extents_t">
       <doc xml:space="preserve">Font-wide extent values, measured in font units.
 
@@ -4690,6 +5054,31 @@ attached to the specified font-functions structure.</doc>
         <parameter name="ffuncs" transfer-ownership="none">
           <doc xml:space="preserve">The font-functions structure</doc>
           <type name="font_funcs_t" c:type="hb_font_funcs_t*"/>
+        </parameter>
+      </parameters>
+    </function>
+    <function name="font_funcs_set_draw_glyph_func" c:identifier="hb_font_funcs_set_draw_glyph_func" version="7.0.0">
+      <doc xml:space="preserve">Sets the implementation function for #hb_font_draw_glyph_func_t,
+which is the same as #hb_font_get_glyph_shape_func_t.</doc>
+      <return-value transfer-ownership="none">
+        <type name="none" c:type="void"/>
+      </return-value>
+      <parameters>
+        <parameter name="ffuncs" transfer-ownership="none">
+          <doc xml:space="preserve">A font-function structure</doc>
+          <type name="font_funcs_t" c:type="hb_font_funcs_t*"/>
+        </parameter>
+        <parameter name="func" transfer-ownership="none" scope="notified" closure="2" destroy="3">
+          <doc xml:space="preserve">The callback function to assign</doc>
+          <type name="font_draw_glyph_func_t" c:type="hb_font_draw_glyph_func_t"/>
+        </parameter>
+        <parameter name="user_data" transfer-ownership="none" nullable="1" allow-none="1">
+          <doc xml:space="preserve">Data to pass to @func</doc>
+          <type name="gpointer" c:type="void*"/>
+        </parameter>
+        <parameter name="destroy" transfer-ownership="none" nullable="1" allow-none="1" scope="notified">
+          <doc xml:space="preserve">The function to call when @user_data is not needed anymore</doc>
+          <type name="destroy_func_t" c:type="hb_destroy_func_t"/>
         </parameter>
       </parameters>
     </function>
@@ -4958,8 +5347,10 @@ hb_font_funcs_set_variation_glyph_func() instead.</doc>
         </parameter>
       </parameters>
     </function>
-    <function name="font_funcs_set_glyph_shape_func" c:identifier="hb_font_funcs_set_glyph_shape_func" version="4.0.0">
-      <doc xml:space="preserve">Sets the implementation function for #hb_font_get_glyph_shape_func_t.</doc>
+    <function name="font_funcs_set_glyph_shape_func" c:identifier="hb_font_funcs_set_glyph_shape_func" version="4.0.0" deprecated="1" deprecated-version="7.0.0">
+      <doc xml:space="preserve">Sets the implementation function for #hb_font_get_glyph_shape_func_t,
+which is the same as #hb_font_draw_glyph_func_t.</doc>
+      <doc-deprecated xml:space="preserve">Use hb_font_funcs_set_draw_glyph_func() instead</doc-deprecated>
       <return-value transfer-ownership="none">
         <type name="none" c:type="void"/>
       </return-value>
@@ -5126,6 +5517,30 @@ hb_font_funcs_set_variation_glyph_func() instead.</doc>
         </parameter>
       </parameters>
     </function>
+    <function name="font_funcs_set_paint_glyph_func" c:identifier="hb_font_funcs_set_paint_glyph_func" version="7.0.0">
+      <doc xml:space="preserve">Sets the implementation function for #hb_font_paint_glyph_func_t.</doc>
+      <return-value transfer-ownership="none">
+        <type name="none" c:type="void"/>
+      </return-value>
+      <parameters>
+        <parameter name="ffuncs" transfer-ownership="none">
+          <doc xml:space="preserve">A font-function structure</doc>
+          <type name="font_funcs_t" c:type="hb_font_funcs_t*"/>
+        </parameter>
+        <parameter name="func" transfer-ownership="none" scope="notified" closure="2" destroy="3">
+          <doc xml:space="preserve">The callback function to assign</doc>
+          <type name="font_paint_glyph_func_t" c:type="hb_font_paint_glyph_func_t"/>
+        </parameter>
+        <parameter name="user_data" transfer-ownership="none" nullable="1" allow-none="1">
+          <doc xml:space="preserve">Data to pass to @func</doc>
+          <type name="gpointer" c:type="void*"/>
+        </parameter>
+        <parameter name="destroy" transfer-ownership="none" nullable="1" allow-none="1" scope="notified">
+          <doc xml:space="preserve">The function to call when @user_data is no longer needed</doc>
+          <type name="destroy_func_t" c:type="hb_destroy_func_t"/>
+        </parameter>
+      </parameters>
+    </function>
     <function name="font_funcs_set_user_data" c:identifier="hb_font_funcs_set_user_data" version="0.9.2" introspectable="0">
       <doc xml:space="preserve">Attaches a user-data key/data pair to the specified font-functions structure.</doc>
       <return-value transfer-ownership="none">
@@ -5179,7 +5594,7 @@ hb_font_funcs_set_variation_glyph_func() instead.</doc>
         </parameter>
       </parameters>
     </function>
-    <record name="font_funcs_t" c:type="hb_font_funcs_t" glib:type-name="hb_font_funcs_t" glib:get-type="hb_gobject_font_funcs_get_type" c:symbol-prefix="gobject_font_funcs">
+    <record name="font_funcs_t" c:type="hb_font_funcs_t" opaque="1" glib:type-name="hb_font_funcs_t" glib:get-type="hb_gobject_font_funcs_get_type" c:symbol-prefix="gobject_font_funcs">
       <doc xml:space="preserve">Data type containing a set of virtual methods used for
 working on #hb_font_t font objects.
 
@@ -5891,7 +6306,10 @@ the specified font, for horizontal text segments.</doc>
       </parameters>
     </callback>
     <function name="font_get_glyph_name" c:identifier="hb_font_get_glyph_name" version="0.9.2">
-      <doc xml:space="preserve">Fetches the glyph-name string for a glyph ID in the specified @font.</doc>
+      <doc xml:space="preserve">Fetches the glyph-name string for a glyph ID in the specified @font.
+
+According to the OpenType specification, glyph names are limited to 63
+characters and can only contain (a subset of) ASCII.</doc>
       <return-value transfer-ownership="none">
         <doc xml:space="preserve">`true` if data found, `false` otherwise</doc>
         <type name="bool_t" c:type="hb_bool_t"/>
@@ -6024,10 +6442,11 @@ output parameter.</doc>
         </parameter>
       </parameters>
     </callback>
-    <function name="font_get_glyph_shape" c:identifier="hb_font_get_glyph_shape" version="4.0.0">
+    <function name="font_get_glyph_shape" c:identifier="hb_font_get_glyph_shape" version="4.0.0" deprecated="1" deprecated-version="7.0.0">
       <doc xml:space="preserve">Fetches the glyph shape that corresponds to a glyph in the specified @font.
-The shape is returned by way of calls to the callsbacks of the @dfuncs
+The shape is returned by way of calls to the callbacks of the @dfuncs
 objects, with @draw_data passed to them.</doc>
+      <doc-deprecated xml:space="preserve">Use hb_font_draw_glyph() instead</doc-deprecated>
       <return-value transfer-ownership="none">
         <type name="none" c:type="void"/>
       </return-value>
@@ -6050,8 +6469,9 @@ objects, with @draw_data passed to them.</doc>
         </parameter>
       </parameters>
     </function>
-    <callback name="font_get_glyph_shape_func_t" c:type="hb_font_get_glyph_shape_func_t" version="4.0.0">
+    <callback name="font_get_glyph_shape_func_t" c:type="hb_font_get_glyph_shape_func_t" version="4.0.0" deprecated="1" deprecated-version="7.0.0">
       <doc xml:space="preserve">A virtual method for the #hb_font_funcs_t of an #hb_font_t object.</doc>
+      <doc-deprecated xml:space="preserve">Use #hb_font_draw_glyph_func_t instead</doc-deprecated>
       <return-value transfer-ownership="none">
         <type name="none" c:type="void"/>
       </return-value>
@@ -6262,7 +6682,8 @@ point. Glyph IDs must be returned in a #hb_codepoint_t output parameter.</doc>
     </callback>
     <function name="font_get_nominal_glyphs" c:identifier="hb_font_get_nominal_glyphs" version="2.6.3">
       <doc xml:space="preserve">Fetches the nominal glyph IDs for a sequence of Unicode code points. Glyph
-IDs must be returned in a #hb_codepoint_t output parameter.</doc>
+IDs must be returned in a #hb_codepoint_t output parameter. Stopes at the
+first unsupported glyph ID.</doc>
       <return-value transfer-ownership="none">
         <doc xml:space="preserve">the number of code points processed</doc>
         <type name="guint" c:type="unsigned int"/>
@@ -6421,6 +6842,30 @@ changed, using a setter function.</doc>
         </parameter>
       </parameters>
     </function>
+    <function name="font_get_synthetic_bold" c:identifier="hb_font_get_synthetic_bold" version="7.0.0">
+      <doc xml:space="preserve">Fetches the "synthetic boldness" parameters of a font.</doc>
+      <return-value transfer-ownership="none">
+        <type name="none" c:type="void"/>
+      </return-value>
+      <parameters>
+        <parameter name="font" transfer-ownership="none">
+          <doc xml:space="preserve">#hb_font_t to work upon</doc>
+          <type name="font_t" c:type="hb_font_t*"/>
+        </parameter>
+        <parameter name="x_embolden" direction="out" caller-allocates="0" transfer-ownership="full">
+          <doc xml:space="preserve">return location for horizontal value</doc>
+          <type name="gfloat" c:type="float*"/>
+        </parameter>
+        <parameter name="y_embolden" direction="out" caller-allocates="0" transfer-ownership="full">
+          <doc xml:space="preserve">return location for vertical value</doc>
+          <type name="gfloat" c:type="float*"/>
+        </parameter>
+        <parameter name="in_place" direction="out" caller-allocates="0" transfer-ownership="full">
+          <doc xml:space="preserve">return location for in-place value</doc>
+          <type name="bool_t" c:type="hb_bool_t*"/>
+        </parameter>
+      </parameters>
+    </function>
     <function name="font_get_synthetic_slant" c:identifier="hb_font_get_synthetic_slant" version="3.3.0">
       <doc xml:space="preserve">Fetches the "synthetic slant" of a font.</doc>
       <return-value transfer-ownership="none">
@@ -6516,6 +6961,19 @@ are not modified.</doc>
         <parameter name="length" direction="out" caller-allocates="0" transfer-ownership="full">
           <doc xml:space="preserve">Number of coordinates retrieved</doc>
           <type name="guint" c:type="unsigned int*"/>
+        </parameter>
+      </parameters>
+    </function>
+    <function name="font_get_var_named_instance" c:identifier="hb_font_get_var_named_instance" version="7.0.0">
+      <doc xml:space="preserve">Returns the currently-set named-instance index of the font.</doc>
+      <return-value transfer-ownership="none">
+        <doc xml:space="preserve">Named-instance index or %HB_FONT_NO_VAR_NAMED_INSTANCE.</doc>
+        <type name="guint" c:type="unsigned int"/>
+      </return-value>
+      <parameters>
+        <parameter name="font" transfer-ownership="none">
+          <doc xml:space="preserve">a font.</doc>
+          <type name="font_t" c:type="hb_font_t*"/>
         </parameter>
       </parameters>
     </function>
@@ -6618,7 +7076,10 @@ Strings of the format `gidDDD` or `uniUUUU` are parsed automatically.
 it in string @s.
 
 If the glyph ID has no name in @font, a string of the form `gidDDD` is
-generated, with `DDD` being the glyph ID.</doc>
+generated, with `DDD` being the glyph ID.
+
+According to the OpenType specification, glyph names are limited to 63
+characters and can only contain (a subset of) ASCII.</doc>
       <return-value transfer-ownership="none">
         <type name="none" c:type="void"/>
       </return-value>
@@ -6668,6 +7129,86 @@ generated, with `DDD` being the glyph ID.</doc>
         </parameter>
       </parameters>
     </function>
+    <function name="font_paint_glyph" c:identifier="hb_font_paint_glyph" version="7.0.0">
+      <doc xml:space="preserve">Paints the glyph.
+
+The painting instructions are returned by way of calls to
+the callbacks of the @funcs object, with @paint_data passed
+to them.
+
+If the font has color palettes (see hb_ot_color_has_palettes()),
+then @palette_index selects the palette to use. If the font only
+has one palette, this will be 0.</doc>
+      <return-value transfer-ownership="none">
+        <type name="none" c:type="void"/>
+      </return-value>
+      <parameters>
+        <parameter name="font" transfer-ownership="none">
+          <doc xml:space="preserve">#hb_font_t to work upon</doc>
+          <type name="font_t" c:type="hb_font_t*"/>
+        </parameter>
+        <parameter name="glyph" transfer-ownership="none">
+          <doc xml:space="preserve">The glyph ID</doc>
+          <type name="codepoint_t" c:type="hb_codepoint_t"/>
+        </parameter>
+        <parameter name="pfuncs" transfer-ownership="none">
+          <doc xml:space="preserve">#hb_paint_funcs_t to paint with</doc>
+          <type name="paint_funcs_t" c:type="hb_paint_funcs_t*"/>
+        </parameter>
+        <parameter name="paint_data" transfer-ownership="none" nullable="1" allow-none="1">
+          <doc xml:space="preserve">User data to pass to paint callbacks</doc>
+          <type name="gpointer" c:type="void*"/>
+        </parameter>
+        <parameter name="palette_index" transfer-ownership="none">
+          <doc xml:space="preserve">The index of the font's color palette to use</doc>
+          <type name="guint" c:type="unsigned int"/>
+        </parameter>
+        <parameter name="foreground" transfer-ownership="none">
+          <doc xml:space="preserve">The foreground color, unpremultipled</doc>
+          <type name="color_t" c:type="hb_color_t"/>
+        </parameter>
+      </parameters>
+    </function>
+    <callback name="font_paint_glyph_func_t" c:type="hb_font_paint_glyph_func_t" version="7.0.0">
+      <doc xml:space="preserve">A virtual method for the #hb_font_funcs_t of an #hb_font_t object.</doc>
+      <return-value transfer-ownership="none">
+        <type name="none" c:type="void"/>
+      </return-value>
+      <parameters>
+        <parameter name="font" transfer-ownership="none">
+          <doc xml:space="preserve">#hb_font_t to work upon</doc>
+          <type name="font_t" c:type="hb_font_t*"/>
+        </parameter>
+        <parameter name="font_data" transfer-ownership="none" nullable="1" allow-none="1">
+          <doc xml:space="preserve">@font user data pointer</doc>
+          <type name="gpointer" c:type="void*"/>
+        </parameter>
+        <parameter name="glyph" transfer-ownership="none">
+          <doc xml:space="preserve">The glyph ID to query</doc>
+          <type name="codepoint_t" c:type="hb_codepoint_t"/>
+        </parameter>
+        <parameter name="paint_funcs" transfer-ownership="none">
+          <doc xml:space="preserve">The paint functions to use</doc>
+          <type name="paint_funcs_t" c:type="hb_paint_funcs_t*"/>
+        </parameter>
+        <parameter name="paint_data" transfer-ownership="none" nullable="1" allow-none="1">
+          <doc xml:space="preserve">The data accompanying the paint functions</doc>
+          <type name="gpointer" c:type="void*"/>
+        </parameter>
+        <parameter name="palette_index" transfer-ownership="none">
+          <doc xml:space="preserve">The color palette to use</doc>
+          <type name="guint" c:type="unsigned int"/>
+        </parameter>
+        <parameter name="foreground" transfer-ownership="none">
+          <doc xml:space="preserve">The foreground color</doc>
+          <type name="color_t" c:type="hb_color_t"/>
+        </parameter>
+        <parameter name="user_data" transfer-ownership="none" nullable="1" allow-none="1" closure="7">
+          <doc xml:space="preserve">User data pointer passed by the caller</doc>
+          <type name="gpointer" c:type="void*"/>
+        </parameter>
+      </parameters>
+    </callback>
     <function name="font_reference" c:identifier="hb_font_reference" version="0.9.2" introspectable="0">
       <doc xml:space="preserve">Increases the reference count on the given font object.</doc>
       <return-value transfer-ownership="full">
@@ -6760,7 +7301,11 @@ the font's user-data with @font-data and the @destroy callback.</doc>
       </parameters>
     </function>
     <function name="font_set_ppem" c:identifier="hb_font_set_ppem" version="0.9.2">
-      <doc xml:space="preserve">Sets the horizontal and vertical pixels-per-em (ppem) of a font.</doc>
+      <doc xml:space="preserve">Sets the horizontal and vertical pixels-per-em (PPEM) of a font.
+
+These values are used for pixel-size-specific adjustment to
+shaping and draw results, though for the most part they are
+unused and can be left unset.</doc>
       <return-value transfer-ownership="none">
         <type name="none" c:type="void"/>
       </return-value>
@@ -6799,7 +7344,32 @@ Used in CoreText to implement optical sizing.
       </parameters>
     </function>
     <function name="font_set_scale" c:identifier="hb_font_set_scale" version="0.9.2">
-      <doc xml:space="preserve">Sets the horizontal and vertical scale of a font.</doc>
+      <doc xml:space="preserve">Sets the horizontal and vertical scale of a font.
+
+The font scale is a number related to, but not the same as,
+font size. Typically the client establishes a scale factor
+to be used between the two. For example, 64, or 256, which
+would be the fractional-precision part of the font scale.
+This is necessary because #hb_position_t values are integer
+types and you need to leave room for fractional values
+in there.
+
+For example, to set the font size to 20, with 64
+levels of fractional precision you would call
+`hb_font_set_scale(font, 20 * 64, 20 * 64)`.
+
+In the example above, even what font size 20 means is up to
+you. It might be 20 pixels, or 20 points, or 20 millimeters.
+HarfBuzz does not care about that.  You can set the point
+size of the font using hb_font_set_ptem(), and the pixel
+size using hb_font_set_ppem().
+
+The choice of scale is yours but needs to be consistent between
+what you set here, and what you expect out of #hb_position_t
+as well has draw / paint API output values.
+
+Fonts default to a scale equal to the UPEM value of their face.
+A font with this setting is sometimes called an "unscaled" font.</doc>
       <return-value transfer-ownership="none">
         <type name="none" c:type="void"/>
       </return-value>
@@ -6818,6 +7388,44 @@ Used in CoreText to implement optical sizing.
         </parameter>
       </parameters>
     </function>
+    <function name="font_set_synthetic_bold" c:identifier="hb_font_set_synthetic_bold" version="7.0.0">
+      <doc xml:space="preserve">Sets the "synthetic boldness" of a font.
+
+Positive values for @x_embolden / @y_embolden make a font
+bolder, negative values thinner. Typical values are in the
+0.01 to 0.05 range. The default value is zero.
+
+Synthetic boldness is applied by offsetting the contour
+points of the glyph shape.
+
+Synthetic boldness is applied when rendering a glyph via
+hb_font_draw_glyph().
+
+If @in_place is `false`, then glyph advance-widths are also
+adjusted, otherwise they are not.  The in-place mode is
+useful for simulating [font grading](https://fonts.google.com/knowledge/glossary/grade).</doc>
+      <return-value transfer-ownership="none">
+        <type name="none" c:type="void"/>
+      </return-value>
+      <parameters>
+        <parameter name="font" transfer-ownership="none">
+          <doc xml:space="preserve">#hb_font_t to work upon</doc>
+          <type name="font_t" c:type="hb_font_t*"/>
+        </parameter>
+        <parameter name="x_embolden" transfer-ownership="none">
+          <doc xml:space="preserve">the amount to embolden horizontally</doc>
+          <type name="gfloat" c:type="float"/>
+        </parameter>
+        <parameter name="y_embolden" transfer-ownership="none">
+          <doc xml:space="preserve">the amount to embolden vertically</doc>
+          <type name="gfloat" c:type="float"/>
+        </parameter>
+        <parameter name="in_place" transfer-ownership="none">
+          <doc xml:space="preserve">whether to embolden glyphs in-place</doc>
+          <type name="bool_t" c:type="hb_bool_t"/>
+        </parameter>
+      </parameters>
+    </function>
     <function name="font_set_synthetic_slant" c:identifier="hb_font_set_synthetic_slant" version="3.3.0">
       <doc xml:space="preserve">Sets the "synthetic slant" of a font.  By default is zero.
 Synthetic slant is the graphical skew applied to the font
@@ -6826,9 +7434,8 @@ at rendering time.
 HarfBuzz needs to know this value to adjust shaping results,
 metrics, and style values to match the slanted rendering.
 
-&lt;note&gt;Note: The glyph shape fetched via the
-hb_font_get_glyph_shape() is slanted to reflect this value
-as well.&lt;/note&gt;
+&lt;note&gt;Note: The glyph shape fetched via the hb_font_draw_glyph()
+function is slanted to reflect this value as well.&lt;/note&gt;
 
 &lt;note&gt;Note: The slant value is a ratio.  For example, a
 20% slant would be represented as a 0.2 value.&lt;/note&gt;</doc>
@@ -6932,7 +7539,7 @@ default values.
       </parameters>
     </function>
     <function name="font_set_var_named_instance" c:identifier="hb_font_set_var_named_instance" version="2.6.0">
-      <doc xml:space="preserve">Sets design coords of a font from a named instance index.</doc>
+      <doc xml:space="preserve">Sets design coords of a font from a named-instance index.</doc>
       <return-value transfer-ownership="none">
         <type name="none" c:type="void"/>
       </return-value>
@@ -6943,7 +7550,31 @@ default values.
         </parameter>
         <parameter name="instance_index" transfer-ownership="none">
           <doc xml:space="preserve">named instance index.</doc>
-          <type name="guint" c:type="unsigned"/>
+          <type name="guint" c:type="unsigned int"/>
+        </parameter>
+      </parameters>
+    </function>
+    <function name="font_set_variation" c:identifier="hb_font_set_variation" version="7.1.0">
+      <doc xml:space="preserve">Change the value of one variation axis on the font.
+
+Note: This function is expensive to be called repeatedly.
+  If you want to set multiple variation axes at the same time,
+  use hb_font_set_variations() instead.</doc>
+      <return-value transfer-ownership="none">
+        <type name="none" c:type="void"/>
+      </return-value>
+      <parameters>
+        <parameter name="font" transfer-ownership="none">
+          <doc xml:space="preserve">#hb_font_t to work upon</doc>
+          <type name="font_t" c:type="hb_font_t*"/>
+        </parameter>
+        <parameter name="tag" transfer-ownership="none">
+          <doc xml:space="preserve">The #hb_tag_t tag of the variation-axis name</doc>
+          <type name="tag_t" c:type="hb_tag_t"/>
+        </parameter>
+        <parameter name="value" transfer-ownership="none">
+          <doc xml:space="preserve">The value of the variation axis</doc>
+          <type name="gfloat" c:type="float"/>
         </parameter>
       </parameters>
     </function>
@@ -7007,7 +7638,7 @@ or vertical) depending on the value of @direction.</doc>
         </parameter>
       </parameters>
     </function>
-    <record name="font_t" c:type="hb_font_t" glib:type-name="hb_font_t" glib:get-type="hb_gobject_font_get_type" c:symbol-prefix="gobject_font">
+    <record name="font_t" c:type="hb_font_t" opaque="1" glib:type-name="hb_font_t" glib:get-type="hb_gobject_font_get_type" c:symbol-prefix="gobject_font">
       <doc xml:space="preserve">Data type for holding fonts.</doc>
     </record>
     <function name="ft_font_changed" c:identifier="hb_ft_font_changed" version="1.0.5">
@@ -7028,9 +7659,12 @@ variation-axis settings on the FT_Face.</doc>
       <doc xml:space="preserve">Fetches the FT_Load_Glyph load flags of the specified #hb_font_t.
 
 For more information, see
-https://www.freetype.org/freetype2/docs/reference/ft2-base_interface.html#ft_load_xxx</doc>
+https://www.freetype.org/freetype2/docs/reference/ft2-base_interface.html#ft_load_xxx
+
+This function works with #hb_font_t objects created by
+hb_ft_font_create() or hb_ft_font_create_referenced().</doc>
       <return-value transfer-ownership="none">
-        <doc xml:space="preserve">FT_Load_Glyph flags found</doc>
+        <doc xml:space="preserve">FT_Load_Glyph flags found, or 0</doc>
         <type name="gint" c:type="int"/>
       </return-value>
       <parameters>
@@ -7050,9 +7684,13 @@ functions even if that #hb_face_t face object was initially
 created with hb_face_create(), and therefore was not
 initially configured to use FreeType font functions.
 
-An #hb_face_t face object created with hb_ft_face_create()
+An #hb_font_t object created with hb_ft_font_create()
 is preconfigured for FreeType font functions and does not
 require this function to be used.
+
+Note that if you modify the underlying #hb_font_t after
+calling this function, you need to call hb_ft_hb_font_changed()
+to update the underlying FT_Face.
 
 &lt;note&gt;Note: Internally, this function creates an FT_Face.
 &lt;/note&gt;</doc>
@@ -7070,7 +7708,10 @@ require this function to be used.
       <doc xml:space="preserve">Sets the FT_Load_Glyph load flags for the specified #hb_font_t.
 
 For more information, see
-https://www.freetype.org/freetype2/docs/reference/ft2-base_interface.html#ft_load_xxx</doc>
+https://www.freetype.org/freetype2/docs/reference/ft2-base_interface.html#ft_load_xxx
+
+This function works with #hb_font_t objects created by
+hb_ft_font_create() or hb_ft_font_create_referenced().</doc>
       <return-value transfer-ownership="none">
         <type name="none" c:type="void"/>
       </return-value>
@@ -7373,7 +8014,9 @@ shaping they hold the output glyphs.</doc>
 were deemed unnecessary.</doc>
     </docsection>
     <docsection name="hb-draw">
-      <doc xml:space="preserve">Functions for drawing (extracting) glyph shapes.</doc>
+      <doc xml:space="preserve">Functions for drawing (extracting) glyph shapes.
+
+The #hb_draw_funcs_t struct can be used with hb_font_draw_glyph().</doc>
     </docsection>
     <docsection name="hb-face">
       <doc xml:space="preserve">A font face is an object that represents a single face from within a
@@ -7474,6 +8117,15 @@ the font data necessary for typesetting OpenType Math layout.</doc>
     </docsection>
     <docsection name="hb-ot-var">
       <doc xml:space="preserve">Functions for fetching information about OpenType Variable Fonts.</doc>
+    </docsection>
+    <docsection name="hb-paint">
+      <doc xml:space="preserve">Functions for painting glyphs.
+
+The main purpose of these functions is to paint (extract) color glyph layers
+from the COLRv1 table, but the API works for drawing ordinary outlines and
+images as well.
+
+The #hb_paint_funcs_t struct can be used with hb_font_paint_glyph().</doc>
     </docsection>
     <docsection name="hb-set">
       <doc xml:space="preserve">Set objects represent a mathematical set of integer values.  They are
@@ -7576,7 +8228,7 @@ specific version of the provided language tag.  For example,
         </parameter>
       </parameters>
     </function>
-    <record name="language_t" c:type="hb_language_t" disguised="1">
+    <record name="language_t" c:type="hb_language_t" disguised="1" pointer="1">
       <doc xml:space="preserve">Data type for languages. Each #hb_language_t corresponds to a BCP 47
 language tag.</doc>
       <method name="_string" c:identifier="hb_language_to_string" moved-to="language_to_string" version="0.9.2">
@@ -7800,6 +8452,53 @@ elements).</doc>
         </parameter>
       </parameters>
     </function>
+    <function name="map_keys" c:identifier="hb_map_keys" version="7.0.0">
+      <doc xml:space="preserve">Add the keys of @map to @keys.</doc>
+      <return-value transfer-ownership="none">
+        <type name="none" c:type="void"/>
+      </return-value>
+      <parameters>
+        <parameter name="map" transfer-ownership="none">
+          <doc xml:space="preserve">A map</doc>
+          <type name="map_t" c:type="const hb_map_t*"/>
+        </parameter>
+        <parameter name="keys" transfer-ownership="none">
+          <doc xml:space="preserve">A set</doc>
+          <type name="set_t" c:type="hb_set_t*"/>
+        </parameter>
+      </parameters>
+    </function>
+    <function name="map_next" c:identifier="hb_map_next" version="7.0.0">
+      <doc xml:space="preserve">Fetches the next key/value paire in @map.
+
+Set @idx to -1 to get started.
+
+If the map is modified during iteration, the behavior is undefined.
+
+The order in which the key/values are returned is undefined.</doc>
+      <return-value transfer-ownership="none">
+        <doc xml:space="preserve">`true` if there was a next value, `false` otherwise</doc>
+        <type name="bool_t" c:type="hb_bool_t"/>
+      </return-value>
+      <parameters>
+        <parameter name="map" transfer-ownership="none">
+          <doc xml:space="preserve">A map</doc>
+          <type name="map_t" c:type="const hb_map_t*"/>
+        </parameter>
+        <parameter name="idx" direction="inout" caller-allocates="0" transfer-ownership="full">
+          <doc xml:space="preserve">Iterator internal state</doc>
+          <type name="gint" c:type="int*"/>
+        </parameter>
+        <parameter name="key" direction="out" caller-allocates="0" transfer-ownership="full">
+          <doc xml:space="preserve">Key retrieved</doc>
+          <type name="codepoint_t" c:type="hb_codepoint_t*"/>
+        </parameter>
+        <parameter name="value" direction="out" caller-allocates="0" transfer-ownership="full">
+          <doc xml:space="preserve">Value retrieved</doc>
+          <type name="codepoint_t" c:type="hb_codepoint_t*"/>
+        </parameter>
+      </parameters>
+    </function>
     <function name="map_reference" c:identifier="hb_map_reference" version="1.7.7" introspectable="0">
       <doc xml:space="preserve">Increases the reference count on a map.</doc>
       <return-value transfer-ownership="full">
@@ -7862,9 +8561,41 @@ elements).</doc>
         </parameter>
       </parameters>
     </function>
-    <record name="map_t" c:type="hb_map_t" glib:type-name="hb_map_t" glib:get-type="hb_gobject_map_get_type" c:symbol-prefix="gobject_map">
+    <record name="map_t" c:type="hb_map_t" opaque="1" glib:type-name="hb_map_t" glib:get-type="hb_gobject_map_get_type" c:symbol-prefix="gobject_map">
       <doc xml:space="preserve">Data type for holding integer-to-integer hash maps.</doc>
     </record>
+    <function name="map_update" c:identifier="hb_map_update" version="7.0.0">
+      <doc xml:space="preserve">Add the contents of @other to @map.</doc>
+      <return-value transfer-ownership="none">
+        <type name="none" c:type="void"/>
+      </return-value>
+      <parameters>
+        <parameter name="map" transfer-ownership="none">
+          <doc xml:space="preserve">A map</doc>
+          <type name="map_t" c:type="hb_map_t*"/>
+        </parameter>
+        <parameter name="other" transfer-ownership="none">
+          <doc xml:space="preserve">Another map</doc>
+          <type name="map_t" c:type="const hb_map_t*"/>
+        </parameter>
+      </parameters>
+    </function>
+    <function name="map_values" c:identifier="hb_map_values" version="7.0.0">
+      <doc xml:space="preserve">Add the values of @map to @values.</doc>
+      <return-value transfer-ownership="none">
+        <type name="none" c:type="void"/>
+      </return-value>
+      <parameters>
+        <parameter name="map" transfer-ownership="none">
+          <doc xml:space="preserve">A map</doc>
+          <type name="map_t" c:type="const hb_map_t*"/>
+        </parameter>
+        <parameter name="values" transfer-ownership="none">
+          <doc xml:space="preserve">A set</doc>
+          <type name="set_t" c:type="hb_set_t*"/>
+        </parameter>
+      </parameters>
+    </function>
     <enumeration name="memory_mode_t" glib:type-name="hb_memory_mode_t" glib:get-type="hb_gobject_memory_mode_get_type" c:type="hb_memory_mode_t">
       <doc xml:space="preserve">Data type holding the memory modes available to
 client programs.
@@ -7884,7 +8615,7 @@ Regarding these various memory-modes:
   HarfBuzz and doing that just once (no reuse!),
 
 - If the font is mmap()ed, it's okay to use
-  @HB_MEMORY_READONLY_MAY_MAKE_WRITABLE, however, using that mode
+  @HB_MEMORY_MODE_READONLY_MAY_MAKE_WRITABLE, however, using that mode
   correctly is very tricky.  Use @HB_MEMORY_MODE_READONLY instead.</doc>
       <member name="duplicate" value="0" c:identifier="HB_MEMORY_MODE_DUPLICATE" glib:nick="duplicate" glib:name="HB_MEMORY_MODE_DUPLICATE">
         <doc xml:space="preserve">HarfBuzz immediately makes a copy of the data.</doc>
@@ -7934,10 +8665,28 @@ face. The list returned will begin at the offset provided.</doc>
         </parameter>
       </parameters>
     </function>
+    <function name="ot_color_glyph_has_paint" c:identifier="hb_ot_color_glyph_has_paint" version="7.0.0">
+      <doc xml:space="preserve">Tests where a face includes COLRv1 paint
+data for @glyph.</doc>
+      <return-value transfer-ownership="none">
+        <doc xml:space="preserve">`true` if data found, `false` otherwise</doc>
+        <type name="bool_t" c:type="hb_bool_t"/>
+      </return-value>
+      <parameters>
+        <parameter name="face" transfer-ownership="none">
+          <doc xml:space="preserve">#hb_face_t to work upon</doc>
+          <type name="face_t" c:type="hb_face_t*"/>
+        </parameter>
+        <parameter name="glyph" transfer-ownership="none">
+          <doc xml:space="preserve">The glyph index to query</doc>
+          <type name="codepoint_t" c:type="hb_codepoint_t"/>
+        </parameter>
+      </parameters>
+    </function>
     <function name="ot_color_glyph_reference_png" c:identifier="hb_ot_color_glyph_reference_png" version="2.1.0">
       <doc xml:space="preserve">Fetches the PNG image for a glyph. This function takes a font object, not a face object,
-as input. To get an optimally sized PNG blob, the UPEM value must be set on the @font
-object. If UPEM is unset, the blob returned will be the largest PNG available.
+as input. To get an optimally sized PNG blob, the PPEM values must be set on the @font
+object. If PPEM is unset, the blob returned will be the largest PNG available.
 
 If the glyph has no PNG image, the singleton empty blob is returned.</doc>
       <return-value transfer-ownership="full">
@@ -7975,7 +8724,22 @@ If the glyph has no SVG document, the singleton empty blob is returned.</doc>
       </parameters>
     </function>
     <function name="ot_color_has_layers" c:identifier="hb_ot_color_has_layers" version="2.1.0">
-      <doc xml:space="preserve">Tests whether a face includes any `COLR` color layers.</doc>
+      <doc xml:space="preserve">Tests whether a face includes a `COLR` table
+with data according to COLRv0.</doc>
+      <return-value transfer-ownership="none">
+        <doc xml:space="preserve">`true` if data found, `false` otherwise</doc>
+        <type name="bool_t" c:type="hb_bool_t"/>
+      </return-value>
+      <parameters>
+        <parameter name="face" transfer-ownership="none">
+          <doc xml:space="preserve">#hb_face_t to work upon</doc>
+          <type name="face_t" c:type="hb_face_t*"/>
+        </parameter>
+      </parameters>
+    </function>
+    <function name="ot_color_has_paint" c:identifier="hb_ot_color_has_paint" version="7.0.0">
+      <doc xml:space="preserve">Tests where a face includes a `COLR` table
+with data according to COLRv1.</doc>
       <return-value transfer-ownership="none">
         <doc xml:space="preserve">`true` if data found, `false` otherwise</doc>
         <type name="bool_t" c:type="hb_bool_t"/>
@@ -8084,7 +8848,11 @@ After calling this function, @colors will be filled with the palette
 colors. If @colors is NULL, the function will just return the number
 of total colors without storing any actual colors; this can be used
 for allocating a buffer of suitable size before calling
-hb_ot_color_palette_get_colors() a second time.</doc>
+hb_ot_color_palette_get_colors() a second time.
+
+The RGBA values in the palette are unpremultiplied. See the
+OpenType spec [CPAL](https://learn.microsoft.com/en-us/typography/opentype/spec/cpal)
+section for details.</doc>
       <return-value transfer-ownership="none">
         <doc xml:space="preserve">the total number of colors in the palette</doc>
         <type name="guint" c:type="unsigned int"/>
@@ -9027,6 +9795,32 @@ specified face's GSUB table or GPOS table.</doc>
         </parameter>
       </parameters>
     </function>
+    <function name="ot_layout_lookup_get_optical_bound" c:identifier="hb_ot_layout_lookup_get_optical_bound" version="5.3.0">
+      <doc xml:space="preserve">Fetches the optical bound of a glyph positioned at the margin of text.
+The direction identifies which edge of the glyph to query.</doc>
+      <return-value transfer-ownership="none">
+        <doc xml:space="preserve">Adjustment value. Negative values mean the glyph will stick out of the margin.</doc>
+        <type name="position_t" c:type="hb_position_t"/>
+      </return-value>
+      <parameters>
+        <parameter name="font" transfer-ownership="none">
+          <doc xml:space="preserve">a font.</doc>
+          <type name="font_t" c:type="hb_font_t*"/>
+        </parameter>
+        <parameter name="lookup_index" transfer-ownership="none">
+          <doc xml:space="preserve">index of the feature lookup to query.</doc>
+          <type name="guint" c:type="unsigned"/>
+        </parameter>
+        <parameter name="direction" transfer-ownership="none">
+          <doc xml:space="preserve">edge of the glyph to query.</doc>
+          <type name="direction_t" c:type="hb_direction_t"/>
+        </parameter>
+        <parameter name="glyph" transfer-ownership="none">
+          <doc xml:space="preserve">a glyph id.</doc>
+          <type name="codepoint_t" c:type="hb_codepoint_t"/>
+        </parameter>
+      </parameters>
+    </function>
     <function name="ot_layout_lookup_substitute_closure" c:identifier="hb_ot_layout_lookup_substitute_closure" version="0.9.7">
       <doc xml:space="preserve">Compute the transitive closure of glyphs needed for a
 specified lookup.</doc>
@@ -9205,6 +9999,49 @@ If none of the given language tags is found, `false` is returned and
         </parameter>
       </parameters>
     </function>
+    <function name="ot_layout_script_select_language2" c:identifier="hb_ot_layout_script_select_language2" version="7.0.0">
+      <doc xml:space="preserve">Fetches the index of the first language tag fom @language_tags that is present
+in the specified face's GSUB or GPOS table, underneath the specified script
+index.
+
+If none of the given language tags is found, `false` is returned and
+@language_index is set to #HB_OT_LAYOUT_DEFAULT_LANGUAGE_INDEX and
+@chosen_language is set to #HB_TAG_NONE.</doc>
+      <return-value transfer-ownership="none">
+        <doc xml:space="preserve">`true` if one of the given language tags is found, `false` otherwise</doc>
+        <type name="bool_t" c:type="hb_bool_t"/>
+      </return-value>
+      <parameters>
+        <parameter name="face" transfer-ownership="none">
+          <doc xml:space="preserve">#hb_face_t to work upon</doc>
+          <type name="face_t" c:type="hb_face_t*"/>
+        </parameter>
+        <parameter name="table_tag" transfer-ownership="none">
+          <doc xml:space="preserve">#HB_OT_TAG_GSUB or #HB_OT_TAG_GPOS</doc>
+          <type name="tag_t" c:type="hb_tag_t"/>
+        </parameter>
+        <parameter name="script_index" transfer-ownership="none">
+          <doc xml:space="preserve">The index of the requested script tag</doc>
+          <type name="guint" c:type="unsigned int"/>
+        </parameter>
+        <parameter name="language_count" transfer-ownership="none">
+          <doc xml:space="preserve">The number of languages in the specified script</doc>
+          <type name="guint" c:type="unsigned int"/>
+        </parameter>
+        <parameter name="language_tags" transfer-ownership="none">
+          <doc xml:space="preserve">The array of language tags</doc>
+          <type name="tag_t" c:type="const hb_tag_t*"/>
+        </parameter>
+        <parameter name="language_index" direction="out" caller-allocates="0" transfer-ownership="full">
+          <doc xml:space="preserve">The index of the chosen language</doc>
+          <type name="guint" c:type="unsigned int*"/>
+        </parameter>
+        <parameter name="chosen_language" direction="out" caller-allocates="0" transfer-ownership="full">
+          <doc xml:space="preserve">#hb_tag_t of the chosen language</doc>
+          <type name="tag_t" c:type="hb_tag_t*"/>
+        </parameter>
+      </parameters>
+    </function>
     <function name="ot_layout_table_choose_script" c:identifier="hb_ot_layout_table_choose_script">
       <doc xml:space="preserve">Deprecated since 2.0.0</doc>
       <return-value transfer-ownership="none">
@@ -9224,11 +10061,11 @@ If none of the given language tags is found, `false` is returned and
           <type name="tag_t" c:type="const hb_tag_t*"/>
         </parameter>
         <parameter name="script_index" direction="out" caller-allocates="0" transfer-ownership="full">
-          <doc xml:space="preserve">The index of the requested script tag</doc>
+          <doc xml:space="preserve">The index of the chosen script</doc>
           <type name="guint" c:type="unsigned int*"/>
         </parameter>
         <parameter name="chosen_script" direction="out" caller-allocates="0" transfer-ownership="full">
-          <doc xml:space="preserve">#hb_tag_t of the script tag requested</doc>
+          <doc xml:space="preserve">#hb_tag_t of the chosen script</doc>
           <type name="tag_t" c:type="hb_tag_t*"/>
         </parameter>
       </parameters>
@@ -9379,8 +10216,8 @@ or GPOS table. The list returned will begin at the offset provided.</doc>
 
 If the table does not have any of the requested scripts, then `DFLT`,
 `dflt`, and `latn` tags are tried in that order. If the table still does not
-have any of these scripts, @script_index and @chosen_script are set to
-#HB_OT_LAYOUT_NO_SCRIPT_INDEX.</doc>
+have any of these scripts, @script_index is set to
+#HB_OT_LAYOUT_NO_SCRIPT_INDEX and @chosen_script is set to #HB_TAG_NONE.</doc>
       <return-value transfer-ownership="none">
         <doc xml:space="preserve">`true` if one of the requested scripts is selected, `false` if a fallback
 script is selected or if no scripts are selected.</doc>
@@ -10307,6 +11144,92 @@ for convenience, and isn't included in the output @text_size.</doc>
         </parameter>
       </parameters>
     </function>
+    <enumeration name="ot_name_id_predefined_t" version="7.0.0" glib:type-name="hb_ot_name_id_predefined_t" glib:get-type="hb_gobject_ot_name_id_predefined_get_type" c:type="hb_ot_name_id_predefined_t">
+      <doc xml:space="preserve">An enum type representing the pre-defined name IDs.
+
+For more information on these fields, see the
+[OpenType spec](https://docs.microsoft.com/en-us/typography/opentype/spec/name#name-ids).</doc>
+      <member name="copyright" value="0" c:identifier="HB_OT_NAME_ID_COPYRIGHT" glib:nick="copyright" glib:name="HB_OT_NAME_ID_COPYRIGHT">
+        <doc xml:space="preserve">Copyright notice</doc>
+      </member>
+      <member name="font_family" value="1" c:identifier="HB_OT_NAME_ID_FONT_FAMILY" glib:nick="font-family" glib:name="HB_OT_NAME_ID_FONT_FAMILY">
+        <doc xml:space="preserve">Font Family name</doc>
+      </member>
+      <member name="font_subfamily" value="2" c:identifier="HB_OT_NAME_ID_FONT_SUBFAMILY" glib:nick="font-subfamily" glib:name="HB_OT_NAME_ID_FONT_SUBFAMILY">
+        <doc xml:space="preserve">Font Subfamily name</doc>
+      </member>
+      <member name="unique_id" value="3" c:identifier="HB_OT_NAME_ID_UNIQUE_ID" glib:nick="unique-id" glib:name="HB_OT_NAME_ID_UNIQUE_ID">
+        <doc xml:space="preserve">Unique font identifier</doc>
+      </member>
+      <member name="full_name" value="4" c:identifier="HB_OT_NAME_ID_FULL_NAME" glib:nick="full-name" glib:name="HB_OT_NAME_ID_FULL_NAME">
+        <doc xml:space="preserve">Full font name that reflects
+all family and relevant subfamily descriptors</doc>
+      </member>
+      <member name="version_string" value="5" c:identifier="HB_OT_NAME_ID_VERSION_STRING" glib:nick="version-string" glib:name="HB_OT_NAME_ID_VERSION_STRING">
+        <doc xml:space="preserve">Version string</doc>
+      </member>
+      <member name="postscript_name" value="6" c:identifier="HB_OT_NAME_ID_POSTSCRIPT_NAME" glib:nick="postscript-name" glib:name="HB_OT_NAME_ID_POSTSCRIPT_NAME">
+        <doc xml:space="preserve">PostScript name for the font</doc>
+      </member>
+      <member name="trademark" value="7" c:identifier="HB_OT_NAME_ID_TRADEMARK" glib:nick="trademark" glib:name="HB_OT_NAME_ID_TRADEMARK">
+        <doc xml:space="preserve">Trademark</doc>
+      </member>
+      <member name="manufacturer" value="8" c:identifier="HB_OT_NAME_ID_MANUFACTURER" glib:nick="manufacturer" glib:name="HB_OT_NAME_ID_MANUFACTURER">
+        <doc xml:space="preserve">Manufacturer Name</doc>
+      </member>
+      <member name="designer" value="9" c:identifier="HB_OT_NAME_ID_DESIGNER" glib:nick="designer" glib:name="HB_OT_NAME_ID_DESIGNER">
+        <doc xml:space="preserve">Designer</doc>
+      </member>
+      <member name="description" value="10" c:identifier="HB_OT_NAME_ID_DESCRIPTION" glib:nick="description" glib:name="HB_OT_NAME_ID_DESCRIPTION">
+        <doc xml:space="preserve">Description</doc>
+      </member>
+      <member name="vendor_url" value="11" c:identifier="HB_OT_NAME_ID_VENDOR_URL" glib:nick="vendor-url" glib:name="HB_OT_NAME_ID_VENDOR_URL">
+        <doc xml:space="preserve">URL of font vendor</doc>
+      </member>
+      <member name="designer_url" value="12" c:identifier="HB_OT_NAME_ID_DESIGNER_URL" glib:nick="designer-url" glib:name="HB_OT_NAME_ID_DESIGNER_URL">
+        <doc xml:space="preserve">URL of typeface designer</doc>
+      </member>
+      <member name="license" value="13" c:identifier="HB_OT_NAME_ID_LICENSE" glib:nick="license" glib:name="HB_OT_NAME_ID_LICENSE">
+        <doc xml:space="preserve">License Description</doc>
+      </member>
+      <member name="license_url" value="14" c:identifier="HB_OT_NAME_ID_LICENSE_URL" glib:nick="license-url" glib:name="HB_OT_NAME_ID_LICENSE_URL">
+        <doc xml:space="preserve">URL where additional licensing
+information can be found</doc>
+      </member>
+      <member name="typographic_family" value="16" c:identifier="HB_OT_NAME_ID_TYPOGRAPHIC_FAMILY" glib:nick="typographic-family" glib:name="HB_OT_NAME_ID_TYPOGRAPHIC_FAMILY">
+        <doc xml:space="preserve">Typographic Family name</doc>
+      </member>
+      <member name="typographic_subfamily" value="17" c:identifier="HB_OT_NAME_ID_TYPOGRAPHIC_SUBFAMILY" glib:nick="typographic-subfamily" glib:name="HB_OT_NAME_ID_TYPOGRAPHIC_SUBFAMILY">
+        <doc xml:space="preserve">Typographic Subfamily name</doc>
+      </member>
+      <member name="mac_full_name" value="18" c:identifier="HB_OT_NAME_ID_MAC_FULL_NAME" glib:nick="mac-full-name" glib:name="HB_OT_NAME_ID_MAC_FULL_NAME">
+        <doc xml:space="preserve">Compatible Full Name for MacOS</doc>
+      </member>
+      <member name="sample_text" value="19" c:identifier="HB_OT_NAME_ID_SAMPLE_TEXT" glib:nick="sample-text" glib:name="HB_OT_NAME_ID_SAMPLE_TEXT">
+        <doc xml:space="preserve">Sample text</doc>
+      </member>
+      <member name="cid_findfont_name" value="20" c:identifier="HB_OT_NAME_ID_CID_FINDFONT_NAME" glib:nick="cid-findfont-name" glib:name="HB_OT_NAME_ID_CID_FINDFONT_NAME">
+        <doc xml:space="preserve">PostScript CID findfont name</doc>
+      </member>
+      <member name="wws_family" value="21" c:identifier="HB_OT_NAME_ID_WWS_FAMILY" glib:nick="wws-family" glib:name="HB_OT_NAME_ID_WWS_FAMILY">
+        <doc xml:space="preserve">WWS Family Name</doc>
+      </member>
+      <member name="wws_subfamily" value="22" c:identifier="HB_OT_NAME_ID_WWS_SUBFAMILY" glib:nick="wws-subfamily" glib:name="HB_OT_NAME_ID_WWS_SUBFAMILY">
+        <doc xml:space="preserve">WWS Subfamily Name</doc>
+      </member>
+      <member name="light_background" value="23" c:identifier="HB_OT_NAME_ID_LIGHT_BACKGROUND" glib:nick="light-background" glib:name="HB_OT_NAME_ID_LIGHT_BACKGROUND">
+        <doc xml:space="preserve">Light Background Palette</doc>
+      </member>
+      <member name="dark_background" value="24" c:identifier="HB_OT_NAME_ID_DARK_BACKGROUND" glib:nick="dark-background" glib:name="HB_OT_NAME_ID_DARK_BACKGROUND">
+        <doc xml:space="preserve">Dark Background Palette</doc>
+      </member>
+      <member name="variations_ps_prefix" value="25" c:identifier="HB_OT_NAME_ID_VARIATIONS_PS_PREFIX" glib:nick="variations-ps-prefix" glib:name="HB_OT_NAME_ID_VARIATIONS_PS_PREFIX">
+        <doc xml:space="preserve">Variations PostScript Name Prefix</doc>
+      </member>
+      <member name="invalid" value="65535" c:identifier="HB_OT_NAME_ID_INVALID" glib:nick="invalid" glib:name="HB_OT_NAME_ID_INVALID">
+        <doc xml:space="preserve">Value to represent a nonexistent name ID.</doc>
+      </member>
+    </enumeration>
     <function name="ot_name_list_names" c:identifier="hb_ot_name_list_names" version="2.1.0">
       <doc xml:space="preserve">Enumerates all available name IDs and language combinations. Returned
 array is owned by the @face and should not be modified.  It can be
@@ -10381,12 +11304,15 @@ under a given @shape_plan.</doc>
         </parameter>
       </parameters>
     </function>
-    <function name="ot_tag_from_language" c:identifier="hb_ot_tag_from_language">
+    <function name="ot_tag_from_language" c:identifier="hb_ot_tag_from_language" version="0.6.0" deprecated="1" deprecated-version="2.0.0">
+      <doc xml:space="preserve">Converts an #hb_language_t to an #hb_tag_t.</doc>
+      <doc-deprecated xml:space="preserve">use hb_ot_tags_from_script_and_language() instead</doc-deprecated>
       <return-value transfer-ownership="none">
         <type name="tag_t" c:type="hb_tag_t"/>
       </return-value>
       <parameters>
         <parameter name="language" transfer-ownership="none">
+          <doc xml:space="preserve">an #hb_language_t to convert.</doc>
           <type name="language_t" c:type="hb_language_t"/>
         </parameter>
       </parameters>
@@ -10418,18 +11344,23 @@ The #hb_language_t corresponding to @tag.</doc>
         </parameter>
       </parameters>
     </function>
-    <function name="ot_tags_from_script" c:identifier="hb_ot_tags_from_script">
+    <function name="ot_tags_from_script" c:identifier="hb_ot_tags_from_script" version="0.6.0" deprecated="1" deprecated-version="2.0.0">
+      <doc xml:space="preserve">Converts an #hb_script_t to script tags.</doc>
+      <doc-deprecated xml:space="preserve">use hb_ot_tags_from_script_and_language() instead</doc-deprecated>
       <return-value transfer-ownership="none">
         <type name="none" c:type="void"/>
       </return-value>
       <parameters>
         <parameter name="script" transfer-ownership="none">
+          <doc xml:space="preserve">an #hb_script_t to convert.</doc>
           <type name="script_t" c:type="hb_script_t"/>
         </parameter>
-        <parameter name="script_tag_1" transfer-ownership="none">
+        <parameter name="script_tag_1" direction="out" caller-allocates="0" transfer-ownership="full">
+          <doc xml:space="preserve">output #hb_tag_t.</doc>
           <type name="tag_t" c:type="hb_tag_t*"/>
         </parameter>
-        <parameter name="script_tag_2" transfer-ownership="none">
+        <parameter name="script_tag_2" direction="out" caller-allocates="0" transfer-ownership="full">
+          <doc xml:space="preserve">output #hb_tag_t.</doc>
           <type name="tag_t" c:type="hb_tag_t*"/>
         </parameter>
       </parameters>
@@ -10502,7 +11433,7 @@ the language tag results</doc>
         <doc xml:space="preserve">The axis should not be exposed directly in user interfaces.</doc>
       </member>
     </bitfield>
-    <record name="ot_var_axis_info_t" c:type="hb_ot_var_axis_info_t" version="2.2.0">
+    <record name="ot_var_axis_info_t" c:type="hb_ot_var_axis_info_t" version="2.2.0" glib:type-name="hb_ot_var_axis_info_t" glib:get-type="hb_gobject_ot_var_axis_info_get_type" c:symbol-prefix="gobject_ot_var_axis_info">
       <doc xml:space="preserve">Data type for holding variation-axis values.
 
 The minimum, default, and maximum values are in un-normalized, user scales.
@@ -10836,6 +11767,1500 @@ applied, as described at https://docs.microsoft.com/en-us/typography/opentype/sp
         </parameter>
       </parameters>
     </function>
+    <function name="paint_color" c:identifier="hb_paint_color" version="7.0.0">
+      <doc xml:space="preserve">Perform a "color" paint operation.</doc>
+      <return-value transfer-ownership="none">
+        <type name="none" c:type="void"/>
+      </return-value>
+      <parameters>
+        <parameter name="funcs" transfer-ownership="none">
+          <doc xml:space="preserve">paint functions</doc>
+          <type name="paint_funcs_t" c:type="hb_paint_funcs_t*"/>
+        </parameter>
+        <parameter name="paint_data" transfer-ownership="none" nullable="1" allow-none="1">
+          <doc xml:space="preserve">associated data passed by the caller</doc>
+          <type name="gpointer" c:type="void*"/>
+        </parameter>
+        <parameter name="is_foreground" transfer-ownership="none">
+          <doc xml:space="preserve">whether the color is the foreground</doc>
+          <type name="bool_t" c:type="hb_bool_t"/>
+        </parameter>
+        <parameter name="color" transfer-ownership="none">
+          <doc xml:space="preserve">The color to use</doc>
+          <type name="color_t" c:type="hb_color_t"/>
+        </parameter>
+      </parameters>
+    </function>
+    <callback name="paint_color_func_t" c:type="hb_paint_color_func_t" version="7.0.0">
+      <doc xml:space="preserve">A virtual method for the #hb_paint_funcs_t to paint a
+color everywhere within the current clip.</doc>
+      <return-value transfer-ownership="none">
+        <type name="none" c:type="void"/>
+      </return-value>
+      <parameters>
+        <parameter name="funcs" transfer-ownership="none">
+          <doc xml:space="preserve">paint functions object</doc>
+          <type name="paint_funcs_t" c:type="hb_paint_funcs_t*"/>
+        </parameter>
+        <parameter name="paint_data" transfer-ownership="none" nullable="1" allow-none="1">
+          <doc xml:space="preserve">The data accompanying the paint functions in hb_font_paint_glyph()</doc>
+          <type name="gpointer" c:type="void*"/>
+        </parameter>
+        <parameter name="is_foreground" transfer-ownership="none">
+          <doc xml:space="preserve">whether the color is the foreground</doc>
+          <type name="bool_t" c:type="hb_bool_t"/>
+        </parameter>
+        <parameter name="color" transfer-ownership="none">
+          <doc xml:space="preserve">The color to use, unpremultiplied</doc>
+          <type name="color_t" c:type="hb_color_t"/>
+        </parameter>
+        <parameter name="user_data" transfer-ownership="none" nullable="1" allow-none="1" closure="4">
+          <doc xml:space="preserve">User data pointer passed to hb_paint_funcs_set_color_func()</doc>
+          <type name="gpointer" c:type="void*"/>
+        </parameter>
+      </parameters>
+    </callback>
+    <enumeration name="paint_composite_mode_t" version="7.0.0" glib:type-name="hb_paint_composite_mode_t" glib:get-type="hb_gobject_paint_composite_mode_get_type" c:type="hb_paint_composite_mode_t">
+      <doc xml:space="preserve">The values of this enumeration describe the compositing modes
+that can be used when combining temporary redirected drawing
+with the backdrop.
+
+See the OpenType spec [COLR](https://learn.microsoft.com/en-us/typography/opentype/spec/colr)
+section for details.</doc>
+      <member name="clear" value="0" c:identifier="HB_PAINT_COMPOSITE_MODE_CLEAR" glib:nick="clear" glib:name="HB_PAINT_COMPOSITE_MODE_CLEAR">
+        <doc xml:space="preserve">clear destination layer (bounded)</doc>
+      </member>
+      <member name="src" value="1" c:identifier="HB_PAINT_COMPOSITE_MODE_SRC" glib:nick="src" glib:name="HB_PAINT_COMPOSITE_MODE_SRC">
+        <doc xml:space="preserve">replace destination layer (bounded)</doc>
+      </member>
+      <member name="dest" value="2" c:identifier="HB_PAINT_COMPOSITE_MODE_DEST" glib:nick="dest" glib:name="HB_PAINT_COMPOSITE_MODE_DEST">
+        <doc xml:space="preserve">ignore the source</doc>
+      </member>
+      <member name="src_over" value="3" c:identifier="HB_PAINT_COMPOSITE_MODE_SRC_OVER" glib:nick="src-over" glib:name="HB_PAINT_COMPOSITE_MODE_SRC_OVER">
+        <doc xml:space="preserve">draw source layer on top of destination layer
+(bounded)</doc>
+      </member>
+      <member name="dest_over" value="4" c:identifier="HB_PAINT_COMPOSITE_MODE_DEST_OVER" glib:nick="dest-over" glib:name="HB_PAINT_COMPOSITE_MODE_DEST_OVER">
+        <doc xml:space="preserve">draw destination on top of source</doc>
+      </member>
+      <member name="src_in" value="5" c:identifier="HB_PAINT_COMPOSITE_MODE_SRC_IN" glib:nick="src-in" glib:name="HB_PAINT_COMPOSITE_MODE_SRC_IN">
+        <doc xml:space="preserve">draw source where there was destination content
+(unbounded)</doc>
+      </member>
+      <member name="dest_in" value="6" c:identifier="HB_PAINT_COMPOSITE_MODE_DEST_IN" glib:nick="dest-in" glib:name="HB_PAINT_COMPOSITE_MODE_DEST_IN">
+        <doc xml:space="preserve">leave destination only where there was
+source content (unbounded)</doc>
+      </member>
+      <member name="src_out" value="7" c:identifier="HB_PAINT_COMPOSITE_MODE_SRC_OUT" glib:nick="src-out" glib:name="HB_PAINT_COMPOSITE_MODE_SRC_OUT">
+        <doc xml:space="preserve">draw source where there was no destination
+content (unbounded)</doc>
+      </member>
+      <member name="dest_out" value="8" c:identifier="HB_PAINT_COMPOSITE_MODE_DEST_OUT" glib:nick="dest-out" glib:name="HB_PAINT_COMPOSITE_MODE_DEST_OUT">
+        <doc xml:space="preserve">leave destination only where there was no
+source content</doc>
+      </member>
+      <member name="src_atop" value="9" c:identifier="HB_PAINT_COMPOSITE_MODE_SRC_ATOP" glib:nick="src-atop" glib:name="HB_PAINT_COMPOSITE_MODE_SRC_ATOP">
+        <doc xml:space="preserve">draw source on top of destination content and
+only there</doc>
+      </member>
+      <member name="dest_atop" value="10" c:identifier="HB_PAINT_COMPOSITE_MODE_DEST_ATOP" glib:nick="dest-atop" glib:name="HB_PAINT_COMPOSITE_MODE_DEST_ATOP">
+        <doc xml:space="preserve">leave destination on top of source content
+and only there (unbounded)</doc>
+      </member>
+      <member name="xor" value="11" c:identifier="HB_PAINT_COMPOSITE_MODE_XOR" glib:nick="xor" glib:name="HB_PAINT_COMPOSITE_MODE_XOR">
+        <doc xml:space="preserve">source and destination are shown where there is only
+one of them</doc>
+      </member>
+      <member name="plus" value="12" c:identifier="HB_PAINT_COMPOSITE_MODE_PLUS" glib:nick="plus" glib:name="HB_PAINT_COMPOSITE_MODE_PLUS">
+        <doc xml:space="preserve">source and destination layers are accumulated</doc>
+      </member>
+      <member name="screen" value="13" c:identifier="HB_PAINT_COMPOSITE_MODE_SCREEN" glib:nick="screen" glib:name="HB_PAINT_COMPOSITE_MODE_SCREEN">
+        <doc xml:space="preserve">source and destination are complemented and
+multiplied. This causes the result to be at least as light as the lighter
+inputs.</doc>
+      </member>
+      <member name="overlay" value="14" c:identifier="HB_PAINT_COMPOSITE_MODE_OVERLAY" glib:nick="overlay" glib:name="HB_PAINT_COMPOSITE_MODE_OVERLAY">
+        <doc xml:space="preserve">multiplies or screens, depending on the
+lightness of the destination color.</doc>
+      </member>
+      <member name="darken" value="15" c:identifier="HB_PAINT_COMPOSITE_MODE_DARKEN" glib:nick="darken" glib:name="HB_PAINT_COMPOSITE_MODE_DARKEN">
+        <doc xml:space="preserve">replaces the destination with the source if it
+is darker, otherwise keeps the source.</doc>
+      </member>
+      <member name="lighten" value="16" c:identifier="HB_PAINT_COMPOSITE_MODE_LIGHTEN" glib:nick="lighten" glib:name="HB_PAINT_COMPOSITE_MODE_LIGHTEN">
+        <doc xml:space="preserve">replaces the destination with the source if it
+is lighter, otherwise keeps the source.</doc>
+      </member>
+      <member name="color_dodge" value="17" c:identifier="HB_PAINT_COMPOSITE_MODE_COLOR_DODGE" glib:nick="color-dodge" glib:name="HB_PAINT_COMPOSITE_MODE_COLOR_DODGE">
+        <doc xml:space="preserve">brightens the destination color to reflect
+the source color.</doc>
+      </member>
+      <member name="color_burn" value="18" c:identifier="HB_PAINT_COMPOSITE_MODE_COLOR_BURN" glib:nick="color-burn" glib:name="HB_PAINT_COMPOSITE_MODE_COLOR_BURN">
+        <doc xml:space="preserve">darkens the destination color to reflect
+the source color.</doc>
+      </member>
+      <member name="hard_light" value="19" c:identifier="HB_PAINT_COMPOSITE_MODE_HARD_LIGHT" glib:nick="hard-light" glib:name="HB_PAINT_COMPOSITE_MODE_HARD_LIGHT">
+        <doc xml:space="preserve">Multiplies or screens, dependent on source
+color.</doc>
+      </member>
+      <member name="soft_light" value="20" c:identifier="HB_PAINT_COMPOSITE_MODE_SOFT_LIGHT" glib:nick="soft-light" glib:name="HB_PAINT_COMPOSITE_MODE_SOFT_LIGHT">
+        <doc xml:space="preserve">Darkens or lightens, dependent on source
+color.</doc>
+      </member>
+      <member name="difference" value="21" c:identifier="HB_PAINT_COMPOSITE_MODE_DIFFERENCE" glib:nick="difference" glib:name="HB_PAINT_COMPOSITE_MODE_DIFFERENCE">
+        <doc xml:space="preserve">Takes the difference of the source and
+destination color.</doc>
+      </member>
+      <member name="exclusion" value="22" c:identifier="HB_PAINT_COMPOSITE_MODE_EXCLUSION" glib:nick="exclusion" glib:name="HB_PAINT_COMPOSITE_MODE_EXCLUSION">
+        <doc xml:space="preserve">Produces an effect similar to difference, but
+with lower contrast.</doc>
+      </member>
+      <member name="multiply" value="23" c:identifier="HB_PAINT_COMPOSITE_MODE_MULTIPLY" glib:nick="multiply" glib:name="HB_PAINT_COMPOSITE_MODE_MULTIPLY">
+        <doc xml:space="preserve">source and destination layers are multiplied.
+This causes the result to be at least as dark as the darker inputs.</doc>
+      </member>
+      <member name="hsl_hue" value="24" c:identifier="HB_PAINT_COMPOSITE_MODE_HSL_HUE" glib:nick="hsl-hue" glib:name="HB_PAINT_COMPOSITE_MODE_HSL_HUE">
+        <doc xml:space="preserve">Creates a color with the hue of the source
+and the saturation and luminosity of the target.</doc>
+      </member>
+      <member name="hsl_saturation" value="25" c:identifier="HB_PAINT_COMPOSITE_MODE_HSL_SATURATION" glib:nick="hsl-saturation" glib:name="HB_PAINT_COMPOSITE_MODE_HSL_SATURATION">
+        <doc xml:space="preserve">Creates a color with the saturation
+of the source and the hue and luminosity of the target. Painting with
+this mode onto a gray area produces no change.</doc>
+      </member>
+      <member name="hsl_color" value="26" c:identifier="HB_PAINT_COMPOSITE_MODE_HSL_COLOR" glib:nick="hsl-color" glib:name="HB_PAINT_COMPOSITE_MODE_HSL_COLOR">
+        <doc xml:space="preserve">Creates a color with the hue and saturation
+of the source and the luminosity of the target. This preserves the gray
+levels of the target and is useful for coloring monochrome images or
+tinting color images.</doc>
+      </member>
+      <member name="hsl_luminosity" value="27" c:identifier="HB_PAINT_COMPOSITE_MODE_HSL_LUMINOSITY" glib:nick="hsl-luminosity" glib:name="HB_PAINT_COMPOSITE_MODE_HSL_LUMINOSITY">
+        <doc xml:space="preserve">Creates a color with the luminosity of
+the source and the hue and saturation of the target. This produces an
+inverse effect to @HB_PAINT_COMPOSITE_MODE_HSL_COLOR.</doc>
+      </member>
+    </enumeration>
+    <function name="paint_custom_palette_color" c:identifier="hb_paint_custom_palette_color" version="7.0.0">
+      <doc xml:space="preserve">Gets the custom palette color for @color_index.</doc>
+      <return-value transfer-ownership="none">
+        <doc xml:space="preserve">`true` if found, `false` otherwise</doc>
+        <type name="bool_t" c:type="hb_bool_t"/>
+      </return-value>
+      <parameters>
+        <parameter name="funcs" transfer-ownership="none">
+          <doc xml:space="preserve">paint functions</doc>
+          <type name="paint_funcs_t" c:type="hb_paint_funcs_t*"/>
+        </parameter>
+        <parameter name="paint_data" transfer-ownership="none" nullable="1" allow-none="1">
+          <doc xml:space="preserve">associated data passed by the caller</doc>
+          <type name="gpointer" c:type="void*"/>
+        </parameter>
+        <parameter name="color_index" transfer-ownership="none">
+          <doc xml:space="preserve">color index</doc>
+          <type name="guint" c:type="unsigned int"/>
+        </parameter>
+        <parameter name="color" direction="out" caller-allocates="0" transfer-ownership="full">
+          <doc xml:space="preserve">fetched color</doc>
+          <type name="color_t" c:type="hb_color_t*"/>
+        </parameter>
+      </parameters>
+    </function>
+    <callback name="paint_custom_palette_color_func_t" c:type="hb_paint_custom_palette_color_func_t" version="7.0.0">
+      <doc xml:space="preserve">A virtual method for the #hb_paint_funcs_t to fetch a color from the custom
+color palette.
+
+Custom palette colors override the colors from the fonts selected color
+palette. It is not necessary to override all palette entries; for entries
+that should be taken from the font palette, return `false`.
+
+This function might get called multiple times, but the custom palette is
+expected to remain unchanged for duration of a hb_font_paint_glyph() call.</doc>
+      <return-value transfer-ownership="none">
+        <doc xml:space="preserve">`true` if found, `false` otherwise</doc>
+        <type name="bool_t" c:type="hb_bool_t"/>
+      </return-value>
+      <parameters>
+        <parameter name="funcs" transfer-ownership="none">
+          <doc xml:space="preserve">paint functions object</doc>
+          <type name="paint_funcs_t" c:type="hb_paint_funcs_t*"/>
+        </parameter>
+        <parameter name="paint_data" transfer-ownership="none" nullable="1" allow-none="1">
+          <doc xml:space="preserve">The data accompanying the paint functions in hb_font_paint_glyph()</doc>
+          <type name="gpointer" c:type="void*"/>
+        </parameter>
+        <parameter name="color_index" transfer-ownership="none">
+          <doc xml:space="preserve">the color index</doc>
+          <type name="guint" c:type="unsigned int"/>
+        </parameter>
+        <parameter name="color" direction="out" caller-allocates="0" transfer-ownership="full">
+          <doc xml:space="preserve">fetched color</doc>
+          <type name="color_t" c:type="hb_color_t*"/>
+        </parameter>
+        <parameter name="user_data" transfer-ownership="none" nullable="1" allow-none="1" closure="4">
+          <doc xml:space="preserve">User data pointer passed to hb_paint_funcs_set_pop_group_func()</doc>
+          <type name="gpointer" c:type="void*"/>
+        </parameter>
+      </parameters>
+    </callback>
+    <enumeration name="paint_extend_t" version="7.0.0" glib:type-name="hb_paint_extend_t" glib:get-type="hb_gobject_paint_extend_get_type" c:type="hb_paint_extend_t">
+      <doc xml:space="preserve">The values of this enumeration determine how color values
+outside the minimum and maximum defined offset on a #hb_color_line_t
+are determined.
+
+See the OpenType spec [COLR](https://learn.microsoft.com/en-us/typography/opentype/spec/colr)
+section for details.</doc>
+      <member name="pad" value="0" c:identifier="HB_PAINT_EXTEND_PAD" glib:nick="pad" glib:name="HB_PAINT_EXTEND_PAD">
+        <doc xml:space="preserve">Outside the defined interval,
+  the color of the closest color stop is used.</doc>
+      </member>
+      <member name="repeat" value="1" c:identifier="HB_PAINT_EXTEND_REPEAT" glib:nick="repeat" glib:name="HB_PAINT_EXTEND_REPEAT">
+        <doc xml:space="preserve">The color line is repeated over
+  repeated multiples of the defined interval</doc>
+      </member>
+      <member name="reflect" value="2" c:identifier="HB_PAINT_EXTEND_REFLECT" glib:nick="reflect" glib:name="HB_PAINT_EXTEND_REFLECT">
+        <doc xml:space="preserve">The color line is repeated over
+     repeated intervals, as for the repeat mode.
+     However, in each repeated interval, the ordering of
+     color stops is the reverse of the adjacent interval.</doc>
+      </member>
+    </enumeration>
+    <function name="paint_funcs_create" c:identifier="hb_paint_funcs_create" version="7.0.0">
+      <doc xml:space="preserve">Creates a new #hb_paint_funcs_t structure of paint functions.
+
+The initial reference count of 1 should be released with hb_paint_funcs_destroy()
+when you are done using the #hb_paint_funcs_t. This function never returns
+`NULL`. If memory cannot be allocated, a special singleton #hb_paint_funcs_t
+object will be returned.</doc>
+      <return-value transfer-ownership="full">
+        <doc xml:space="preserve">the paint-functions structure</doc>
+        <type name="paint_funcs_t" c:type="hb_paint_funcs_t*"/>
+      </return-value>
+    </function>
+    <function name="paint_funcs_destroy" c:identifier="hb_paint_funcs_destroy" version="7.0.0" introspectable="0">
+      <doc xml:space="preserve">Decreases the reference count on a paint-functions structure.
+
+When the reference count reaches zero, the structure
+is destroyed, freeing all memory.</doc>
+      <return-value transfer-ownership="none">
+        <type name="none" c:type="void"/>
+      </return-value>
+      <parameters>
+        <parameter name="funcs" transfer-ownership="none">
+          <doc xml:space="preserve">The paint-functions structure</doc>
+          <type name="paint_funcs_t" c:type="hb_paint_funcs_t*"/>
+        </parameter>
+      </parameters>
+    </function>
+    <function name="paint_funcs_get_empty" c:identifier="hb_paint_funcs_get_empty" version="7.0.0">
+      <doc xml:space="preserve">Fetches the singleton empty paint-functions structure.</doc>
+      <return-value transfer-ownership="full">
+        <doc xml:space="preserve">The empty paint-functions structure</doc>
+        <type name="paint_funcs_t" c:type="hb_paint_funcs_t*"/>
+      </return-value>
+    </function>
+    <function name="paint_funcs_get_user_data" c:identifier="hb_paint_funcs_get_user_data" version="7.0.0" introspectable="0">
+      <doc xml:space="preserve">Fetches the user-data associated with the specified key,
+attached to the specified paint-functions structure.</doc>
+      <return-value transfer-ownership="none" nullable="1">
+        <doc xml:space="preserve">A pointer to the user data</doc>
+        <type name="gpointer" c:type="void*"/>
+      </return-value>
+      <parameters>
+        <parameter name="funcs" transfer-ownership="none">
+          <doc xml:space="preserve">The paint-functions structure</doc>
+          <type name="paint_funcs_t" c:type="const hb_paint_funcs_t*"/>
+        </parameter>
+        <parameter name="key" transfer-ownership="none">
+          <doc xml:space="preserve">The user-data key to query</doc>
+          <type name="user_data_key_t" c:type="hb_user_data_key_t*"/>
+        </parameter>
+      </parameters>
+    </function>
+    <function name="paint_funcs_is_immutable" c:identifier="hb_paint_funcs_is_immutable" version="7.0.0">
+      <doc xml:space="preserve">Tests whether a paint-functions structure is immutable.</doc>
+      <return-value transfer-ownership="none">
+        <doc xml:space="preserve">`true` if @funcs is immutable, `false` otherwise</doc>
+        <type name="bool_t" c:type="hb_bool_t"/>
+      </return-value>
+      <parameters>
+        <parameter name="funcs" transfer-ownership="none">
+          <doc xml:space="preserve">The paint-functions structure</doc>
+          <type name="paint_funcs_t" c:type="hb_paint_funcs_t*"/>
+        </parameter>
+      </parameters>
+    </function>
+    <function name="paint_funcs_make_immutable" c:identifier="hb_paint_funcs_make_immutable" version="7.0.0">
+      <doc xml:space="preserve">Makes a paint-functions structure immutable.
+
+After this call, all attempts to set one of the callbacks
+on @funcs will fail.</doc>
+      <return-value transfer-ownership="none">
+        <type name="none" c:type="void"/>
+      </return-value>
+      <parameters>
+        <parameter name="funcs" transfer-ownership="none">
+          <doc xml:space="preserve">The paint-functions structure</doc>
+          <type name="paint_funcs_t" c:type="hb_paint_funcs_t*"/>
+        </parameter>
+      </parameters>
+    </function>
+    <function name="paint_funcs_reference" c:identifier="hb_paint_funcs_reference" version="7.0.0" introspectable="0">
+      <doc xml:space="preserve">Increases the reference count on a paint-functions structure.
+
+This prevents @funcs from being destroyed until a matching
+call to hb_paint_funcs_destroy() is made.</doc>
+      <return-value transfer-ownership="full">
+        <doc xml:space="preserve">The paint-functions structure</doc>
+        <type name="paint_funcs_t" c:type="hb_paint_funcs_t*"/>
+      </return-value>
+      <parameters>
+        <parameter name="funcs" transfer-ownership="none">
+          <doc xml:space="preserve">The paint-functions structure</doc>
+          <type name="paint_funcs_t" c:type="hb_paint_funcs_t*"/>
+        </parameter>
+      </parameters>
+    </function>
+    <function name="paint_funcs_set_color_func" c:identifier="hb_paint_funcs_set_color_func" version="7.0.0">
+      <doc xml:space="preserve">Sets the paint-color callback on the paint functions struct.</doc>
+      <return-value transfer-ownership="none">
+        <type name="none" c:type="void"/>
+      </return-value>
+      <parameters>
+        <parameter name="funcs" transfer-ownership="none">
+          <doc xml:space="preserve">A paint functions struct</doc>
+          <type name="paint_funcs_t" c:type="hb_paint_funcs_t*"/>
+        </parameter>
+        <parameter name="func" transfer-ownership="none" scope="notified" closure="2" destroy="3">
+          <doc xml:space="preserve">The paint-color callback</doc>
+          <type name="paint_color_func_t" c:type="hb_paint_color_func_t"/>
+        </parameter>
+        <parameter name="user_data" transfer-ownership="none" nullable="1" allow-none="1">
+          <doc xml:space="preserve">Data to pass to @func</doc>
+          <type name="gpointer" c:type="void*"/>
+        </parameter>
+        <parameter name="destroy" transfer-ownership="none" nullable="1" allow-none="1" scope="notified">
+          <doc xml:space="preserve">Function to call when @user_data is no longer needed</doc>
+          <type name="destroy_func_t" c:type="hb_destroy_func_t"/>
+        </parameter>
+      </parameters>
+    </function>
+    <function name="paint_funcs_set_custom_palette_color_func" c:identifier="hb_paint_funcs_set_custom_palette_color_func" version="7.0.0">
+      <doc xml:space="preserve">Sets the custom-palette-color callback on the paint functions struct.</doc>
+      <return-value transfer-ownership="none">
+        <type name="none" c:type="void"/>
+      </return-value>
+      <parameters>
+        <parameter name="funcs" transfer-ownership="none">
+          <doc xml:space="preserve">A paint functions struct</doc>
+          <type name="paint_funcs_t" c:type="hb_paint_funcs_t*"/>
+        </parameter>
+        <parameter name="func" transfer-ownership="none" scope="notified" closure="2" destroy="3">
+          <doc xml:space="preserve">The custom-palette-color callback</doc>
+          <type name="paint_custom_palette_color_func_t" c:type="hb_paint_custom_palette_color_func_t"/>
+        </parameter>
+        <parameter name="user_data" transfer-ownership="none" nullable="1" allow-none="1">
+          <doc xml:space="preserve">Data to pass to @func</doc>
+          <type name="gpointer" c:type="void*"/>
+        </parameter>
+        <parameter name="destroy" transfer-ownership="none" nullable="1" allow-none="1" scope="notified">
+          <doc xml:space="preserve">Function to call when @user_data is no longer needed</doc>
+          <type name="destroy_func_t" c:type="hb_destroy_func_t"/>
+        </parameter>
+      </parameters>
+    </function>
+    <function name="paint_funcs_set_image_func" c:identifier="hb_paint_funcs_set_image_func" version="7.0.0">
+      <doc xml:space="preserve">Sets the paint-image callback on the paint functions struct.</doc>
+      <return-value transfer-ownership="none">
+        <type name="none" c:type="void"/>
+      </return-value>
+      <parameters>
+        <parameter name="funcs" transfer-ownership="none">
+          <doc xml:space="preserve">A paint functions struct</doc>
+          <type name="paint_funcs_t" c:type="hb_paint_funcs_t*"/>
+        </parameter>
+        <parameter name="func" transfer-ownership="none" scope="notified" closure="2" destroy="3">
+          <doc xml:space="preserve">The paint-image callback</doc>
+          <type name="paint_image_func_t" c:type="hb_paint_image_func_t"/>
+        </parameter>
+        <parameter name="user_data" transfer-ownership="none" nullable="1" allow-none="1">
+          <doc xml:space="preserve">Data to pass to @func</doc>
+          <type name="gpointer" c:type="void*"/>
+        </parameter>
+        <parameter name="destroy" transfer-ownership="none" nullable="1" allow-none="1" scope="notified">
+          <doc xml:space="preserve">Function to call when @user_data is no longer needed</doc>
+          <type name="destroy_func_t" c:type="hb_destroy_func_t"/>
+        </parameter>
+      </parameters>
+    </function>
+    <function name="paint_funcs_set_linear_gradient_func" c:identifier="hb_paint_funcs_set_linear_gradient_func" version="7.0.0">
+      <doc xml:space="preserve">Sets the linear-gradient callback on the paint functions struct.</doc>
+      <return-value transfer-ownership="none">
+        <type name="none" c:type="void"/>
+      </return-value>
+      <parameters>
+        <parameter name="funcs" transfer-ownership="none">
+          <doc xml:space="preserve">A paint functions struct</doc>
+          <type name="paint_funcs_t" c:type="hb_paint_funcs_t*"/>
+        </parameter>
+        <parameter name="func" transfer-ownership="none" scope="notified" closure="2" destroy="3">
+          <doc xml:space="preserve">The linear-gradient callback</doc>
+          <type name="paint_linear_gradient_func_t" c:type="hb_paint_linear_gradient_func_t"/>
+        </parameter>
+        <parameter name="user_data" transfer-ownership="none" nullable="1" allow-none="1">
+          <doc xml:space="preserve">Data to pass to @func</doc>
+          <type name="gpointer" c:type="void*"/>
+        </parameter>
+        <parameter name="destroy" transfer-ownership="none" nullable="1" allow-none="1" scope="notified">
+          <doc xml:space="preserve">Function to call when @user_data is no longer needed</doc>
+          <type name="destroy_func_t" c:type="hb_destroy_func_t"/>
+        </parameter>
+      </parameters>
+    </function>
+    <function name="paint_funcs_set_pop_clip_func" c:identifier="hb_paint_funcs_set_pop_clip_func" version="7.0.0">
+      <doc xml:space="preserve">Sets the pop-clip callback on the paint functions struct.</doc>
+      <return-value transfer-ownership="none">
+        <type name="none" c:type="void"/>
+      </return-value>
+      <parameters>
+        <parameter name="funcs" transfer-ownership="none">
+          <doc xml:space="preserve">A paint functions struct</doc>
+          <type name="paint_funcs_t" c:type="hb_paint_funcs_t*"/>
+        </parameter>
+        <parameter name="func" transfer-ownership="none" scope="notified" closure="2" destroy="3">
+          <doc xml:space="preserve">The pop-clip callback</doc>
+          <type name="paint_pop_clip_func_t" c:type="hb_paint_pop_clip_func_t"/>
+        </parameter>
+        <parameter name="user_data" transfer-ownership="none" nullable="1" allow-none="1">
+          <doc xml:space="preserve">Data to pass to @func</doc>
+          <type name="gpointer" c:type="void*"/>
+        </parameter>
+        <parameter name="destroy" transfer-ownership="none" nullable="1" allow-none="1" scope="notified">
+          <doc xml:space="preserve">Function to call when @user_data is no longer needed</doc>
+          <type name="destroy_func_t" c:type="hb_destroy_func_t"/>
+        </parameter>
+      </parameters>
+    </function>
+    <function name="paint_funcs_set_pop_group_func" c:identifier="hb_paint_funcs_set_pop_group_func" version="7.0.0">
+      <doc xml:space="preserve">Sets the pop-group callback on the paint functions struct.</doc>
+      <return-value transfer-ownership="none">
+        <type name="none" c:type="void"/>
+      </return-value>
+      <parameters>
+        <parameter name="funcs" transfer-ownership="none">
+          <doc xml:space="preserve">A paint functions struct</doc>
+          <type name="paint_funcs_t" c:type="hb_paint_funcs_t*"/>
+        </parameter>
+        <parameter name="func" transfer-ownership="none" scope="notified" closure="2" destroy="3">
+          <doc xml:space="preserve">The pop-group callback</doc>
+          <type name="paint_pop_group_func_t" c:type="hb_paint_pop_group_func_t"/>
+        </parameter>
+        <parameter name="user_data" transfer-ownership="none" nullable="1" allow-none="1">
+          <doc xml:space="preserve">Data to pass to @func</doc>
+          <type name="gpointer" c:type="void*"/>
+        </parameter>
+        <parameter name="destroy" transfer-ownership="none" nullable="1" allow-none="1" scope="notified">
+          <doc xml:space="preserve">Function to call when @user_data is no longer needed</doc>
+          <type name="destroy_func_t" c:type="hb_destroy_func_t"/>
+        </parameter>
+      </parameters>
+    </function>
+    <function name="paint_funcs_set_pop_transform_func" c:identifier="hb_paint_funcs_set_pop_transform_func" version="7.0.0">
+      <doc xml:space="preserve">Sets the pop-transform callback on the paint functions struct.</doc>
+      <return-value transfer-ownership="none">
+        <type name="none" c:type="void"/>
+      </return-value>
+      <parameters>
+        <parameter name="funcs" transfer-ownership="none">
+          <doc xml:space="preserve">A paint functions struct</doc>
+          <type name="paint_funcs_t" c:type="hb_paint_funcs_t*"/>
+        </parameter>
+        <parameter name="func" transfer-ownership="none" scope="notified" closure="2" destroy="3">
+          <doc xml:space="preserve">The pop-transform callback</doc>
+          <type name="paint_pop_transform_func_t" c:type="hb_paint_pop_transform_func_t"/>
+        </parameter>
+        <parameter name="user_data" transfer-ownership="none" nullable="1" allow-none="1">
+          <doc xml:space="preserve">Data to pass to @func</doc>
+          <type name="gpointer" c:type="void*"/>
+        </parameter>
+        <parameter name="destroy" transfer-ownership="none" nullable="1" allow-none="1" scope="notified">
+          <doc xml:space="preserve">Function to call when @user_data is no longer needed</doc>
+          <type name="destroy_func_t" c:type="hb_destroy_func_t"/>
+        </parameter>
+      </parameters>
+    </function>
+    <function name="paint_funcs_set_push_clip_glyph_func" c:identifier="hb_paint_funcs_set_push_clip_glyph_func" version="7.0.0">
+      <doc xml:space="preserve">Sets the push-clip-glyph callback on the paint functions struct.</doc>
+      <return-value transfer-ownership="none">
+        <type name="none" c:type="void"/>
+      </return-value>
+      <parameters>
+        <parameter name="funcs" transfer-ownership="none">
+          <doc xml:space="preserve">A paint functions struct</doc>
+          <type name="paint_funcs_t" c:type="hb_paint_funcs_t*"/>
+        </parameter>
+        <parameter name="func" transfer-ownership="none" scope="notified" closure="2" destroy="3">
+          <doc xml:space="preserve">The push-clip-glyph callback</doc>
+          <type name="paint_push_clip_glyph_func_t" c:type="hb_paint_push_clip_glyph_func_t"/>
+        </parameter>
+        <parameter name="user_data" transfer-ownership="none" nullable="1" allow-none="1">
+          <doc xml:space="preserve">Data to pass to @func</doc>
+          <type name="gpointer" c:type="void*"/>
+        </parameter>
+        <parameter name="destroy" transfer-ownership="none" nullable="1" allow-none="1" scope="notified">
+          <doc xml:space="preserve">Function to call when @user_data is no longer needed</doc>
+          <type name="destroy_func_t" c:type="hb_destroy_func_t"/>
+        </parameter>
+      </parameters>
+    </function>
+    <function name="paint_funcs_set_push_clip_rectangle_func" c:identifier="hb_paint_funcs_set_push_clip_rectangle_func" version="7.0.0">
+      <doc xml:space="preserve">Sets the push-clip-rect callback on the paint functions struct.</doc>
+      <return-value transfer-ownership="none">
+        <type name="none" c:type="void"/>
+      </return-value>
+      <parameters>
+        <parameter name="funcs" transfer-ownership="none">
+          <doc xml:space="preserve">A paint functions struct</doc>
+          <type name="paint_funcs_t" c:type="hb_paint_funcs_t*"/>
+        </parameter>
+        <parameter name="func" transfer-ownership="none" scope="notified" closure="2" destroy="3">
+          <doc xml:space="preserve">The push-clip-rectangle callback</doc>
+          <type name="paint_push_clip_rectangle_func_t" c:type="hb_paint_push_clip_rectangle_func_t"/>
+        </parameter>
+        <parameter name="user_data" transfer-ownership="none" nullable="1" allow-none="1">
+          <doc xml:space="preserve">Data to pass to @func</doc>
+          <type name="gpointer" c:type="void*"/>
+        </parameter>
+        <parameter name="destroy" transfer-ownership="none" nullable="1" allow-none="1" scope="notified">
+          <doc xml:space="preserve">Function to call when @user_data is no longer needed</doc>
+          <type name="destroy_func_t" c:type="hb_destroy_func_t"/>
+        </parameter>
+      </parameters>
+    </function>
+    <function name="paint_funcs_set_push_group_func" c:identifier="hb_paint_funcs_set_push_group_func" version="7.0.0">
+      <doc xml:space="preserve">Sets the push-group callback on the paint functions struct.</doc>
+      <return-value transfer-ownership="none">
+        <type name="none" c:type="void"/>
+      </return-value>
+      <parameters>
+        <parameter name="funcs" transfer-ownership="none">
+          <doc xml:space="preserve">A paint functions struct</doc>
+          <type name="paint_funcs_t" c:type="hb_paint_funcs_t*"/>
+        </parameter>
+        <parameter name="func" transfer-ownership="none" scope="notified" closure="2" destroy="3">
+          <doc xml:space="preserve">The push-group callback</doc>
+          <type name="paint_push_group_func_t" c:type="hb_paint_push_group_func_t"/>
+        </parameter>
+        <parameter name="user_data" transfer-ownership="none" nullable="1" allow-none="1">
+          <doc xml:space="preserve">Data to pass to @func</doc>
+          <type name="gpointer" c:type="void*"/>
+        </parameter>
+        <parameter name="destroy" transfer-ownership="none" nullable="1" allow-none="1" scope="notified">
+          <doc xml:space="preserve">Function to call when @user_data is no longer needed</doc>
+          <type name="destroy_func_t" c:type="hb_destroy_func_t"/>
+        </parameter>
+      </parameters>
+    </function>
+    <function name="paint_funcs_set_push_transform_func" c:identifier="hb_paint_funcs_set_push_transform_func" version="7.0.0">
+      <doc xml:space="preserve">Sets the push-transform callback on the paint functions struct.</doc>
+      <return-value transfer-ownership="none">
+        <type name="none" c:type="void"/>
+      </return-value>
+      <parameters>
+        <parameter name="funcs" transfer-ownership="none">
+          <doc xml:space="preserve">A paint functions struct</doc>
+          <type name="paint_funcs_t" c:type="hb_paint_funcs_t*"/>
+        </parameter>
+        <parameter name="func" transfer-ownership="none" scope="notified" closure="2" destroy="3">
+          <doc xml:space="preserve">The push-transform callback</doc>
+          <type name="paint_push_transform_func_t" c:type="hb_paint_push_transform_func_t"/>
+        </parameter>
+        <parameter name="user_data" transfer-ownership="none" nullable="1" allow-none="1">
+          <doc xml:space="preserve">Data to pass to @func</doc>
+          <type name="gpointer" c:type="void*"/>
+        </parameter>
+        <parameter name="destroy" transfer-ownership="none" nullable="1" allow-none="1" scope="notified">
+          <doc xml:space="preserve">Function to call when @user_data is no longer needed</doc>
+          <type name="destroy_func_t" c:type="hb_destroy_func_t"/>
+        </parameter>
+      </parameters>
+    </function>
+    <function name="paint_funcs_set_radial_gradient_func" c:identifier="hb_paint_funcs_set_radial_gradient_func" version="7.0.0">
+      <doc xml:space="preserve">Sets the radial-gradient callback on the paint functions struct.</doc>
+      <return-value transfer-ownership="none">
+        <type name="none" c:type="void"/>
+      </return-value>
+      <parameters>
+        <parameter name="funcs" transfer-ownership="none">
+          <doc xml:space="preserve">A paint functions struct</doc>
+          <type name="paint_funcs_t" c:type="hb_paint_funcs_t*"/>
+        </parameter>
+        <parameter name="func" transfer-ownership="none" scope="notified" closure="2" destroy="3">
+          <doc xml:space="preserve">The radial-gradient callback</doc>
+          <type name="paint_radial_gradient_func_t" c:type="hb_paint_radial_gradient_func_t"/>
+        </parameter>
+        <parameter name="user_data" transfer-ownership="none" nullable="1" allow-none="1">
+          <doc xml:space="preserve">Data to pass to @func</doc>
+          <type name="gpointer" c:type="void*"/>
+        </parameter>
+        <parameter name="destroy" transfer-ownership="none" nullable="1" allow-none="1" scope="notified">
+          <doc xml:space="preserve">Function to call when @user_data is no longer needed</doc>
+          <type name="destroy_func_t" c:type="hb_destroy_func_t"/>
+        </parameter>
+      </parameters>
+    </function>
+    <function name="paint_funcs_set_sweep_gradient_func" c:identifier="hb_paint_funcs_set_sweep_gradient_func" version="7.0.0">
+      <doc xml:space="preserve">Sets the sweep-gradient callback on the paint functions struct.</doc>
+      <return-value transfer-ownership="none">
+        <type name="none" c:type="void"/>
+      </return-value>
+      <parameters>
+        <parameter name="funcs" transfer-ownership="none">
+          <doc xml:space="preserve">A paint functions struct</doc>
+          <type name="paint_funcs_t" c:type="hb_paint_funcs_t*"/>
+        </parameter>
+        <parameter name="func" transfer-ownership="none" scope="notified" closure="2" destroy="3">
+          <doc xml:space="preserve">The sweep-gradient callback</doc>
+          <type name="paint_sweep_gradient_func_t" c:type="hb_paint_sweep_gradient_func_t"/>
+        </parameter>
+        <parameter name="user_data" transfer-ownership="none" nullable="1" allow-none="1">
+          <doc xml:space="preserve">Data to pass to @func</doc>
+          <type name="gpointer" c:type="void*"/>
+        </parameter>
+        <parameter name="destroy" transfer-ownership="none" nullable="1" allow-none="1" scope="notified">
+          <doc xml:space="preserve">Function to call when @user_data is no longer needed</doc>
+          <type name="destroy_func_t" c:type="hb_destroy_func_t"/>
+        </parameter>
+      </parameters>
+    </function>
+    <function name="paint_funcs_set_user_data" c:identifier="hb_paint_funcs_set_user_data" version="7.0.0" introspectable="0">
+      <doc xml:space="preserve">Attaches a user-data key/data pair to the specified paint-functions structure.</doc>
+      <return-value transfer-ownership="none">
+        <doc xml:space="preserve">`true` if success, `false` otherwise</doc>
+        <type name="bool_t" c:type="hb_bool_t"/>
+      </return-value>
+      <parameters>
+        <parameter name="funcs" transfer-ownership="none">
+          <doc xml:space="preserve">The paint-functions structure</doc>
+          <type name="paint_funcs_t" c:type="hb_paint_funcs_t*"/>
+        </parameter>
+        <parameter name="key" transfer-ownership="none">
+          <doc xml:space="preserve">The user-data key</doc>
+          <type name="user_data_key_t" c:type="hb_user_data_key_t*"/>
+        </parameter>
+        <parameter name="data" transfer-ownership="none" nullable="1" allow-none="1">
+          <doc xml:space="preserve">A pointer to the user data</doc>
+          <type name="gpointer" c:type="void*"/>
+        </parameter>
+        <parameter name="destroy" transfer-ownership="none" nullable="1" allow-none="1">
+          <doc xml:space="preserve">A callback to call when @data is not needed anymore</doc>
+          <type name="destroy_func_t" c:type="hb_destroy_func_t"/>
+        </parameter>
+        <parameter name="replace" transfer-ownership="none">
+          <doc xml:space="preserve">Whether to replace an existing data with the same key</doc>
+          <type name="bool_t" c:type="hb_bool_t"/>
+        </parameter>
+      </parameters>
+    </function>
+    <record name="paint_funcs_t" c:type="hb_paint_funcs_t" opaque="1" version="7.0.0" glib:type-name="hb_paint_funcs_t" glib:get-type="hb_gobject_paint_funcs_get_type" c:symbol-prefix="gobject_paint_funcs">
+      <doc xml:space="preserve">Glyph paint callbacks.
+
+The callbacks assume that the caller maintains a stack
+of current transforms, clips and intermediate surfaces,
+as evidenced by the pairs of push/pop callbacks. The
+push/pop calls will be properly nested, so it is fine
+to store the different kinds of object on a single stack.
+
+Not all callbacks are required for all kinds of glyphs.
+For rendering COLRv0 or non-color outline glyphs, the
+gradient callbacks are not needed, and the composite
+callback only needs to handle simple alpha compositing
+(#HB_PAINT_COMPOSITE_MODE_SRC_OVER).
+
+The paint-image callback is only needed for glyphs
+with image blobs in the CBDT, sbix or SVG tables.
+
+The custom-palette-color callback is only necessary if
+you want to override colors from the font palette with
+custom colors.</doc>
+    </record>
+    <function name="paint_image" c:identifier="hb_paint_image" version="7.0.0">
+      <doc xml:space="preserve">Perform a "image" paint operation.</doc>
+      <return-value transfer-ownership="none">
+        <type name="none" c:type="void"/>
+      </return-value>
+      <parameters>
+        <parameter name="funcs" transfer-ownership="none">
+          <doc xml:space="preserve">paint functions</doc>
+          <type name="paint_funcs_t" c:type="hb_paint_funcs_t*"/>
+        </parameter>
+        <parameter name="paint_data" transfer-ownership="none" nullable="1" allow-none="1">
+          <doc xml:space="preserve">associated data passed by the caller</doc>
+          <type name="gpointer" c:type="void*"/>
+        </parameter>
+        <parameter name="image" transfer-ownership="none">
+          <doc xml:space="preserve">image data</doc>
+          <type name="blob_t" c:type="hb_blob_t*"/>
+        </parameter>
+        <parameter name="width" transfer-ownership="none">
+          <doc xml:space="preserve">width of the raster image in pixels, or 0</doc>
+          <type name="guint" c:type="unsigned int"/>
+        </parameter>
+        <parameter name="height" transfer-ownership="none">
+          <doc xml:space="preserve">height of the raster image in pixels, or 0</doc>
+          <type name="guint" c:type="unsigned int"/>
+        </parameter>
+        <parameter name="format" transfer-ownership="none">
+          <doc xml:space="preserve">the image format as a tag</doc>
+          <type name="tag_t" c:type="hb_tag_t"/>
+        </parameter>
+        <parameter name="slant" transfer-ownership="none">
+          <doc xml:space="preserve">the synthetic slant ratio to be applied to the image during rendering</doc>
+          <type name="gfloat" c:type="float"/>
+        </parameter>
+        <parameter name="extents" transfer-ownership="none" nullable="1" allow-none="1">
+          <doc xml:space="preserve">the extents of the glyph</doc>
+          <type name="glyph_extents_t" c:type="hb_glyph_extents_t*"/>
+        </parameter>
+      </parameters>
+    </function>
+    <callback name="paint_image_func_t" c:type="hb_paint_image_func_t" version="7.0.0">
+      <doc xml:space="preserve">A virtual method for the #hb_paint_funcs_t to paint a glyph image.
+
+This method is called for glyphs with image blobs in the CBDT,
+sbix or SVG tables. The @format identifies the kind of data that
+is contained in @image. Possible values include #HB_PAINT_IMAGE_FORMAT_PNG,
+#HB_PAINT_IMAGE_FORMAT_SVG and #HB_PAINT_IMAGE_FORMAT_BGRA.
+
+The image dimensions and glyph extents are provided if available,
+and should be used to size and position the image.</doc>
+      <return-value transfer-ownership="none">
+        <doc xml:space="preserve">Whether the operation was successful.</doc>
+        <type name="bool_t" c:type="hb_bool_t"/>
+      </return-value>
+      <parameters>
+        <parameter name="funcs" transfer-ownership="none">
+          <doc xml:space="preserve">paint functions object</doc>
+          <type name="paint_funcs_t" c:type="hb_paint_funcs_t*"/>
+        </parameter>
+        <parameter name="paint_data" transfer-ownership="none" nullable="1" allow-none="1">
+          <doc xml:space="preserve">The data accompanying the paint functions in hb_font_paint_glyph()</doc>
+          <type name="gpointer" c:type="void*"/>
+        </parameter>
+        <parameter name="image" transfer-ownership="none">
+          <doc xml:space="preserve">the image data</doc>
+          <type name="blob_t" c:type="hb_blob_t*"/>
+        </parameter>
+        <parameter name="width" transfer-ownership="none">
+          <doc xml:space="preserve">width of the raster image in pixels, or 0</doc>
+          <type name="guint" c:type="unsigned int"/>
+        </parameter>
+        <parameter name="height" transfer-ownership="none">
+          <doc xml:space="preserve">height of the raster image in pixels, or 0</doc>
+          <type name="guint" c:type="unsigned int"/>
+        </parameter>
+        <parameter name="format" transfer-ownership="none">
+          <doc xml:space="preserve">the image format as a tag</doc>
+          <type name="tag_t" c:type="hb_tag_t"/>
+        </parameter>
+        <parameter name="slant" transfer-ownership="none">
+          <doc xml:space="preserve">the synthetic slant ratio to be applied to the image during rendering</doc>
+          <type name="gfloat" c:type="float"/>
+        </parameter>
+        <parameter name="extents" transfer-ownership="none" nullable="1" allow-none="1">
+          <doc xml:space="preserve">glyph extents for desired rendering</doc>
+          <type name="glyph_extents_t" c:type="hb_glyph_extents_t*"/>
+        </parameter>
+        <parameter name="user_data" transfer-ownership="none" nullable="1" allow-none="1" closure="8">
+          <doc xml:space="preserve">User data pointer passed to hb_paint_funcs_set_image_func()</doc>
+          <type name="gpointer" c:type="void*"/>
+        </parameter>
+      </parameters>
+    </callback>
+    <function name="paint_linear_gradient" c:identifier="hb_paint_linear_gradient" version="7.0.0">
+      <doc xml:space="preserve">Perform a "linear-gradient" paint operation.</doc>
+      <return-value transfer-ownership="none">
+        <type name="none" c:type="void"/>
+      </return-value>
+      <parameters>
+        <parameter name="funcs" transfer-ownership="none">
+          <doc xml:space="preserve">paint functions</doc>
+          <type name="paint_funcs_t" c:type="hb_paint_funcs_t*"/>
+        </parameter>
+        <parameter name="paint_data" transfer-ownership="none" nullable="1" allow-none="1">
+          <doc xml:space="preserve">associated data passed by the caller</doc>
+          <type name="gpointer" c:type="void*"/>
+        </parameter>
+        <parameter name="color_line" transfer-ownership="none">
+          <doc xml:space="preserve">Color information for the gradient</doc>
+          <type name="color_line_t" c:type="hb_color_line_t*"/>
+        </parameter>
+        <parameter name="x0" transfer-ownership="none">
+          <doc xml:space="preserve">X coordinate of the first point</doc>
+          <type name="gfloat" c:type="float"/>
+        </parameter>
+        <parameter name="y0" transfer-ownership="none">
+          <doc xml:space="preserve">Y coordinate of the first point</doc>
+          <type name="gfloat" c:type="float"/>
+        </parameter>
+        <parameter name="x1" transfer-ownership="none">
+          <doc xml:space="preserve">X coordinate of the second point</doc>
+          <type name="gfloat" c:type="float"/>
+        </parameter>
+        <parameter name="y1" transfer-ownership="none">
+          <doc xml:space="preserve">Y coordinate of the second point</doc>
+          <type name="gfloat" c:type="float"/>
+        </parameter>
+        <parameter name="x2" transfer-ownership="none">
+          <doc xml:space="preserve">X coordinate of the third point</doc>
+          <type name="gfloat" c:type="float"/>
+        </parameter>
+        <parameter name="y2" transfer-ownership="none">
+          <doc xml:space="preserve">Y coordinate of the third point</doc>
+          <type name="gfloat" c:type="float"/>
+        </parameter>
+      </parameters>
+    </function>
+    <callback name="paint_linear_gradient_func_t" c:type="hb_paint_linear_gradient_func_t" version="7.0.0">
+      <doc xml:space="preserve">A virtual method for the #hb_paint_funcs_t to paint a linear
+gradient everywhere within the current clip.
+
+The @color_line object contains information about the colors of the gradients.
+It is only valid for the duration of the callback, you cannot keep it around.
+
+The coordinates of the points are interpreted according
+to the current transform.
+
+See the OpenType spec [COLR](https://learn.microsoft.com/en-us/typography/opentype/spec/colr)
+section for details on how the points define the direction
+of the gradient, and how to interpret the @color_line.</doc>
+      <return-value transfer-ownership="none">
+        <type name="none" c:type="void"/>
+      </return-value>
+      <parameters>
+        <parameter name="funcs" transfer-ownership="none">
+          <doc xml:space="preserve">paint functions object</doc>
+          <type name="paint_funcs_t" c:type="hb_paint_funcs_t*"/>
+        </parameter>
+        <parameter name="paint_data" transfer-ownership="none" nullable="1" allow-none="1">
+          <doc xml:space="preserve">The data accompanying the paint functions in hb_font_paint_glyph()</doc>
+          <type name="gpointer" c:type="void*"/>
+        </parameter>
+        <parameter name="color_line" transfer-ownership="none">
+          <doc xml:space="preserve">Color information for the gradient</doc>
+          <type name="color_line_t" c:type="hb_color_line_t*"/>
+        </parameter>
+        <parameter name="x0" transfer-ownership="none">
+          <doc xml:space="preserve">X coordinate of the first point</doc>
+          <type name="gfloat" c:type="float"/>
+        </parameter>
+        <parameter name="y0" transfer-ownership="none">
+          <doc xml:space="preserve">Y coordinate of the first point</doc>
+          <type name="gfloat" c:type="float"/>
+        </parameter>
+        <parameter name="x1" transfer-ownership="none">
+          <doc xml:space="preserve">X coordinate of the second point</doc>
+          <type name="gfloat" c:type="float"/>
+        </parameter>
+        <parameter name="y1" transfer-ownership="none">
+          <doc xml:space="preserve">Y coordinate of the second point</doc>
+          <type name="gfloat" c:type="float"/>
+        </parameter>
+        <parameter name="x2" transfer-ownership="none">
+          <doc xml:space="preserve">X coordinate of the third point</doc>
+          <type name="gfloat" c:type="float"/>
+        </parameter>
+        <parameter name="y2" transfer-ownership="none">
+          <doc xml:space="preserve">Y coordinate of the third point</doc>
+          <type name="gfloat" c:type="float"/>
+        </parameter>
+        <parameter name="user_data" transfer-ownership="none" nullable="1" allow-none="1" closure="9">
+          <doc xml:space="preserve">User data pointer passed to hb_paint_funcs_set_linear_gradient_func()</doc>
+          <type name="gpointer" c:type="void*"/>
+        </parameter>
+      </parameters>
+    </callback>
+    <function name="paint_pop_clip" c:identifier="hb_paint_pop_clip" version="7.0.0">
+      <doc xml:space="preserve">Perform a "pop-clip" paint operation.</doc>
+      <return-value transfer-ownership="none">
+        <type name="none" c:type="void"/>
+      </return-value>
+      <parameters>
+        <parameter name="funcs" transfer-ownership="none">
+          <doc xml:space="preserve">paint functions</doc>
+          <type name="paint_funcs_t" c:type="hb_paint_funcs_t*"/>
+        </parameter>
+        <parameter name="paint_data" transfer-ownership="none" nullable="1" allow-none="1">
+          <doc xml:space="preserve">associated data passed by the caller</doc>
+          <type name="gpointer" c:type="void*"/>
+        </parameter>
+      </parameters>
+    </function>
+    <callback name="paint_pop_clip_func_t" c:type="hb_paint_pop_clip_func_t" version="7.0.0">
+      <doc xml:space="preserve">A virtual method for the #hb_paint_funcs_t to undo
+the effect of a prior call to the #hb_paint_funcs_push_clip_glyph_func_t
+or #hb_paint_funcs_push_clip_rectangle_func_t vfuncs.</doc>
+      <return-value transfer-ownership="none">
+        <type name="none" c:type="void"/>
+      </return-value>
+      <parameters>
+        <parameter name="funcs" transfer-ownership="none">
+          <doc xml:space="preserve">paint functions object</doc>
+          <type name="paint_funcs_t" c:type="hb_paint_funcs_t*"/>
+        </parameter>
+        <parameter name="paint_data" transfer-ownership="none" nullable="1" allow-none="1">
+          <doc xml:space="preserve">The data accompanying the paint functions in hb_font_paint_glyph()</doc>
+          <type name="gpointer" c:type="void*"/>
+        </parameter>
+        <parameter name="user_data" transfer-ownership="none" nullable="1" allow-none="1" closure="2">
+          <doc xml:space="preserve">User data pointer passed to hb_paint_funcs_set_pop_clip_func()</doc>
+          <type name="gpointer" c:type="void*"/>
+        </parameter>
+      </parameters>
+    </callback>
+    <function name="paint_pop_group" c:identifier="hb_paint_pop_group" version="7.0.0">
+      <doc xml:space="preserve">Perform a "pop-group" paint operation.</doc>
+      <return-value transfer-ownership="none">
+        <type name="none" c:type="void"/>
+      </return-value>
+      <parameters>
+        <parameter name="funcs" transfer-ownership="none">
+          <doc xml:space="preserve">paint functions</doc>
+          <type name="paint_funcs_t" c:type="hb_paint_funcs_t*"/>
+        </parameter>
+        <parameter name="paint_data" transfer-ownership="none" nullable="1" allow-none="1">
+          <doc xml:space="preserve">associated data passed by the caller</doc>
+          <type name="gpointer" c:type="void*"/>
+        </parameter>
+        <parameter name="mode" transfer-ownership="none">
+          <doc xml:space="preserve">the compositing mode to use</doc>
+          <type name="paint_composite_mode_t" c:type="hb_paint_composite_mode_t"/>
+        </parameter>
+      </parameters>
+    </function>
+    <callback name="paint_pop_group_func_t" c:type="hb_paint_pop_group_func_t" version="7.0.0">
+      <doc xml:space="preserve">A virtual method for the #hb_paint_funcs_t to undo
+the effect of a prior call to the #hb_paint_funcs_push_group_func_t
+vfunc.
+
+This call stops the redirection to the intermediate surface,
+and then composites it on the previous surface, using the
+compositing mode passed to this call.</doc>
+      <return-value transfer-ownership="none">
+        <type name="none" c:type="void"/>
+      </return-value>
+      <parameters>
+        <parameter name="funcs" transfer-ownership="none">
+          <doc xml:space="preserve">paint functions object</doc>
+          <type name="paint_funcs_t" c:type="hb_paint_funcs_t*"/>
+        </parameter>
+        <parameter name="paint_data" transfer-ownership="none" nullable="1" allow-none="1">
+          <doc xml:space="preserve">The data accompanying the paint functions in hb_font_paint_glyph()</doc>
+          <type name="gpointer" c:type="void*"/>
+        </parameter>
+        <parameter name="mode" transfer-ownership="none">
+          <doc xml:space="preserve">the compositing mode to use</doc>
+          <type name="paint_composite_mode_t" c:type="hb_paint_composite_mode_t"/>
+        </parameter>
+        <parameter name="user_data" transfer-ownership="none" nullable="1" allow-none="1" closure="3">
+          <doc xml:space="preserve">User data pointer passed to hb_paint_funcs_set_pop_group_func()</doc>
+          <type name="gpointer" c:type="void*"/>
+        </parameter>
+      </parameters>
+    </callback>
+    <function name="paint_pop_transform" c:identifier="hb_paint_pop_transform" version="7.0.0">
+      <doc xml:space="preserve">Perform a "pop-transform" paint operation.</doc>
+      <return-value transfer-ownership="none">
+        <type name="none" c:type="void"/>
+      </return-value>
+      <parameters>
+        <parameter name="funcs" transfer-ownership="none">
+          <doc xml:space="preserve">paint functions</doc>
+          <type name="paint_funcs_t" c:type="hb_paint_funcs_t*"/>
+        </parameter>
+        <parameter name="paint_data" transfer-ownership="none" nullable="1" allow-none="1">
+          <doc xml:space="preserve">associated data passed by the caller</doc>
+          <type name="gpointer" c:type="void*"/>
+        </parameter>
+      </parameters>
+    </function>
+    <callback name="paint_pop_transform_func_t" c:type="hb_paint_pop_transform_func_t" version="7.0.0">
+      <doc xml:space="preserve">A virtual method for the #hb_paint_funcs_t to undo
+the effect of a prior call to the #hb_paint_funcs_push_transform_func_t
+vfunc.</doc>
+      <return-value transfer-ownership="none">
+        <type name="none" c:type="void"/>
+      </return-value>
+      <parameters>
+        <parameter name="funcs" transfer-ownership="none">
+          <doc xml:space="preserve">paint functions object</doc>
+          <type name="paint_funcs_t" c:type="hb_paint_funcs_t*"/>
+        </parameter>
+        <parameter name="paint_data" transfer-ownership="none" nullable="1" allow-none="1">
+          <doc xml:space="preserve">The data accompanying the paint functions in hb_font_paint_glyph()</doc>
+          <type name="gpointer" c:type="void*"/>
+        </parameter>
+        <parameter name="user_data" transfer-ownership="none" nullable="1" allow-none="1" closure="2">
+          <doc xml:space="preserve">User data pointer passed to hb_paint_funcs_set_pop_transform_func()</doc>
+          <type name="gpointer" c:type="void*"/>
+        </parameter>
+      </parameters>
+    </callback>
+    <function name="paint_push_clip_glyph" c:identifier="hb_paint_push_clip_glyph" version="7.0.0">
+      <doc xml:space="preserve">Perform a "push-clip-glyph" paint operation.</doc>
+      <return-value transfer-ownership="none">
+        <type name="none" c:type="void"/>
+      </return-value>
+      <parameters>
+        <parameter name="funcs" transfer-ownership="none">
+          <doc xml:space="preserve">paint functions</doc>
+          <type name="paint_funcs_t" c:type="hb_paint_funcs_t*"/>
+        </parameter>
+        <parameter name="paint_data" transfer-ownership="none" nullable="1" allow-none="1">
+          <doc xml:space="preserve">associated data passed by the caller</doc>
+          <type name="gpointer" c:type="void*"/>
+        </parameter>
+        <parameter name="glyph" transfer-ownership="none">
+          <doc xml:space="preserve">the glyph ID</doc>
+          <type name="codepoint_t" c:type="hb_codepoint_t"/>
+        </parameter>
+        <parameter name="font" transfer-ownership="none">
+          <doc xml:space="preserve">the font</doc>
+          <type name="font_t" c:type="hb_font_t*"/>
+        </parameter>
+      </parameters>
+    </function>
+    <callback name="paint_push_clip_glyph_func_t" c:type="hb_paint_push_clip_glyph_func_t" version="7.0.0">
+      <doc xml:space="preserve">A virtual method for the #hb_paint_funcs_t to clip
+subsequent paint calls to the outline of a glyph.
+
+The coordinates of the glyph outline are interpreted according
+to the current transform.
+
+This clip is applied in addition to the current clip,
+and remains in effect until a matching call to
+the #hb_paint_funcs_pop_clip_func_t vfunc.</doc>
+      <return-value transfer-ownership="none">
+        <type name="none" c:type="void"/>
+      </return-value>
+      <parameters>
+        <parameter name="funcs" transfer-ownership="none">
+          <doc xml:space="preserve">paint functions object</doc>
+          <type name="paint_funcs_t" c:type="hb_paint_funcs_t*"/>
+        </parameter>
+        <parameter name="paint_data" transfer-ownership="none" nullable="1" allow-none="1">
+          <doc xml:space="preserve">The data accompanying the paint functions in hb_font_paint_glyph()</doc>
+          <type name="gpointer" c:type="void*"/>
+        </parameter>
+        <parameter name="glyph" transfer-ownership="none">
+          <doc xml:space="preserve">the glyph ID</doc>
+          <type name="codepoint_t" c:type="hb_codepoint_t"/>
+        </parameter>
+        <parameter name="font" transfer-ownership="none">
+          <doc xml:space="preserve">the font</doc>
+          <type name="font_t" c:type="hb_font_t*"/>
+        </parameter>
+        <parameter name="user_data" transfer-ownership="none" nullable="1" allow-none="1" closure="4">
+          <doc xml:space="preserve">User data pointer passed to hb_paint_funcs_set_push_clip_glyph_func()</doc>
+          <type name="gpointer" c:type="void*"/>
+        </parameter>
+      </parameters>
+    </callback>
+    <function name="paint_push_clip_rectangle" c:identifier="hb_paint_push_clip_rectangle" version="7.0.0">
+      <doc xml:space="preserve">Perform a "push-clip-rect" paint operation.</doc>
+      <return-value transfer-ownership="none">
+        <type name="none" c:type="void"/>
+      </return-value>
+      <parameters>
+        <parameter name="funcs" transfer-ownership="none">
+          <doc xml:space="preserve">paint functions</doc>
+          <type name="paint_funcs_t" c:type="hb_paint_funcs_t*"/>
+        </parameter>
+        <parameter name="paint_data" transfer-ownership="none" nullable="1" allow-none="1">
+          <doc xml:space="preserve">associated data passed by the caller</doc>
+          <type name="gpointer" c:type="void*"/>
+        </parameter>
+        <parameter name="xmin" transfer-ownership="none">
+          <doc xml:space="preserve">min X for the rectangle</doc>
+          <type name="gfloat" c:type="float"/>
+        </parameter>
+        <parameter name="ymin" transfer-ownership="none">
+          <doc xml:space="preserve">min Y for the rectangle</doc>
+          <type name="gfloat" c:type="float"/>
+        </parameter>
+        <parameter name="xmax" transfer-ownership="none">
+          <doc xml:space="preserve">max X for the rectangle</doc>
+          <type name="gfloat" c:type="float"/>
+        </parameter>
+        <parameter name="ymax" transfer-ownership="none">
+          <doc xml:space="preserve">max Y for the rectangle</doc>
+          <type name="gfloat" c:type="float"/>
+        </parameter>
+      </parameters>
+    </function>
+    <callback name="paint_push_clip_rectangle_func_t" c:type="hb_paint_push_clip_rectangle_func_t" version="7.0.0">
+      <doc xml:space="preserve">A virtual method for the #hb_paint_funcs_t to clip
+subsequent paint calls to a rectangle.
+
+The coordinates of the rectangle are interpreted according
+to the current transform.
+
+This clip is applied in addition to the current clip,
+and remains in effect until a matching call to
+the #hb_paint_funcs_pop_clip_func_t vfunc.</doc>
+      <return-value transfer-ownership="none">
+        <type name="none" c:type="void"/>
+      </return-value>
+      <parameters>
+        <parameter name="funcs" transfer-ownership="none">
+          <doc xml:space="preserve">paint functions object</doc>
+          <type name="paint_funcs_t" c:type="hb_paint_funcs_t*"/>
+        </parameter>
+        <parameter name="paint_data" transfer-ownership="none" nullable="1" allow-none="1">
+          <doc xml:space="preserve">The data accompanying the paint functions in hb_font_paint_glyph()</doc>
+          <type name="gpointer" c:type="void*"/>
+        </parameter>
+        <parameter name="xmin" transfer-ownership="none">
+          <doc xml:space="preserve">min X for the rectangle</doc>
+          <type name="gfloat" c:type="float"/>
+        </parameter>
+        <parameter name="ymin" transfer-ownership="none">
+          <doc xml:space="preserve">min Y for the rectangle</doc>
+          <type name="gfloat" c:type="float"/>
+        </parameter>
+        <parameter name="xmax" transfer-ownership="none">
+          <doc xml:space="preserve">max X for the rectangle</doc>
+          <type name="gfloat" c:type="float"/>
+        </parameter>
+        <parameter name="ymax" transfer-ownership="none">
+          <doc xml:space="preserve">max Y for the rectangle</doc>
+          <type name="gfloat" c:type="float"/>
+        </parameter>
+        <parameter name="user_data" transfer-ownership="none" nullable="1" allow-none="1" closure="6">
+          <doc xml:space="preserve">User data pointer passed to hb_paint_funcs_set_push_clip_rectangle_func()</doc>
+          <type name="gpointer" c:type="void*"/>
+        </parameter>
+      </parameters>
+    </callback>
+    <function name="paint_push_group" c:identifier="hb_paint_push_group" version="7.0.0">
+      <doc xml:space="preserve">Perform a "push-group" paint operation.</doc>
+      <return-value transfer-ownership="none">
+        <type name="none" c:type="void"/>
+      </return-value>
+      <parameters>
+        <parameter name="funcs" transfer-ownership="none">
+          <doc xml:space="preserve">paint functions</doc>
+          <type name="paint_funcs_t" c:type="hb_paint_funcs_t*"/>
+        </parameter>
+        <parameter name="paint_data" transfer-ownership="none" nullable="1" allow-none="1">
+          <doc xml:space="preserve">associated data passed by the caller</doc>
+          <type name="gpointer" c:type="void*"/>
+        </parameter>
+      </parameters>
+    </function>
+    <callback name="paint_push_group_func_t" c:type="hb_paint_push_group_func_t" version="7.0.0">
+      <doc xml:space="preserve">A virtual method for the #hb_paint_funcs_t to use
+an intermediate surface for subsequent paint calls.
+
+The drawing will be redirected to an intermediate surface
+until a matching call to the #hb_paint_funcs_pop_group_func_t
+vfunc.</doc>
+      <return-value transfer-ownership="none">
+        <type name="none" c:type="void"/>
+      </return-value>
+      <parameters>
+        <parameter name="funcs" transfer-ownership="none">
+          <doc xml:space="preserve">paint functions object</doc>
+          <type name="paint_funcs_t" c:type="hb_paint_funcs_t*"/>
+        </parameter>
+        <parameter name="paint_data" transfer-ownership="none" nullable="1" allow-none="1">
+          <doc xml:space="preserve">The data accompanying the paint functions in hb_font_paint_glyph()</doc>
+          <type name="gpointer" c:type="void*"/>
+        </parameter>
+        <parameter name="user_data" transfer-ownership="none" nullable="1" allow-none="1" closure="2">
+          <doc xml:space="preserve">User data pointer passed to hb_paint_funcs_set_push_group_func()</doc>
+          <type name="gpointer" c:type="void*"/>
+        </parameter>
+      </parameters>
+    </callback>
+    <function name="paint_push_transform" c:identifier="hb_paint_push_transform" version="7.0.0">
+      <doc xml:space="preserve">Perform a "push-transform" paint operation.</doc>
+      <return-value transfer-ownership="none">
+        <type name="none" c:type="void"/>
+      </return-value>
+      <parameters>
+        <parameter name="funcs" transfer-ownership="none">
+          <doc xml:space="preserve">paint functions</doc>
+          <type name="paint_funcs_t" c:type="hb_paint_funcs_t*"/>
+        </parameter>
+        <parameter name="paint_data" transfer-ownership="none" nullable="1" allow-none="1">
+          <doc xml:space="preserve">associated data passed by the caller</doc>
+          <type name="gpointer" c:type="void*"/>
+        </parameter>
+        <parameter name="xx" transfer-ownership="none">
+          <doc xml:space="preserve">xx component of the transform matrix</doc>
+          <type name="gfloat" c:type="float"/>
+        </parameter>
+        <parameter name="yx" transfer-ownership="none">
+          <doc xml:space="preserve">yx component of the transform matrix</doc>
+          <type name="gfloat" c:type="float"/>
+        </parameter>
+        <parameter name="xy" transfer-ownership="none">
+          <doc xml:space="preserve">xy component of the transform matrix</doc>
+          <type name="gfloat" c:type="float"/>
+        </parameter>
+        <parameter name="yy" transfer-ownership="none">
+          <doc xml:space="preserve">yy component of the transform matrix</doc>
+          <type name="gfloat" c:type="float"/>
+        </parameter>
+        <parameter name="dx" transfer-ownership="none">
+          <doc xml:space="preserve">dx component of the transform matrix</doc>
+          <type name="gfloat" c:type="float"/>
+        </parameter>
+        <parameter name="dy" transfer-ownership="none">
+          <doc xml:space="preserve">dy component of the transform matrix</doc>
+          <type name="gfloat" c:type="float"/>
+        </parameter>
+      </parameters>
+    </function>
+    <callback name="paint_push_transform_func_t" c:type="hb_paint_push_transform_func_t" version="7.0.0">
+      <doc xml:space="preserve">A virtual method for the #hb_paint_funcs_t to apply
+a transform to subsequent paint calls.
+
+This transform is applied after the current transform,
+and remains in effect until a matching call to
+the #hb_paint_funcs_pop_transform_func_t vfunc.</doc>
+      <return-value transfer-ownership="none">
+        <type name="none" c:type="void"/>
+      </return-value>
+      <parameters>
+        <parameter name="funcs" transfer-ownership="none">
+          <doc xml:space="preserve">paint functions object</doc>
+          <type name="paint_funcs_t" c:type="hb_paint_funcs_t*"/>
+        </parameter>
+        <parameter name="paint_data" transfer-ownership="none" nullable="1" allow-none="1">
+          <doc xml:space="preserve">The data accompanying the paint functions in hb_font_paint_glyph()</doc>
+          <type name="gpointer" c:type="void*"/>
+        </parameter>
+        <parameter name="xx" transfer-ownership="none">
+          <doc xml:space="preserve">xx component of the transform matrix</doc>
+          <type name="gfloat" c:type="float"/>
+        </parameter>
+        <parameter name="yx" transfer-ownership="none">
+          <doc xml:space="preserve">yx component of the transform matrix</doc>
+          <type name="gfloat" c:type="float"/>
+        </parameter>
+        <parameter name="xy" transfer-ownership="none">
+          <doc xml:space="preserve">xy component of the transform matrix</doc>
+          <type name="gfloat" c:type="float"/>
+        </parameter>
+        <parameter name="yy" transfer-ownership="none">
+          <doc xml:space="preserve">yy component of the transform matrix</doc>
+          <type name="gfloat" c:type="float"/>
+        </parameter>
+        <parameter name="dx" transfer-ownership="none">
+          <doc xml:space="preserve">dx component of the transform matrix</doc>
+          <type name="gfloat" c:type="float"/>
+        </parameter>
+        <parameter name="dy" transfer-ownership="none">
+          <doc xml:space="preserve">dy component of the transform matrix</doc>
+          <type name="gfloat" c:type="float"/>
+        </parameter>
+        <parameter name="user_data" transfer-ownership="none" nullable="1" allow-none="1" closure="8">
+          <doc xml:space="preserve">User data pointer passed to hb_paint_funcs_set_push_transform_func()</doc>
+          <type name="gpointer" c:type="void*"/>
+        </parameter>
+      </parameters>
+    </callback>
+    <function name="paint_radial_gradient" c:identifier="hb_paint_radial_gradient" version="7.0.0">
+      <doc xml:space="preserve">Perform a "radial-gradient" paint operation.</doc>
+      <return-value transfer-ownership="none">
+        <type name="none" c:type="void"/>
+      </return-value>
+      <parameters>
+        <parameter name="funcs" transfer-ownership="none">
+          <doc xml:space="preserve">paint functions</doc>
+          <type name="paint_funcs_t" c:type="hb_paint_funcs_t*"/>
+        </parameter>
+        <parameter name="paint_data" transfer-ownership="none" nullable="1" allow-none="1">
+          <doc xml:space="preserve">associated data passed by the caller</doc>
+          <type name="gpointer" c:type="void*"/>
+        </parameter>
+        <parameter name="color_line" transfer-ownership="none">
+          <doc xml:space="preserve">Color information for the gradient</doc>
+          <type name="color_line_t" c:type="hb_color_line_t*"/>
+        </parameter>
+        <parameter name="x0" transfer-ownership="none">
+          <doc xml:space="preserve">X coordinate of the first circle's center</doc>
+          <type name="gfloat" c:type="float"/>
+        </parameter>
+        <parameter name="y0" transfer-ownership="none">
+          <doc xml:space="preserve">Y coordinate of the first circle's center</doc>
+          <type name="gfloat" c:type="float"/>
+        </parameter>
+        <parameter name="r0" transfer-ownership="none">
+          <doc xml:space="preserve">radius of the first circle</doc>
+          <type name="gfloat" c:type="float"/>
+        </parameter>
+        <parameter name="x1" transfer-ownership="none">
+          <doc xml:space="preserve">X coordinate of the second circle's center</doc>
+          <type name="gfloat" c:type="float"/>
+        </parameter>
+        <parameter name="y1" transfer-ownership="none">
+          <doc xml:space="preserve">Y coordinate of the second circle's center</doc>
+          <type name="gfloat" c:type="float"/>
+        </parameter>
+        <parameter name="r1" transfer-ownership="none">
+          <doc xml:space="preserve">radius of the second circle</doc>
+          <type name="gfloat" c:type="float"/>
+        </parameter>
+      </parameters>
+    </function>
+    <callback name="paint_radial_gradient_func_t" c:type="hb_paint_radial_gradient_func_t" version="7.0.0">
+      <doc xml:space="preserve">A virtual method for the #hb_paint_funcs_t to paint a radial
+gradient everywhere within the current clip.
+
+The @color_line object contains information about the colors of the gradients.
+It is only valid for the duration of the callback, you cannot keep it around.
+
+The coordinates of the points are interpreted according
+to the current transform.
+
+See the OpenType spec [COLR](https://learn.microsoft.com/en-us/typography/opentype/spec/colr)
+section for details on how the points define the direction
+of the gradient, and how to interpret the @color_line.</doc>
+      <return-value transfer-ownership="none">
+        <type name="none" c:type="void"/>
+      </return-value>
+      <parameters>
+        <parameter name="funcs" transfer-ownership="none">
+          <doc xml:space="preserve">paint functions object</doc>
+          <type name="paint_funcs_t" c:type="hb_paint_funcs_t*"/>
+        </parameter>
+        <parameter name="paint_data" transfer-ownership="none" nullable="1" allow-none="1">
+          <doc xml:space="preserve">The data accompanying the paint functions in hb_font_paint_glyph()</doc>
+          <type name="gpointer" c:type="void*"/>
+        </parameter>
+        <parameter name="color_line" transfer-ownership="none">
+          <doc xml:space="preserve">Color information for the gradient</doc>
+          <type name="color_line_t" c:type="hb_color_line_t*"/>
+        </parameter>
+        <parameter name="x0" transfer-ownership="none">
+          <doc xml:space="preserve">X coordinate of the first circle's center</doc>
+          <type name="gfloat" c:type="float"/>
+        </parameter>
+        <parameter name="y0" transfer-ownership="none">
+          <doc xml:space="preserve">Y coordinate of the first circle's center</doc>
+          <type name="gfloat" c:type="float"/>
+        </parameter>
+        <parameter name="r0" transfer-ownership="none">
+          <doc xml:space="preserve">radius of the first circle</doc>
+          <type name="gfloat" c:type="float"/>
+        </parameter>
+        <parameter name="x1" transfer-ownership="none">
+          <doc xml:space="preserve">X coordinate of the second circle's center</doc>
+          <type name="gfloat" c:type="float"/>
+        </parameter>
+        <parameter name="y1" transfer-ownership="none">
+          <doc xml:space="preserve">Y coordinate of the second circle's center</doc>
+          <type name="gfloat" c:type="float"/>
+        </parameter>
+        <parameter name="r1" transfer-ownership="none">
+          <doc xml:space="preserve">radius of the second circle</doc>
+          <type name="gfloat" c:type="float"/>
+        </parameter>
+        <parameter name="user_data" transfer-ownership="none" nullable="1" allow-none="1" closure="9">
+          <doc xml:space="preserve">User data pointer passed to hb_paint_funcs_set_radial_gradient_func()</doc>
+          <type name="gpointer" c:type="void*"/>
+        </parameter>
+      </parameters>
+    </callback>
+    <function name="paint_sweep_gradient" c:identifier="hb_paint_sweep_gradient" version="7.0.0">
+      <doc xml:space="preserve">Perform a "sweep-gradient" paint operation.</doc>
+      <return-value transfer-ownership="none">
+        <type name="none" c:type="void"/>
+      </return-value>
+      <parameters>
+        <parameter name="funcs" transfer-ownership="none">
+          <doc xml:space="preserve">paint functions</doc>
+          <type name="paint_funcs_t" c:type="hb_paint_funcs_t*"/>
+        </parameter>
+        <parameter name="paint_data" transfer-ownership="none" nullable="1" allow-none="1">
+          <doc xml:space="preserve">associated data passed by the caller</doc>
+          <type name="gpointer" c:type="void*"/>
+        </parameter>
+        <parameter name="color_line" transfer-ownership="none">
+          <doc xml:space="preserve">Color information for the gradient</doc>
+          <type name="color_line_t" c:type="hb_color_line_t*"/>
+        </parameter>
+        <parameter name="x0" transfer-ownership="none">
+          <doc xml:space="preserve">X coordinate of the circle's center</doc>
+          <type name="gfloat" c:type="float"/>
+        </parameter>
+        <parameter name="y0" transfer-ownership="none">
+          <doc xml:space="preserve">Y coordinate of the circle's center</doc>
+          <type name="gfloat" c:type="float"/>
+        </parameter>
+        <parameter name="start_angle" transfer-ownership="none">
+          <doc xml:space="preserve">the start angle</doc>
+          <type name="gfloat" c:type="float"/>
+        </parameter>
+        <parameter name="end_angle" transfer-ownership="none">
+          <doc xml:space="preserve">the end angle</doc>
+          <type name="gfloat" c:type="float"/>
+        </parameter>
+      </parameters>
+    </function>
+    <callback name="paint_sweep_gradient_func_t" c:type="hb_paint_sweep_gradient_func_t" version="7.0.0">
+      <doc xml:space="preserve">A virtual method for the #hb_paint_funcs_t to paint a sweep
+gradient everywhere within the current clip.
+
+The @color_line object contains information about the colors of the gradients.
+It is only valid for the duration of the callback, you cannot keep it around.
+
+The coordinates of the points are interpreted according
+to the current transform.
+
+See the OpenType spec [COLR](https://learn.microsoft.com/en-us/typography/opentype/spec/colr)
+section for details on how the points define the direction
+of the gradient, and how to interpret the @color_line.</doc>
+      <return-value transfer-ownership="none">
+        <type name="none" c:type="void"/>
+      </return-value>
+      <parameters>
+        <parameter name="funcs" transfer-ownership="none">
+          <doc xml:space="preserve">paint functions object</doc>
+          <type name="paint_funcs_t" c:type="hb_paint_funcs_t*"/>
+        </parameter>
+        <parameter name="paint_data" transfer-ownership="none" nullable="1" allow-none="1">
+          <doc xml:space="preserve">The data accompanying the paint functions in hb_font_paint_glyph()</doc>
+          <type name="gpointer" c:type="void*"/>
+        </parameter>
+        <parameter name="color_line" transfer-ownership="none">
+          <doc xml:space="preserve">Color information for the gradient</doc>
+          <type name="color_line_t" c:type="hb_color_line_t*"/>
+        </parameter>
+        <parameter name="x0" transfer-ownership="none">
+          <doc xml:space="preserve">X coordinate of the circle's center</doc>
+          <type name="gfloat" c:type="float"/>
+        </parameter>
+        <parameter name="y0" transfer-ownership="none">
+          <doc xml:space="preserve">Y coordinate of the circle's center</doc>
+          <type name="gfloat" c:type="float"/>
+        </parameter>
+        <parameter name="start_angle" transfer-ownership="none">
+          <doc xml:space="preserve">the start angle, in radians</doc>
+          <type name="gfloat" c:type="float"/>
+        </parameter>
+        <parameter name="end_angle" transfer-ownership="none">
+          <doc xml:space="preserve">the end angle, in radians</doc>
+          <type name="gfloat" c:type="float"/>
+        </parameter>
+        <parameter name="user_data" transfer-ownership="none" nullable="1" allow-none="1" closure="7">
+          <doc xml:space="preserve">User data pointer passed to hb_paint_funcs_set_sweep_gradient_func()</doc>
+          <type name="gpointer" c:type="void*"/>
+        </parameter>
+      </parameters>
+    </callback>
     <callback name="reference_table_func_t" c:type="hb_reference_table_func_t" version="0.9.2">
       <doc xml:space="preserve">Callback function for hb_face_create_for_tables().</doc>
       <return-value transfer-ownership="full">
@@ -11818,6 +14243,19 @@ elements).</doc>
         </parameter>
       </parameters>
     </function>
+    <function name="set_is_inverted" c:identifier="hb_set_is_inverted" version="7.0.0">
+      <doc xml:space="preserve">Returns whether the set is inverted.</doc>
+      <return-value transfer-ownership="none">
+        <doc xml:space="preserve">`true` if the set is inverted, `false` otherwise</doc>
+        <type name="bool_t" c:type="hb_bool_t"/>
+      </return-value>
+      <parameters>
+        <parameter name="set" transfer-ownership="none">
+          <doc xml:space="preserve">A set</doc>
+          <type name="set_t" c:type="const hb_set_t*"/>
+        </parameter>
+      </parameters>
+    </function>
     <function name="set_is_subset" c:identifier="hb_set_is_subset" version="1.8.1">
       <doc xml:space="preserve">Tests whether @set is a subset of @larger_set.</doc>
       <return-value transfer-ownership="none">
@@ -12046,7 +14484,7 @@ and @other.</doc>
         </parameter>
       </parameters>
     </function>
-    <record name="set_t" c:type="hb_set_t" glib:type-name="hb_set_t" glib:get-type="hb_gobject_set_get_type" c:symbol-prefix="gobject_set">
+    <record name="set_t" c:type="hb_set_t" opaque="1" glib:type-name="hb_set_t" glib:get-type="hb_gobject_set_get_type" c:symbol-prefix="gobject_set">
       <doc xml:space="preserve">Data type for holding a set of integers. #hb_set_t's are
 used to gather and contain glyph IDs, Unicode code
 points, and various other collections of discrete
@@ -12133,6 +14571,73 @@ will be used.</doc>
           <array c:type="const char* const*">
             <type name="utf8" c:type="char*"/>
           </array>
+        </parameter>
+      </parameters>
+    </function>
+    <function name="shape_justify" c:identifier="hb_shape_justify">
+      <doc xml:space="preserve">See hb_shape_full() for basic details. If @shaper_list is not `NULL`, the specified
+shapers will be used in the given order, otherwise the default shapers list
+will be used.
+
+In addition, justify the shaping results such that the shaping results reach
+the target advance width/height, depending on the buffer direction.
+
+If the advance of the buffer shaped with hb_shape_full() is already known,
+put that in *advance. Otherwise set *advance to zero.
+
+This API is currently experimental and will probably change in the future.</doc>
+      <return-value transfer-ownership="none">
+        <doc xml:space="preserve">false if all shapers failed, true otherwise
+
+XSince: EXPERIMENTAL</doc>
+        <type name="bool_t" c:type="hb_bool_t"/>
+      </return-value>
+      <parameters>
+        <parameter name="font" transfer-ownership="none">
+          <doc xml:space="preserve">a mutable #hb_font_t to use for shaping</doc>
+          <type name="font_t" c:type="hb_font_t*"/>
+        </parameter>
+        <parameter name="buffer" transfer-ownership="none">
+          <doc xml:space="preserve">an #hb_buffer_t to shape</doc>
+          <type name="buffer_t" c:type="hb_buffer_t*"/>
+        </parameter>
+        <parameter name="features" transfer-ownership="none" nullable="1" allow-none="1">
+          <doc xml:space="preserve">an array of user
+   specified #hb_feature_t or `NULL`</doc>
+          <array length="3" zero-terminated="0" c:type="const hb_feature_t*">
+            <type name="feature_t" c:type="hb_feature_t"/>
+          </array>
+        </parameter>
+        <parameter name="num_features" transfer-ownership="none">
+          <doc xml:space="preserve">the length of @features array</doc>
+          <type name="guint" c:type="unsigned int"/>
+        </parameter>
+        <parameter name="shaper_list" transfer-ownership="none" nullable="1" allow-none="1">
+          <doc xml:space="preserve">a `NULL`-terminated
+   array of shapers to use or `NULL`</doc>
+          <array c:type="const char* const*">
+            <type name="utf8" c:type="char*"/>
+          </array>
+        </parameter>
+        <parameter name="min_target_advance" transfer-ownership="none">
+          <doc xml:space="preserve">Minimum advance width/height to aim for.</doc>
+          <type name="gfloat" c:type="float"/>
+        </parameter>
+        <parameter name="max_target_advance" transfer-ownership="none">
+          <doc xml:space="preserve">Maximum advance width/height to aim for.</doc>
+          <type name="gfloat" c:type="float"/>
+        </parameter>
+        <parameter name="advance" direction="inout" caller-allocates="0" transfer-ownership="full">
+          <doc xml:space="preserve">Input/output advance width/height of the buffer.</doc>
+          <type name="gfloat" c:type="float*"/>
+        </parameter>
+        <parameter name="var_tag" direction="out" caller-allocates="0" transfer-ownership="full">
+          <doc xml:space="preserve">Variation-axis tag used for justification.</doc>
+          <type name="tag_t" c:type="hb_tag_t*"/>
+        </parameter>
+        <parameter name="var_value" direction="out" caller-allocates="0" transfer-ownership="full">
+          <doc xml:space="preserve">Variation-axis value used to reach target justification.</doc>
+          <type name="gfloat" c:type="float*"/>
         </parameter>
       </parameters>
     </function>
@@ -12431,7 +14936,7 @@ attached to the specified shaping plan.</doc>
         </parameter>
       </parameters>
     </function>
-    <record name="shape_plan_t" c:type="hb_shape_plan_t" glib:type-name="hb_shape_plan_t" glib:get-type="hb_gobject_shape_plan_get_type" c:symbol-prefix="gobject_shape_plan">
+    <record name="shape_plan_t" c:type="hb_shape_plan_t" opaque="1" glib:type-name="hb_shape_plan_t" glib:get-type="hb_gobject_shape_plan_get_type" c:symbol-prefix="gobject_shape_plan">
       <doc xml:space="preserve">Data type for holding a shaping plan.
 
 Shape plans contain information about how HarfBuzz will shape a
@@ -13308,7 +15813,7 @@ immutable.</doc>
         </parameter>
       </parameters>
     </function>
-    <record name="unicode_funcs_t" c:type="hb_unicode_funcs_t" glib:type-name="hb_unicode_funcs_t" glib:get-type="hb_gobject_unicode_funcs_get_type" c:symbol-prefix="gobject_unicode_funcs">
+    <record name="unicode_funcs_t" c:type="hb_unicode_funcs_t" opaque="1" glib:type-name="hb_unicode_funcs_t" glib:get-type="hb_gobject_unicode_funcs_get_type" c:symbol-prefix="gobject_unicode_funcs">
       <doc xml:space="preserve">Data type containing a set of virtual methods used for
 accessing various Unicode character properties.
 
@@ -13661,7 +16166,7 @@ allocating big enough size for @buf, 128 bytes is more than enough.</doc>
             <doc xml:space="preserve">an #hb_variation_t to convert</doc>
             <type name="variation_t" c:type="hb_variation_t*"/>
           </instance-parameter>
-          <parameter name="buf" direction="out" caller-allocates="0" transfer-ownership="full">
+          <parameter name="buf" direction="out" caller-allocates="1" transfer-ownership="none">
             <doc xml:space="preserve">output string</doc>
             <array length="1" zero-terminated="0" c:type="char*">
               <type name="utf8" c:type="char"/>
@@ -13686,7 +16191,7 @@ allocating big enough size for @buf, 128 bytes is more than enough.</doc>
           <doc xml:space="preserve">an #hb_variation_t to convert</doc>
           <type name="variation_t" c:type="hb_variation_t*"/>
         </parameter>
-        <parameter name="buf" direction="out" caller-allocates="0" transfer-ownership="full">
+        <parameter name="buf" direction="out" caller-allocates="1" transfer-ownership="none">
           <doc xml:space="preserve">output string</doc>
           <array length="2" zero-terminated="0" c:type="char*">
             <type name="utf8" c:type="char"/>

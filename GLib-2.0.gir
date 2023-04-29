@@ -164,6 +164,27 @@ The typical usage would be something like:
         </parameter>
       </parameters>
     </function-macro>
+    <constant name="ATOMIC_REF_COUNT_INIT" value="1" c:type="G_ATOMIC_REF_COUNT_INIT" version="2.78">
+      <doc xml:space="preserve">Evaluates to the initial reference count for `gatomicrefcount`.
+
+This macro is useful for initializing `gatomicrefcount` fields inside
+structures, for instance:
+
+|[&lt;!-- language="C" --&gt;
+typedef struct {
+  gatomicrefcount ref_count;
+  char *name;
+  char *address;
+} Person;
+
+static const Person default_person = {
+  .ref_count = G_ATOMIC_REF_COUNT_INIT,
+  .name = "Default name",
+  .address = "Default address",
+};
+]|</doc>
+      <type name="gint" c:type="gint"/>
+    </constant>
     <record name="Array" c:type="GArray" glib:type-name="GArray" glib:get-type="g_array_get_type" c:symbol-prefix="array">
       <doc xml:space="preserve">Contains the public fields of a GArray.</doc>
       <field name="data" writable="1">
@@ -20741,6 +20762,27 @@ The link is not freed.
         </return-value>
       </function>
     </record>
+    <constant name="REF_COUNT_INIT" value="-1" c:type="G_REF_COUNT_INIT" version="2.78">
+      <doc xml:space="preserve">Evaluates to the initial reference count for `grefcount`.
+
+This macro is useful for initializing `grefcount` fields inside
+structures, for instance:
+
+|[&lt;!-- language="C" --&gt;
+typedef struct {
+  grefcount ref_count;
+  char *name;
+  char *address;
+} Person;
+
+static const Person default_person = {
+  .ref_count = G_REF_COUNT_INIT,
+  .name = "Default name",
+  .address = "Default address",
+};
+]|</doc>
+      <type name="gint" c:type="gint"/>
+    </constant>
     <record name="RWLock" c:type="GRWLock" version="2.32">
       <doc xml:space="preserve">The GRWLock struct is an opaque data structure to represent a
 reader-writer lock. It is similar to a #GMutex in that it allows
