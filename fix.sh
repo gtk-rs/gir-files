@@ -50,6 +50,12 @@ xmlstarlet ed -L \
 	-u '//_:class[@name="Object"]/_:constructor[@name="new_with_properties"]//_:parameter[@name="values"]/_:array/@c:type' -v "const GValue*" \
 	GObject-2.0.gir
 
+# add missing attributes to resolve type struct for TypePlugin
+xmlstarlet ed -L \
+	-i '//_:interface[@name="TypePlugin" and not(@glib:type-struct)]' -t 'attr' -n 'glib:type-struct' -v 'TypePluginClass' \
+	-i '//_:record[@name="TypePluginClass" and not(@glib:is-gtype-struct-for)]' -t 'attr' -n 'glib:is-gtype-struct-for' -v 'TypePlugin' \
+	GObject-2.0.gir
+
 # fix wrong "full" transfer ownership
 xmlstarlet ed -L \
 	-u '//_:method[@c:identifier="gdk_frame_clock_get_current_timings"]/_:return-value/@transfer-ownership' -v "none" \
