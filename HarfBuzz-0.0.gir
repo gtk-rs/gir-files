@@ -277,6 +277,10 @@ a font.</doc>
         </parameter>
       </parameters>
     </function-macro>
+    <constant name="UNICODE_COMBINING_CLASS_CCC133" value="133" c:type="HB_UNICODE_COMBINING_CLASS_CCC133" deprecated="1" deprecated-version="7.2.0">
+      <doc xml:space="preserve">[Tibetan]</doc>
+      <type name="gint" c:type="gint"/>
+    </constant>
     <constant name="UNICODE_MAX" value="1114111" c:type="HB_UNICODE_MAX" version="1.9.0">
       <doc xml:space="preserve">Maximum valid Unicode code point.</doc>
       <type name="gint" c:type="gint"/>
@@ -316,11 +320,11 @@ as three integer components.</doc>
       <doc xml:space="preserve">The micro component of the library version available at compile-time.</doc>
       <type name="gint" c:type="gint"/>
     </constant>
-    <constant name="VERSION_MINOR" value="1" c:type="HB_VERSION_MINOR">
+    <constant name="VERSION_MINOR" value="3" c:type="HB_VERSION_MINOR">
       <doc xml:space="preserve">The minor component of the library version available at compile-time.</doc>
       <type name="gint" c:type="gint"/>
     </constant>
-    <constant name="VERSION_STRING" value="7.1.0" c:type="HB_VERSION_STRING">
+    <constant name="VERSION_STRING" value="7.3.0" c:type="HB_VERSION_STRING">
       <doc xml:space="preserve">A string literal containing the library version available at compile-time.</doc>
       <type name="utf8" c:type="gchar*"/>
     </constant>
@@ -4318,7 +4322,7 @@ them to the #hb_set_t set @out.</doc>
 a face index into that blob.
 
 The face index is used for blobs of file formats such as TTC and
-and DFont that can contain more than one face.  Face indices within
+DFont that can contain more than one face.  Face indices within
 such collections are zero-based.
 
 &lt;note&gt;Note: If the blob font format is not a collection, @index
@@ -8004,7 +8008,12 @@ pass around other binary data.</doc>
     <docsection name="hb-buffer">
       <doc xml:space="preserve">Buffers serve a dual role in HarfBuzz; before shaping, they hold
 the input characters that are passed to hb_shape(), and after
-shaping they hold the output glyphs.</doc>
+shaping they hold the output glyphs.
+
+The input buffer is a sequence of Unicode codepoints, with
+associated attributes such as direction and script.  The output
+buffer is a sequence of glyphs, with associated attributes such
+as position and cluster.</doc>
     </docsection>
     <docsection name="hb-common">
       <doc xml:space="preserve">Common data types used across HarfBuzz are defined here.</doc>
@@ -8024,7 +8033,13 @@ font family.
 
 More precisely, a font face represents a single face in a binary font file.
 Font faces are typically built from a binary blob and a face index.
-Font faces are used to create fonts.</doc>
+Font faces are used to create fonts.
+
+A font face can be created from a binary blob using hb_face_create().
+The face index is used to select a face from a binary blob that contains
+multiple faces.  For example, a binary blob that contains both a regular
+and a bold face can be used to create two font faces, one for each face
+index.</doc>
     </docsection>
     <docsection name="hb-font">
       <doc xml:space="preserve">Functions for working with font objects.
@@ -8040,7 +8055,12 @@ of font functions is defined by the virtual methods in
 #hb_font_funcs_t.
 
 HarfBuzz provides a built-in set of lightweight default
-functions for each method in #hb_font_funcs_t.</doc>
+functions for each method in #hb_font_funcs_t.
+
+The default font functions are implemented in terms of the
+#hb_font_funcs_t methods of the parent font object.  This allows
+client programs to override only the methods they need to, and
+otherwise inherit the parent font's implementation, if any.</doc>
     </docsection>
     <docsection name="hb-ft">
       <doc xml:space="preserve">Functions for using HarfBuzz with the FreeType library.
@@ -8094,7 +8114,9 @@ by hb_font_create() default to using these functions, so most clients would
 never need to call these functions directly.</doc>
     </docsection>
     <docsection name="hb-ot-layout">
-      <doc xml:space="preserve">Functions for querying OpenType Layout features in the font face.</doc>
+      <doc xml:space="preserve">Functions for querying OpenType Layout features in the font face.
+See the [OpenType specification](http://www.microsoft.com/typography/otspec/)
+for details.</doc>
     </docsection>
     <docsection name="hb-ot-math">
       <doc xml:space="preserve">Functions for fetching mathematics layout data from OpenType fonts.
@@ -10429,7 +10451,7 @@ is an #hb_position_t.
 
 However, if the requested constant is #HB_OT_MATH_CONSTANT_SCRIPT_PERCENT_SCALE_DOWN,
 #HB_OT_MATH_CONSTANT_SCRIPT_SCRIPT_PERCENT_SCALE_DOWN or
-#HB_OT_MATH_CONSTANT_SCRIPT_PERCENT_SCALE_DOWN, then the return value is
+#HB_OT_MATH_CONSTANT_RADICAL_DEGREE_BOTTOM_RAISE_PERCENT, then the return value is
 an integer between 0 and 100 representing that percentage.</doc>
       <return-value transfer-ownership="none">
         <doc xml:space="preserve">the requested constant or zero</doc>
@@ -15210,8 +15232,8 @@ being returned from hb_unicode_combining_class().&lt;/note&gt;</doc>
       <member name="ccc130" value="130" c:identifier="HB_UNICODE_COMBINING_CLASS_CCC130" glib:nick="ccc130" glib:name="HB_UNICODE_COMBINING_CLASS_CCC130">
         <doc xml:space="preserve">[Tibetan]</doc>
       </member>
-      <member name="ccc133" value="132" c:identifier="HB_UNICODE_COMBINING_CLASS_CCC133" glib:nick="ccc133" glib:name="HB_UNICODE_COMBINING_CLASS_CCC133">
-        <doc xml:space="preserve">[Tibetan]</doc>
+      <member name="ccc132" value="132" c:identifier="HB_UNICODE_COMBINING_CLASS_CCC132" glib:nick="ccc132" glib:name="HB_UNICODE_COMBINING_CLASS_CCC132">
+        <doc xml:space="preserve">[Tibetan] Since: 7.2.0</doc>
       </member>
       <member name="attached_below_left" value="200" c:identifier="HB_UNICODE_COMBINING_CLASS_ATTACHED_BELOW_LEFT" glib:nick="attached-below-left" glib:name="HB_UNICODE_COMBINING_CLASS_ATTACHED_BELOW_LEFT">
         <doc xml:space="preserve">Marks attached at the bottom left</doc>

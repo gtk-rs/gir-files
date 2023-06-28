@@ -428,6 +428,25 @@ has API to set up cross-process parent-child relationships between
 surfaces with [method@GdkWayland.WaylandToplevel.export_handle] and
 [method@GdkWayland.WaylandToplevel.set_transient_for_exported].</doc>
       <implements name="Gdk.Toplevel"/>
+      <method name="drop_exported_handle" c:identifier="gdk_wayland_toplevel_drop_exported_handle" version="4.12">
+        <doc xml:space="preserve">Destroy a handle that was obtained with gdk_wayland_toplevel_export_handle().
+
+Note that this API depends on an unstable Wayland protocol,
+and thus may require changes in the future.</doc>
+        <return-value transfer-ownership="none">
+          <type name="none" c:type="void"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="toplevel" transfer-ownership="none">
+            <doc xml:space="preserve">the `GdkToplevel` that was exported</doc>
+            <type name="WaylandToplevel" c:type="GdkToplevel*"/>
+          </instance-parameter>
+          <parameter name="handle" transfer-ownership="none">
+            <doc xml:space="preserve">the handle to drop</doc>
+            <type name="utf8" c:type="const char*"/>
+          </parameter>
+        </parameters>
+      </method>
       <method name="export_handle" c:identifier="gdk_wayland_toplevel_export_handle">
         <doc xml:space="preserve">Asynchronously obtains a handle for a surface that can be passed
 to other processes.
@@ -443,6 +462,12 @@ should be called to clean up resources.
 The main purpose for obtaining a handle is to mark a surface
 from another surface as transient for this one, see
 [method@GdkWayland.WaylandToplevel.set_transient_for_exported].
+
+Before 4.12, this API could not safely be used multiple times,
+since there was no reference counting for handles. Starting with
+4.12, every call to this function obtains a new handle, and every
+call to [method@GdkWayland.WaylandToplevel.drop_exported_handle] drops
+just the handle that it is given.
 
 Note that this API depends on an unstable Wayland protocol,
 and thus may require changes in the future.</doc>
@@ -511,15 +536,21 @@ and thus may require changes in the future.</doc>
           </parameter>
         </parameters>
       </method>
-      <method name="unexport_handle" c:identifier="gdk_wayland_toplevel_unexport_handle">
+      <method name="unexport_handle" c:identifier="gdk_wayland_toplevel_unexport_handle" deprecated="1" deprecated-version="4.12">
         <doc xml:space="preserve">Destroys the handle that was obtained with
 gdk_wayland_toplevel_export_handle().
 
 It is an error to call this function on a surface that
 does not have a handle.
 
+Since 4.12, this function does nothing. Use
+[method@GdkWayland.WaylandToplevel.drop_exported_handle] instead to drop a
+handle that was obtained with [method@GdkWayland.WaylandToplevel.export_handle].
+
 Note that this API depends on an unstable Wayland protocol,
 and thus may require changes in the future.</doc>
+        <doc-deprecated xml:space="preserve">Use [method@GdkWayland.WaylandToplevel.drop_exported_handle]
+  instead, this function does nothing</doc-deprecated>
         <return-value transfer-ownership="none">
           <type name="none" c:type="void"/>
         </return-value>
