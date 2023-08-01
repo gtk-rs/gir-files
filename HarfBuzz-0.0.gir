@@ -133,6 +133,10 @@ there is no selector index corresponding to the selector of interest.</doc>
 Set to U+FFFD REPLACEMENT CHARACTER.</doc>
       <type name="gint" c:type="gint"/>
     </constant>
+    <constant name="CODEPOINT_INVALID" value="4294967295" c:type="HB_CODEPOINT_INVALID" version="8.0.0">
+      <doc xml:space="preserve">Unused #hb_codepoint_t value.</doc>
+      <type name="codepoint_t" c:type="hb_codepoint_t"/>
+    </constant>
     <function-macro name="COLOR" c:identifier="HB_COLOR" version="2.1.0" introspectable="0">
       <doc xml:space="preserve">Constructs an #hb_color_t from four integers.</doc>
       <parameters>
@@ -224,10 +228,6 @@ a font.</doc>
       <doc xml:space="preserve">An unset #hb_language_t.</doc>
       <type name="language_t" c:type="hb_language_t"/>
     </constant>
-    <constant name="MAP_VALUE_INVALID" value="4294967295" c:type="HB_MAP_VALUE_INVALID" version="1.7.7">
-      <doc xml:space="preserve">Unset #hb_map_t value.</doc>
-      <type name="codepoint_t" c:type="hb_codepoint_t"/>
-    </constant>
     <constant name="OT_LAYOUT_DEFAULT_LANGUAGE_INDEX" value="65535" c:type="HB_OT_LAYOUT_DEFAULT_LANGUAGE_INDEX">
       <doc xml:space="preserve">Special value for language index indicating default or unsupported language.</doc>
       <type name="gint" c:type="gint"/>
@@ -255,10 +255,6 @@ a font.</doc>
     <constant name="OT_VAR_NO_AXIS_INDEX" value="4294967295" c:type="HB_OT_VAR_NO_AXIS_INDEX" version="1.4.2" deprecated="1" deprecated-version="2.2.0">
       <doc xml:space="preserve">Do not use.</doc>
       <type name="gint" c:type="gint"/>
-    </constant>
-    <constant name="SET_VALUE_INVALID" value="4294967295" c:type="HB_SET_VALUE_INVALID" version="0.9.21">
-      <doc xml:space="preserve">Unset #hb_set_t value.</doc>
-      <type name="codepoint_t" c:type="hb_codepoint_t"/>
     </constant>
     <function-macro name="TAG" c:identifier="HB_TAG" introspectable="0">
       <doc xml:space="preserve">Constructs an #hb_tag_t from four character literals.</doc>
@@ -312,19 +308,19 @@ as three integer components.</doc>
         </parameter>
       </parameters>
     </function-macro>
-    <constant name="VERSION_MAJOR" value="7" c:type="HB_VERSION_MAJOR">
+    <constant name="VERSION_MAJOR" value="8" c:type="HB_VERSION_MAJOR">
       <doc xml:space="preserve">The major component of the library version available at compile-time.</doc>
       <type name="gint" c:type="gint"/>
     </constant>
-    <constant name="VERSION_MICRO" value="0" c:type="HB_VERSION_MICRO">
+    <constant name="VERSION_MICRO" value="1" c:type="HB_VERSION_MICRO">
       <doc xml:space="preserve">The micro component of the library version available at compile-time.</doc>
       <type name="gint" c:type="gint"/>
     </constant>
-    <constant name="VERSION_MINOR" value="3" c:type="HB_VERSION_MINOR">
+    <constant name="VERSION_MINOR" value="0" c:type="HB_VERSION_MINOR">
       <doc xml:space="preserve">The minor component of the library version available at compile-time.</doc>
       <type name="gint" c:type="gint"/>
     </constant>
-    <constant name="VERSION_STRING" value="7.3.0" c:type="HB_VERSION_STRING">
+    <constant name="VERSION_STRING" value="8.0.1" c:type="HB_VERSION_STRING">
       <doc xml:space="preserve">A string literal containing the library version available at compile-time.</doc>
       <type name="utf8" c:type="gchar*"/>
     </constant>
@@ -5062,8 +5058,7 @@ attached to the specified font-functions structure.</doc>
       </parameters>
     </function>
     <function name="font_funcs_set_draw_glyph_func" c:identifier="hb_font_funcs_set_draw_glyph_func" version="7.0.0">
-      <doc xml:space="preserve">Sets the implementation function for #hb_font_draw_glyph_func_t,
-which is the same as #hb_font_get_glyph_shape_func_t.</doc>
+      <doc xml:space="preserve">Sets the implementation function for #hb_font_draw_glyph_func_t.</doc>
       <return-value transfer-ownership="none">
         <type name="none" c:type="void"/>
       </return-value>
@@ -8078,19 +8073,6 @@ HarfBuzz supports using GLib to provide Unicode data, by attaching
 GLib functions to the virtual methods in a #hb_unicode_funcs_t function
 structure.</doc>
     </docsection>
-    <docsection name="hb-gobject">
-      <doc xml:space="preserve">Support for using HarfBuzz with the GObject library to provide
-type data.
-
-The types and functions listed here are solely a linkage between
-HarfBuzz's public data types and the GTypes used by the GObject framework.
-HarfBuzz uses GObject introspection to generate its Python bindings
-(and potentially other language bindings); client programs should never need
-to access the GObject-integration mechanics.
-
-For client programs using the GNOME and GTK software stack, please see the
-GLib and FreeType integration pages.</doc>
-    </docsection>
     <docsection name="hb-graphite2">
       <doc xml:space="preserve">Functions for using HarfBuzz with fonts that include Graphite features.
 
@@ -9334,6 +9316,42 @@ Useful if the client program wishes to cache the list.</doc>
         </parameter>
       </parameters>
     </function>
+    <function name="ot_layout_get_baseline2" c:identifier="hb_ot_layout_get_baseline2" version="8.0.0">
+      <doc xml:space="preserve">Fetches a baseline value from the face.
+
+This function is like hb_ot_layout_get_baseline() but takes
+#hb_script_t and #hb_language_t instead of OpenType #hb_tag_t.</doc>
+      <return-value transfer-ownership="none">
+        <doc xml:space="preserve">`true` if found baseline value in the font.</doc>
+        <type name="bool_t" c:type="hb_bool_t"/>
+      </return-value>
+      <parameters>
+        <parameter name="font" transfer-ownership="none">
+          <doc xml:space="preserve">a font</doc>
+          <type name="font_t" c:type="hb_font_t*"/>
+        </parameter>
+        <parameter name="baseline_tag" transfer-ownership="none">
+          <doc xml:space="preserve">a baseline tag</doc>
+          <type name="ot_layout_baseline_tag_t" c:type="hb_ot_layout_baseline_tag_t"/>
+        </parameter>
+        <parameter name="direction" transfer-ownership="none">
+          <doc xml:space="preserve">text direction.</doc>
+          <type name="direction_t" c:type="hb_direction_t"/>
+        </parameter>
+        <parameter name="script" transfer-ownership="none">
+          <doc xml:space="preserve">script.</doc>
+          <type name="script_t" c:type="hb_script_t"/>
+        </parameter>
+        <parameter name="language" transfer-ownership="none" nullable="1" allow-none="1">
+          <doc xml:space="preserve">language, currently unused.</doc>
+          <type name="language_t" c:type="hb_language_t"/>
+        </parameter>
+        <parameter name="coord" direction="out" caller-allocates="0" transfer-ownership="full" nullable="1">
+          <doc xml:space="preserve">baseline value if found.</doc>
+          <type name="position_t" c:type="hb_position_t*"/>
+        </parameter>
+      </parameters>
+    </function>
     <function name="ot_layout_get_baseline_with_fallback" c:identifier="hb_ot_layout_get_baseline_with_fallback" version="4.0.0">
       <doc xml:space="preserve">Fetches a baseline value from the face, and synthesizes
 it if the font does not have it.</doc>
@@ -9364,6 +9382,117 @@ it if the font does not have it.</doc>
         <parameter name="coord" direction="out" caller-allocates="0" transfer-ownership="full">
           <doc xml:space="preserve">baseline value if found.</doc>
           <type name="position_t" c:type="hb_position_t*"/>
+        </parameter>
+      </parameters>
+    </function>
+    <function name="ot_layout_get_baseline_with_fallback2" c:identifier="hb_ot_layout_get_baseline_with_fallback2" version="8.0.0">
+      <doc xml:space="preserve">Fetches a baseline value from the face, and synthesizes
+it if the font does not have it.
+
+This function is like hb_ot_layout_get_baseline_with_fallback() but takes
+#hb_script_t and #hb_language_t instead of OpenType #hb_tag_t.</doc>
+      <return-value transfer-ownership="none">
+        <type name="none" c:type="void"/>
+      </return-value>
+      <parameters>
+        <parameter name="font" transfer-ownership="none">
+          <doc xml:space="preserve">a font</doc>
+          <type name="font_t" c:type="hb_font_t*"/>
+        </parameter>
+        <parameter name="baseline_tag" transfer-ownership="none">
+          <doc xml:space="preserve">a baseline tag</doc>
+          <type name="ot_layout_baseline_tag_t" c:type="hb_ot_layout_baseline_tag_t"/>
+        </parameter>
+        <parameter name="direction" transfer-ownership="none">
+          <doc xml:space="preserve">text direction.</doc>
+          <type name="direction_t" c:type="hb_direction_t"/>
+        </parameter>
+        <parameter name="script" transfer-ownership="none">
+          <doc xml:space="preserve">script.</doc>
+          <type name="script_t" c:type="hb_script_t"/>
+        </parameter>
+        <parameter name="language" transfer-ownership="none" nullable="1" allow-none="1">
+          <doc xml:space="preserve">language, currently unused.</doc>
+          <type name="language_t" c:type="hb_language_t"/>
+        </parameter>
+        <parameter name="coord" direction="out" caller-allocates="0" transfer-ownership="full">
+          <doc xml:space="preserve">baseline value if found.</doc>
+          <type name="position_t" c:type="hb_position_t*"/>
+        </parameter>
+      </parameters>
+    </function>
+    <function name="ot_layout_get_font_extents" c:identifier="hb_ot_layout_get_font_extents" version="8.0.0">
+      <doc xml:space="preserve">Fetches script/language-specific font extents.  These values are
+looked up in the `BASE` table's `MinMax` records.
+
+If no such extents are found, the default extents for the font are
+fetched. As such, the return value of this function can for the
+most part be ignored.  Note that the per-script/language extents
+do not have a line-gap value, and the line-gap is set to zero in
+that case.</doc>
+      <return-value transfer-ownership="none">
+        <doc xml:space="preserve">`true` if found script/language-specific font extents.</doc>
+        <type name="bool_t" c:type="hb_bool_t"/>
+      </return-value>
+      <parameters>
+        <parameter name="font" transfer-ownership="none">
+          <doc xml:space="preserve">a font</doc>
+          <type name="font_t" c:type="hb_font_t*"/>
+        </parameter>
+        <parameter name="direction" transfer-ownership="none">
+          <doc xml:space="preserve">text direction.</doc>
+          <type name="direction_t" c:type="hb_direction_t"/>
+        </parameter>
+        <parameter name="script_tag" transfer-ownership="none">
+          <doc xml:space="preserve">script tag.</doc>
+          <type name="tag_t" c:type="hb_tag_t"/>
+        </parameter>
+        <parameter name="language_tag" transfer-ownership="none">
+          <doc xml:space="preserve">language tag.</doc>
+          <type name="tag_t" c:type="hb_tag_t"/>
+        </parameter>
+        <parameter name="extents" direction="out" caller-allocates="1" transfer-ownership="none" nullable="1">
+          <doc xml:space="preserve">font extents if found.</doc>
+          <type name="font_extents_t" c:type="hb_font_extents_t*"/>
+        </parameter>
+      </parameters>
+    </function>
+    <function name="ot_layout_get_font_extents2" c:identifier="hb_ot_layout_get_font_extents2" version="8.0.0">
+      <doc xml:space="preserve">Fetches script/language-specific font extents.  These values are
+looked up in the `BASE` table's `MinMax` records.
+
+If no such extents are found, the default extents for the font are
+fetched. As such, the return value of this function can for the
+most part be ignored.  Note that the per-script/language extents
+do not have a line-gap value, and the line-gap is set to zero in
+that case.
+
+This function is like hb_ot_layout_get_font_extents() but takes
+#hb_script_t and #hb_language_t instead of OpenType #hb_tag_t.</doc>
+      <return-value transfer-ownership="none">
+        <doc xml:space="preserve">`true` if found script/language-specific font extents.</doc>
+        <type name="bool_t" c:type="hb_bool_t"/>
+      </return-value>
+      <parameters>
+        <parameter name="font" transfer-ownership="none">
+          <doc xml:space="preserve">a font</doc>
+          <type name="font_t" c:type="hb_font_t*"/>
+        </parameter>
+        <parameter name="direction" transfer-ownership="none">
+          <doc xml:space="preserve">text direction.</doc>
+          <type name="direction_t" c:type="hb_direction_t"/>
+        </parameter>
+        <parameter name="script" transfer-ownership="none">
+          <doc xml:space="preserve">script.</doc>
+          <type name="script_t" c:type="hb_script_t"/>
+        </parameter>
+        <parameter name="language" transfer-ownership="none" nullable="1" allow-none="1">
+          <doc xml:space="preserve">language.</doc>
+          <type name="language_t" c:type="hb_language_t"/>
+        </parameter>
+        <parameter name="extents" direction="out" caller-allocates="1" transfer-ownership="none" nullable="1">
+          <doc xml:space="preserve">font extents if found.</doc>
+          <type name="font_extents_t" c:type="hb_font_extents_t*"/>
         </parameter>
       </parameters>
     </function>
@@ -11397,7 +11526,7 @@ The #hb_language_t corresponding to @tag.</doc>
           <doc xml:space="preserve">an #hb_script_t to convert.</doc>
           <type name="script_t" c:type="hb_script_t"/>
         </parameter>
-        <parameter name="language" transfer-ownership="none">
+        <parameter name="language" transfer-ownership="none" nullable="1" allow-none="1">
           <doc xml:space="preserve">an #hb_language_t to convert.</doc>
           <type name="language_t" c:type="hb_language_t"/>
         </parameter>
