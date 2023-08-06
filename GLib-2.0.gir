@@ -14464,7 +14464,7 @@ This is the same as standard C `UINT8_MAX`, which should be
 preferred in new code.</doc>
       <type name="guint8" c:type="guint8"/>
     </constant>
-    <constant name="MICRO_VERSION" value="0" c:type="GLIB_MICRO_VERSION">
+    <constant name="MICRO_VERSION" value="1" c:type="GLIB_MICRO_VERSION">
       <doc xml:space="preserve">The micro version number of the GLib library.
 
 Like #gtk_micro_version, but from the headers used at
@@ -18244,7 +18244,12 @@ need to parse commandline options are expected to provide a function for
 getting a `GOptionGroup` holding their options, which
 the application can then add to its #GOptionContext.</doc>
       <constructor name="new" c:identifier="g_option_group_new" version="2.6">
-        <doc xml:space="preserve">Creates a new #GOptionGroup.</doc>
+        <doc xml:space="preserve">Creates a new #GOptionGroup.
+
+@description is typically used to provide a title for the group. If so, it
+is recommended that it&#x2019;s written in title case, and has a trailing colon so
+that it matches the style of built-in GLib group titles such as
+&#x2018;Application Options:&#x2019;.</doc>
         <return-value transfer-ownership="full">
           <doc xml:space="preserve">a newly created option group. It should be added
   to a #GOptionContext or freed with g_option_group_unref().</doc>
@@ -19984,7 +19989,7 @@ Note that the comparison function for g_ptr_array_sort() doesn't
 take the pointers from the array as arguments, it takes pointers to
 the pointers in the array.
 
-Use g_ptr_array_sort_with_data() if you want to use normal
+Use g_ptr_array_sort_values() if you want to use normal
 #GCompareFuncs, otherwise here is a full example of use:
 
 |[&lt;!-- language="C" --&gt;
@@ -20085,7 +20090,7 @@ Note that the comparison function for g_ptr_array_sort_with_data()
 doesn't take the pointers from the array as arguments, it takes
 pointers to the pointers in the array.
 
-Use g_ptr_array_sort_with_data() if you want to use normal
+Use g_ptr_array_sort_values_with_data() if you want to use normal
 #GCompareDataFuncs, otherwise here is a full example of use:
 
 |[&lt;!-- language="C" --&gt;
@@ -41698,7 +41703,7 @@ threads are using the same datalist and the same key.</doc>
           <doc xml:space="preserve">the #GQuark identifying a data element</doc>
           <type name="Quark" c:type="GQuark"/>
         </parameter>
-        <parameter name="dup_func" transfer-ownership="none" nullable="1" allow-none="1" scope="call" closure="3">
+        <parameter name="dup_func" transfer-ownership="none" scope="call" closure="3">
           <doc xml:space="preserve">function to duplicate the old value</doc>
           <type name="DuplicateFunc" c:type="GDuplicateFunc"/>
         </parameter>
@@ -43766,7 +43771,12 @@ translation of filenames.</doc>
     </function>
     <function name="filename_from_uri" c:identifier="g_filename_from_uri" throws="1">
       <doc xml:space="preserve">Converts an escaped ASCII-encoded URI to a local filename in the
-encoding used for filenames.</doc>
+encoding used for filenames.
+
+Since GLib 2.78, the query string and fragment can be present in the URI,
+but are not part of the resulting filename.
+We take inspiration from https://url.spec.whatwg.org/#file-state,
+but we don't support the entire standard.</doc>
       <return-value transfer-ownership="full">
         <doc xml:space="preserve">a newly-allocated string holding
               the resulting filename, or %NULL on an error.</doc>
@@ -51744,7 +51754,7 @@ are different concepts on Windows.</doc>
           <doc xml:space="preserve">flags from #GSpawnFlags</doc>
           <type name="SpawnFlags" c:type="GSpawnFlags"/>
         </parameter>
-        <parameter name="child_setup" transfer-ownership="none" nullable="1" allow-none="1" scope="async" closure="5">
+        <parameter name="child_setup" transfer-ownership="none" scope="async" closure="5">
           <doc xml:space="preserve">function to run in the child just before exec()</doc>
           <type name="SpawnChildSetupFunc" c:type="GSpawnChildSetupFunc"/>
         </parameter>
@@ -51789,7 +51799,7 @@ so no FD assignments are used.</doc>
           <doc xml:space="preserve">flags from #GSpawnFlags</doc>
           <type name="SpawnFlags" c:type="GSpawnFlags"/>
         </parameter>
-        <parameter name="child_setup" transfer-ownership="none" nullable="1" allow-none="1" scope="async" closure="5">
+        <parameter name="child_setup" transfer-ownership="none" scope="async" closure="5">
           <doc xml:space="preserve">function to run in the child just before exec()</doc>
           <type name="SpawnChildSetupFunc" c:type="GSpawnChildSetupFunc"/>
         </parameter>
@@ -51847,7 +51857,7 @@ so no FD assignments are used.</doc>
           <doc xml:space="preserve">flags from #GSpawnFlags</doc>
           <type name="SpawnFlags" c:type="GSpawnFlags"/>
         </parameter>
-        <parameter name="child_setup" transfer-ownership="none" nullable="1" allow-none="1" scope="async" closure="5">
+        <parameter name="child_setup" transfer-ownership="none" scope="async" closure="5">
           <doc xml:space="preserve">function to run in the child just before exec()</doc>
           <type name="SpawnChildSetupFunc" c:type="GSpawnChildSetupFunc"/>
         </parameter>
@@ -52097,7 +52107,7 @@ windows on the right screen, you may want to use #GdkAppLaunchContext,
           <doc xml:space="preserve">flags from #GSpawnFlags</doc>
           <type name="SpawnFlags" c:type="GSpawnFlags"/>
         </parameter>
-        <parameter name="child_setup" transfer-ownership="none" nullable="1" allow-none="1" scope="async" closure="5">
+        <parameter name="child_setup" transfer-ownership="none" scope="async" closure="5">
           <doc xml:space="preserve">function to run in the child just before `exec()`</doc>
           <type name="SpawnChildSetupFunc" c:type="GSpawnChildSetupFunc"/>
         </parameter>
@@ -52383,7 +52393,7 @@ how these functions work on Windows.</doc>
           <doc xml:space="preserve">flags from #GSpawnFlags</doc>
           <type name="SpawnFlags" c:type="GSpawnFlags"/>
         </parameter>
-        <parameter name="child_setup" transfer-ownership="none" nullable="1" allow-none="1" scope="async" closure="5">
+        <parameter name="child_setup" transfer-ownership="none" scope="async" closure="5">
           <doc xml:space="preserve">function to run in the child just before exec()</doc>
           <type name="SpawnChildSetupFunc" c:type="GSpawnChildSetupFunc"/>
         </parameter>
@@ -53472,7 +53482,7 @@ the strsignal() function.</doc>
         </parameter>
       </parameters>
     </function>
-    <function name="strsplit" c:identifier="g_strsplit" introspectable="0">
+    <function name="strsplit" c:identifier="g_strsplit">
       <doc xml:space="preserve">Splits a string into a maximum of @max_tokens pieces, using the given
 @delimiter. If @max_tokens is reached, the remainder of @string is
 appended to the last token.
@@ -53487,9 +53497,9 @@ special case is that being able to represent an empty vector is typically
 more useful than consistent handling of empty elements. If you do need
 to represent empty elements, you'll need to check for the empty string
 before calling g_strsplit().</doc>
-      <return-value>
-        <doc xml:space="preserve">a newly-allocated %NULL-terminated array of strings. Use
-   g_strfreev() to free it.</doc>
+      <return-value transfer-ownership="full">
+        <doc xml:space="preserve">a newly-allocated %NULL-terminated array of
+   strings. Use g_strfreev() to free it.</doc>
         <array c:type="gchar**">
           <type name="utf8"/>
         </array>
@@ -53512,7 +53522,7 @@ before calling g_strsplit().</doc>
         </parameter>
       </parameters>
     </function>
-    <function name="strsplit_set" c:identifier="g_strsplit_set" version="2.4" introspectable="0">
+    <function name="strsplit_set" c:identifier="g_strsplit_set" version="2.4">
       <doc xml:space="preserve">Splits @string into a number of tokens not containing any of the characters
 in @delimiter. A token is the (possibly empty) longest string that does not
 contain any of the characters in @delimiters. If @max_tokens is reached, the
@@ -53534,9 +53544,9 @@ before calling g_strsplit_set().
 
 Note that this function works on bytes not characters, so it can't be used
 to delimit UTF-8 strings for anything but ASCII characters.</doc>
-      <return-value>
-        <doc xml:space="preserve">a newly-allocated %NULL-terminated array of strings. Use
-   g_strfreev() to free it.</doc>
+      <return-value transfer-ownership="full">
+        <doc xml:space="preserve">a newly-allocated %NULL-terminated array of
+   strings. Use g_strfreev() to free it.</doc>
         <array c:type="gchar**">
           <type name="utf8"/>
         </array>
@@ -54015,7 +54025,12 @@ called with the same type of fixture (the @data_size argument), but varying
         </parameter>
       </parameters>
     </function>
-    <function name="test_disable_crash_reporting" c:identifier="g_test_disable_crash_reporting">
+    <function name="test_disable_crash_reporting" c:identifier="g_test_disable_crash_reporting" version="2.78">
+      <doc xml:space="preserve">Attempt to disable system crash reporting infrastructure.
+
+This function should be called before exercising code paths that are
+expected or intended to crash, to avoid wasting resources in system-wide
+crash collection infrastructure such as systemd-coredump or abrt.</doc>
       <return-value transfer-ownership="none">
         <type name="none" c:type="void"/>
       </return-value>
@@ -56483,7 +56498,7 @@ pointed to by @mirrored_ch.  Otherwise the original character is put.</doc>
           <doc xml:space="preserve">a Unicode character</doc>
           <type name="gunichar" c:type="gunichar"/>
         </parameter>
-        <parameter name="mirrored_ch" transfer-ownership="none">
+        <parameter name="mirrored_ch" direction="out" caller-allocates="0" transfer-ownership="full">
           <doc xml:space="preserve">location to store the mirrored character</doc>
           <type name="gunichar" c:type="gunichar*"/>
         </parameter>
