@@ -553,7 +553,7 @@ A string name/value pair representing a generic attribute.</doc>
         </parameters>
       </function>
     </record>
-    <constant name="BINARY_AGE" value="24911" c:type="ATK_BINARY_AGE" version="2.7.4">
+    <constant name="BINARY_AGE" value="25000" c:type="ATK_BINARY_AGE" version="2.7.4">
       <doc xml:space="preserve">Like atk_get_binary_age(), but from the headers used at
 application compile time, rather than from the library linked
 against at application run time.</doc>
@@ -4537,13 +4537,28 @@ determinations of when components occlude one another.</doc>
         <doc xml:space="preserve">This layer is used for toplevel windows.</doc>
       </member>
     </enumeration>
+    <enumeration name="Live" glib:type-name="AtkLive" glib:get-type="atk_live_get_type" c:type="AtkLive">
+      <doc xml:space="preserve">Enumeration used to indicate a type of live region and how assertive it
+should be in terms of speaking notifications. Currently, this is only used
+for "notification" events, but it may be used for additional purposes
+in the future.</doc>
+      <member name="none" value="0" c:identifier="ATK_LIVE_NONE" glib:nick="none" glib:name="ATK_LIVE_NONE">
+        <doc xml:space="preserve">No live region.</doc>
+      </member>
+      <member name="polite" value="1" c:identifier="ATK_LIVE_POLITE" glib:nick="polite" glib:name="ATK_LIVE_POLITE">
+        <doc xml:space="preserve">This live region should be considered polite.</doc>
+      </member>
+      <member name="assertive" value="2" c:identifier="ATK_LIVE_ASSERTIVE" glib:nick="assertive" glib:name="ATK_LIVE_ASSERTIVE">
+        <doc xml:space="preserve">This live region should be considered assertive.</doc>
+      </member>
+    </enumeration>
     <constant name="MAJOR_VERSION" value="2" c:type="ATK_MAJOR_VERSION" version="2.7.4">
       <doc xml:space="preserve">Like atk_get_major_version(), but from the headers used at
 application compile time, rather than from the library linked
 against at application run time.</doc>
       <type name="gint" c:type="gint"/>
     </constant>
-    <constant name="MICRO_VERSION" value="1" c:type="ATK_MICRO_VERSION" version="2.7.4">
+    <constant name="MICRO_VERSION" value="90" c:type="ATK_MICRO_VERSION" version="2.7.4">
       <doc xml:space="preserve">Like atk_get_micro_version(), but from the headers used at
 application compile time, rather than from the library linked
 against at application run time.</doc>
@@ -5811,7 +5826,9 @@ signal when the cell in the table which has focus changes.</doc>
       </glib:signal>
       <glib:signal name="announcement" when="last" version="2.46">
         <doc xml:space="preserve">The "announcement" signal can be emitted to pass an announcement on to
-be read by a screen reader.</doc>
+be read by a screen reader.
+
+Depcrecated (2.50): Use AtkObject::notification instead.</doc>
         <return-value transfer-ownership="none">
           <type name="none" c:type="void"/>
         </return-value>
@@ -5857,6 +5874,24 @@ focus.</doc>
             <doc xml:space="preserve">a boolean value which indicates whether the object gained
 or lost focus.</doc>
             <type name="gboolean" c:type="gboolean"/>
+          </parameter>
+        </parameters>
+      </glib:signal>
+      <glib:signal name="notification" when="last" version="2.50">
+        <doc xml:space="preserve">The "notification" signal can be emitted to pass an announcement on to
+be read by a screen reader.</doc>
+        <return-value transfer-ownership="none">
+          <type name="none" c:type="void"/>
+        </return-value>
+        <parameters>
+          <parameter name="arg1" transfer-ownership="none">
+            <doc xml:space="preserve">the text to be announced.</doc>
+            <type name="utf8" c:type="gchar*"/>
+          </parameter>
+          <parameter name="arg2" transfer-ownership="none">
+            <doc xml:space="preserve">an #AtkLive specifying the politeness of the notification.
+Should be either ATK_LIVE_POLITE or ATK_LIVE_ASSERTIVE.</doc>
+            <type name="gint" c:type="gint"/>
           </parameter>
         </parameters>
       </glib:signal>
