@@ -841,6 +841,99 @@ Adding this node has no visual effect.</doc>
         </parameters>
       </method>
     </class>
+    <class name="FillNode" c:symbol-prefix="fill_node" c:type="GskFillNode" version="4.14" parent="RenderNode" glib:type-name="GskFillNode" glib:get-type="gsk_fill_node_get_type" glib:fundamental="1">
+      <doc xml:space="preserve">A render node filling the area given by [struct@Gsk.Path]
+and [enum@Gsk.FillRule] with the child node.</doc>
+      <constructor name="new" c:identifier="gsk_fill_node_new" version="4.14">
+        <doc xml:space="preserve">Creates a `GskRenderNode` that will fill the @child in the area
+given by @path and @fill_rule.</doc>
+        <return-value transfer-ownership="none">
+          <doc xml:space="preserve">A new `GskRenderNode`</doc>
+          <type name="FillNode" c:type="GskRenderNode*"/>
+        </return-value>
+        <parameters>
+          <parameter name="child" transfer-ownership="none">
+            <doc xml:space="preserve">The node to fill the area with</doc>
+            <type name="RenderNode" c:type="GskRenderNode*"/>
+          </parameter>
+          <parameter name="path" transfer-ownership="none">
+            <doc xml:space="preserve">The path describing the area to fill</doc>
+            <type name="Path" c:type="GskPath*"/>
+          </parameter>
+          <parameter name="fill_rule" transfer-ownership="none">
+            <doc xml:space="preserve">The fill rule to use</doc>
+            <type name="FillRule" c:type="GskFillRule"/>
+          </parameter>
+        </parameters>
+      </constructor>
+      <method name="get_child" c:identifier="gsk_fill_node_get_child" version="4.14">
+        <doc xml:space="preserve">Gets the child node that is getting drawn by the given @node.</doc>
+        <return-value transfer-ownership="none">
+          <doc xml:space="preserve">The child that is getting drawn</doc>
+          <type name="RenderNode" c:type="GskRenderNode*"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="node" transfer-ownership="none">
+            <doc xml:space="preserve">a fill `GskRenderNode`</doc>
+            <type name="FillNode" c:type="const GskRenderNode*"/>
+          </instance-parameter>
+        </parameters>
+      </method>
+      <method name="get_fill_rule" c:identifier="gsk_fill_node_get_fill_rule" version="4.14">
+        <doc xml:space="preserve">Retrieves the fill rule used to determine how the path is filled.</doc>
+        <return-value transfer-ownership="none">
+          <doc xml:space="preserve">a `GskFillRule`</doc>
+          <type name="FillRule" c:type="GskFillRule"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="node" transfer-ownership="none">
+            <doc xml:space="preserve">a fill `GskRenderNode`</doc>
+            <type name="FillNode" c:type="const GskRenderNode*"/>
+          </instance-parameter>
+        </parameters>
+      </method>
+      <method name="get_path" c:identifier="gsk_fill_node_get_path" version="4.14">
+        <doc xml:space="preserve">Retrieves the path used to describe the area filled with the contents of
+the @node.</doc>
+        <return-value transfer-ownership="none">
+          <doc xml:space="preserve">a `GskPath`</doc>
+          <type name="Path" c:type="GskPath*"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="node" transfer-ownership="none">
+            <doc xml:space="preserve">a fill `GskRenderNode`</doc>
+            <type name="FillNode" c:type="const GskRenderNode*"/>
+          </instance-parameter>
+        </parameters>
+      </method>
+    </class>
+    <enumeration name="FillRule" version="4.14" glib:type-name="GskFillRule" glib:get-type="gsk_fill_rule_get_type" c:type="GskFillRule">
+      <doc xml:space="preserve">`GskFillRule` is used to select how paths are filled.
+
+Whether or not a point is included in the fill is determined by taking
+a ray from that point to infinity and looking at intersections with the
+path. The ray can be in any direction, as long as it doesn't pass through
+the end point of a segment or have a tricky intersection such as
+intersecting tangent to the path.
+
+(Note that filling is not actually implemented in this way. This
+is just a description of the rule that is applied.)
+
+New entries may be added in future versions.</doc>
+      <member name="winding" value="0" c:identifier="GSK_FILL_RULE_WINDING" glib:nick="winding" glib:name="GSK_FILL_RULE_WINDING">
+        <doc xml:space="preserve">If the path crosses the ray from
+  left-to-right, counts +1. If the path crosses the ray
+  from right to left, counts -1. (Left and right are determined
+  from the perspective of looking along the ray from the starting
+  point.) If the total count is non-zero, the point will be filled.</doc>
+      </member>
+      <member name="even_odd" value="1" c:identifier="GSK_FILL_RULE_EVEN_ODD" glib:nick="even-odd" glib:name="GSK_FILL_RULE_EVEN_ODD">
+        <doc xml:space="preserve">Counts the total number of
+  intersections, without regard to the orientation of the contour. If
+  the total number of intersections is odd, the point will be
+  filled.</doc>
+      </member>
+    </enumeration>
     <class name="GLRenderer" c:symbol-prefix="gl_renderer" c:type="GskGLRenderer" parent="Renderer" glib:type-name="GskGLRenderer" glib:get-type="gsk_gl_renderer_get_type" glib:type-struct="GLRendererClass">
       <constructor name="new" c:identifier="gsk_gl_renderer_new" version="4.2">
         <doc xml:space="preserve">Creates a new `GskRenderer` using the new OpenGL renderer.</doc>
@@ -1736,6 +1829,54 @@ into the box given by @outline.</doc>
         </parameters>
       </method>
     </class>
+    <enumeration name="LineCap" version="4.14" glib:type-name="GskLineCap" glib:get-type="gsk_line_cap_get_type" c:type="GskLineCap">
+      <doc xml:space="preserve">Specifies how to render the start and end points of contours or
+dashes when stroking.
+
+The default line cap style is `GSK_LINE_CAP_BUTT`.
+
+&lt;picture&gt;
+  &lt;source srcset="caps-dark.png" media="(prefers-color-scheme: dark)"&gt;
+  &lt;img alt="Line Cap Styles" src="caps-light.png"&gt;
+&lt;/picture&gt;
+
+New entries may be added in future versions.</doc>
+      <member name="butt" value="0" c:identifier="GSK_LINE_CAP_BUTT" glib:nick="butt" glib:name="GSK_LINE_CAP_BUTT">
+        <doc xml:space="preserve">Start and stop the line exactly at the start
+  and end point</doc>
+      </member>
+      <member name="round" value="1" c:identifier="GSK_LINE_CAP_ROUND" glib:nick="round" glib:name="GSK_LINE_CAP_ROUND">
+        <doc xml:space="preserve">Use a round ending, the center of the circle
+  is the start or end point</doc>
+      </member>
+      <member name="square" value="2" c:identifier="GSK_LINE_CAP_SQUARE" glib:nick="square" glib:name="GSK_LINE_CAP_SQUARE">
+        <doc xml:space="preserve">use squared ending, the center of the square
+  is the start or end point</doc>
+      </member>
+    </enumeration>
+    <enumeration name="LineJoin" version="4.14" glib:type-name="GskLineJoin" glib:get-type="gsk_line_join_get_type" c:type="GskLineJoin">
+      <doc xml:space="preserve">Specifies how to render the junction of two lines when stroking.
+
+The default line join style is `GSK_LINE_JOIN_MITER`.
+
+&lt;picture&gt;
+  &lt;source srcset="join-dark.png" media="(prefers-color-scheme: dark)"&gt;
+  &lt;img alt="Line Join Styles" src="join-light.png"&gt;
+&lt;/picture&gt;
+
+New entries may be added in future versions.</doc>
+      <member name="miter" value="0" c:identifier="GSK_LINE_JOIN_MITER" glib:nick="miter" glib:name="GSK_LINE_JOIN_MITER">
+        <doc xml:space="preserve">Use a sharp angled corner</doc>
+      </member>
+      <member name="round" value="1" c:identifier="GSK_LINE_JOIN_ROUND" glib:nick="round" glib:name="GSK_LINE_JOIN_ROUND">
+        <doc xml:space="preserve">Use a round join, the center of the circle is
+  the join point</doc>
+      </member>
+      <member name="bevel" value="2" c:identifier="GSK_LINE_JOIN_BEVEL" glib:nick="bevel" glib:name="GSK_LINE_JOIN_BEVEL">
+        <doc xml:space="preserve">use a cut-off join, the join is cut off at half
+  the line width from the joint point</doc>
+      </member>
+    </enumeration>
     <class name="LinearGradientNode" c:symbol-prefix="linear_gradient_node" c:type="GskLinearGradientNode" parent="RenderNode" glib:type-name="GskLinearGradientNode" glib:get-type="gsk_linear_gradient_node_get_type" glib:fundamental="1">
       <doc xml:space="preserve">A render node for a linear gradient.</doc>
       <constructor name="new" c:identifier="gsk_linear_gradient_node_new">
@@ -2135,6 +2276,1136 @@ during node deserialization.</doc>
         <doc xml:space="preserve">the position in the line, as characters</doc>
         <type name="gsize" c:type="gsize"/>
       </field>
+    </record>
+    <record name="Path" c:type="GskPath" opaque="1" version="4.14" glib:type-name="GskPath" glib:get-type="gsk_path_get_type" c:symbol-prefix="path">
+      <doc xml:space="preserve">A `GskPath` describes lines and curves that are more complex
+than simple rectangles.
+
+Paths can used for rendering (filling or stroking) and for animations
+(e.g. as trajectories).
+
+`GskPath` is an immutable, opaque, reference-counted struct.
+After creation, you cannot change the types it represents. Instead,
+new `GskPath` objects have to be created. The [struct@Gsk.PathBuilder]
+structure is meant to help in this endeavor.
+
+Conceptually, a path consists of zero or more contours (continous, connected
+curves), each of which may or may not be closed. Contours are typically
+constructed from B&#xE9;zier segments.
+
+&lt;picture&gt;
+  &lt;source srcset="path-dark.png" media="(prefers-color-scheme: dark)"&gt;
+  &lt;img alt="A Path" src="path-light.png"&gt;
+&lt;/picture&gt;</doc>
+      <method name="foreach" c:identifier="gsk_path_foreach" version="4.14">
+        <doc xml:space="preserve">Calls @func for every operation of the path.
+
+Note that this only approximates @self, because paths can contain
+optimizations for various specialized contours, and depending on
+the @flags, the path may be decomposed into simpler curves than
+the ones that it contained originally.</doc>
+        <return-value transfer-ownership="none">
+          <doc xml:space="preserve">`FALSE` if @func returned FALSE`, `TRUE` otherwise.</doc>
+          <type name="gboolean" c:type="gboolean"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="self" transfer-ownership="none">
+            <doc xml:space="preserve">a `GskPath`</doc>
+            <type name="Path" c:type="GskPath*"/>
+          </instance-parameter>
+          <parameter name="flags" transfer-ownership="none">
+            <doc xml:space="preserve">flags to pass to the foreach function. See [flags@Gsk.PathForeachFlags]
+  for details about flags</doc>
+            <type name="PathForeachFlags" c:type="GskPathForeachFlags"/>
+          </parameter>
+          <parameter name="func" transfer-ownership="none" scope="call" closure="2">
+            <doc xml:space="preserve">the function to call for operations</doc>
+            <type name="PathForeachFunc" c:type="GskPathForeachFunc"/>
+          </parameter>
+          <parameter name="user_data" transfer-ownership="none" nullable="1" allow-none="1">
+            <doc xml:space="preserve">user data passed to @func</doc>
+            <type name="gpointer" c:type="gpointer"/>
+          </parameter>
+        </parameters>
+      </method>
+      <method name="get_bounds" c:identifier="gsk_path_get_bounds" version="4.14">
+        <doc xml:space="preserve">Computes the bounds of the given path.
+
+The returned bounds may be larger than necessary, because this
+function aims to be fast, not accurate. The bounds are guaranteed
+to contain the path.
+
+It is possible that the returned rectangle has 0 width and/or height.
+This can happen when the path only describes a point or an
+axis-aligned line.
+
+If the path is empty, `FALSE` is returned and @bounds are set to
+graphene_rect_zero(). This is different from the case where the path
+is a single point at the origin, where the @bounds will also be set to
+the zero rectangle but 0 will be returned.</doc>
+        <return-value transfer-ownership="none">
+          <doc xml:space="preserve">`TRUE` if the path has bounds, `FALSE` if the path is known
+  to be empty and have no bounds.</doc>
+          <type name="gboolean" c:type="gboolean"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="self" transfer-ownership="none">
+            <doc xml:space="preserve">a `GskPath`</doc>
+            <type name="Path" c:type="GskPath*"/>
+          </instance-parameter>
+          <parameter name="bounds" direction="out" caller-allocates="1" transfer-ownership="none">
+            <doc xml:space="preserve">the bounds of the given path</doc>
+            <type name="Graphene.Rect" c:type="graphene_rect_t*"/>
+          </parameter>
+        </parameters>
+      </method>
+      <method name="get_closest_point" c:identifier="gsk_path_get_closest_point" version="4.14">
+        <doc xml:space="preserve">Computes the closest point on the path to the given point
+and sets the @result to it.
+
+If there is no point closer than the given threshold,
+`FALSE` is returned.</doc>
+        <return-value transfer-ownership="none">
+          <doc xml:space="preserve">`TRUE` if @point was set to the closest point
+  on @self, `FALSE` if no point is closer than @threshold</doc>
+          <type name="gboolean" c:type="gboolean"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="self" transfer-ownership="none">
+            <doc xml:space="preserve">a `GskPath`</doc>
+            <type name="Path" c:type="GskPath*"/>
+          </instance-parameter>
+          <parameter name="point" transfer-ownership="none">
+            <doc xml:space="preserve">the point</doc>
+            <type name="Graphene.Point" c:type="const graphene_point_t*"/>
+          </parameter>
+          <parameter name="threshold" transfer-ownership="none">
+            <doc xml:space="preserve">maximum allowed distance</doc>
+            <type name="gfloat" c:type="float"/>
+          </parameter>
+          <parameter name="result" direction="out" caller-allocates="1" transfer-ownership="none">
+            <doc xml:space="preserve">return location for the closest point</doc>
+            <type name="PathPoint" c:type="GskPathPoint*"/>
+          </parameter>
+        </parameters>
+      </method>
+      <method name="get_end_point" c:identifier="gsk_path_get_end_point" version="4.14">
+        <doc xml:space="preserve">Gets the end point of the path.
+
+An empty path has no points, so `FALSE`
+is returned in this case.</doc>
+        <return-value transfer-ownership="none">
+          <doc xml:space="preserve">`TRUE` if @result was filled</doc>
+          <type name="gboolean" c:type="gboolean"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="self" transfer-ownership="none">
+            <doc xml:space="preserve">a `GskPath`</doc>
+            <type name="Path" c:type="GskPath*"/>
+          </instance-parameter>
+          <parameter name="result" direction="out" caller-allocates="1" transfer-ownership="none">
+            <doc xml:space="preserve">return location for point</doc>
+            <type name="PathPoint" c:type="GskPathPoint*"/>
+          </parameter>
+        </parameters>
+      </method>
+      <method name="get_start_point" c:identifier="gsk_path_get_start_point" version="4.14">
+        <doc xml:space="preserve">Gets the start point of the path.
+
+An empty path has no points, so `FALSE`
+is returned in this case.</doc>
+        <return-value transfer-ownership="none">
+          <doc xml:space="preserve">`TRUE` if @result was filled</doc>
+          <type name="gboolean" c:type="gboolean"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="self" transfer-ownership="none">
+            <doc xml:space="preserve">a `GskPath`</doc>
+            <type name="Path" c:type="GskPath*"/>
+          </instance-parameter>
+          <parameter name="result" direction="out" caller-allocates="1" transfer-ownership="none">
+            <doc xml:space="preserve">return location for point</doc>
+            <type name="PathPoint" c:type="GskPathPoint*"/>
+          </parameter>
+        </parameters>
+      </method>
+      <method name="get_stroke_bounds" c:identifier="gsk_path_get_stroke_bounds" version="4.14">
+        <doc xml:space="preserve">Computes the bounds for stroking the given path with the
+parameters in @stroke.
+
+The returned bounds may be larger than necessary, because this
+function aims to be fast, not accurate. The bounds are guaranteed
+to contain the area affected by the stroke, including protrusions
+like miters.</doc>
+        <return-value transfer-ownership="none">
+          <doc xml:space="preserve">`TRUE` if the path has bounds, `FALSE` if the path is known
+  to be empty and have no bounds.</doc>
+          <type name="gboolean" c:type="gboolean"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="self" transfer-ownership="none">
+            <doc xml:space="preserve">a #GtkPath</doc>
+            <type name="Path" c:type="GskPath*"/>
+          </instance-parameter>
+          <parameter name="stroke" transfer-ownership="none">
+            <doc xml:space="preserve">stroke parameters</doc>
+            <type name="Stroke" c:type="const GskStroke*"/>
+          </parameter>
+          <parameter name="bounds" direction="out" caller-allocates="1" transfer-ownership="none">
+            <doc xml:space="preserve">the bounds to fill in</doc>
+            <type name="Graphene.Rect" c:type="graphene_rect_t*"/>
+          </parameter>
+        </parameters>
+      </method>
+      <method name="in_fill" c:identifier="gsk_path_in_fill" version="4.14">
+        <doc xml:space="preserve">Returns whether the given point is inside the area
+that would be affected if the path was filled according
+to @fill_rule.
+
+Note that this function assumes that filling a contour
+implicitly closes it.</doc>
+        <return-value transfer-ownership="none">
+          <doc xml:space="preserve">`TRUE` if @point is inside</doc>
+          <type name="gboolean" c:type="gboolean"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="self" transfer-ownership="none">
+            <doc xml:space="preserve">a `GskPath`</doc>
+            <type name="Path" c:type="GskPath*"/>
+          </instance-parameter>
+          <parameter name="point" transfer-ownership="none">
+            <doc xml:space="preserve">the point to test</doc>
+            <type name="Graphene.Point" c:type="const graphene_point_t*"/>
+          </parameter>
+          <parameter name="fill_rule" transfer-ownership="none">
+            <doc xml:space="preserve">the fill rule to follow</doc>
+            <type name="FillRule" c:type="GskFillRule"/>
+          </parameter>
+        </parameters>
+      </method>
+      <method name="is_closed" c:identifier="gsk_path_is_closed" version="4.14">
+        <doc xml:space="preserve">Returns if the path represents a single closed
+contour.</doc>
+        <return-value transfer-ownership="none">
+          <doc xml:space="preserve">`TRUE` if the path is closed</doc>
+          <type name="gboolean" c:type="gboolean"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="self" transfer-ownership="none">
+            <doc xml:space="preserve">a `GskPath`</doc>
+            <type name="Path" c:type="GskPath*"/>
+          </instance-parameter>
+        </parameters>
+      </method>
+      <method name="is_empty" c:identifier="gsk_path_is_empty" version="4.14">
+        <doc xml:space="preserve">Checks if the path is empty, i.e. contains no lines or curves.</doc>
+        <return-value transfer-ownership="none">
+          <doc xml:space="preserve">`TRUE` if the path is empty</doc>
+          <type name="gboolean" c:type="gboolean"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="self" transfer-ownership="none">
+            <doc xml:space="preserve">a `GskPath`</doc>
+            <type name="Path" c:type="GskPath*"/>
+          </instance-parameter>
+        </parameters>
+      </method>
+      <method name="point_get_curvature" c:identifier="gsk_path_point_get_curvature" version="4.14">
+        <doc xml:space="preserve">Calculates the curvature of the path at the point.
+
+Optionally, returns the center of the osculating circle as well.
+
+If the curvature is infinite (at line segments), zero is returned,
+and @center is not modified.</doc>
+        <return-value transfer-ownership="none">
+          <doc xml:space="preserve">The curvature of the path at the given point</doc>
+          <type name="gfloat" c:type="float"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="path" transfer-ownership="none">
+            <doc xml:space="preserve">a `GskPath`</doc>
+            <type name="Path" c:type="GskPath*"/>
+          </instance-parameter>
+          <parameter name="point" transfer-ownership="none">
+            <doc xml:space="preserve">a `GskPathPoint` on @path</doc>
+            <type name="PathPoint" c:type="const GskPathPoint*"/>
+          </parameter>
+          <parameter name="center" direction="out" caller-allocates="1" transfer-ownership="none" nullable="1">
+            <doc xml:space="preserve">Return location for
+  the center of the osculating circle</doc>
+            <type name="Graphene.Point" c:type="graphene_point_t*"/>
+          </parameter>
+        </parameters>
+      </method>
+      <method name="point_get_position" c:identifier="gsk_path_point_get_position" version="4.14">
+        <doc xml:space="preserve">Gets the position of the point.</doc>
+        <return-value transfer-ownership="none">
+          <type name="none" c:type="void"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="path" transfer-ownership="none">
+            <doc xml:space="preserve">a `GskPath`</doc>
+            <type name="Path" c:type="GskPath*"/>
+          </instance-parameter>
+          <parameter name="point" transfer-ownership="none">
+            <doc xml:space="preserve">a `GskPathPoint` on @path</doc>
+            <type name="PathPoint" c:type="const GskPathPoint*"/>
+          </parameter>
+          <parameter name="position" direction="out" caller-allocates="1" transfer-ownership="none">
+            <doc xml:space="preserve">Return location for
+  the coordinates of the point</doc>
+            <type name="Graphene.Point" c:type="graphene_point_t*"/>
+          </parameter>
+        </parameters>
+      </method>
+      <method name="point_get_tangent" c:identifier="gsk_path_point_get_tangent" version="4.14">
+        <doc xml:space="preserve">Gets the tangent of the path at the point.
+
+Note that certain points on a path may not have a single
+tangent, such as sharp turns. At such points, there are
+two tangents -- the direction of the path going into the
+point, and the direction coming out of it. The @direction
+argument lets you choose which one to get.</doc>
+        <return-value transfer-ownership="none">
+          <type name="none" c:type="void"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="path" transfer-ownership="none">
+            <doc xml:space="preserve">a `GskPath`</doc>
+            <type name="Path" c:type="GskPath*"/>
+          </instance-parameter>
+          <parameter name="point" transfer-ownership="none">
+            <doc xml:space="preserve">a `GskPathPoint` on @path</doc>
+            <type name="PathPoint" c:type="const GskPathPoint*"/>
+          </parameter>
+          <parameter name="direction" transfer-ownership="none">
+            <doc xml:space="preserve">the direction for which to return the tangent</doc>
+            <type name="PathDirection" c:type="GskPathDirection"/>
+          </parameter>
+          <parameter name="tangent" direction="out" caller-allocates="1" transfer-ownership="none">
+            <doc xml:space="preserve">Return location for
+  the tangent at the point</doc>
+            <type name="Graphene.Vec2" c:type="graphene_vec2_t*"/>
+          </parameter>
+        </parameters>
+      </method>
+      <method name="print" c:identifier="gsk_path_print" version="4.14">
+        <doc xml:space="preserve">Converts @self into a human-readable string representation suitable
+for printing.
+
+The string is compatible with
+[SVG path syntax](https://www.w3.org/TR/SVG11/paths.html#PathData).</doc>
+        <return-value transfer-ownership="none">
+          <type name="none" c:type="void"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="self" transfer-ownership="none">
+            <doc xml:space="preserve">a `GskPath`</doc>
+            <type name="Path" c:type="GskPath*"/>
+          </instance-parameter>
+          <parameter name="string" transfer-ownership="none">
+            <doc xml:space="preserve">The string to print into</doc>
+            <type name="GLib.String" c:type="GString*"/>
+          </parameter>
+        </parameters>
+      </method>
+      <method name="ref" c:identifier="gsk_path_ref" version="4.14">
+        <doc xml:space="preserve">Increases the reference count of a `GskPath` by one.</doc>
+        <return-value transfer-ownership="full">
+          <doc xml:space="preserve">the passed in `GskPath`.</doc>
+          <type name="Path" c:type="GskPath*"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="self" transfer-ownership="none">
+            <doc xml:space="preserve">a `GskPath`</doc>
+            <type name="Path" c:type="GskPath*"/>
+          </instance-parameter>
+        </parameters>
+      </method>
+      <method name="to_cairo" c:identifier="gsk_path_to_cairo" version="4.14">
+        <doc xml:space="preserve">Appends the given @path to the given cairo context for drawing
+with Cairo.
+
+This may cause some suboptimal conversions to be performed as
+Cairo does not support all features of `GskPath`.
+
+This function does not clear the existing Cairo path. Call
+cairo_new_path() if you want this.</doc>
+        <return-value transfer-ownership="none">
+          <type name="none" c:type="void"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="self" transfer-ownership="none">
+            <doc xml:space="preserve">a `GskPath`</doc>
+            <type name="Path" c:type="GskPath*"/>
+          </instance-parameter>
+          <parameter name="cr" transfer-ownership="none">
+            <doc xml:space="preserve">a cairo context</doc>
+            <type name="cairo.Context" c:type="cairo_t*"/>
+          </parameter>
+        </parameters>
+      </method>
+      <method name="to_string" c:identifier="gsk_path_to_string" version="4.14">
+        <doc xml:space="preserve">Converts the path into a string that is suitable for printing.
+
+You can use this function in a debugger to get a quick overview
+of the path.
+
+This is a wrapper around [method@Gsk.Path.print], see that function
+for details.</doc>
+        <return-value transfer-ownership="full">
+          <doc xml:space="preserve">A new string for @self</doc>
+          <type name="utf8" c:type="char*"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="self" transfer-ownership="none">
+            <doc xml:space="preserve">a `GskPath`</doc>
+            <type name="Path" c:type="GskPath*"/>
+          </instance-parameter>
+        </parameters>
+      </method>
+      <method name="unref" c:identifier="gsk_path_unref" version="4.14">
+        <doc xml:space="preserve">Decreases the reference count of a `GskPath` by one.
+
+If the resulting reference count is zero, frees the path.</doc>
+        <return-value transfer-ownership="none">
+          <type name="none" c:type="void"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="self" transfer-ownership="none">
+            <doc xml:space="preserve">a `GskPath`</doc>
+            <type name="Path" c:type="GskPath*"/>
+          </instance-parameter>
+        </parameters>
+      </method>
+      <function name="parse" c:identifier="gsk_path_parse" version="4.14">
+        <doc xml:space="preserve">This is a convenience function that constructs a `GskPath`
+from a serialized form.
+
+The string is expected to be in
+[SVG path syntax](https://www.w3.org/TR/SVG11/paths.html#PathData),
+as e.g. produced by [method@Gsk.Path.to_string].
+
+A high-level summary of the syntax:
+
+- `M x y` Move to `(x, y)`
+- `L x y` Add a line from the current point to `(x, y)`
+- `Q x1 y1 x2 y2` Add a quadratic B&#xE9;zier from the current point to `(x2, y2)`, with control point `(x1, y1)`
+- `C x1 y1 x2 y2 x3 y3` Add a cubic B&#xE9;zier from the current point to `(x3, y3)`, with control points `(x1, y1)` and `(x2, y2)`
+- `Z` Close the contour by drawing a line back to the start point
+- `H x` Add a horizontal line from the current point to the given x value
+- `V y` Add a vertical line from the current point to the given y value
+- `T x2 y2` Add a quadratic B&#xE9;zier, using the reflection of the previous segments' control point as control point
+- `S x2 y2 x3 y3` Add a cubic B&#xE9;zier, using the reflection of the previous segments' second control point as first control point
+- `A rx ry r l s x y` Add an elliptical arc from the current point to `(x, y)` with radii rx and ry. See the SVG documentation for how the other parameters influence the arc.
+
+All the commands have lowercase variants that interpret coordinates
+relative to the current point.</doc>
+        <return-value transfer-ownership="full" nullable="1">
+          <doc xml:space="preserve">a new `GskPath`, or `NULL`
+  if @string could not be parsed</doc>
+          <type name="Path" c:type="GskPath*"/>
+        </return-value>
+        <parameters>
+          <parameter name="string" transfer-ownership="none">
+            <doc xml:space="preserve">a string</doc>
+            <type name="utf8" c:type="const char*"/>
+          </parameter>
+        </parameters>
+      </function>
+    </record>
+    <record name="PathBuilder" c:type="GskPathBuilder" opaque="1" version="4.14" glib:type-name="GskPathBuilder" glib:get-type="gsk_path_builder_get_type" c:symbol-prefix="path_builder">
+      <doc xml:space="preserve">`GskPathBuilder` is an auxiliary object for constructing
+`GskPath` objects.
+
+A path is constructed like this:
+
+|[&lt;!-- language="C" --&gt;
+GskPath *
+construct_path (void)
+{
+  GskPathBuilder *builder;
+
+  builder = gsk_path_builder_new ();
+
+  // add contours to the path here
+
+  return gsk_path_builder_free_to_path (builder);
+]|
+
+Adding contours to the path can be done in two ways.
+The easiest option is to use the `gsk_path_builder_add_*` group
+of functions that add predefined contours to the current path,
+either common shapes like [method@Gsk.PathBuilder.add_circle]
+or by adding from other paths like [method@Gsk.PathBuilder.add_path].
+
+The `gsk_path_builder_add_*` methods always add complete contours,
+and do not use or modify the current point.
+
+The other option is to define each line and curve manually with
+the `gsk_path_builder_*_to` group of functions. You start with
+a call to [method@Gsk.PathBuilder.move_to] to set the starting point
+and then use multiple calls to any of the drawing functions to
+move the pen along the plane. Once you are done, you can call
+[method@Gsk.PathBuilder.close] to close the path by connecting it
+back with a line to the starting point.
+
+This is similar for how paths are drawn in Cairo.</doc>
+      <constructor name="new" c:identifier="gsk_path_builder_new" version="4.14">
+        <doc xml:space="preserve">Create a new `GskPathBuilder` object.
+
+The resulting builder would create an empty `GskPath`.
+Use addition functions to add types to it.</doc>
+        <return-value transfer-ownership="full">
+          <doc xml:space="preserve">a new `GskPathBuilder`</doc>
+          <type name="PathBuilder" c:type="GskPathBuilder*"/>
+        </return-value>
+      </constructor>
+      <method name="add_cairo_path" c:identifier="gsk_path_builder_add_cairo_path" version="4.14">
+        <doc xml:space="preserve">Adds a Cairo path to the builder.
+
+You can use cairo_copy_path() to access the path
+from a Cairo context.</doc>
+        <return-value transfer-ownership="none">
+          <type name="none" c:type="void"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="self" transfer-ownership="none">
+            <doc xml:space="preserve">a `GskPathBuilder`</doc>
+            <type name="PathBuilder" c:type="GskPathBuilder*"/>
+          </instance-parameter>
+          <parameter name="path" transfer-ownership="none">
+            <type name="cairo.Path" c:type="const cairo_path_t*"/>
+          </parameter>
+        </parameters>
+      </method>
+      <method name="add_circle" c:identifier="gsk_path_builder_add_circle" version="4.14">
+        <doc xml:space="preserve">Adds a circle with the @center and @radius.</doc>
+        <return-value transfer-ownership="none">
+          <type name="none" c:type="void"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="self" transfer-ownership="none">
+            <doc xml:space="preserve">a `GskPathBuilder`</doc>
+            <type name="PathBuilder" c:type="GskPathBuilder*"/>
+          </instance-parameter>
+          <parameter name="center" transfer-ownership="none">
+            <doc xml:space="preserve">the center of the circle</doc>
+            <type name="Graphene.Point" c:type="const graphene_point_t*"/>
+          </parameter>
+          <parameter name="radius" transfer-ownership="none">
+            <doc xml:space="preserve">the radius of the circle</doc>
+            <type name="gfloat" c:type="float"/>
+          </parameter>
+        </parameters>
+      </method>
+      <method name="add_layout" c:identifier="gsk_path_builder_add_layout" version="4.14">
+        <doc xml:space="preserve">Adds the outlines for the glyphs in @layout to
+the builder.</doc>
+        <return-value transfer-ownership="none">
+          <type name="none" c:type="void"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="self" transfer-ownership="none">
+            <doc xml:space="preserve">a #GskPathBuilder</doc>
+            <type name="PathBuilder" c:type="GskPathBuilder*"/>
+          </instance-parameter>
+          <parameter name="layout" transfer-ownership="none">
+            <doc xml:space="preserve">the pango layout to add</doc>
+            <type name="Pango.Layout" c:type="PangoLayout*"/>
+          </parameter>
+        </parameters>
+      </method>
+      <method name="add_path" c:identifier="gsk_path_builder_add_path" version="4.14">
+        <doc xml:space="preserve">Appends all of @path to the builder.</doc>
+        <return-value transfer-ownership="none">
+          <type name="none" c:type="void"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="self" transfer-ownership="none">
+            <doc xml:space="preserve">a `GskPathBuilder`</doc>
+            <type name="PathBuilder" c:type="GskPathBuilder*"/>
+          </instance-parameter>
+          <parameter name="path" transfer-ownership="none">
+            <doc xml:space="preserve">the path to append</doc>
+            <type name="Path" c:type="GskPath*"/>
+          </parameter>
+        </parameters>
+      </method>
+      <method name="add_rect" c:identifier="gsk_path_builder_add_rect" version="4.14">
+        <doc xml:space="preserve">Adds @rect as a new contour to the path built by the builder.
+
+If the width or height of the rectangle is negative, the start
+point will be on the right or bottom, respectively.
+
+If the the width or height are 0, the path will be a closed
+horizontal or vertical line. If both are 0, it'll be a closed dot.</doc>
+        <return-value transfer-ownership="none">
+          <type name="none" c:type="void"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="self" transfer-ownership="none">
+            <doc xml:space="preserve">A `GskPathBuilder`</doc>
+            <type name="PathBuilder" c:type="GskPathBuilder*"/>
+          </instance-parameter>
+          <parameter name="rect" transfer-ownership="none">
+            <doc xml:space="preserve">The rectangle to create a path for</doc>
+            <type name="Graphene.Rect" c:type="const graphene_rect_t*"/>
+          </parameter>
+        </parameters>
+      </method>
+      <method name="add_reverse_path" c:identifier="gsk_path_builder_add_reverse_path" version="4.14">
+        <doc xml:space="preserve">Appends all of @path to the builder, in reverse order.</doc>
+        <return-value transfer-ownership="none">
+          <type name="none" c:type="void"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="self" transfer-ownership="none">
+            <doc xml:space="preserve">a `GskPathBuilder`</doc>
+            <type name="PathBuilder" c:type="GskPathBuilder*"/>
+          </instance-parameter>
+          <parameter name="path" transfer-ownership="none">
+            <doc xml:space="preserve">the path to append</doc>
+            <type name="Path" c:type="GskPath*"/>
+          </parameter>
+        </parameters>
+      </method>
+      <method name="add_segment" c:identifier="gsk_path_builder_add_segment" version="4.14">
+        <doc xml:space="preserve">Adds to @self the segment of @path from @start to @end.
+
+If @start is equal to or after @end, the path will first add the
+segment from @start to the end of the path, and then add the segment
+from the beginning to @end. If the path is closed, these segments
+will be connected.
+
+Note that this method always adds a path with the given start point
+and end point. To add a closed path, use [method@Gsk.PathBuilder.add_path].</doc>
+        <return-value transfer-ownership="none">
+          <type name="none" c:type="void"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="self" transfer-ownership="none">
+            <doc xml:space="preserve">a `GskPathBuilder`</doc>
+            <type name="PathBuilder" c:type="GskPathBuilder*"/>
+          </instance-parameter>
+          <parameter name="path" transfer-ownership="none">
+            <doc xml:space="preserve">the `GskPath` to take the segment to</doc>
+            <type name="Path" c:type="GskPath*"/>
+          </parameter>
+          <parameter name="start" transfer-ownership="none">
+            <doc xml:space="preserve">the point on @path to start at</doc>
+            <type name="PathPoint" c:type="const GskPathPoint*"/>
+          </parameter>
+          <parameter name="end" transfer-ownership="none">
+            <doc xml:space="preserve">the point on @path to end at</doc>
+            <type name="PathPoint" c:type="const GskPathPoint*"/>
+          </parameter>
+        </parameters>
+      </method>
+      <method name="close" c:identifier="gsk_path_builder_close" version="4.14">
+        <doc xml:space="preserve">Ends the current contour with a line back to the start point.
+
+Note that this is different from calling [method@Gsk.PathBuilder.line_to]
+with the start point in that the contour will be closed. A closed
+contour behaves different from an open one when stroking its start
+and end point are considered connected, so they will be joined
+via the line join, and not ended with line caps.</doc>
+        <return-value transfer-ownership="none">
+          <type name="none" c:type="void"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="self" transfer-ownership="none">
+            <doc xml:space="preserve">a `GskPathBuilder`</doc>
+            <type name="PathBuilder" c:type="GskPathBuilder*"/>
+          </instance-parameter>
+        </parameters>
+      </method>
+      <method name="cubic_to" c:identifier="gsk_path_builder_cubic_to" version="4.14">
+        <doc xml:space="preserve">Adds a [cubic B&#xE9;zier curve](https://en.wikipedia.org/wiki/B%C3%A9zier_curve)
+from the current point to @x3, @y3 with @x1, @y1 and @x2, @y2 as the control
+points.
+
+After this, @x3, @y3 will be the new current point.</doc>
+        <return-value transfer-ownership="none">
+          <type name="none" c:type="void"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="self" transfer-ownership="none">
+            <doc xml:space="preserve">a `GskPathBuilder`</doc>
+            <type name="PathBuilder" c:type="GskPathBuilder*"/>
+          </instance-parameter>
+          <parameter name="x1" transfer-ownership="none">
+            <doc xml:space="preserve">x coordinate of first control point</doc>
+            <type name="gfloat" c:type="float"/>
+          </parameter>
+          <parameter name="y1" transfer-ownership="none">
+            <doc xml:space="preserve">y coordinate of first control point</doc>
+            <type name="gfloat" c:type="float"/>
+          </parameter>
+          <parameter name="x2" transfer-ownership="none">
+            <doc xml:space="preserve">x coordinate of second control point</doc>
+            <type name="gfloat" c:type="float"/>
+          </parameter>
+          <parameter name="y2" transfer-ownership="none">
+            <doc xml:space="preserve">y coordinate of second control point</doc>
+            <type name="gfloat" c:type="float"/>
+          </parameter>
+          <parameter name="x3" transfer-ownership="none">
+            <doc xml:space="preserve">x coordinate of the end of the curve</doc>
+            <type name="gfloat" c:type="float"/>
+          </parameter>
+          <parameter name="y3" transfer-ownership="none">
+            <doc xml:space="preserve">y coordinate of the end of the curve</doc>
+            <type name="gfloat" c:type="float"/>
+          </parameter>
+        </parameters>
+      </method>
+      <method name="free_to_path" c:identifier="gsk_path_builder_free_to_path" version="4.14" introspectable="0">
+        <doc xml:space="preserve">Creates a new `GskPath` from the current state of the
+given builder, and frees the @builder instance.</doc>
+        <return-value transfer-ownership="full">
+          <doc xml:space="preserve">the newly created `GskPath`
+  with all the contours added to the builder</doc>
+          <type name="Path" c:type="GskPath*"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="self" transfer-ownership="none">
+            <doc xml:space="preserve">a `GskPathBuilder`</doc>
+            <type name="PathBuilder" c:type="GskPathBuilder*"/>
+          </instance-parameter>
+        </parameters>
+      </method>
+      <method name="get_current_point" c:identifier="gsk_path_builder_get_current_point" version="4.14">
+        <doc xml:space="preserve">Gets the current point. The current point is used for relative
+drawing commands and updated after every operation.
+
+When the builder is created, the default current point is set to (0, 0).
+Note that this is different from cairo, which starts out without
+a current point.</doc>
+        <return-value transfer-ownership="none">
+          <doc xml:space="preserve">The current point</doc>
+          <type name="Graphene.Point" c:type="const graphene_point_t*"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="self" transfer-ownership="none">
+            <doc xml:space="preserve">a `GskPathBuilder`</doc>
+            <type name="PathBuilder" c:type="GskPathBuilder*"/>
+          </instance-parameter>
+        </parameters>
+      </method>
+      <method name="line_to" c:identifier="gsk_path_builder_line_to" version="4.14">
+        <doc xml:space="preserve">Draws a line from the current point to @x, @y and makes it
+the new current point.</doc>
+        <return-value transfer-ownership="none">
+          <type name="none" c:type="void"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="self" transfer-ownership="none">
+            <doc xml:space="preserve">a `GskPathBuilder`</doc>
+            <type name="PathBuilder" c:type="GskPathBuilder*"/>
+          </instance-parameter>
+          <parameter name="x" transfer-ownership="none">
+            <doc xml:space="preserve">x coordinate</doc>
+            <type name="gfloat" c:type="float"/>
+          </parameter>
+          <parameter name="y" transfer-ownership="none">
+            <doc xml:space="preserve">y coordinate</doc>
+            <type name="gfloat" c:type="float"/>
+          </parameter>
+        </parameters>
+      </method>
+      <method name="move_to" c:identifier="gsk_path_builder_move_to" version="4.14">
+        <doc xml:space="preserve">Starts a new contour by placing the pen at @x, @y.
+
+If this function is called twice in succession, the first
+call will result in a contour made up of a single point.
+The second call will start a new contour.</doc>
+        <return-value transfer-ownership="none">
+          <type name="none" c:type="void"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="self" transfer-ownership="none">
+            <doc xml:space="preserve">a `GskPathBuilder`</doc>
+            <type name="PathBuilder" c:type="GskPathBuilder*"/>
+          </instance-parameter>
+          <parameter name="x" transfer-ownership="none">
+            <doc xml:space="preserve">x coordinate</doc>
+            <type name="gfloat" c:type="float"/>
+          </parameter>
+          <parameter name="y" transfer-ownership="none">
+            <doc xml:space="preserve">y coordinate</doc>
+            <type name="gfloat" c:type="float"/>
+          </parameter>
+        </parameters>
+      </method>
+      <method name="quad_to" c:identifier="gsk_path_builder_quad_to" version="4.14">
+        <doc xml:space="preserve">Adds a [quadratic B&#xE9;zier curve](https://en.wikipedia.org/wiki/B%C3%A9zier_curve)
+from the current point to @x2, @y2 with @x1, @y1 as the control point.
+
+After this, @x2, @y2 will be the new current point.</doc>
+        <return-value transfer-ownership="none">
+          <type name="none" c:type="void"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="self" transfer-ownership="none">
+            <doc xml:space="preserve">a #GskPathBuilder</doc>
+            <type name="PathBuilder" c:type="GskPathBuilder*"/>
+          </instance-parameter>
+          <parameter name="x1" transfer-ownership="none">
+            <doc xml:space="preserve">x coordinate of control point</doc>
+            <type name="gfloat" c:type="float"/>
+          </parameter>
+          <parameter name="y1" transfer-ownership="none">
+            <doc xml:space="preserve">y coordinate of control point</doc>
+            <type name="gfloat" c:type="float"/>
+          </parameter>
+          <parameter name="x2" transfer-ownership="none">
+            <doc xml:space="preserve">x coordinate of the end of the curve</doc>
+            <type name="gfloat" c:type="float"/>
+          </parameter>
+          <parameter name="y2" transfer-ownership="none">
+            <doc xml:space="preserve">y coordinate of the end of the curve</doc>
+            <type name="gfloat" c:type="float"/>
+          </parameter>
+        </parameters>
+      </method>
+      <method name="ref" c:identifier="gsk_path_builder_ref" version="4.14">
+        <doc xml:space="preserve">Acquires a reference on the given builder.
+
+This function is intended primarily for language bindings.
+`GskPathBuilder` objects should not be kept around.</doc>
+        <return-value transfer-ownership="none">
+          <doc xml:space="preserve">the given `GskPathBuilder` with
+  its reference count increased</doc>
+          <type name="PathBuilder" c:type="GskPathBuilder*"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="self" transfer-ownership="none">
+            <doc xml:space="preserve">a `GskPathBuilder`</doc>
+            <type name="PathBuilder" c:type="GskPathBuilder*"/>
+          </instance-parameter>
+        </parameters>
+      </method>
+      <method name="rel_cubic_to" c:identifier="gsk_path_builder_rel_cubic_to" version="4.14">
+        <doc xml:space="preserve">Adds a [cubic B&#xE9;zier curve](https://en.wikipedia.org/wiki/B%C3%A9zier_curve)
+from the current point to @x3, @y3 with @x1, @y1 and @x2, @y2 as the control
+points. All coordinates are given relative to the current point.
+
+This is the relative version of [method@Gsk.PathBuilder.cubic_to].</doc>
+        <return-value transfer-ownership="none">
+          <type name="none" c:type="void"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="self" transfer-ownership="none">
+            <doc xml:space="preserve">a `GskPathBuilder`</doc>
+            <type name="PathBuilder" c:type="GskPathBuilder*"/>
+          </instance-parameter>
+          <parameter name="x1" transfer-ownership="none">
+            <doc xml:space="preserve">x offset of first control point</doc>
+            <type name="gfloat" c:type="float"/>
+          </parameter>
+          <parameter name="y1" transfer-ownership="none">
+            <doc xml:space="preserve">y offset of first control point</doc>
+            <type name="gfloat" c:type="float"/>
+          </parameter>
+          <parameter name="x2" transfer-ownership="none">
+            <doc xml:space="preserve">x offset of second control point</doc>
+            <type name="gfloat" c:type="float"/>
+          </parameter>
+          <parameter name="y2" transfer-ownership="none">
+            <doc xml:space="preserve">y offset of second control point</doc>
+            <type name="gfloat" c:type="float"/>
+          </parameter>
+          <parameter name="x3" transfer-ownership="none">
+            <doc xml:space="preserve">x offset of the end of the curve</doc>
+            <type name="gfloat" c:type="float"/>
+          </parameter>
+          <parameter name="y3" transfer-ownership="none">
+            <doc xml:space="preserve">y offset of the end of the curve</doc>
+            <type name="gfloat" c:type="float"/>
+          </parameter>
+        </parameters>
+      </method>
+      <method name="rel_line_to" c:identifier="gsk_path_builder_rel_line_to" version="4.14">
+        <doc xml:space="preserve">Draws a line from the current point to a point offset to it by @x, @y
+and makes it the new current point.
+
+This is the relative version of [method@Gsk.PathBuilder.line_to].</doc>
+        <return-value transfer-ownership="none">
+          <type name="none" c:type="void"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="self" transfer-ownership="none">
+            <doc xml:space="preserve">a `GskPathBuilder`</doc>
+            <type name="PathBuilder" c:type="GskPathBuilder*"/>
+          </instance-parameter>
+          <parameter name="x" transfer-ownership="none">
+            <doc xml:space="preserve">x offset</doc>
+            <type name="gfloat" c:type="float"/>
+          </parameter>
+          <parameter name="y" transfer-ownership="none">
+            <doc xml:space="preserve">y offset</doc>
+            <type name="gfloat" c:type="float"/>
+          </parameter>
+        </parameters>
+      </method>
+      <method name="rel_move_to" c:identifier="gsk_path_builder_rel_move_to" version="4.14">
+        <doc xml:space="preserve">Starts a new contour by placing the pen at @x, @y relative to the current
+point.
+
+This is the relative version of [method@Gsk.PathBuilder.move_to].</doc>
+        <return-value transfer-ownership="none">
+          <type name="none" c:type="void"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="self" transfer-ownership="none">
+            <doc xml:space="preserve">a `GskPathBuilder`</doc>
+            <type name="PathBuilder" c:type="GskPathBuilder*"/>
+          </instance-parameter>
+          <parameter name="x" transfer-ownership="none">
+            <doc xml:space="preserve">x offset</doc>
+            <type name="gfloat" c:type="float"/>
+          </parameter>
+          <parameter name="y" transfer-ownership="none">
+            <doc xml:space="preserve">y offset</doc>
+            <type name="gfloat" c:type="float"/>
+          </parameter>
+        </parameters>
+      </method>
+      <method name="rel_quad_to" c:identifier="gsk_path_builder_rel_quad_to" version="4.14">
+        <doc xml:space="preserve">Adds a [quadratic B&#xE9;zier curve](https://en.wikipedia.org/wiki/B%C3%A9zier_curve)
+from the current point to @x2, @y2 with @x1, @y1 the control point.
+
+All coordinates are given relative to the current point.
+
+This is the relative version of [method@Gsk.PathBuilder.quad_to].</doc>
+        <return-value transfer-ownership="none">
+          <type name="none" c:type="void"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="self" transfer-ownership="none">
+            <doc xml:space="preserve">a `GskPathBuilder`</doc>
+            <type name="PathBuilder" c:type="GskPathBuilder*"/>
+          </instance-parameter>
+          <parameter name="x1" transfer-ownership="none">
+            <doc xml:space="preserve">x offset of control point</doc>
+            <type name="gfloat" c:type="float"/>
+          </parameter>
+          <parameter name="y1" transfer-ownership="none">
+            <doc xml:space="preserve">y offset of control point</doc>
+            <type name="gfloat" c:type="float"/>
+          </parameter>
+          <parameter name="x2" transfer-ownership="none">
+            <doc xml:space="preserve">x offset of the end of the curve</doc>
+            <type name="gfloat" c:type="float"/>
+          </parameter>
+          <parameter name="y2" transfer-ownership="none">
+            <doc xml:space="preserve">y offset of the end of the curve</doc>
+            <type name="gfloat" c:type="float"/>
+          </parameter>
+        </parameters>
+      </method>
+      <method name="to_path" c:identifier="gsk_path_builder_to_path" version="4.14">
+        <doc xml:space="preserve">Creates a new `GskPath` from the given builder.
+
+The given `GskPathBuilder` is reset once this function returns;
+you cannot call this function multiple times on the same builder
+instance.
+
+This function is intended primarily for language bindings.
+C code should use [method@Gsk.PathBuilder.free_to_path].</doc>
+        <return-value transfer-ownership="full">
+          <doc xml:space="preserve">the newly created `GskPath`
+  with all the contours added to the builder</doc>
+          <type name="Path" c:type="GskPath*"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="self" transfer-ownership="none">
+            <doc xml:space="preserve">a `GskPathBuilder`</doc>
+            <type name="PathBuilder" c:type="GskPathBuilder*"/>
+          </instance-parameter>
+        </parameters>
+      </method>
+      <method name="unref" c:identifier="gsk_path_builder_unref" version="4.14">
+        <doc xml:space="preserve">Releases a reference on the given builder.</doc>
+        <return-value transfer-ownership="none">
+          <type name="none" c:type="void"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="self" transfer-ownership="none">
+            <doc xml:space="preserve">a `GskPathBuilder`</doc>
+            <type name="PathBuilder" c:type="GskPathBuilder*"/>
+          </instance-parameter>
+        </parameters>
+      </method>
+    </record>
+    <enumeration name="PathDirection" version="4.14" glib:type-name="GskPathDirection" glib:get-type="gsk_path_direction_get_type" c:type="GskPathDirection">
+      <doc xml:space="preserve">The values of the `GskPathDirection` enum are used to pick one
+of the two sides of the path that at a given point on the path.</doc>
+      <member name="start" value="0" c:identifier="GSK_PATH_START" glib:nick="start" glib:name="GSK_PATH_START">
+        <doc xml:space="preserve">The side that leads to the start of the path</doc>
+      </member>
+      <member name="end" value="1" c:identifier="GSK_PATH_END" glib:nick="end" glib:name="GSK_PATH_END">
+        <doc xml:space="preserve">The side that leads to the end of the path</doc>
+      </member>
+    </enumeration>
+    <bitfield name="PathForeachFlags" version="4.14" glib:type-name="GskPathForeachFlags" glib:get-type="gsk_path_foreach_flags_get_type" c:type="GskPathForeachFlags">
+      <doc xml:space="preserve">Flags that can be passed to gsk_path_foreach() to enable additional
+features.
+
+By default, [method@Gsk.Path.foreach] will only emit a path with all operations
+flattened to straight lines to allow for maximum compatibility. The only
+operations emitted will be `GSK_PATH_MOVE`, `GSK_PATH_LINE` and `GSK_PATH_CLOSE`.</doc>
+      <member name="only_lines" value="0" c:identifier="GSK_PATH_FOREACH_ALLOW_ONLY_LINES" glib:nick="only-lines" glib:name="GSK_PATH_FOREACH_ALLOW_ONLY_LINES">
+        <doc xml:space="preserve">The default behavior, only allow lines.</doc>
+      </member>
+      <member name="quad" value="1" c:identifier="GSK_PATH_FOREACH_ALLOW_QUAD" glib:nick="quad" glib:name="GSK_PATH_FOREACH_ALLOW_QUAD">
+        <doc xml:space="preserve">Allow emission of `GSK_PATH_QUAD` operations</doc>
+      </member>
+      <member name="cubic" value="2" c:identifier="GSK_PATH_FOREACH_ALLOW_CUBIC" glib:nick="cubic" glib:name="GSK_PATH_FOREACH_ALLOW_CUBIC">
+        <doc xml:space="preserve">Allow emission of `GSK_PATH_CUBIC` operations.</doc>
+      </member>
+    </bitfield>
+    <callback name="PathForeachFunc" c:type="GskPathForeachFunc">
+      <doc xml:space="preserve">Prototype of the callback to iterate throught the operations of
+a path.</doc>
+      <return-value transfer-ownership="none">
+        <doc xml:space="preserve">%TRUE to continue evaluating the path, %FALSE to
+  immediately abort and not call the function again.</doc>
+        <type name="gboolean" c:type="gboolean"/>
+      </return-value>
+      <parameters>
+        <parameter name="op" transfer-ownership="none">
+          <doc xml:space="preserve">The operation to perform</doc>
+          <type name="PathOperation" c:type="GskPathOperation"/>
+        </parameter>
+        <parameter name="pts" transfer-ownership="none">
+          <doc xml:space="preserve">The points of the operation</doc>
+          <type name="Graphene.Point" c:type="const graphene_point_t*"/>
+        </parameter>
+        <parameter name="n_pts" transfer-ownership="none">
+          <doc xml:space="preserve">The number of points</doc>
+          <type name="gsize" c:type="gsize"/>
+        </parameter>
+        <parameter name="user_data" transfer-ownership="none" nullable="1" allow-none="1" closure="3">
+          <doc xml:space="preserve">The user data provided with the function</doc>
+          <type name="gpointer" c:type="gpointer"/>
+        </parameter>
+      </parameters>
+    </callback>
+    <enumeration name="PathOperation" version="4.14" glib:type-name="GskPathOperation" glib:get-type="gsk_path_operation_get_type" c:type="GskPathOperation">
+      <doc xml:space="preserve">Path operations are used to described segments of a `GskPath`.
+
+More values may be added in the future.</doc>
+      <member name="move" value="0" c:identifier="GSK_PATH_MOVE" glib:nick="move" glib:name="GSK_PATH_MOVE">
+        <doc xml:space="preserve">A move-to operation, with 1 point describing the target point.</doc>
+      </member>
+      <member name="close" value="1" c:identifier="GSK_PATH_CLOSE" glib:nick="close" glib:name="GSK_PATH_CLOSE">
+        <doc xml:space="preserve">A close operation ending the current contour with a line back
+  to the starting point. Two points describe the start and end of the line.</doc>
+      </member>
+      <member name="line" value="2" c:identifier="GSK_PATH_LINE" glib:nick="line" glib:name="GSK_PATH_LINE">
+        <doc xml:space="preserve">A line-to operation, with 2 points describing the start and
+  end point of a straight line.</doc>
+      </member>
+      <member name="quad" value="3" c:identifier="GSK_PATH_QUAD" glib:nick="quad" glib:name="GSK_PATH_QUAD">
+        <doc xml:space="preserve">A curve-to operation describing a quadratic B&#xE9;zier curve
+  with 3 points describing the start point, the control point and the end
+  point of the curve.</doc>
+      </member>
+      <member name="cubic" value="4" c:identifier="GSK_PATH_CUBIC" glib:nick="cubic" glib:name="GSK_PATH_CUBIC">
+        <doc xml:space="preserve">A curve-to operation describing a cubic B&#xE9;zier curve with 4
+  points describing the start point, the two control points and the end point
+  of the curve.</doc>
+      </member>
+    </enumeration>
+    <record name="PathPoint" c:type="GskPathPoint" version="4.14" glib:type-name="GskPathPoint" glib:get-type="gsk_path_point_get_type" c:symbol-prefix="path_point">
+      <doc xml:space="preserve">`GskPathPoint` is an opaque type representing a point on a path.
+
+It can be queried for properties of the path at that point, such as its
+tangent or its curvature.
+
+To obtain a `GskPathPoint`, use [method@Gsk.Path.get_closest_point].
+
+Note that `GskPathPoint` structs are meant to be stack-allocated, and
+don't a reference to the path object they are obtained from. It is the
+callers responsibility to keep a reference to the path as long as the
+`GskPathPoint` is used.</doc>
+      <union name="data" c:type="data">
+        <field name="f" writable="1">
+          <array zero-terminated="0" fixed-size="8">
+            <type name="gfloat" c:type="float"/>
+          </array>
+        </field>
+        <field name="p" writable="1">
+          <array zero-terminated="0" fixed-size="8">
+            <type name="gpointer" c:type="gpointer"/>
+          </array>
+        </field>
+      </union>
+      <method name="compare" c:identifier="gsk_path_point_compare">
+        <doc xml:space="preserve">Returns whether @point1 is before or after @point2.</doc>
+        <return-value transfer-ownership="none">
+          <doc xml:space="preserve">-1 if @point1 is before @point2,
+  1 if @point1 is after @point2,
+  0 if they are equal</doc>
+          <type name="gint" c:type="int"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="point1" transfer-ownership="none">
+            <doc xml:space="preserve">a `GskPathPoint`</doc>
+            <type name="PathPoint" c:type="const GskPathPoint*"/>
+          </instance-parameter>
+          <parameter name="point2" transfer-ownership="none">
+            <doc xml:space="preserve">another `GskPathPoint`</doc>
+            <type name="PathPoint" c:type="const GskPathPoint*"/>
+          </parameter>
+        </parameters>
+      </method>
+      <method name="copy" c:identifier="gsk_path_point_copy">
+        <return-value transfer-ownership="full">
+          <type name="PathPoint" c:type="GskPathPoint*"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="point" transfer-ownership="none">
+            <type name="PathPoint" c:type="GskPathPoint*"/>
+          </instance-parameter>
+        </parameters>
+      </method>
+      <method name="equal" c:identifier="gsk_path_point_equal">
+        <doc xml:space="preserve">Returns whether the two path points refer to the same
+location on all paths.
+
+Note that the start- and endpoint of a closed contour
+will compare nonequal according to this definition.
+Use [method@Gsk.Path.is_closed] to find out if the
+start- and endpoint of a concrete path refer to the
+same location.</doc>
+        <return-value transfer-ownership="none">
+          <doc xml:space="preserve">`TRUE` if @point1 and @point2 are equal</doc>
+          <type name="gboolean" c:type="gboolean"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="point1" transfer-ownership="none">
+            <doc xml:space="preserve">a `GskPathPoint`</doc>
+            <type name="PathPoint" c:type="const GskPathPoint*"/>
+          </instance-parameter>
+          <parameter name="point2" transfer-ownership="none">
+            <doc xml:space="preserve">another `GskPathPoint`</doc>
+            <type name="PathPoint" c:type="const GskPathPoint*"/>
+          </parameter>
+        </parameters>
+      </method>
+      <method name="free" c:identifier="gsk_path_point_free">
+        <return-value transfer-ownership="none">
+          <type name="none" c:type="void"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="point" transfer-ownership="none">
+            <type name="PathPoint" c:type="GskPathPoint*"/>
+          </instance-parameter>
+        </parameters>
+      </method>
     </record>
     <function-macro name="RENDERER" c:identifier="GSK_RENDERER" introspectable="0">
       <parameters>
@@ -2559,6 +3830,12 @@ node to a file for later inspection.</doc>
       </member>
       <member name="mask_node" value="27" c:identifier="GSK_MASK_NODE" glib:nick="mask-node" glib:name="GSK_MASK_NODE">
         <doc xml:space="preserve">A node that masks one child with another (Since: 4.10)</doc>
+      </member>
+      <member name="fill_node" value="28" c:identifier="GSK_FILL_NODE" glib:nick="fill-node" glib:name="GSK_FILL_NODE">
+        <doc xml:space="preserve">A node that fills a path</doc>
+      </member>
+      <member name="stroke_node" value="29" c:identifier="GSK_STROKE_NODE" glib:nick="stroke-node" glib:name="GSK_STROKE_NODE">
+        <doc xml:space="preserve">A node that strokes a path</doc>
       </member>
     </enumeration>
     <class name="Renderer" c:symbol-prefix="renderer" c:type="GskRenderer" parent="GObject.Object" abstract="1" glib:type-name="GskRenderer" glib:get-type="gsk_renderer_get_type" glib:type-struct="RendererClass">
@@ -3538,6 +4815,381 @@ If the resulting reference count is zero, frees the builder.</doc>
         </parameters>
       </method>
     </class>
+    <record name="Stroke" c:type="GskStroke" opaque="1" version="4.14" glib:type-name="GskStroke" glib:get-type="gsk_stroke_get_type" c:symbol-prefix="stroke">
+      <doc xml:space="preserve">A `GskStroke` struct collects the parameters that influence
+the operation of stroking a path.</doc>
+      <constructor name="new" c:identifier="gsk_stroke_new" version="4.14">
+        <doc xml:space="preserve">Creates a new `GskStroke` with the given @line_width.</doc>
+        <return-value transfer-ownership="full">
+          <doc xml:space="preserve">a new `GskStroke`</doc>
+          <type name="Stroke" c:type="GskStroke*"/>
+        </return-value>
+        <parameters>
+          <parameter name="line_width" transfer-ownership="none">
+            <doc xml:space="preserve">line width of the stroke. Must be &gt; 0</doc>
+            <type name="gfloat" c:type="float"/>
+          </parameter>
+        </parameters>
+      </constructor>
+      <method name="copy" c:identifier="gsk_stroke_copy" version="4.14">
+        <doc xml:space="preserve">Creates a copy of the given @other stroke.</doc>
+        <return-value transfer-ownership="full">
+          <doc xml:space="preserve">a new `GskStroke`. Use [method@Gsk.Stroke.free] to free it</doc>
+          <type name="Stroke" c:type="GskStroke*"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="other" transfer-ownership="none">
+            <doc xml:space="preserve">`GskStroke` to copy</doc>
+            <type name="Stroke" c:type="const GskStroke*"/>
+          </instance-parameter>
+        </parameters>
+      </method>
+      <method name="free" c:identifier="gsk_stroke_free" version="4.14">
+        <doc xml:space="preserve">Frees a `GskStroke`.</doc>
+        <return-value transfer-ownership="none">
+          <type name="none" c:type="void"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="self" transfer-ownership="none">
+            <doc xml:space="preserve">a `GskStroke`</doc>
+            <type name="Stroke" c:type="GskStroke*"/>
+          </instance-parameter>
+        </parameters>
+      </method>
+      <method name="get_dash" c:identifier="gsk_stroke_get_dash" version="4.14">
+        <doc xml:space="preserve">Gets the dash array in use or `NULL` if dashing is disabled.</doc>
+        <return-value transfer-ownership="none" nullable="1">
+          <doc xml:space="preserve">
+  The dash array or `NULL` if the dash array is empty.</doc>
+          <array length="0" zero-terminated="0" c:type="const float*">
+            <type name="gfloat" c:type="float"/>
+          </array>
+        </return-value>
+        <parameters>
+          <instance-parameter name="self" transfer-ownership="none">
+            <doc xml:space="preserve">a `GskStroke`</doc>
+            <type name="Stroke" c:type="const GskStroke*"/>
+          </instance-parameter>
+          <parameter name="n_dash" direction="out" caller-allocates="1" transfer-ownership="full">
+            <doc xml:space="preserve">number of elements
+    in the array returned</doc>
+            <type name="gsize" c:type="gsize*"/>
+          </parameter>
+        </parameters>
+      </method>
+      <method name="get_dash_offset" c:identifier="gsk_stroke_get_dash_offset" version="4.14">
+        <doc xml:space="preserve">Returns the dash_offset of a `GskStroke`.</doc>
+        <return-value transfer-ownership="none">
+          <type name="gfloat" c:type="float"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="self" transfer-ownership="none">
+            <doc xml:space="preserve">a `GskStroke`</doc>
+            <type name="Stroke" c:type="const GskStroke*"/>
+          </instance-parameter>
+        </parameters>
+      </method>
+      <method name="get_line_cap" c:identifier="gsk_stroke_get_line_cap" version="4.14">
+        <doc xml:space="preserve">Gets the line cap used.
+
+See [enum@Gsk.LineCap] for details.</doc>
+        <return-value transfer-ownership="none">
+          <doc xml:space="preserve">The line cap</doc>
+          <type name="LineCap" c:type="GskLineCap"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="self" transfer-ownership="none">
+            <doc xml:space="preserve">a `GskStroke`</doc>
+            <type name="Stroke" c:type="const GskStroke*"/>
+          </instance-parameter>
+        </parameters>
+      </method>
+      <method name="get_line_join" c:identifier="gsk_stroke_get_line_join" version="4.14">
+        <doc xml:space="preserve">Gets the line join used.
+
+See [enum@Gsk.LineJoin] for details.</doc>
+        <return-value transfer-ownership="none">
+          <doc xml:space="preserve">The line join</doc>
+          <type name="LineJoin" c:type="GskLineJoin"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="self" transfer-ownership="none">
+            <doc xml:space="preserve">a `GskStroke`</doc>
+            <type name="Stroke" c:type="const GskStroke*"/>
+          </instance-parameter>
+        </parameters>
+      </method>
+      <method name="get_line_width" c:identifier="gsk_stroke_get_line_width" version="4.14">
+        <doc xml:space="preserve">Gets the line width used.</doc>
+        <return-value transfer-ownership="none">
+          <doc xml:space="preserve">The line width</doc>
+          <type name="gfloat" c:type="float"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="self" transfer-ownership="none">
+            <doc xml:space="preserve">a `GskStroke`</doc>
+            <type name="Stroke" c:type="const GskStroke*"/>
+          </instance-parameter>
+        </parameters>
+      </method>
+      <method name="get_miter_limit" c:identifier="gsk_stroke_get_miter_limit" version="4.14">
+        <doc xml:space="preserve">Returns the miter limit of a `GskStroke`.</doc>
+        <return-value transfer-ownership="none">
+          <type name="gfloat" c:type="float"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="self" transfer-ownership="none">
+            <doc xml:space="preserve">a `GskStroke`</doc>
+            <type name="Stroke" c:type="const GskStroke*"/>
+          </instance-parameter>
+        </parameters>
+      </method>
+      <method name="set_dash" c:identifier="gsk_stroke_set_dash" version="4.14">
+        <doc xml:space="preserve">Sets the dash pattern to use by this stroke.
+
+A dash pattern is specified by an array of alternating non-negative
+values. Each value provides the length of alternate "on" and "off"
+portions of the stroke.
+
+Each "on" segment will have caps applied as if the segment were a
+separate contour. In particular, it is valid to use an "on" length
+of 0 with `GSK_LINE_CAP_ROUND` or `GSK_LINE_CAP_SQUARE` to draw dots
+or squares along a path.
+
+If @n_dash is 0, if all elements in @dash are 0, or if there are
+negative values in @dash, then dashing is disabled.
+
+If @n_dash is 1, an alternating "on" and "off" pattern with the
+single dash length provided is assumed.
+
+If @n_dash is uneven, the dash array will be used with the first
+element in @dash defining an "on" or "off" in alternating passes
+through the array.
+
+You can specify a starting offset into the dash with
+[method@Gsk.Stroke.set_dash_offset].</doc>
+        <return-value transfer-ownership="none">
+          <type name="none" c:type="void"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="self" transfer-ownership="none">
+            <doc xml:space="preserve">a `GskStroke`</doc>
+            <type name="Stroke" c:type="GskStroke*"/>
+          </instance-parameter>
+          <parameter name="dash" transfer-ownership="none" nullable="1" allow-none="1">
+            <doc xml:space="preserve">
+    the array of dashes</doc>
+            <array length="1" zero-terminated="0" c:type="const float*">
+              <type name="gfloat" c:type="float"/>
+            </array>
+          </parameter>
+          <parameter name="n_dash" transfer-ownership="none">
+            <doc xml:space="preserve">number of elements in @dash</doc>
+            <type name="gsize" c:type="gsize"/>
+          </parameter>
+        </parameters>
+      </method>
+      <method name="set_dash_offset" c:identifier="gsk_stroke_set_dash_offset" version="4.14">
+        <doc xml:space="preserve">Sets the offset into the dash pattern where dashing should begin.
+
+This is an offset into the length of the path, not an index into
+the array values of the dash array.
+
+See [method@Gsk.Stroke.set_dash] for more details on dashing.</doc>
+        <return-value transfer-ownership="none">
+          <type name="none" c:type="void"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="self" transfer-ownership="none">
+            <doc xml:space="preserve">a `GskStroke`</doc>
+            <type name="Stroke" c:type="GskStroke*"/>
+          </instance-parameter>
+          <parameter name="offset" transfer-ownership="none">
+            <doc xml:space="preserve">offset into the dash pattern</doc>
+            <type name="gfloat" c:type="float"/>
+          </parameter>
+        </parameters>
+      </method>
+      <method name="set_line_cap" c:identifier="gsk_stroke_set_line_cap" version="4.14">
+        <doc xml:space="preserve">Sets the line cap to be used when stroking.
+
+See [enum@Gsk.LineCap] for details.</doc>
+        <return-value transfer-ownership="none">
+          <type name="none" c:type="void"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="self" transfer-ownership="none">
+            <doc xml:space="preserve">a`GskStroke`</doc>
+            <type name="Stroke" c:type="GskStroke*"/>
+          </instance-parameter>
+          <parameter name="line_cap" transfer-ownership="none">
+            <doc xml:space="preserve">the `GskLineCap`</doc>
+            <type name="LineCap" c:type="GskLineCap"/>
+          </parameter>
+        </parameters>
+      </method>
+      <method name="set_line_join" c:identifier="gsk_stroke_set_line_join" version="4.14">
+        <doc xml:space="preserve">Sets the line join to be used when stroking.
+
+See [enum@Gsk.LineJoin] for details.</doc>
+        <return-value transfer-ownership="none">
+          <type name="none" c:type="void"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="self" transfer-ownership="none">
+            <doc xml:space="preserve">a `GskStroke`</doc>
+            <type name="Stroke" c:type="GskStroke*"/>
+          </instance-parameter>
+          <parameter name="line_join" transfer-ownership="none">
+            <doc xml:space="preserve">The line join to use</doc>
+            <type name="LineJoin" c:type="GskLineJoin"/>
+          </parameter>
+        </parameters>
+      </method>
+      <method name="set_line_width" c:identifier="gsk_stroke_set_line_width" version="4.14">
+        <doc xml:space="preserve">Sets the line width to be used when stroking.
+
+The line width must be &gt; 0.</doc>
+        <return-value transfer-ownership="none">
+          <type name="none" c:type="void"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="self" transfer-ownership="none">
+            <doc xml:space="preserve">a `GskStroke`</doc>
+            <type name="Stroke" c:type="GskStroke*"/>
+          </instance-parameter>
+          <parameter name="line_width" transfer-ownership="none">
+            <doc xml:space="preserve">width of the line in pixels</doc>
+            <type name="gfloat" c:type="float"/>
+          </parameter>
+        </parameters>
+      </method>
+      <method name="set_miter_limit" c:identifier="gsk_stroke_set_miter_limit" version="4.14">
+        <doc xml:space="preserve">Sets the limit for the distance from the corner where sharp
+turns of joins get cut off.
+
+The miter limit is in units of line width and must be non-negative.
+
+For joins of type `GSK_LINE_JOIN_MITER` that exceed the miter
+limit, the join gets rendered as if it was of type
+`GSK_LINE_JOIN_BEVEL`.</doc>
+        <return-value transfer-ownership="none">
+          <type name="none" c:type="void"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="self" transfer-ownership="none">
+            <doc xml:space="preserve">a `GskStroke`</doc>
+            <type name="Stroke" c:type="GskStroke*"/>
+          </instance-parameter>
+          <parameter name="limit" transfer-ownership="none">
+            <doc xml:space="preserve">the miter limit</doc>
+            <type name="gfloat" c:type="float"/>
+          </parameter>
+        </parameters>
+      </method>
+      <method name="to_cairo" c:identifier="gsk_stroke_to_cairo" version="4.14">
+        <doc xml:space="preserve">A helper function that sets the stroke parameters
+of @cr from the values found in @self.</doc>
+        <return-value transfer-ownership="none">
+          <type name="none" c:type="void"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="self" transfer-ownership="none">
+            <doc xml:space="preserve">a `GskStroke`</doc>
+            <type name="Stroke" c:type="const GskStroke*"/>
+          </instance-parameter>
+          <parameter name="cr" transfer-ownership="none">
+            <doc xml:space="preserve">the cairo context to configure</doc>
+            <type name="cairo.Context" c:type="cairo_t*"/>
+          </parameter>
+        </parameters>
+      </method>
+      <function name="equal" c:identifier="gsk_stroke_equal" version="4.14">
+        <doc xml:space="preserve">Checks if 2 strokes are identical.</doc>
+        <return-value transfer-ownership="none">
+          <doc xml:space="preserve">`TRUE` if the 2 strokes are equal, `FALSE` otherwise</doc>
+          <type name="gboolean" c:type="gboolean"/>
+        </return-value>
+        <parameters>
+          <parameter name="stroke1" transfer-ownership="none" nullable="1" allow-none="1">
+            <doc xml:space="preserve">the first `GskStroke`</doc>
+            <type name="gpointer" c:type="gconstpointer"/>
+          </parameter>
+          <parameter name="stroke2" transfer-ownership="none" nullable="1" allow-none="1">
+            <doc xml:space="preserve">the second `GskStroke`</doc>
+            <type name="gpointer" c:type="gconstpointer"/>
+          </parameter>
+        </parameters>
+      </function>
+    </record>
+    <class name="StrokeNode" c:symbol-prefix="stroke_node" c:type="GskStrokeNode" version="4.14" parent="RenderNode" glib:type-name="GskStrokeNode" glib:get-type="gsk_stroke_node_get_type" glib:fundamental="1">
+      <doc xml:space="preserve">A render node that will fill the area determined by stroking the the given
+[struct@Gsk.Path] using the [struct@Gsk.Stroke] attributes.</doc>
+      <constructor name="new" c:identifier="gsk_stroke_node_new" version="4.14">
+        <doc xml:space="preserve">Creates a #GskRenderNode that will fill the outline generated by stroking
+the given @path using the attributes defined in @stroke.
+
+The area is filled with @child.</doc>
+        <return-value transfer-ownership="none">
+          <doc xml:space="preserve">A new #GskRenderNode</doc>
+          <type name="StrokeNode" c:type="GskRenderNode*"/>
+        </return-value>
+        <parameters>
+          <parameter name="child" transfer-ownership="none">
+            <doc xml:space="preserve">The node to stroke the area with</doc>
+            <type name="RenderNode" c:type="GskRenderNode*"/>
+          </parameter>
+          <parameter name="path" transfer-ownership="none">
+            <doc xml:space="preserve">The path describing the area to stroke</doc>
+            <type name="Path" c:type="GskPath*"/>
+          </parameter>
+          <parameter name="stroke" transfer-ownership="none">
+            <doc xml:space="preserve">The stroke attributes to use</doc>
+            <type name="Stroke" c:type="const GskStroke*"/>
+          </parameter>
+        </parameters>
+      </constructor>
+      <method name="get_child" c:identifier="gsk_stroke_node_get_child" version="4.14">
+        <doc xml:space="preserve">Gets the child node that is getting drawn by the given @node.</doc>
+        <return-value transfer-ownership="none">
+          <doc xml:space="preserve">The child that is getting drawn</doc>
+          <type name="RenderNode" c:type="GskRenderNode*"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="node" transfer-ownership="none">
+            <doc xml:space="preserve">a stroke #GskRenderNode</doc>
+            <type name="StrokeNode" c:type="const GskRenderNode*"/>
+          </instance-parameter>
+        </parameters>
+      </method>
+      <method name="get_path" c:identifier="gsk_stroke_node_get_path" version="4.14">
+        <doc xml:space="preserve">Retrieves the path that will be stroked with the contents of
+the @node.</doc>
+        <return-value transfer-ownership="none">
+          <doc xml:space="preserve">a #GskPath</doc>
+          <type name="Path" c:type="GskPath*"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="node" transfer-ownership="none">
+            <doc xml:space="preserve">a stroke #GskRenderNode</doc>
+            <type name="StrokeNode" c:type="const GskRenderNode*"/>
+          </instance-parameter>
+        </parameters>
+      </method>
+      <method name="get_stroke" c:identifier="gsk_stroke_node_get_stroke" version="4.14">
+        <doc xml:space="preserve">Retrieves the stroke attributes used in this @node.</doc>
+        <return-value transfer-ownership="none">
+          <doc xml:space="preserve">a #GskStroke</doc>
+          <type name="Stroke" c:type="const GskStroke*"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="node" transfer-ownership="none">
+            <doc xml:space="preserve">a stroke #GskRenderNode</doc>
+            <type name="StrokeNode" c:type="const GskRenderNode*"/>
+          </instance-parameter>
+        </parameters>
+      </method>
+    </class>
     <class name="TextNode" c:symbol-prefix="text_node" c:type="GskTextNode" parent="RenderNode" glib:type-name="GskTextNode" glib:get-type="gsk_text_node_get_type" glib:fundamental="1">
       <doc xml:space="preserve">A render node drawing a set of glyphs.</doc>
       <constructor name="new" c:identifier="gsk_text_node_new">
@@ -4481,10 +6133,62 @@ with the given @transform.</doc>
       </constructor>
     </class>
     <record name="VulkanRendererClass" c:type="GskVulkanRendererClass" disguised="1" opaque="1" glib:is-gtype-struct-for="VulkanRenderer"/>
+    <function name="path_parse" c:identifier="gsk_path_parse" moved-to="Path.parse" version="4.14">
+      <doc xml:space="preserve">This is a convenience function that constructs a `GskPath`
+from a serialized form.
+
+The string is expected to be in
+[SVG path syntax](https://www.w3.org/TR/SVG11/paths.html#PathData),
+as e.g. produced by [method@Gsk.Path.to_string].
+
+A high-level summary of the syntax:
+
+- `M x y` Move to `(x, y)`
+- `L x y` Add a line from the current point to `(x, y)`
+- `Q x1 y1 x2 y2` Add a quadratic B&#xE9;zier from the current point to `(x2, y2)`, with control point `(x1, y1)`
+- `C x1 y1 x2 y2 x3 y3` Add a cubic B&#xE9;zier from the current point to `(x3, y3)`, with control points `(x1, y1)` and `(x2, y2)`
+- `Z` Close the contour by drawing a line back to the start point
+- `H x` Add a horizontal line from the current point to the given x value
+- `V y` Add a vertical line from the current point to the given y value
+- `T x2 y2` Add a quadratic B&#xE9;zier, using the reflection of the previous segments' control point as control point
+- `S x2 y2 x3 y3` Add a cubic B&#xE9;zier, using the reflection of the previous segments' second control point as first control point
+- `A rx ry r l s x y` Add an elliptical arc from the current point to `(x, y)` with radii rx and ry. See the SVG documentation for how the other parameters influence the arc.
+
+All the commands have lowercase variants that interpret coordinates
+relative to the current point.</doc>
+      <return-value transfer-ownership="full" nullable="1">
+        <doc xml:space="preserve">a new `GskPath`, or `NULL`
+  if @string could not be parsed</doc>
+        <type name="Path" c:type="GskPath*"/>
+      </return-value>
+      <parameters>
+        <parameter name="string" transfer-ownership="none">
+          <doc xml:space="preserve">a string</doc>
+          <type name="utf8" c:type="const char*"/>
+        </parameter>
+      </parameters>
+    </function>
     <function name="serialization_error_quark" c:identifier="gsk_serialization_error_quark" moved-to="SerializationError.quark">
       <return-value transfer-ownership="none">
         <type name="GLib.Quark" c:type="GQuark"/>
       </return-value>
+    </function>
+    <function name="stroke_equal" c:identifier="gsk_stroke_equal" moved-to="Stroke.equal" version="4.14">
+      <doc xml:space="preserve">Checks if 2 strokes are identical.</doc>
+      <return-value transfer-ownership="none">
+        <doc xml:space="preserve">`TRUE` if the 2 strokes are equal, `FALSE` otherwise</doc>
+        <type name="gboolean" c:type="gboolean"/>
+      </return-value>
+      <parameters>
+        <parameter name="stroke1" transfer-ownership="none" nullable="1" allow-none="1">
+          <doc xml:space="preserve">the first `GskStroke`</doc>
+          <type name="gpointer" c:type="gconstpointer"/>
+        </parameter>
+        <parameter name="stroke2" transfer-ownership="none" nullable="1" allow-none="1">
+          <doc xml:space="preserve">the second `GskStroke`</doc>
+          <type name="gpointer" c:type="gconstpointer"/>
+        </parameter>
+      </parameters>
     </function>
     <function name="transform_parse" c:identifier="gsk_transform_parse" moved-to="Transform.parse">
       <doc xml:space="preserve">Parses the given @string into a transform and puts it in
