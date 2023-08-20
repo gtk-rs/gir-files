@@ -316,11 +316,11 @@ as three integer components.</doc>
       <doc xml:space="preserve">The micro component of the library version available at compile-time.</doc>
       <type name="gint" c:type="gint"/>
     </constant>
-    <constant name="VERSION_MINOR" value="0" c:type="HB_VERSION_MINOR">
+    <constant name="VERSION_MINOR" value="1" c:type="HB_VERSION_MINOR">
       <doc xml:space="preserve">The minor component of the library version available at compile-time.</doc>
       <type name="gint" c:type="gint"/>
     </constant>
-    <constant name="VERSION_STRING" value="8.0.1" c:type="HB_VERSION_STRING">
+    <constant name="VERSION_STRING" value="8.1.1" c:type="HB_VERSION_STRING">
       <doc xml:space="preserve">A string literal containing the library version available at compile-time.</doc>
       <type name="utf8" c:type="gchar*"/>
     </constant>
@@ -9031,8 +9031,37 @@ features is provided, all features will be queried.</doc>
           </array>
         </parameter>
         <parameter name="feature_indexes" direction="out" caller-allocates="1" transfer-ownership="none">
-          <doc xml:space="preserve">The array of feature indexes found for the query</doc>
+          <doc xml:space="preserve">The set of feature indexes found for the query</doc>
           <type name="set_t" c:type="hb_set_t*"/>
+        </parameter>
+      </parameters>
+    </function>
+    <function name="ot_layout_collect_features_map" c:identifier="hb_ot_layout_collect_features_map" version="8.1.0">
+      <doc xml:space="preserve">Fetches the mapping from feature tags to feature indexes for
+the specified script and language.</doc>
+      <return-value transfer-ownership="none">
+        <type name="none" c:type="void"/>
+      </return-value>
+      <parameters>
+        <parameter name="face" transfer-ownership="none">
+          <doc xml:space="preserve">#hb_face_t to work upon</doc>
+          <type name="face_t" c:type="hb_face_t*"/>
+        </parameter>
+        <parameter name="table_tag" transfer-ownership="none">
+          <doc xml:space="preserve">#HB_OT_TAG_GSUB or #HB_OT_TAG_GPOS</doc>
+          <type name="tag_t" c:type="hb_tag_t"/>
+        </parameter>
+        <parameter name="script_index" transfer-ownership="none">
+          <doc xml:space="preserve">The index of the requested script tag</doc>
+          <type name="guint" c:type="unsigned"/>
+        </parameter>
+        <parameter name="language_index" transfer-ownership="none">
+          <doc xml:space="preserve">The index of the requested language tag</doc>
+          <type name="guint" c:type="unsigned"/>
+        </parameter>
+        <parameter name="feature_map" direction="out" caller-allocates="1" transfer-ownership="none">
+          <doc xml:space="preserve">The map of feature tag to feature index.</doc>
+          <type name="map_t" c:type="hb_map_t*"/>
         </parameter>
       </parameters>
     </function>
