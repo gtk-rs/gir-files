@@ -432,11 +432,12 @@ given by @clip.</doc>
         <doc xml:space="preserve">Creates a `GskRenderNode` that will drawn the @child with
 @color_matrix.
 
-In particular, the node will transform the operation
+In particular, the node will transform colors by applying
 
-    pixel = color_matrix * pixel + color_offset
+    pixel = transpose(color_matrix) * pixel + color_offset
 
-for every pixel.</doc>
+for every pixel. The transformation operates on unpremultiplied
+colors, with color components ordered R, G, B, A.</doc>
         <return-value transfer-ownership="full">
           <doc xml:space="preserve">A new `GskRenderNode`</doc>
           <type name="ColorMatrixNode" c:type="GskRenderNode*"/>
@@ -1835,12 +1836,15 @@ dashes when stroking.
 
 The default line cap style is `GSK_LINE_CAP_BUTT`.
 
-&lt;picture&gt;
-  &lt;source srcset="caps-dark.png" media="(prefers-color-scheme: dark)"&gt;
-  &lt;img alt="Line Cap Styles" src="caps-light.png"&gt;
-&lt;/picture&gt;
+New entries may be added in future versions.
 
-New entries may be added in future versions.</doc>
+&lt;figure&gt;
+  &lt;picture&gt;
+    &lt;source srcset="caps-dark.png" media="(prefers-color-scheme: dark)"&gt;
+    &lt;img alt="Line Cap Styles" src="caps-light.png"&gt;
+  &lt;/picture&gt;
+  &lt;figcaption&gt;GSK_LINE_CAP_BUTT, GSK_LINE_CAP_ROUND, GSK_LINE_CAP_SQUARE&lt;/figcaption&gt;
+&lt;/figure&gt;</doc>
       <member name="butt" value="0" c:identifier="GSK_LINE_CAP_BUTT" glib:nick="butt" glib:name="GSK_LINE_CAP_BUTT">
         <doc xml:space="preserve">Start and stop the line exactly at the start
   and end point</doc>
@@ -1859,12 +1863,15 @@ New entries may be added in future versions.</doc>
 
 The default line join style is `GSK_LINE_JOIN_MITER`.
 
-&lt;picture&gt;
-  &lt;source srcset="join-dark.png" media="(prefers-color-scheme: dark)"&gt;
-  &lt;img alt="Line Join Styles" src="join-light.png"&gt;
-&lt;/picture&gt;
+New entries may be added in future versions.
 
-New entries may be added in future versions.</doc>
+&lt;figure&gt;
+  &lt;picture&gt;
+    &lt;source srcset="join-dark.png" media="(prefers-color-scheme: dark)"&gt;
+    &lt;img alt="Line Join Styles" src="join-light.png"&gt;
+  &lt;/picture&gt;
+  &lt;figcaption&gt;GSK_LINE_JOINT_MITER, GSK_LINE_JOINT_ROUND, GSK_LINE_JOIN_BEVEL&lt;/figcaption&gt;
+&lt;/figure&gt;</doc>
       <member name="miter" value="0" c:identifier="GSK_LINE_JOIN_MITER" glib:nick="miter" glib:name="GSK_LINE_JOIN_MITER">
         <doc xml:space="preserve">Use a sharp angled corner</doc>
       </member>
@@ -2510,85 +2517,6 @@ contour.</doc>
           </instance-parameter>
         </parameters>
       </method>
-      <method name="point_get_curvature" c:identifier="gsk_path_point_get_curvature" version="4.14">
-        <doc xml:space="preserve">Calculates the curvature of the path at the point.
-
-Optionally, returns the center of the osculating circle as well.
-
-If the curvature is infinite (at line segments), zero is returned,
-and @center is not modified.</doc>
-        <return-value transfer-ownership="none">
-          <doc xml:space="preserve">The curvature of the path at the given point</doc>
-          <type name="gfloat" c:type="float"/>
-        </return-value>
-        <parameters>
-          <instance-parameter name="path" transfer-ownership="none">
-            <doc xml:space="preserve">a `GskPath`</doc>
-            <type name="Path" c:type="GskPath*"/>
-          </instance-parameter>
-          <parameter name="point" transfer-ownership="none">
-            <doc xml:space="preserve">a `GskPathPoint` on @path</doc>
-            <type name="PathPoint" c:type="const GskPathPoint*"/>
-          </parameter>
-          <parameter name="center" direction="out" caller-allocates="1" transfer-ownership="none" nullable="1">
-            <doc xml:space="preserve">Return location for
-  the center of the osculating circle</doc>
-            <type name="Graphene.Point" c:type="graphene_point_t*"/>
-          </parameter>
-        </parameters>
-      </method>
-      <method name="point_get_position" c:identifier="gsk_path_point_get_position" version="4.14">
-        <doc xml:space="preserve">Gets the position of the point.</doc>
-        <return-value transfer-ownership="none">
-          <type name="none" c:type="void"/>
-        </return-value>
-        <parameters>
-          <instance-parameter name="path" transfer-ownership="none">
-            <doc xml:space="preserve">a `GskPath`</doc>
-            <type name="Path" c:type="GskPath*"/>
-          </instance-parameter>
-          <parameter name="point" transfer-ownership="none">
-            <doc xml:space="preserve">a `GskPathPoint` on @path</doc>
-            <type name="PathPoint" c:type="const GskPathPoint*"/>
-          </parameter>
-          <parameter name="position" direction="out" caller-allocates="1" transfer-ownership="none">
-            <doc xml:space="preserve">Return location for
-  the coordinates of the point</doc>
-            <type name="Graphene.Point" c:type="graphene_point_t*"/>
-          </parameter>
-        </parameters>
-      </method>
-      <method name="point_get_tangent" c:identifier="gsk_path_point_get_tangent" version="4.14">
-        <doc xml:space="preserve">Gets the tangent of the path at the point.
-
-Note that certain points on a path may not have a single
-tangent, such as sharp turns. At such points, there are
-two tangents -- the direction of the path going into the
-point, and the direction coming out of it. The @direction
-argument lets you choose which one to get.</doc>
-        <return-value transfer-ownership="none">
-          <type name="none" c:type="void"/>
-        </return-value>
-        <parameters>
-          <instance-parameter name="path" transfer-ownership="none">
-            <doc xml:space="preserve">a `GskPath`</doc>
-            <type name="Path" c:type="GskPath*"/>
-          </instance-parameter>
-          <parameter name="point" transfer-ownership="none">
-            <doc xml:space="preserve">a `GskPathPoint` on @path</doc>
-            <type name="PathPoint" c:type="const GskPathPoint*"/>
-          </parameter>
-          <parameter name="direction" transfer-ownership="none">
-            <doc xml:space="preserve">the direction for which to return the tangent</doc>
-            <type name="PathDirection" c:type="GskPathDirection"/>
-          </parameter>
-          <parameter name="tangent" direction="out" caller-allocates="1" transfer-ownership="none">
-            <doc xml:space="preserve">Return location for
-  the tangent at the point</doc>
-            <type name="Graphene.Vec2" c:type="graphene_vec2_t*"/>
-          </parameter>
-        </parameters>
-      </method>
       <method name="print" c:identifier="gsk_path_print" version="4.14">
         <doc xml:space="preserve">Converts @self into a human-readable string representation suitable
 for printing.
@@ -2780,7 +2708,9 @@ from a Cairo context.</doc>
         </parameters>
       </method>
       <method name="add_circle" c:identifier="gsk_path_builder_add_circle" version="4.14">
-        <doc xml:space="preserve">Adds a circle with the @center and @radius.</doc>
+        <doc xml:space="preserve">Adds a circle with the @center and @radius.
+
+The path is going around the circle in clockwise direction.</doc>
         <return-value transfer-ownership="none">
           <type name="none" c:type="void"/>
         </return-value>
@@ -2835,6 +2765,8 @@ the builder.</doc>
       <method name="add_rect" c:identifier="gsk_path_builder_add_rect" version="4.14">
         <doc xml:space="preserve">Adds @rect as a new contour to the path built by the builder.
 
+The path is going around the rectangle in clockwise direction.
+
 If the width or height of the rectangle is negative, the start
 point will be on the right or bottom, respectively.
 
@@ -2867,6 +2799,24 @@ horizontal or vertical line. If both are 0, it'll be a closed dot.</doc>
           <parameter name="path" transfer-ownership="none">
             <doc xml:space="preserve">the path to append</doc>
             <type name="Path" c:type="GskPath*"/>
+          </parameter>
+        </parameters>
+      </method>
+      <method name="add_rounded_rect" c:identifier="gsk_path_builder_add_rounded_rect" version="4.14">
+        <doc xml:space="preserve">Adds @rect as a new contour to the path built in @self.
+
+The path is going around the rectangle in clockwise direction.</doc>
+        <return-value transfer-ownership="none">
+          <type name="none" c:type="void"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="self" transfer-ownership="none">
+            <doc xml:space="preserve">a #GskPathBuilder</doc>
+            <type name="PathBuilder" c:type="GskPathBuilder*"/>
+          </instance-parameter>
+          <parameter name="rect" transfer-ownership="none">
+            <doc xml:space="preserve">the rounded rect</doc>
+            <type name="RoundedRect" c:type="const GskRoundedRect*"/>
           </parameter>
         </parameters>
       </method>
@@ -3241,12 +3191,31 @@ C code should use [method@Gsk.PathBuilder.free_to_path].</doc>
     </record>
     <enumeration name="PathDirection" version="4.14" glib:type-name="GskPathDirection" glib:get-type="gsk_path_direction_get_type" c:type="GskPathDirection">
       <doc xml:space="preserve">The values of the `GskPathDirection` enum are used to pick one
-of the two sides of the path that at a given point on the path.</doc>
-      <member name="start" value="0" c:identifier="GSK_PATH_START" glib:nick="start" glib:name="GSK_PATH_START">
-        <doc xml:space="preserve">The side that leads to the start of the path</doc>
+of the four tangents at a given point on the path.
+
+Note that the directions for @GSK_PATH_FROM_START/@GSK_PATH_TO_END and
+@GSK_PATH_TO_START/@GSK_PATH_FROM_END will coincide for smooth points.
+Only sharp turns will exhibit four different directions.
+
+&lt;picture&gt;
+  &lt;source srcset="directions-dark.png" media="(prefers-color-scheme: dark)"&gt;
+  &lt;img alt="Path Tangents" src="directions-light.png"&gt;
+&lt;/picture&gt;</doc>
+      <member name="from_start" value="0" c:identifier="GSK_PATH_FROM_START" glib:nick="from-start" glib:name="GSK_PATH_FROM_START">
+        <doc xml:space="preserve">The tangent in path direction of the incoming side
+  of the path</doc>
       </member>
-      <member name="end" value="1" c:identifier="GSK_PATH_END" glib:nick="end" glib:name="GSK_PATH_END">
-        <doc xml:space="preserve">The side that leads to the end of the path</doc>
+      <member name="to_start" value="1" c:identifier="GSK_PATH_TO_START" glib:nick="to-start" glib:name="GSK_PATH_TO_START">
+        <doc xml:space="preserve">The tangent against path direction of the incoming side
+  of the path</doc>
+      </member>
+      <member name="to_end" value="2" c:identifier="GSK_PATH_TO_END" glib:nick="to-end" glib:name="GSK_PATH_TO_END">
+        <doc xml:space="preserve">The tangent in path direction of the outgoing side
+  of the path</doc>
+      </member>
+      <member name="from_end" value="3" c:identifier="GSK_PATH_FROM_END" glib:nick="from-end" glib:name="GSK_PATH_FROM_END">
+        <doc xml:space="preserve">The tangent against path direction of the outgoing
+  side of the path</doc>
       </member>
     </enumeration>
     <bitfield name="PathForeachFlags" version="4.14" glib:type-name="GskPathForeachFlags" glib:get-type="gsk_path_foreach_flags_get_type" c:type="GskPathForeachFlags">
@@ -3404,6 +3373,114 @@ same location.</doc>
           <instance-parameter name="point" transfer-ownership="none">
             <type name="PathPoint" c:type="GskPathPoint*"/>
           </instance-parameter>
+        </parameters>
+      </method>
+      <method name="get_curvature" c:identifier="gsk_path_point_get_curvature" version="4.14">
+        <doc xml:space="preserve">Calculates the curvature of the path at the point.
+
+Optionally, returns the center of the osculating circle as well.
+
+If the curvature is infinite (at line segments), zero is returned,
+and @center is not modified.</doc>
+        <return-value transfer-ownership="none">
+          <doc xml:space="preserve">The curvature of the path at the given point</doc>
+          <type name="gfloat" c:type="float"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="point" transfer-ownership="none">
+            <doc xml:space="preserve">a `GskPathPoint`</doc>
+            <type name="PathPoint" c:type="const GskPathPoint*"/>
+          </instance-parameter>
+          <parameter name="path" transfer-ownership="none">
+            <doc xml:space="preserve">the path that @point is on</doc>
+            <type name="Path" c:type="GskPath*"/>
+          </parameter>
+          <parameter name="center" direction="out" caller-allocates="1" transfer-ownership="none" nullable="1">
+            <doc xml:space="preserve">Return location for
+  the center of the osculating circle</doc>
+            <type name="Graphene.Point" c:type="graphene_point_t*"/>
+          </parameter>
+        </parameters>
+      </method>
+      <method name="get_position" c:identifier="gsk_path_point_get_position" version="4.14">
+        <doc xml:space="preserve">Gets the position of the point.</doc>
+        <return-value transfer-ownership="none">
+          <type name="none" c:type="void"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="point" transfer-ownership="none">
+            <doc xml:space="preserve">a `GskPathPoint`</doc>
+            <type name="PathPoint" c:type="const GskPathPoint*"/>
+          </instance-parameter>
+          <parameter name="path" transfer-ownership="none">
+            <doc xml:space="preserve">the path that @point is on</doc>
+            <type name="Path" c:type="GskPath*"/>
+          </parameter>
+          <parameter name="position" direction="out" caller-allocates="1" transfer-ownership="none">
+            <doc xml:space="preserve">Return location for
+  the coordinates of the point</doc>
+            <type name="Graphene.Point" c:type="graphene_point_t*"/>
+          </parameter>
+        </parameters>
+      </method>
+      <method name="get_rotation" c:identifier="gsk_path_point_get_rotation" version="4.14">
+        <doc xml:space="preserve">Gets the direction of the tangent at a given point.
+
+This is a convenience variant of [method@Gsk.PathPoint.get_tangent]
+that returns the angle between the tangent and the X axis. The angle
+can e.g. be used in [method@Gtk.Snapshot.rotate].</doc>
+        <return-value transfer-ownership="none">
+          <doc xml:space="preserve">the angle between the tangent and the X axis, in degrees</doc>
+          <type name="gfloat" c:type="float"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="point" transfer-ownership="none">
+            <doc xml:space="preserve">a `GskPathPoint`</doc>
+            <type name="PathPoint" c:type="const GskPathPoint*"/>
+          </instance-parameter>
+          <parameter name="path" transfer-ownership="none">
+            <doc xml:space="preserve">the path that @point is on</doc>
+            <type name="Path" c:type="GskPath*"/>
+          </parameter>
+          <parameter name="direction" transfer-ownership="none">
+            <doc xml:space="preserve">the direction for which to return the rotation</doc>
+            <type name="PathDirection" c:type="GskPathDirection"/>
+          </parameter>
+        </parameters>
+      </method>
+      <method name="get_tangent" c:identifier="gsk_path_point_get_tangent" version="4.14">
+        <doc xml:space="preserve">Gets the tangent of the path at the point.
+
+Note that certain points on a path may not have a single
+tangent, such as sharp turns. At such points, there are
+two tangents -- the direction of the path going into the
+point, and the direction coming out of it. The @direction
+argument lets you choose which one to get.
+
+If you want to orient something in the direction of the
+path, [method@Gsk.PathPoint.get_rotation] may be more
+convenient to use.</doc>
+        <return-value transfer-ownership="none">
+          <type name="none" c:type="void"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="point" transfer-ownership="none">
+            <doc xml:space="preserve">a `GskPathPoint`</doc>
+            <type name="PathPoint" c:type="const GskPathPoint*"/>
+          </instance-parameter>
+          <parameter name="path" transfer-ownership="none">
+            <doc xml:space="preserve">the path that @point is on</doc>
+            <type name="Path" c:type="GskPath*"/>
+          </parameter>
+          <parameter name="direction" transfer-ownership="none">
+            <doc xml:space="preserve">the direction for which to return the tangent</doc>
+            <type name="PathDirection" c:type="GskPathDirection"/>
+          </parameter>
+          <parameter name="tangent" direction="out" caller-allocates="1" transfer-ownership="none">
+            <doc xml:space="preserve">Return location for
+  the tangent at the point</doc>
+            <type name="Graphene.Vec2" c:type="graphene_vec2_t*"/>
+          </parameter>
         </parameters>
       </method>
     </record>
@@ -4870,9 +4947,8 @@ the operation of stroking a path.</doc>
             <doc xml:space="preserve">a `GskStroke`</doc>
             <type name="Stroke" c:type="const GskStroke*"/>
           </instance-parameter>
-          <parameter name="n_dash" direction="out" caller-allocates="1" transfer-ownership="full">
-            <doc xml:space="preserve">number of elements
-    in the array returned</doc>
+          <parameter name="n_dash" direction="out" caller-allocates="0" transfer-ownership="full">
+            <doc xml:space="preserve">number of elements in the array returned</doc>
             <type name="gsize" c:type="gsize*"/>
           </parameter>
         </parameters>
