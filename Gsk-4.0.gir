@@ -2307,10 +2307,17 @@ constructed from B&#xE9;zier segments.
       <method name="foreach" c:identifier="gsk_path_foreach" version="4.14">
         <doc xml:space="preserve">Calls @func for every operation of the path.
 
-Note that this only approximates @self, because paths can contain
-optimizations for various specialized contours, and depending on
-the @flags, the path may be decomposed into simpler curves than
-the ones that it contained originally.</doc>
+Note that this may only approximate @self, because paths can contain
+optimizations for various specialized contours, and depending on the
+@flags, the path may be decomposed into simpler curves than the ones
+that it contained originally.
+
+This function serves two purposes:
+
+- When the @flags allow everything, it provides access to the raw,
+  unmodified data of the path.
+- When the @flags disallow certain operations, it provides
+  an approximation of the path using just the allowed operations.</doc>
         <return-value transfer-ownership="none">
           <doc xml:space="preserve">`FALSE` if @func returned FALSE`, `TRUE` otherwise.</doc>
           <type name="gboolean" c:type="gboolean"/>
@@ -2349,7 +2356,7 @@ axis-aligned line.
 If the path is empty, `FALSE` is returned and @bounds are set to
 graphene_rect_zero(). This is different from the case where the path
 is a single point at the origin, where the @bounds will also be set to
-the zero rectangle but 0 will be returned.</doc>
+the zero rectangle but `TRUE` will be returned.</doc>
         <return-value transfer-ownership="none">
           <doc xml:space="preserve">`TRUE` if the path has bounds, `FALSE` if the path is known
   to be empty and have no bounds.</doc>
@@ -2522,7 +2529,8 @@ contour.</doc>
 for printing.
 
 The string is compatible with
-[SVG path syntax](https://www.w3.org/TR/SVG11/paths.html#PathData).</doc>
+[SVG path syntax](https://www.w3.org/TR/SVG11/paths.html#PathData),
+see [func@Gsk.Path.parse] for a summary of the syntax.</doc>
         <return-value transfer-ownership="none">
           <type name="none" c:type="void"/>
         </return-value>
@@ -2610,7 +2618,7 @@ If the resulting reference count is zero, frees the path.</doc>
         <doc xml:space="preserve">This is a convenience function that constructs a `GskPath`
 from a serialized form.
 
-The string is expected to be in
+The string is expected to be in (a superset of)
 [SVG path syntax](https://www.w3.org/TR/SVG11/paths.html#PathData),
 as e.g. produced by [method@Gsk.Path.to_string].
 
@@ -2626,9 +2634,12 @@ A high-level summary of the syntax:
 - `T x2 y2` Add a quadratic B&#xE9;zier, using the reflection of the previous segments' control point as control point
 - `S x2 y2 x3 y3` Add a cubic B&#xE9;zier, using the reflection of the previous segments' second control point as first control point
 - `A rx ry r l s x y` Add an elliptical arc from the current point to `(x, y)` with radii rx and ry. See the SVG documentation for how the other parameters influence the arc.
+- `E x1 y1 x2 y2` Add an elliptical arc from the current point to `(x2, y2)` with tangents that are dermined by the point `(x1, y1)`.
 
 All the commands have lowercase variants that interpret coordinates
-relative to the current point.</doc>
+relative to the current point.
+
+The `E` command is an extension that is not supported in SVG.</doc>
         <return-value transfer-ownership="full" nullable="1">
           <doc xml:space="preserve">a new `GskPath`, or `NULL`
   if @string could not be parsed</doc>
@@ -2852,6 +2863,42 @@ and end point. To add a closed path, use [method@Gsk.PathBuilder.add_path].</doc
           </parameter>
         </parameters>
       </method>
+      <method name="arc_to" c:identifier="gsk_path_builder_arc_to" version="4.14">
+        <doc xml:space="preserve">Adds an elliptical arc from the current point to @x3, @y3
+with @x1, @y1 determining the tangent directions.
+
+After this, @x3, @y3 will be the new current point.
+
+&lt;picture&gt;
+  &lt;source srcset="arc-dark.png" media="(prefers-color-scheme: dark)"&gt;
+  &lt;img alt="Arc To" src="arc-light.png"&gt;
+&lt;/picture&gt;</doc>
+        <return-value transfer-ownership="none">
+          <type name="none" c:type="void"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="self" transfer-ownership="none">
+            <doc xml:space="preserve">a `GskPathBuilder`</doc>
+            <type name="PathBuilder" c:type="GskPathBuilder*"/>
+          </instance-parameter>
+          <parameter name="x1" transfer-ownership="none">
+            <doc xml:space="preserve">x coordinate of first control point</doc>
+            <type name="gfloat" c:type="float"/>
+          </parameter>
+          <parameter name="y1" transfer-ownership="none">
+            <doc xml:space="preserve">y coordinate of first control point</doc>
+            <type name="gfloat" c:type="float"/>
+          </parameter>
+          <parameter name="x2" transfer-ownership="none">
+            <doc xml:space="preserve">x coordinate of second control point</doc>
+            <type name="gfloat" c:type="float"/>
+          </parameter>
+          <parameter name="y2" transfer-ownership="none">
+            <doc xml:space="preserve">y coordinate of second control point</doc>
+            <type name="gfloat" c:type="float"/>
+          </parameter>
+        </parameters>
+      </method>
       <method name="close" c:identifier="gsk_path_builder_close" version="4.14">
         <doc xml:space="preserve">Ends the current contour with a line back to the start point.
 
@@ -2946,6 +2993,42 @@ a current point.</doc>
             <doc xml:space="preserve">a `GskPathBuilder`</doc>
             <type name="PathBuilder" c:type="GskPathBuilder*"/>
           </instance-parameter>
+        </parameters>
+      </method>
+      <method name="html_arc_to" c:identifier="gsk_path_builder_html_arc_to" version="4.14">
+        <doc xml:space="preserve">Implements arc-to according to the HTML Canvas spec.
+
+A convenience function that implements the
+[HTML arc_to](https://html.spec.whatwg.org/multipage/canvas.html#dom-context-2d-arcto-dev)
+functionality.</doc>
+        <return-value transfer-ownership="none">
+          <type name="none" c:type="void"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="self" transfer-ownership="none">
+            <doc xml:space="preserve">a `GskPathBuilder`</doc>
+            <type name="PathBuilder" c:type="GskPathBuilder*"/>
+          </instance-parameter>
+          <parameter name="x1" transfer-ownership="none">
+            <doc xml:space="preserve">X coordinate of first control point</doc>
+            <type name="gfloat" c:type="float"/>
+          </parameter>
+          <parameter name="y1" transfer-ownership="none">
+            <doc xml:space="preserve">Y coordinate of first control point</doc>
+            <type name="gfloat" c:type="float"/>
+          </parameter>
+          <parameter name="x2" transfer-ownership="none">
+            <doc xml:space="preserve">X coordinate of second control point</doc>
+            <type name="gfloat" c:type="float"/>
+          </parameter>
+          <parameter name="y2" transfer-ownership="none">
+            <doc xml:space="preserve">Y coordinate of second control point</doc>
+            <type name="gfloat" c:type="float"/>
+          </parameter>
+          <parameter name="radius" transfer-ownership="none">
+            <doc xml:space="preserve">Radius of the circle</doc>
+            <type name="gfloat" c:type="float"/>
+          </parameter>
         </parameters>
       </method>
       <method name="line_to" c:identifier="gsk_path_builder_line_to" version="4.14">
@@ -3049,6 +3132,38 @@ This function is intended primarily for language bindings.
             <doc xml:space="preserve">a `GskPathBuilder`</doc>
             <type name="PathBuilder" c:type="GskPathBuilder*"/>
           </instance-parameter>
+        </parameters>
+      </method>
+      <method name="rel_arc_to" c:identifier="gsk_path_builder_rel_arc_to" version="4.14">
+        <doc xml:space="preserve">Adds an elliptical arc from the current point to @x3, @y3
+with @x1, @y1 determining the tangent directions. All coordinates
+are given relative to the current point.
+
+This is the relative version of [method@Gsk.PathBuilder.arc_to].</doc>
+        <return-value transfer-ownership="none">
+          <type name="none" c:type="void"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="self" transfer-ownership="none">
+            <doc xml:space="preserve">a `GskPathBuilder`</doc>
+            <type name="PathBuilder" c:type="GskPathBuilder*"/>
+          </instance-parameter>
+          <parameter name="x1" transfer-ownership="none">
+            <doc xml:space="preserve">x coordinate of first control point</doc>
+            <type name="gfloat" c:type="float"/>
+          </parameter>
+          <parameter name="y1" transfer-ownership="none">
+            <doc xml:space="preserve">y coordinate of first control point</doc>
+            <type name="gfloat" c:type="float"/>
+          </parameter>
+          <parameter name="x2" transfer-ownership="none">
+            <doc xml:space="preserve">x coordinate of second control point</doc>
+            <type name="gfloat" c:type="float"/>
+          </parameter>
+          <parameter name="y2" transfer-ownership="none">
+            <doc xml:space="preserve">y coordinate of second control point</doc>
+            <type name="gfloat" c:type="float"/>
+          </parameter>
         </parameters>
       </method>
       <method name="rel_cubic_to" c:identifier="gsk_path_builder_rel_cubic_to" version="4.14">
@@ -3170,6 +3285,50 @@ This is the relative version of [method@Gsk.PathBuilder.quad_to].</doc>
           </parameter>
         </parameters>
       </method>
+      <method name="svg_arc_to" c:identifier="gsk_path_builder_svg_arc_to" version="4.14">
+        <doc xml:space="preserve">Implements arc-to according to the SVG spec.
+
+A convenience function that implements the
+[SVG arc_to](https://www.w3.org/TR/SVG11/paths.html#PathDataEllipticalArcCommands)
+functionality.</doc>
+        <return-value transfer-ownership="none">
+          <type name="none" c:type="void"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="self" transfer-ownership="none">
+            <doc xml:space="preserve">a `GskPathBuilder`</doc>
+            <type name="PathBuilder" c:type="GskPathBuilder*"/>
+          </instance-parameter>
+          <parameter name="rx" transfer-ownership="none">
+            <doc xml:space="preserve">X radius</doc>
+            <type name="gfloat" c:type="float"/>
+          </parameter>
+          <parameter name="ry" transfer-ownership="none">
+            <doc xml:space="preserve">Y radius</doc>
+            <type name="gfloat" c:type="float"/>
+          </parameter>
+          <parameter name="x_axis_rotation" transfer-ownership="none">
+            <doc xml:space="preserve">the rotation of the ellipsis</doc>
+            <type name="gfloat" c:type="float"/>
+          </parameter>
+          <parameter name="large_arc" transfer-ownership="none">
+            <doc xml:space="preserve">whether to add the large arc</doc>
+            <type name="gboolean" c:type="gboolean"/>
+          </parameter>
+          <parameter name="positive_sweep" transfer-ownership="none">
+            <doc xml:space="preserve">whether to sweep in the positive direction</doc>
+            <type name="gboolean" c:type="gboolean"/>
+          </parameter>
+          <parameter name="x" transfer-ownership="none">
+            <doc xml:space="preserve">the X coordinate of the endpoint</doc>
+            <type name="gfloat" c:type="float"/>
+          </parameter>
+          <parameter name="y" transfer-ownership="none">
+            <doc xml:space="preserve">the Y coordinate of the endpoint</doc>
+            <type name="gfloat" c:type="float"/>
+          </parameter>
+        </parameters>
+      </method>
       <method name="to_path" c:identifier="gsk_path_builder_to_path" version="4.14">
         <doc xml:space="preserve">Creates a new `GskPath` from the given builder.
 
@@ -3234,12 +3393,13 @@ Only sharp turns will exhibit four different directions.
       </member>
     </enumeration>
     <bitfield name="PathForeachFlags" version="4.14" glib:type-name="GskPathForeachFlags" glib:get-type="gsk_path_foreach_flags_get_type" c:type="GskPathForeachFlags">
-      <doc xml:space="preserve">Flags that can be passed to gsk_path_foreach() to enable additional
-features.
+      <doc xml:space="preserve">Flags that can be passed to gsk_path_foreach() to influence what
+kinds of operations the path is decomposed into.
 
-By default, [method@Gsk.Path.foreach] will only emit a path with all operations
-flattened to straight lines to allow for maximum compatibility. The only
-operations emitted will be `GSK_PATH_MOVE`, `GSK_PATH_LINE` and `GSK_PATH_CLOSE`.</doc>
+By default, [method@Gsk.Path.foreach] will only emit a path with all
+operations flattened to straight lines to allow for maximum compatibility.
+The only operations emitted will be `GSK_PATH_MOVE`, `GSK_PATH_LINE` and
+`GSK_PATH_CLOSE`.</doc>
       <member name="only_lines" value="0" c:identifier="GSK_PATH_FOREACH_ALLOW_ONLY_LINES" glib:nick="only-lines" glib:name="GSK_PATH_FOREACH_ALLOW_ONLY_LINES">
         <doc xml:space="preserve">The default behavior, only allow lines.</doc>
       </member>
@@ -3249,18 +3409,29 @@ operations emitted will be `GSK_PATH_MOVE`, `GSK_PATH_LINE` and `GSK_PATH_CLOSE`
       <member name="cubic" value="2" c:identifier="GSK_PATH_FOREACH_ALLOW_CUBIC" glib:nick="cubic" glib:name="GSK_PATH_FOREACH_ALLOW_CUBIC">
         <doc xml:space="preserve">Allow emission of `GSK_PATH_CUBIC` operations.</doc>
       </member>
+      <member name="arc" value="4" c:identifier="GSK_PATH_FOREACH_ALLOW_ARC" glib:nick="arc" glib:name="GSK_PATH_FOREACH_ALLOW_ARC">
+        <doc xml:space="preserve">Allow emission of `GSK_PATH_ARC` operations.</doc>
+      </member>
     </bitfield>
     <callback name="PathForeachFunc" c:type="GskPathForeachFunc">
-      <doc xml:space="preserve">Prototype of the callback to iterate throught the operations of
-a path.</doc>
+      <doc xml:space="preserve">Prototype of the callback to iterate through the operations of
+a path.
+
+For each operation, the callback is given the @op itself,
+and the points that the operation is applied to in @pts. The
+@n_pts argument is somewhat redundant, since the number of points
+can be inferred from the operation.
+
+Each contour of the path starts with a @GSK_PATH_MOVE operation.
+Closed contours end with a @GSK_PATH_CLOSE operation.</doc>
       <return-value transfer-ownership="none">
-        <doc xml:space="preserve">%TRUE to continue evaluating the path, %FALSE to
+        <doc xml:space="preserve">%TRUE to continue iterating the path, %FALSE to
   immediately abort and not call the function again.</doc>
         <type name="gboolean" c:type="gboolean"/>
       </return-value>
       <parameters>
         <parameter name="op" transfer-ownership="none">
-          <doc xml:space="preserve">The operation to perform</doc>
+          <doc xml:space="preserve">The operation</doc>
           <type name="PathOperation" c:type="GskPathOperation"/>
         </parameter>
         <parameter name="pts" transfer-ownership="none">
@@ -3301,6 +3472,12 @@ More values may be added in the future.</doc>
         <doc xml:space="preserve">A curve-to operation describing a cubic B&#xE9;zier curve with 4
   points describing the start point, the two control points and the end point
   of the curve.</doc>
+      </member>
+      <member name="arc" value="5" c:identifier="GSK_PATH_ARC" glib:nick="arc" glib:name="GSK_PATH_ARC">
+        <doc xml:space="preserve">A curve-to operation describing an elliptical arc with 3 points
+  (more precisely, 2 points with their tangents). Note that an ellipse is not
+  uniquely determined by this data; GTK picks the ellipse segment that is the
+  affine transform of a quarter circle.</doc>
       </member>
     </enumeration>
     <record name="PathPoint" c:type="GskPathPoint" version="4.14" glib:type-name="GskPathPoint" glib:get-type="gsk_path_point_get_type" c:symbol-prefix="path_point">
@@ -3394,9 +3571,21 @@ same location.</doc>
         <doc xml:space="preserve">Calculates the curvature of the path at the point.
 
 Optionally, returns the center of the osculating circle as well.
+The curvature is the inverse of the radius of the osculating circle.
 
-If the curvature is infinite (at line segments), zero is returned,
-and @center is not modified.</doc>
+Lines have a curvature of zero (indicating an osculating circle of
+infinite radius. In this case, the @center is not modified.
+
+Note that certain points on a path may not have a single curvature,
+such as sharp turns. At such points, there are two curvatures --
+the (limit of) the curvature of the path going into the point,
+and the (limit of) the curvature of the path coming out of it.
+The @direction argument lets you choose which one to get.
+
+&lt;picture&gt;
+  &lt;source srcset="curvature-dark.png" media="(prefers-color-scheme: dark)"&gt;
+  &lt;img alt="Osculating circle" src="curvature-light.png"&gt;
+&lt;/picture&gt;</doc>
         <return-value transfer-ownership="none">
           <doc xml:space="preserve">The curvature of the path at the given point</doc>
           <type name="gfloat" c:type="float"/>
@@ -3409,6 +3598,10 @@ and @center is not modified.</doc>
           <parameter name="path" transfer-ownership="none">
             <doc xml:space="preserve">the path that @point is on</doc>
             <type name="Path" c:type="GskPath*"/>
+          </parameter>
+          <parameter name="direction" transfer-ownership="none">
+            <doc xml:space="preserve">the direction for which to return the curvature</doc>
+            <type name="PathDirection" c:type="GskPathDirection"/>
           </parameter>
           <parameter name="center" direction="out" caller-allocates="1" transfer-ownership="none" nullable="1">
             <doc xml:space="preserve">Return location for
@@ -3443,7 +3636,8 @@ and @center is not modified.</doc>
 
 This is a convenience variant of [method@Gsk.PathPoint.get_tangent]
 that returns the angle between the tangent and the X axis. The angle
-can e.g. be used in [method@Gtk.Snapshot.rotate].</doc>
+can e.g. be used in
+[gtk_snapshot_rotate()](../gtk4/method.Snapshot.rotate.html).</doc>
         <return-value transfer-ownership="none">
           <doc xml:space="preserve">the angle between the tangent and the X axis, in degrees</doc>
           <type name="gfloat" c:type="float"/>
@@ -6228,7 +6422,7 @@ with the given @transform.</doc>
       <doc xml:space="preserve">This is a convenience function that constructs a `GskPath`
 from a serialized form.
 
-The string is expected to be in
+The string is expected to be in (a superset of)
 [SVG path syntax](https://www.w3.org/TR/SVG11/paths.html#PathData),
 as e.g. produced by [method@Gsk.Path.to_string].
 
@@ -6244,9 +6438,12 @@ A high-level summary of the syntax:
 - `T x2 y2` Add a quadratic B&#xE9;zier, using the reflection of the previous segments' control point as control point
 - `S x2 y2 x3 y3` Add a cubic B&#xE9;zier, using the reflection of the previous segments' second control point as first control point
 - `A rx ry r l s x y` Add an elliptical arc from the current point to `(x, y)` with radii rx and ry. See the SVG documentation for how the other parameters influence the arc.
+- `E x1 y1 x2 y2` Add an elliptical arc from the current point to `(x2, y2)` with tangents that are dermined by the point `(x1, y1)`.
 
 All the commands have lowercase variants that interpret coordinates
-relative to the current point.</doc>
+relative to the current point.
+
+The `E` command is an extension that is not supported in SVG.</doc>
       <return-value transfer-ownership="full" nullable="1">
         <doc xml:space="preserve">a new `GskPath`, or `NULL`
   if @string could not be parsed</doc>
