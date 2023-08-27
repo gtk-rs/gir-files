@@ -2528,7 +2528,7 @@ contour.</doc>
         <doc xml:space="preserve">Converts @self into a human-readable string representation suitable
 for printing.
 
-The string is compatible with
+The string is compatible with (a superset of)
 [SVG path syntax](https://www.w3.org/TR/SVG11/paths.html#PathData),
 see [func@Gsk.Path.parse] for a summary of the syntax.</doc>
         <return-value transfer-ownership="none">
@@ -2634,15 +2634,14 @@ A high-level summary of the syntax:
 - `T x2 y2` Add a quadratic B&#xE9;zier, using the reflection of the previous segments' control point as control point
 - `S x2 y2 x3 y3` Add a cubic B&#xE9;zier, using the reflection of the previous segments' second control point as first control point
 - `A rx ry r l s x y` Add an elliptical arc from the current point to `(x, y)` with radii rx and ry. See the SVG documentation for how the other parameters influence the arc.
-- `E x1 y1 x2 y2` Add an elliptical arc from the current point to `(x2, y2)` with tangents that are dermined by the point `(x1, y1)`.
+- `O x1 y1 x2 y2 w` Add a rational quadratic B&#xE9;zier from the current point to `(x2, y2)` with control point `(x1, y1)` and weight `w`.
 
 All the commands have lowercase variants that interpret coordinates
 relative to the current point.
 
-The `E` command is an extension that is not supported in SVG.</doc>
+The `O` command is an extension that is not supported in SVG.</doc>
         <return-value transfer-ownership="full" nullable="1">
-          <doc xml:space="preserve">a new `GskPath`, or `NULL`
-  if @string could not be parsed</doc>
+          <doc xml:space="preserve">a new `GskPath`, or `NULL` if @string could not be parsed</doc>
           <type name="Path" c:type="GskPath*"/>
         </return-value>
         <parameters>
@@ -2689,7 +2688,7 @@ move the pen along the plane. Once you are done, you can call
 [method@Gsk.PathBuilder.close] to close the path by connecting it
 back with a line to the starting point.
 
-This is similar for how paths are drawn in Cairo.</doc>
+This is similar to how paths are drawn in Cairo.</doc>
       <constructor name="new" c:identifier="gsk_path_builder_new" version="4.14">
         <doc xml:space="preserve">Create a new `GskPathBuilder` object.
 
@@ -2741,8 +2740,7 @@ The path is going around the circle in clockwise direction.</doc>
         </parameters>
       </method>
       <method name="add_layout" c:identifier="gsk_path_builder_add_layout" version="4.14">
-        <doc xml:space="preserve">Adds the outlines for the glyphs in @layout to
-the builder.</doc>
+        <doc xml:space="preserve">Adds the outlines for the glyphs in @layout to the builder.</doc>
         <return-value transfer-ownership="none">
           <type name="none" c:type="void"/>
         </return-value>
@@ -2869,6 +2867,11 @@ with @x1, @y1 determining the tangent directions.
 
 After this, @x3, @y3 will be the new current point.
 
+Note: Two points and their tangents do not determine
+a unique ellipse, so GSK just picks one. If you need more
+precise control, use [method@Gsk.PathBuilder.conic_to]
+or [method@Gsk.PathBuilder.svg_arc_to].
+
 &lt;picture&gt;
   &lt;source srcset="arc-dark.png" media="(prefers-color-scheme: dark)"&gt;
   &lt;img alt="Arc To" src="arc-light.png"&gt;
@@ -2915,6 +2918,53 @@ joined via the line join, and not ended with line caps.</doc>
             <doc xml:space="preserve">a `GskPathBuilder`</doc>
             <type name="PathBuilder" c:type="GskPathBuilder*"/>
           </instance-parameter>
+        </parameters>
+      </method>
+      <method name="conic_to" c:identifier="gsk_path_builder_conic_to" version="4.14">
+        <doc xml:space="preserve">Adds a [conic curve](https://en.wikipedia.org/wiki/Non-uniform_rational_B-spline)
+from the current point to @x2, @y2 with the given @weight and @x1, @y1 as the
+control point.
+
+The weight determines how strongly the curve is pulled towards the control point.
+A conic with weight 1 is identical to a quadratic B&#xE9;zier curve with the same points.
+
+Conic curves can be used to draw ellipses and circles. They are also known as
+rational quadratic B&#xE9;zier curves.
+
+After this, @x2, @y2 will be the new current point.
+
+&lt;picture&gt;
+  &lt;source srcset="conic-dark.png" media="(prefers-color-scheme: dark)"&gt;
+  &lt;img alt="Conic To" src="conic-light.png"&gt;
+&lt;/picture&gt;</doc>
+        <return-value transfer-ownership="none">
+          <type name="none" c:type="void"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="self" transfer-ownership="none">
+            <doc xml:space="preserve">a `GskPathBuilder`</doc>
+            <type name="PathBuilder" c:type="GskPathBuilder*"/>
+          </instance-parameter>
+          <parameter name="x1" transfer-ownership="none">
+            <doc xml:space="preserve">x coordinate of control point</doc>
+            <type name="gfloat" c:type="float"/>
+          </parameter>
+          <parameter name="y1" transfer-ownership="none">
+            <doc xml:space="preserve">y coordinate of control point</doc>
+            <type name="gfloat" c:type="float"/>
+          </parameter>
+          <parameter name="x2" transfer-ownership="none">
+            <doc xml:space="preserve">x coordinate of the end of the curve</doc>
+            <type name="gfloat" c:type="float"/>
+          </parameter>
+          <parameter name="y2" transfer-ownership="none">
+            <doc xml:space="preserve">y coordinate of the end of the curve</doc>
+            <type name="gfloat" c:type="float"/>
+          </parameter>
+          <parameter name="weight" transfer-ownership="none">
+            <doc xml:space="preserve">weight of the control point, must be greater than zero</doc>
+            <type name="gfloat" c:type="float"/>
+          </parameter>
         </parameters>
       </method>
       <method name="cubic_to" c:identifier="gsk_path_builder_cubic_to" version="4.14">
@@ -2964,7 +3014,7 @@ After this, @x3, @y3 will be the new current point.
       </method>
       <method name="free_to_path" c:identifier="gsk_path_builder_free_to_path" version="4.14" introspectable="0">
         <doc xml:space="preserve">Creates a new `GskPath` from the current state of the
-given builder, and frees the @builder instance.</doc>
+given builder, and unrefs the @builder instance.</doc>
         <return-value transfer-ownership="full">
           <doc xml:space="preserve">the newly created `GskPath`
   with all the contours added to the builder</doc>
@@ -2978,12 +3028,14 @@ given builder, and frees the @builder instance.</doc>
         </parameters>
       </method>
       <method name="get_current_point" c:identifier="gsk_path_builder_get_current_point" version="4.14">
-        <doc xml:space="preserve">Gets the current point. The current point is used for relative
-drawing commands and updated after every operation.
+        <doc xml:space="preserve">Gets the current point.
 
-When the builder is created, the default current point is set to (0, 0).
-Note that this is different from cairo, which starts out without
-a current point.</doc>
+The current point is used for relative drawing commands and
+updated after every operation.
+
+When the builder is created, the default current point is set
+to `0, 0`. Note that this is different from cairo, which starts
+out without a current point.</doc>
         <return-value transfer-ownership="none">
           <doc xml:space="preserve">The current point</doc>
           <type name="Graphene.Point" c:type="const graphene_point_t*"/>
@@ -3000,7 +3052,11 @@ a current point.</doc>
 
 A convenience function that implements the
 [HTML arc_to](https://html.spec.whatwg.org/multipage/canvas.html#dom-context-2d-arcto-dev)
-functionality.</doc>
+functionality.
+
+After this, the current point will be the point where
+the circle with the given radius touches the line from
+@x1, @y1 to @x2, @y2.</doc>
         <return-value transfer-ownership="none">
           <type name="none" c:type="void"/>
         </return-value>
@@ -3136,8 +3192,9 @@ This function is intended primarily for language bindings.
       </method>
       <method name="rel_arc_to" c:identifier="gsk_path_builder_rel_arc_to" version="4.14">
         <doc xml:space="preserve">Adds an elliptical arc from the current point to @x3, @y3
-with @x1, @y1 determining the tangent directions. All coordinates
-are given relative to the current point.
+with @x1, @y1 determining the tangent directions.
+
+All coordinates are given relative to the current point.
 
 This is the relative version of [method@Gsk.PathBuilder.arc_to].</doc>
         <return-value transfer-ownership="none">
@@ -3166,10 +3223,50 @@ This is the relative version of [method@Gsk.PathBuilder.arc_to].</doc>
           </parameter>
         </parameters>
       </method>
+      <method name="rel_conic_to" c:identifier="gsk_path_builder_rel_conic_to" version="4.14">
+        <doc xml:space="preserve">Adds a [conic curve](https://en.wikipedia.org/wiki/Non-uniform_rational_B-spline)
+from the current point to @x2, @y2 with the given @weight and @x1, @y1 as the
+control point.
+
+All coordinates are given relative to the current point.
+
+This is the relative version of [method@Gsk.PathBuilder.conic_to].</doc>
+        <return-value transfer-ownership="none">
+          <type name="none" c:type="void"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="self" transfer-ownership="none">
+            <doc xml:space="preserve">a `GskPathBuilder`</doc>
+            <type name="PathBuilder" c:type="GskPathBuilder*"/>
+          </instance-parameter>
+          <parameter name="x1" transfer-ownership="none">
+            <doc xml:space="preserve">x offset of control point</doc>
+            <type name="gfloat" c:type="float"/>
+          </parameter>
+          <parameter name="y1" transfer-ownership="none">
+            <doc xml:space="preserve">y offset of control point</doc>
+            <type name="gfloat" c:type="float"/>
+          </parameter>
+          <parameter name="x2" transfer-ownership="none">
+            <doc xml:space="preserve">x offset of the end of the curve</doc>
+            <type name="gfloat" c:type="float"/>
+          </parameter>
+          <parameter name="y2" transfer-ownership="none">
+            <doc xml:space="preserve">y offset of the end of the curve</doc>
+            <type name="gfloat" c:type="float"/>
+          </parameter>
+          <parameter name="weight" transfer-ownership="none">
+            <doc xml:space="preserve">weight of the curve, must be greater than zero</doc>
+            <type name="gfloat" c:type="float"/>
+          </parameter>
+        </parameters>
+      </method>
       <method name="rel_cubic_to" c:identifier="gsk_path_builder_rel_cubic_to" version="4.14">
         <doc xml:space="preserve">Adds a [cubic B&#xE9;zier curve](https://en.wikipedia.org/wiki/B%C3%A9zier_curve)
 from the current point to @x3, @y3 with @x1, @y1 and @x2, @y2 as the control
-points. All coordinates are given relative to the current point.
+points.
+
+All coordinates are given relative to the current point.
 
 This is the relative version of [method@Gsk.PathBuilder.cubic_to].</doc>
         <return-value transfer-ownership="none">
@@ -3206,9 +3303,45 @@ This is the relative version of [method@Gsk.PathBuilder.cubic_to].</doc>
           </parameter>
         </parameters>
       </method>
+      <method name="rel_html_arc_to" c:identifier="gsk_path_builder_rel_html_arc_to" version="4.14">
+        <doc xml:space="preserve">Implements arc-to according to the HTML Canvas spec.
+
+All coordinates are given relative to the current point.
+
+This is the relative version of [method@Gsk.PathBuilder.html_arc_to].</doc>
+        <return-value transfer-ownership="none">
+          <type name="none" c:type="void"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="self" transfer-ownership="none">
+            <doc xml:space="preserve">a `GskPathBuilder`</doc>
+            <type name="PathBuilder" c:type="GskPathBuilder*"/>
+          </instance-parameter>
+          <parameter name="x1" transfer-ownership="none">
+            <doc xml:space="preserve">X coordinate of first control point</doc>
+            <type name="gfloat" c:type="float"/>
+          </parameter>
+          <parameter name="y1" transfer-ownership="none">
+            <doc xml:space="preserve">Y coordinate of first control point</doc>
+            <type name="gfloat" c:type="float"/>
+          </parameter>
+          <parameter name="x2" transfer-ownership="none">
+            <doc xml:space="preserve">X coordinate of second control point</doc>
+            <type name="gfloat" c:type="float"/>
+          </parameter>
+          <parameter name="y2" transfer-ownership="none">
+            <doc xml:space="preserve">Y coordinate of second control point</doc>
+            <type name="gfloat" c:type="float"/>
+          </parameter>
+          <parameter name="radius" transfer-ownership="none">
+            <doc xml:space="preserve">Radius of the circle</doc>
+            <type name="gfloat" c:type="float"/>
+          </parameter>
+        </parameters>
+      </method>
       <method name="rel_line_to" c:identifier="gsk_path_builder_rel_line_to" version="4.14">
-        <doc xml:space="preserve">Draws a line from the current point to a point offset to it by @x, @y
-and makes it the new current point.
+        <doc xml:space="preserve">Draws a line from the current point to a point offset from it
+by @x, @y and makes it the new current point.
 
 This is the relative version of [method@Gsk.PathBuilder.line_to].</doc>
         <return-value transfer-ownership="none">
@@ -3230,8 +3363,8 @@ This is the relative version of [method@Gsk.PathBuilder.line_to].</doc>
         </parameters>
       </method>
       <method name="rel_move_to" c:identifier="gsk_path_builder_rel_move_to" version="4.14">
-        <doc xml:space="preserve">Starts a new contour by placing the pen at @x, @y relative to the current
-point.
+        <doc xml:space="preserve">Starts a new contour by placing the pen at @x, @y
+relative to the current point.
 
 This is the relative version of [method@Gsk.PathBuilder.move_to].</doc>
         <return-value transfer-ownership="none">
@@ -3285,12 +3418,58 @@ This is the relative version of [method@Gsk.PathBuilder.quad_to].</doc>
           </parameter>
         </parameters>
       </method>
+      <method name="rel_svg_arc_to" c:identifier="gsk_path_builder_rel_svg_arc_to" version="4.14">
+        <doc xml:space="preserve">Implements arc-to according to the SVG spec.
+
+All coordinates are given relative to the current point.
+
+This is the relative version of [method@Gsk.PathBuilder.svg_arc_to].</doc>
+        <return-value transfer-ownership="none">
+          <type name="none" c:type="void"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="self" transfer-ownership="none">
+            <doc xml:space="preserve">a `GskPathBuilder`</doc>
+            <type name="PathBuilder" c:type="GskPathBuilder*"/>
+          </instance-parameter>
+          <parameter name="rx" transfer-ownership="none">
+            <doc xml:space="preserve">X radius</doc>
+            <type name="gfloat" c:type="float"/>
+          </parameter>
+          <parameter name="ry" transfer-ownership="none">
+            <doc xml:space="preserve">Y radius</doc>
+            <type name="gfloat" c:type="float"/>
+          </parameter>
+          <parameter name="x_axis_rotation" transfer-ownership="none">
+            <doc xml:space="preserve">the rotation of the ellipsis</doc>
+            <type name="gfloat" c:type="float"/>
+          </parameter>
+          <parameter name="large_arc" transfer-ownership="none">
+            <doc xml:space="preserve">whether to add the large arc</doc>
+            <type name="gboolean" c:type="gboolean"/>
+          </parameter>
+          <parameter name="positive_sweep" transfer-ownership="none">
+            <doc xml:space="preserve">whether to sweep in the positive direction</doc>
+            <type name="gboolean" c:type="gboolean"/>
+          </parameter>
+          <parameter name="x" transfer-ownership="none">
+            <doc xml:space="preserve">the X coordinate of the endpoint</doc>
+            <type name="gfloat" c:type="float"/>
+          </parameter>
+          <parameter name="y" transfer-ownership="none">
+            <doc xml:space="preserve">the Y coordinate of the endpoint</doc>
+            <type name="gfloat" c:type="float"/>
+          </parameter>
+        </parameters>
+      </method>
       <method name="svg_arc_to" c:identifier="gsk_path_builder_svg_arc_to" version="4.14">
         <doc xml:space="preserve">Implements arc-to according to the SVG spec.
 
 A convenience function that implements the
 [SVG arc_to](https://www.w3.org/TR/SVG11/paths.html#PathDataEllipticalArcCommands)
-functionality.</doc>
+functionality.
+
+After this, @x, @y will be the new current point.</doc>
         <return-value transfer-ownership="none">
           <type name="none" c:type="void"/>
         </return-value>
@@ -3409,18 +3588,18 @@ The only operations emitted will be `GSK_PATH_MOVE`, `GSK_PATH_LINE` and
       <member name="cubic" value="2" c:identifier="GSK_PATH_FOREACH_ALLOW_CUBIC" glib:nick="cubic" glib:name="GSK_PATH_FOREACH_ALLOW_CUBIC">
         <doc xml:space="preserve">Allow emission of `GSK_PATH_CUBIC` operations.</doc>
       </member>
-      <member name="arc" value="4" c:identifier="GSK_PATH_FOREACH_ALLOW_ARC" glib:nick="arc" glib:name="GSK_PATH_FOREACH_ALLOW_ARC">
-        <doc xml:space="preserve">Allow emission of `GSK_PATH_ARC` operations.</doc>
+      <member name="conic" value="4" c:identifier="GSK_PATH_FOREACH_ALLOW_CONIC" glib:nick="conic" glib:name="GSK_PATH_FOREACH_ALLOW_CONIC">
+        <doc xml:space="preserve">Allow emission of `GSK_PATH_CONIC` operations.</doc>
       </member>
     </bitfield>
     <callback name="PathForeachFunc" c:type="GskPathForeachFunc">
       <doc xml:space="preserve">Prototype of the callback to iterate through the operations of
 a path.
 
-For each operation, the callback is given the @op itself,
-and the points that the operation is applied to in @pts. The
-@n_pts argument is somewhat redundant, since the number of points
-can be inferred from the operation.
+For each operation, the callback is given the @op itself, the points
+that the operation is applied to in @pts, and a @weight for conic
+curves. The @n_pts argument is somewhat redundant, since the number
+of points can be inferred from the operation.
 
 Each contour of the path starts with a @GSK_PATH_MOVE operation.
 Closed contours end with a @GSK_PATH_CLOSE operation.</doc>
@@ -3442,14 +3621,152 @@ Closed contours end with a @GSK_PATH_CLOSE operation.</doc>
           <doc xml:space="preserve">The number of points</doc>
           <type name="gsize" c:type="gsize"/>
         </parameter>
-        <parameter name="user_data" transfer-ownership="none" nullable="1" allow-none="1" closure="3">
+        <parameter name="weight" transfer-ownership="none">
+          <doc xml:space="preserve">The weight for conic curves, or unused if not a conic curve</doc>
+          <type name="gfloat" c:type="float"/>
+        </parameter>
+        <parameter name="user_data" transfer-ownership="none" nullable="1" allow-none="1" closure="4">
           <doc xml:space="preserve">The user data provided with the function</doc>
           <type name="gpointer" c:type="gpointer"/>
         </parameter>
       </parameters>
     </callback>
+    <record name="PathMeasure" c:type="GskPathMeasure" opaque="1" glib:type-name="GskPathMeasure" glib:get-type="gsk_path_measure_get_type" c:symbol-prefix="path_measure">
+      <doc xml:space="preserve">`GskPathMeasure` is an object that allows measurements
+on `GskPath`s such as determining the length of the path.
+
+Many measuring operations require sampling the path length
+at intermediate points. Therefore, a `GskPathMeasure` has
+a tolerance that determines what precision is required
+for such approximations.
+
+A `GskPathMeasure` struct is a reference counted struct
+and should be treated as opaque.</doc>
+      <constructor name="new" c:identifier="gsk_path_measure_new" version="4.14">
+        <doc xml:space="preserve">Creates a measure object for the given @path with the
+default tolerance.</doc>
+        <return-value transfer-ownership="full">
+          <doc xml:space="preserve">a new `GskPathMeasure` representing @path</doc>
+          <type name="PathMeasure" c:type="GskPathMeasure*"/>
+        </return-value>
+        <parameters>
+          <parameter name="path" transfer-ownership="none">
+            <doc xml:space="preserve">the path to measure</doc>
+            <type name="Path" c:type="GskPath*"/>
+          </parameter>
+        </parameters>
+      </constructor>
+      <constructor name="new_with_tolerance" c:identifier="gsk_path_measure_new_with_tolerance" version="4.14">
+        <doc xml:space="preserve">Creates a measure object for the given @path and @tolerance.</doc>
+        <return-value transfer-ownership="full">
+          <doc xml:space="preserve">a new `GskPathMeasure` representing @path</doc>
+          <type name="PathMeasure" c:type="GskPathMeasure*"/>
+        </return-value>
+        <parameters>
+          <parameter name="path" transfer-ownership="none">
+            <doc xml:space="preserve">the path to measure</doc>
+            <type name="Path" c:type="GskPath*"/>
+          </parameter>
+          <parameter name="tolerance" transfer-ownership="none">
+            <doc xml:space="preserve">the tolerance for measuring operations</doc>
+            <type name="gfloat" c:type="float"/>
+          </parameter>
+        </parameters>
+      </constructor>
+      <method name="get_length" c:identifier="gsk_path_measure_get_length" version="4.14">
+        <doc xml:space="preserve">Gets the length of the path being measured.
+
+The length is cached, so this function does not do any work.</doc>
+        <return-value transfer-ownership="none">
+          <doc xml:space="preserve">The length of the path measured by @self</doc>
+          <type name="gfloat" c:type="float"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="self" transfer-ownership="none">
+            <doc xml:space="preserve">a `GskPathMeasure`</doc>
+            <type name="PathMeasure" c:type="GskPathMeasure*"/>
+          </instance-parameter>
+        </parameters>
+      </method>
+      <method name="get_path" c:identifier="gsk_path_measure_get_path" version="4.14">
+        <doc xml:space="preserve">Returns the path that the measure was created for.</doc>
+        <return-value transfer-ownership="none">
+          <doc xml:space="preserve">the path of @self</doc>
+          <type name="Path" c:type="GskPath*"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="self" transfer-ownership="none">
+            <doc xml:space="preserve">a `GskPathMeasure`</doc>
+            <type name="PathMeasure" c:type="GskPathMeasure*"/>
+          </instance-parameter>
+        </parameters>
+      </method>
+      <method name="get_point" c:identifier="gsk_path_measure_get_point" version="4.14">
+        <doc xml:space="preserve">Sets @result to the point at the given distance into the path.
+
+An empty path has no points, so `FALSE` is returned in that case.</doc>
+        <return-value transfer-ownership="none">
+          <doc xml:space="preserve">`TRUE` if @result was set</doc>
+          <type name="gboolean" c:type="gboolean"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="self" transfer-ownership="none">
+            <doc xml:space="preserve">a `GskPathMeasure`</doc>
+            <type name="PathMeasure" c:type="GskPathMeasure*"/>
+          </instance-parameter>
+          <parameter name="distance" transfer-ownership="none">
+            <doc xml:space="preserve">the distance</doc>
+            <type name="gfloat" c:type="float"/>
+          </parameter>
+          <parameter name="result" direction="out" caller-allocates="1" transfer-ownership="none">
+            <doc xml:space="preserve">return location for the result</doc>
+            <type name="PathPoint" c:type="GskPathPoint*"/>
+          </parameter>
+        </parameters>
+      </method>
+      <method name="get_tolerance" c:identifier="gsk_path_measure_get_tolerance" version="4.14">
+        <doc xml:space="preserve">Returns the tolerance that the measure was created with.</doc>
+        <return-value transfer-ownership="none">
+          <doc xml:space="preserve">the tolerance of @self</doc>
+          <type name="gfloat" c:type="float"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="self" transfer-ownership="none">
+            <doc xml:space="preserve">a `GskPathMeasure`</doc>
+            <type name="PathMeasure" c:type="GskPathMeasure*"/>
+          </instance-parameter>
+        </parameters>
+      </method>
+      <method name="ref" c:identifier="gsk_path_measure_ref" version="4.14">
+        <doc xml:space="preserve">Increases the reference count of a `GskPathMeasure` by one.</doc>
+        <return-value transfer-ownership="full">
+          <doc xml:space="preserve">the passed in `GskPathMeasure`.</doc>
+          <type name="PathMeasure" c:type="GskPathMeasure*"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="self" transfer-ownership="none">
+            <doc xml:space="preserve">a `GskPathMeasure`</doc>
+            <type name="PathMeasure" c:type="GskPathMeasure*"/>
+          </instance-parameter>
+        </parameters>
+      </method>
+      <method name="unref" c:identifier="gsk_path_measure_unref" version="4.14">
+        <doc xml:space="preserve">Decreases the reference count of a `GskPathMeasure` by one.
+
+If the resulting reference count is zero, frees the object.</doc>
+        <return-value transfer-ownership="none">
+          <type name="none" c:type="void"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="self" transfer-ownership="none">
+            <doc xml:space="preserve">a `GskPathMeasure`</doc>
+            <type name="PathMeasure" c:type="GskPathMeasure*"/>
+          </instance-parameter>
+        </parameters>
+      </method>
+    </record>
     <enumeration name="PathOperation" version="4.14" glib:type-name="GskPathOperation" glib:get-type="gsk_path_operation_get_type" c:type="GskPathOperation">
-      <doc xml:space="preserve">Path operations are used to described segments of a `GskPath`.
+      <doc xml:space="preserve">Path operations are used to describe the segments of a `GskPath`.
 
 More values may be added in the future.</doc>
       <member name="move" value="0" c:identifier="GSK_PATH_MOVE" glib:nick="move" glib:name="GSK_PATH_MOVE">
@@ -3473,20 +3790,21 @@ More values may be added in the future.</doc>
   points describing the start point, the two control points and the end point
   of the curve.</doc>
       </member>
-      <member name="arc" value="5" c:identifier="GSK_PATH_ARC" glib:nick="arc" glib:name="GSK_PATH_ARC">
-        <doc xml:space="preserve">A curve-to operation describing an elliptical arc with 3 points
-  (more precisely, 2 points with their tangents). Note that an ellipse is not
-  uniquely determined by this data; GTK picks the ellipse segment that is the
-  affine transform of a quarter circle.</doc>
+      <member name="conic" value="5" c:identifier="GSK_PATH_CONIC" glib:nick="conic" glib:name="GSK_PATH_CONIC">
+        <doc xml:space="preserve">A rational quadratic B&#xE9;zier curve with 3 points describing
+  the start point, control point and end point of the curve. A weight for the
+  curve will be passed, too.</doc>
       </member>
     </enumeration>
     <record name="PathPoint" c:type="GskPathPoint" version="4.14" glib:type-name="GskPathPoint" glib:get-type="gsk_path_point_get_type" c:symbol-prefix="path_point">
       <doc xml:space="preserve">`GskPathPoint` is an opaque type representing a point on a path.
 
-It can be queried for properties of the path at that point, such as its
-tangent or its curvature.
+It can be queried for properties of the path at that point, such as
+its tangent or its curvature.
 
-To obtain a `GskPathPoint`, use [method@Gsk.Path.get_closest_point].
+To obtain a `GskPathPoint`, use [method@Gsk.Path.get_closest_point],
+[method@Gsk.Path.get_start_point], [method@Gsk.Path.get_end_point]
+or [method@Gsk.PathMeasure.get_point].
 
 Note that `GskPathPoint` structs are meant to be stack-allocated, and
 don't a reference to the path object they are obtained from. It is the
@@ -3504,7 +3822,7 @@ callers responsibility to keep a reference to the path as long as the
           </array>
         </field>
       </union>
-      <method name="compare" c:identifier="gsk_path_point_compare">
+      <method name="compare" c:identifier="gsk_path_point_compare" version="4.14">
         <doc xml:space="preserve">Returns whether @point1 is before or after @point2.</doc>
         <return-value transfer-ownership="none">
           <doc xml:space="preserve">-1 if @point1 is before @point2,
@@ -3533,7 +3851,7 @@ callers responsibility to keep a reference to the path as long as the
           </instance-parameter>
         </parameters>
       </method>
-      <method name="equal" c:identifier="gsk_path_point_equal">
+      <method name="equal" c:identifier="gsk_path_point_equal" version="4.14">
         <doc xml:space="preserve">Returns whether the two path points refer to the same
 location on all paths.
 
@@ -3607,6 +3925,24 @@ The @direction argument lets you choose which one to get.
             <doc xml:space="preserve">Return location for
   the center of the osculating circle</doc>
             <type name="Graphene.Point" c:type="graphene_point_t*"/>
+          </parameter>
+        </parameters>
+      </method>
+      <method name="get_distance" c:identifier="gsk_path_point_get_distance" version="4.14">
+        <doc xml:space="preserve">Returns the distance from the beginning of the path
+to @point.</doc>
+        <return-value transfer-ownership="none">
+          <doc xml:space="preserve">the distance of @point</doc>
+          <type name="gfloat" c:type="float"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="point" transfer-ownership="none">
+            <doc xml:space="preserve">a `GskPathPoint on the path</doc>
+            <type name="PathPoint" c:type="const GskPathPoint*"/>
+          </instance-parameter>
+          <parameter name="measure" transfer-ownership="none">
+            <doc xml:space="preserve">a `GskPathMeasure` for the path</doc>
+            <type name="PathMeasure" c:type="GskPathMeasure*"/>
           </parameter>
         </parameters>
       </method>
@@ -5263,7 +5599,7 @@ You can specify a starting offset into the dash with
           </instance-parameter>
           <parameter name="dash" transfer-ownership="none" nullable="1" allow-none="1">
             <doc xml:space="preserve">
-    the array of dashes</doc>
+  the array of dashes</doc>
             <array length="1" zero-terminated="0" c:type="const float*">
               <type name="gfloat" c:type="float"/>
             </array>
@@ -5828,7 +6164,8 @@ The result of this function can later be parsed with
         </parameters>
       </method>
       <method name="rotate" c:identifier="gsk_transform_rotate">
-        <doc xml:space="preserve">Rotates @next @angle degrees in 2D - or in 3D-speak, around the z axis.</doc>
+        <doc xml:space="preserve">Rotates @next @angle degrees in 2D - or in 3D-speak, around the Z axis.
+The rotation happens around the origin point of (0, 0).</doc>
         <return-value transfer-ownership="full" nullable="1">
           <doc xml:space="preserve">The new transform</doc>
           <type name="Transform" c:type="GskTransform*"/>
@@ -6438,15 +6775,14 @@ A high-level summary of the syntax:
 - `T x2 y2` Add a quadratic B&#xE9;zier, using the reflection of the previous segments' control point as control point
 - `S x2 y2 x3 y3` Add a cubic B&#xE9;zier, using the reflection of the previous segments' second control point as first control point
 - `A rx ry r l s x y` Add an elliptical arc from the current point to `(x, y)` with radii rx and ry. See the SVG documentation for how the other parameters influence the arc.
-- `E x1 y1 x2 y2` Add an elliptical arc from the current point to `(x2, y2)` with tangents that are dermined by the point `(x1, y1)`.
+- `O x1 y1 x2 y2 w` Add a rational quadratic B&#xE9;zier from the current point to `(x2, y2)` with control point `(x1, y1)` and weight `w`.
 
 All the commands have lowercase variants that interpret coordinates
 relative to the current point.
 
-The `E` command is an extension that is not supported in SVG.</doc>
+The `O` command is an extension that is not supported in SVG.</doc>
       <return-value transfer-ownership="full" nullable="1">
-        <doc xml:space="preserve">a new `GskPath`, or `NULL`
-  if @string could not be parsed</doc>
+        <doc xml:space="preserve">a new `GskPath`, or `NULL` if @string could not be parsed</doc>
         <type name="Path" c:type="GskPath*"/>
       </return-value>
       <parameters>
