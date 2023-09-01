@@ -2401,6 +2401,10 @@ If there is no point closer than the given threshold,
             <doc xml:space="preserve">return location for the closest point</doc>
             <type name="PathPoint" c:type="GskPathPoint*"/>
           </parameter>
+          <parameter name="distance" direction="out" caller-allocates="0" transfer-ownership="full" optional="1" allow-none="1">
+            <doc xml:space="preserve">return location for the distance</doc>
+            <type name="gfloat" c:type="float*"/>
+          </parameter>
         </parameters>
       </method>
       <method name="get_end_point" c:identifier="gsk_path_get_end_point" version="4.14">
@@ -2720,7 +2724,9 @@ from a Cairo context.</doc>
       <method name="add_circle" c:identifier="gsk_path_builder_add_circle" version="4.14">
         <doc xml:space="preserve">Adds a circle with the @center and @radius.
 
-The path is going around the circle in clockwise direction.</doc>
+The path is going around the circle in clockwise direction.
+
+If @radius is zero, the contour will be a closed point.</doc>
         <return-value transfer-ownership="none">
           <type name="none" c:type="void"/>
         </return-value>
@@ -2775,9 +2781,6 @@ The path is going around the circle in clockwise direction.</doc>
         <doc xml:space="preserve">Adds @rect as a new contour to the path built by the builder.
 
 The path is going around the rectangle in clockwise direction.
-
-If the width or height of the rectangle is negative, the start
-point will be on the right or bottom, respectively.
 
 If the the width or height are 0, the path will be a closed
 horizontal or vertical line. If both are 0, it'll be a closed dot.</doc>
@@ -3631,7 +3634,7 @@ Closed contours end with a @GSK_PATH_CLOSE operation.</doc>
         </parameter>
       </parameters>
     </callback>
-    <record name="PathMeasure" c:type="GskPathMeasure" opaque="1" glib:type-name="GskPathMeasure" glib:get-type="gsk_path_measure_get_type" c:symbol-prefix="path_measure">
+    <record name="PathMeasure" c:type="GskPathMeasure" opaque="1" version="4.14" glib:type-name="GskPathMeasure" glib:get-type="gsk_path_measure_get_type" c:symbol-prefix="path_measure">
       <doc xml:space="preserve">`GskPathMeasure` is an object that allows measurements
 on `GskPath`s such as determining the length of the path.
 
@@ -3806,20 +3809,29 @@ To obtain a `GskPathPoint`, use [method@Gsk.Path.get_closest_point],
 [method@Gsk.Path.get_start_point], [method@Gsk.Path.get_end_point]
 or [method@Gsk.PathMeasure.get_point].
 
-Note that `GskPathPoint` structs are meant to be stack-allocated, and
-don't a reference to the path object they are obtained from. It is the
-callers responsibility to keep a reference to the path as long as the
-`GskPathPoint` is used.</doc>
-      <union name="data" c:type="data">
-        <field name="f" writable="1">
-          <array zero-terminated="0" fixed-size="8">
+Note that `GskPathPoint` structs are meant to be stack-allocated,
+and don't hold a reference to the path object they are obtained from.
+It is the callers responsibility to keep a reference to the path
+as long as the `GskPathPoint` is used.</doc>
+      <union>
+        <record>
+          <field name="contour" writable="1">
+            <type name="gsize" c:type="gsize"/>
+          </field>
+          <field name="idx" writable="1">
+            <type name="gsize" c:type="gsize"/>
+          </field>
+          <field name="t" writable="1">
             <type name="gfloat" c:type="float"/>
-          </array>
-        </field>
-        <field name="p" writable="1">
+          </field>
+        </record>
+        <field name="padding" writable="1">
           <array zero-terminated="0" fixed-size="8">
             <type name="gpointer" c:type="gpointer"/>
           </array>
+        </field>
+        <field name="alignment" writable="1">
+          <type name="Graphene.Vec4" c:type="graphene_vec4_t"/>
         </field>
       </union>
       <method name="compare" c:identifier="gsk_path_point_compare" version="4.14">
@@ -3893,6 +3905,8 @@ The curvature is the inverse of the radius of the osculating circle.
 
 Lines have a curvature of zero (indicating an osculating circle of
 infinite radius. In this case, the @center is not modified.
+
+Circles with a radius of zero have `INFINITY` as curvature
 
 Note that certain points on a path may not have a single curvature,
 such as sharp turns. At such points, there are two curvatures --
