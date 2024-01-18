@@ -553,7 +553,7 @@ A string name/value pair representing a generic attribute.</doc>
         </parameters>
       </function>
     </record>
-    <constant name="BINARY_AGE" value="25010" c:type="ATK_BINARY_AGE" version="2.7.4">
+    <constant name="BINARY_AGE" value="25110" c:type="ATK_BINARY_AGE" version="2.7.4">
       <doc xml:space="preserve">Like atk_get_binary_age(), but from the headers used at
 application compile time, rather than from the library linked
 against at application run time.</doc>
@@ -4564,7 +4564,7 @@ application compile time, rather than from the library linked
 against at application run time.</doc>
       <type name="gint" c:type="gint"/>
     </constant>
-    <constant name="MINOR_VERSION" value="50" c:type="ATK_MINOR_VERSION" version="2.7.4">
+    <constant name="MINOR_VERSION" value="51" c:type="ATK_MINOR_VERSION" version="2.7.4">
       <doc xml:space="preserve">Like atk_get_minor_version(), but from the headers used at
 application compile time, rather than from the library linked
 against at application run time.</doc>
@@ -5317,7 +5317,7 @@ a empty value you can use "".</doc>
           </parameter>
         </parameters>
       </method>
-      <method name="get_accessible_id" c:identifier="atk_object_get_accessible_id" version="2.34">
+      <method name="get_accessible_id" c:identifier="atk_object_get_accessible_id" glib:get-property="accessible-id" version="2.34">
         <doc xml:space="preserve">Gets the accessible id of the accessible.</doc>
         <return-value transfer-ownership="none">
           <doc xml:space="preserve">a character string representing the accessible id of the object, or
@@ -5356,6 +5356,20 @@ atk_attribute_set_free().</doc>
         <return-value transfer-ownership="none">
           <doc xml:space="preserve">a character string representing the accessible description
 of the accessible.</doc>
+          <type name="utf8" c:type="const gchar*"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="accessible" transfer-ownership="none">
+            <doc xml:space="preserve">an #AtkObject</doc>
+            <type name="Object" c:type="AtkObject*"/>
+          </instance-parameter>
+        </parameters>
+      </method>
+      <method name="get_help_text" c:identifier="atk_object_get_help_text" version="2.52">
+        <doc xml:space="preserve">Gets the help text associated with the accessible.</doc>
+        <return-value transfer-ownership="none">
+          <doc xml:space="preserve">a character string representing the help text or the object, or
+NULL if no such string was set.</doc>
           <type name="utf8" c:type="const gchar*"/>
         </return-value>
         <parameters>
@@ -5635,7 +5649,7 @@ set of the accessible</doc>
           </parameter>
         </parameters>
       </method>
-      <method name="set_accessible_id" c:identifier="atk_object_set_accessible_id" version="2.34">
+      <method name="set_accessible_id" c:identifier="atk_object_set_accessible_id" glib:set-property="accessible-id" version="2.34">
         <doc xml:space="preserve">Sets the accessible ID of the accessible.  This is not meant to be presented
 to the user, but to be an ID which is stable over application development.
 Typically, this is the gtkbuilder ID. Such an ID will be available for
@@ -5649,7 +5663,7 @@ reading, or for automatic regression testing.</doc>
             <doc xml:space="preserve">an #AtkObject</doc>
             <type name="Object" c:type="AtkObject*"/>
           </instance-parameter>
-          <parameter name="name" transfer-ownership="none">
+          <parameter name="id" transfer-ownership="none">
             <doc xml:space="preserve">a character string to be set as the accessible id</doc>
             <type name="utf8" c:type="const gchar*"/>
           </parameter>
@@ -5670,6 +5684,24 @@ the name to a empty value you can use "".</doc>
           </instance-parameter>
           <parameter name="description" transfer-ownership="none">
             <doc xml:space="preserve">a character string to be set as the accessible description</doc>
+            <type name="utf8" c:type="const gchar*"/>
+          </parameter>
+        </parameters>
+      </method>
+      <method name="set_help_text" c:identifier="atk_object_set_help_text" version="2.52">
+        <doc xml:space="preserve">Sets the help text associated with the accessible. This can be used to
+expose context-sensitive information to help a user understand how to
+interact with the object.</doc>
+        <return-value transfer-ownership="none">
+          <type name="none" c:type="void"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="accessible" transfer-ownership="none">
+            <doc xml:space="preserve">an #AtkObject</doc>
+            <type name="Object" c:type="AtkObject*"/>
+          </instance-parameter>
+          <parameter name="help_text" transfer-ownership="none">
+            <doc xml:space="preserve">a character string to be set as the accessible's help text</doc>
             <type name="utf8" c:type="const gchar*"/>
           </parameter>
         </parameters>
@@ -5734,8 +5766,14 @@ a empty value you can use "".</doc>
       <property name="accessible-description" writable="1" transfer-ownership="none" default-value="NULL">
         <type name="utf8" c:type="gchar*"/>
       </property>
+      <property name="accessible-help-text" writable="1" transfer-ownership="none" default-value="NULL">
+        <type name="utf8" c:type="gchar*"/>
+      </property>
       <property name="accessible-hypertext-nlinks" transfer-ownership="none" default-value="0">
         <type name="gint" c:type="gint"/>
+      </property>
+      <property name="accessible-id" writable="1" transfer-ownership="none" setter="set_accessible_id" getter="get_accessible_id" default-value="NULL">
+        <type name="utf8" c:type="gchar*"/>
       </property>
       <property name="accessible-name" writable="1" transfer-ownership="none" default-value="NULL">
         <type name="utf8" c:type="gchar*"/>

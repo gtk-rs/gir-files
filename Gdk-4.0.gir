@@ -846,8 +846,9 @@ lifetime of an application, so this function is typically called on
 exit. Depending on the platform, the functionality may not be available
 unless a "clipboard manager" is running.
 
-This function is called automatically when a [class@Gtk.Application] is
-shut down, so you likely don't need to call it.</doc>
+This function is called automatically when a
+[GtkApplication](../gtk4/class.Application.html)
+is shut down, so you likely don't need to call it.</doc>
         <return-value transfer-ownership="none">
           <type name="none" c:type="void"/>
         </return-value>
@@ -2460,7 +2461,8 @@ something about it.
 Cursors by themselves are not very interesting: they must be bound to a
 window for users to see them. This is done with [method@Gdk.Surface.set_cursor]
 or [method@Gdk.Surface.set_device_cursor]. Applications will typically
-use higher-level GTK functions such as [method@Gtk.Widget.set_cursor] instead.
+use higher-level GTK functions such as [gtk_widget_set_cursor()](../gtk4/method.Widget.set_cursor.html)
+instead.
 
 Cursors are not bound to a given [class@Gdk.Display], so they can be shared.
 However, the appearance of cursors may vary when used on different
@@ -2709,6 +2711,12 @@ The texture will be %NULL if the cursor was created from a name.</doc>
     <function-macro name="DISPLAY_MANAGER" c:identifier="GDK_DISPLAY_MANAGER" introspectable="0">
       <parameters>
         <parameter name="object">
+        </parameter>
+      </parameters>
+    </function-macro>
+    <function-macro name="DMABUF_TEXTURE" c:identifier="GDK_DMABUF_TEXTURE" introspectable="0">
+      <parameters>
+        <parameter name="obj">
         </parameter>
       </parameters>
     </function-macro>
@@ -3090,7 +3098,7 @@ This is only relevant for keyboard devices.</doc>
         <doc xml:space="preserve">Whether the device is represented by a cursor on the screen.</doc>
         <type name="gboolean" c:type="gboolean"/>
       </property>
-      <property name="modifier-state" transfer-ownership="none" getter="get_modifier_state" default-value="0">
+      <property name="modifier-state" transfer-ownership="none" getter="get_modifier_state" default-value="GDK_NO_MODIFIER_MASK">
         <attribute name="org.gtk.Property.get" value="gdk_device_get_modifier_state"/>
         <doc xml:space="preserve">The current modifier state of the device.
 
@@ -3581,6 +3589,27 @@ this function will return %NULL.</doc>
           </instance-parameter>
         </parameters>
       </method>
+      <method name="get_dmabuf_formats" c:identifier="gdk_display_get_dmabuf_formats" glib:get-property="dmabuf-formats" version="4.14">
+        <doc xml:space="preserve">Returns the dma-buf formats that are supported on this display.
+
+GTK may use OpenGL or Vulkan to support some formats.
+Calling this function will then initialize them if they aren't yet.
+
+The formats returned by this function can be used for negotiating
+buffer formats with producers such as v4l, pipewire or GStreamer.
+
+To learn more about dma-bufs, see [class@Gdk.DmabufTextureBuilder].</doc>
+        <return-value transfer-ownership="none">
+          <doc xml:space="preserve">a `GdkDmabufFormats` object</doc>
+          <type name="DmabufFormats" c:type="GdkDmabufFormats*"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="display" transfer-ownership="none">
+            <doc xml:space="preserve">a `GdkDisplay`</doc>
+            <type name="Display" c:type="GdkDisplay*"/>
+          </instance-parameter>
+        </parameters>
+      </method>
       <method name="get_monitor_at_surface" c:identifier="gdk_display_get_monitor_at_surface">
         <doc xml:space="preserve">Gets the monitor in which the largest area of @surface
 resides.</doc>
@@ -3854,9 +3883,9 @@ The returned array should be freed with g_free().</doc>
         <doc xml:space="preserve">Indicates to the GUI environment that the application has
 finished loading, using a given identifier.
 
-GTK will call this function automatically for [class@Gtk.Window]
+GTK will call this function automatically for [GtkWindow](../gtk4/class.Window.html)
 with custom startup-notification identifier unless
-[method@Gtk.Window.set_auto_startup_notification]
+[gtk_window_set_auto_startup_notification()](../gtk4/method.Window.set_auto_startup_notification.html)
 is called to disable that feature.</doc>
         <doc-deprecated xml:space="preserve">Using [method@Gdk.Toplevel.set_startup_id] is sufficient</doc-deprecated>
         <return-value transfer-ownership="none">
@@ -4022,6 +4051,10 @@ virtualized test environments.</doc>
         <attribute name="org.gtk.Property.get" value="gdk_display_is_composited"/>
         <doc xml:space="preserve">%TRUE if the display properly composites the alpha channel.</doc>
         <type name="gboolean" c:type="gboolean"/>
+      </property>
+      <property name="dmabuf-formats" version="4.14" transfer-ownership="none" getter="get_dmabuf_formats">
+        <doc xml:space="preserve">The dma-buf formats that are supported on this display</doc>
+        <type name="DmabufFormats"/>
       </property>
       <property name="input-shapes" transfer-ownership="none" default-value="TRUE">
         <attribute name="org.gtk.Property.get" value="gdk_display_supports_input_shapes"/>
@@ -4228,6 +4261,733 @@ backends will be used.</doc>
         </parameters>
       </glib:signal>
     </class>
+    <enumeration name="DmabufError" version="4.14" glib:type-name="GdkDmabufError" glib:get-type="gdk_dmabuf_error_get_type" c:type="GdkDmabufError" glib:error-domain="gdk-dmabuf-error-quark">
+      <doc xml:space="preserve">Error enumeration for `GdkDmabufTexture`.</doc>
+      <member name="not_available" value="0" c:identifier="GDK_DMABUF_ERROR_NOT_AVAILABLE" glib:nick="not-available" glib:name="GDK_DMABUF_ERROR_NOT_AVAILABLE">
+        <doc xml:space="preserve">Dmabuf support is not available, because the OS
+  is not Linux, or it was explicitly disabled at compile- or runtime</doc>
+      </member>
+      <member name="unsupported_format" value="1" c:identifier="GDK_DMABUF_ERROR_UNSUPPORTED_FORMAT" glib:nick="unsupported-format" glib:name="GDK_DMABUF_ERROR_UNSUPPORTED_FORMAT">
+        <doc xml:space="preserve">The requested format is not supported</doc>
+      </member>
+      <member name="creation_failed" value="2" c:identifier="GDK_DMABUF_ERROR_CREATION_FAILED" glib:nick="creation-failed" glib:name="GDK_DMABUF_ERROR_CREATION_FAILED">
+        <doc xml:space="preserve">GTK failed to create the resource for other
+  reasons</doc>
+      </member>
+      <function name="quark" c:identifier="gdk_dmabuf_error_quark">
+        <return-value transfer-ownership="none">
+          <type name="GLib.Quark" c:type="GQuark"/>
+        </return-value>
+      </function>
+    </enumeration>
+    <record name="DmabufFormats" c:type="GdkDmabufFormats" opaque="1" version="4.14" glib:type-name="GdkDmabufFormats" glib:get-type="gdk_dmabuf_formats_get_type" c:symbol-prefix="dmabuf_formats">
+      <doc xml:space="preserve">The `GdkDmabufFormats` struct provides information about
+supported DMA buffer formats.
+
+You can query whether a given format is supported with
+[method@Gdk.DmabufFormats.contains] and you can iterate
+over the list of all supported formats with
+[method@Gdk.DmabufFormats.get_n_formats] and
+[method@Gdk.DmabufFormats.get_format].
+
+The list of supported formats is sorted by preference,
+with the best formats coming first.
+
+The list may contains (format, modifier) pairs where the modifier
+is `DMA_FORMAT_MOD_INVALID`, indicating that **_implicit modifiers_**
+may be used with this format.
+
+See [class@Gdk.DmabufTextureBuilder] for more information
+about DMA buffers.
+
+Note that DMA buffers only exist on Linux.</doc>
+      <method name="contains" c:identifier="gdk_dmabuf_formats_contains" version="4.14">
+        <doc xml:space="preserve">Returns whether a given format is contained in @formats.</doc>
+        <return-value transfer-ownership="none">
+          <doc xml:space="preserve">`TRUE` if the format specified by the arguments
+  is part of @formats</doc>
+          <type name="gboolean" c:type="gboolean"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="formats" transfer-ownership="none">
+            <doc xml:space="preserve">a `GdkDmabufFormats`</doc>
+            <type name="DmabufFormats" c:type="GdkDmabufFormats*"/>
+          </instance-parameter>
+          <parameter name="fourcc" transfer-ownership="none">
+            <doc xml:space="preserve">a format code</doc>
+            <type name="guint32" c:type="guint32"/>
+          </parameter>
+          <parameter name="modifier" transfer-ownership="none">
+            <doc xml:space="preserve">a format modifier</doc>
+            <type name="guint64" c:type="guint64"/>
+          </parameter>
+        </parameters>
+      </method>
+      <method name="get_format" c:identifier="gdk_dmabuf_formats_get_format" version="4.14">
+        <doc xml:space="preserve">Gets the fourcc code and modifier for a format
+that is contained in @formats.</doc>
+        <return-value transfer-ownership="none">
+          <type name="none" c:type="void"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="formats" transfer-ownership="none">
+            <doc xml:space="preserve">a `GdkDmabufFormats`</doc>
+            <type name="DmabufFormats" c:type="GdkDmabufFormats*"/>
+          </instance-parameter>
+          <parameter name="idx" transfer-ownership="none">
+            <doc xml:space="preserve">the index of the format to return</doc>
+            <type name="gsize" c:type="gsize"/>
+          </parameter>
+          <parameter name="fourcc" direction="out" caller-allocates="0" transfer-ownership="full">
+            <doc xml:space="preserve">return location for the format code</doc>
+            <type name="guint32" c:type="guint32*"/>
+          </parameter>
+          <parameter name="modifier" direction="out" caller-allocates="0" transfer-ownership="full">
+            <doc xml:space="preserve">return location for the format modifier</doc>
+            <type name="guint64" c:type="guint64*"/>
+          </parameter>
+        </parameters>
+      </method>
+      <method name="get_n_formats" c:identifier="gdk_dmabuf_formats_get_n_formats" version="4.14">
+        <doc xml:space="preserve">Returns the number of formats that the @formats object
+contains.
+
+Note that DMA buffers are a Linux concept, so on other
+platforms, [method@Gdk.DmabufFormats.get_n_formats] will
+always return zero.</doc>
+        <return-value transfer-ownership="none">
+          <doc xml:space="preserve">the number of formats</doc>
+          <type name="gsize" c:type="gsize"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="formats" transfer-ownership="none">
+            <doc xml:space="preserve">a `GdkDmabufFormats`</doc>
+            <type name="DmabufFormats" c:type="GdkDmabufFormats*"/>
+          </instance-parameter>
+        </parameters>
+      </method>
+      <method name="ref" c:identifier="gdk_dmabuf_formats_ref" version="4.14">
+        <doc xml:space="preserve">Increases the reference count of @formats.</doc>
+        <return-value transfer-ownership="full">
+          <doc xml:space="preserve">the passed-in object</doc>
+          <type name="DmabufFormats" c:type="GdkDmabufFormats*"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="formats" transfer-ownership="none">
+            <doc xml:space="preserve">a `GdkDmabufFormats`</doc>
+            <type name="DmabufFormats" c:type="GdkDmabufFormats*"/>
+          </instance-parameter>
+        </parameters>
+      </method>
+      <method name="unref" c:identifier="gdk_dmabuf_formats_unref" version="4.14">
+        <doc xml:space="preserve">Decreases the reference count of @formats.
+
+When the reference count reaches zero,
+the object is freed.</doc>
+        <return-value transfer-ownership="none">
+          <type name="none" c:type="void"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="formats" transfer-ownership="none">
+            <doc xml:space="preserve">a `GdkDmabufFormats`</doc>
+            <type name="DmabufFormats" c:type="GdkDmabufFormats*"/>
+          </instance-parameter>
+        </parameters>
+      </method>
+    </record>
+    <class name="DmabufTexture" c:symbol-prefix="dmabuf_texture" c:type="GdkDmabufTexture" version="4.14" parent="Texture" glib:type-name="GdkDmabufTexture" glib:get-type="gdk_dmabuf_texture_get_type" glib:type-struct="DmabufTextureClass">
+      <doc xml:space="preserve">A `GdkTexture` representing a dma-buf object.
+
+To create a `GdkDmabufTexture`, use the auxiliary
+[class@Gdk.DmabufTextureBuilder] object.
+
+Dma-buf textures can only be created on Linux.</doc>
+      <implements name="Paintable"/>
+      <implements name="Gio.Icon"/>
+      <implements name="Gio.LoadableIcon"/>
+    </class>
+    <class name="DmabufTextureBuilder" c:symbol-prefix="dmabuf_texture_builder" c:type="GdkDmabufTextureBuilder" version="4.14" parent="GObject.Object" glib:type-name="GdkDmabufTextureBuilder" glib:get-type="gdk_dmabuf_texture_builder_get_type" glib:type-struct="DmabufTextureBuilderClass">
+      <doc xml:space="preserve">`GdkDmabufTextureBuilder` is a builder used to construct [class@Gdk.Texture]
+objects from DMA buffers.
+
+DMA buffers are commonly called **_dma-bufs_**.
+
+DMA buffers are a feature of the Linux kernel to enable efficient buffer and
+memory sharing between hardware such as codecs, GPUs, displays, cameras and the
+kernel drivers controlling them. For example, a decoder may want its output to
+be directly shared with the display server for rendering without a copy.
+
+Any device driver which participates in DMA buffer sharing, can do so as either
+the exporter or importer of buffers (or both).
+
+The memory that is shared via DMA buffers is usually stored in non-system memory
+(maybe in device's local memory or something else not directly accessible by the
+CPU), and accessing this memory from the CPU may have higher-than-usual overhead.
+
+In particular for graphics data, it is not uncommon that data consists of multiple
+separate blocks of memory, for example one block for each of the red, green and
+blue channels. These blocks are called **_planes_**. DMA buffers can have up to
+four planes. Even if the memory is a single block, the data can be organized in
+multiple planes, by specifying offsets from the beginning of the data.
+
+DMA buffers are exposed to user-space as file descriptors allowing to pass them
+between processes. If a DMA buffer has multiple planes, there is one file
+descriptor per plane.
+
+The format of the data (for graphics data, essentially its colorspace) is described
+by a 32-bit integer. These format identifiers are defined in the header file `drm_fourcc.h`
+and commonly referred to as **_fourcc_** values, since they are identified by 4 ASCII
+characters. Additionally, each DMA buffer has a **_modifier_**, which is a 64-bit integer
+that describes driver-specific details of the memory layout, such as tiling or compression.
+
+For historical reasons, some producers of dma-bufs don't provide an explicit modifier, but
+instead return `DMA_FORMAT_MOD_INVALID` to indicate that their modifier is **_implicit_**.
+GTK tries to accommodate this situation by accepting `DMA_FORMAT_MOD_INVALID` as modifier.
+
+The operation of `GdkDmabufTextureBuilder` is quite simple: Create a texture builder,
+set all the necessary properties, and then call [method@Gdk.DmabufTextureBuilder.build]
+to create the new texture.
+
+The required properties for a dma-buf texture are
+
+ * The width and height in pixels
+
+ * The `fourcc` code and `modifier` which identify the format and memory layout of the dma-buf
+
+ * The file descriptor, offset and stride for each of the planes
+
+`GdkDmabufTextureBuilder` can be used for quick one-shot construction of
+textures as well as kept around and reused to construct multiple textures.
+
+For further information, see
+
+* The Linux kernel [documentation](https://docs.kernel.org/driver-api/dma-buf.html)
+
+* The header file [drm_fourcc.h](https://gitlab.freedesktop.org/mesa/drm/-/blob/main/include/drm/drm_fourcc.h)</doc>
+      <constructor name="new" c:identifier="gdk_dmabuf_texture_builder_new" version="4.14">
+        <doc xml:space="preserve">Creates a new texture builder.</doc>
+        <return-value transfer-ownership="full">
+          <doc xml:space="preserve">the new `GdkTextureBuilder`</doc>
+          <type name="DmabufTextureBuilder" c:type="GdkDmabufTextureBuilder*"/>
+        </return-value>
+      </constructor>
+      <method name="build" c:identifier="gdk_dmabuf_texture_builder_build" version="4.14" throws="1">
+        <doc xml:space="preserve">Builds a new `GdkTexture` with the values set up in the builder.
+
+It is a programming error to call this function if any mandatory
+property has not been set.
+
+If the dmabuf is not supported by GTK, %NULL will be returned and @error will be set.
+
+The `destroy` function gets called when the returned texture gets released.
+
+It is possible to call this function multiple times to create multiple textures,
+possibly with changing properties in between.
+
+It is the responsibility of the caller to keep the file descriptors for the planes
+open until the created texture is no longer used, and close them afterwards (possibly
+using the @destroy notify).
+
+Not all formats defined in the `drm_fourcc.h` header are supported. You can use
+[method@Gdk.Display.get_dmabuf_formats] to get a list of supported formats.</doc>
+        <return-value transfer-ownership="full" nullable="1">
+          <doc xml:space="preserve">a newly built `GdkTexture` or `NULL`
+  if the format is not supported</doc>
+          <type name="Texture" c:type="GdkTexture*"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="self" transfer-ownership="none">
+            <doc xml:space="preserve">a `GdkDmabufTextureBuilder`</doc>
+            <type name="DmabufTextureBuilder" c:type="GdkDmabufTextureBuilder*"/>
+          </instance-parameter>
+          <parameter name="destroy" transfer-ownership="none" nullable="1" allow-none="1" scope="async">
+            <doc xml:space="preserve">destroy function to be called when the texture is
+  released</doc>
+            <type name="GLib.DestroyNotify" c:type="GDestroyNotify"/>
+          </parameter>
+          <parameter name="data" transfer-ownership="none" nullable="1" allow-none="1">
+            <doc xml:space="preserve">user data to pass to the destroy function</doc>
+            <type name="gpointer" c:type="gpointer"/>
+          </parameter>
+        </parameters>
+      </method>
+      <method name="get_display" c:identifier="gdk_dmabuf_texture_builder_get_display" glib:get-property="display" version="4.14">
+        <doc xml:space="preserve">Returns the display that this texture builder is
+associated with.</doc>
+        <return-value transfer-ownership="none">
+          <doc xml:space="preserve">the display</doc>
+          <type name="Display" c:type="GdkDisplay*"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="self" transfer-ownership="none">
+            <doc xml:space="preserve">a `GdkDmabufTextureBuilder</doc>
+            <type name="DmabufTextureBuilder" c:type="GdkDmabufTextureBuilder*"/>
+          </instance-parameter>
+        </parameters>
+      </method>
+      <method name="get_fd" c:identifier="gdk_dmabuf_texture_builder_get_fd" version="4.14">
+        <doc xml:space="preserve">Gets the file descriptor for a plane.</doc>
+        <return-value transfer-ownership="none">
+          <doc xml:space="preserve">the file descriptor</doc>
+          <type name="gint" c:type="int"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="self" transfer-ownership="none">
+            <doc xml:space="preserve">a `GdkDmabufTextureBuilder`</doc>
+            <type name="DmabufTextureBuilder" c:type="GdkDmabufTextureBuilder*"/>
+          </instance-parameter>
+          <parameter name="plane" transfer-ownership="none">
+            <doc xml:space="preserve">the plane to get the fd for</doc>
+            <type name="guint" c:type="unsigned int"/>
+          </parameter>
+        </parameters>
+      </method>
+      <method name="get_fourcc" c:identifier="gdk_dmabuf_texture_builder_get_fourcc" glib:get-property="fourcc" version="4.14">
+        <attribute name="org.gtk.Method.get_property" value="fourcc"/>
+        <doc xml:space="preserve">Gets the format previously set via gdk_dmabuf_texture_builder_set_fourcc()
+or 0 if the format wasn't set.
+
+The format is specified as a fourcc code.</doc>
+        <return-value transfer-ownership="none">
+          <doc xml:space="preserve">The format</doc>
+          <type name="guint32" c:type="guint32"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="self" transfer-ownership="none">
+            <doc xml:space="preserve">a `GdkDmabufTextureBuilder`</doc>
+            <type name="DmabufTextureBuilder" c:type="GdkDmabufTextureBuilder*"/>
+          </instance-parameter>
+        </parameters>
+      </method>
+      <method name="get_height" c:identifier="gdk_dmabuf_texture_builder_get_height" glib:get-property="height" version="4.14">
+        <attribute name="org.gtk.Method.get_property" value="height"/>
+        <doc xml:space="preserve">Gets the height previously set via gdk_dmabuf_texture_builder_set_height() or
+0 if the height wasn't set.</doc>
+        <return-value transfer-ownership="none">
+          <doc xml:space="preserve">The height</doc>
+          <type name="guint" c:type="unsigned int"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="self" transfer-ownership="none">
+            <doc xml:space="preserve">a `GdkDmabufTextureBuilder`</doc>
+            <type name="DmabufTextureBuilder" c:type="GdkDmabufTextureBuilder*"/>
+          </instance-parameter>
+        </parameters>
+      </method>
+      <method name="get_modifier" c:identifier="gdk_dmabuf_texture_builder_get_modifier" glib:get-property="modifier" version="4.14">
+        <doc xml:space="preserve">Gets the modifier value.</doc>
+        <return-value transfer-ownership="none">
+          <doc xml:space="preserve">the modifier</doc>
+          <type name="guint64" c:type="guint64"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="self" transfer-ownership="none">
+            <doc xml:space="preserve">a `GdkDmabufTextureBuilder`</doc>
+            <type name="DmabufTextureBuilder" c:type="GdkDmabufTextureBuilder*"/>
+          </instance-parameter>
+        </parameters>
+      </method>
+      <method name="get_n_planes" c:identifier="gdk_dmabuf_texture_builder_get_n_planes" glib:get-property="n-planes" version="4.14">
+        <attribute name="org.gtk.Method.get_property" value="n-planes"/>
+        <doc xml:space="preserve">Gets the number of planes.</doc>
+        <return-value transfer-ownership="none">
+          <doc xml:space="preserve">The number of planes</doc>
+          <type name="guint" c:type="unsigned int"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="self" transfer-ownership="none">
+            <doc xml:space="preserve">a `GdkDmabufTextureBuilder`</doc>
+            <type name="DmabufTextureBuilder" c:type="GdkDmabufTextureBuilder*"/>
+          </instance-parameter>
+        </parameters>
+      </method>
+      <method name="get_offset" c:identifier="gdk_dmabuf_texture_builder_get_offset" version="4.14">
+        <doc xml:space="preserve">Gets the offset value for a plane.</doc>
+        <return-value transfer-ownership="none">
+          <doc xml:space="preserve">the offset</doc>
+          <type name="guint" c:type="unsigned int"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="self" transfer-ownership="none">
+            <doc xml:space="preserve">a `GdkDmabufTextureBuilder`</doc>
+            <type name="DmabufTextureBuilder" c:type="GdkDmabufTextureBuilder*"/>
+          </instance-parameter>
+          <parameter name="plane" transfer-ownership="none">
+            <doc xml:space="preserve">the plane to get the offset for</doc>
+            <type name="guint" c:type="unsigned int"/>
+          </parameter>
+        </parameters>
+      </method>
+      <method name="get_premultiplied" c:identifier="gdk_dmabuf_texture_builder_get_premultiplied" glib:get-property="premultiplied" version="4.14">
+        <doc xml:space="preserve">Whether the data is premultiplied.</doc>
+        <return-value transfer-ownership="none">
+          <doc xml:space="preserve">whether the data is premultiplied</doc>
+          <type name="gboolean" c:type="gboolean"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="self" transfer-ownership="none">
+            <doc xml:space="preserve">a `GdkDmabufTextureBuilder`</doc>
+            <type name="DmabufTextureBuilder" c:type="GdkDmabufTextureBuilder*"/>
+          </instance-parameter>
+        </parameters>
+      </method>
+      <method name="get_stride" c:identifier="gdk_dmabuf_texture_builder_get_stride" version="4.14">
+        <doc xml:space="preserve">Gets the stride value for a plane.</doc>
+        <return-value transfer-ownership="none">
+          <doc xml:space="preserve">the stride</doc>
+          <type name="guint" c:type="unsigned int"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="self" transfer-ownership="none">
+            <doc xml:space="preserve">a `GdkDmabufTextureBuilder`</doc>
+            <type name="DmabufTextureBuilder" c:type="GdkDmabufTextureBuilder*"/>
+          </instance-parameter>
+          <parameter name="plane" transfer-ownership="none">
+            <doc xml:space="preserve">the plane to get the stride for</doc>
+            <type name="guint" c:type="unsigned int"/>
+          </parameter>
+        </parameters>
+      </method>
+      <method name="get_update_region" c:identifier="gdk_dmabuf_texture_builder_get_update_region" glib:get-property="update-region" version="4.14">
+        <attribute name="org.gtk.Method.get_property" value="update-region"/>
+        <doc xml:space="preserve">Gets the region previously set via gdk_dmabuf_texture_builder_set_update_region() or
+%NULL if none was set.</doc>
+        <return-value transfer-ownership="none" nullable="1">
+          <doc xml:space="preserve">The region</doc>
+          <type name="cairo.Region" c:type="cairo_region_t*"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="self" transfer-ownership="none">
+            <doc xml:space="preserve">a `GdkDmabufTextureBuilder`</doc>
+            <type name="DmabufTextureBuilder" c:type="GdkDmabufTextureBuilder*"/>
+          </instance-parameter>
+        </parameters>
+      </method>
+      <method name="get_update_texture" c:identifier="gdk_dmabuf_texture_builder_get_update_texture" glib:get-property="update-texture" version="4.14">
+        <attribute name="org.gtk.Method.get_property" value="update-texture"/>
+        <doc xml:space="preserve">Gets the texture previously set via gdk_dmabuf_texture_builder_set_update_texture() or
+%NULL if none was set.</doc>
+        <return-value transfer-ownership="none" nullable="1">
+          <doc xml:space="preserve">The texture</doc>
+          <type name="Texture" c:type="GdkTexture*"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="self" transfer-ownership="none">
+            <doc xml:space="preserve">a `GdkDmabufTextureBuilder`</doc>
+            <type name="DmabufTextureBuilder" c:type="GdkDmabufTextureBuilder*"/>
+          </instance-parameter>
+        </parameters>
+      </method>
+      <method name="get_width" c:identifier="gdk_dmabuf_texture_builder_get_width" glib:get-property="width" version="4.14">
+        <attribute name="org.gtk.Method.get_property" value="width"/>
+        <doc xml:space="preserve">Gets the width previously set via gdk_dmabuf_texture_builder_set_width() or
+0 if the width wasn't set.</doc>
+        <return-value transfer-ownership="none">
+          <doc xml:space="preserve">The width</doc>
+          <type name="guint" c:type="unsigned int"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="self" transfer-ownership="none">
+            <doc xml:space="preserve">a `GdkDmabufTextureBuilder`</doc>
+            <type name="DmabufTextureBuilder" c:type="GdkDmabufTextureBuilder*"/>
+          </instance-parameter>
+        </parameters>
+      </method>
+      <method name="set_display" c:identifier="gdk_dmabuf_texture_builder_set_display" glib:set-property="display" version="4.14">
+        <doc xml:space="preserve">Sets the display that this texture builder is
+associated with.
+
+The display is used to determine the supported
+dma-buf formats.</doc>
+        <return-value transfer-ownership="none">
+          <type name="none" c:type="void"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="self" transfer-ownership="none">
+            <doc xml:space="preserve">a `GdkDmabufTextureBuilder</doc>
+            <type name="DmabufTextureBuilder" c:type="GdkDmabufTextureBuilder*"/>
+          </instance-parameter>
+          <parameter name="display" transfer-ownership="none">
+            <doc xml:space="preserve">the display</doc>
+            <type name="Display" c:type="GdkDisplay*"/>
+          </parameter>
+        </parameters>
+      </method>
+      <method name="set_fd" c:identifier="gdk_dmabuf_texture_builder_set_fd" version="4.14">
+        <doc xml:space="preserve">Sets the file descriptor for a plane.</doc>
+        <return-value transfer-ownership="none">
+          <type name="none" c:type="void"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="self" transfer-ownership="none">
+            <doc xml:space="preserve">a `GdkDmabufTextureBuilder`</doc>
+            <type name="DmabufTextureBuilder" c:type="GdkDmabufTextureBuilder*"/>
+          </instance-parameter>
+          <parameter name="plane" transfer-ownership="none">
+            <doc xml:space="preserve">the plane to set the fd for</doc>
+            <type name="guint" c:type="unsigned int"/>
+          </parameter>
+          <parameter name="fd" transfer-ownership="none">
+            <doc xml:space="preserve">the file descriptor</doc>
+            <type name="gint" c:type="int"/>
+          </parameter>
+        </parameters>
+      </method>
+      <method name="set_fourcc" c:identifier="gdk_dmabuf_texture_builder_set_fourcc" glib:set-property="fourcc" version="4.14">
+        <attribute name="org.gtk.Method.set_property" value="fourcc"/>
+        <doc xml:space="preserve">Sets the format of the texture.
+
+The format is specified as a fourcc code.
+
+The format must be set before calling [method@Gdk.GLTextureBuilder.build].</doc>
+        <return-value transfer-ownership="none">
+          <type name="none" c:type="void"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="self" transfer-ownership="none">
+            <doc xml:space="preserve">a `GdkDmabufTextureBuilder`</doc>
+            <type name="DmabufTextureBuilder" c:type="GdkDmabufTextureBuilder*"/>
+          </instance-parameter>
+          <parameter name="fourcc" transfer-ownership="none">
+            <doc xml:space="preserve">the texture's format or 0 to unset</doc>
+            <type name="guint32" c:type="guint32"/>
+          </parameter>
+        </parameters>
+      </method>
+      <method name="set_height" c:identifier="gdk_dmabuf_texture_builder_set_height" glib:set-property="height" version="4.14">
+        <attribute name="org.gtk.Method.set_property" value="height"/>
+        <doc xml:space="preserve">Sets the height of the texture.
+
+The height must be set before calling [method@Gdk.GLTextureBuilder.build].</doc>
+        <return-value transfer-ownership="none">
+          <type name="none" c:type="void"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="self" transfer-ownership="none">
+            <doc xml:space="preserve">a `GdkDmabufTextureBuilder`</doc>
+            <type name="DmabufTextureBuilder" c:type="GdkDmabufTextureBuilder*"/>
+          </instance-parameter>
+          <parameter name="height" transfer-ownership="none">
+            <doc xml:space="preserve">the texture's height or 0 to unset</doc>
+            <type name="guint" c:type="unsigned int"/>
+          </parameter>
+        </parameters>
+      </method>
+      <method name="set_modifier" c:identifier="gdk_dmabuf_texture_builder_set_modifier" glib:set-property="modifier" version="4.14">
+        <doc xml:space="preserve">Sets the modifier.</doc>
+        <return-value transfer-ownership="none">
+          <type name="none" c:type="void"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="self" transfer-ownership="none">
+            <doc xml:space="preserve">a `GdkDmabufTextureBuilder`</doc>
+            <type name="DmabufTextureBuilder" c:type="GdkDmabufTextureBuilder*"/>
+          </instance-parameter>
+          <parameter name="modifier" transfer-ownership="none">
+            <doc xml:space="preserve">the modifier value</doc>
+            <type name="guint64" c:type="guint64"/>
+          </parameter>
+        </parameters>
+      </method>
+      <method name="set_n_planes" c:identifier="gdk_dmabuf_texture_builder_set_n_planes" glib:set-property="n-planes" version="4.14">
+        <attribute name="org.gtk.Method.set_property" value="n-planes"/>
+        <doc xml:space="preserve">Sets the number of planes of the texture.</doc>
+        <return-value transfer-ownership="none">
+          <type name="none" c:type="void"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="self" transfer-ownership="none">
+            <doc xml:space="preserve">a `GdkDmabufTextureBuilder`</doc>
+            <type name="DmabufTextureBuilder" c:type="GdkDmabufTextureBuilder*"/>
+          </instance-parameter>
+          <parameter name="n_planes" transfer-ownership="none">
+            <doc xml:space="preserve">the number of planes</doc>
+            <type name="guint" c:type="unsigned int"/>
+          </parameter>
+        </parameters>
+      </method>
+      <method name="set_offset" c:identifier="gdk_dmabuf_texture_builder_set_offset" version="4.14">
+        <doc xml:space="preserve">Sets the offset for a plane.</doc>
+        <return-value transfer-ownership="none">
+          <type name="none" c:type="void"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="self" transfer-ownership="none">
+            <doc xml:space="preserve">a `GdkDmabufTextureBuilder`</doc>
+            <type name="DmabufTextureBuilder" c:type="GdkDmabufTextureBuilder*"/>
+          </instance-parameter>
+          <parameter name="plane" transfer-ownership="none">
+            <doc xml:space="preserve">the plane to set the offset for</doc>
+            <type name="guint" c:type="unsigned int"/>
+          </parameter>
+          <parameter name="offset" transfer-ownership="none">
+            <doc xml:space="preserve">the offset value</doc>
+            <type name="guint" c:type="unsigned int"/>
+          </parameter>
+        </parameters>
+      </method>
+      <method name="set_premultiplied" c:identifier="gdk_dmabuf_texture_builder_set_premultiplied" glib:set-property="premultiplied" version="4.14">
+        <doc xml:space="preserve">Sets whether the data is premultiplied.
+
+Unless otherwise specified, all formats including alpha channels are assumed
+to be premultiplied.</doc>
+        <return-value transfer-ownership="none">
+          <type name="none" c:type="void"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="self" transfer-ownership="none">
+            <doc xml:space="preserve">a `GdkDmabufTextureBuilder`</doc>
+            <type name="DmabufTextureBuilder" c:type="GdkDmabufTextureBuilder*"/>
+          </instance-parameter>
+          <parameter name="premultiplied" transfer-ownership="none">
+            <doc xml:space="preserve">whether the data is premultiplied</doc>
+            <type name="gboolean" c:type="gboolean"/>
+          </parameter>
+        </parameters>
+      </method>
+      <method name="set_stride" c:identifier="gdk_dmabuf_texture_builder_set_stride" version="4.14">
+        <doc xml:space="preserve">Sets the stride for a plane.
+
+The stride must be set for all planes before calling [method@Gdk.GLTextureBuilder.build].</doc>
+        <return-value transfer-ownership="none">
+          <type name="none" c:type="void"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="self" transfer-ownership="none">
+            <doc xml:space="preserve">a `GdkDmabufTextureBuilder`</doc>
+            <type name="DmabufTextureBuilder" c:type="GdkDmabufTextureBuilder*"/>
+          </instance-parameter>
+          <parameter name="plane" transfer-ownership="none">
+            <doc xml:space="preserve">the plane to set the stride for</doc>
+            <type name="guint" c:type="unsigned int"/>
+          </parameter>
+          <parameter name="stride" transfer-ownership="none">
+            <doc xml:space="preserve">the stride value</doc>
+            <type name="guint" c:type="unsigned int"/>
+          </parameter>
+        </parameters>
+      </method>
+      <method name="set_update_region" c:identifier="gdk_dmabuf_texture_builder_set_update_region" glib:set-property="update-region" version="4.14">
+        <attribute name="org.gtk.Method.set_property" value="update-region"/>
+        <doc xml:space="preserve">Sets the region to be updated by this texture. Together with
+[property@Gdk.DmabufTextureBuilder:update-texture] this describes an
+update of a previous texture.
+
+When rendering animations of large textures, it is possible that
+consecutive textures are only updating contents in parts of the texture.
+It is then possible to describe this update via these two properties,
+so that GTK can avoid rerendering parts that did not change.
+
+An example would be a screen recording where only the mouse pointer moves.</doc>
+        <return-value transfer-ownership="none">
+          <type name="none" c:type="void"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="self" transfer-ownership="none">
+            <doc xml:space="preserve">a `GdkDmabufTextureBuilder`</doc>
+            <type name="DmabufTextureBuilder" c:type="GdkDmabufTextureBuilder*"/>
+          </instance-parameter>
+          <parameter name="region" transfer-ownership="none" nullable="1" allow-none="1">
+            <doc xml:space="preserve">the region to update</doc>
+            <type name="cairo.Region" c:type="cairo_region_t*"/>
+          </parameter>
+        </parameters>
+      </method>
+      <method name="set_update_texture" c:identifier="gdk_dmabuf_texture_builder_set_update_texture" glib:set-property="update-texture" version="4.14">
+        <attribute name="org.gtk.Method.set_property" value="update-texture"/>
+        <doc xml:space="preserve">Sets the texture to be updated by this texture. See
+[method@Gdk.DmabufTextureBuilder.set_update_region] for an explanation.</doc>
+        <return-value transfer-ownership="none">
+          <type name="none" c:type="void"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="self" transfer-ownership="none">
+            <doc xml:space="preserve">a `GdkDmabufTextureBuilder`</doc>
+            <type name="DmabufTextureBuilder" c:type="GdkDmabufTextureBuilder*"/>
+          </instance-parameter>
+          <parameter name="texture" transfer-ownership="none" nullable="1" allow-none="1">
+            <doc xml:space="preserve">the texture to update</doc>
+            <type name="Texture" c:type="GdkTexture*"/>
+          </parameter>
+        </parameters>
+      </method>
+      <method name="set_width" c:identifier="gdk_dmabuf_texture_builder_set_width" glib:set-property="width" version="4.14">
+        <attribute name="org.gtk.Method.set_property" value="width"/>
+        <doc xml:space="preserve">Sets the width of the texture.
+
+The width must be set before calling [method@Gdk.GLTextureBuilder.build].</doc>
+        <return-value transfer-ownership="none">
+          <type name="none" c:type="void"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="self" transfer-ownership="none">
+            <doc xml:space="preserve">a `GdkDmabufTextureBuilder`</doc>
+            <type name="DmabufTextureBuilder" c:type="GdkDmabufTextureBuilder*"/>
+          </instance-parameter>
+          <parameter name="width" transfer-ownership="none">
+            <doc xml:space="preserve">The texture's width or 0 to unset</doc>
+            <type name="guint" c:type="unsigned int"/>
+          </parameter>
+        </parameters>
+      </method>
+      <property name="display" version="4.14" writable="1" transfer-ownership="none" setter="set_display" getter="get_display">
+        <attribute name="org.gtk.Property.get" value="gdk_dmabuf_texture_builder_get_display"/>
+        <attribute name="org.gtk.Property.set" value="gdk_dmabuf_texture_builder_set_display"/>
+        <doc xml:space="preserve">The display that this texture will be used on.</doc>
+        <type name="Display"/>
+      </property>
+      <property name="fourcc" version="4.14" writable="1" transfer-ownership="none" setter="set_fourcc" getter="get_fourcc" default-value="0">
+        <attribute name="org.gtk.Property.get" value="gdk_dmabuf_texture_builder_get_fourcc"/>
+        <attribute name="org.gtk.Property.set" value="gdk_dmabuf_texture_builder_set_fourcc"/>
+        <doc xml:space="preserve">The format of the texture, as a fourcc value.</doc>
+        <type name="guint" c:type="guint"/>
+      </property>
+      <property name="height" version="4.14" writable="1" transfer-ownership="none" setter="set_height" getter="get_height" default-value="0">
+        <attribute name="org.gtk.Property.get" value="gdk_dmabuf_texture_builder_get_height"/>
+        <attribute name="org.gtk.Property.set" value="gdk_dmabuf_texture_builder_set_height"/>
+        <doc xml:space="preserve">The height of the texture.</doc>
+        <type name="guint" c:type="guint"/>
+      </property>
+      <property name="modifier" version="4.14" writable="1" transfer-ownership="none" setter="set_modifier" getter="get_modifier" default-value="0">
+        <doc xml:space="preserve">The modifier.</doc>
+        <type name="guint64" c:type="guint64"/>
+      </property>
+      <property name="n-planes" version="4.14" writable="1" transfer-ownership="none" setter="set_n_planes" getter="get_n_planes" default-value="1">
+        <attribute name="org.gtk.Property.get" value="gdk_dmabuf_texture_builder_get_n_planes"/>
+        <attribute name="org.gtk.Property.set" value="gdk_dmabuf_texture_builder_set_n_planes"/>
+        <doc xml:space="preserve">The number of planes of the texture.
+
+Note that you can set properties for other planes,
+but they will be ignored when constructing the texture.</doc>
+        <type name="guint" c:type="guint"/>
+      </property>
+      <property name="premultiplied" version="4.14" writable="1" transfer-ownership="none" setter="set_premultiplied" getter="get_premultiplied" default-value="TRUE">
+        <doc xml:space="preserve">Whether the alpha channel is premultiplied into the others.
+
+Only relevant if the format has alpha.</doc>
+        <type name="gboolean" c:type="gboolean"/>
+      </property>
+      <property name="update-region" version="4.14" writable="1" transfer-ownership="none" setter="set_update_region" getter="get_update_region">
+        <attribute name="org.gtk.Property.get" value="gdk_dmabuf_texture_builder_get_update_region"/>
+        <attribute name="org.gtk.Property.set" value="gdk_dmabuf_texture_builder_set_update_region"/>
+        <doc xml:space="preserve">The update region for [property@Gdk.GLTextureBuilder:update-texture].</doc>
+        <type name="cairo.Region"/>
+      </property>
+      <property name="update-texture" version="4.14" writable="1" transfer-ownership="none" setter="set_update_texture" getter="get_update_texture">
+        <attribute name="org.gtk.Property.get" value="gdk_dmabuf_texture_builder_get_update_texture"/>
+        <attribute name="org.gtk.Property.set" value="gdk_dmabuf_texture_builder_set_update_texture"/>
+        <doc xml:space="preserve">The texture [property@Gdk.DmabufTextureBuilder:update-region] is an update for.</doc>
+        <type name="Texture"/>
+      </property>
+      <property name="width" version="4.14" writable="1" transfer-ownership="none" setter="set_width" getter="get_width" default-value="0">
+        <attribute name="org.gtk.Property.get" value="gdk_dmabuf_texture_builder_get_width"/>
+        <attribute name="org.gtk.Property.set" value="gdk_dmabuf_texture_builder_set_width"/>
+        <doc xml:space="preserve">The width of the texture.</doc>
+        <type name="guint" c:type="guint"/>
+      </property>
+    </class>
+    <record name="DmabufTextureBuilderClass" c:type="GdkDmabufTextureBuilderClass" disguised="1" opaque="1" glib:is-gtype-struct-for="DmabufTextureBuilder"/>
+    <record name="DmabufTextureClass" c:type="GdkDmabufTextureClass" disguised="1" opaque="1" glib:is-gtype-struct-for="DmabufTexture"/>
     <class name="Drag" c:symbol-prefix="drag" c:type="GdkDrag" parent="GObject.Object" abstract="1" glib:type-name="GdkDrag" glib:get-type="gdk_drag_get_type">
       <doc xml:space="preserve">The `GdkDrag` object represents the source of an ongoing DND operation.
 
@@ -4670,8 +5430,8 @@ query the region that must be drawn.
 
 When using GTK, the widget system automatically places calls to
 gdk_draw_context_begin_frame() and gdk_draw_context_end_frame() via the
-use of [class@Gsk.Renderer]s, so application code does not need to call
-these functions explicitly.</doc>
+use of [GskRenderer](../gsk4/class.Renderer.html)s, so application code
+does not need to call these functions explicitly.</doc>
         <return-value transfer-ownership="none">
           <type name="none" c:type="void"/>
         </return-value>
@@ -4977,7 +5737,7 @@ See [method@Gdk.Drop.read_async].</doc>
             <doc xml:space="preserve">a `GAsyncResult`</doc>
             <type name="Gio.AsyncResult" c:type="GAsyncResult*"/>
           </parameter>
-          <parameter name="out_mime_type" direction="out" caller-allocates="0" transfer-ownership="full">
+          <parameter name="out_mime_type" direction="out" caller-allocates="0" transfer-ownership="none">
             <doc xml:space="preserve">return location for the used mime type</doc>
             <type name="utf8" c:type="const char**"/>
           </parameter>
@@ -5603,9 +6363,9 @@ of related touch events.</doc>
       <member name="pad_group_mode" value="27" c:identifier="GDK_PAD_GROUP_MODE" glib:nick="pad-group-mode" glib:name="GDK_PAD_GROUP_MODE">
         <doc xml:space="preserve">A tablet pad group mode change.</doc>
       </member>
-      <member name="touchpad_hold" value="28" c:identifier="GDK_TOUCHPAD_HOLD" glib:nick="touchpad-hold" glib:name="GDK_TOUCHPAD_HOLD">
-        <doc xml:space="preserve">A touchpad hold gesture event, the current state
-  is determined by its phase field. Since: 4.6</doc>
+      <member name="touchpad_hold" value="28" c:identifier="GDK_TOUCHPAD_HOLD" version="4.6" glib:nick="touchpad-hold" glib:name="GDK_TOUCHPAD_HOLD">
+        <doc xml:space="preserve">A touchpad hold gesture event, the current state is determined by its phase
+field.</doc>
       </member>
       <member name="event_last" value="29" c:identifier="GDK_EVENT_LAST" glib:nick="event-last" glib:name="GDK_EVENT_LAST">
         <doc xml:space="preserve">marks the end of the GdkEventType enumeration.</doc>
@@ -5984,7 +6744,8 @@ of the frame.
 
 The frame is repainted. GDK normally handles this internally and
 emits [signal@Gdk.Surface::render] signals which are turned into
-[signal@Gtk.Widget::snapshot] signals by GTK.</doc>
+[GtkWidget::snapshot](../gtk4/signal.Widget.snapshot.html) signals
+by GTK.</doc>
         <return-value transfer-ownership="none">
           <type name="none" c:type="void"/>
         </return-value>
@@ -6004,7 +6765,8 @@ of the frame.
 
 Animations should be updated using [method@Gdk.FrameClock.get_frame_time].
 Applications can connect directly to this signal, or use
-[method@Gtk.Widget.add_tick_callback] as a more convenient interface.</doc>
+[gtk_widget_add_tick_callback()](../gtk4/method.Widget.add_tick_callback.html)
+as a more convenient interface.</doc>
         <return-value transfer-ownership="none">
           <type name="none" c:type="void"/>
         </return-value>
@@ -6712,7 +7474,7 @@ anymore, this function has been deprecated and now always returns %NULL.</doc>
 Note that the GL texture must not be modified until @destroy is called,
 which will happen when the GdkTexture object is finalized, or due to
 an explicit call of [method@Gdk.GLTexture.release].</doc>
-        <doc-deprecated xml:space="preserve">[class@Gdk.GLTextureBuilder] supercedes this function
+        <doc-deprecated xml:space="preserve">[class@Gdk.GLTextureBuilder] supersedes this function
   and provides extended functionality for creating GL textures.</doc-deprecated>
         <return-value transfer-ownership="full">
           <doc xml:space="preserve">A newly-created
@@ -6765,7 +7527,7 @@ function has been called.</doc>
       </method>
     </class>
     <class name="GLTextureBuilder" c:symbol-prefix="gl_texture_builder" c:type="GdkGLTextureBuilder" version="4.12" parent="GObject.Object" glib:type-name="GdkGLTextureBuilder" glib:get-type="gdk_gl_texture_builder_get_type" glib:type-struct="GLTextureBuilderClass">
-      <doc xml:space="preserve">`GdkGLTextureBuilder` is a buider used to construct [class@Gdk.Texture] objects from
+      <doc xml:space="preserve">`GdkGLTextureBuilder` is a builder used to construct [class@Gdk.Texture] objects from
 GL textures.
 
 The operation is quite simple: Create a texture builder, set all the necessary
@@ -6818,7 +7580,7 @@ possibly with changing properties in between.</doc>
         </parameters>
       </method>
       <method name="get_context" c:identifier="gdk_gl_texture_builder_get_context" glib:get-property="context" version="4.12">
-        <attribute name="org.gdk.Method.get_property" value="context"/>
+        <attribute name="org.gtk.Method.get_property" value="context"/>
         <doc xml:space="preserve">Gets the context previously set via gdk_gl_texture_builder_set_context() or
 %NULL if none was set.</doc>
         <return-value transfer-ownership="none" nullable="1">
@@ -6833,7 +7595,7 @@ possibly with changing properties in between.</doc>
         </parameters>
       </method>
       <method name="get_format" c:identifier="gdk_gl_texture_builder_get_format" glib:get-property="format" version="4.12">
-        <attribute name="org.gdk.Method.get_property" value="format"/>
+        <attribute name="org.gtk.Method.get_property" value="format"/>
         <doc xml:space="preserve">Gets the format previously set via gdk_gl_texture_builder_set_format().</doc>
         <return-value transfer-ownership="none">
           <doc xml:space="preserve">The format</doc>
@@ -6847,7 +7609,7 @@ possibly with changing properties in between.</doc>
         </parameters>
       </method>
       <method name="get_has_mipmap" c:identifier="gdk_gl_texture_builder_get_has_mipmap" glib:get-property="has-mipmap" version="4.12">
-        <attribute name="org.gdk.Method.get_property" value="has-mipmap"/>
+        <attribute name="org.gtk.Method.get_property" value="has-mipmap"/>
         <doc xml:space="preserve">Gets whether the texture has a mipmap.</doc>
         <return-value transfer-ownership="none">
           <doc xml:space="preserve">Whether the texture has a mipmap</doc>
@@ -6861,7 +7623,7 @@ possibly with changing properties in between.</doc>
         </parameters>
       </method>
       <method name="get_height" c:identifier="gdk_gl_texture_builder_get_height" glib:get-property="height" version="4.12">
-        <attribute name="org.gdk.Method.get_property" value="height"/>
+        <attribute name="org.gtk.Method.get_property" value="height"/>
         <doc xml:space="preserve">Gets the height previously set via gdk_gl_texture_builder_set_height() or
 0 if the height wasn't set.</doc>
         <return-value transfer-ownership="none">
@@ -6876,7 +7638,7 @@ possibly with changing properties in between.</doc>
         </parameters>
       </method>
       <method name="get_id" c:identifier="gdk_gl_texture_builder_get_id" glib:get-property="id" version="4.12">
-        <attribute name="org.gdk.Method.get_property" value="id"/>
+        <attribute name="org.gtk.Method.get_property" value="id"/>
         <doc xml:space="preserve">Gets the texture id previously set via gdk_gl_texture_builder_set_id() or
 0 if the id wasn't set.</doc>
         <return-value transfer-ownership="none">
@@ -6891,7 +7653,7 @@ possibly with changing properties in between.</doc>
         </parameters>
       </method>
       <method name="get_sync" c:identifier="gdk_gl_texture_builder_get_sync" glib:get-property="sync" version="4.12">
-        <attribute name="org.gdk.Method.get_property" value="sync"/>
+        <attribute name="org.gtk.Method.get_property" value="sync"/>
         <doc xml:space="preserve">Gets the `GLsync` previously set via gdk_gl_texture_builder_set_sync().</doc>
         <return-value transfer-ownership="none" nullable="1">
           <doc xml:space="preserve">the `GLSync`</doc>
@@ -6905,7 +7667,7 @@ possibly with changing properties in between.</doc>
         </parameters>
       </method>
       <method name="get_update_region" c:identifier="gdk_gl_texture_builder_get_update_region" glib:get-property="update-region" version="4.12">
-        <attribute name="org.gdk.Method.get_property" value="update_region"/>
+        <attribute name="org.gtk.Method.get_property" value="update-region"/>
         <doc xml:space="preserve">Gets the region previously set via gdk_gl_texture_builder_set_update_region() or
 %NULL if none was set.</doc>
         <return-value transfer-ownership="none" nullable="1">
@@ -6920,7 +7682,7 @@ possibly with changing properties in between.</doc>
         </parameters>
       </method>
       <method name="get_update_texture" c:identifier="gdk_gl_texture_builder_get_update_texture" glib:get-property="update-texture" version="4.12">
-        <attribute name="org.gdk.Method.get_property" value="update_texture"/>
+        <attribute name="org.gtk.Method.get_property" value="update-texture"/>
         <doc xml:space="preserve">Gets the texture previously set via gdk_gl_texture_builder_set_update_texture() or
 %NULL if none was set.</doc>
         <return-value transfer-ownership="none" nullable="1">
@@ -6935,7 +7697,7 @@ possibly with changing properties in between.</doc>
         </parameters>
       </method>
       <method name="get_width" c:identifier="gdk_gl_texture_builder_get_width" glib:get-property="width" version="4.12">
-        <attribute name="org.gdk.Method.get_property" value="width"/>
+        <attribute name="org.gtk.Method.get_property" value="width"/>
         <doc xml:space="preserve">Gets the width previously set via gdk_gl_texture_builder_set_width() or
 0 if the width wasn't set.</doc>
         <return-value transfer-ownership="none">
@@ -6950,7 +7712,7 @@ possibly with changing properties in between.</doc>
         </parameters>
       </method>
       <method name="set_context" c:identifier="gdk_gl_texture_builder_set_context" glib:set-property="context" version="4.12">
-        <attribute name="org.gdk.Method.set_property" value="context"/>
+        <attribute name="org.gtk.Method.set_property" value="context"/>
         <doc xml:space="preserve">Sets the context to be used for the texture. This is the context that owns
 the texture.
 
@@ -6970,7 +7732,7 @@ The context must be set before calling [method@Gdk.GLTextureBuilder.build].</doc
         </parameters>
       </method>
       <method name="set_format" c:identifier="gdk_gl_texture_builder_set_format" glib:set-property="format" version="4.12">
-        <attribute name="org.gdk.Method.set_property" value="format"/>
+        <attribute name="org.gtk.Method.set_property" value="format"/>
         <doc xml:space="preserve">Sets the format of the texture. The default is `GDK_MEMORY_R8G8B8A8_PREMULTIPLIED`.
 
 The format is the preferred format the texture data should be downloaded to. The
@@ -7002,7 +7764,7 @@ in GSK's shaders.</doc>
         </parameters>
       </method>
       <method name="set_has_mipmap" c:identifier="gdk_gl_texture_builder_set_has_mipmap" glib:set-property="has-mipmap" version="4.12">
-        <attribute name="org.gdk.Method.set_property" value="has-mipmap"/>
+        <attribute name="org.gtk.Method.set_property" value="has-mipmap"/>
         <doc xml:space="preserve">Sets whether the texture has a mipmap. This allows the renderer and other users of the
 generated texture to use a higher quality downscaling.
 
@@ -7022,7 +7784,7 @@ Typically, the `glGenerateMipmap` function is used to generate a mimap.</doc>
         </parameters>
       </method>
       <method name="set_height" c:identifier="gdk_gl_texture_builder_set_height" glib:set-property="height" version="4.12">
-        <attribute name="org.gdk.Method.set_property" value="height"/>
+        <attribute name="org.gtk.Method.set_property" value="height"/>
         <doc xml:space="preserve">Sets the height of the texture.
 
 The height must be set before calling [method@Gdk.GLTextureBuilder.build].</doc>
@@ -7041,7 +7803,7 @@ The height must be set before calling [method@Gdk.GLTextureBuilder.build].</doc>
         </parameters>
       </method>
       <method name="set_id" c:identifier="gdk_gl_texture_builder_set_id" glib:set-property="id" version="4.12">
-        <attribute name="org.gdk.Method.set_property" value="id"/>
+        <attribute name="org.gtk.Method.set_property" value="id"/>
         <doc xml:space="preserve">Sets the texture id of the texture. The texture id must remain unmodified
 until the texture was finalized. See [method@Gdk.GLTextureBuilder.build]
 for a longer discussion.
@@ -7062,7 +7824,7 @@ The id must be set before calling [method@Gdk.GLTextureBuilder.build].</doc>
         </parameters>
       </method>
       <method name="set_sync" c:identifier="gdk_gl_texture_builder_set_sync" glib:set-property="sync" version="4.12">
-        <attribute name="org.gdk.Method.set_property" value="sync"/>
+        <attribute name="org.gtk.Method.set_property" value="sync"/>
         <doc xml:space="preserve">Sets the GLSync object to use for the texture.
 
 GTK will wait on this object before using the created `GdkTexture`.
@@ -7086,7 +7848,7 @@ responsibility to make sure it doesn't leak.</doc>
         </parameters>
       </method>
       <method name="set_update_region" c:identifier="gdk_gl_texture_builder_set_update_region" glib:set-property="update-region" version="4.12">
-        <attribute name="org.gdk.Method.set_property" value="update_region"/>
+        <attribute name="org.gtk.Method.set_property" value="update-region"/>
         <doc xml:space="preserve">Sets the region to be updated by this texture. Together with
 [property@Gdk.GLTextureBuilder:update-texture] this describes an
 update of a previous texture.
@@ -7112,7 +7874,7 @@ An example would be a screen recording where only the mouse pointer moves.</doc>
         </parameters>
       </method>
       <method name="set_update_texture" c:identifier="gdk_gl_texture_builder_set_update_texture" glib:set-property="update-texture" version="4.12">
-        <attribute name="org.gdk.Method.set_property" value="update_texture"/>
+        <attribute name="org.gtk.Method.set_property" value="update-texture"/>
         <doc xml:space="preserve">Sets the texture to be updated by this texture. See
 [method@Gdk.GLTextureBuilder.set_update_region] for an explanation.</doc>
         <return-value transfer-ownership="none">
@@ -7130,7 +7892,7 @@ An example would be a screen recording where only the mouse pointer moves.</doc>
         </parameters>
       </method>
       <method name="set_width" c:identifier="gdk_gl_texture_builder_set_width" glib:set-property="width" version="4.12">
-        <attribute name="org.gdk.Method.set_property" value="width"/>
+        <attribute name="org.gtk.Method.set_property" value="width"/>
         <doc xml:space="preserve">Sets the width of the texture.
 
 The width must be set before calling [method@Gdk.GLTextureBuilder.build].</doc>
@@ -7149,58 +7911,58 @@ The width must be set before calling [method@Gdk.GLTextureBuilder.build].</doc>
         </parameters>
       </method>
       <property name="context" version="4.12" writable="1" transfer-ownership="none" setter="set_context" getter="get_context">
-        <attribute name="org.gdk.Property.get" value="gdk_gl_texture_builder_get_context"/>
-        <attribute name="org.gdk.Property.set" value="gdk_gl_texture_builder_set_context"/>
+        <attribute name="org.gtk.Property.get" value="gdk_gl_texture_builder_get_context"/>
+        <attribute name="org.gtk.Property.set" value="gdk_gl_texture_builder_set_context"/>
         <doc xml:space="preserve">The context owning the texture.</doc>
         <type name="GLContext"/>
       </property>
       <property name="format" version="4.12" writable="1" transfer-ownership="none" setter="set_format" getter="get_format" default-value="GDK_MEMORY_R8G8B8A8_PREMULTIPLIED">
-        <attribute name="org.gdk.Property.get" value="gdk_gl_texture_builder_get_format"/>
-        <attribute name="org.gdk.Property.set" value="gdk_gl_texture_builder_set_format"/>
+        <attribute name="org.gtk.Property.get" value="gdk_gl_texture_builder_get_format"/>
+        <attribute name="org.gtk.Property.set" value="gdk_gl_texture_builder_set_format"/>
         <doc xml:space="preserve">The format when downloading the texture.</doc>
         <type name="MemoryFormat"/>
       </property>
       <property name="has-mipmap" version="4.12" writable="1" transfer-ownership="none" setter="set_has_mipmap" getter="get_has_mipmap" default-value="FALSE">
-        <attribute name="org.gdk.Property.get" value="gdk_gl_texture_builder_get_has_mipmap"/>
-        <attribute name="org.gdk.Property.set" value="gdk_gl_texture_builder_set_has_mipmap"/>
+        <attribute name="org.gtk.Property.get" value="gdk_gl_texture_builder_get_has_mipmap"/>
+        <attribute name="org.gtk.Property.set" value="gdk_gl_texture_builder_set_has_mipmap"/>
         <doc xml:space="preserve">If the texture has a mipmap.</doc>
         <type name="gboolean" c:type="gboolean"/>
       </property>
       <property name="height" version="4.12" writable="1" transfer-ownership="none" setter="set_height" getter="get_height" default-value="0">
-        <attribute name="org.gdk.Property.get" value="gdk_gl_texture_builder_get_height"/>
-        <attribute name="org.gdk.Property.set" value="gdk_gl_texture_builder_set_height"/>
+        <attribute name="org.gtk.Property.get" value="gdk_gl_texture_builder_get_height"/>
+        <attribute name="org.gtk.Property.set" value="gdk_gl_texture_builder_set_height"/>
         <doc xml:space="preserve">The height of the texture.</doc>
         <type name="gint" c:type="gint"/>
       </property>
       <property name="id" version="4.12" writable="1" transfer-ownership="none" setter="set_id" getter="get_id" default-value="0">
-        <attribute name="org.gdk.Property.get" value="gdk_gl_texture_builder_get_id"/>
-        <attribute name="org.gdk.Property.set" value="gdk_gl_texture_builder_set_id"/>
+        <attribute name="org.gtk.Property.get" value="gdk_gl_texture_builder_get_id"/>
+        <attribute name="org.gtk.Property.set" value="gdk_gl_texture_builder_set_id"/>
         <doc xml:space="preserve">The texture ID to use.</doc>
         <type name="guint" c:type="guint"/>
       </property>
       <property name="sync" version="4.12" writable="1" transfer-ownership="none" setter="set_sync" getter="get_sync">
-        <attribute name="org.gdk.Property.get" value="gdk_gl_texture_builder_get_sync"/>
-        <attribute name="org.gdk.Property.set" value="gdk_gl_texture_builder_set_sync"/>
+        <attribute name="org.gtk.Property.get" value="gdk_gl_texture_builder_get_sync"/>
+        <attribute name="org.gtk.Property.set" value="gdk_gl_texture_builder_set_sync"/>
         <doc xml:space="preserve">An optional `GLSync` object.
 
 If this is set, GTK will wait on it before using the texture.</doc>
         <type name="gpointer" c:type="gpointer"/>
       </property>
       <property name="update-region" version="4.12" writable="1" transfer-ownership="none" setter="set_update_region" getter="get_update_region">
-        <attribute name="org.gdk.Property.get" value="gdk_gl_texture_builder_get_update_region"/>
-        <attribute name="org.gdk.Property.set" value="gdk_gl_texture_builder_set_update_region"/>
+        <attribute name="org.gtk.Property.get" value="gdk_gl_texture_builder_get_update_region"/>
+        <attribute name="org.gtk.Property.set" value="gdk_gl_texture_builder_set_update_region"/>
         <doc xml:space="preserve">The update region for [property@Gdk.GLTextureBuilder:update-texture].</doc>
         <type name="cairo.Region"/>
       </property>
       <property name="update-texture" version="4.12" writable="1" transfer-ownership="none" setter="set_update_texture" getter="get_update_texture">
-        <attribute name="org.gdk.Property.get" value="gdk_gl_texture_builder_get_update_texture"/>
-        <attribute name="org.gdk.Property.set" value="gdk_gl_texture_builder_set_update_texture"/>
+        <attribute name="org.gtk.Property.get" value="gdk_gl_texture_builder_get_update_texture"/>
+        <attribute name="org.gtk.Property.set" value="gdk_gl_texture_builder_set_update_texture"/>
         <doc xml:space="preserve">The texture [property@Gdk.GLTextureBuilder:update-region] is an update for.</doc>
         <type name="Texture"/>
       </property>
       <property name="width" version="4.12" writable="1" transfer-ownership="none" setter="set_width" getter="get_width" default-value="0">
-        <attribute name="org.gdk.Property.get" value="gdk_gl_texture_builder_get_width"/>
-        <attribute name="org.gdk.Property.set" value="gdk_gl_texture_builder_set_width"/>
+        <attribute name="org.gtk.Property.get" value="gdk_gl_texture_builder_get_width"/>
+        <attribute name="org.gtk.Property.set" value="gdk_gl_texture_builder_set_width"/>
         <doc xml:space="preserve">The width of the texture.</doc>
         <type name="gint" c:type="gint"/>
       </property>
@@ -7357,6 +8119,12 @@ If this is set, GTK will wait on it before using the texture.</doc>
     <function-macro name="IS_DISPLAY_MANAGER" c:identifier="GDK_IS_DISPLAY_MANAGER" introspectable="0">
       <parameters>
         <parameter name="object">
+        </parameter>
+      </parameters>
+    </function-macro>
+    <function-macro name="IS_DMABUF_TEXTURE" c:identifier="GDK_IS_DMABUF_TEXTURE" introspectable="0">
+      <parameters>
+        <parameter name="obj">
         </parameter>
       </parameters>
     </function-macro>
@@ -14626,7 +15394,23 @@ for details).</doc>
       </member>
       <member name="a32_float" value="27" c:identifier="GDK_MEMORY_A32_FLOAT" glib:nick="a32-float" glib:name="GDK_MEMORY_A32_FLOAT">
       </member>
-      <member name="n_formats" value="28" c:identifier="GDK_MEMORY_N_FORMATS" glib:nick="n-formats" glib:name="GDK_MEMORY_N_FORMATS">
+      <member name="a8b8g8r8_premultiplied" value="28" c:identifier="GDK_MEMORY_A8B8G8R8_PREMULTIPLIED" glib:nick="a8b8g8r8-premultiplied" glib:name="GDK_MEMORY_A8B8G8R8_PREMULTIPLIED">
+        <doc xml:space="preserve">4 bytes; for alpha, blue, green, red,
+  The color values are premultiplied with the alpha value. Since 4.14</doc>
+      </member>
+      <member name="b8g8r8x8" value="29" c:identifier="GDK_MEMORY_B8G8R8X8" glib:nick="b8g8r8x8" glib:name="GDK_MEMORY_B8G8R8X8">
+        <doc xml:space="preserve">4 bytes; for blue, green, red, unused. Since 4.14</doc>
+      </member>
+      <member name="x8r8g8b8" value="30" c:identifier="GDK_MEMORY_X8R8G8B8" glib:nick="x8r8g8b8" glib:name="GDK_MEMORY_X8R8G8B8">
+        <doc xml:space="preserve">4 bytes; for unused, red, green, blue. Since 4.14</doc>
+      </member>
+      <member name="r8g8b8x8" value="31" c:identifier="GDK_MEMORY_R8G8B8X8" glib:nick="r8g8b8x8" glib:name="GDK_MEMORY_R8G8B8X8">
+        <doc xml:space="preserve">4 bytes; for red, green, blue, unused. Since 4.14</doc>
+      </member>
+      <member name="x8b8g8r8" value="32" c:identifier="GDK_MEMORY_X8B8G8R8" glib:nick="x8b8g8r8" glib:name="GDK_MEMORY_X8B8G8R8">
+        <doc xml:space="preserve">4 bytes; for unused, blue, green, red. Since 4.14</doc>
+      </member>
+      <member name="n_formats" value="33" c:identifier="GDK_MEMORY_N_FORMATS" glib:nick="n-formats" glib:name="GDK_MEMORY_N_FORMATS">
         <doc xml:space="preserve">The number of formats. This value will change as
   more formats get added, so do not rely on its concrete integer.</doc>
       </member>
@@ -14680,6 +15464,9 @@ Apple, CapsLock or ShiftLock.
 Note that GDK may add internal values to events which include values outside
 of this enumeration. Your code should preserve and ignore them.  You can use
 %GDK_MODIFIER_MASK to remove all private values.</doc>
+      <member name="no_modifier_mask" value="0" c:identifier="GDK_NO_MODIFIER_MASK" version="4.14" glib:nick="no-modifier-mask" glib:name="GDK_NO_MODIFIER_MASK">
+        <doc xml:space="preserve">No modifier.</doc>
+      </member>
       <member name="shift_mask" value="1" c:identifier="GDK_SHIFT_MASK" glib:nick="shift-mask" glib:name="GDK_SHIFT_MASK">
         <doc xml:space="preserve">the Shift key.</doc>
       </member>
@@ -15147,7 +15934,8 @@ useful for implementing subclasses and should not be used by applications:
 This is often useful for implementing the
 [vfunc@Gdk.Paintable.get_current_image] virtual function
 when the paintable is in an incomplete state (like a
-[class@Gtk.MediaStream] before receiving the first frame).</doc>
+[GtkMediaStream](../gtk4/class.MediaStream.html) before receiving
+the first frame).</doc>
         <return-value transfer-ownership="full">
           <doc xml:space="preserve">a `GdkPaintable`</doc>
           <type name="Paintable" c:type="GdkPaintable*"/>
@@ -15855,9 +16643,9 @@ and size of the popup. You can learn about the result by calling
 [method@Gdk.Popup.get_position_x], [method@Gdk.Popup.get_position_y],
 [method@Gdk.Popup.get_rect_anchor] and [method@Gdk.Popup.get_surface_anchor]
 after the popup has been presented. This can be used to adjust the rendering.
-For example, [class@Gtk.Popover] changes its arrow position accordingly.
-But you have to be careful avoid changing the size of the popover, or it
-has to be presented again.</doc>
+For example, [GtkPopover](../gtk4/class.Popover.html) changes its arrow position
+accordingly. But you have to be careful avoid changing the size of the popover,
+or it has to be presented again.</doc>
       <constructor name="new" c:identifier="gdk_popup_layout_new">
         <doc xml:space="preserve">Create a popup layout description.
 
@@ -16818,7 +17606,7 @@ A same tool may be used by several devices.</doc>
     <class name="Snapshot" c:symbol-prefix="snapshot" c:type="GdkSnapshot" parent="GObject.Object" abstract="1" glib:type-name="GdkSnapshot" glib:get-type="gdk_snapshot_get_type" glib:type-struct="SnapshotClass">
       <doc xml:space="preserve">Base type for snapshot operations.
 
-The subclass of `GdkSnapshot` used by GTK is [class@Gtk.Snapshot].</doc>
+The subclass of `GdkSnapshot` used by GTK is [GtkSnapshot](../gtk4/class.Snapshot.html).</doc>
     </class>
     <record name="SnapshotClass" c:type="GdkSnapshotClass" disguised="1" opaque="1" glib:is-gtype-struct-for="Snapshot"/>
     <enumeration name="SubpixelLayout" glib:type-name="GdkSubpixelLayout" glib:get-type="gdk_subpixel_layout_get_type" c:type="GdkSubpixelLayout">
@@ -16847,7 +17635,7 @@ of physical pixels on an output device are laid out.</doc>
       <doc xml:space="preserve">A `GdkSurface` is a rectangular region on the screen.
 
 It&#x2019;s a low-level object, used to implement high-level objects
-such as [class@Gtk.Window] or [class@Gtk.Dialog] in GTK.
+such as [GtkWindow](../gtk4/class.Window.html).
 
 The surfaces you see in practice are either [iface@Gdk.Toplevel] or
 [iface@Gdk.Popup], and those interfaces provide much of the required
@@ -16974,13 +17762,12 @@ or any other error occurs.</doc>
           </parameter>
         </parameters>
       </method>
-      <method name="create_vulkan_context" c:identifier="gdk_surface_create_vulkan_context" throws="1">
-        <doc xml:space="preserve">Creates a new `GdkVulkanContext` for rendering on @surface.
-
-If the creation of the `GdkVulkanContext` failed, @error will be set.</doc>
+      <method name="create_vulkan_context" c:identifier="gdk_surface_create_vulkan_context" deprecated="1" deprecated-version="4.14" throws="1">
+        <doc xml:space="preserve">Sets an error and returns %NULL.</doc>
+        <doc-deprecated xml:space="preserve">GTK does not expose any Vulkan internals. This
+  function is a leftover that was accidentally exposed.</doc-deprecated>
         <return-value transfer-ownership="full">
-          <doc xml:space="preserve">the newly created `GdkVulkanContext`, or
-  %NULL on error</doc>
+          <doc xml:space="preserve">%NULL</doc>
           <type name="VulkanContext" c:type="GdkVulkanContext*"/>
         </return-value>
         <parameters>
@@ -17221,7 +18008,7 @@ Surface size is reported in &#x201D;application pixels&#x201D;, not
 For toplevel surfaces, withdraws them, so they will no longer be
 known to the window manager; for all surfaces, unmaps them, so
 they won&#x2019;t be displayed. Normally done automatically as
-part of [method@Gtk.Widget.hide].</doc>
+part of [gtk_widget_hide()](../gtk4/method.Widget.hide.html).</doc>
         <return-value transfer-ownership="none">
           <type name="none" c:type="void"/>
         </return-value>
@@ -17369,7 +18156,7 @@ This function only works for toplevel surfaces.
 GTK will update this property automatically if the @surface background
 is opaque, as we know where the opaque regions are. If your surface
 background is not opaque, please update this property in your
-[vfunc@Gtk.Widget.css_changed] handler.</doc>
+[GtkWidgetClass.css_changed](../gtk4/vfunc.Widget.css_changed.html) handler.</doc>
         <return-value transfer-ownership="none">
           <type name="none" c:type="void"/>
         </return-value>
@@ -17710,7 +18497,7 @@ gdk_texture_download (texture,
 cairo_surface_mark_dirty (surface);
 ```
 
-For more flexible download capabilites, see
+For more flexible download capabilities, see
 [struct@Gdk.TextureDownloader].</doc>
         <return-value transfer-ownership="none">
           <type name="none" c:type="void"/>
@@ -17891,7 +18678,7 @@ use [method@Gdk.Texture.save_to_png_bytes].</doc>
 [class@Gdk.Texture].
 
 It is intended to be created as a short-term object for a single download,
-but can be used for multipe downloads of different textures or with different
+but can be used for multiple downloads of different textures or with different
 settings.
 
 `GdkTextureDownloader` can be used to convert data between different formats.
@@ -18179,8 +18966,9 @@ You might use this function to implement a &#x201C;window resize grip.&#x201D;</
       <method name="focus" c:identifier="gdk_toplevel_focus">
         <doc xml:space="preserve">Sets keyboard focus to @surface.
 
-In most cases, [method@Gtk.Window.present_with_time] should be
-used on a [class@Gtk.Window], rather than calling this function.</doc>
+In most cases, [gtk_window_present_with_time()](../gtk4/method.Window.present_with_time.html)
+should be used on a [GtkWindow](../gtk4/class.Window.html), rather than
+calling this function.</doc>
         <return-value transfer-ownership="none">
           <type name="none" c:type="void"/>
         </return-value>
@@ -18417,8 +19205,8 @@ previously called [method@Gdk.Toplevel.set_transient_for].</doc>
         <doc xml:space="preserve">Sets the startup notification ID.
 
 When using GTK, typically you should use
-[method@Gtk.Window.set_startup_id] instead of this
-low-level function.</doc>
+[gtk_window_set_startup_id()](../gtk4/method.Window.set_startup_id.html)
+instead of this low-level function.</doc>
         <return-value transfer-ownership="none">
           <type name="none" c:type="void"/>
         </return-value>
@@ -18462,8 +19250,8 @@ dialog associated with the application surface @parent. This
 allows the window manager to do things like center @surface
 on @parent and keep @surface above @parent.
 
-See [method@Gtk.Window.set_transient_for] if you&#x2019;re using
-[class@Gtk.Window] or [class@Gtk.Dialog].</doc>
+See [gtk_window_set_transient_for()](../gtk4/method.Window.set_transient_for.html)
+if you&#x2019;re using [GtkWindow](../gtk4/class.Window.html).</doc>
         <return-value transfer-ownership="none">
           <type name="none" c:type="void"/>
         </return-value>
@@ -19505,6 +20293,11 @@ call [func@Gdk.content_serialize_finish] to get the result of the operation.</do
         </parameter>
       </parameters>
     </function>
+    <function name="dmabuf_error_quark" c:identifier="gdk_dmabuf_error_quark" moved-to="DmabufError.quark">
+      <return-value transfer-ownership="none">
+        <type name="GLib.Quark" c:type="GQuark"/>
+      </return-value>
+    </function>
     <function name="drag_action_is_unique" c:identifier="gdk_drag_action_is_unique" moved-to="DragAction.is_unique">
       <doc xml:space="preserve">Checks if @action represents a single action or includes
 multiple actions.
@@ -19768,7 +20561,8 @@ keyvals, such as %GDK_KEY_KP_Decimal.</doc>
 This is often useful for implementing the
 [vfunc@Gdk.Paintable.get_current_image] virtual function
 when the paintable is in an incomplete state (like a
-[class@Gtk.MediaStream] before receiving the first frame).</doc>
+[GtkMediaStream](../gtk4/class.MediaStream.html) before receiving
+the first frame).</doc>
       <return-value transfer-ownership="full">
         <doc xml:space="preserve">a `GdkPaintable`</doc>
         <type name="Paintable" c:type="GdkPaintable*"/>
