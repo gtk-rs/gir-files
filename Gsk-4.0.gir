@@ -1655,6 +1655,12 @@ code, and what the corresponding C type is on the Gtk side.</doc>
         </parameter>
       </parameters>
     </function-macro>
+    <function-macro name="INCLUDE_WARNING" c:identifier="GSK_INCLUDE_WARNING" introspectable="0">
+      <parameters>
+        <parameter name="x">
+        </parameter>
+      </parameters>
+    </function-macro>
     <function-macro name="IS_BROADWAY_RENDERER" c:identifier="GSK_IS_BROADWAY_RENDERER" introspectable="0">
       <parameters>
         <parameter name="obj">
@@ -2065,11 +2071,8 @@ the 'mask value' with the alpha of the source.</doc>
       </method>
     </class>
     <class name="NglRenderer" c:symbol-prefix="ngl_renderer" parent="Renderer" glib:type-name="GskNglRenderer" glib:get-type="gsk_ngl_renderer_get_type">
-      <constructor name="new" c:identifier="gsk_ngl_renderer_new" deprecated="1" deprecated-version="4.4">
-        <doc xml:space="preserve">Same as gsk_gl_renderer_new().</doc>
-        <doc-deprecated xml:space="preserve">Use gsk_gl_renderer_new()</doc-deprecated>
+      <constructor name="new" c:identifier="gsk_ngl_renderer_new">
         <return-value transfer-ownership="full">
-          <doc xml:space="preserve">a new GL renderer</doc>
           <type name="Renderer" c:type="GskRenderer*"/>
         </return-value>
       </constructor>
@@ -2296,7 +2299,7 @@ After creation, you cannot change the types it represents. Instead,
 new `GskPath` objects have to be created. The [struct@Gsk.PathBuilder]
 structure is meant to help in this endeavor.
 
-Conceptually, a path consists of zero or more contours (continous, connected
+Conceptually, a path consists of zero or more contours (continuous, connected
 curves), each of which may or may not be closed. Contours are typically
 constructed from B&#xE9;zier segments.
 
@@ -4467,17 +4470,20 @@ node to a file for later inspection.</doc>
       <member name="gl_shader_node" value="25" c:identifier="GSK_GL_SHADER_NODE" glib:nick="gl-shader-node" glib:name="GSK_GL_SHADER_NODE">
         <doc xml:space="preserve">A node that uses OpenGL fragment shaders to render</doc>
       </member>
-      <member name="texture_scale_node" value="26" c:identifier="GSK_TEXTURE_SCALE_NODE" glib:nick="texture-scale-node" glib:name="GSK_TEXTURE_SCALE_NODE">
-        <doc xml:space="preserve">A node drawing a `GdkTexture` scaled and filtered (Since: 4.10)</doc>
+      <member name="texture_scale_node" value="26" c:identifier="GSK_TEXTURE_SCALE_NODE" version="4.10" glib:nick="texture-scale-node" glib:name="GSK_TEXTURE_SCALE_NODE">
+        <doc xml:space="preserve">A node drawing a `GdkTexture` scaled and filtered.</doc>
       </member>
-      <member name="mask_node" value="27" c:identifier="GSK_MASK_NODE" glib:nick="mask-node" glib:name="GSK_MASK_NODE">
-        <doc xml:space="preserve">A node that masks one child with another (Since: 4.10)</doc>
+      <member name="mask_node" value="27" c:identifier="GSK_MASK_NODE" version="4.10" glib:nick="mask-node" glib:name="GSK_MASK_NODE">
+        <doc xml:space="preserve">A node that masks one child with another.</doc>
       </member>
-      <member name="fill_node" value="28" c:identifier="GSK_FILL_NODE" glib:nick="fill-node" glib:name="GSK_FILL_NODE">
-        <doc xml:space="preserve">A node that fills a path</doc>
+      <member name="fill_node" value="28" c:identifier="GSK_FILL_NODE" version="4.14" glib:nick="fill-node" glib:name="GSK_FILL_NODE">
+        <doc xml:space="preserve">A node that fills a path.</doc>
       </member>
-      <member name="stroke_node" value="29" c:identifier="GSK_STROKE_NODE" glib:nick="stroke-node" glib:name="GSK_STROKE_NODE">
-        <doc xml:space="preserve">A node that strokes a path</doc>
+      <member name="stroke_node" value="29" c:identifier="GSK_STROKE_NODE" version="4.14" glib:nick="stroke-node" glib:name="GSK_STROKE_NODE">
+        <doc xml:space="preserve">A node that strokes a path.</doc>
+      </member>
+      <member name="subsurface_node" value="30" c:identifier="GSK_SUBSURFACE_NODE" version="4.14" glib:nick="subsurface-node" glib:name="GSK_SUBSURFACE_NODE">
+        <doc xml:space="preserve">A node that possibly redirects part of the scene graph to a subsurface.</doc>
       </member>
     </enumeration>
     <class name="Renderer" c:symbol-prefix="renderer" c:type="GskRenderer" parent="GObject.Object" abstract="1" glib:type-name="GskRenderer" glib:get-type="gsk_renderer_get_type" glib:type-struct="RendererClass">
@@ -4547,6 +4553,8 @@ graph.
 
 Since GTK 4.6, the surface may be `NULL`, which allows using
 renderers without having to create a surface.
+Since GTK 4.14, it is recommended to use [method@Gsk.Renderer.realize_for_display]
+instead.
 
 Note that it is mandatory to call [method@Gsk.Renderer.unrealize] before
 destroying the renderer.</doc>
@@ -4562,6 +4570,27 @@ destroying the renderer.</doc>
           <parameter name="surface" transfer-ownership="none" nullable="1" allow-none="1">
             <doc xml:space="preserve">the `GdkSurface` renderer will be used on</doc>
             <type name="Gdk.Surface" c:type="GdkSurface*"/>
+          </parameter>
+        </parameters>
+      </method>
+      <method name="realize_for_display" c:identifier="gsk_renderer_realize_for_display" version="4.14" throws="1">
+        <doc xml:space="preserve">Creates the resources needed by the @renderer to render the scene
+graph.
+
+Note that it is mandatory to call [method@Gsk.Renderer.unrealize] before
+destroying the renderer.</doc>
+        <return-value transfer-ownership="none">
+          <doc xml:space="preserve">Whether the renderer was successfully realized</doc>
+          <type name="gboolean" c:type="gboolean"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="renderer" transfer-ownership="none">
+            <doc xml:space="preserve">a `GskRenderer`</doc>
+            <type name="Renderer" c:type="GskRenderer*"/>
+          </instance-parameter>
+          <parameter name="display" transfer-ownership="none">
+            <doc xml:space="preserve">the `GdkDisplay` renderer will be used on</doc>
+            <type name="Gdk.Display" c:type="GdkDisplay*"/>
           </parameter>
         </parameters>
       </method>
@@ -5831,6 +5860,57 @@ the @node.</doc>
         </parameters>
       </method>
     </class>
+    <class name="SubsurfaceNode" c:symbol-prefix="subsurface_node" c:type="GskSubsurfaceNode" version="4.14" parent="RenderNode" glib:type-name="GskSubsurfaceNode" glib:get-type="gsk_subsurface_node_get_type" glib:fundamental="1">
+      <doc xml:space="preserve">A render node that potentially diverts a part of the scene graph to a subsurface.</doc>
+      <constructor name="new" c:identifier="gsk_subsurface_node_new" version="4.14" introspectable="0">
+        <doc xml:space="preserve">Creates a `GskRenderNode` that will possibly divert the child
+node to a subsurface.
+
+Note: Since subsurfaces are currently private, these nodes cannot
+currently be created outside of GTK. See
+[GtkGraphicsOffload](../gtk4/class.GraphicsOffload.html).</doc>
+        <return-value transfer-ownership="full">
+          <doc xml:space="preserve">A new `GskRenderNode`</doc>
+          <type name="SubsurfaceNode" c:type="GskRenderNode*"/>
+        </return-value>
+        <parameters>
+          <parameter name="child" transfer-ownership="none">
+            <doc xml:space="preserve">The child to divert to a subsurface</doc>
+            <type name="RenderNode" c:type="GskRenderNode*"/>
+          </parameter>
+          <parameter name="subsurface" transfer-ownership="none" nullable="1" allow-none="1">
+            <doc xml:space="preserve">the subsurface to use</doc>
+            <type name="gpointer" c:type="gpointer"/>
+          </parameter>
+        </parameters>
+      </constructor>
+      <function name="get_subsurface" c:identifier="gsk_subsurface_node_get_subsurface" version="4.14" introspectable="0">
+        <doc xml:space="preserve">Gets the subsurface that was set on this node</doc>
+        <return-value transfer-ownership="none" nullable="1">
+          <doc xml:space="preserve">the subsurface</doc>
+          <type name="gpointer" c:type="gpointer"/>
+        </return-value>
+        <parameters>
+          <parameter name="node" transfer-ownership="none">
+            <doc xml:space="preserve">a debug `GskRenderNode`</doc>
+            <type name="DebugNode" c:type="const GskRenderNode*"/>
+          </parameter>
+        </parameters>
+      </function>
+      <method name="get_child" c:identifier="gsk_subsurface_node_get_child" version="4.14">
+        <doc xml:space="preserve">Gets the child node that is getting drawn by the given @node.</doc>
+        <return-value transfer-ownership="none">
+          <doc xml:space="preserve">the child `GskRenderNode`</doc>
+          <type name="RenderNode" c:type="GskRenderNode*"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="node" transfer-ownership="none">
+            <doc xml:space="preserve">a debug `GskRenderNode`</doc>
+            <type name="SubsurfaceNode" c:type="const GskRenderNode*"/>
+          </instance-parameter>
+        </parameters>
+      </method>
+    </class>
     <class name="TextNode" c:symbol-prefix="text_node" c:type="GskTextNode" parent="RenderNode" glib:type-name="GskTextNode" glib:get-type="gsk_text_node_get_type" glib:fundamental="1">
       <doc xml:space="preserve">A render node drawing a set of glyphs.</doc>
       <constructor name="new" c:identifier="gsk_text_node_new">
@@ -6767,7 +6847,9 @@ with the given @transform.</doc>
       </parameters>
     </function-macro>
     <class name="VulkanRenderer" c:symbol-prefix="vulkan_renderer" c:type="GskVulkanRenderer" parent="Renderer" glib:type-name="GskVulkanRenderer" glib:get-type="gsk_vulkan_renderer_get_type" glib:type-struct="VulkanRendererClass">
-      <doc xml:space="preserve">A GSK renderer that is using Vulkan.</doc>
+      <doc xml:space="preserve">A GSK renderer that is using Vulkan.
+
+This renderer will fail to realize if Vulkan is not supported.</doc>
       <constructor name="new" c:identifier="gsk_vulkan_renderer_new">
         <return-value transfer-ownership="full">
           <type name="Renderer" c:type="GskRenderer*"/>
