@@ -5606,6 +5606,11 @@ implementation and should never be accessed directly.</doc>
         </type>
       </field>
       <field name="constructor" introspectable="0">
+        <doc xml:space="preserve">the @constructor function is called by g_object_new () to
+ complete the object initialization after all the construction properties are
+ set. The first thing a @constructor implementation must do is chain up to the
+ @constructor of the parent class. Overriding @constructor should be rarely
+ needed, e.g. to handle construct properties, or to implement singletons.</doc>
         <callback name="constructor" introspectable="0">
           <return-value>
             <type name="Object" c:type="GObject*"/>
@@ -5624,6 +5629,11 @@ implementation and should never be accessed directly.</doc>
         </callback>
       </field>
       <field name="set_property">
+        <doc xml:space="preserve">the generic setter for all properties of this type. Should be
+ overridden for every type with properties. If implementations of
+ @set_property don't emit property change notification explicitly, this will
+ be done implicitly by the type system. However, if the notify signal is
+ emitted explicitly, the type system will not emit it a second time.</doc>
         <callback name="set_property">
           <return-value transfer-ownership="none">
             <type name="none" c:type="void"/>
@@ -5645,6 +5655,8 @@ implementation and should never be accessed directly.</doc>
         </callback>
       </field>
       <field name="get_property">
+        <doc xml:space="preserve">the generic getter for all properties of this type. Should be
+ overridden for every type with properties.</doc>
         <callback name="get_property">
           <return-value transfer-ownership="none">
             <type name="none" c:type="void"/>
@@ -5666,6 +5678,11 @@ implementation and should never be accessed directly.</doc>
         </callback>
       </field>
       <field name="dispose">
+        <doc xml:space="preserve">the @dispose function is supposed to drop all references to other
+ objects, but keep the instance otherwise intact, so that client method
+ invocations still work. It may be run multiple times (due to reference
+ loops). Before returning, @dispose should chain up to the @dispose method
+ of the parent class.</doc>
         <callback name="dispose">
           <return-value transfer-ownership="none">
             <type name="none" c:type="void"/>
@@ -5678,6 +5695,9 @@ implementation and should never be accessed directly.</doc>
         </callback>
       </field>
       <field name="finalize">
+        <doc xml:space="preserve">instance finalization function, should finish the finalization of
+ the instance begun in @dispose and chain up to the @finalize method of the
+ parent class.</doc>
         <callback name="finalize">
           <return-value transfer-ownership="none">
             <type name="none" c:type="void"/>
@@ -5690,6 +5710,9 @@ implementation and should never be accessed directly.</doc>
         </callback>
       </field>
       <field name="dispatch_properties_changed">
+        <doc xml:space="preserve">emits property change notification for a bunch
+ of properties. Overriding @dispatch_properties_changed should be rarely
+ needed.</doc>
         <callback name="dispatch_properties_changed">
           <return-value transfer-ownership="none">
             <type name="none" c:type="void"/>
@@ -5708,6 +5731,7 @@ implementation and should never be accessed directly.</doc>
         </callback>
       </field>
       <field name="notify">
+        <doc xml:space="preserve">the class closure for the notify signal</doc>
         <callback name="notify">
           <return-value transfer-ownership="none">
             <type name="none" c:type="void"/>
@@ -5724,6 +5748,13 @@ implementation and should never be accessed directly.</doc>
         </callback>
       </field>
       <field name="constructed">
+        <doc xml:space="preserve">the @constructed function is called by g_object_new() as the
+ final step of the object creation process.  At the point of the call, all
+ construction properties have been set on the object.  The purpose of this
+ call is to allow for object initialisation steps that can only be performed
+ after construction properties have been set.  @constructed implementors
+ should chain up to the @constructed call of their parent class to allow it
+ to complete its initialisation.</doc>
         <callback name="constructed">
           <return-value transfer-ownership="none">
             <type name="none" c:type="void"/>
@@ -6196,6 +6227,13 @@ already been loaded, g_type_default_interface_peek().</doc>
         </parameters>
       </function>
       <virtual-method name="constructed">
+        <doc xml:space="preserve">the @constructed function is called by g_object_new() as the
+ final step of the object creation process.  At the point of the call, all
+ construction properties have been set on the object.  The purpose of this
+ call is to allow for object initialisation steps that can only be performed
+ after construction properties have been set.  @constructed implementors
+ should chain up to the @constructed call of their parent class to allow it
+ to complete its initialisation.</doc>
         <return-value transfer-ownership="none">
           <type name="none" c:type="void"/>
         </return-value>
@@ -6206,6 +6244,9 @@ already been loaded, g_type_default_interface_peek().</doc>
         </parameters>
       </virtual-method>
       <virtual-method name="dispatch_properties_changed">
+        <doc xml:space="preserve">emits property change notification for a bunch
+ of properties. Overriding @dispatch_properties_changed should be rarely
+ needed.</doc>
         <return-value transfer-ownership="none">
           <type name="none" c:type="void"/>
         </return-value>
@@ -6222,6 +6263,11 @@ already been loaded, g_type_default_interface_peek().</doc>
         </parameters>
       </virtual-method>
       <virtual-method name="dispose">
+        <doc xml:space="preserve">the @dispose function is supposed to drop all references to other
+ objects, but keep the instance otherwise intact, so that client method
+ invocations still work. It may be run multiple times (due to reference
+ loops). Before returning, @dispose should chain up to the @dispose method
+ of the parent class.</doc>
         <return-value transfer-ownership="none">
           <type name="none" c:type="void"/>
         </return-value>
@@ -6232,6 +6278,9 @@ already been loaded, g_type_default_interface_peek().</doc>
         </parameters>
       </virtual-method>
       <virtual-method name="finalize">
+        <doc xml:space="preserve">instance finalization function, should finish the finalization of
+ the instance begun in @dispose and chain up to the @finalize method of the
+ parent class.</doc>
         <return-value transfer-ownership="none">
           <type name="none" c:type="void"/>
         </return-value>
@@ -6242,6 +6291,8 @@ already been loaded, g_type_default_interface_peek().</doc>
         </parameters>
       </virtual-method>
       <virtual-method name="get_property">
+        <doc xml:space="preserve">the generic getter for all properties of this type. Should be
+ overridden for every type with properties.</doc>
         <return-value transfer-ownership="none">
           <type name="none" c:type="void"/>
         </return-value>
@@ -6285,6 +6336,11 @@ called.</doc>
         </parameters>
       </virtual-method>
       <virtual-method name="set_property">
+        <doc xml:space="preserve">the generic setter for all properties of this type. Should be
+ overridden for every type with properties. If implementations of
+ @set_property don't emit property change notification explicitly, this will
+ be done implicitly by the type system. However, if the notify signal is
+ emitted explicitly, the type system will not emit it a second time.</doc>
         <return-value transfer-ownership="none">
           <type name="none" c:type="void"/>
         </return-value>
@@ -7746,6 +7802,11 @@ my_singleton_constructor (GType                  type,
         </type>
       </field>
       <field name="constructor" introspectable="0">
+        <doc xml:space="preserve">the @constructor function is called by g_object_new () to
+ complete the object initialization after all the construction properties are
+ set. The first thing a @constructor implementation must do is chain up to the
+ @constructor of the parent class. Overriding @constructor should be rarely
+ needed, e.g. to handle construct properties, or to implement singletons.</doc>
         <callback name="constructor" introspectable="0">
           <return-value>
             <type name="Object" c:type="GObject*"/>
@@ -7764,6 +7825,11 @@ my_singleton_constructor (GType                  type,
         </callback>
       </field>
       <field name="set_property">
+        <doc xml:space="preserve">the generic setter for all properties of this type. Should be
+ overridden for every type with properties. If implementations of
+ @set_property don't emit property change notification explicitly, this will
+ be done implicitly by the type system. However, if the notify signal is
+ emitted explicitly, the type system will not emit it a second time.</doc>
         <callback name="set_property">
           <return-value transfer-ownership="none">
             <type name="none" c:type="void"/>
@@ -7785,6 +7851,8 @@ my_singleton_constructor (GType                  type,
         </callback>
       </field>
       <field name="get_property">
+        <doc xml:space="preserve">the generic getter for all properties of this type. Should be
+ overridden for every type with properties.</doc>
         <callback name="get_property">
           <return-value transfer-ownership="none">
             <type name="none" c:type="void"/>
@@ -7806,6 +7874,11 @@ my_singleton_constructor (GType                  type,
         </callback>
       </field>
       <field name="dispose">
+        <doc xml:space="preserve">the @dispose function is supposed to drop all references to other
+ objects, but keep the instance otherwise intact, so that client method
+ invocations still work. It may be run multiple times (due to reference
+ loops). Before returning, @dispose should chain up to the @dispose method
+ of the parent class.</doc>
         <callback name="dispose">
           <return-value transfer-ownership="none">
             <type name="none" c:type="void"/>
@@ -7818,6 +7891,9 @@ my_singleton_constructor (GType                  type,
         </callback>
       </field>
       <field name="finalize">
+        <doc xml:space="preserve">instance finalization function, should finish the finalization of
+ the instance begun in @dispose and chain up to the @finalize method of the
+ parent class.</doc>
         <callback name="finalize">
           <return-value transfer-ownership="none">
             <type name="none" c:type="void"/>
@@ -7830,6 +7906,9 @@ my_singleton_constructor (GType                  type,
         </callback>
       </field>
       <field name="dispatch_properties_changed">
+        <doc xml:space="preserve">emits property change notification for a bunch
+ of properties. Overriding @dispatch_properties_changed should be rarely
+ needed.</doc>
         <callback name="dispatch_properties_changed">
           <return-value transfer-ownership="none">
             <type name="none" c:type="void"/>
@@ -7848,6 +7927,7 @@ my_singleton_constructor (GType                  type,
         </callback>
       </field>
       <field name="notify">
+        <doc xml:space="preserve">the class closure for the notify signal</doc>
         <callback name="notify">
           <return-value transfer-ownership="none">
             <type name="none" c:type="void"/>
@@ -7864,6 +7944,13 @@ my_singleton_constructor (GType                  type,
         </callback>
       </field>
       <field name="constructed">
+        <doc xml:space="preserve">the @constructed function is called by g_object_new() as the
+ final step of the object creation process.  At the point of the call, all
+ construction properties have been set on the object.  The purpose of this
+ call is to allow for object initialisation steps that can only be performed
+ after construction properties have been set.  @constructed implementors
+ should chain up to the @constructed call of their parent class to allow it
+ to complete its initialisation.</doc>
         <callback name="constructed">
           <return-value transfer-ownership="none">
             <type name="none" c:type="void"/>
@@ -8600,6 +8687,8 @@ the rules for valid names.</doc>
         </parameters>
       </function>
       <virtual-method name="finalize">
+        <doc xml:space="preserve">The instance finalization function (optional), should chain
+ up to the finalize method of the parent class.</doc>
         <return-value transfer-ownership="none">
           <type name="none" c:type="void"/>
         </return-value>
@@ -8610,6 +8699,9 @@ the rules for valid names.</doc>
         </parameters>
       </virtual-method>
       <virtual-method name="value_is_valid">
+        <doc xml:space="preserve">Checks if contents of @value comply with the specifications
+  set out by this type, without modifying the value. This vfunc is optional.
+  If it isn't set, GObject will use @value_validate. Since 2.74</doc>
         <return-value transfer-ownership="none">
           <type name="gboolean" c:type="gboolean"/>
         </return-value>
@@ -8623,6 +8715,9 @@ the rules for valid names.</doc>
         </parameters>
       </virtual-method>
       <virtual-method name="value_set_default">
+        <doc xml:space="preserve">Resets a @value to the default value for this type
+ (recommended, the default is g_value_reset()), see
+ g_param_value_set_default().</doc>
         <return-value transfer-ownership="none">
           <type name="none" c:type="void"/>
         </return-value>
@@ -8636,6 +8731,9 @@ the rules for valid names.</doc>
         </parameters>
       </virtual-method>
       <virtual-method name="value_validate">
+        <doc xml:space="preserve">Ensures that the contents of @value comply with the
+ specifications set out by this type (optional), see
+ g_param_value_validate().</doc>
         <return-value transfer-ownership="none">
           <type name="gboolean" c:type="gboolean"/>
         </return-value>
@@ -8649,6 +8747,8 @@ the rules for valid names.</doc>
         </parameters>
       </virtual-method>
       <virtual-method name="values_cmp">
+        <doc xml:space="preserve">Compares @value1 with @value2 according to this type
+ (recommended, the default is memcmp()), see g_param_values_cmp().</doc>
         <return-value transfer-ownership="none">
           <type name="gint" c:type="gint"/>
         </return-value>
@@ -8987,6 +9087,8 @@ g_param_type_register_static().</doc>
         <type name="GType" c:type="GType"/>
       </field>
       <field name="finalize">
+        <doc xml:space="preserve">The instance finalization function (optional), should chain
+ up to the finalize method of the parent class.</doc>
         <callback name="finalize">
           <return-value transfer-ownership="none">
             <type name="none" c:type="void"/>
@@ -8999,6 +9101,9 @@ g_param_type_register_static().</doc>
         </callback>
       </field>
       <field name="value_set_default">
+        <doc xml:space="preserve">Resets a @value to the default value for this type
+ (recommended, the default is g_value_reset()), see
+ g_param_value_set_default().</doc>
         <callback name="value_set_default">
           <return-value transfer-ownership="none">
             <type name="none" c:type="void"/>
@@ -9014,6 +9119,9 @@ g_param_type_register_static().</doc>
         </callback>
       </field>
       <field name="value_validate">
+        <doc xml:space="preserve">Ensures that the contents of @value comply with the
+ specifications set out by this type (optional), see
+ g_param_value_validate().</doc>
         <callback name="value_validate">
           <return-value transfer-ownership="none">
             <type name="gboolean" c:type="gboolean"/>
@@ -9029,6 +9137,8 @@ g_param_type_register_static().</doc>
         </callback>
       </field>
       <field name="values_cmp">
+        <doc xml:space="preserve">Compares @value1 with @value2 according to this type
+ (recommended, the default is memcmp()), see g_param_values_cmp().</doc>
         <callback name="values_cmp">
           <return-value transfer-ownership="none">
             <type name="gint" c:type="gint"/>
@@ -9047,6 +9157,9 @@ g_param_type_register_static().</doc>
         </callback>
       </field>
       <field name="value_is_valid">
+        <doc xml:space="preserve">Checks if contents of @value comply with the specifications
+  set out by this type, without modifying the value. This vfunc is optional.
+  If it isn't set, GObject will use @value_validate. Since 2.74</doc>
         <callback name="value_is_valid">
           <return-value transfer-ownership="none">
             <type name="gboolean" c:type="gboolean"/>
@@ -9454,6 +9567,7 @@ g_param_type_register_static().</doc>
         <type name="guint16" c:type="guint16"/>
       </field>
       <field name="instance_init">
+        <doc xml:space="preserve">Location of the instance initialization function (optional).</doc>
         <callback name="instance_init">
           <return-value transfer-ownership="none">
             <type name="none" c:type="void"/>
@@ -9470,6 +9584,7 @@ g_param_type_register_static().</doc>
         <type name="GType" c:type="GType"/>
       </field>
       <field name="finalize">
+        <doc xml:space="preserve">The instance finalization function (optional).</doc>
         <callback name="finalize">
           <return-value transfer-ownership="none">
             <type name="none" c:type="void"/>
@@ -9482,6 +9597,9 @@ g_param_type_register_static().</doc>
         </callback>
       </field>
       <field name="value_set_default">
+        <doc xml:space="preserve">Resets a @value to the default value for @pspec
+ (recommended, the default is g_value_reset()), see
+ g_param_value_set_default().</doc>
         <callback name="value_set_default">
           <return-value transfer-ownership="none">
             <type name="none" c:type="void"/>
@@ -9497,6 +9615,9 @@ g_param_type_register_static().</doc>
         </callback>
       </field>
       <field name="value_validate">
+        <doc xml:space="preserve">Ensures that the contents of @value comply with the
+ specifications set out by @pspec (optional), see
+ g_param_value_validate().</doc>
         <callback name="value_validate">
           <return-value transfer-ownership="none">
             <type name="gboolean" c:type="gboolean"/>
@@ -9512,6 +9633,8 @@ g_param_type_register_static().</doc>
         </callback>
       </field>
       <field name="values_cmp">
+        <doc xml:space="preserve">Compares @value1 with @value2 according to @pspec
+ (recommended, the default is memcmp()), see g_param_values_cmp().</doc>
         <callback name="values_cmp">
           <return-value transfer-ownership="none">
             <type name="gint" c:type="gint"/>
@@ -11409,6 +11532,8 @@ derive from `GTypeModule` and implement the load and unload functions
 in `GTypeModuleClass`.</doc>
       <implements name="TypePlugin"/>
       <virtual-method name="load">
+        <doc xml:space="preserve">loads the module and registers one or more types using
+ g_type_module_register_type().</doc>
         <return-value transfer-ownership="none">
           <type name="gboolean" c:type="gboolean"/>
         </return-value>
@@ -11419,6 +11544,7 @@ in `GTypeModuleClass`.</doc>
         </parameters>
       </virtual-method>
       <virtual-method name="unload">
+        <doc xml:space="preserve">unloads the module</doc>
         <return-value transfer-ownership="none">
           <type name="none" c:type="void"/>
         </return-value>
@@ -11646,6 +11772,8 @@ the @load and @unload functions in #GTypeModuleClass must be implemented.</doc>
         <type name="ObjectClass" c:type="GObjectClass"/>
       </field>
       <field name="load">
+        <doc xml:space="preserve">loads the module and registers one or more types using
+ g_type_module_register_type().</doc>
         <callback name="load">
           <return-value transfer-ownership="none">
             <type name="gboolean" c:type="gboolean"/>
@@ -11658,6 +11786,7 @@ the @load and @unload functions in #GTypeModuleClass must be implemented.</doc>
         </callback>
       </field>
       <field name="unload">
+        <doc xml:space="preserve">unloads the module</doc>
         <callback name="unload">
           <return-value transfer-ownership="none">
             <type name="none" c:type="void"/>

@@ -144,6 +144,8 @@ one should use the wrapper functions provided for `PangoAttribute`.</doc>
         <type name="AttrType" c:type="PangoAttrType"/>
       </field>
       <field name="copy">
+        <doc xml:space="preserve">function to duplicate an attribute of this type
+  (see [method@Pango.Attribute.copy])</doc>
         <callback name="copy">
           <return-value transfer-ownership="full">
             <type name="Attribute" c:type="PangoAttribute*"/>
@@ -156,6 +158,8 @@ one should use the wrapper functions provided for `PangoAttribute`.</doc>
         </callback>
       </field>
       <field name="destroy">
+        <doc xml:space="preserve">function to free an attribute of this type
+  (see [method@Pango.Attribute.destroy])</doc>
         <callback name="destroy">
           <return-value transfer-ownership="none">
             <type name="none" c:type="void"/>
@@ -168,6 +172,8 @@ one should use the wrapper functions provided for `PangoAttribute`.</doc>
         </callback>
       </field>
       <field name="equal">
+        <doc xml:space="preserve">function to check two attributes of this type for equality
+  (see [method@Pango.Attribute.equal])</doc>
         <callback name="equal">
           <return-value transfer-ownership="none">
             <type name="gboolean" c:type="gboolean"/>
@@ -4838,6 +4844,8 @@ a particular `PangoFontMap` implementation.</doc>
         <type name="GObject.ObjectClass" c:type="GObjectClass"/>
       </field>
       <field name="load_font">
+        <doc xml:space="preserve">a function to load a font with a given description. See
+pango_font_map_load_font().</doc>
         <callback name="load_font">
           <return-value transfer-ownership="full" nullable="1">
             <doc xml:space="preserve">the newly allocated `PangoFont`
@@ -4861,6 +4869,8 @@ a particular `PangoFontMap` implementation.</doc>
         </callback>
       </field>
       <field name="list_families">
+        <doc xml:space="preserve">A function to list available font families. See
+pango_font_map_list_families().</doc>
         <callback name="list_families">
           <return-value transfer-ownership="none">
             <type name="none" c:type="void"/>
@@ -4886,6 +4896,8 @@ a particular `PangoFontMap` implementation.</doc>
         </callback>
       </field>
       <field name="load_fontset">
+        <doc xml:space="preserve">a function to load a fontset with a given given description
+suitable for a particular language. See pango_font_map_load_fontset().</doc>
         <callback name="load_fontset">
           <return-value transfer-ownership="full" nullable="1">
             <doc xml:space="preserve">the newly allocated
@@ -4918,6 +4930,8 @@ can handle fonts of this fonts loaded with this fontmap.</doc>
         <type name="utf8" c:type="const char*"/>
       </field>
       <field name="get_serial">
+        <doc xml:space="preserve">a function to get the serial number of the fontmap.
+See pango_font_map_get_serial().</doc>
         <callback name="get_serial">
           <return-value transfer-ownership="none">
             <doc xml:space="preserve">The current serial number of @fontmap.</doc>
@@ -4932,6 +4946,7 @@ can handle fonts of this fonts loaded with this fontmap.</doc>
         </callback>
       </field>
       <field name="changed">
+        <doc xml:space="preserve">See pango_font_map_changed()</doc>
         <callback name="changed">
           <return-value transfer-ownership="none">
             <type name="none" c:type="void"/>
@@ -5293,6 +5308,7 @@ glyph for a Unicode character.</doc>
         </parameters>
       </virtual-method>
       <virtual-method name="get_language">
+        <doc xml:space="preserve">a function to get the language of the fontset.</doc>
         <return-value transfer-ownership="full">
           <type name="Language" c:type="PangoLanguage*"/>
         </return-value>
@@ -5381,6 +5397,8 @@ a particular `PangoFontset` implementation.</doc>
         <type name="GObject.ObjectClass" c:type="GObjectClass"/>
       </field>
       <field name="get_font">
+        <doc xml:space="preserve">a function to get the font in the fontset that contains the
+  best glyph for the given Unicode character; see [method@Pango.Fontset.get_font]</doc>
         <callback name="get_font">
           <return-value transfer-ownership="full">
             <doc xml:space="preserve">a `PangoFont`</doc>
@@ -5399,6 +5417,8 @@ a particular `PangoFontset` implementation.</doc>
         </callback>
       </field>
       <field name="get_metrics">
+        <doc xml:space="preserve">a function to get overall metric information for the fonts
+  in the fontset; see [method@Pango.Fontset.get_metrics]</doc>
         <callback name="get_metrics">
           <return-value transfer-ownership="full">
             <doc xml:space="preserve">a `PangoFontMetrics` object</doc>
@@ -5413,6 +5433,7 @@ a particular `PangoFontset` implementation.</doc>
         </callback>
       </field>
       <field name="get_language">
+        <doc xml:space="preserve">a function to get the language of the fontset.</doc>
         <callback name="get_language">
           <return-value transfer-ownership="full">
             <type name="Language" c:type="PangoLanguage*"/>
@@ -5425,6 +5446,8 @@ a particular `PangoFontset` implementation.</doc>
         </callback>
       </field>
       <field name="foreach">
+        <doc xml:space="preserve">a function to loop over the fonts in the fontset. See
+  [method@Pango.Fontset.foreach]</doc>
         <callback name="foreach">
           <return-value transfer-ownership="none">
             <type name="none" c:type="void"/>
@@ -9839,6 +9862,7 @@ By subclassing `PangoRenderer` and overriding operations such as
 @draw_glyphs and @draw_rectangle, renderers for particular font
 backends and destinations can be created.</doc>
       <virtual-method name="begin">
+        <doc xml:space="preserve">Do renderer-specific initialization before drawing</doc>
         <return-value transfer-ownership="none">
           <type name="none" c:type="void"/>
         </return-value>
@@ -10028,6 +10052,9 @@ Use [method@Pango.Renderer.activate] to activate a renderer.</doc>
         </parameters>
       </virtual-method>
       <virtual-method name="draw_shape">
+        <doc xml:space="preserve">draw content for a glyph shaped with `PangoAttrShape`
+  @x, @y are the coordinates of the left edge of the baseline,
+  in user coordinates.</doc>
         <return-value transfer-ownership="none">
           <type name="none" c:type="void"/>
         </return-value>
@@ -10088,6 +10115,7 @@ using the given `PangoRenderer`; coordinates are in device space.</doc>
         </parameters>
       </virtual-method>
       <virtual-method name="end">
+        <doc xml:space="preserve">Do renderer-specific cleanup after drawing</doc>
         <return-value transfer-ownership="none">
           <type name="none" c:type="void"/>
         </return-value>
@@ -10128,6 +10156,7 @@ changes to colors. (See [method@Pango.Renderer.set_color])</doc>
         </parameters>
       </virtual-method>
       <virtual-method name="prepare_run">
+        <doc xml:space="preserve">updates the renderer for a new run</doc>
         <return-value transfer-ownership="none">
           <type name="none" c:type="void"/>
         </return-value>
@@ -10684,6 +10713,7 @@ and must be implemented:
         <type name="GObject.ObjectClass" c:type="GObjectClass"/>
       </field>
       <field name="draw_glyphs">
+        <doc xml:space="preserve">draws a `PangoGlyphString`</doc>
         <callback name="draw_glyphs">
           <return-value transfer-ownership="none">
             <type name="none" c:type="void"/>
@@ -10715,6 +10745,7 @@ and must be implemented:
         </callback>
       </field>
       <field name="draw_rectangle">
+        <doc xml:space="preserve">draws a rectangle</doc>
         <callback name="draw_rectangle">
           <return-value transfer-ownership="none">
             <type name="none" c:type="void"/>
@@ -10750,6 +10781,9 @@ and must be implemented:
         </callback>
       </field>
       <field name="draw_error_underline">
+        <doc xml:space="preserve">draws a squiggly line that approximately
+covers the given rectangle in the style of an underline used to
+indicate a spelling error.</doc>
         <callback name="draw_error_underline">
           <return-value transfer-ownership="none">
             <type name="none" c:type="void"/>
@@ -10779,6 +10813,9 @@ and must be implemented:
         </callback>
       </field>
       <field name="draw_shape">
+        <doc xml:space="preserve">draw content for a glyph shaped with `PangoAttrShape`
+  @x, @y are the coordinates of the left edge of the baseline,
+  in user coordinates.</doc>
         <callback name="draw_shape">
           <return-value transfer-ownership="none">
             <type name="none" c:type="void"/>
@@ -10800,6 +10837,7 @@ and must be implemented:
         </callback>
       </field>
       <field name="draw_trapezoid">
+        <doc xml:space="preserve">draws a trapezoidal filled area</doc>
         <callback name="draw_trapezoid">
           <return-value transfer-ownership="none">
             <type name="none" c:type="void"/>
@@ -10841,6 +10879,7 @@ and must be implemented:
         </callback>
       </field>
       <field name="draw_glyph">
+        <doc xml:space="preserve">draws a single glyph</doc>
         <callback name="draw_glyph">
           <return-value transfer-ownership="none">
             <type name="none" c:type="void"/>
@@ -10870,6 +10909,8 @@ and must be implemented:
         </callback>
       </field>
       <field name="part_changed">
+        <doc xml:space="preserve">do renderer specific processing when rendering
+ attributes change</doc>
         <callback name="part_changed">
           <return-value transfer-ownership="none">
             <type name="none" c:type="void"/>
@@ -10887,6 +10928,7 @@ and must be implemented:
         </callback>
       </field>
       <field name="begin">
+        <doc xml:space="preserve">Do renderer-specific initialization before drawing</doc>
         <callback name="begin">
           <return-value transfer-ownership="none">
             <type name="none" c:type="void"/>
@@ -10899,6 +10941,7 @@ and must be implemented:
         </callback>
       </field>
       <field name="end">
+        <doc xml:space="preserve">Do renderer-specific cleanup after drawing</doc>
         <callback name="end">
           <return-value transfer-ownership="none">
             <type name="none" c:type="void"/>
@@ -10911,6 +10954,7 @@ and must be implemented:
         </callback>
       </field>
       <field name="prepare_run">
+        <doc xml:space="preserve">updates the renderer for a new run</doc>
         <callback name="prepare_run">
           <return-value transfer-ownership="none">
             <type name="none" c:type="void"/>
@@ -10926,6 +10970,7 @@ and must be implemented:
         </callback>
       </field>
       <field name="draw_glyph_item">
+        <doc xml:space="preserve">draws a `PangoGlyphItem`</doc>
         <callback name="draw_glyph_item">
           <return-value transfer-ownership="none">
             <type name="none" c:type="void"/>

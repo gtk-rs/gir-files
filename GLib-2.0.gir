@@ -210,6 +210,19 @@ static const Person default_person = {
 ]|</doc>
       <type name="gint" c:type="gint"/>
     </constant>
+    <function-macro name="AUTO_LOCK" c:identifier="G_AUTO_LOCK" version="2.80" introspectable="0">
+      <doc xml:space="preserve">Works like [func@GLib.MUTEX_AUTO_LOCK], but for a lock defined with
+[func@GLib.LOCK_DEFINE].
+
+This feature is only supported on GCC and clang. This macro is not defined on
+other compilers and should not be used in programs that are intended to be
+portable to those compilers.</doc>
+      <parameters>
+        <parameter name="name">
+          <doc xml:space="preserve">the name of the lock</doc>
+        </parameter>
+      </parameters>
+    </function-macro>
     <record name="Allocator" c:type="GAllocator" disguised="1" opaque="1">
       <method name="free" c:identifier="g_allocator_free">
         <return-value transfer-ownership="none">
@@ -12008,6 +12021,10 @@ on a #GIOChannel is satisfied.</doc>
       <doc xml:space="preserve">A table of functions used to handle different types of #GIOChannel
 in a generic way.</doc>
       <field name="io_read">
+        <doc xml:space="preserve">reads raw bytes from the channel.  This is called from
+          various functions such as g_io_channel_read_chars() to
+          read raw bytes from the channel.  Encoding and buffering
+          issues are dealt with at a higher level.</doc>
         <callback name="io_read" throws="1">
           <return-value transfer-ownership="none">
             <type name="IOStatus" c:type="GIOStatus"/>
@@ -12029,6 +12046,10 @@ in a generic way.</doc>
         </callback>
       </field>
       <field name="io_write">
+        <doc xml:space="preserve">writes raw bytes to the channel.  This is called from
+           various functions such as g_io_channel_write_chars() to
+           write raw bytes to the channel.  Encoding and buffering
+           issues are dealt with at a higher level.</doc>
         <callback name="io_write" throws="1">
           <return-value transfer-ownership="none">
             <type name="IOStatus" c:type="GIOStatus"/>
@@ -12050,6 +12071,8 @@ in a generic way.</doc>
         </callback>
       </field>
       <field name="io_seek">
+        <doc xml:space="preserve">seeks the channel.  This is called from
+          g_io_channel_seek() on channels that support it.</doc>
         <callback name="io_seek" throws="1">
           <return-value transfer-ownership="none">
             <type name="IOStatus" c:type="GIOStatus"/>
@@ -12068,6 +12091,8 @@ in a generic way.</doc>
         </callback>
       </field>
       <field name="io_close">
+        <doc xml:space="preserve">closes the channel.  This is called from
+           g_io_channel_close() after flushing the buffers.</doc>
         <callback name="io_close" throws="1">
           <return-value transfer-ownership="none">
             <type name="IOStatus" c:type="GIOStatus"/>
@@ -12080,6 +12105,8 @@ in a generic way.</doc>
         </callback>
       </field>
       <field name="io_create_watch">
+        <doc xml:space="preserve">creates a watch on the channel.  This call
+                  corresponds directly to g_io_create_watch().</doc>
         <callback name="io_create_watch">
           <return-value transfer-ownership="full">
             <type name="Source" c:type="GSource*"/>
@@ -12095,6 +12122,12 @@ in a generic way.</doc>
         </callback>
       </field>
       <field name="io_free">
+        <doc xml:space="preserve">called from g_io_channel_unref() when the channel needs to
+          be freed.  This function must free the memory associated
+          with the channel, including freeing the #GIOChannel
+          structure itself.  The channel buffers have been flushed
+          and possibly @io_close has been called by the time this
+          function is called.</doc>
         <callback name="io_free">
           <return-value transfer-ownership="none">
             <type name="none" c:type="void"/>
@@ -12107,6 +12140,10 @@ in a generic way.</doc>
         </callback>
       </field>
       <field name="io_set_flags">
+        <doc xml:space="preserve">sets the #GIOFlags on the channel.  This is called
+               from g_io_channel_set_flags() with all flags except
+               for %G_IO_FLAG_APPEND and %G_IO_FLAG_NONBLOCK masked
+               out.</doc>
         <callback name="io_set_flags" throws="1">
           <return-value transfer-ownership="none">
             <type name="IOStatus" c:type="GIOStatus"/>
@@ -12122,6 +12159,10 @@ in a generic way.</doc>
         </callback>
       </field>
       <field name="io_get_flags">
+        <doc xml:space="preserve">gets the #GIOFlags for the channel.  This function
+               need only return the %G_IO_FLAG_APPEND and
+               %G_IO_FLAG_NONBLOCK flags; g_io_channel_get_flags()
+               automatically adds the others as appropriate.</doc>
         <callback name="io_get_flags">
           <return-value transfer-ownership="none">
             <type name="IOFlags" c:type="GIOFlags"/>
@@ -14982,7 +15023,7 @@ linked against at application run time.</doc>
     <constant name="MAXUINT8" value="255" c:type="G_MAXUINT8">
       <type name="guint8" c:type="guint8"/>
     </constant>
-    <constant name="MICRO_VERSION" value="0" c:type="GLIB_MICRO_VERSION">
+    <constant name="MICRO_VERSION" value="1" c:type="GLIB_MICRO_VERSION">
       <doc xml:space="preserve">The micro version number of the GLib library.
 
 Like #gtk_micro_version, but from the headers used at
@@ -15017,6 +15058,45 @@ linked against at application run time.</doc>
     <constant name="MODULE_SUFFIX" value="so" c:type="G_MODULE_SUFFIX">
       <type name="utf8" c:type="gchar*"/>
     </constant>
+    <function-macro name="MUTEX_AUTO_LOCK" c:identifier="G_MUTEX_AUTO_LOCK" version="2.80.0" introspectable="0">
+      <doc xml:space="preserve">Declare a [type@GLib.MutexLocker] variable with `g_autoptr()` and lock the
+mutex. The mutex will be unlocked automatically when leaving the scope. The
+variable is declared with `G_GNUC_UNUSED` to avoid compiler warning if it is
+not used in the scope.
+
+This feature is only supported on GCC and clang. This macro is not defined on
+other compilers and should not be used in programs that are intended to be
+portable to those compilers.
+
+Note that this should be used in a place where it is allowed to declare a
+variable, which could be before any statement in the case
+`-Wdeclaration-after-statement` is used, or C standard prior to C99.
+
+```c
+{
+  G_MUTEX_AUTO_LOCK (&amp;obj-&gt;mutex, locker);
+
+  obj-&gt;stuff_with_lock ();
+  if (condition)
+    {
+      // No need to unlock
+      return;
+    }
+
+  // Unlock before end of scope
+  g_clear_pointer (&amp;locker, g_mutex_locker_free);
+  obj-&gt;stuff_without_lock ();
+}
+```</doc>
+      <parameters>
+        <parameter name="mutex">
+          <doc xml:space="preserve">a [type@GLib.Mutex]</doc>
+        </parameter>
+        <parameter name="var">
+          <doc xml:space="preserve">a variable name to be declared</doc>
+        </parameter>
+      </parameters>
+    </function-macro>
     <record name="MainContext" c:type="GMainContext" opaque="1" glib:type-name="GMainContext" glib:get-type="g_main_context_get_type" c:symbol-prefix="main_context">
       <doc xml:space="preserve">The `GMainContext` struct is an opaque data
 type representing a set of sources to be handled in a main loop.</doc>
@@ -16454,6 +16534,9 @@ errors are intended to be set from these callbacks. If you set an error
 from a callback, g_markup_parse_context_parse() will report that error
 back to its caller.</doc>
       <field name="start_element">
+        <doc xml:space="preserve">Callback to invoke when the opening tag of an element
+    is seen. The callback's @attribute_names and @attribute_values parameters
+    are %NULL-terminated.</doc>
         <callback name="start_element" throws="1">
           <return-value transfer-ownership="none">
             <type name="none" c:type="void"/>
@@ -16478,6 +16561,9 @@ back to its caller.</doc>
         </callback>
       </field>
       <field name="end_element">
+        <doc xml:space="preserve">Callback to invoke when the closing tag of an element
+    is seen. Note that this is also called for empty tags like
+    `&lt;empty/&gt;`.</doc>
         <callback name="end_element" throws="1">
           <return-value transfer-ownership="none">
             <type name="none" c:type="void"/>
@@ -16496,6 +16582,11 @@ back to its caller.</doc>
         </callback>
       </field>
       <field name="text">
+        <doc xml:space="preserve">Callback to invoke when some text is seen (text is always
+    inside an element). Note that the text of an element may be spread
+    over multiple calls of this function. If the
+    %G_MARKUP_TREAT_CDATA_AS_TEXT flag is set, this function is also
+    called for the content of CDATA marked sections.</doc>
         <callback name="text" throws="1">
           <return-value transfer-ownership="none">
             <type name="none" c:type="void"/>
@@ -16517,6 +16608,11 @@ back to its caller.</doc>
         </callback>
       </field>
       <field name="passthrough">
+        <doc xml:space="preserve">Callback to invoke for comments, processing instructions
+    and doctype declarations; if you're re-writing the parsed document,
+    write the passthrough text back out in the same position. If the
+    %G_MARKUP_TREAT_CDATA_AS_TEXT flag is not set, this function is also
+    called for CDATA marked sections.</doc>
         <callback name="passthrough" throws="1">
           <return-value transfer-ownership="none">
             <type name="none" c:type="void"/>
@@ -16538,6 +16634,7 @@ back to its caller.</doc>
         </callback>
       </field>
       <field name="error">
+        <doc xml:space="preserve">Callback to invoke when an error occurs.</doc>
         <callback name="error">
           <return-value transfer-ownership="none">
             <type name="none" c:type="void"/>
@@ -17029,6 +17126,7 @@ if it exists, should be prior to any use of GLib.
 
 This functions related to this has been deprecated in 2.46, and no longer work.</doc>
       <field name="malloc">
+        <doc xml:space="preserve">function to use for allocating memory.</doc>
         <callback name="malloc">
           <return-value transfer-ownership="none">
             <type name="gpointer" c:type="gpointer"/>
@@ -17041,6 +17139,7 @@ This functions related to this has been deprecated in 2.46, and no longer work.<
         </callback>
       </field>
       <field name="realloc">
+        <doc xml:space="preserve">function to use for reallocating memory.</doc>
         <callback name="realloc">
           <return-value transfer-ownership="none">
             <type name="gpointer" c:type="gpointer"/>
@@ -17056,6 +17155,7 @@ This functions related to this has been deprecated in 2.46, and no longer work.<
         </callback>
       </field>
       <field name="free">
+        <doc xml:space="preserve">function to use to free memory.</doc>
         <callback name="free">
           <return-value transfer-ownership="none">
             <type name="none" c:type="void"/>
@@ -17068,6 +17168,7 @@ This functions related to this has been deprecated in 2.46, and no longer work.<
         </callback>
       </field>
       <field name="calloc">
+        <doc xml:space="preserve">function to use for allocating zero-filled memory.</doc>
         <callback name="calloc">
           <return-value transfer-ownership="none">
             <type name="gpointer" c:type="gpointer"/>
@@ -17083,6 +17184,7 @@ This functions related to this has been deprecated in 2.46, and no longer work.<
         </callback>
       </field>
       <field name="try_malloc">
+        <doc xml:space="preserve">function to use for allocating memory without a default error handler.</doc>
         <callback name="try_malloc">
           <return-value transfer-ownership="none">
             <type name="gpointer" c:type="gpointer"/>
@@ -17095,6 +17197,7 @@ This functions related to this has been deprecated in 2.46, and no longer work.<
         </callback>
       </field>
       <field name="try_realloc">
+        <doc xml:space="preserve">function to use for reallocating memory without a default error handler.</doc>
         <callback name="try_realloc">
           <return-value transfer-ownership="none">
             <type name="gpointer" c:type="gpointer"/>
@@ -21685,6 +21788,45 @@ The link is not freed.
         </return-value>
       </function>
     </record>
+    <function-macro name="REC_MUTEX_AUTO_LOCK" c:identifier="G_REC_MUTEX_AUTO_LOCK" version="2.80.0" introspectable="0">
+      <doc xml:space="preserve">Declare a [type@GLib.RecMutexLocker] variable with `g_autoptr()` and lock the
+mutex. The mutex will be unlocked automatically when leaving the scope. The
+variable is declared with `G_GNUC_UNUSED` to avoid compiler warning if it is
+not used in the scope.
+
+This feature is only supported on GCC and clang. This macro is not defined on
+other compilers and should not be used in programs that are intended to be
+portable to those compilers.
+
+Note that this should be used in a place where it is allowed to declare a
+variable, which could be before any statement in the case
+`-Wdeclaration-after-statement` is used, or C standard prior to C99.
+
+```c
+{
+  G_REC_MUTEX_AUTO_LOCK (&amp;obj-&gt;rec_mutex, locker);
+
+  obj-&gt;stuff_with_lock ();
+  if (condition)
+    {
+      // No need to unlock
+      return;
+    }
+
+  // Unlock before end of scope
+  g_clear_pointer (&amp;locker, g_rec_mutex_locker_free);
+  obj-&gt;stuff_without_lock ();
+}
+```</doc>
+      <parameters>
+        <parameter name="mutex">
+          <doc xml:space="preserve">a [type@GLib.RecMutex]</doc>
+        </parameter>
+        <parameter name="var">
+          <doc xml:space="preserve">a variable name to be declared</doc>
+        </parameter>
+      </parameters>
+    </function-macro>
     <constant name="REF_COUNT_INIT" value="-1" c:type="G_REF_COUNT_INIT" version="2.78">
       <doc xml:space="preserve">Evaluates to the initial reference count for `grefcount`.
 
@@ -21936,6 +22078,84 @@ by the current thread leads to undefined behaviour.</doc>
         </parameters>
       </method>
     </record>
+    <function-macro name="RW_LOCK_READER_AUTO_LOCK" c:identifier="G_RW_LOCK_READER_AUTO_LOCK" version="2.80.0" introspectable="0">
+      <doc xml:space="preserve">Declare a [type@GLib.RWLockReaderLocker] variable with `g_autoptr()` and lock
+for reading. The mutex will be unlocked automatically when leaving the scope.
+The variable is declared with `G_GNUC_UNUSED` to avoid compiler warning if it
+is not used in the scope.
+
+This feature is only supported on GCC and clang. This macro is not defined on
+other compilers and should not be used in programs that are intended to be
+portable to those compilers.
+
+Note that this should be used in a place where it is allowed to declare a
+variable, which could be before any statement in the case
+`-Wdeclaration-after-statement` is used, or C standard prior to C99.
+
+```c
+{
+  G_RW_LOCK_READER_AUTO_LOCK (&amp;obj-&gt;rw_lock, locker);
+
+  obj-&gt;stuff_with_lock ();
+  if (condition)
+    {
+      // No need to unlock
+      return;
+    }
+
+  // Unlock before end of scope
+  g_clear_pointer (&amp;locker, g_rw_lock_reader_locker_free);
+  obj-&gt;stuff_without_lock ();
+}
+```</doc>
+      <parameters>
+        <parameter name="mutex">
+          <doc xml:space="preserve">a [type@GLib.RWLock]</doc>
+        </parameter>
+        <parameter name="var">
+          <doc xml:space="preserve">a variable name to be declared</doc>
+        </parameter>
+      </parameters>
+    </function-macro>
+    <function-macro name="RW_LOCK_WRITER_AUTO_LOCK" c:identifier="G_RW_LOCK_WRITER_AUTO_LOCK" version="2.80.0" introspectable="0">
+      <doc xml:space="preserve">Declare a [type@GLib.RWLockWriterLocker] variable with `g_autoptr()` and lock
+for writing. The mutex will be unlocked automatically when leaving the scope.
+The variable is declared with `G_GNUC_UNUSED` to avoid compiler warning if it
+is not used in the scope.
+
+This feature is only supported on GCC and clang. This macro is not defined on
+other compilers and should not be used in programs that are intended to be
+portable to those compilers.
+
+Note that this should be used in a place where it is allowed to declare a
+variable, which could be before any statement in the case
+`-Wdeclaration-after-statement` is used, or C standard prior to C99.
+
+```c
+{
+  G_RW_LOCK_WRITER_AUTO_LOCK (&amp;obj-&gt;rw_lock, locker);
+
+  obj-&gt;stuff_with_lock ();
+  if (condition)
+    {
+      // No need to unlock
+      return;
+    }
+
+  // Unlock before end of scope
+  g_clear_pointer (&amp;locker, g_rw_lock_writer_locker_free);
+  obj-&gt;stuff_without_lock ();
+}
+```</doc>
+      <parameters>
+        <parameter name="mutex">
+          <doc xml:space="preserve">a [type@GLib.RWLock]</doc>
+        </parameter>
+        <parameter name="var">
+          <doc xml:space="preserve">a variable name to be declared</doc>
+        </parameter>
+      </parameters>
+    </function-macro>
     <record name="Rand" c:type="GRand" opaque="1" glib:type-name="GRand" glib:get-type="g_rand_get_type" c:symbol-prefix="rand">
       <doc xml:space="preserve">The GRand struct is an opaque data structure. It should only be
 accessed through the g_rand_* functions.</doc>
@@ -27246,6 +27466,7 @@ wrong source.</doc>
       <doc xml:space="preserve">The `GSourceCallbackFuncs` struct contains
 functions for managing callback objects.</doc>
       <field name="ref">
+        <doc xml:space="preserve">Called when a reference is added to the callback object</doc>
         <callback name="ref">
           <return-value transfer-ownership="none">
             <type name="none" c:type="void"/>
@@ -27258,6 +27479,7 @@ functions for managing callback objects.</doc>
         </callback>
       </field>
       <field name="unref">
+        <doc xml:space="preserve">Called when a reference to the callback object is dropped</doc>
         <callback name="unref">
           <return-value transfer-ownership="none">
             <type name="none" c:type="void"/>
@@ -27270,6 +27492,8 @@ functions for managing callback objects.</doc>
         </callback>
       </field>
       <field name="get" introspectable="0">
+        <doc xml:space="preserve">Called to extract the callback function and data from the
+    callback object.</doc>
         <callback name="get" introspectable="0">
           <return-value transfer-ownership="none">
             <type name="none" c:type="void"/>
@@ -27353,6 +27577,17 @@ indicate that it doesn't mind how long the poll() call blocks. In the
 check function, it tests the results of the poll() call to see if the
 required condition has been met, and returns %TRUE if so.</doc>
       <field name="prepare">
+        <doc xml:space="preserve">Called before all the file descriptors are polled. If the
+    source can determine that it is ready here (without waiting for the
+    results of the poll() call) it should return %TRUE. It can also return
+    a @timeout_ value which should be the maximum timeout (in milliseconds)
+    which should be passed to the poll() call. The actual timeout used will
+    be -1 if all sources returned -1, or it will be the minimum of all
+    the @timeout_ values returned which were &gt;= 0.  Since 2.36 this may
+    be %NULL, in which case the effect is as if the function always returns
+    %FALSE with a timeout of -1.  If @prepare returns a
+    timeout and the source also has a ready time set, then the
+    lower of the two will be used.</doc>
         <callback name="prepare">
           <return-value transfer-ownership="none">
             <type name="gboolean" c:type="gboolean"/>
@@ -27368,6 +27603,12 @@ required condition has been met, and returns %TRUE if so.</doc>
         </callback>
       </field>
       <field name="check">
+        <doc xml:space="preserve">Called after all the file descriptors are polled. The source
+    should return %TRUE if it is ready to be dispatched. Note that some
+    time may have passed since the previous prepare function was called,
+    so the source should be checked again here.  Since 2.36 this may
+    be %NULL, in which case the effect is as if the function always returns
+    %FALSE.</doc>
         <callback name="check">
           <return-value transfer-ownership="none">
             <type name="gboolean" c:type="gboolean"/>
@@ -27380,6 +27621,15 @@ required condition has been met, and returns %TRUE if so.</doc>
         </callback>
       </field>
       <field name="dispatch" introspectable="0">
+        <doc xml:space="preserve">Called to dispatch the event source, after it has returned
+    %TRUE in either its @prepare or its @check function, or if a ready time
+    has been reached. The @dispatch function receives a callback function and
+    user data. The callback function may be %NULL if the source was never
+    connected to a callback using g_source_set_callback(). The @dispatch
+    function should call the callback function with @user_data and whatever
+    additional parameters are needed for this type of event source. The
+    return value of the @dispatch function should be %G_SOURCE_REMOVE if the
+    source should be removed or %G_SOURCE_CONTINUE to keep it.</doc>
         <callback name="dispatch" introspectable="0">
           <return-value transfer-ownership="none">
             <type name="gboolean" c:type="gboolean"/>
@@ -27398,6 +27648,10 @@ required condition has been met, and returns %TRUE if so.</doc>
         </callback>
       </field>
       <field name="finalize">
+        <doc xml:space="preserve">Called when the source is finalized. At this point, the source
+    will have been destroyed, had its callback cleared, and have been removed
+    from its #GMainContext, but it will still have its final reference count,
+    so methods can be called on it from within this function.</doc>
         <callback name="finalize">
           <return-value transfer-ownership="none">
             <type name="none" c:type="void"/>
@@ -30099,6 +30353,7 @@ or g_thread_try_new().</doc>
       <doc xml:space="preserve">This function table is no longer used by g_thread_init()
 to initialize the thread system.</doc>
       <field name="mutex_new">
+        <doc xml:space="preserve">virtual function pointer for g_mutex_new()</doc>
         <callback name="mutex_new">
           <return-value>
             <type name="Mutex" c:type="GMutex*"/>
@@ -30106,6 +30361,7 @@ to initialize the thread system.</doc>
         </callback>
       </field>
       <field name="mutex_lock">
+        <doc xml:space="preserve">virtual function pointer for g_mutex_lock()</doc>
         <callback name="mutex_lock">
           <return-value transfer-ownership="none">
             <type name="none" c:type="void"/>
@@ -30118,6 +30374,7 @@ to initialize the thread system.</doc>
         </callback>
       </field>
       <field name="mutex_trylock">
+        <doc xml:space="preserve">virtual function pointer for g_mutex_trylock()</doc>
         <callback name="mutex_trylock">
           <return-value transfer-ownership="none">
             <type name="gboolean" c:type="gboolean"/>
@@ -30130,6 +30387,7 @@ to initialize the thread system.</doc>
         </callback>
       </field>
       <field name="mutex_unlock">
+        <doc xml:space="preserve">virtual function pointer for g_mutex_unlock()</doc>
         <callback name="mutex_unlock">
           <return-value transfer-ownership="none">
             <type name="none" c:type="void"/>
@@ -30142,6 +30400,7 @@ to initialize the thread system.</doc>
         </callback>
       </field>
       <field name="mutex_free">
+        <doc xml:space="preserve">virtual function pointer for g_mutex_free()</doc>
         <callback name="mutex_free">
           <return-value transfer-ownership="none">
             <type name="none" c:type="void"/>
@@ -30154,6 +30413,7 @@ to initialize the thread system.</doc>
         </callback>
       </field>
       <field name="cond_new">
+        <doc xml:space="preserve">virtual function pointer for g_cond_new()</doc>
         <callback name="cond_new">
           <return-value>
             <type name="Cond" c:type="GCond*"/>
@@ -30161,6 +30421,7 @@ to initialize the thread system.</doc>
         </callback>
       </field>
       <field name="cond_signal">
+        <doc xml:space="preserve">virtual function pointer for g_cond_signal()</doc>
         <callback name="cond_signal">
           <return-value transfer-ownership="none">
             <type name="none" c:type="void"/>
@@ -30173,6 +30434,7 @@ to initialize the thread system.</doc>
         </callback>
       </field>
       <field name="cond_broadcast">
+        <doc xml:space="preserve">virtual function pointer for g_cond_broadcast()</doc>
         <callback name="cond_broadcast">
           <return-value transfer-ownership="none">
             <type name="none" c:type="void"/>
@@ -30185,6 +30447,7 @@ to initialize the thread system.</doc>
         </callback>
       </field>
       <field name="cond_wait">
+        <doc xml:space="preserve">virtual function pointer for g_cond_wait()</doc>
         <callback name="cond_wait">
           <return-value transfer-ownership="none">
             <type name="none" c:type="void"/>
@@ -30200,6 +30463,7 @@ to initialize the thread system.</doc>
         </callback>
       </field>
       <field name="cond_timed_wait">
+        <doc xml:space="preserve">virtual function pointer for g_cond_timed_wait()</doc>
         <callback name="cond_timed_wait">
           <return-value transfer-ownership="none">
             <type name="gboolean" c:type="gboolean"/>
@@ -30218,6 +30482,7 @@ to initialize the thread system.</doc>
         </callback>
       </field>
       <field name="cond_free">
+        <doc xml:space="preserve">virtual function pointer for g_cond_free()</doc>
         <callback name="cond_free">
           <return-value transfer-ownership="none">
             <type name="none" c:type="void"/>
@@ -30230,6 +30495,7 @@ to initialize the thread system.</doc>
         </callback>
       </field>
       <field name="private_new">
+        <doc xml:space="preserve">virtual function pointer for g_private_new()</doc>
         <callback name="private_new">
           <return-value>
             <type name="Private" c:type="GPrivate*"/>
@@ -30242,6 +30508,7 @@ to initialize the thread system.</doc>
         </callback>
       </field>
       <field name="private_get">
+        <doc xml:space="preserve">virtual function pointer for g_private_get()</doc>
         <callback name="private_get">
           <return-value transfer-ownership="none">
             <type name="gpointer" c:type="gpointer"/>
@@ -30254,6 +30521,7 @@ to initialize the thread system.</doc>
         </callback>
       </field>
       <field name="private_set">
+        <doc xml:space="preserve">virtual function pointer for g_private_set()</doc>
         <callback name="private_set">
           <return-value transfer-ownership="none">
             <type name="none" c:type="void"/>
@@ -30269,6 +30537,7 @@ to initialize the thread system.</doc>
         </callback>
       </field>
       <field name="thread_create">
+        <doc xml:space="preserve">virtual function pointer for g_thread_create()</doc>
         <callback name="thread_create" introspectable="0" throws="1">
           <return-value transfer-ownership="none">
             <type name="none" c:type="void"/>
@@ -30299,6 +30568,7 @@ to initialize the thread system.</doc>
         </callback>
       </field>
       <field name="thread_yield">
+        <doc xml:space="preserve">virtual function pointer for g_thread_yield()</doc>
         <callback name="thread_yield">
           <return-value transfer-ownership="none">
             <type name="none" c:type="void"/>
@@ -30306,6 +30576,7 @@ to initialize the thread system.</doc>
         </callback>
       </field>
       <field name="thread_join">
+        <doc xml:space="preserve">virtual function pointer for g_thread_join()</doc>
         <callback name="thread_join">
           <return-value transfer-ownership="none">
             <type name="none" c:type="void"/>
@@ -30318,6 +30589,7 @@ to initialize the thread system.</doc>
         </callback>
       </field>
       <field name="thread_exit">
+        <doc xml:space="preserve">virtual function pointer for g_thread_exit()</doc>
         <callback name="thread_exit">
           <return-value transfer-ownership="none">
             <type name="none" c:type="void"/>
@@ -30325,6 +30597,8 @@ to initialize the thread system.</doc>
         </callback>
       </field>
       <field name="thread_set_priority">
+        <doc xml:space="preserve">virtual function pointer for
+                      g_thread_set_priority()</doc>
         <callback name="thread_set_priority" introspectable="0">
           <return-value transfer-ownership="none">
             <type name="none" c:type="void"/>
@@ -30340,6 +30614,7 @@ to initialize the thread system.</doc>
         </callback>
       </field>
       <field name="thread_self">
+        <doc xml:space="preserve">virtual function pointer for g_thread_self()</doc>
         <callback name="thread_self">
           <return-value transfer-ownership="none">
             <type name="none" c:type="void"/>
@@ -30352,6 +30627,8 @@ to initialize the thread system.</doc>
         </callback>
       </field>
       <field name="thread_equal">
+        <doc xml:space="preserve">used internally by recursive mutex locks and by some
+               assertion checks</doc>
         <callback name="thread_equal">
           <return-value transfer-ownership="none">
             <type name="gboolean" c:type="gboolean"/>
@@ -34957,7 +35234,7 @@ its type nor its content can be modified further.
 
 `GVariant` is useful whenever data needs to be serialized, for example when
 sending method parameters in D-Bus, or when saving settings using
-[class@Gio.Settings].
+[`GSettings`](../gio/class.Settings.html).
 
 When creating a new `GVariant`, you pass the data you want to store in it
 along with a string representing the type of data you wish to pass to it.
@@ -35002,7 +35279,7 @@ Serialized `GVariant` data can also be sent over the network.
 `GVariant` instances can be sent over D-Bus.  See [type@GLib.VariantType] for
 exceptions.  (However, `GVariant`&#x2019;s serialization format is not the same
 as the serialization format of a D-Bus message body: use
-[class@Gio.DBusMessage], in the GIO library, for those.)
+[GDBusMessage](../gio/class.DBusMessage.html), in the GIO library, for those.)
 
 For space-efficiency, the `GVariant` serialization format does not
 automatically include the variant&#x2019;s length, type or endianness,
@@ -38662,10 +38939,10 @@ type&#x2019;.
 This is similar to how instances of abstract classes may not
 directly exist in other type systems, but instances of their
 non-abstract subtypes may.  For example, in GTK, no object that has
-the type of [class@Gtk.Widget] can exist (since [class@Gtk.Widget] is an
-abstract class), but a [class@Gtk.Window] can certainly be instantiated, and
-you would say that the [class@Gtk.Window] is a [class@Gtk.Widget] (since
-[class@Gtk.Window] is a subclass of [class@Gtk.Widget]).
+the type of [`GtkWidget`](https://docs.gtk.org/gtk4/class.Widget.html) can
+exist (since `GtkWidget` is an abstract class), but a [`GtkWindow`](https://docs.gtk.org/gtk4/class.Window.html)
+can certainly be instantiated, and you would say that a `GtkWindow` is a
+`GtkWidget` (since `GtkWindow` is a subclass of `GtkWidget`).
 
 Two types may not be compared by value; use [method@GLib.VariantType.equal]
 or [method@GLib.VariantType.is_subtype_of]  May be copied using
@@ -38693,7 +38970,8 @@ The above definition is recursive to arbitrary depth. `aaaaai` and
 `a(aa(ui)(qna{ya(yd)}))`. In order to not hit memory limits,
 [type@GLib.Variant] imposes a limit on recursion depth of 65 nested
 containers. This is the limit in the D-Bus specification (64) plus one to
-allow a [class@Gio.DBusMessage] to be nested in a top-level tuple.
+allow a [`GDBusMessage`](../gio/class.DBusMessage.html) to be nested in
+a top-level tuple.
 
 The meaning of each of the characters is as follows:
 
@@ -43535,7 +43813,7 @@ See your C library manual for more details about creat().</doc>
       </parameters>
     </function>
     <function-macro name="critical" c:identifier="g_critical" introspectable="0">
-      <doc xml:space="preserve">Logs a &#x2018;critical warning&#x2019; ([flags@GLib.LogLevelFlags.CRITICAL]).
+      <doc xml:space="preserve">Logs a &#x2018;critical warning&#x2019; ([flags@GLib.LogLevelFlags.LEVEL_CRITICAL]).
 
 Critical warnings are intended to be used in the event of an error
 that originated in the current process (a programmer error).
@@ -43543,7 +43821,7 @@ Logging of a critical error is by definition an indication of a bug
 somewhere in the current program (or its libraries).
 
 [func@GLib.return_if_fail], [func@GLib.return_val_if_fail], [func@GLib.return_if_reached] and
-[func@GLib.return_val_if_reached] log at [flags@GLib.LogLevelFlags.CRITICAL].
+[func@GLib.return_val_if_reached] log at [flags@GLib.LogLevelFlags.LEVEL_CRITICAL].
 
 You can make critical warnings fatal at runtime by
 setting the `G_DEBUG` environment variable (see
@@ -47852,9 +48130,9 @@ environment variables:
     these messages are not printed. If you need to set the allowed
     domains at runtime, use [func@GLib.log_writer_default_set_debug_domains].
 
-`stderr` is used for levels [flags@GLib.LogLevelFlags.ERROR],
-[flags@GLib.LogLevelFlags.CRITICAL], [flags@GLib.LogLevelFlags.WARNING] and
-[flags@GLib.LogLevelFlags.MESSAGE]. `stdout` is used for
+`stderr` is used for levels [flags@GLib.LogLevelFlags.LEVEL_ERROR],
+[flags@GLib.LogLevelFlags.LEVEL_CRITICAL], [flags@GLib.LogLevelFlags.LEVEL_WARNING] and
+[flags@GLib.LogLevelFlags.LEVEL_MESSAGE]. `stdout` is used for
 the rest, unless `stderr` was requested by
 [func@GLib.log_writer_default_set_use_stderr].
 
@@ -47922,7 +48200,7 @@ This has no effect if structured logging is enabled; see
 
 When a message with any of these levels is logged the program terminates.
 You can only set the levels defined by GLib to be fatal.
-[flags@GLib.LogLevelFlags.ERROR] is always fatal.
+[flags@GLib.LogLevelFlags.LEVEL_ERROR] is always fatal.
 
 You can also make some message levels fatal at runtime by setting
 the `G_DEBUG` environment variable (see
@@ -47993,7 +48271,7 @@ This has no effect if structured logging is enabled; see
     <function name="log_set_fatal_mask" c:identifier="g_log_set_fatal_mask">
       <doc xml:space="preserve">Sets the log levels which are fatal in the given domain.
 
-[flags@GLib.LogLevelFlags.ERROR] is always fatal.
+[flags@GLib.LogLevelFlags.LEVEL_ERROR] is always fatal.
 
 This has no effect on structured log messages (using [func@GLib.log_structured] or
 [func@GLib.log_structured_array]). To change the fatal behaviour for specific log
@@ -48002,9 +48280,9 @@ messages, programs must install a custom log writer function using
 [Using Structured Logging](logging.html#using-structured-logging).
 
 This function is mostly intended to be used with
-[flags@GLib.LogLevelFlags.CRITICAL].  You should typically not set
-[flags@GLib.LogLevelFlags.WARNING], [flags@GLib.LogLevelFlags.MESSAGE], [flags@GLib.LogLevelFlags.INFO] or
-[flags@GLib.LogLevelFlags.DEBUG] as fatal except inside of test programs.</doc>
+[flags@GLib.LogLevelFlags.LEVEL_CRITICAL].  You should typically not set
+[flags@GLib.LogLevelFlags.LEVEL_WARNING], [flags@GLib.LogLevelFlags.LEVEL_MESSAGE], [flags@GLib.LogLevelFlags.LEVEL_INFO] or
+[flags@GLib.LogLevelFlags.LEVEL_DEBUG] as fatal except inside of test programs.</doc>
       <return-value transfer-ownership="none">
         <doc xml:space="preserve">the old fatal mask for the log domain</doc>
         <type name="LogLevelFlags" c:type="GLogLevelFlags"/>
@@ -48024,12 +48302,12 @@ This function is mostly intended to be used with
       <doc xml:space="preserve">Sets the log handler for a domain and a set of log levels.
 
 To handle fatal and recursive messages the @log_levels parameter
-must be combined with the [flags@GLib.LogLevelFlags.FATAL] and [flags@GLib.LogLevelFlags.RECURSION]
+must be combined with the [flags@GLib.LogLevelFlags.FLAG_FATAL] and [flags@GLib.LogLevelFlags.FLAG_RECURSION]
 bit flags.
 
-Note that since the [flags@GLib.LogLevelFlags.ERROR] log level is always fatal, if
+Note that since the [flags@GLib.LogLevelFlags.LEVEL_ERROR] log level is always fatal, if
 you want to set a handler for this log level you must combine it with
-[flags@GLib.LogLevelFlags.FATAL].
+[flags@GLib.LogLevelFlags.FLAG_FATAL].
 
 This has no effect if structured logging is enabled; see
 [Using Structured Logging](logging.html#using-structured-logging).
@@ -48068,8 +48346,8 @@ g_log_set_handler ("GLib", G_LOG_LEVEL_MASK | G_LOG_FLAG_FATAL
         <parameter name="log_levels" transfer-ownership="none">
           <doc xml:space="preserve">the log levels to apply the log handler for.
    To handle fatal and recursive messages as well, combine
-   the log levels with the [flags@GLib.LogLevelFlags.FATAL] and
-   [flags@GLib.LogLevelFlags.RECURSION] bit flags.</doc>
+   the log levels with the [flags@GLib.LogLevelFlags.FLAG_FATAL] and
+   [flags@GLib.LogLevelFlags.FLAG_RECURSION] bit flags.</doc>
           <type name="LogLevelFlags" c:type="GLogLevelFlags"/>
         </parameter>
         <parameter name="log_func" transfer-ownership="none" closure="3">
@@ -48100,8 +48378,8 @@ This has no effect if structured logging is enabled; see
         <parameter name="log_levels" transfer-ownership="none">
           <doc xml:space="preserve">the log levels to apply the log handler for.
   To handle fatal and recursive messages as well, combine
-  the log levels with the [flags@GLib.LogLevelFlags.FATAL] and
-  [flags@GLib.LogLevelFlags.RECURSION] bit flags.</doc>
+  the log levels with the [flags@GLib.LogLevelFlags.FLAG_FATAL] and
+  [flags@GLib.LogLevelFlags.FLAG_RECURSION] bit flags.</doc>
           <type name="LogLevelFlags" c:type="GLogLevelFlags"/>
         </parameter>
         <parameter name="log_func" transfer-ownership="none" scope="notified" closure="3" destroy="4">
@@ -48154,7 +48432,7 @@ There can only be one writer function. It is an error to set more than one.</doc
 
 The message will be passed through to the log writer set by the application
 using [func@GLib.log_set_writer_func]. If the message is fatal (i.e. its log level
-is [flags@GLib.LogLevelFlags.ERROR]), the program will be aborted by calling
+is [flags@GLib.LogLevelFlags.LEVEL_ERROR]), the program will be aborted by calling
 [func@GLib.BREAKPOINT] at the end of this function. If the log writer returns
 [enum@GLib.LogWriterOutput.UNHANDLED] (failure), no other fallback writers will be tried.
 See the documentation for [type@GLib.LogWriterFunc] for information on chaining
@@ -48264,7 +48542,7 @@ manually to the format string.</doc>
 
 The message will be passed through to the log writer set by the application
 using [func@GLib.log_set_writer_func]. If the
-message is fatal (i.e. its log level is [flags@GLib.LogLevelFlags.ERROR]), the program will
+message is fatal (i.e. its log level is [flags@GLib.LogLevelFlags.LEVEL_ERROR]), the program will
 be aborted at the end of this function.
 
 See [func@GLib.log_structured] for more documentation.
@@ -48431,8 +48709,8 @@ The built-in log functions are [func@GLib.log_default_handler] for the
 old-style API, and both [func@GLib.log_writer_default] and
 [func@GLib.log_writer_standard_streams] for the structured API.
 
-By default, log messages of levels [flags@GLib.LogLevelFlags.INFO] and
-[flags@GLib.LogLevelFlags.DEBUG] are sent to `stdout`, and other log messages are
+By default, log messages of levels [flags@GLib.LogLevelFlags.LEVEL_INFO] and
+[flags@GLib.LogLevelFlags.LEVEL_DEBUG] are sent to `stdout`, and other log messages are
 sent to `stderr`. This is problematic for applications that intend
 to reserve `stdout` for structured output such as JSON or XML.
 
@@ -48600,7 +48878,7 @@ defined, but will always return [enum@GLib.LogWriterOutput.UNHANDLED].</doc>
       <doc xml:space="preserve">Format a structured log message and print it to either `stdout` or `stderr`,
 depending on its log level.
 
-[flags@GLib.LogLevelFlags.INFO] and [flags@GLib.LogLevelFlags.DEBUG] messages
+[flags@GLib.LogLevelFlags.LEVEL_INFO] and [flags@GLib.LogLevelFlags.LEVEL_DEBUG] messages
 are sent to `stdout`, or to `stderr` if requested by
 [func@GLib.log_writer_default_set_use_stderr];
 all other log levels are sent to `stderr`. Only fields
@@ -55076,7 +55354,7 @@ This API may only be used with the old logging API ([func@GLib.log] without
 `G_LOG_USE_STRUCTURED` defined). It will not work with the structured logging
 API. See [Testing for Messages](logging.html#testing-for-messages).
 
-If messages at [flags@GLib.LogLevelFlags.DEBUG] are emitted, but not explicitly
+If messages at [flags@GLib.LogLevelFlags.LEVEL_DEBUG] are emitted, but not explicitly
 expected via [func@GLib.test_expect_message] then they will be ignored.</doc>
     </function-macro>
     <function name="test_assert_expected_messages_internal" c:identifier="g_test_assert_expected_messages_internal">
@@ -55294,7 +55572,7 @@ Note that you cannot use this to test [func@GLib.error] messages, since
 [func@GLib.error] intentionally never returns even if the program doesn&#x2019;t
 abort; use [func@GLib.test_trap_subprocess] in this case.
 
-If messages at [flags@GLib.LogLevelFlags.DEBUG] are emitted, but not explicitly
+If messages at [flags@GLib.LogLevelFlags.LEVEL_DEBUG] are emitted, but not explicitly
 expected via [func@GLib.test_expect_message] then they will be ignored.</doc>
       <return-value transfer-ownership="none">
         <type name="none" c:type="void"/>
@@ -60386,9 +60664,9 @@ other trusted programs violating protocol, invalid contents in
 trusted files, etc.)
 
 If attempting to deal with programmer errors (for example, incorrect function
-parameters) then you should use [flags@GLib.LogLevelFlags.CRITICAL] instead.
+parameters) then you should use [flags@GLib.LogLevelFlags.LEVEL_CRITICAL] instead.
 
-[func@GLib.warn_if_reached] and func@GLib.warn_if_fail] log at [flags@GLib.LogLevelFlags.WARNING].
+[func@GLib.warn_if_reached] and func@GLib.warn_if_fail] log at [flags@GLib.LogLevelFlags.LEVEL_WARNING].
 
 You can make warnings fatal at runtime by setting the `G_DEBUG`
 environment variable (see

@@ -2030,6 +2030,7 @@ See [method@Gdk.ContentProvider.write_mime_type_async].</doc>
         <type name="GObject.ObjectClass" c:type="GObjectClass"/>
       </field>
       <field name="content_changed">
+        <doc xml:space="preserve">Signal class closure for `GdkContentProvider::content-changed`</doc>
         <callback name="content_changed">
           <return-value transfer-ownership="none">
             <type name="none" c:type="void"/>
@@ -16370,6 +16371,10 @@ that will make the implementation likely quite slow.</doc>
         <type name="GObject.TypeInterface" c:type="GTypeInterface"/>
       </field>
       <field name="snapshot">
+        <doc xml:space="preserve">Snapshot the paintable. The given @width and @height are
+  guaranteed to be larger than 0.0. The resulting snapshot must modify
+  only the area in the rectangle from (0,0) to (width, height).
+  This is the only function that must be implemented for this interface.</doc>
         <callback name="snapshot">
           <return-value transfer-ownership="none">
             <type name="none" c:type="void"/>
@@ -16395,6 +16400,9 @@ that will make the implementation likely quite slow.</doc>
         </callback>
       </field>
       <field name="get_current_image">
+        <doc xml:space="preserve">return a `GdkPaintable` that does not change over
+  time. This means the `GDK_PAINTABLE_STATIC_SIZE` and
+  `GDK_PAINTABLE_STATIC_CONTENTS` flag are set.</doc>
         <callback name="get_current_image">
           <return-value transfer-ownership="full">
             <doc xml:space="preserve">An immutable paintable for the current
@@ -16410,6 +16418,8 @@ that will make the implementation likely quite slow.</doc>
         </callback>
       </field>
       <field name="get_flags">
+        <doc xml:space="preserve">Get the flags for this instance. See [enum@Gdk.PaintableFlags]
+  for details.</doc>
         <callback name="get_flags">
           <return-value transfer-ownership="none">
             <doc xml:space="preserve">The `GdkPaintableFlags` for this paintable</doc>
@@ -16424,6 +16434,9 @@ that will make the implementation likely quite slow.</doc>
         </callback>
       </field>
       <field name="get_intrinsic_width">
+        <doc xml:space="preserve">The preferred width for this object to be
+  snapshot at or 0 if none. This is purely a hint. The object must still
+  be able to render at any size.</doc>
         <callback name="get_intrinsic_width">
           <return-value transfer-ownership="none">
             <doc xml:space="preserve">the intrinsic width of @paintable or 0 if none.</doc>
@@ -16438,6 +16451,9 @@ that will make the implementation likely quite slow.</doc>
         </callback>
       </field>
       <field name="get_intrinsic_height">
+        <doc xml:space="preserve">The preferred height for this object to be
+  snapshot at or 0 if none. This is purely a hint. The object must still
+  be able to render at any size.</doc>
         <callback name="get_intrinsic_height">
           <return-value transfer-ownership="none">
             <doc xml:space="preserve">the intrinsic height of @paintable or 0 if none.</doc>
@@ -16452,6 +16468,10 @@ that will make the implementation likely quite slow.</doc>
         </callback>
       </field>
       <field name="get_intrinsic_aspect_ratio">
+        <doc xml:space="preserve">The preferred aspect ratio for this object
+  or 0 if none. If both [vfunc@Gdk.Paintable.get_intrinsic_width]
+  and [vfunc@Gdk.Paintable.get_intrinsic_height] return non-zero
+  values, this function should return the aspect ratio computed from those.</doc>
         <callback name="get_intrinsic_aspect_ratio">
           <return-value transfer-ownership="none">
             <doc xml:space="preserve">the intrinsic aspect ratio of @paintable or 0 if none.</doc>
