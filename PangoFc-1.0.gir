@@ -149,6 +149,12 @@ covered by the font.</doc>
         <type name="GObject.ObjectClass" c:type="GObjectClass"/>
       </field>
       <field name="get_charset">
+        <doc xml:space="preserve">This returns an `FcCharset` given a `PangoFcFont` that
+ includes a list of supported characters in the font.  The
+ #FcCharSet that is returned should be an internal reference to your
+ code.  Pango will not free this structure.  It is important that
+ you make this callback fast because this callback is called
+ separately for each character to determine Unicode coverage.</doc>
         <callback name="get_charset">
           <return-value transfer-ownership="none">
             <doc xml:space="preserve">the `FcCharset` for @fcfont; must not
@@ -168,6 +174,8 @@ covered by the font.</doc>
         </callback>
       </field>
       <field name="get_glyph">
+        <doc xml:space="preserve">This returns a single `PangoGlyph` for a given Unicode
+ code point.</doc>
         <callback name="get_glyph">
           <return-value transfer-ownership="none">
             <doc xml:space="preserve">the glyph index, or 0 if the glyph isn't
