@@ -3967,6 +3967,24 @@ On modern displays, this value is always %TRUE.</doc>
           </instance-parameter>
         </parameters>
       </method>
+      <method name="supports_shadow_width" c:identifier="gdk_display_supports_shadow_width" version="4.14">
+        <attribute name="org.gtk.Method.get_property" value="shadow-width"/>
+        <doc xml:space="preserve">Returns whether it's possible for a surface to draw outside of the window area.
+
+If %TRUE is returned the application decides if it wants to draw shadows.
+If %FALSE is returned, the compositor decides if it wants to draw shadows.</doc>
+        <return-value transfer-ownership="none">
+          <doc xml:space="preserve">%TRUE if surfaces can draw shadows or
+  %FALSE if the display does not support this functionality.</doc>
+          <type name="gboolean" c:type="gboolean"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="display" transfer-ownership="none">
+            <doc xml:space="preserve">a `GdkDisplay`</doc>
+            <type name="Display" c:type="GdkDisplay*"/>
+          </instance-parameter>
+        </parameters>
+      </method>
       <method name="sync" c:identifier="gdk_display_sync">
         <doc xml:space="preserve">Flushes any requests queued for the windowing system and waits until all
 requests have been handled.
@@ -4065,6 +4083,11 @@ virtualized test environments.</doc>
       <property name="rgba" transfer-ownership="none" default-value="TRUE">
         <attribute name="org.gtk.Property.get" value="gdk_display_is_rgba"/>
         <doc xml:space="preserve">%TRUE if the display supports an alpha channel.</doc>
+        <type name="gboolean" c:type="gboolean"/>
+      </property>
+      <property name="shadow-width" version="4.14" transfer-ownership="none" default-value="TRUE">
+        <attribute name="org.gtk.Property.get" value="gdk_display_supports_shadow_width"/>
+        <doc xml:space="preserve">%TRUE if the display supports extensible frames.</doc>
         <type name="gboolean" c:type="gboolean"/>
       </property>
       <glib:signal name="closed" when="last">
@@ -19677,7 +19700,10 @@ The minimum size should be within the bounds (see
 
 The shadow width corresponds to the part of the computed surface size
 that would consist of the shadow margin surrounding the window, would
-there be any.</doc>
+there be any.
+
+Shadow width should only be set if
+[method@Gtk.Display.supports_shadow_width] is %TRUE.</doc>
         <return-value transfer-ownership="none">
           <type name="none" c:type="void"/>
         </return-value>
