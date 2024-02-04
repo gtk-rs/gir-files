@@ -15593,7 +15593,7 @@ This can be used to identify a monitor in the UI.</doc>
 display coordinate space.
 
 The returned geometry is in  &#x201D;application pixels&#x201D;, not in
-&#x201D;device pixels&#x201D; (see [method@Gdk.Monitor.get_scale_factor]).</doc>
+&#x201D;device pixels&#x201D; (see [method@Gdk.Monitor.get_scale]).</doc>
         <return-value transfer-ownership="none">
           <type name="none" c:type="void"/>
         </return-value>
@@ -15665,6 +15665,25 @@ is returned as 60000.</doc>
         <return-value transfer-ownership="none">
           <doc xml:space="preserve">the refresh rate in milli-Hertz, or 0</doc>
           <type name="gint" c:type="int"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="monitor" transfer-ownership="none">
+            <doc xml:space="preserve">a `GdkMonitor`</doc>
+            <type name="Monitor" c:type="GdkMonitor*"/>
+          </instance-parameter>
+        </parameters>
+      </method>
+      <method name="get_scale" c:identifier="gdk_monitor_get_scale" glib:get-property="scale" version="4.14">
+        <attribute name="org.gtk.Method.get_property" value="scale"/>
+        <doc xml:space="preserve">Gets the internal scale factor that maps from monitor coordinates
+to device pixels.
+
+This can be used if you want to create pixel based data for a
+particular monitor, but most of the time you&#x2019;re drawing to a surface
+where it is better to use [method@Gdk.Surface.get_scale] instead.</doc>
+        <return-value transfer-ownership="none">
+          <doc xml:space="preserve">the scale</doc>
+          <type name="gdouble" c:type="double"/>
         </return-value>
         <parameters>
           <instance-parameter name="monitor" transfer-ownership="none">
@@ -15782,9 +15801,17 @@ is unplugged or removed.</doc>
         <doc xml:space="preserve">The refresh rate, in milli-Hertz.</doc>
         <type name="gint" c:type="gint"/>
       </property>
+      <property name="scale" version="4.14" transfer-ownership="none" getter="get_scale" default-value="1.000000">
+        <attribute name="org.gtk.Property.get" value="gdk_monitor_get_scale"/>
+        <doc xml:space="preserve">The scale of the monitor.</doc>
+        <type name="gdouble" c:type="gdouble"/>
+      </property>
       <property name="scale-factor" transfer-ownership="none" getter="get_scale_factor" default-value="1">
         <attribute name="org.gtk.Property.get" value="gdk_monitor_get_scale_factor"/>
-        <doc xml:space="preserve">The scale factor.</doc>
+        <doc xml:space="preserve">The scale factor.
+
+The scale factor is the next larger integer,
+compared to [property@Gdk.Surface:scale].</doc>
         <type name="gint" c:type="gint"/>
       </property>
       <property name="subpixel-layout" transfer-ownership="none" getter="get_subpixel_layout" default-value="GDK_SUBPIXEL_LAYOUT_UNKNOWN">
