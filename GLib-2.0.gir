@@ -44010,7 +44010,11 @@ threads are using the same datalist and the same key.</doc>
       <doc xml:space="preserve">Removes multiple keys from a datalist.
 
 This is more efficient than calling g_datalist_id_remove_data()
-multiple times in a row.</doc>
+multiple times in a row.
+
+Before 2.80, @n_keys had to be not larger than 16. Now it can be larger, but
+note that GData does a linear search, so an excessive number of keys will
+perform badly.</doc>
       <return-value transfer-ownership="none">
         <type name="none" c:type="void"/>
       </return-value>
@@ -44026,7 +44030,7 @@ multiple times in a row.</doc>
           </array>
         </parameter>
         <parameter name="n_keys" transfer-ownership="none">
-          <doc xml:space="preserve">length of @keys, must be &lt;= 16</doc>
+          <doc xml:space="preserve">length of @keys.</doc>
           <type name="gsize" c:type="gsize"/>
         </parameter>
       </parameters>
@@ -55961,12 +55965,13 @@ g_test_init(), the option `-m perf` enables performance tests, while
 `-m quick` disables them.</doc>
     </function-macro>
     <function name="test_queue_destroy" c:identifier="g_test_queue_destroy" version="2.16">
-      <doc xml:space="preserve">This function enqueus a callback @destroy_func to be executed
-during the next test case teardown phase. This is most useful
-to auto destruct allocated test resources at the end of a test run.
-Resources are released in reverse queue order, that means enqueueing
-callback A before callback B will cause B() to be called before
-A() during teardown.</doc>
+      <doc xml:space="preserve">Enqueues a callback @destroy_func to be executed during the next test case
+teardown phase.
+
+This is most useful to auto destroy allocated test resources at the end of a
+test run. Resources are released in reverse queue order, that means
+enqueueing callback `A` before callback `B` will cause `B()` to be called
+before `A()` during teardown.</doc>
       <return-value transfer-ownership="none">
         <type name="none" c:type="void"/>
       </return-value>

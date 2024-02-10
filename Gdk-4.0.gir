@@ -4072,6 +4072,7 @@ virtualized test environments.</doc>
         <type name="gboolean" c:type="gboolean"/>
       </property>
       <property name="dmabuf-formats" version="4.14" transfer-ownership="none" getter="get_dmabuf_formats">
+        <attribute name="org.gtk.Property.get" value="gdk_display_get_dmabuf_formats"/>
         <doc xml:space="preserve">The dma-buf formats that are supported on this display</doc>
         <type name="DmabufFormats"/>
       </property>
@@ -4347,6 +4348,24 @@ Note that DMA buffers only exist on Linux.</doc>
           </parameter>
         </parameters>
       </method>
+      <method name="equal" c:identifier="gdk_dmabuf_formats_equal" version="4.14">
+        <doc xml:space="preserve">Returns whether @formats1 and @formats2 contain the
+same dmabuf formats, in the same order.</doc>
+        <return-value transfer-ownership="none">
+          <doc xml:space="preserve">`TRUE` if @formats1 and @formats2 are equal</doc>
+          <type name="gboolean" c:type="gboolean"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="formats1" transfer-ownership="none" nullable="1" allow-none="1">
+            <doc xml:space="preserve">a `GdkDmabufFormats`</doc>
+            <type name="DmabufFormats" c:type="const GdkDmabufFormats*"/>
+          </instance-parameter>
+          <parameter name="formats2" transfer-ownership="none" nullable="1" allow-none="1">
+            <doc xml:space="preserve">another `GdkDmabufFormats`</doc>
+            <type name="DmabufFormats" c:type="const GdkDmabufFormats*"/>
+          </parameter>
+        </parameters>
+      </method>
       <method name="get_format" c:identifier="gdk_dmabuf_formats_get_format" version="4.14">
         <doc xml:space="preserve">Gets the fourcc code and modifier for a format
 that is contained in @formats.</doc>
@@ -4420,7 +4439,7 @@ the object is freed.</doc>
       </method>
     </record>
     <class name="DmabufTexture" c:symbol-prefix="dmabuf_texture" c:type="GdkDmabufTexture" version="4.14" parent="Texture" glib:type-name="GdkDmabufTexture" glib:get-type="gdk_dmabuf_texture_get_type" glib:type-struct="DmabufTextureClass">
-      <doc xml:space="preserve">A `GdkTexture` representing a dma-buf object.
+      <doc xml:space="preserve">A `GdkTexture` representing a DMA buffer.
 
 To create a `GdkDmabufTexture`, use the auxiliary
 [class@Gdk.DmabufTextureBuilder] object.
