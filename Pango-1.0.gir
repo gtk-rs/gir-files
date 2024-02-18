@@ -4299,7 +4299,7 @@ for enumerating faces.</doc>
           </parameter>
         </parameters>
       </method>
-      <method name="get_name" c:identifier="pango_font_family_get_name">
+      <method name="get_name" c:identifier="pango_font_family_get_name" glib:get-property="name">
         <doc xml:space="preserve">Gets the name of the family.
 
 The name is unique among all fonts for the font backend and can
@@ -4317,7 +4317,7 @@ this family is desired.</doc>
           </instance-parameter>
         </parameters>
       </method>
-      <method name="is_monospace" c:identifier="pango_font_family_is_monospace" version="1.4">
+      <method name="is_monospace" c:identifier="pango_font_family_is_monospace" glib:get-property="is-monospace" version="1.4">
         <doc xml:space="preserve">A monospace font is a font designed for text display where the the
 characters form a regular grid.
 
@@ -4343,7 +4343,7 @@ be affected by double-width characters.</doc>
           </instance-parameter>
         </parameters>
       </method>
-      <method name="is_variable" c:identifier="pango_font_family_is_variable" version="1.44">
+      <method name="is_variable" c:identifier="pango_font_family_is_variable" glib:get-property="is-variable" version="1.44">
         <doc xml:space="preserve">A variable font is a font which has axes that can be modified to
 produce different faces.
 
@@ -4394,6 +4394,16 @@ for enumerating faces.</doc>
           </parameter>
         </parameters>
       </method>
+      <property name="is-monospace" version="1.52" transfer-ownership="none" getter="is_monospace" default-value="FALSE">
+        <attribute name="org.gtk.Property.get" value="pango_font_family_is_monospace"/>
+        <doc xml:space="preserve">Is this a monospace font</doc>
+        <type name="gboolean" c:type="gboolean"/>
+      </property>
+      <property name="is-variable" version="1.52" transfer-ownership="none" getter="is_variable" default-value="FALSE">
+        <attribute name="org.gtk.Property.get" value="pango_font_family_is_variable"/>
+        <doc xml:space="preserve">Is this a variable font</doc>
+        <type name="gboolean" c:type="gboolean"/>
+      </property>
       <property name="item-type" transfer-ownership="none">
         <doc xml:space="preserve">The type of items contained in this list.</doc>
         <type name="GType" c:type="GType"/>
@@ -4401,6 +4411,11 @@ for enumerating faces.</doc>
       <property name="n-items" transfer-ownership="none" default-value="0">
         <doc xml:space="preserve">The number of items contained in this list.</doc>
         <type name="guint" c:type="guint"/>
+      </property>
+      <property name="name" version="1.52" transfer-ownership="none" getter="get_name" default-value="NULL">
+        <attribute name="org.gtk.Property.get" value="pango_font_family_get_name"/>
+        <doc xml:space="preserve">The name of the family</doc>
+        <type name="utf8" c:type="gchar*"/>
       </property>
       <field name="parent_instance">
         <type name="GObject.Object" c:type="GObject"/>
@@ -12098,7 +12113,7 @@ Two encoded version numbers can be compared as integers.</doc>
       <doc xml:space="preserve">The major component of the version of Pango available at compile-time.</doc>
       <type name="gint" c:type="gint"/>
     </constant>
-    <constant name="VERSION_MICRO" value="0" c:type="PANGO_VERSION_MICRO">
+    <constant name="VERSION_MICRO" value="2" c:type="PANGO_VERSION_MICRO">
       <doc xml:space="preserve">The micro component of the version of Pango available at compile-time.</doc>
       <type name="gint" c:type="gint"/>
     </constant>
@@ -12106,7 +12121,7 @@ Two encoded version numbers can be compared as integers.</doc>
       <doc xml:space="preserve">The minor component of the version of Pango available at compile-time.</doc>
       <type name="gint" c:type="gint"/>
     </constant>
-    <constant name="VERSION_STRING" value="1.51.0" c:type="PANGO_VERSION_STRING">
+    <constant name="VERSION_STRING" value="1.51.2" c:type="PANGO_VERSION_STRING">
       <doc xml:space="preserve">A string literal containing the version of Pango available at compile-time.</doc>
       <type name="utf8" c:type="gchar*"/>
     </constant>

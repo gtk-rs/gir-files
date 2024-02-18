@@ -553,7 +553,7 @@ A string name/value pair representing a generic attribute.</doc>
         </parameters>
       </function>
     </record>
-    <constant name="BINARY_AGE" value="25110" c:type="ATK_BINARY_AGE" version="2.7.4">
+    <constant name="BINARY_AGE" value="25200" c:type="ATK_BINARY_AGE" version="2.7.4">
       <doc xml:space="preserve">Like atk_get_binary_age(), but from the headers used at
 application compile time, rather than from the library linked
 against at application run time.</doc>
@@ -2091,6 +2091,22 @@ ask for the document type if it applies.</doc-deprecated>
           </instance-parameter>
         </parameters>
       </virtual-method>
+      <virtual-method name="get_text_selections" invoker="get_text_selections" version="2.52">
+        <doc xml:space="preserve">Returns an array of AtkTextSelections within this document.</doc>
+        <return-value transfer-ownership="full">
+          <doc xml:space="preserve">a GArray of
+AtkTextSelection structures representing the selection.</doc>
+          <array name="GLib.Array" c:type="GArray*">
+            <type name="TextSelection"/>
+          </array>
+        </return-value>
+        <parameters>
+          <instance-parameter name="document" transfer-ownership="none">
+            <doc xml:space="preserve">an #AtkDocument</doc>
+            <type name="Document" c:type="AtkDocument*"/>
+          </instance-parameter>
+        </parameters>
+      </virtual-method>
       <virtual-method name="set_document_attribute" invoker="set_attribute_value" version="1.12">
         <doc xml:space="preserve">Sets the value for the given @attribute_name inside @document.</doc>
         <return-value transfer-ownership="none">
@@ -2112,6 +2128,30 @@ ask for the document type if it applies.</doc-deprecated>
           <parameter name="attribute_value" transfer-ownership="none">
             <doc xml:space="preserve">a string value to be associated with @attribute_name.</doc>
             <type name="utf8" c:type="const gchar*"/>
+          </parameter>
+        </parameters>
+      </virtual-method>
+      <virtual-method name="set_text_selections" invoker="set_text_selections" version="2.52">
+        <doc xml:space="preserve">Makes 1 or more selections within this document denoted by the given
+array of AtkTextSelections. Any existing physical selection (inside or
+outside this document) is replaced by the new selections. All objects within
+the given selection ranges must be descendants of this document. Otherwise
+FALSE will be returned.</doc>
+        <return-value transfer-ownership="none">
+          <doc xml:space="preserve">TRUE if the selection was made successfully; FALSE otherwise.</doc>
+          <type name="gboolean" c:type="gboolean"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="document" transfer-ownership="none">
+            <doc xml:space="preserve">an #AtkDocument.</doc>
+            <type name="Document" c:type="AtkDocument*"/>
+          </instance-parameter>
+          <parameter name="selections" transfer-ownership="none">
+            <doc xml:space="preserve">a GArray of AtkTextSelections
+             to be selected.</doc>
+            <array name="GLib.Array" c:type="GArray*">
+              <type name="TextSelection"/>
+            </array>
           </parameter>
         </parameters>
       </virtual-method>
@@ -2232,6 +2272,22 @@ ask for the document type if it applies.</doc-deprecated>
           </instance-parameter>
         </parameters>
       </method>
+      <method name="get_text_selections" c:identifier="atk_document_get_text_selections" version="2.52">
+        <doc xml:space="preserve">Returns an array of AtkTextSelections within this document.</doc>
+        <return-value transfer-ownership="full">
+          <doc xml:space="preserve">a GArray of
+AtkTextSelection structures representing the selection.</doc>
+          <array name="GLib.Array" c:type="GArray*">
+            <type name="TextSelection"/>
+          </array>
+        </return-value>
+        <parameters>
+          <instance-parameter name="document" transfer-ownership="none">
+            <doc xml:space="preserve">an #AtkDocument</doc>
+            <type name="Document" c:type="AtkDocument*"/>
+          </instance-parameter>
+        </parameters>
+      </method>
       <method name="set_attribute_value" c:identifier="atk_document_set_attribute_value" version="1.12">
         <doc xml:space="preserve">Sets the value for the given @attribute_name inside @document.</doc>
         <return-value transfer-ownership="none">
@@ -2253,6 +2309,30 @@ ask for the document type if it applies.</doc-deprecated>
           <parameter name="attribute_value" transfer-ownership="none">
             <doc xml:space="preserve">a string value to be associated with @attribute_name.</doc>
             <type name="utf8" c:type="const gchar*"/>
+          </parameter>
+        </parameters>
+      </method>
+      <method name="set_text_selections" c:identifier="atk_document_set_text_selections" version="2.52">
+        <doc xml:space="preserve">Makes 1 or more selections within this document denoted by the given
+array of AtkTextSelections. Any existing physical selection (inside or
+outside this document) is replaced by the new selections. All objects within
+the given selection ranges must be descendants of this document. Otherwise
+FALSE will be returned.</doc>
+        <return-value transfer-ownership="none">
+          <doc xml:space="preserve">TRUE if the selection was made successfully; FALSE otherwise.</doc>
+          <type name="gboolean" c:type="gboolean"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="document" transfer-ownership="none">
+            <doc xml:space="preserve">an #AtkDocument.</doc>
+            <type name="Document" c:type="AtkDocument*"/>
+          </instance-parameter>
+          <parameter name="selections" transfer-ownership="none">
+            <doc xml:space="preserve">a GArray of AtkTextSelections
+             to be selected.</doc>
+            <array name="GLib.Array" c:type="GArray*">
+              <type name="TextSelection"/>
+            </array>
           </parameter>
         </parameters>
       </method>
@@ -2478,6 +2558,44 @@ interrogating ATK for the latest document content.</doc>
             <parameter name="document" transfer-ownership="none">
               <doc xml:space="preserve">the #AtkDocument</doc>
               <type name="Document" c:type="AtkDocument*"/>
+            </parameter>
+          </parameters>
+        </callback>
+      </field>
+      <field name="get_text_selections">
+        <callback name="get_text_selections">
+          <return-value transfer-ownership="full">
+            <doc xml:space="preserve">a GArray of
+AtkTextSelection structures representing the selection.</doc>
+            <array name="GLib.Array" c:type="GArray*">
+              <type name="TextSelection"/>
+            </array>
+          </return-value>
+          <parameters>
+            <parameter name="document" transfer-ownership="none">
+              <doc xml:space="preserve">an #AtkDocument</doc>
+              <type name="Document" c:type="AtkDocument*"/>
+            </parameter>
+          </parameters>
+        </callback>
+      </field>
+      <field name="set_text_selections">
+        <callback name="set_text_selections">
+          <return-value transfer-ownership="none">
+            <doc xml:space="preserve">TRUE if the selection was made successfully; FALSE otherwise.</doc>
+            <type name="gboolean" c:type="gboolean"/>
+          </return-value>
+          <parameters>
+            <parameter name="document" transfer-ownership="none">
+              <doc xml:space="preserve">an #AtkDocument.</doc>
+              <type name="Document" c:type="AtkDocument*"/>
+            </parameter>
+            <parameter name="selections" transfer-ownership="none">
+              <doc xml:space="preserve">a GArray of AtkTextSelections
+             to be selected.</doc>
+              <array name="GLib.Array" c:type="GArray*">
+                <type name="TextSelection"/>
+              </array>
             </parameter>
           </parameters>
         </callback>
@@ -4603,7 +4721,7 @@ application compile time, rather than from the library linked
 against at application run time.</doc>
       <type name="gint" c:type="gint"/>
     </constant>
-    <constant name="MICRO_VERSION" value="0" c:type="ATK_MICRO_VERSION" version="2.7.4">
+    <constant name="MICRO_VERSION" value="90" c:type="ATK_MICRO_VERSION" version="2.7.4">
       <doc xml:space="preserve">Like atk_get_micro_version(), but from the headers used at
 application compile time, rather than from the library linked
 against at application run time.</doc>
@@ -14172,6 +14290,49 @@ parent object.</doc>
       <field name="height" writable="1">
         <doc xml:space="preserve">The height of a rectangle</doc>
         <type name="gint" c:type="gint"/>
+      </field>
+    </record>
+    <record name="TextSelection" c:type="AtkTextSelection" version="2.52">
+      <doc xml:space="preserve">This structure represents a single  text selection within a document. This
+selection is defined by two points in the content, where each one is defined
+by an AtkObject supporting the AtkText interface and a character offset
+relative to it.
+
+The end object must appear after the start object in the accessibility tree,
+i.e. the end object must be reachable from the start object by navigating
+forward (next, first child etc).
+
+This struct also contains a @start_is_active boolean, to communicate if the
+start of the selection is the active point or not.
+
+The active point corresponds to the user's focus or point of interest. The
+user moves the active point to expand or collapse the range. The anchor
+point is the other point of the range and typically remains constant. In
+most cases, anchor is the start of the range and active is the end. However,
+when selecting backwards (e.g. pressing shift+left arrow in a text field),
+the start of the range is the active point, as the user moves this to
+manipulate the selection.</doc>
+      <field name="start_object" writable="1">
+        <doc xml:space="preserve">the AtkText containing the start of the selection.</doc>
+        <type name="Object" c:type="AtkObject*"/>
+      </field>
+      <field name="start_offset" writable="1">
+        <doc xml:space="preserve">the text offset of the beginning of the selection within
+               @start_object.</doc>
+        <type name="gint" c:type="gint"/>
+      </field>
+      <field name="end_object" writable="1">
+        <doc xml:space="preserve">the AtkText containing the end of the selection.</doc>
+        <type name="Object" c:type="AtkObject*"/>
+      </field>
+      <field name="end_offset" writable="1">
+        <doc xml:space="preserve">the text offset of the end of the selection within @end_object.</doc>
+        <type name="gint" c:type="gint"/>
+      </field>
+      <field name="start_is_active" writable="1">
+        <doc xml:space="preserve">a gboolean indicating whether the start of the selection
+                 is the active point.</doc>
+        <type name="gboolean" c:type="gboolean"/>
       </field>
     </record>
     <function-macro name="UNAVAILABLE" c:identifier="ATK_UNAVAILABLE" introspectable="0">
