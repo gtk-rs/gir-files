@@ -15023,7 +15023,7 @@ linked against at application run time.</doc>
     <constant name="MAXUINT8" value="255" c:type="G_MAXUINT8">
       <type name="guint8" c:type="guint8"/>
     </constant>
-    <constant name="MICRO_VERSION" value="1" c:type="GLIB_MICRO_VERSION">
+    <constant name="MICRO_VERSION" value="2" c:type="GLIB_MICRO_VERSION">
       <doc xml:space="preserve">The micro version number of the GLib library.
 
 Like #gtk_micro_version, but from the headers used at
@@ -29594,9 +29594,6 @@ to create the directory if it doesn&#x2019;t exist.</doc>
       <doc xml:space="preserve">Evaluates to a time span of one second.</doc>
       <type name="gint64" c:type="gint64"/>
     </constant>
-    <constant name="TRACE_CURRENT_TIME" value="0" c:type="G_TRACE_CURRENT_TIME">
-      <type name="gint" c:type="gint"/>
-    </constant>
     <function-macro name="TRYLOCK" c:identifier="G_TRYLOCK" introspectable="0">
       <doc xml:space="preserve">Works like g_mutex_trylock(), but for a lock defined with
 %G_LOCK_DEFINE.</doc>
@@ -39676,26 +39673,9 @@ function passed to g_atexit().</doc>
         </parameter>
       </parameters>
     </function-macro>
-    <function-macro name="WIN32_HAVE_WIDECHAR_API" c:identifier="G_WIN32_HAVE_WIDECHAR_API" introspectable="0"/>
-    <function-macro name="WIN32_IS_NT_BASED" c:identifier="G_WIN32_IS_NT_BASED" introspectable="0"/>
     <constant name="WIN32_MSG_HANDLE" value="19981206" c:type="G_WIN32_MSG_HANDLE">
       <type name="gint" c:type="gint"/>
     </constant>
-    <enumeration name="Win32OSType" c:type="GWin32OSType">
-      <doc xml:space="preserve">Type of Windows edition to check for at run-time.</doc>
-      <member name="any" value="0" c:identifier="G_WIN32_OS_ANY">
-        <doc xml:space="preserve">The running system can be a workstation or a server edition of
- Windows.  The type of the running system is therefore not checked.</doc>
-      </member>
-      <member name="workstation" value="1" c:identifier="G_WIN32_OS_WORKSTATION">
-        <doc xml:space="preserve">The running system is a workstation edition of Windows,
- such as Windows 7 Professional.</doc>
-      </member>
-      <member name="server" value="2" c:identifier="G_WIN32_OS_SERVER">
-        <doc xml:space="preserve">The running system is a server edition of Windows, such as
- Windows Server 2008 R2.</doc>
-      </member>
-    </enumeration>
     <function-macro name="abort" c:identifier="g_abort" version="2.50" introspectable="0">
       <doc xml:space="preserve">A wrapper for the POSIX abort() function.
 
@@ -43386,6 +43366,33 @@ See [`signal(7)`](man:signal(7)) and
         </parameter>
       </parameters>
     </function>
+    <function name="closefrom" c:identifier="g_closefrom" version="2.80">
+      <doc xml:space="preserve">Close every file descriptor equal to or greater than @lowfd.
+
+Typically @lowfd will be 3, to leave standard input, standard output
+and standard error open.
+
+This is the same as Linux `close_range (lowfd, ~0U, 0)`,
+but portable to other OSs and to older versions of Linux.
+Equivalently, it is the same as BSD `closefrom (lowfd)`, but portable,
+and async-signal-safe on all OSs.
+
+This function is async-signal safe, making it safe to call from a
+signal handler or a [callback@GLib.SpawnChildSetupFunc], as long as @lowfd is
+non-negative.
+See [`signal(7)`](man:signal(7)) and
+[`signal-safety(7)`](man:signal-safety(7)) for more details.</doc>
+      <return-value transfer-ownership="none">
+        <doc xml:space="preserve">0 on success, -1 with errno set on error</doc>
+        <type name="gint" c:type="int"/>
+      </return-value>
+      <parameters>
+        <parameter name="lowfd" transfer-ownership="none">
+          <doc xml:space="preserve">Minimum fd to close, which must be non-negative</doc>
+          <type name="gint" c:type="int"/>
+        </parameter>
+      </parameters>
+    </function>
     <function name="compute_checksum_for_bytes" c:identifier="g_compute_checksum_for_bytes" version="2.34">
       <doc xml:space="preserve">Computes the checksum for a binary @data. This is a
 convenience wrapper for g_checksum_new(), g_checksum_get_string()
@@ -45163,6 +45170,32 @@ already takes care of passing valid information to this function.</doc>
         <parameter name="error_type_clear" transfer-ownership="none" scope="forever">
           <doc xml:space="preserve">function freeing fields of the private error data</doc>
           <type name="ErrorClearFunc" c:type="GErrorClearFunc"/>
+        </parameter>
+      </parameters>
+    </function>
+    <function name="fdwalk_set_cloexec" c:identifier="g_fdwalk_set_cloexec" version="2.80">
+      <doc xml:space="preserve">Mark every file descriptor equal to or greater than @lowfd to be closed
+at the next `execve()` or similar, as if via the `FD_CLOEXEC` flag.
+
+Typically @lowfd will be 3, to leave standard input, standard output
+and standard error open after exec.
+
+This is the same as Linux `close_range (lowfd, ~0U, CLOSE_RANGE_CLOEXEC)`,
+but portable to other OSs and to older versions of Linux.
+
+This function is async-signal safe, making it safe to call from a
+signal handler or a [callback@GLib.SpawnChildSetupFunc], as long as @lowfd is
+non-negative.
+See [`signal(7)`](man:signal(7)) and
+[`signal-safety(7)`](man:signal-safety(7)) for more details.</doc>
+      <return-value transfer-ownership="none">
+        <doc xml:space="preserve">0 on success, -1 with errno set on error</doc>
+        <type name="gint" c:type="int"/>
+      </return-value>
+      <parameters>
+        <parameter name="lowfd" transfer-ownership="none">
+          <doc xml:space="preserve">Minimum fd to act on, which must be non-negative</doc>
+          <type name="gint" c:type="int"/>
         </parameter>
       </parameters>
     </function>
@@ -52516,21 +52549,6 @@ could only be called once per process.</doc>
         </parameter>
       </parameters>
     </function>
-    <function name="set_prgname_once" c:identifier="g_set_prgname_once">
-      <doc xml:space="preserve">If g_get_prgname() is not set, this is the same as setting
-the name via g_set_prgname() and %TRUE is returned. Otherwise,
-does nothing and returns %FALSE. This is thread-safe.</doc>
-      <return-value transfer-ownership="none">
-        <doc xml:space="preserve">whether g_prgname was initialized by the call.</doc>
-        <type name="gboolean" c:type="gboolean"/>
-      </return-value>
-      <parameters>
-        <parameter name="prgname" transfer-ownership="none">
-          <doc xml:space="preserve">the name of the program.</doc>
-          <type name="utf8" c:type="const gchar*"/>
-        </parameter>
-      </parameters>
-    </function>
     <function name="set_print_handler" c:identifier="g_set_print_handler" introspectable="0">
       <doc xml:space="preserve">Sets the print handler to @func, or resets it to the
 default GLib handler if `NULL`.
@@ -52584,19 +52602,6 @@ Before GLib 2.76, this was `NULL`.</doc>
           <doc xml:space="preserve">he new error message handler or `NULL`
   to reset to the default</doc>
           <type name="PrintFunc" c:type="GPrintFunc"/>
-        </parameter>
-      </parameters>
-    </function>
-    <function name="set_user_dirs" c:identifier="g_set_user_dirs" introspectable="0">
-      <return-value transfer-ownership="none">
-        <type name="none" c:type="void"/>
-      </return-value>
-      <parameters>
-        <parameter name="first_dir_type" transfer-ownership="none">
-          <type name="utf8" c:type="const gchar*"/>
-        </parameter>
-        <parameter name="..." transfer-ownership="none">
-          <varargs/>
         </parameter>
       </parameters>
     </function>
@@ -52828,11 +52833,6 @@ internally.</doc>
           <type name="gpointer" c:type="gconstpointer"/>
         </parameter>
       </parameters>
-    </function>
-    <function name="slice_debug_tree_statistics" c:identifier="g_slice_debug_tree_statistics">
-      <return-value transfer-ownership="none">
-        <type name="none" c:type="void"/>
-      </return-value>
     </function>
     <function-macro name="slice_dup" c:identifier="g_slice_dup" version="2.14" introspectable="0">
       <doc xml:space="preserve">A convenience macro to duplicate a block of memory using
@@ -57208,60 +57208,6 @@ See g_get_monotonic_time().</doc>
         </parameter>
       </parameters>
     </function>
-    <function name="trace_define_int64_counter" c:identifier="g_trace_define_int64_counter">
-      <return-value transfer-ownership="none">
-        <type name="guint" c:type="guint"/>
-      </return-value>
-      <parameters>
-        <parameter name="group" transfer-ownership="none">
-          <type name="utf8" c:type="const char*"/>
-        </parameter>
-        <parameter name="name" transfer-ownership="none">
-          <type name="utf8" c:type="const char*"/>
-        </parameter>
-        <parameter name="description" transfer-ownership="none">
-          <type name="utf8" c:type="const char*"/>
-        </parameter>
-      </parameters>
-    </function>
-    <function name="trace_mark" c:identifier="g_trace_mark" introspectable="0">
-      <return-value transfer-ownership="none">
-        <type name="none" c:type="void"/>
-      </return-value>
-      <parameters>
-        <parameter name="begin_time_nsec" transfer-ownership="none">
-          <type name="gint64" c:type="gint64"/>
-        </parameter>
-        <parameter name="duration_nsec" transfer-ownership="none">
-          <type name="gint64" c:type="gint64"/>
-        </parameter>
-        <parameter name="group" transfer-ownership="none">
-          <type name="utf8" c:type="const gchar*"/>
-        </parameter>
-        <parameter name="name" transfer-ownership="none">
-          <type name="utf8" c:type="const gchar*"/>
-        </parameter>
-        <parameter name="message_format" transfer-ownership="none">
-          <type name="utf8" c:type="const gchar*"/>
-        </parameter>
-        <parameter name="..." transfer-ownership="none">
-          <varargs/>
-        </parameter>
-      </parameters>
-    </function>
-    <function name="trace_set_int64_counter" c:identifier="g_trace_set_int64_counter">
-      <return-value transfer-ownership="none">
-        <type name="none" c:type="void"/>
-      </return-value>
-      <parameters>
-        <parameter name="id" transfer-ownership="none">
-          <type name="guint" c:type="guint"/>
-        </parameter>
-        <parameter name="value" transfer-ownership="none">
-          <type name="gint64" c:type="gint64"/>
-        </parameter>
-      </parameters>
-    </function>
     <function name="trash_stack_height" c:identifier="g_trash_stack_height" moved-to="TrashStack.height" deprecated="1" deprecated-version="2.48">
       <doc xml:space="preserve">Returns the height of a #GTrashStack.
 
@@ -60729,113 +60675,5 @@ warning is printed each time instead of only once.</doc>
         </parameter>
       </parameters>
     </function-macro>
-    <function name="win32_check_windows_version" c:identifier="g_win32_check_windows_version">
-      <return-value transfer-ownership="none">
-        <type name="gboolean" c:type="gboolean"/>
-      </return-value>
-      <parameters>
-        <parameter name="major" transfer-ownership="none">
-          <type name="gint" c:type="const gint"/>
-        </parameter>
-        <parameter name="minor" transfer-ownership="none">
-          <type name="gint" c:type="const gint"/>
-        </parameter>
-        <parameter name="spver" transfer-ownership="none">
-          <type name="gint" c:type="const gint"/>
-        </parameter>
-        <parameter name="os_type" transfer-ownership="none">
-          <type name="Win32OSType" c:type="const GWin32OSType"/>
-        </parameter>
-      </parameters>
-    </function>
-    <function name="win32_error_message" c:identifier="g_win32_error_message">
-      <return-value transfer-ownership="full">
-        <type name="utf8" c:type="gchar*"/>
-      </return-value>
-      <parameters>
-        <parameter name="error" transfer-ownership="none">
-          <type name="gint" c:type="gint"/>
-        </parameter>
-      </parameters>
-    </function>
-    <function name="win32_ftruncate" c:identifier="g_win32_ftruncate">
-      <return-value transfer-ownership="none">
-        <type name="gint" c:type="gint"/>
-      </return-value>
-      <parameters>
-        <parameter name="f" transfer-ownership="none">
-          <type name="gint" c:type="gint"/>
-        </parameter>
-        <parameter name="size" transfer-ownership="none">
-          <type name="guint" c:type="guint"/>
-        </parameter>
-      </parameters>
-    </function>
-    <function name="win32_get_command_line" c:identifier="g_win32_get_command_line" introspectable="0">
-      <return-value>
-        <array c:type="gchar**">
-          <type name="utf8"/>
-        </array>
-      </return-value>
-    </function>
-    <function name="win32_get_package_installation_directory" c:identifier="g_win32_get_package_installation_directory">
-      <return-value transfer-ownership="full">
-        <type name="utf8" c:type="gchar*"/>
-      </return-value>
-      <parameters>
-        <parameter name="package" transfer-ownership="none">
-          <type name="utf8" c:type="const gchar*"/>
-        </parameter>
-        <parameter name="dll_name" transfer-ownership="none">
-          <type name="utf8" c:type="const gchar*"/>
-        </parameter>
-      </parameters>
-    </function>
-    <function name="win32_get_package_installation_directory_of_module" c:identifier="g_win32_get_package_installation_directory_of_module">
-      <return-value transfer-ownership="full">
-        <type name="utf8" c:type="gchar*"/>
-      </return-value>
-      <parameters>
-        <parameter name="hmodule" transfer-ownership="none" nullable="1" allow-none="1">
-          <type name="gpointer" c:type="gpointer"/>
-        </parameter>
-      </parameters>
-    </function>
-    <function name="win32_get_package_installation_subdirectory" c:identifier="g_win32_get_package_installation_subdirectory">
-      <return-value transfer-ownership="full">
-        <type name="utf8" c:type="gchar*"/>
-      </return-value>
-      <parameters>
-        <parameter name="package" transfer-ownership="none">
-          <type name="utf8" c:type="const gchar*"/>
-        </parameter>
-        <parameter name="dll_name" transfer-ownership="none">
-          <type name="utf8" c:type="const gchar*"/>
-        </parameter>
-        <parameter name="subdir" transfer-ownership="none">
-          <type name="utf8" c:type="const gchar*"/>
-        </parameter>
-      </parameters>
-    </function>
-    <function name="win32_get_windows_version" c:identifier="g_win32_get_windows_version">
-      <return-value transfer-ownership="none">
-        <type name="guint" c:type="guint"/>
-      </return-value>
-    </function>
-    <function name="win32_getlocale" c:identifier="g_win32_getlocale">
-      <return-value transfer-ownership="full">
-        <type name="utf8" c:type="gchar*"/>
-      </return-value>
-    </function>
-    <function name="win32_locale_filename_from_utf8" c:identifier="g_win32_locale_filename_from_utf8">
-      <return-value transfer-ownership="full">
-        <type name="utf8" c:type="gchar*"/>
-      </return-value>
-      <parameters>
-        <parameter name="utf8filename" transfer-ownership="none">
-          <type name="utf8" c:type="const gchar*"/>
-        </parameter>
-      </parameters>
-    </function>
   </namespace>
 </repository>
