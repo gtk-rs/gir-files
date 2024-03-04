@@ -483,7 +483,7 @@ even on a local clipboard. In this case the clipboard is empty.</doc>
           </instance-parameter>
         </parameters>
       </method>
-      <method name="read_async" c:identifier="gdk_clipboard_read_async">
+      <method name="read_async" c:identifier="gdk_clipboard_read_async" glib:finish-func="read_finish">
         <doc xml:space="preserve">Asynchronously requests an input stream to read the @clipboard's
 contents from.
 
@@ -548,7 +548,7 @@ See [method@Gdk.Clipboard.read_async].</doc>
           </parameter>
         </parameters>
       </method>
-      <method name="read_text_async" c:identifier="gdk_clipboard_read_text_async">
+      <method name="read_text_async" c:identifier="gdk_clipboard_read_text_async" glib:finish-func="read_text_finish">
         <doc xml:space="preserve">Asynchronously request the @clipboard contents converted to a string.
 
 When the operation is finished @callback will be called. You must then
@@ -598,7 +598,7 @@ See [method@Gdk.Clipboard.read_text_async].</doc>
           </parameter>
         </parameters>
       </method>
-      <method name="read_texture_async" c:identifier="gdk_clipboard_read_texture_async">
+      <method name="read_texture_async" c:identifier="gdk_clipboard_read_texture_async" glib:finish-func="read_texture_finish">
         <doc xml:space="preserve">Asynchronously request the @clipboard contents converted to a `GdkPixbuf`.
 
 When the operation is finished @callback will be called. You must then
@@ -648,7 +648,7 @@ See [method@Gdk.Clipboard.read_texture_async].</doc>
           </parameter>
         </parameters>
       </method>
-      <method name="read_value_async" c:identifier="gdk_clipboard_read_value_async">
+      <method name="read_value_async" c:identifier="gdk_clipboard_read_value_async" glib:finish-func="read_value_finish">
         <doc xml:space="preserve">Asynchronously request the @clipboard contents converted to the given
 @type.
 
@@ -834,7 +834,7 @@ transfer the contents and then request that format from @provider.</doc>
           </parameter>
         </parameters>
       </method>
-      <method name="store_async" c:identifier="gdk_clipboard_store_async">
+      <method name="store_async" c:identifier="gdk_clipboard_store_async" glib:finish-func="store_finish">
         <doc xml:space="preserve">Asynchronously instructs the @clipboard to store its contents remotely.
 
 If the clipboard is not local, this function does nothing but report success.
@@ -1801,7 +1801,7 @@ This can be assumed to be a subset of [method@Gdk.ContentProvider.ref_formats].<
           </instance-parameter>
         </parameters>
       </virtual-method>
-      <virtual-method name="write_mime_type_async" invoker="write_mime_type_async">
+      <virtual-method name="write_mime_type_async" invoker="write_mime_type_async" glib:finish-func="write_mime_type_finish">
         <doc xml:space="preserve">Asynchronously writes the contents of @provider to @stream in the given
 @mime_type.
 
@@ -1937,7 +1937,7 @@ This can be assumed to be a subset of [method@Gdk.ContentProvider.ref_formats].<
           </instance-parameter>
         </parameters>
       </method>
-      <method name="write_mime_type_async" c:identifier="gdk_content_provider_write_mime_type_async">
+      <method name="write_mime_type_async" c:identifier="gdk_content_provider_write_mime_type_async" glib:finish-func="write_mime_type_finish">
         <doc xml:space="preserve">Asynchronously writes the contents of @provider to @stream in the given
 @mime_type.
 
@@ -5721,7 +5721,7 @@ to be read in.</doc>
           </instance-parameter>
         </parameters>
       </method>
-      <method name="read_async" c:identifier="gdk_drop_read_async">
+      <method name="read_async" c:identifier="gdk_drop_read_async" glib:finish-func="read_finish">
         <doc xml:space="preserve">Asynchronously read the dropped data from a `GdkDrop`
 in a format that complies with one of the mime types.</doc>
         <return-value transfer-ownership="none">
@@ -5786,7 +5786,7 @@ See [method@Gdk.Drop.read_async].</doc>
           </parameter>
         </parameters>
       </method>
-      <method name="read_value_async" c:identifier="gdk_drop_read_value_async">
+      <method name="read_value_async" c:identifier="gdk_drop_read_value_async" glib:finish-func="read_value_finish">
         <doc xml:space="preserve">Asynchronously request the drag operation's contents converted
 to the given @type.
 
@@ -15329,9 +15329,9 @@ Note that we ignore Caps Lock for matching.</doc>
       <doc xml:space="preserve">`GdkMemoryFormat` describes formats that image data can have in memory.
 
 It describes formats by listing the contents of the memory passed to it.
-So GDK_MEMORY_A8R8G8B8 will be 1 byte (8 bits) of alpha, followed by a
+So `GDK_MEMORY_A8R8G8B8` will be 1 byte (8 bits) of alpha, followed by a
 byte each of red, green and blue. It is not endian-dependent, so
-CAIRO_FORMAT_ARGB32 is represented by different `GdkMemoryFormats`
+`CAIRO_FORMAT_ARGB32` is represented by different `GdkMemoryFormats`
 on architectures with different endiannesses.
 
 Its naming is modelled after
@@ -15367,91 +15367,83 @@ for details).</doc>
       <member name="b8g8r8" value="8" c:identifier="GDK_MEMORY_B8G8R8" glib:nick="b8g8r8" glib:name="GDK_MEMORY_B8G8R8">
         <doc xml:space="preserve">3 bytes; for blue, green, red. The data is opaque.</doc>
       </member>
-      <member name="r16g16b16" value="9" c:identifier="GDK_MEMORY_R16G16B16" glib:nick="r16g16b16" glib:name="GDK_MEMORY_R16G16B16">
-        <doc xml:space="preserve">3 guint16 values; for red, green, blue. Since: 4.6</doc>
+      <member name="r16g16b16" value="9" c:identifier="GDK_MEMORY_R16G16B16" version="4.6" glib:nick="r16g16b16" glib:name="GDK_MEMORY_R16G16B16">
+        <doc xml:space="preserve">3 guint16 values; for red, green, blue.</doc>
       </member>
-      <member name="r16g16b16a16_premultiplied" value="10" c:identifier="GDK_MEMORY_R16G16B16A16_PREMULTIPLIED" glib:nick="r16g16b16a16-premultiplied" glib:name="GDK_MEMORY_R16G16B16A16_PREMULTIPLIED">
-        <doc xml:space="preserve">4 guint16 values; for red, green,
-  blue, alpha. The color values are premultiplied with the alpha value.
- Since: 4.6</doc>
+      <member name="r16g16b16a16_premultiplied" value="10" c:identifier="GDK_MEMORY_R16G16B16A16_PREMULTIPLIED" version="4.6" glib:nick="r16g16b16a16-premultiplied" glib:name="GDK_MEMORY_R16G16B16A16_PREMULTIPLIED">
+        <doc xml:space="preserve">4 guint16 values; for red, green, blue, alpha. The color values are
+premultiplied with the alpha value.</doc>
       </member>
-      <member name="r16g16b16a16" value="11" c:identifier="GDK_MEMORY_R16G16B16A16" glib:nick="r16g16b16a16" glib:name="GDK_MEMORY_R16G16B16A16">
-        <doc xml:space="preserve">4 guint16 values; for red, green, blue, alpha.
- Since: 4.6</doc>
+      <member name="r16g16b16a16" value="11" c:identifier="GDK_MEMORY_R16G16B16A16" version="4.6" glib:nick="r16g16b16a16" glib:name="GDK_MEMORY_R16G16B16A16">
+        <doc xml:space="preserve">4 guint16 values; for red, green, blue, alpha.</doc>
       </member>
-      <member name="r16g16b16_float" value="12" c:identifier="GDK_MEMORY_R16G16B16_FLOAT" glib:nick="r16g16b16-float" glib:name="GDK_MEMORY_R16G16B16_FLOAT">
-        <doc xml:space="preserve">3 half-float values; for red, green, blue.
-  The data is opaque. Since: 4.6</doc>
+      <member name="r16g16b16_float" value="12" c:identifier="GDK_MEMORY_R16G16B16_FLOAT" version="4.6" glib:nick="r16g16b16-float" glib:name="GDK_MEMORY_R16G16B16_FLOAT">
+        <doc xml:space="preserve">3 half-float values; for red, green, blue. The data is opaque.</doc>
       </member>
-      <member name="r16g16b16a16_float_premultiplied" value="13" c:identifier="GDK_MEMORY_R16G16B16A16_FLOAT_PREMULTIPLIED" glib:nick="r16g16b16a16-float-premultiplied" glib:name="GDK_MEMORY_R16G16B16A16_FLOAT_PREMULTIPLIED">
-        <doc xml:space="preserve">4 half-float values; for
-  red, green, blue and alpha. The color values are premultiplied with
-  the alpha value. Since: 4.6</doc>
+      <member name="r16g16b16a16_float_premultiplied" value="13" c:identifier="GDK_MEMORY_R16G16B16A16_FLOAT_PREMULTIPLIED" version="4.6" glib:nick="r16g16b16a16-float-premultiplied" glib:name="GDK_MEMORY_R16G16B16A16_FLOAT_PREMULTIPLIED">
+        <doc xml:space="preserve">4 half-float values; for red, green, blue and alpha. The color values are
+premultiplied with the alpha value.</doc>
       </member>
-      <member name="r16g16b16a16_float" value="14" c:identifier="GDK_MEMORY_R16G16B16A16_FLOAT" glib:nick="r16g16b16a16-float" glib:name="GDK_MEMORY_R16G16B16A16_FLOAT">
-        <doc xml:space="preserve">4 half-float values; for red, green,
-  blue and alpha. Since: 4.6</doc>
+      <member name="r16g16b16a16_float" value="14" c:identifier="GDK_MEMORY_R16G16B16A16_FLOAT" version="4.6" glib:nick="r16g16b16a16-float" glib:name="GDK_MEMORY_R16G16B16A16_FLOAT">
+        <doc xml:space="preserve">4 half-float values; for red, green, blue and alpha.</doc>
       </member>
       <member name="r32g32b32_float" value="15" c:identifier="GDK_MEMORY_R32G32B32_FLOAT" glib:nick="r32g32b32-float" glib:name="GDK_MEMORY_R32G32B32_FLOAT">
+        <doc xml:space="preserve">3 float values; for red, green, blue.</doc>
       </member>
-      <member name="r32g32b32a32_float_premultiplied" value="16" c:identifier="GDK_MEMORY_R32G32B32A32_FLOAT_PREMULTIPLIED" glib:nick="r32g32b32a32-float-premultiplied" glib:name="GDK_MEMORY_R32G32B32A32_FLOAT_PREMULTIPLIED">
-        <doc xml:space="preserve">4 float values; for
-  red, green, blue and alpha. The color values are premultiplied with
-  the alpha value. Since: 4.6</doc>
+      <member name="r32g32b32a32_float_premultiplied" value="16" c:identifier="GDK_MEMORY_R32G32B32A32_FLOAT_PREMULTIPLIED" version="4.6" glib:nick="r32g32b32a32-float-premultiplied" glib:name="GDK_MEMORY_R32G32B32A32_FLOAT_PREMULTIPLIED">
+        <doc xml:space="preserve">4 float values; for red, green, blue and alpha. The color values are
+premultiplied with the alpha value.</doc>
       </member>
-      <member name="r32g32b32a32_float" value="17" c:identifier="GDK_MEMORY_R32G32B32A32_FLOAT" glib:nick="r32g32b32a32-float" glib:name="GDK_MEMORY_R32G32B32A32_FLOAT">
-        <doc xml:space="preserve">4 float values; for red, green, blue and
-  alpha. Since: 4.6</doc>
+      <member name="r32g32b32a32_float" value="17" c:identifier="GDK_MEMORY_R32G32B32A32_FLOAT" version="4.6" glib:nick="r32g32b32a32-float" glib:name="GDK_MEMORY_R32G32B32A32_FLOAT">
+        <doc xml:space="preserve">4 float values; for red, green, blue and alpha.</doc>
       </member>
-      <member name="g8a8_premultiplied" value="18" c:identifier="GDK_MEMORY_G8A8_PREMULTIPLIED" glib:nick="g8a8-premultiplied" glib:name="GDK_MEMORY_G8A8_PREMULTIPLIED">
-        <doc xml:space="preserve">2 bytes; for grayscale, alpha. The color
-  values are premultiplied with the alpha value. Since: 4.12</doc>
+      <member name="g8a8_premultiplied" value="18" c:identifier="GDK_MEMORY_G8A8_PREMULTIPLIED" version="4.12" glib:nick="g8a8-premultiplied" glib:name="GDK_MEMORY_G8A8_PREMULTIPLIED">
+        <doc xml:space="preserve">2 bytes; for grayscale, alpha. The color values are premultiplied with the
+alpha value.</doc>
       </member>
-      <member name="g8a8" value="19" c:identifier="GDK_MEMORY_G8A8" glib:nick="g8a8" glib:name="GDK_MEMORY_G8A8">
-        <doc xml:space="preserve">2 bytes; for grayscale, alpha. Since: 4.12</doc>
+      <member name="g8a8" value="19" c:identifier="GDK_MEMORY_G8A8" version="4.12" glib:nick="g8a8" glib:name="GDK_MEMORY_G8A8">
+        <doc xml:space="preserve">2 bytes; for grayscale, alpha.</doc>
       </member>
-      <member name="g8" value="20" c:identifier="GDK_MEMORY_G8" glib:nick="g8" glib:name="GDK_MEMORY_G8">
-        <doc xml:space="preserve">One byte; for grayscale. The data is opaque.
-  Since: 4.12</doc>
+      <member name="g8" value="20" c:identifier="GDK_MEMORY_G8" version="4.12" glib:nick="g8" glib:name="GDK_MEMORY_G8">
+        <doc xml:space="preserve">One byte; for grayscale. The data is opaque.</doc>
       </member>
-      <member name="g16a16_premultiplied" value="21" c:identifier="GDK_MEMORY_G16A16_PREMULTIPLIED" glib:nick="g16a16-premultiplied" glib:name="GDK_MEMORY_G16A16_PREMULTIPLIED">
-        <doc xml:space="preserve">2 guint16 values; for grayscale, alpha.
- The color values are premultiplied with the alpha value. Since: 4.12</doc>
+      <member name="g16a16_premultiplied" value="21" c:identifier="GDK_MEMORY_G16A16_PREMULTIPLIED" version="4.12" glib:nick="g16a16-premultiplied" glib:name="GDK_MEMORY_G16A16_PREMULTIPLIED">
+        <doc xml:space="preserve">2 guint16 values; for grayscale, alpha. The color values are premultiplied
+with the alpha value.</doc>
       </member>
-      <member name="g16a16" value="22" c:identifier="GDK_MEMORY_G16A16" glib:nick="g16a16" glib:name="GDK_MEMORY_G16A16">
-        <doc xml:space="preserve">2 guint16 values; for grayscale, alpha. Since: 4.12</doc>
+      <member name="g16a16" value="22" c:identifier="GDK_MEMORY_G16A16" version="4.12" glib:nick="g16a16" glib:name="GDK_MEMORY_G16A16">
+        <doc xml:space="preserve">2 guint16 values; for grayscale, alpha.</doc>
       </member>
-      <member name="g16" value="23" c:identifier="GDK_MEMORY_G16" glib:nick="g16" glib:name="GDK_MEMORY_G16">
-        <doc xml:space="preserve">One guint16 value; for grayscale. The data is opaque.
-  Since: 4.12</doc>
+      <member name="g16" value="23" c:identifier="GDK_MEMORY_G16" version="4.12" glib:nick="g16" glib:name="GDK_MEMORY_G16">
+        <doc xml:space="preserve">One guint16 value; for grayscale. The data is opaque.</doc>
       </member>
-      <member name="a8" value="24" c:identifier="GDK_MEMORY_A8" glib:nick="a8" glib:name="GDK_MEMORY_A8">
-        <doc xml:space="preserve">One byte; for alpha.
-  Since: 4.12</doc>
+      <member name="a8" value="24" c:identifier="GDK_MEMORY_A8" version="4.12" glib:nick="a8" glib:name="GDK_MEMORY_A8">
+        <doc xml:space="preserve">One byte; for alpha.</doc>
       </member>
-      <member name="a16" value="25" c:identifier="GDK_MEMORY_A16" glib:nick="a16" glib:name="GDK_MEMORY_A16">
-        <doc xml:space="preserve">One guint16 value; for alpha.
-  Since: 4.12</doc>
+      <member name="a16" value="25" c:identifier="GDK_MEMORY_A16" version="4.12" glib:nick="a16" glib:name="GDK_MEMORY_A16">
+        <doc xml:space="preserve">One guint16 value; for alpha.</doc>
       </member>
-      <member name="a16_float" value="26" c:identifier="GDK_MEMORY_A16_FLOAT" glib:nick="a16-float" glib:name="GDK_MEMORY_A16_FLOAT">
+      <member name="a16_float" value="26" c:identifier="GDK_MEMORY_A16_FLOAT" version="4.12" glib:nick="a16-float" glib:name="GDK_MEMORY_A16_FLOAT">
+        <doc xml:space="preserve">One half-float value; for alpha.</doc>
       </member>
-      <member name="a32_float" value="27" c:identifier="GDK_MEMORY_A32_FLOAT" glib:nick="a32-float" glib:name="GDK_MEMORY_A32_FLOAT">
+      <member name="a32_float" value="27" c:identifier="GDK_MEMORY_A32_FLOAT" version="4.12" glib:nick="a32-float" glib:name="GDK_MEMORY_A32_FLOAT">
+        <doc xml:space="preserve">One float value; for alpha.</doc>
       </member>
-      <member name="a8b8g8r8_premultiplied" value="28" c:identifier="GDK_MEMORY_A8B8G8R8_PREMULTIPLIED" glib:nick="a8b8g8r8-premultiplied" glib:name="GDK_MEMORY_A8B8G8R8_PREMULTIPLIED">
-        <doc xml:space="preserve">4 bytes; for alpha, blue, green, red,
-  The color values are premultiplied with the alpha value. Since 4.14</doc>
+      <member name="a8b8g8r8_premultiplied" value="28" c:identifier="GDK_MEMORY_A8B8G8R8_PREMULTIPLIED" version="4.14" glib:nick="a8b8g8r8-premultiplied" glib:name="GDK_MEMORY_A8B8G8R8_PREMULTIPLIED">
+        <doc xml:space="preserve">4 bytes; for alpha, blue, green, red, The color values are premultiplied with
+the alpha value.</doc>
       </member>
-      <member name="b8g8r8x8" value="29" c:identifier="GDK_MEMORY_B8G8R8X8" glib:nick="b8g8r8x8" glib:name="GDK_MEMORY_B8G8R8X8">
-        <doc xml:space="preserve">4 bytes; for blue, green, red, unused. Since 4.14</doc>
+      <member name="b8g8r8x8" value="29" c:identifier="GDK_MEMORY_B8G8R8X8" version="4.14" glib:nick="b8g8r8x8" glib:name="GDK_MEMORY_B8G8R8X8">
+        <doc xml:space="preserve">4 bytes; for blue, green, red, unused.</doc>
       </member>
-      <member name="x8r8g8b8" value="30" c:identifier="GDK_MEMORY_X8R8G8B8" glib:nick="x8r8g8b8" glib:name="GDK_MEMORY_X8R8G8B8">
-        <doc xml:space="preserve">4 bytes; for unused, red, green, blue. Since 4.14</doc>
+      <member name="x8r8g8b8" value="30" c:identifier="GDK_MEMORY_X8R8G8B8" version="4.14" glib:nick="x8r8g8b8" glib:name="GDK_MEMORY_X8R8G8B8">
+        <doc xml:space="preserve">4 bytes; for unused, red, green, blue.</doc>
       </member>
-      <member name="r8g8b8x8" value="31" c:identifier="GDK_MEMORY_R8G8B8X8" glib:nick="r8g8b8x8" glib:name="GDK_MEMORY_R8G8B8X8">
-        <doc xml:space="preserve">4 bytes; for red, green, blue, unused. Since 4.14</doc>
+      <member name="r8g8b8x8" value="31" c:identifier="GDK_MEMORY_R8G8B8X8" version="4.14" glib:nick="r8g8b8x8" glib:name="GDK_MEMORY_R8G8B8X8">
+        <doc xml:space="preserve">4 bytes; for red, green, blue, unused.</doc>
       </member>
-      <member name="x8b8g8r8" value="32" c:identifier="GDK_MEMORY_X8B8G8R8" glib:nick="x8b8g8r8" glib:name="GDK_MEMORY_X8B8G8R8">
-        <doc xml:space="preserve">4 bytes; for unused, blue, green, red. Since 4.14</doc>
+      <member name="x8b8g8r8" value="32" c:identifier="GDK_MEMORY_X8B8G8R8" version="4.14" glib:nick="x8b8g8r8" glib:name="GDK_MEMORY_X8B8G8R8">
+        <doc xml:space="preserve">4 bytes; for unused, blue, green, red.</doc>
       </member>
       <member name="n_formats" value="33" c:identifier="GDK_MEMORY_N_FORMATS" glib:nick="n-formats" glib:name="GDK_MEMORY_N_FORMATS">
         <doc xml:space="preserve">The number of formats. This value will change as
