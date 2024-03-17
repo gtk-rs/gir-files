@@ -16985,12 +16985,16 @@ g_signal_override_class_handler().</doc>
       </parameters>
     </function>
     <function-macro name="signal_connect" c:identifier="g_signal_connect" introspectable="0">
-      <doc xml:space="preserve">Connects a #GCallback function to a signal for a particular object.
+      <doc xml:space="preserve">Connects a [type@GObject.Callback] function to a signal for a particular object.
 
-The handler will be called synchronously, before the default handler of the signal. g_signal_emit() will not return control until all handlers are called.
+The handler will be called synchronously, before the default handler of the signal.
+[func@GObject.signal_emit] will not return control until all handlers are called.
 
-See [memory management of signal handlers][signals.html#Memory_management_of_signal_handlers] for
-details on how to handle the return value and memory management of @data.</doc>
+See [memory management of signal handlers](signals.html#Memory_management_of_signal_handlers) for
+details on how to handle the return value and memory management of @data.
+
+This function cannot fail. If the given signal doesn&#x2019;t exist, a critical
+warning is emitted.</doc>
       <parameters>
         <parameter name="instance">
           <doc xml:space="preserve">the instance to connect to.</doc>
@@ -17009,7 +17013,10 @@ details on how to handle the return value and memory management of @data.</doc>
     <function-macro name="signal_connect_after" c:identifier="g_signal_connect_after" introspectable="0">
       <doc xml:space="preserve">Connects a #GCallback function to a signal for a particular object.
 
-The handler will be called synchronously, after the default handler of the signal.</doc>
+The handler will be called synchronously, after the default handler of the signal.
+
+This function cannot fail. If the given signal doesn&#x2019;t exist, a critical
+warning is emitted.</doc>
       <parameters>
         <parameter name="instance">
           <doc xml:space="preserve">the instance to connect to.</doc>
@@ -17029,9 +17036,12 @@ The handler will be called synchronously, after the default handler of the signa
       <doc xml:space="preserve">Connects a closure to a signal for a particular object.
 
 If @closure is a floating reference (see g_closure_sink()), this function
-takes ownership of @closure.</doc>
+takes ownership of @closure.
+
+This function cannot fail. If the given signal doesn&#x2019;t exist, a critical
+warning is emitted.</doc>
       <return-value transfer-ownership="none">
-        <doc xml:space="preserve">the handler ID (always greater than 0 for successful connections)</doc>
+        <doc xml:space="preserve">the handler ID (always greater than 0)</doc>
         <type name="gulong" c:type="gulong"/>
       </return-value>
       <parameters>
@@ -17058,9 +17068,12 @@ takes ownership of @closure.</doc>
       <doc xml:space="preserve">Connects a closure to a signal for a particular object.
 
 If @closure is a floating reference (see g_closure_sink()), this function
-takes ownership of @closure.</doc>
+takes ownership of @closure.
+
+This function cannot fail. If the given signal doesn&#x2019;t exist, a critical
+warning is emitted.</doc>
       <return-value transfer-ownership="none">
-        <doc xml:space="preserve">the handler ID (always greater than 0 for successful connections)</doc>
+        <doc xml:space="preserve">the handler ID (always greater than 0)</doc>
         <type name="gulong" c:type="gulong"/>
       </return-value>
       <parameters>
@@ -17092,9 +17105,12 @@ takes ownership of @closure.</doc>
 to g_signal_connect(), but allows to provide a #GClosureNotify for the data
 which will be called when the signal handler is disconnected and no longer
 used. Specify @connect_flags if you need `..._after()` or
-`..._swapped()` variants of this function.</doc>
+`..._swapped()` variants of this function.
+
+This function cannot fail. If the given signal doesn&#x2019;t exist, a critical
+warning is emitted.</doc>
       <return-value transfer-ownership="none">
-        <doc xml:space="preserve">the handler ID (always greater than 0 for successful connections)</doc>
+        <doc xml:space="preserve">the handler ID (always greater than 0)</doc>
         <type name="gulong" c:type="gulong"/>
       </return-value>
       <parameters>
@@ -17187,7 +17203,10 @@ button_clicked_cb (GtkButton *button, GtkWidget *other_widget)
 
 g_signal_connect (button, "clicked",
                   (GCallback) button_clicked_cb, other_widget);
-]|</doc>
+]|
+
+This function cannot fail. If the given signal doesn&#x2019;t exist, a critical
+warning is emitted.</doc>
       <parameters>
         <parameter name="instance">
           <doc xml:space="preserve">the instance to connect to.</doc>
