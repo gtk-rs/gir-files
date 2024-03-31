@@ -3,6 +3,7 @@ import os
 import shutil
 
 GIR_FILES = [
+    "Adw-1",
     "Atk-1.0",
     "cairo-1.0",
     "fontconfig-2.0",
