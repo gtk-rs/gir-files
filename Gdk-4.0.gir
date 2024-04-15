@@ -2487,6 +2487,35 @@ above, it will try the fallback cursor. Fallback cursors can themselves have
 fallback cursors again, so it is possible to provide a chain of progressively
 easier to support cursors. If none of the provided cursors can be supported,
 the default cursor will be the ultimate fallback.</doc>
+      <constructor name="new_from_callback" c:identifier="gdk_cursor_new_from_callback" version="4.16" introspectable="0">
+        <doc xml:space="preserve">Creates a new callback-based cursor object.
+
+Cursors of this kind produce textures for the cursor
+image on demand, when the @callback is called.</doc>
+        <return-value transfer-ownership="full" nullable="1">
+          <doc xml:space="preserve">a new `GdkCursor`</doc>
+          <type name="Cursor" c:type="GdkCursor*"/>
+        </return-value>
+        <parameters>
+          <parameter name="callback" transfer-ownership="none" scope="notified" closure="1" destroy="2">
+            <doc xml:space="preserve">the `GdkCursorGetTextureCallback`</doc>
+            <type name="CursorGetTextureCallback" c:type="GdkCursorGetTextureCallback"/>
+          </parameter>
+          <parameter name="data" transfer-ownership="none" nullable="1" allow-none="1">
+            <doc xml:space="preserve">data to pass to @callback</doc>
+            <type name="gpointer" c:type="gpointer"/>
+          </parameter>
+          <parameter name="destroy" transfer-ownership="none" scope="async">
+            <doc xml:space="preserve">destroy notify for @data</doc>
+            <type name="GLib.DestroyNotify" c:type="GDestroyNotify"/>
+          </parameter>
+          <parameter name="fallback" transfer-ownership="none" nullable="1" allow-none="1">
+            <doc xml:space="preserve">the `GdkCursor` to fall back to when
+  this one cannot be supported</doc>
+            <type name="Cursor" c:type="GdkCursor*"/>
+          </parameter>
+        </parameters>
+      </constructor>
       <constructor name="new_from_name" c:identifier="gdk_cursor_new_from_name">
         <doc xml:space="preserve">Creates a new cursor by looking up @name in the current cursor
 theme.
@@ -2671,6 +2700,37 @@ The texture will be %NULL if the cursor was created from a name.</doc>
         <type name="Texture"/>
       </property>
     </class>
+    <callback name="CursorGetTextureCallback" c:type="GdkCursorGetTextureCallback" introspectable="0">
+      <return-value>
+        <type name="Texture" c:type="GdkTexture*"/>
+      </return-value>
+      <parameters>
+        <parameter name="cursor" transfer-ownership="none">
+          <type name="Cursor" c:type="GdkCursor*"/>
+        </parameter>
+        <parameter name="cursor_size" transfer-ownership="none">
+          <type name="gint" c:type="int"/>
+        </parameter>
+        <parameter name="scale" transfer-ownership="none">
+          <type name="gdouble" c:type="double"/>
+        </parameter>
+        <parameter name="width" transfer-ownership="none">
+          <type name="gint" c:type="int*"/>
+        </parameter>
+        <parameter name="height" transfer-ownership="none">
+          <type name="gint" c:type="int*"/>
+        </parameter>
+        <parameter name="hotspot_x" transfer-ownership="none">
+          <type name="gint" c:type="int*"/>
+        </parameter>
+        <parameter name="hotspot_y" transfer-ownership="none">
+          <type name="gint" c:type="int*"/>
+        </parameter>
+        <parameter name="data" transfer-ownership="none" nullable="1" allow-none="1">
+          <type name="gpointer" c:type="gpointer"/>
+        </parameter>
+      </parameters>
+    </callback>
     <function-macro name="DECLARE_INTERNAL_TYPE" c:identifier="GDK_DECLARE_INTERNAL_TYPE" introspectable="0">
       <parameters>
         <parameter name="ModuleObjName">
@@ -4517,22 +4577,20 @@ For further information, see
       <method name="build" c:identifier="gdk_dmabuf_texture_builder_build" version="4.14" throws="1">
         <doc xml:space="preserve">Builds a new `GdkTexture` with the values set up in the builder.
 
-It is a programming error to call this function if any mandatory
-property has not been set.
+It is a programming error to call this function if any mandatory property has not been set.
 
-If the dmabuf is not supported by GTK, %NULL will be returned and @error will be set.
+Not all formats defined in the `drm_fourcc.h` header are supported. You can use
+[method@Gdk.Display.get_dmabuf_formats] to get a list of supported formats. If the
+format is not supported by GTK, %NULL will be returned and @error will be set.
 
 The `destroy` function gets called when the returned texture gets released.
-
-It is possible to call this function multiple times to create multiple textures,
-possibly with changing properties in between.
 
 It is the responsibility of the caller to keep the file descriptors for the planes
 open until the created texture is no longer used, and close them afterwards (possibly
 using the @destroy notify).
 
-Not all formats defined in the `drm_fourcc.h` header are supported. You can use
-[method@Gdk.Display.get_dmabuf_formats] to get a list of supported formats.</doc>
+It is possible to call this function multiple times to create multiple textures,
+possibly with changing properties in between.</doc>
         <return-value transfer-ownership="full" nullable="1">
           <doc xml:space="preserve">a newly built `GdkTexture` or `NULL`
   if the format is not supported</doc>
