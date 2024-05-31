@@ -160,13 +160,24 @@ alignment.</doc>
     <constant name="ANALYZER_ANALYZING" value="1" c:type="G_ANALYZER_ANALYZING">
       <type name="gint" c:type="gint"/>
     </constant>
-    <function-macro name="APPROX_VALUE" c:identifier="G_APPROX_VALUE" introspectable="0">
+    <function-macro name="APPROX_VALUE" c:identifier="G_APPROX_VALUE" version="2.58" introspectable="0">
+      <doc xml:space="preserve">Evaluates to a truth value if the absolute difference between @a and @b is
+smaller than @epsilon, and to a false value otherwise.
+
+For example,
+- `G_APPROX_VALUE (5, 6, 2)` evaluates to true
+- `G_APPROX_VALUE (3.14, 3.15, 0.001)` evaluates to false
+- `G_APPROX_VALUE (n, 0.f, FLT_EPSILON)` evaluates to true if `n` is within
+  the single precision floating point epsilon from zero</doc>
       <parameters>
         <parameter name="a">
+          <doc xml:space="preserve">a numeric value</doc>
         </parameter>
         <parameter name="b">
+          <doc xml:space="preserve">a numeric value</doc>
         </parameter>
         <parameter name="epsilon">
+          <doc xml:space="preserve">a numeric value that expresses the tolerance between @a and @b</doc>
         </parameter>
       </parameters>
     </function-macro>
@@ -1498,6 +1509,8 @@ the queue is destroyed after the final unref.</doc>
       </function>
     </record>
     <constant name="BIG_ENDIAN" value="4321" c:type="G_BIG_ENDIAN">
+      <doc xml:space="preserve">Specifies one of the possible types of byte order.
+See %G_BYTE_ORDER.</doc>
       <type name="gint" c:type="gint"/>
     </constant>
     <function-macro name="BREAKPOINT" c:identifier="G_BREAKPOINT" introspectable="0">
@@ -3621,19 +3634,60 @@ Used for specifying valid identifier characters
 in #GScannerConfig.</doc>
       <type name="utf8" c:type="gchar*"/>
     </constant>
-    <function-macro name="CXX_STD_CHECK_VERSION" c:identifier="G_CXX_STD_CHECK_VERSION" introspectable="0">
+    <function-macro name="CXX_STD_CHECK_VERSION" c:identifier="G_CXX_STD_CHECK_VERSION" version="2.76" introspectable="0">
+      <doc xml:space="preserve">Macro to check if the current compiler supports a specified @version
+of the C++ standard. Such value must be numeric and can be provided both
+in the short form for the well-known versions (e.g. `11`, `17`...) or in
+the complete form otherwise (e.g. `201103L`, `201703L`, `205503L`...).
+
+When a C compiler is used, the macro is defined and returns always %FALSE.
+
+This value is compared against %G_CXX_STD_VERSION.
+
+|[&lt;!-- language="C" --&gt;
+#if G_CXX_STD_CHECK_VERSION(20)
+#endif
+]|
+
+See also: %G_C_STD_CHECK_VERSION</doc>
       <parameters>
         <parameter name="version">
+          <doc xml:space="preserve">The C++ version to be checked for compatibility</doc>
         </parameter>
       </parameters>
     </function-macro>
-    <function-macro name="C_STD_CHECK_VERSION" c:identifier="G_C_STD_CHECK_VERSION" introspectable="0">
+    <function-macro name="C_STD_CHECK_VERSION" c:identifier="G_C_STD_CHECK_VERSION" version="2.76" introspectable="0">
+      <doc xml:space="preserve">Macro to check if the current compiler supports a specified @version
+of the C standard. Such value must be numeric and can be provided both
+in the short form for the well-known versions (e.g. `90`, `99`...) or in
+the complete form otherwise (e.g. `199000L`, `199901L`, `205503L`...).
+
+When a C++ compiler is used, the macro is defined and returns always %FALSE.
+
+This value is compared against %G_C_STD_VERSION.
+
+|[&lt;!-- language="C" --&gt;
+#if G_C_STD_CHECK_VERSION(17)
+#endif
+]|
+
+See also: %G_CXX_STD_CHECK_VERSION</doc>
       <parameters>
         <parameter name="version">
+          <doc xml:space="preserve">The C version to be checked for compatibility</doc>
         </parameter>
       </parameters>
     </function-macro>
-    <constant name="C_STD_VERSION" value="199000" c:type="G_C_STD_VERSION">
+    <constant name="C_STD_VERSION" value="199000" c:type="G_C_STD_VERSION" version="2.76">
+      <doc xml:space="preserve">The C standard version the code is compiling against, it's normally
+defined with the same value of `__STDC_VERSION__` for C standard
+compatible compilers, while it uses the lowest standard version
+in pure MSVC, given that in such compiler the definition depends on
+a compilation flag.
+
+This is granted to be undefined when compiling with a C++ compiler.
+
+See also: %G_C_STD_CHECK_VERSION and %G_CXX_STD_VERSION</doc>
       <type name="gint" c:type="gint"/>
     </constant>
     <record name="Cache" c:type="GCache" disguised="1" opaque="1" deprecated="1" deprecated-version="2.32">
@@ -4767,29 +4821,86 @@ flags &amp; ~G_DATALIST_FLAGS_MASK != 0 is an error.</doc>
 functions when debugging. It prints the current monotonic time and the code
 location using %G_STRLOC.</doc>
     </function-macro>
-    <function-macro name="DEFINE_AUTOPTR_CLEANUP_FUNC" c:identifier="G_DEFINE_AUTOPTR_CLEANUP_FUNC" introspectable="0">
+    <function-macro name="DEFINE_AUTOPTR_CLEANUP_FUNC" c:identifier="G_DEFINE_AUTOPTR_CLEANUP_FUNC" version="2.44" introspectable="0">
+      <doc xml:space="preserve">Defines the appropriate cleanup function for a pointer type.
+
+The function will not be called if the variable to be cleaned up
+contains %NULL.
+
+This will typically be the `_free()` or `_unref()` function for the given
+type.
+
+With this definition, it will be possible to use g_autoptr() with
+@TypeName.
+
+|[
+G_DEFINE_AUTOPTR_CLEANUP_FUNC(GObject, g_object_unref)
+]|
+
+This macro should be used unconditionally; it is a no-op on compilers
+where cleanup is not supported.</doc>
       <parameters>
         <parameter name="TypeName">
+          <doc xml:space="preserve">a type name to define a g_autoptr() cleanup function for</doc>
         </parameter>
         <parameter name="func">
+          <doc xml:space="preserve">the cleanup function</doc>
         </parameter>
       </parameters>
     </function-macro>
-    <function-macro name="DEFINE_AUTO_CLEANUP_CLEAR_FUNC" c:identifier="G_DEFINE_AUTO_CLEANUP_CLEAR_FUNC" introspectable="0">
+    <function-macro name="DEFINE_AUTO_CLEANUP_CLEAR_FUNC" c:identifier="G_DEFINE_AUTO_CLEANUP_CLEAR_FUNC" version="2.44" introspectable="0">
+      <doc xml:space="preserve">Defines the appropriate cleanup function for a type.
+
+This will typically be the `_clear()` function for the given type.
+
+With this definition, it will be possible to use g_auto() with
+@TypeName.
+
+|[
+G_DEFINE_AUTO_CLEANUP_CLEAR_FUNC(GQueue, g_queue_clear)
+]|
+
+This macro should be used unconditionally; it is a no-op on compilers
+where cleanup is not supported.</doc>
       <parameters>
         <parameter name="TypeName">
+          <doc xml:space="preserve">a type name to define a g_auto() cleanup function for</doc>
         </parameter>
         <parameter name="func">
+          <doc xml:space="preserve">the clear function</doc>
         </parameter>
       </parameters>
     </function-macro>
-    <function-macro name="DEFINE_AUTO_CLEANUP_FREE_FUNC" c:identifier="G_DEFINE_AUTO_CLEANUP_FREE_FUNC" introspectable="0">
+    <function-macro name="DEFINE_AUTO_CLEANUP_FREE_FUNC" c:identifier="G_DEFINE_AUTO_CLEANUP_FREE_FUNC" version="2.44" introspectable="0">
+      <doc xml:space="preserve">Defines the appropriate cleanup function for a type.
+
+With this definition, it will be possible to use g_auto() with
+@TypeName.
+
+This function will be rarely used.  It is used with pointer-based
+typedefs and non-pointer types where the value of the variable
+represents a resource that must be freed.  Two examples are #GStrv
+and file descriptors.
+
+@none specifies the "none" value for the type in question.  It is
+probably something like %NULL or `-1`.  If the variable is found to
+contain this value then the free function will not be called.
+
+|[
+G_DEFINE_AUTO_CLEANUP_FREE_FUNC(GStrv, g_strfreev, NULL)
+]|
+
+This macro should be used unconditionally; it is a no-op on compilers
+where cleanup is not supported.</doc>
       <parameters>
         <parameter name="TypeName">
+          <doc xml:space="preserve">a type name to define a g_auto() cleanup function for</doc>
         </parameter>
         <parameter name="func">
+          <doc xml:space="preserve">the free function</doc>
         </parameter>
         <parameter name="none">
+          <doc xml:space="preserve">the "none" value for the type</doc>
         </parameter>
       </parameters>
     </function-macro>
@@ -5554,9 +5665,13 @@ in the macro, so you shouldn't use double quotes.</doc>
       </parameters>
     </function-macro>
     <constant name="DIR_SEPARATOR" value="47" c:type="G_DIR_SEPARATOR">
+      <doc xml:space="preserve">The directory separator character.
+This is '/' on UNIX machines and '\' under Windows.</doc>
       <type name="gint" c:type="gint"/>
     </constant>
     <constant name="DIR_SEPARATOR_S" value="/" c:type="G_DIR_SEPARATOR_S">
+      <doc xml:space="preserve">The directory separator as a string.
+This is "/" on UNIX machines and "\" under Windows.</doc>
       <type name="utf8" c:type="gchar*"/>
     </constant>
     <record name="Data" c:type="GData" disguised="1" opaque="1">
@@ -8067,7 +8182,12 @@ modified, and might thus be a read-only literal string.</doc>
       </function>
     </record>
     <union name="DoubleIEEE754" c:type="GDoubleIEEE754">
+      <doc xml:space="preserve">The #GFloatIEEE754 and #GDoubleIEEE754 unions are used to access the sign,
+mantissa and exponent of IEEE floats and doubles. These unions are defined
+as appropriate for a given platform. IEEE floats and doubles are supported
+(used for storage) by at least Intel, PPC and Sparc.</doc>
       <field name="v_double" writable="1">
+        <doc xml:space="preserve">the double value</doc>
         <type name="gdouble" c:type="gdouble"/>
       </field>
       <record name="mpn" c:type="mpn">
@@ -8107,6 +8227,7 @@ object.</doc>
       </parameters>
     </callback>
     <constant name="E" value="2.718282" c:type="G_E">
+      <doc xml:space="preserve">The base of natural logarithms.</doc>
       <type name="gdouble" c:type="gdouble"/>
     </constant>
     <function-macro name="ENCODE_VERSION" c:identifier="G_ENCODE_VERSION" introspectable="0">
@@ -8652,7 +8773,12 @@ performance.</doc>
       </member>
     </bitfield>
     <union name="FloatIEEE754" c:type="GFloatIEEE754">
+      <doc xml:space="preserve">The #GFloatIEEE754 and #GDoubleIEEE754 unions are used to access the sign,
+mantissa and exponent of IEEE floats and doubles. These unions are defined
+as appropriate for a given platform. IEEE floats and doubles are supported
+(used for storage) by at least Intel, PPC and Sparc.</doc>
       <field name="v_float" writable="1">
+        <doc xml:space="preserve">the double value</doc>
         <type name="gfloat" c:type="gfloat"/>
       </field>
       <record name="mpn" c:type="mpn">
@@ -8802,11 +8928,21 @@ See the [GNU C documentation](https://gcc.gnu.org/onlinedocs/gcc/Common-Function
         </parameter>
       </parameters>
     </function-macro>
-    <function-macro name="GNUC_CHECK_VERSION" c:identifier="G_GNUC_CHECK_VERSION" introspectable="0">
+    <function-macro name="GNUC_CHECK_VERSION" c:identifier="G_GNUC_CHECK_VERSION" version="2.42" introspectable="0">
+      <doc xml:space="preserve">Expands to a check for a compiler with __GNUC__ defined and a version
+greater than or equal to the major and minor numbers provided. For example,
+the following would only match on compilers such as GCC 4.8 or newer.
+
+|[&lt;!-- language="C" --&gt;
+#if G_GNUC_CHECK_VERSION(4, 8)
+#endif
+]|</doc>
       <parameters>
         <parameter name="major">
+          <doc xml:space="preserve">major version to check against</doc>
         </parameter>
         <parameter name="minor">
+          <doc xml:space="preserve">minor version to check against</doc>
         </parameter>
       </parameters>
     </function-macro>
@@ -8992,6 +9128,7 @@ for details.</doc>
       <type name="gint" c:type="gint"/>
     </constant>
     <constant name="HAVE_GNUC_VISIBILITY" value="1" c:type="G_HAVE_GNUC_VISIBILITY">
+      <doc xml:space="preserve">Defined to 1 if gcc-style visibility handling is supported.</doc>
       <type name="gint" c:type="gint"/>
     </constant>
     <constant name="HAVE_GROWING_STACK" value="0" c:type="G_HAVE_GROWING_STACK">
@@ -11046,9 +11183,11 @@ more convenient than the raw iconv wrappers.</doc>
       </function>
     </record>
     <constant name="IEEE754_DOUBLE_BIAS" value="1023" c:type="G_IEEE754_DOUBLE_BIAS">
+      <doc xml:space="preserve">The bias by which exponents in double-precision floats are offset.</doc>
       <type name="gint" c:type="gint"/>
     </constant>
     <constant name="IEEE754_FLOAT_BIAS" value="127" c:type="G_IEEE754_FLOAT_BIAS">
+      <doc xml:space="preserve">The bias by which exponents in single-precision floats are offset.</doc>
       <type name="gint" c:type="gint"/>
     </constant>
     <record name="IOChannel" c:type="GIOChannel" glib:type-name="GIOChannel" glib:get-type="g_io_channel_get_type" c:symbol-prefix="io_channel">
@@ -12214,9 +12353,13 @@ in a generic way.</doc>
         <doc xml:space="preserve">Resource temporarily unavailable.</doc>
       </member>
     </enumeration>
-    <function-macro name="IS_DIR_SEPARATOR" c:identifier="G_IS_DIR_SEPARATOR" introspectable="0">
+    <function-macro name="IS_DIR_SEPARATOR" c:identifier="G_IS_DIR_SEPARATOR" version="2.6" introspectable="0">
+      <doc xml:space="preserve">Checks whether a character is a directory
+separator. It returns %TRUE for '/' on UNIX
+machines and for '\' or '/' under Windows.</doc>
       <parameters>
         <parameter name="c">
+          <doc xml:space="preserve">a character</doc>
         </parameter>
       </parameters>
     </function-macro>
@@ -13860,19 +14003,31 @@ reaches zero, frees the key file and all its allocated memory.</doc>
   written back.</doc>
       </member>
     </bitfield>
-    <function-macro name="LIKELY" c:identifier="G_LIKELY" introspectable="0">
+    <function-macro name="LIKELY" c:identifier="G_LIKELY" version="2.2" introspectable="0">
+      <doc xml:space="preserve">Hints the compiler that the expression is likely to evaluate to
+a true value. The compiler may use this information for optimizations.
+
+|[&lt;!-- language="C" --&gt;
+if (G_LIKELY (random () != 1))
+  g_print ("not one");
+]|</doc>
       <parameters>
         <parameter name="expr">
+          <doc xml:space="preserve">the expression</doc>
         </parameter>
       </parameters>
     </function-macro>
     <constant name="LITTLE_ENDIAN" value="1234" c:type="G_LITTLE_ENDIAN">
+      <doc xml:space="preserve">Specifies one of the possible types of byte order.
+See %G_BYTE_ORDER.</doc>
       <type name="gint" c:type="gint"/>
     </constant>
     <constant name="LN10" value="2.302585" c:type="G_LN10">
+      <doc xml:space="preserve">The natural logarithm of 10.</doc>
       <type name="gdouble" c:type="gdouble"/>
     </constant>
     <constant name="LN2" value="0.693147" c:type="G_LN2">
+      <doc xml:space="preserve">The natural logarithm of 2.</doc>
       <type name="gdouble" c:type="gdouble"/>
     </constant>
     <function-macro name="LOCK" c:identifier="G_LOCK" introspectable="0">
@@ -13942,6 +14097,7 @@ module.</doc>
       </parameters>
     </function-macro>
     <constant name="LOG_2_BASE_10" value="0.301030" c:type="G_LOG_2_BASE_10">
+      <doc xml:space="preserve">Multiplying the base 2 exponent by this number yields the base 10 exponent.</doc>
       <type name="gdouble" c:type="gdouble"/>
     </constant>
     <constant name="LOG_DOMAIN" value="0" c:type="G_LOG_DOMAIN">
@@ -17442,8 +17598,13 @@ in structures and initialised with g_mutex_init().</doc-deprecated>
       </parameters>
     </function-macro>
     <function-macro name="N_ELEMENTS" c:identifier="G_N_ELEMENTS" introspectable="0">
+      <doc xml:space="preserve">Determines the number of elements in an array. The array must be
+declared so the compiler knows its size at compile-time; this
+macro will not work on an array allocated on the heap, only static
+arrays or arrays on the stack.</doc>
       <parameters>
         <parameter name="arr">
+          <doc xml:space="preserve">the array</doc>
         </parameter>
       </parameters>
     </function-macro>
@@ -19153,9 +19314,12 @@ and all memory allocated by the @group is released.</doc>
       </parameters>
     </callback>
     <constant name="PDP_ENDIAN" value="3412" c:type="G_PDP_ENDIAN">
+      <doc xml:space="preserve">Specifies one of the possible types of byte order
+(currently unused). See %G_BYTE_ORDER.</doc>
       <type name="gint" c:type="gint"/>
     </constant>
     <constant name="PI" value="3.141593" c:type="G_PI">
+      <doc xml:space="preserve">The value of pi (ratio of circle's circumference to its diameter).</doc>
       <type name="gdouble" c:type="gdouble"/>
     </constant>
     <constant name="PID_FORMAT" value="i" c:type="G_PID_FORMAT" version="2.50">
@@ -19164,9 +19328,11 @@ when printing a #GPid.</doc>
       <type name="utf8" c:type="gchar*"/>
     </constant>
     <constant name="PI_2" value="1.570796" c:type="G_PI_2">
+      <doc xml:space="preserve">Pi divided by 2.</doc>
       <type name="gdouble" c:type="gdouble"/>
     </constant>
     <constant name="PI_4" value="0.785398" c:type="G_PI_4">
+      <doc xml:space="preserve">Pi divided by 4.</doc>
       <type name="gdouble" c:type="gdouble"/>
     </constant>
     <constant name="POLLFD_FORMAT" value="%d" c:type="G_POLLFD_FORMAT">
@@ -19617,15 +19783,15 @@ This function can be passed to g_hash_table_new() as the
       </function>
     </record>
     <record name="PatternSpec" c:type="GPatternSpec" opaque="1" glib:type-name="GPatternSpec" glib:get-type="g_pattern_spec_get_type" c:symbol-prefix="pattern_spec">
-      <doc xml:space="preserve">A `GPatternSpec` struct is the 'compiled' form of a glob-style pattern.
+      <doc xml:space="preserve">A `GPatternSpec` struct is the &#x2018;compiled&#x2019; form of a glob-style pattern.
 
 The [func@GLib.pattern_match_simple] and [method@GLib.PatternSpec.match] functions
-match a string against a pattern containing '*' and '?' wildcards with similar
-semantics as the standard `glob()` function: '*' matches an arbitrary,
-possibly empty, string, '?' matches an arbitrary character.
+match a string against a pattern containing `*` and `?` wildcards with similar
+semantics as the standard `glob()` function: `*` matches an arbitrary,
+possibly empty, string, `?` matches an arbitrary character.
 
-Note that in contrast to `glob()`, the '/' character can be matched by
-the wildcards, there are no '[...]' character ranges and '*' and '?'
+Note that in contrast to [`glob()`](man:glob(3)), the `/` character can be
+matched by the wildcards, there are no `[&#x2026;]` character ranges and `*` and `?`
 can not be escaped to include them literally in a pattern.
 
 When multiple strings must be matched against the same pattern, it is better
@@ -19634,9 +19800,9 @@ to compile the pattern to a [struct@GLib.PatternSpec] using
 instead of [func@GLib.pattern_match_simple]. This avoids the overhead of repeated
 pattern compilation.</doc>
       <constructor name="new" c:identifier="g_pattern_spec_new">
-        <doc xml:space="preserve">Compiles a pattern to a #GPatternSpec.</doc>
+        <doc xml:space="preserve">Compiles a pattern to a [type@GLib.PatternSpec].</doc>
         <return-value transfer-ownership="full">
-          <doc xml:space="preserve">a newly-allocated #GPatternSpec</doc>
+          <doc xml:space="preserve">a newly-allocated [type@GLib.PatternSpec]</doc>
           <type name="PatternSpec" c:type="GPatternSpec*"/>
         </return-value>
         <parameters>
@@ -19647,7 +19813,7 @@ pattern compilation.</doc>
         </parameters>
       </constructor>
       <method name="copy" c:identifier="g_pattern_spec_copy" version="2.70">
-        <doc xml:space="preserve">Copies @pspec in a new #GPatternSpec.</doc>
+        <doc xml:space="preserve">Copies @pspec in a new [type@GLib.PatternSpec].</doc>
         <return-value transfer-ownership="full">
           <doc xml:space="preserve">a copy of @pspec.</doc>
           <type name="PatternSpec" c:type="GPatternSpec*"/>
@@ -19678,7 +19844,7 @@ match the same set of strings.</doc>
         </parameters>
       </method>
       <method name="free" c:identifier="g_pattern_spec_free">
-        <doc xml:space="preserve">Frees the memory allocated for the #GPatternSpec.</doc>
+        <doc xml:space="preserve">Frees the memory allocated for the [type@GLib.PatternSpec].</doc>
         <return-value transfer-ownership="none">
           <type name="none" c:type="void"/>
         </return-value>
@@ -19690,23 +19856,25 @@ match the same set of strings.</doc>
         </parameters>
       </method>
       <method name="match" c:identifier="g_pattern_spec_match" version="2.70">
-        <doc xml:space="preserve">Matches a string against a compiled pattern. Passing the correct
+        <doc xml:space="preserve">Matches a string against a compiled pattern.
+
+Passing the correct
 length of the string given is mandatory. The reversed string can be
-omitted by passing %NULL, this is more efficient if the reversed
+omitted by passing `NULL`, this is more efficient if the reversed
 version of the string to be matched is not at hand, as
-g_pattern_match() will only construct it if the compiled pattern
+[method@GLib.PatternSpec.match] will only construct it if the compiled pattern
 requires reverse matches.
 
 Note that, if the user code will (possibly) match a string against a
 multitude of patterns containing wildcards, chances are high that
-some patterns will require a reversed string. In this case, it's
+some patterns will require a reversed string. In this case, it&#x2019;s
 more efficient to provide the reversed string to avoid multiple
-constructions thereof in the various calls to g_pattern_match().
+constructions thereof in the various calls to [method@GLib.PatternSpec.match].
 
 Note also that the reverse of a UTF-8 encoded string can in general
-not be obtained by g_strreverse(). This works only if the string
+not be obtained by [func@GLib.strreverse]. This works only if the string
 does not contain any multibyte characters. GLib offers the
-g_utf8_strreverse() function to reverse UTF-8 encoded strings.</doc>
+[func@GLib.utf8_strreverse] function to reverse UTF-8 encoded strings.</doc>
         <return-value transfer-ownership="none">
           <doc xml:space="preserve">%TRUE if @string matches @pspec</doc>
           <type name="gboolean" c:type="gboolean"/>
@@ -19717,8 +19885,8 @@ g_utf8_strreverse() function to reverse UTF-8 encoded strings.</doc>
             <type name="PatternSpec" c:type="GPatternSpec*"/>
           </instance-parameter>
           <parameter name="string_length" transfer-ownership="none">
-            <doc xml:space="preserve">the length of @string (in bytes, i.e. strlen(),
-    not g_utf8_strlen())</doc>
+            <doc xml:space="preserve">the length of @string (in bytes, i.e. `strlen()`,
+   not [func@GLib.utf8_strlen])</doc>
             <type name="gsize" c:type="gsize"/>
           </parameter>
           <parameter name="string" transfer-ownership="none">
@@ -19726,15 +19894,17 @@ g_utf8_strreverse() function to reverse UTF-8 encoded strings.</doc>
             <type name="utf8" c:type="const gchar*"/>
           </parameter>
           <parameter name="string_reversed" transfer-ownership="none" nullable="1" allow-none="1">
-            <doc xml:space="preserve">the reverse of @string or %NULL</doc>
+            <doc xml:space="preserve">the reverse of @string</doc>
             <type name="utf8" c:type="const gchar*"/>
           </parameter>
         </parameters>
       </method>
       <method name="match_string" c:identifier="g_pattern_spec_match_string" version="2.70">
-        <doc xml:space="preserve">Matches a string against a compiled pattern. If the string is to be
+        <doc xml:space="preserve">Matches a string against a compiled pattern.
+
+If the string is to be
 matched against more than one pattern, consider using
-g_pattern_match() instead while supplying the reversed string.</doc>
+[method@GLib.PatternSpec.match] instead while supplying the reversed string.</doc>
         <return-value transfer-ownership="none">
           <doc xml:space="preserve">%TRUE if @string matches @pspec</doc>
           <type name="gboolean" c:type="gboolean"/>
@@ -24101,9 +24271,13 @@ currently the number of fields must be 2.</doc>
       </function>
     </record>
     <constant name="SEARCHPATH_SEPARATOR" value="58" c:type="G_SEARCHPATH_SEPARATOR">
+      <doc xml:space="preserve">The search path separator character.
+This is ':' on UNIX machines and ';' under Windows.</doc>
       <type name="gint" c:type="gint"/>
     </constant>
     <constant name="SEARCHPATH_SEPARATOR_S" value=":" c:type="G_SEARCHPATH_SEPARATOR_S">
+      <doc xml:space="preserve">The search path separator as a string.
+This is ":" on UNIX machines and ";" under Windows.</doc>
       <type name="utf8" c:type="gchar*"/>
     </constant>
     <constant name="SIZEOF_LONG" value="8" c:type="GLIB_SIZEOF_LONG">
@@ -24932,11 +25106,26 @@ the #GSource from the main loop.</doc>
       <type name="gboolean" c:type="gboolean"/>
     </constant>
     <constant name="SQRT2" value="1.414214" c:type="G_SQRT2">
+      <doc xml:space="preserve">The square root of two.</doc>
       <type name="gdouble" c:type="gdouble"/>
     </constant>
     <function-macro name="STRINGIFY" c:identifier="G_STRINGIFY" introspectable="0">
+      <doc xml:space="preserve">Accepts a macro or a string and converts it into a string after
+preprocessor argument expansion. For example, the following code:
+
+|[&lt;!-- language="C" --&gt;
+#define AGE 27
+const gchar *greeting = G_STRINGIFY (AGE) " today!";
+]|
+
+is transformed by the preprocessor into (code equivalent to):
+
+|[&lt;!-- language="C" --&gt;
+const gchar *greeting = "27 today!";
+]|</doc>
       <parameters>
         <parameter name="macro_or_string">
+          <doc xml:space="preserve">a macro or a string</doc>
         </parameter>
       </parameters>
     </function-macro>
@@ -24947,28 +25136,43 @@ the #GSource from the main loop.</doc>
       </parameters>
     </function-macro>
     <function-macro name="STRUCT_MEMBER" c:identifier="G_STRUCT_MEMBER" introspectable="0">
+      <doc xml:space="preserve">Returns a member of a structure at a given offset, using the given type.</doc>
       <parameters>
         <parameter name="member_type">
+          <doc xml:space="preserve">the type of the struct field</doc>
         </parameter>
         <parameter name="struct_p">
+          <doc xml:space="preserve">a pointer to a struct</doc>
         </parameter>
         <parameter name="struct_offset">
+          <doc xml:space="preserve">the offset of the field from the start of the struct,
+    in bytes</doc>
         </parameter>
       </parameters>
     </function-macro>
     <function-macro name="STRUCT_MEMBER_P" c:identifier="G_STRUCT_MEMBER_P" introspectable="0">
+      <doc xml:space="preserve">Returns an untyped pointer to a given offset of a struct.</doc>
       <parameters>
         <parameter name="struct_p">
+          <doc xml:space="preserve">a pointer to a struct</doc>
         </parameter>
         <parameter name="struct_offset">
+          <doc xml:space="preserve">the offset from the start of the struct, in bytes</doc>
         </parameter>
       </parameters>
     </function-macro>
     <function-macro name="STRUCT_OFFSET" c:identifier="G_STRUCT_OFFSET" introspectable="0">
+      <doc xml:space="preserve">Returns the offset, in bytes, of a member of a struct.
+
+Consider using standard C `offsetof()`, available since at least C89
+and C++98, in new code (but note that `offsetof()` returns a `size_t`
+rather than a `long`).</doc>
       <parameters>
         <parameter name="struct_type">
+          <doc xml:space="preserve">a structure type, e.g. #GtkWidget</doc>
         </parameter>
         <parameter name="member">
+          <doc xml:space="preserve">a field in the structure, e.g. @window</doc>
         </parameter>
       </parameters>
     </function-macro>
@@ -27132,7 +27336,7 @@ should not count on @func being called with @data as its first
 parameter. Cast @func with G_SOURCE_FUNC() to avoid warnings about
 incompatible function types.
 
-See [memory management of sources][mainloop-memory-management] for details
+See [mainloop memory management](main-loop.html#memory-management-of-sources) for details
 on how to handle memory management of @data.
 
 Typically, you won't use this function. Instead use functions specific
@@ -32847,9 +33051,17 @@ decomposition of a single Unicode character.
 This is as defined by Unicode 6.1.</doc>
       <type name="gint" c:type="gint"/>
     </constant>
-    <function-macro name="UNLIKELY" c:identifier="G_UNLIKELY" introspectable="0">
+    <function-macro name="UNLIKELY" c:identifier="G_UNLIKELY" version="2.2" introspectable="0">
+      <doc xml:space="preserve">Hints the compiler that the expression is unlikely to evaluate to
+a true value. The compiler may use this information for optimizations.
+
+|[&lt;!-- language="C" --&gt;
+if (G_UNLIKELY (random () == 1))
+  g_print ("a random one");
+]|</doc>
       <parameters>
         <parameter name="expr">
+          <doc xml:space="preserve">the expression</doc>
         </parameter>
       </parameters>
     </function-macro>
@@ -39725,10 +39937,19 @@ function passed to g_atexit().</doc>
       </return-value>
     </callback>
     <function-macro name="WIN32_DLLMAIN_FOR_DLL_NAME" c:identifier="G_WIN32_DLLMAIN_FOR_DLL_NAME" introspectable="0">
+      <doc xml:space="preserve">On Windows, this macro defines a DllMain() function that stores
+the actual DLL name that the code being compiled will be included in.
+
+On non-Windows platforms, expands to nothing.</doc>
       <parameters>
         <parameter name="static">
+          <doc xml:space="preserve">empty or "static"</doc>
         </parameter>
         <parameter name="dll_name">
+          <doc xml:space="preserve">the name of the (pointer to the) char array where
+    the DLL name will be stored. If this is used, you must also
+    include `windows.h`. If you need a more complex DLL entry
+    point function, you cannot use this</doc>
         </parameter>
       </parameters>
     </function-macro>
@@ -43358,9 +43579,31 @@ pointer is set to %NULL.
 A macro is also included that allows this function to be used without
 pointer casts. This will mask any warnings about incompatible function types
 or calling conventions, so you must ensure that your @destroy function is
-compatible with being called as `GDestroyNotify` using the standard calling
-convention for the platform that GLib was compiled for; otherwise the program
-will experience undefined behaviour.</doc>
+compatible with being called as [callback@GLib.DestroyNotify] using the
+standard calling convention for the platform that GLib was compiled for;
+otherwise the program will experience undefined behaviour.
+
+Examples of this kind of undefined behaviour include using many Windows Win32
+APIs, as well as many if not all OpenGL and Vulkan calls on 32-bit Windows,
+which typically use the `__stdcall` calling convention rather than the
+`__cdecl` calling convention.
+
+The affected functions can be used by wrapping them in a
+[callback@GLib.DestroyNotify] that is declared with the standard calling
+convention:
+
+```c
+// Wrapper needed to avoid mismatched calling conventions on Windows
+static void
+destroy_sync (void *sync)
+{
+  glDeleteSync (sync);
+}
+
+// &#x2026;
+
+g_clear_pointer (&amp;sync, destroy_sync);
+```</doc>
       <return-value transfer-ownership="none">
         <type name="none" c:type="void"/>
       </return-value>
@@ -43371,7 +43614,7 @@ will experience undefined behaviour.</doc>
           <type name="gpointer" c:type="gpointer*"/>
         </parameter>
         <parameter name="destroy" transfer-ownership="none" scope="async">
-          <doc xml:space="preserve">a function to which a gpointer can be passed, to destroy *@pp</doc>
+          <doc xml:space="preserve">a function to which a gpointer can be passed, to destroy `*pp`</doc>
           <type name="DestroyNotify" c:type="GDestroyNotify"/>
         </parameter>
       </parameters>
@@ -47570,14 +47813,18 @@ the canonical presentation form will be entirely ASCII.</doc>
       </parameters>
     </function>
     <function-macro name="htonl" c:identifier="g_htonl" introspectable="0">
+      <doc xml:space="preserve">Converts a 32-bit integer value from host to network byte order.</doc>
       <parameters>
         <parameter name="val">
+          <doc xml:space="preserve">a 32-bit integer value in host byte order</doc>
         </parameter>
       </parameters>
     </function-macro>
     <function-macro name="htons" c:identifier="g_htons" introspectable="0">
+      <doc xml:space="preserve">Converts a 16-bit integer value from host to network byte order.</doc>
       <parameters>
         <parameter name="val">
+          <doc xml:space="preserve">a 16-bit integer value in host byte order</doc>
         </parameter>
       </parameters>
     </function-macro>
@@ -47652,7 +47899,7 @@ default idle priority, %G_PRIORITY_DEFAULT_IDLE.  If the function
 returns %FALSE it is automatically removed from the list of event
 sources and will not be called again.
 
-See [memory management of sources][mainloop-memory-management] for details
+See [mainloop memory management](main-loop.html#memory-management-of-sources) for details
 on how to handle the return value and memory management of @data.
 
 This internally creates a main loop source using g_idle_source_new()
@@ -47682,7 +47929,7 @@ events pending.
 If the function returns %G_SOURCE_REMOVE or %FALSE it is automatically
 removed from the list of event sources and will not be called again.
 
-See [memory management of sources][mainloop-memory-management] for details
+See [mainloop memory management](main-loop.html#memory-management-of-sources) for details
 on how to handle the return value and memory management of @data.
 
 This internally creates a main loop source using g_idle_source_new()
@@ -50118,14 +50365,18 @@ vulnerability.</doc>
       </parameters>
     </function>
     <function-macro name="ntohl" c:identifier="g_ntohl" introspectable="0">
+      <doc xml:space="preserve">Converts a 32-bit integer value from network to host byte order.</doc>
       <parameters>
         <parameter name="val">
+          <doc xml:space="preserve">a 32-bit integer value in network byte order</doc>
         </parameter>
       </parameters>
     </function-macro>
     <function-macro name="ntohs" c:identifier="g_ntohs" introspectable="0">
+      <doc xml:space="preserve">Converts a 16-bit integer value from network to host byte order.</doc>
       <parameters>
         <parameter name="val">
+          <doc xml:space="preserve">a 16-bit integer value in network byte order</doc>
         </parameter>
       </parameters>
     </function-macro>
@@ -50594,24 +50845,26 @@ is not an absolute path it returns %NULL.</doc>
       </parameters>
     </function>
     <function name="pattern_match" c:identifier="g_pattern_match" introspectable="0" deprecated="1" deprecated-version="2.70">
-      <doc xml:space="preserve">Matches a string against a compiled pattern. Passing the correct
+      <doc xml:space="preserve">Matches a string against a compiled pattern.
+
+Passing the correct
 length of the string given is mandatory. The reversed string can be
-omitted by passing %NULL, this is more efficient if the reversed
+omitted by passing `NULL`, this is more efficient if the reversed
 version of the string to be matched is not at hand, as
-g_pattern_match() will only construct it if the compiled pattern
+`g_pattern_match()` will only construct it if the compiled pattern
 requires reverse matches.
 
 Note that, if the user code will (possibly) match a string against a
 multitude of patterns containing wildcards, chances are high that
-some patterns will require a reversed string. In this case, it's
+some patterns will require a reversed string. In this case, it&#x2019;s
 more efficient to provide the reversed string to avoid multiple
-constructions thereof in the various calls to g_pattern_match().
+constructions thereof in the various calls to `g_pattern_match()`.
 
 Note also that the reverse of a UTF-8 encoded string can in general
-not be obtained by g_strreverse(). This works only if the string
+not be obtained by [func@GLib.strreverse]. This works only if the string
 does not contain any multibyte characters. GLib offers the
-g_utf8_strreverse() function to reverse UTF-8 encoded strings.</doc>
-      <doc-deprecated xml:space="preserve">Use g_pattern_spec_match() instead</doc-deprecated>
+[func@GLib.utf8_strreverse] function to reverse UTF-8 encoded strings.</doc>
+      <doc-deprecated xml:space="preserve">Use [method@GLib.PatternSpec.match] instead</doc-deprecated>
       <return-value transfer-ownership="none">
         <doc xml:space="preserve">%TRUE if @string matches @pspec</doc>
         <type name="gboolean" c:type="gboolean"/>
@@ -50622,8 +50875,8 @@ g_utf8_strreverse() function to reverse UTF-8 encoded strings.</doc>
           <type name="PatternSpec" c:type="GPatternSpec*"/>
         </parameter>
         <parameter name="string_length" transfer-ownership="none">
-          <doc xml:space="preserve">the length of @string (in bytes, i.e. strlen(),
-    not g_utf8_strlen())</doc>
+          <doc xml:space="preserve">the length of @string (in bytes, i.e. `strlen()`,
+   not [func@GLib.utf8_strlen])</doc>
           <type name="guint" c:type="guint"/>
         </parameter>
         <parameter name="string" transfer-ownership="none">
@@ -50631,16 +50884,18 @@ g_utf8_strreverse() function to reverse UTF-8 encoded strings.</doc>
           <type name="utf8" c:type="const gchar*"/>
         </parameter>
         <parameter name="string_reversed" transfer-ownership="none" nullable="1" allow-none="1">
-          <doc xml:space="preserve">the reverse of @string or %NULL</doc>
+          <doc xml:space="preserve">the reverse of @string</doc>
           <type name="utf8" c:type="const gchar*"/>
         </parameter>
       </parameters>
     </function>
     <function name="pattern_match_simple" c:identifier="g_pattern_match_simple">
-      <doc xml:space="preserve">Matches a string against a pattern given as a string. If this
-function is to be called in a loop, it's more efficient to compile
-the pattern once with g_pattern_spec_new() and call
-g_pattern_match_string() repeatedly.</doc>
+      <doc xml:space="preserve">Matches a string against a pattern given as a string.
+
+If this
+function is to be called in a loop, it&#x2019;s more efficient to compile
+the pattern once with [ctor@GLib.PatternSpec.new] and call
+[method@GLib.PatternSpec.match_string] repeatedly.</doc>
       <return-value transfer-ownership="none">
         <doc xml:space="preserve">%TRUE if @string matches @pspec</doc>
         <type name="gboolean" c:type="gboolean"/>
@@ -50657,10 +50912,12 @@ g_pattern_match_string() repeatedly.</doc>
       </parameters>
     </function>
     <function name="pattern_match_string" c:identifier="g_pattern_match_string" introspectable="0" deprecated="1" deprecated-version="2.70">
-      <doc xml:space="preserve">Matches a string against a compiled pattern. If the string is to be
+      <doc xml:space="preserve">Matches a string against a compiled pattern.
+
+If the string is to be
 matched against more than one pattern, consider using
-g_pattern_match() instead while supplying the reversed string.</doc>
-      <doc-deprecated xml:space="preserve">Use g_pattern_spec_match_string() instead</doc-deprecated>
+[method@GLib.PatternSpec.match] instead while supplying the reversed string.</doc>
+      <doc-deprecated xml:space="preserve">Use [method@GLib.PatternSpec.match_string] instead</doc-deprecated>
       <return-value transfer-ownership="none">
         <doc xml:space="preserve">%TRUE if @string matches @pspec</doc>
         <type name="gboolean" c:type="gboolean"/>
@@ -52811,23 +53068,41 @@ preserve things literally.</doc>
         </parameter>
       </parameters>
     </function>
-    <function-macro name="size_checked_add" c:identifier="g_size_checked_add" introspectable="0">
+    <function-macro name="size_checked_add" c:identifier="g_size_checked_add" version="2.48" introspectable="0">
+      <doc xml:space="preserve">Performs a checked addition of @a and @b, storing the result in
+@dest.
+
+If the operation is successful, %TRUE is returned.  If the operation
+overflows then the state of @dest is undefined and %FALSE is
+returned.</doc>
       <parameters>
         <parameter name="dest">
+          <doc xml:space="preserve">a pointer to the #gsize destination</doc>
         </parameter>
         <parameter name="a">
+          <doc xml:space="preserve">the #gsize left operand</doc>
         </parameter>
         <parameter name="b">
+          <doc xml:space="preserve">the #gsize right operand</doc>
         </parameter>
       </parameters>
     </function-macro>
-    <function-macro name="size_checked_mul" c:identifier="g_size_checked_mul" introspectable="0">
+    <function-macro name="size_checked_mul" c:identifier="g_size_checked_mul" version="2.48" introspectable="0">
+      <doc xml:space="preserve">Performs a checked multiplication of @a and @b, storing the result in
+@dest.
+
+If the operation is successful, %TRUE is returned.  If the operation
+overflows then the state of @dest is undefined and %FALSE is
+returned.</doc>
       <parameters>
         <parameter name="dest">
+          <doc xml:space="preserve">a pointer to the #gsize destination</doc>
         </parameter>
         <parameter name="a">
+          <doc xml:space="preserve">the #gsize left operand</doc>
         </parameter>
         <parameter name="b">
+          <doc xml:space="preserve">the #gsize right operand</doc>
         </parameter>
       </parameters>
     </function-macro>
@@ -54502,9 +54777,20 @@ Comparing two %NULL pointers returns 0.</doc>
       </parameters>
     </function>
     <function name="strcompress" c:identifier="g_strcompress">
-      <doc xml:space="preserve">Replaces all escaped characters with their one byte equivalent.
+      <doc xml:space="preserve">Makes a copy of a string replacing C string-style escape
+sequences with their one byte equivalent:
 
-This function does the reverse conversion of [func@GLib.strescape].</doc>
+- `\b` &#x2192; [U+0008 Backspace](https://en.wikipedia.org/wiki/Backspace)
+- `\f` &#x2192; [U+000C Form Feed](https://en.wikipedia.org/wiki/Form_feed)
+- `\n` &#x2192; [U+000A Line Feed](https://en.wikipedia.org/wiki/Newline)
+- `\r` &#x2192; [U+000D Carriage Return](https://en.wikipedia.org/wiki/Carriage_return)
+- `\t` &#x2192; [U+0009 Horizontal Tabulation](https://en.wikipedia.org/wiki/Tab_character)
+- `\v` &#x2192; [U+000B Vertical Tabulation](https://en.wikipedia.org/wiki/Vertical_Tab)
+- `\` followed by one to three octal digits &#x2192; the numeric value (mod 255)
+- `\` followed by any other character &#x2192; the character as is.
+  For example, `\\` will turn into a backslash (`\`) and `\"` into a double quote (`"`).
+
+[func@GLib.strescape] does the reverse conversion.</doc>
       <return-value transfer-ownership="full">
         <doc xml:space="preserve">a newly-allocated copy of @source with all escaped
   character compressed</doc>
@@ -54716,11 +55002,22 @@ g_strerror (saved_errno);
       </parameters>
     </function>
     <function name="strescape" c:identifier="g_strescape">
-      <doc xml:space="preserve">Escapes the special characters '\b', '\f', '\n', '\r', '\t', '\v', '\'
-and '"' in the string @source by inserting a '\' before
-them. Additionally all characters in the range 0x01-0x1F (everything
+      <doc xml:space="preserve">It replaces the following special characters in the string @source
+with their corresponding C escape sequence:
+
+ Symbol | Escape
+---|---
+ [U+0008 Backspace](https://en.wikipedia.org/wiki/Backspace) | `\b`
+ [U+000C Form Feed](https://en.wikipedia.org/wiki/Form_feed) | `\f`
+ [U+000A Line Feed](https://en.wikipedia.org/wiki/Newline) | `\n`
+ [U+000D Carriage Return](https://en.wikipedia.org/wiki/Carriage_return) | `\r`
+ [U+0009 Horizontal Tabulation](https://en.wikipedia.org/wiki/Tab_character) | `\t`
+ [U+000B Vertical Tabulation](https://en.wikipedia.org/wiki/Vertical_Tab) | `\v`
+
+It also inserts a backslash (`\`) before any backslash or a double quote (`"`).
+Additionally all characters in the range 0x01-0x1F (everything
 below SPACE) and in the range 0x7F-0xFF (all non-ASCII chars) are
-replaced with a '\' followed by their octal representation.
+replaced with a backslash followed by their octal representation.
 Characters supplied in @exceptions are not escaped.
 
 [func@GLib.strcompress] does the reverse conversion.</doc>
@@ -56984,7 +57281,7 @@ After each call to the timeout function, the time of the next
 timeout is recalculated based on the current time and the given interval
 (it does not try to 'catch up' time lost in delays).
 
-See [memory management of sources][mainloop-memory-management] for details
+See [mainloop memory management](main-loop.html#memory-management-of-sources) for details
 on how to handle the return value and memory management of @data.
 
 If you want to have a timer in the "seconds" range and do not care
@@ -57036,7 +57333,7 @@ After each call to the timeout function, the time of the next
 timeout is recalculated based on the current time and the given interval
 (it does not try to 'catch up' time lost in delays).
 
-See [memory management of sources][mainloop-memory-management] for details
+See [mainloop memory management](main-loop.html#memory-management-of-sources) for details
 on how to handle the return value and memory management of @data.
 
 This internally creates a main loop source using g_timeout_source_new()
@@ -57123,7 +57420,7 @@ Note that the first call of the timer may not be precise for timeouts
 of one second. If you need finer precision and have such a timeout,
 you may want to use g_timeout_add() instead.
 
-See [memory management of sources][mainloop-memory-management] for details
+See [mainloop memory management](main-loop.html#memory-management-of-sources) for details
 on how to handle the return value and memory management of @data.
 
 The interval given is in terms of monotonic time, not wall clock
@@ -57167,7 +57464,7 @@ event sources. Thus they should not be relied on for precise timing.
 After each call to the timeout function, the time of the next
 timeout is recalculated based on the current time and the given @interval
 
-See [memory management of sources][mainloop-memory-management] for details
+See [mainloop memory management](main-loop.html#memory-management-of-sources) for details
 on how to handle the return value and memory management of @data.
 
 If you want timing more precise than whole seconds, use g_timeout_add()
@@ -57572,43 +57869,79 @@ to UTF-8. The result will be terminated with a 0 byte.</doc>
         </parameter>
       </parameters>
     </function>
-    <function-macro name="uint64_checked_add" c:identifier="g_uint64_checked_add" introspectable="0">
+    <function-macro name="uint64_checked_add" c:identifier="g_uint64_checked_add" version="2.48" introspectable="0">
+      <doc xml:space="preserve">Performs a checked addition of @a and @b, storing the result in
+@dest.
+
+If the operation is successful, %TRUE is returned.  If the operation
+overflows then the state of @dest is undefined and %FALSE is
+returned.</doc>
       <parameters>
         <parameter name="dest">
+          <doc xml:space="preserve">a pointer to the #guint64 destination</doc>
         </parameter>
         <parameter name="a">
+          <doc xml:space="preserve">the #guint64 left operand</doc>
         </parameter>
         <parameter name="b">
+          <doc xml:space="preserve">the #guint64 right operand</doc>
         </parameter>
       </parameters>
     </function-macro>
-    <function-macro name="uint64_checked_mul" c:identifier="g_uint64_checked_mul" introspectable="0">
+    <function-macro name="uint64_checked_mul" c:identifier="g_uint64_checked_mul" version="2.48" introspectable="0">
+      <doc xml:space="preserve">Performs a checked multiplication of @a and @b, storing the result in
+@dest.
+
+If the operation is successful, %TRUE is returned.  If the operation
+overflows then the state of @dest is undefined and %FALSE is
+returned.</doc>
       <parameters>
         <parameter name="dest">
+          <doc xml:space="preserve">a pointer to the #guint64 destination</doc>
         </parameter>
         <parameter name="a">
+          <doc xml:space="preserve">the #guint64 left operand</doc>
         </parameter>
         <parameter name="b">
+          <doc xml:space="preserve">the #guint64 right operand</doc>
         </parameter>
       </parameters>
     </function-macro>
-    <function-macro name="uint_checked_add" c:identifier="g_uint_checked_add" introspectable="0">
+    <function-macro name="uint_checked_add" c:identifier="g_uint_checked_add" version="2.48" introspectable="0">
+      <doc xml:space="preserve">Performs a checked addition of @a and @b, storing the result in
+@dest.
+
+If the operation is successful, %TRUE is returned.  If the operation
+overflows then the state of @dest is undefined and %FALSE is
+returned.</doc>
       <parameters>
         <parameter name="dest">
+          <doc xml:space="preserve">a pointer to the #guint destination</doc>
         </parameter>
         <parameter name="a">
+          <doc xml:space="preserve">the #guint left operand</doc>
         </parameter>
         <parameter name="b">
+          <doc xml:space="preserve">the #guint right operand</doc>
         </parameter>
       </parameters>
     </function-macro>
-    <function-macro name="uint_checked_mul" c:identifier="g_uint_checked_mul" introspectable="0">
+    <function-macro name="uint_checked_mul" c:identifier="g_uint_checked_mul" version="2.48" introspectable="0">
+      <doc xml:space="preserve">Performs a checked multiplication of @a and @b, storing the result in
+@dest.
+
+If the operation is successful, %TRUE is returned.  If the operation
+overflows then the state of @dest is undefined and %FALSE is
+returned.</doc>
       <parameters>
         <parameter name="dest">
+          <doc xml:space="preserve">a pointer to the #guint destination</doc>
         </parameter>
         <parameter name="a">
+          <doc xml:space="preserve">the #guint left operand</doc>
         </parameter>
         <parameter name="b">
+          <doc xml:space="preserve">the #guint right operand</doc>
         </parameter>
       </parameters>
     </function-macro>
