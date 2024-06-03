@@ -935,7 +935,10 @@ New entries may be added in future versions.</doc>
   filled.</doc>
       </member>
     </enumeration>
-    <class name="GLRenderer" c:symbol-prefix="gl_renderer" c:type="GskGLRenderer" parent="Renderer" glib:type-name="GskGLRenderer" glib:get-type="gsk_gl_renderer_get_type" glib:type-struct="GLRendererClass">
+    <class name="GLRenderer" c:symbol-prefix="gl_renderer" c:type="GskGLRenderer" version="4.2" parent="Renderer" glib:type-name="GskGLRenderer" glib:get-type="gsk_gl_renderer_get_type" glib:type-struct="GLRendererClass">
+      <doc xml:space="preserve">A GL based renderer.
+
+See [class@Gsk.Renderer].</doc>
       <constructor name="new" c:identifier="gsk_gl_renderer_new" version="4.2">
         <doc xml:space="preserve">Creates a new `GskRenderer` using the new OpenGL renderer.</doc>
         <return-value transfer-ownership="full">
@@ -1402,7 +1405,6 @@ u_textureN value that the shader defines.</doc>
         </parameters>
       </method>
       <method name="get_resource" c:identifier="gsk_gl_shader_get_resource" glib:get-property="resource">
-        <attribute name="org.gtk.Method.get_property" value="resource"/>
         <doc xml:space="preserve">Gets the resource path for the GLSL sourcecode being used
 to render this shader.</doc>
         <return-value transfer-ownership="none" nullable="1">
@@ -1417,7 +1419,6 @@ to render this shader.</doc>
         </parameters>
       </method>
       <method name="get_source" c:identifier="gsk_gl_shader_get_source" glib:get-property="source">
-        <attribute name="org.gtk.Method.get_property" value="source"/>
         <doc xml:space="preserve">Gets the GLSL sourcecode being used to render this shader.</doc>
         <return-value transfer-ownership="none">
           <doc xml:space="preserve">The source code for the shader</doc>
@@ -1482,7 +1483,6 @@ to render this shader.</doc>
         </parameters>
       </method>
       <property name="resource" writable="1" construct-only="1" transfer-ownership="none" getter="get_resource" default-value="NULL">
-        <attribute name="org.gtk.Property.get" value="gsk_gl_shader_get_resource"/>
         <doc xml:space="preserve">Resource containing the source code for the shader.
 
 If the shader source is not coming from a resource, this
@@ -1490,6 +1490,7 @@ will be %NULL.</doc>
         <type name="utf8" c:type="gchar*"/>
       </property>
       <property name="source" writable="1" construct-only="1" transfer-ownership="none" getter="get_source">
+        <doc xml:space="preserve">The source code for the shader, as a `GBytes`.</doc>
         <type name="GLib.Bytes"/>
       </property>
     </class>
@@ -2723,6 +2724,7 @@ from a Cairo context.</doc>
             <type name="PathBuilder" c:type="GskPathBuilder*"/>
           </instance-parameter>
           <parameter name="path" transfer-ownership="none">
+            <doc xml:space="preserve">a path</doc>
             <type name="cairo.Path" c:type="const cairo_path_t*"/>
           </parameter>
         </parameters>
@@ -3859,12 +3861,15 @@ as long as the `GskPathPoint` is used.</doc>
           </parameter>
         </parameters>
       </method>
-      <method name="copy" c:identifier="gsk_path_point_copy">
+      <method name="copy" c:identifier="gsk_path_point_copy" version="4.14">
+        <doc xml:space="preserve">Copies a path point.</doc>
         <return-value transfer-ownership="full">
+          <doc xml:space="preserve">the copied point</doc>
           <type name="PathPoint" c:type="GskPathPoint*"/>
         </return-value>
         <parameters>
           <instance-parameter name="point" transfer-ownership="none">
+            <doc xml:space="preserve">a path point</doc>
             <type name="PathPoint" c:type="GskPathPoint*"/>
           </instance-parameter>
         </parameters>
@@ -3893,12 +3898,14 @@ same location.</doc>
           </parameter>
         </parameters>
       </method>
-      <method name="free" c:identifier="gsk_path_point_free">
+      <method name="free" c:identifier="gsk_path_point_free" version="4.14">
+        <doc xml:space="preserve">Frees a path point copied by [method@Gsk.PathPoint.copy].</doc>
         <return-value transfer-ownership="none">
           <type name="none" c:type="void"/>
         </return-value>
         <parameters>
           <instance-parameter name="point" transfer-ownership="none">
+            <doc xml:space="preserve">a path point</doc>
             <type name="PathPoint" c:type="GskPathPoint*"/>
           </instance-parameter>
         </parameters>
@@ -4518,7 +4525,6 @@ The renderer will be realized before it is returned.</doc>
         </parameters>
       </constructor>
       <method name="get_surface" c:identifier="gsk_renderer_get_surface" glib:get-property="surface">
-        <attribute name="org.gtk.Method.get_property" value="surface"/>
         <doc xml:space="preserve">Retrieves the `GdkSurface` set using gsk_enderer_realize().
 
 If the renderer has not been realized yet, %NULL will be returned.</doc>
@@ -4533,8 +4539,7 @@ If the renderer has not been realized yet, %NULL will be returned.</doc>
           </instance-parameter>
         </parameters>
       </method>
-      <method name="is_realized" c:identifier="gsk_renderer_is_realized">
-        <attribute name="org.gtk.Method.get_property" value="realized"/>
+      <method name="is_realized" c:identifier="gsk_renderer_is_realized" glib:get-property="realized">
         <doc xml:space="preserve">Checks whether the @renderer is realized or not.</doc>
         <return-value transfer-ownership="none">
           <doc xml:space="preserve">%TRUE if the `GskRenderer` was realized, and %FALSE otherwise</doc>
@@ -4666,13 +4671,11 @@ transform node and pass that node instead.</doc>
           </instance-parameter>
         </parameters>
       </method>
-      <property name="realized" transfer-ownership="none" default-value="FALSE">
-        <attribute name="org.gtk.Property.get" value="gsk_renderer_is_realized"/>
+      <property name="realized" transfer-ownership="none" getter="is_realized" default-value="FALSE">
         <doc xml:space="preserve">Whether the renderer has been associated with a surface or draw context.</doc>
         <type name="gboolean" c:type="gboolean"/>
       </property>
       <property name="surface" transfer-ownership="none" getter="get_surface">
-        <attribute name="org.gtk.Property.get" value="gsk_renderer_get_surface"/>
         <doc xml:space="preserve">The surface associated with renderer.</doc>
         <type name="Gdk.Surface"/>
       </property>
@@ -5147,7 +5150,9 @@ rendering pipeline.</doc>
   a proper serialization</doc>
       </member>
       <function name="quark" c:identifier="gsk_serialization_error_quark">
+        <doc xml:space="preserve">Registers an error quark for [class@Gsk.RenderNode] errors.</doc>
         <return-value transfer-ownership="none">
+          <doc xml:space="preserve">the error quark</doc>
           <type name="GLib.Quark" c:type="GQuark"/>
         </return-value>
       </function>
@@ -5550,6 +5555,7 @@ the operation of stroking a path.</doc>
       <method name="get_dash_offset" c:identifier="gsk_stroke_get_dash_offset" version="4.14">
         <doc xml:space="preserve">Returns the dash_offset of a `GskStroke`.</doc>
         <return-value transfer-ownership="none">
+          <doc xml:space="preserve">the dash_offset</doc>
           <type name="gfloat" c:type="float"/>
         </return-value>
         <parameters>
@@ -5605,6 +5611,7 @@ See [enum@Gsk.LineJoin] for details.</doc>
       <method name="get_miter_limit" c:identifier="gsk_stroke_get_miter_limit" version="4.14">
         <doc xml:space="preserve">Returns the miter limit of a `GskStroke`.</doc>
         <return-value transfer-ownership="none">
+          <doc xml:space="preserve">the miter limit</doc>
           <type name="gfloat" c:type="float"/>
         </return-value>
         <parameters>
@@ -6136,7 +6143,12 @@ after the way CSS describes transforms.
 This means code can safely expose them as properties of objects without
 having to worry about others changing them.</doc>
       <constructor name="new" c:identifier="gsk_transform_new">
+        <doc xml:space="preserve">Creates a new identity transform.
+
+This function is meant to be used by language
+bindings. For C code, this is equivalent to using %NULL.</doc>
         <return-value transfer-ownership="full">
+          <doc xml:space="preserve">A new identity transform</doc>
           <type name="Transform" c:type="GskTransform*"/>
         </return-value>
       </constructor>
@@ -6177,7 +6189,10 @@ If @self is not invertible, %NULL is returned.
 Note that inverting %NULL also returns %NULL, which is
 the correct inverse of %NULL. If you need to differentiate
 between those cases, you should check @self is not %NULL
-before calling this function.</doc>
+before calling this function.
+
+This function consumes @self. Use [method@Gsk.Transform.ref] first
+if you want to keep it around.</doc>
         <return-value transfer-ownership="full" nullable="1">
           <doc xml:space="preserve">The inverted transform</doc>
           <type name="Transform" c:type="GskTransform*"/>
@@ -6190,7 +6205,10 @@ before calling this function.</doc>
         </parameters>
       </method>
       <method name="matrix" c:identifier="gsk_transform_matrix">
-        <doc xml:space="preserve">Multiplies @next with the given @matrix.</doc>
+        <doc xml:space="preserve">Multiplies @next with the given @matrix.
+
+This function consumes @next. Use [method@Gsk.Transform.ref] first
+if you want to keep it around.</doc>
         <return-value transfer-ownership="full">
           <doc xml:space="preserve">The new transform</doc>
           <type name="Transform" c:type="GskTransform*"/>
@@ -6212,7 +6230,10 @@ before calling this function.</doc>
 This transform scales points in X and Y based on their Z value,
 scaling points with positive Z values away from the origin, and
 those with negative Z values towards the origin. Points
-on the z=0 plane are unchanged.</doc>
+on the z=0 plane are unchanged.
+
+This function consumes @next. Use [method@Gsk.Transform.ref] first
+if you want to keep it around.</doc>
         <return-value transfer-ownership="full">
           <doc xml:space="preserve">The new transform</doc>
           <type name="Transform" c:type="GskTransform*"/>
@@ -6265,7 +6286,10 @@ The result of this function can later be parsed with
       </method>
       <method name="rotate" c:identifier="gsk_transform_rotate">
         <doc xml:space="preserve">Rotates @next @angle degrees in 2D - or in 3D-speak, around the Z axis.
-The rotation happens around the origin point of (0, 0).</doc>
+The rotation happens around the origin point of (0, 0).
+
+This function consumes @next. Use [method@Gsk.Transform.ref] first
+if you want to keep it around.</doc>
         <return-value transfer-ownership="full" nullable="1">
           <doc xml:space="preserve">The new transform</doc>
           <type name="Transform" c:type="GskTransform*"/>
@@ -6284,7 +6308,10 @@ The rotation happens around the origin point of (0, 0).</doc>
       <method name="rotate_3d" c:identifier="gsk_transform_rotate_3d">
         <doc xml:space="preserve">Rotates @next @angle degrees around @axis.
 
-For a rotation in 2D space, use [method@Gsk.Transform.rotate]</doc>
+For a rotation in 2D space, use [method@Gsk.Transform.rotate]
+
+This function consumes @next. Use [method@Gsk.Transform.ref] first
+if you want to keep it around.</doc>
         <return-value transfer-ownership="full" nullable="1">
           <doc xml:space="preserve">The new transform</doc>
           <type name="Transform" c:type="GskTransform*"/>
@@ -6307,7 +6334,10 @@ For a rotation in 2D space, use [method@Gsk.Transform.rotate]</doc>
       <method name="scale" c:identifier="gsk_transform_scale">
         <doc xml:space="preserve">Scales @next in 2-dimensional space by the given factors.
 
-Use [method@Gsk.Transform.scale_3d] to scale in all 3 dimensions.</doc>
+Use [method@Gsk.Transform.scale_3d] to scale in all 3 dimensions.
+
+This function consumes @next. Use [method@Gsk.Transform.ref] first
+if you want to keep it around.</doc>
         <return-value transfer-ownership="full" nullable="1">
           <doc xml:space="preserve">The new transform</doc>
           <type name="Transform" c:type="GskTransform*"/>
@@ -6328,7 +6358,10 @@ Use [method@Gsk.Transform.scale_3d] to scale in all 3 dimensions.</doc>
         </parameters>
       </method>
       <method name="scale_3d" c:identifier="gsk_transform_scale_3d">
-        <doc xml:space="preserve">Scales @next by the given factors.</doc>
+        <doc xml:space="preserve">Scales @next by the given factors.
+
+This function consumes @next. Use [method@Gsk.Transform.ref] first
+if you want to keep it around.</doc>
         <return-value transfer-ownership="full" nullable="1">
           <doc xml:space="preserve">The new transform</doc>
           <type name="Transform" c:type="GskTransform*"/>
@@ -6353,7 +6386,10 @@ Use [method@Gsk.Transform.scale_3d] to scale in all 3 dimensions.</doc>
         </parameters>
       </method>
       <method name="skew" c:identifier="gsk_transform_skew" version="4.6">
-        <doc xml:space="preserve">Applies a skew transform.</doc>
+        <doc xml:space="preserve">Applies a skew transform.
+
+This function consumes @next. Use [method@Gsk.Transform.ref] first
+if you want to keep it around.</doc>
         <return-value transfer-ownership="full" nullable="1">
           <doc xml:space="preserve">The new transform</doc>
           <type name="Transform" c:type="GskTransform*"/>
@@ -6599,7 +6635,10 @@ to check.</doc>
         </parameters>
       </method>
       <method name="transform" c:identifier="gsk_transform_transform">
-        <doc xml:space="preserve">Applies all the operations from @other to @next.</doc>
+        <doc xml:space="preserve">Applies all the operations from @other to @next.
+
+This function consumes @next. Use [method@Gsk.Transform.ref] first
+if you want to keep it around.</doc>
         <return-value transfer-ownership="full" nullable="1">
           <doc xml:space="preserve">The new transform</doc>
           <type name="Transform" c:type="GskTransform*"/>
@@ -6660,7 +6699,10 @@ The result is the bounding box containing the coplanar quad.</doc>
         </parameters>
       </method>
       <method name="translate" c:identifier="gsk_transform_translate">
-        <doc xml:space="preserve">Translates @next in 2-dimensional space by @point.</doc>
+        <doc xml:space="preserve">Translates @next in 2-dimensional space by @point.
+
+This function consumes @next. Use [method@Gsk.Transform.ref] first
+if you want to keep it around.</doc>
         <return-value transfer-ownership="full" nullable="1">
           <doc xml:space="preserve">The new transform</doc>
           <type name="Transform" c:type="GskTransform*"/>
@@ -6677,7 +6719,10 @@ The result is the bounding box containing the coplanar quad.</doc>
         </parameters>
       </method>
       <method name="translate_3d" c:identifier="gsk_transform_translate_3d">
-        <doc xml:space="preserve">Translates @next by @point.</doc>
+        <doc xml:space="preserve">Translates @next by @point.
+
+This function consumes @next. Use [method@Gsk.Transform.ref] first
+if you want to keep it around.</doc>
         <return-value transfer-ownership="full" nullable="1">
           <doc xml:space="preserve">The new transform</doc>
           <type name="Transform" c:type="GskTransform*"/>
@@ -6895,7 +6940,9 @@ The `O` command is an extension that is not supported in SVG.</doc>
       </parameters>
     </function>
     <function name="serialization_error_quark" c:identifier="gsk_serialization_error_quark" moved-to="SerializationError.quark">
+      <doc xml:space="preserve">Registers an error quark for [class@Gsk.RenderNode] errors.</doc>
       <return-value transfer-ownership="none">
+        <doc xml:space="preserve">the error quark</doc>
         <type name="GLib.Quark" c:type="GQuark"/>
       </return-value>
     </function>
