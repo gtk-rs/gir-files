@@ -935,7 +935,10 @@ New entries may be added in future versions.</doc>
   filled.</doc>
       </member>
     </enumeration>
-    <class name="GLRenderer" c:symbol-prefix="gl_renderer" c:type="GskGLRenderer" parent="Renderer" glib:type-name="GskGLRenderer" glib:get-type="gsk_gl_renderer_get_type" glib:type-struct="GLRendererClass">
+    <class name="GLRenderer" c:symbol-prefix="gl_renderer" c:type="GskGLRenderer" version="4.2" parent="Renderer" glib:type-name="GskGLRenderer" glib:get-type="gsk_gl_renderer_get_type" glib:type-struct="GLRendererClass">
+      <doc xml:space="preserve">A GL based renderer.
+
+See [class@Gsk.Renderer].</doc>
       <constructor name="new" c:identifier="gsk_gl_renderer_new" version="4.2">
         <doc xml:space="preserve">Creates a new `GskRenderer` using the new OpenGL renderer.</doc>
         <return-value transfer-ownership="full">
@@ -1490,6 +1493,8 @@ will be %NULL.</doc>
         <type name="utf8" c:type="gchar*"/>
       </property>
       <property name="source" writable="1" construct-only="1" transfer-ownership="none" getter="get_source">
+        <attribute name="org.gtk.Property.get" value="gsk_gl_shader_get_source"/>
+        <doc xml:space="preserve">The source code for the shader, as a `GBytes`.</doc>
         <type name="GLib.Bytes"/>
       </property>
     </class>
@@ -2723,6 +2728,7 @@ from a Cairo context.</doc>
             <type name="PathBuilder" c:type="GskPathBuilder*"/>
           </instance-parameter>
           <parameter name="path" transfer-ownership="none">
+            <doc xml:space="preserve">a path</doc>
             <type name="cairo.Path" c:type="const cairo_path_t*"/>
           </parameter>
         </parameters>
@@ -3859,12 +3865,15 @@ as long as the `GskPathPoint` is used.</doc>
           </parameter>
         </parameters>
       </method>
-      <method name="copy" c:identifier="gsk_path_point_copy">
+      <method name="copy" c:identifier="gsk_path_point_copy" version="4.14">
+        <doc xml:space="preserve">Copies a path point.</doc>
         <return-value transfer-ownership="full">
+          <doc xml:space="preserve">the copied point</doc>
           <type name="PathPoint" c:type="GskPathPoint*"/>
         </return-value>
         <parameters>
           <instance-parameter name="point" transfer-ownership="none">
+            <doc xml:space="preserve">a path point</doc>
             <type name="PathPoint" c:type="GskPathPoint*"/>
           </instance-parameter>
         </parameters>
@@ -3893,12 +3902,14 @@ same location.</doc>
           </parameter>
         </parameters>
       </method>
-      <method name="free" c:identifier="gsk_path_point_free">
+      <method name="free" c:identifier="gsk_path_point_free" version="4.14">
+        <doc xml:space="preserve">Frees a path point copied by [method@Gsk.PathPoint.copy].</doc>
         <return-value transfer-ownership="none">
           <type name="none" c:type="void"/>
         </return-value>
         <parameters>
           <instance-parameter name="point" transfer-ownership="none">
+            <doc xml:space="preserve">a path point</doc>
             <type name="PathPoint" c:type="GskPathPoint*"/>
           </instance-parameter>
         </parameters>
@@ -5147,7 +5158,9 @@ rendering pipeline.</doc>
   a proper serialization</doc>
       </member>
       <function name="quark" c:identifier="gsk_serialization_error_quark">
+        <doc xml:space="preserve">Registers an error quark for [class@Gsk.RenderNode] errors.</doc>
         <return-value transfer-ownership="none">
+          <doc xml:space="preserve">the error quark</doc>
           <type name="GLib.Quark" c:type="GQuark"/>
         </return-value>
       </function>
@@ -5550,6 +5563,7 @@ the operation of stroking a path.</doc>
       <method name="get_dash_offset" c:identifier="gsk_stroke_get_dash_offset" version="4.14">
         <doc xml:space="preserve">Returns the dash_offset of a `GskStroke`.</doc>
         <return-value transfer-ownership="none">
+          <doc xml:space="preserve">the dash_offset</doc>
           <type name="gfloat" c:type="float"/>
         </return-value>
         <parameters>
@@ -5605,6 +5619,7 @@ See [enum@Gsk.LineJoin] for details.</doc>
       <method name="get_miter_limit" c:identifier="gsk_stroke_get_miter_limit" version="4.14">
         <doc xml:space="preserve">Returns the miter limit of a `GskStroke`.</doc>
         <return-value transfer-ownership="none">
+          <doc xml:space="preserve">the miter limit</doc>
           <type name="gfloat" c:type="float"/>
         </return-value>
         <parameters>
@@ -6136,7 +6151,12 @@ after the way CSS describes transforms.
 This means code can safely expose them as properties of objects without
 having to worry about others changing them.</doc>
       <constructor name="new" c:identifier="gsk_transform_new">
+        <doc xml:space="preserve">Creates a new identity transform.
+
+This function is meant to be used by language
+bindings. For C code, this is equivalent to using %NULL.</doc>
         <return-value transfer-ownership="full">
+          <doc xml:space="preserve">A new identity transform</doc>
           <type name="Transform" c:type="GskTransform*"/>
         </return-value>
       </constructor>
@@ -6895,7 +6915,9 @@ The `O` command is an extension that is not supported in SVG.</doc>
       </parameters>
     </function>
     <function name="serialization_error_quark" c:identifier="gsk_serialization_error_quark" moved-to="SerializationError.quark">
+      <doc xml:space="preserve">Registers an error quark for [class@Gsk.RenderNode] errors.</doc>
       <return-value transfer-ownership="none">
+        <doc xml:space="preserve">the error quark</doc>
         <type name="GLib.Quark" c:type="GQuark"/>
       </return-value>
     </function>

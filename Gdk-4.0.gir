@@ -2465,7 +2465,7 @@ above, it will try the fallback cursor. Fallback cursors can themselves have
 fallback cursors again, so it is possible to provide a chain of progressively
 easier to support cursors. If none of the provided cursors can be supported,
 the default cursor will be the ultimate fallback.</doc>
-      <constructor name="new_from_callback" c:identifier="gdk_cursor_new_from_callback" version="4.16" introspectable="0">
+      <constructor name="new_from_callback" c:identifier="gdk_cursor_new_from_callback" version="4.16">
         <doc xml:space="preserve">Creates a new callback-based cursor object.
 
 Cursors of this kind produce textures for the cursor
@@ -2678,33 +2678,59 @@ The texture will be %NULL if the cursor was created from a name.</doc>
         <type name="Texture"/>
       </property>
     </class>
-    <callback name="CursorGetTextureCallback" c:type="GdkCursorGetTextureCallback" introspectable="0">
-      <return-value>
+    <callback name="CursorGetTextureCallback" c:type="GdkCursorGetTextureCallback">
+      <doc xml:space="preserve">The type of callback used by a dynamic `GdkCursor` to generate
+a texture for the cursor image at the given @cursor_size
+and @scale.
+
+The actual cursor size in application pixels may be different
+from @cursor_size x @cursor_size, and will be returned in
+@width, @height. The returned texture should have a size that
+corresponds to the actual cursor size, in device pixels (i.e.
+application pixels, multiplied by @scale).
+
+This function may fail and return `NULL`, in which case
+the fallback cursor will be used.</doc>
+      <return-value transfer-ownership="full" nullable="1">
+        <doc xml:space="preserve">the cursor image, or
+  `NULL` if none could be produced.</doc>
         <type name="Texture" c:type="GdkTexture*"/>
       </return-value>
       <parameters>
         <parameter name="cursor" transfer-ownership="none">
+          <doc xml:space="preserve">the `GdkCursor`</doc>
           <type name="Cursor" c:type="GdkCursor*"/>
         </parameter>
         <parameter name="cursor_size" transfer-ownership="none">
+          <doc xml:space="preserve">the nominal cursor size, in application pixels</doc>
           <type name="gint" c:type="int"/>
         </parameter>
         <parameter name="scale" transfer-ownership="none">
+          <doc xml:space="preserve">the device scale</doc>
           <type name="gdouble" c:type="double"/>
         </parameter>
-        <parameter name="width" transfer-ownership="none">
+        <parameter name="width" direction="out" caller-allocates="0" transfer-ownership="full">
+          <doc xml:space="preserve">return location for the actual cursor width,
+  in application pixels</doc>
           <type name="gint" c:type="int*"/>
         </parameter>
-        <parameter name="height" transfer-ownership="none">
+        <parameter name="height" direction="out" caller-allocates="0" transfer-ownership="full">
+          <doc xml:space="preserve">return location for the actual cursor height,
+  in application pixels</doc>
           <type name="gint" c:type="int*"/>
         </parameter>
-        <parameter name="hotspot_x" transfer-ownership="none">
+        <parameter name="hotspot_x" direction="out" caller-allocates="0" transfer-ownership="full">
+          <doc xml:space="preserve">return location for the hotspot X position,
+  in application pixels</doc>
           <type name="gint" c:type="int*"/>
         </parameter>
-        <parameter name="hotspot_y" transfer-ownership="none">
+        <parameter name="hotspot_y" direction="out" caller-allocates="0" transfer-ownership="full">
+          <doc xml:space="preserve">return location for the hotspot Y position,
+  in application pixels</doc>
           <type name="gint" c:type="int*"/>
         </parameter>
         <parameter name="data" transfer-ownership="none" nullable="1" allow-none="1">
+          <doc xml:space="preserve">User data for the callback</doc>
           <type name="gpointer" c:type="gpointer"/>
         </parameter>
       </parameters>
@@ -4338,7 +4364,9 @@ backends will be used.</doc>
   reasons</doc>
       </member>
       <function name="quark" c:identifier="gdk_dmabuf_error_quark">
+        <doc xml:space="preserve">Registers an error quark for [class@Gdk.DmabufTexture] errors.</doc>
         <return-value transfer-ownership="none">
+          <doc xml:space="preserve">the error quark</doc>
           <type name="GLib.Quark" c:type="GQuark"/>
         </return-value>
       </function>
@@ -5452,7 +5480,7 @@ a result.</doc>
     <record name="DragSurfaceInterface" c:type="GdkDragSurfaceInterface" disguised="1" opaque="1" glib:is-gtype-struct-for="DragSurface">
       <doc xml:space="preserve">The `GdkDragSurfaceInterface` implementation is private to GDK.</doc>
     </record>
-    <record name="DragSurfaceSize" c:type="GdkDragSurfaceSize" disguised="1" opaque="1" version="4.12">
+    <record name="DragSurfaceSize" c:type="GdkDragSurfaceSize" disguised="1" opaque="1" version="4.12" glib:type-name="GdkDragSurfaceSize" glib:get-type="gdk_drag_surface_size_get_type" c:symbol-prefix="drag_surface_size">
       <doc xml:space="preserve">The `GdkDragSurfaceSize` struct contains information that is useful
 to compute the size of a drag surface.</doc>
       <method name="set_size" c:identifier="gdk_drag_surface_size_set_size" version="4.12">
@@ -6235,6 +6263,7 @@ Emulated pointer events typically originate from a touch events.</doc>
 
 This position is in [surface coordinates](coordinates.html).</doc>
         <return-value transfer-ownership="none">
+          <doc xml:space="preserve">whether the positions were set</doc>
           <type name="gboolean" c:type="gboolean"/>
         </return-value>
         <parameters>
@@ -7533,7 +7562,9 @@ anymore, this function has been deprecated and now always returns %NULL.</doc>
         <doc xml:space="preserve">The shader linking failed</doc>
       </member>
       <function name="quark" c:identifier="gdk_gl_error_quark">
+        <doc xml:space="preserve">Registers an error quark for [class@Gdk.GLContext] errors.</doc>
         <return-value transfer-ownership="none">
+          <doc xml:space="preserve">the error quark</doc>
           <type name="GLib.Quark" c:type="GQuark"/>
         </return-value>
       </function>
@@ -18960,7 +18991,9 @@ By default, GDK_MEMORY_DEFAULT is set.</doc>
         <doc xml:space="preserve">The image format is not supported</doc>
       </member>
       <function name="quark" c:identifier="gdk_texture_error_quark">
+        <doc xml:space="preserve">Registers an error quark for [class@Gdk.Texture] errors.</doc>
         <return-value transfer-ownership="none">
+          <doc xml:space="preserve">the error quark</doc>
           <type name="GLib.Quark" c:type="GQuark"/>
         </return-value>
       </function>
@@ -18988,11 +19021,16 @@ the [enum@Gdk.AxisUse] enumerations as indices.</doc>
       </field>
     </record>
     <enumeration name="TitlebarGesture" version="4.4" glib:type-name="GdkTitlebarGesture" glib:get-type="gdk_titlebar_gesture_get_type" c:type="GdkTitlebarGesture">
+      <doc xml:space="preserve">The kind of title bar gesture to emit with
+[method@Gdk.Toplevel.titlebar_gesture].</doc>
       <member name="double_click" value="1" c:identifier="GDK_TITLEBAR_GESTURE_DOUBLE_CLICK" glib:nick="double-click" glib:name="GDK_TITLEBAR_GESTURE_DOUBLE_CLICK">
+        <doc xml:space="preserve">double click gesture</doc>
       </member>
       <member name="right_click" value="2" c:identifier="GDK_TITLEBAR_GESTURE_RIGHT_CLICK" glib:nick="right-click" glib:name="GDK_TITLEBAR_GESTURE_RIGHT_CLICK">
+        <doc xml:space="preserve">right click gesture</doc>
       </member>
       <member name="middle_click" value="3" c:identifier="GDK_TITLEBAR_GESTURE_MIDDLE_CLICK" glib:nick="middle-click" glib:name="GDK_TITLEBAR_GESTURE_MIDDLE_CLICK">
+        <doc xml:space="preserve">middle click gesture</doc>
       </member>
     </enumeration>
     <interface name="Toplevel" c:symbol-prefix="toplevel" c:type="GdkToplevel" glib:type-name="GdkToplevel" glib:get-type="gdk_toplevel_get_type" glib:type-struct="ToplevelInterface">
@@ -19708,7 +19746,7 @@ to resize the surface after it has been presented.</doc>
         </parameters>
       </method>
     </record>
-    <record name="ToplevelSize" c:type="GdkToplevelSize" disguised="1" opaque="1">
+    <record name="ToplevelSize" c:type="GdkToplevelSize" disguised="1" opaque="1" glib:type-name="GdkToplevelSize" glib:get-type="gdk_toplevel_size_get_type" c:symbol-prefix="toplevel_size">
       <doc xml:space="preserve">The `GdkToplevelSize` struct contains information that is useful
 to compute the size of a toplevel.</doc>
       <method name="get_bounds" c:identifier="gdk_toplevel_size_get_bounds">
@@ -20055,7 +20093,9 @@ for example in response to a change of the surface size.</doc>
         <doc xml:space="preserve">Vulkan support is not available on this Surface</doc>
       </member>
       <function name="quark" c:identifier="gdk_vulkan_error_quark">
+        <doc xml:space="preserve">Registers an error quark for [class@Gdk.VulkanContext] errors.</doc>
         <return-value transfer-ownership="none">
+          <doc xml:space="preserve">the error quark</doc>
           <type name="GLib.Quark" c:type="GQuark"/>
         </return-value>
       </function>
@@ -20406,7 +20446,9 @@ indicate a higher priority.</doc>
       </parameters>
     </function>
     <function name="dmabuf_error_quark" c:identifier="gdk_dmabuf_error_quark" moved-to="DmabufError.quark">
+      <doc xml:space="preserve">Registers an error quark for [class@Gdk.DmabufTexture] errors.</doc>
       <return-value transfer-ownership="none">
+        <doc xml:space="preserve">the error quark</doc>
         <type name="GLib.Quark" c:type="GQuark"/>
       </return-value>
     </function>
@@ -20426,11 +20468,6 @@ is returned.</doc>
           <type name="DragAction" c:type="GdkDragAction"/>
         </parameter>
       </parameters>
-    </function>
-    <function name="drag_surface_size_get_type" c:identifier="gdk_drag_surface_size_get_type">
-      <return-value transfer-ownership="none">
-        <type name="GType" c:type="GType"/>
-      </return-value>
     </function>
     <function name="events_get_angle" c:identifier="gdk_events_get_angle">
       <doc xml:space="preserve">Returns the relative angle from @event1 to @event2.
@@ -20513,7 +20550,9 @@ If not, this function returns %FALSE.</doc>
       </parameters>
     </function>
     <function name="gl_error_quark" c:identifier="gdk_gl_error_quark" moved-to="GLError.quark">
+      <doc xml:space="preserve">Registers an error quark for [class@Gdk.GLContext] errors.</doc>
       <return-value transfer-ownership="none">
+        <doc xml:space="preserve">the error quark</doc>
         <type name="GLib.Quark" c:type="GQuark"/>
       </return-value>
     </function>
@@ -20876,13 +20915,10 @@ in order to take effect.</doc>
       </parameters>
     </function>
     <function name="texture_error_quark" c:identifier="gdk_texture_error_quark" moved-to="TextureError.quark">
+      <doc xml:space="preserve">Registers an error quark for [class@Gdk.Texture] errors.</doc>
       <return-value transfer-ownership="none">
+        <doc xml:space="preserve">the error quark</doc>
         <type name="GLib.Quark" c:type="GQuark"/>
-      </return-value>
-    </function>
-    <function name="toplevel_size_get_type" c:identifier="gdk_toplevel_size_get_type">
-      <return-value transfer-ownership="none">
-        <type name="GType" c:type="GType"/>
       </return-value>
     </function>
     <function name="unicode_to_keyval" c:identifier="gdk_unicode_to_keyval">
@@ -20900,7 +20936,9 @@ in order to take effect.</doc>
       </parameters>
     </function>
     <function name="vulkan_error_quark" c:identifier="gdk_vulkan_error_quark" moved-to="VulkanError.quark">
+      <doc xml:space="preserve">Registers an error quark for [class@Gdk.VulkanContext] errors.</doc>
       <return-value transfer-ownership="none">
+        <doc xml:space="preserve">the error quark</doc>
         <type name="GLib.Quark" c:type="GQuark"/>
       </return-value>
     </function>
