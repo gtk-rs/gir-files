@@ -927,7 +927,7 @@ thread.</doc>
       <member name="xdigit" value="1024" c:identifier="G_ASCII_XDIGIT">
       </member>
     </bitfield>
-    <record name="AsyncQueue" c:type="GAsyncQueue" disguised="1" opaque="1">
+    <record name="AsyncQueue" c:type="GAsyncQueue" disguised="1" opaque="1" copy-function="g_async_queue_ref" free-function="g_async_queue_unref">
       <doc xml:space="preserve">An opaque data structure which represents an asynchronous queue.
 
 It should only be accessed through the `g_async_queue_*` functions.</doc>
@@ -1172,7 +1172,7 @@ This function must be called while holding the @queue's lock.</doc>
           </parameter>
         </parameters>
       </method>
-      <method name="ref" c:identifier="g_async_queue_ref" introspectable="0">
+      <method name="ref" c:identifier="g_async_queue_ref">
         <doc xml:space="preserve">Increases the reference count of the asynchronous @queue by 1.
 You do not need to hold the lock to call this function.</doc>
         <return-value transfer-ownership="full">
@@ -1485,14 +1485,14 @@ lock.</doc-deprecated>
           </instance-parameter>
         </parameters>
       </method>
-      <function name="new" c:identifier="g_async_queue_new" introspectable="0">
+      <function name="new" c:identifier="g_async_queue_new">
         <doc xml:space="preserve">Creates a new asynchronous queue.</doc>
         <return-value transfer-ownership="full">
           <doc xml:space="preserve">a new #GAsyncQueue. Free with g_async_queue_unref()</doc>
           <type name="AsyncQueue" c:type="GAsyncQueue*"/>
         </return-value>
       </function>
-      <function name="new_full" c:identifier="g_async_queue_new_full" version="2.16" introspectable="0">
+      <function name="new_full" c:identifier="g_async_queue_new_full" version="2.16">
         <doc xml:space="preserve">Creates a new asynchronous queue and sets up a destroy notify
 function that is used to free any remaining queue items when
 the queue is destroyed after the final unref.</doc>
@@ -27804,7 +27804,7 @@ any events need to be processed. It sets the returned timeout to -1 to
 indicate that it doesn't mind how long the poll() call blocks. In the
 check function, it tests the results of the poll() call to see if the
 required condition has been met, and returns %TRUE if so.</doc>
-      <field name="prepare">
+      <field name="prepare" writable="1">
         <doc xml:space="preserve">Called before all the file descriptors are polled. If the
     source can determine that it is ready here (without waiting for the
     results of the poll() call) it should return %TRUE. It can also return
@@ -27816,39 +27816,18 @@ required condition has been met, and returns %TRUE if so.</doc>
     %FALSE with a timeout of -1.  If @prepare returns a
     timeout and the source also has a ready time set, then the
     lower of the two will be used.</doc>
-        <callback name="prepare">
-          <return-value transfer-ownership="none">
-            <type name="gboolean" c:type="gboolean"/>
-          </return-value>
-          <parameters>
-            <parameter name="source" transfer-ownership="none">
-              <type name="Source" c:type="GSource*"/>
-            </parameter>
-            <parameter name="timeout_" transfer-ownership="none">
-              <type name="gint" c:type="gint*"/>
-            </parameter>
-          </parameters>
-        </callback>
+        <type name="SourceFuncsPrepareFunc" c:type="GSourceFuncsPrepareFunc"/>
       </field>
-      <field name="check">
+      <field name="check" writable="1">
         <doc xml:space="preserve">Called after all the file descriptors are polled. The source
     should return %TRUE if it is ready to be dispatched. Note that some
     time may have passed since the previous prepare function was called,
     so the source should be checked again here.  Since 2.36 this may
     be %NULL, in which case the effect is as if the function always returns
     %FALSE.</doc>
-        <callback name="check">
-          <return-value transfer-ownership="none">
-            <type name="gboolean" c:type="gboolean"/>
-          </return-value>
-          <parameters>
-            <parameter name="source" transfer-ownership="none">
-              <type name="Source" c:type="GSource*"/>
-            </parameter>
-          </parameters>
-        </callback>
+        <type name="SourceFuncsCheckFunc" c:type="GSourceFuncsCheckFunc"/>
       </field>
-      <field name="dispatch" introspectable="0">
+      <field name="dispatch" introspectable="0" writable="1">
         <doc xml:space="preserve">Called to dispatch the event source, after it has returned
     %TRUE in either its @prepare or its @check function, or if a ready time
     has been reached. The @dispatch function receives a callback function and
@@ -27858,38 +27837,14 @@ required condition has been met, and returns %TRUE if so.</doc>
     additional parameters are needed for this type of event source. The
     return value of the @dispatch function should be %G_SOURCE_REMOVE if the
     source should be removed or %G_SOURCE_CONTINUE to keep it.</doc>
-        <callback name="dispatch" introspectable="0">
-          <return-value transfer-ownership="none">
-            <type name="gboolean" c:type="gboolean"/>
-          </return-value>
-          <parameters>
-            <parameter name="source" transfer-ownership="none">
-              <type name="Source" c:type="GSource*"/>
-            </parameter>
-            <parameter name="callback" transfer-ownership="none" closure="2">
-              <type name="SourceFunc" c:type="GSourceFunc"/>
-            </parameter>
-            <parameter name="user_data" transfer-ownership="none" nullable="1" allow-none="1" closure="2">
-              <type name="gpointer" c:type="gpointer"/>
-            </parameter>
-          </parameters>
-        </callback>
+        <type name="SourceFuncsDispatchFunc" c:type="GSourceFuncsDispatchFunc"/>
       </field>
-      <field name="finalize">
+      <field name="finalize" writable="1">
         <doc xml:space="preserve">Called when the source is finalized. At this point, the source
     will have been destroyed, had its callback cleared, and have been removed
     from its #GMainContext, but it will still have its final reference count,
     so methods can be called on it from within this function.</doc>
-        <callback name="finalize">
-          <return-value transfer-ownership="none">
-            <type name="none" c:type="void"/>
-          </return-value>
-          <parameters>
-            <parameter name="source" transfer-ownership="none">
-              <type name="Source" c:type="GSource*"/>
-            </parameter>
-          </parameters>
-        </callback>
+        <type name="SourceFuncsFinalizeFunc" c:type="GSourceFuncsFinalizeFunc"/>
       </field>
       <field name="closure_callback" readable="0" private="1">
         <type name="SourceFunc" c:type="GSourceFunc"/>
@@ -27898,6 +27853,106 @@ required condition has been met, and returns %TRUE if so.</doc>
         <type name="SourceDummyMarshal" c:type="GSourceDummyMarshal"/>
       </field>
     </record>
+    <callback name="SourceFuncsCheckFunc" c:type="GSourceFuncsCheckFunc" version="2.82">
+      <doc xml:space="preserve">Checks if the source is ready to be dispatched.
+
+Called after all the file descriptors are polled. The source
+should return %TRUE if it is ready to be dispatched. Note that some
+time may have passed since the previous prepare function was called,
+so the source should be checked again here.
+
+Since 2.36 this may be `NULL`, in which case the effect is
+as if the function always returns `FALSE`.</doc>
+      <return-value transfer-ownership="none">
+        <doc xml:space="preserve">%TRUE if ready to be dispatched, %FALSE otherwise</doc>
+        <type name="gboolean" c:type="gboolean"/>
+      </return-value>
+      <parameters>
+        <parameter name="source" transfer-ownership="none">
+          <doc xml:space="preserve">The #GSource</doc>
+          <type name="Source" c:type="GSource*"/>
+        </parameter>
+      </parameters>
+    </callback>
+    <callback name="SourceFuncsDispatchFunc" c:type="GSourceFuncsDispatchFunc" version="2.82" introspectable="0">
+      <doc xml:space="preserve">Dispatches the source callback.
+
+Called to dispatch the event source, after it has returned
+`TRUE` in either its prepare or its check function, or if a ready time
+has been reached. The dispatch function receives a callback function and
+user data. The callback function may be `NULL` if the source was never
+connected to a callback using [method@GLib.Source.set_callback]. The dispatch
+function should call the callback function with @user_data and whatever
+additional parameters are needed for this type of event source. The
+return value of the dispatch function should be [const@GLib.SOURCE_REMOVE]
+if the source should be removed or [const@GLib.SOURCE_CONTINUE] to keep it.</doc>
+      <return-value transfer-ownership="none">
+        <doc xml:space="preserve">[const@GLib.SOURCE_REMOVE] if the source should be removed,
+  [const@GLib.SOURCE_CONTINUE] otherwise.</doc>
+        <type name="gboolean" c:type="gboolean"/>
+      </return-value>
+      <parameters>
+        <parameter name="source" transfer-ownership="none">
+          <doc xml:space="preserve">The #GSource</doc>
+          <type name="Source" c:type="GSource*"/>
+        </parameter>
+        <parameter name="callback" transfer-ownership="none" nullable="1" allow-none="1" closure="2">
+          <doc xml:space="preserve">The #GSourceFunc to call</doc>
+          <type name="SourceFunc" c:type="GSourceFunc"/>
+        </parameter>
+        <parameter name="user_data" transfer-ownership="none" nullable="1" allow-none="1" closure="2">
+          <doc xml:space="preserve">data to pass to @callback</doc>
+          <type name="gpointer" c:type="gpointer"/>
+        </parameter>
+      </parameters>
+    </callback>
+    <callback name="SourceFuncsFinalizeFunc" c:type="GSourceFuncsFinalizeFunc" version="2.82">
+      <doc xml:space="preserve">Finalizes the source.
+
+Called when the source is finalized. At this point, the source
+will have been destroyed, had its callback cleared, and have been removed
+from its [type@GLib.MainContext], but it will still have its final reference
+count, so methods can be called on it from within this function.</doc>
+      <return-value transfer-ownership="none">
+        <type name="none" c:type="void"/>
+      </return-value>
+      <parameters>
+        <parameter name="source" transfer-ownership="none">
+          <doc xml:space="preserve">The #GSource</doc>
+          <type name="Source" c:type="GSource*"/>
+        </parameter>
+      </parameters>
+    </callback>
+    <callback name="SourceFuncsPrepareFunc" c:type="GSourceFuncsPrepareFunc" version="2.82">
+      <doc xml:space="preserve">Checks the source for readiness.
+
+Called before all the file descriptors are polled. If the
+source can determine that it is ready here (without waiting for the
+results of the poll call) it should return %TRUE. It can also return
+a @timeout_ value which should be the maximum timeout (in milliseconds)
+which should be passed to the poll call. The actual timeout used will
+be `-1` if all sources returned `-1`, or it will be the minimum of all
+the @timeout_ values returned which were greater than or equal to `0`.
+If the prepare function returns a timeout and the source also has a
+ready time set, then the lower of the two will be used.
+
+Since 2.36 this may be `NULL`, in which case the effect is as if the
+function always returns `FALSE` with a timeout of `-1`.</doc>
+      <return-value transfer-ownership="none">
+        <doc xml:space="preserve">%TRUE if the source is ready, %FALSE otherwise</doc>
+        <type name="gboolean" c:type="gboolean"/>
+      </return-value>
+      <parameters>
+        <parameter name="source" transfer-ownership="none">
+          <doc xml:space="preserve">The #GSource</doc>
+          <type name="Source" c:type="GSource*"/>
+        </parameter>
+        <parameter name="timeout_" direction="out" caller-allocates="0" transfer-ownership="full" optional="1" allow-none="1">
+          <doc xml:space="preserve">the maximum timeout (in milliseconds) which should be passed to the poll call</doc>
+          <type name="gint" c:type="gint*"/>
+        </parameter>
+      </parameters>
+    </callback>
     <callback name="SourceOnceFunc" c:type="GSourceOnceFunc" version="2.74">
       <doc xml:space="preserve">A source function that is only called once before being removed from the main
 context automatically.
@@ -41539,6 +41594,28 @@ g_assert_not_reached() macros.</doc>
         </parameter>
       </parameters>
     </function>
+    <function name="async_queue_new" c:identifier="g_async_queue_new" moved-to="AsyncQueue.new">
+      <doc xml:space="preserve">Creates a new asynchronous queue.</doc>
+      <return-value transfer-ownership="full">
+        <doc xml:space="preserve">a new #GAsyncQueue. Free with g_async_queue_unref()</doc>
+        <type name="AsyncQueue" c:type="GAsyncQueue*"/>
+      </return-value>
+    </function>
+    <function name="async_queue_new_full" c:identifier="g_async_queue_new_full" moved-to="AsyncQueue.new_full" version="2.16">
+      <doc xml:space="preserve">Creates a new asynchronous queue and sets up a destroy notify
+function that is used to free any remaining queue items when
+the queue is destroyed after the final unref.</doc>
+      <return-value transfer-ownership="full">
+        <doc xml:space="preserve">a new #GAsyncQueue. Free with g_async_queue_unref()</doc>
+        <type name="AsyncQueue" c:type="GAsyncQueue*"/>
+      </return-value>
+      <parameters>
+        <parameter name="item_free_func" transfer-ownership="none" nullable="1" allow-none="1" scope="async">
+          <doc xml:space="preserve">function to free queue elements</doc>
+          <type name="DestroyNotify" c:type="GDestroyNotify"/>
+        </parameter>
+      </parameters>
+    </function>
     <function name="atexit" c:identifier="g_atexit" deprecated="1" deprecated-version="2.32">
       <doc xml:space="preserve">Specifies a function to be called at normal program termination.
 
@@ -48763,11 +48840,11 @@ There can only be one writer function. It is an error to set more than one.</doc
         <type name="none" c:type="void"/>
       </return-value>
       <parameters>
-        <parameter name="func" transfer-ownership="none" nullable="1" allow-none="1" scope="notified" closure="1" destroy="2">
+        <parameter name="func" transfer-ownership="none" scope="notified" closure="1" destroy="2">
           <doc xml:space="preserve">log writer function, which must not be `NULL`</doc>
           <type name="LogWriterFunc" c:type="GLogWriterFunc"/>
         </parameter>
-        <parameter name="user_data" transfer-ownership="none" nullable="1" allow-none="1" closure="0">
+        <parameter name="user_data" transfer-ownership="none" nullable="1" allow-none="1">
           <doc xml:space="preserve">user data to pass to @func</doc>
           <type name="gpointer" c:type="gpointer"/>
         </parameter>
@@ -51603,11 +51680,14 @@ stores the length of its data in #guint, which may be shorter than
         </parameter>
       </parameters>
     </function>
-    <function name="qsort_with_data" c:identifier="g_qsort_with_data">
-      <doc xml:space="preserve">This is just like the standard C qsort() function, but
-the comparison routine accepts a user data argument.
+    <function name="qsort_with_data" c:identifier="g_qsort_with_data" deprecated="1" deprecated-version="2.82">
+      <doc xml:space="preserve">This is just like the standard C [`qsort()`](man:qsort(3)) function, but
+the comparison routine accepts a user data argument
+(like [`qsort_r()`](man:qsort_r(3))).
 
-This is guaranteed to be a stable sort since version 2.32.</doc>
+Unlike `qsort()`, this is guaranteed to be a stable sort (since GLib 2.32).</doc>
+      <doc-deprecated xml:space="preserve">`total_elems` is too small to represent larger arrays; use
+  [func@GLib.sort_array] instead</doc-deprecated>
       <return-value transfer-ownership="none">
         <type name="none" c:type="void"/>
       </return-value>
@@ -53437,6 +53517,40 @@ the Single Unix Specification.</doc>
         <parameter name="..." transfer-ownership="none">
           <doc xml:space="preserve">the arguments to insert in the output</doc>
           <varargs/>
+        </parameter>
+      </parameters>
+    </function>
+    <function name="sort_array" c:identifier="g_sort_array" introspectable="0">
+      <doc xml:space="preserve">This is just like the standard C [`qsort()`](man:qsort(3)) function, but
+the comparison routine accepts a user data argument
+(like [`qsort_r()`](man:qsort_r(3))).
+
+Unlike `qsort()`, this is guaranteed to be a stable sort.</doc>
+      <return-value transfer-ownership="none">
+        <type name="none" c:type="void"/>
+      </return-value>
+      <parameters>
+        <parameter name="array" transfer-ownership="none">
+          <doc xml:space="preserve">start of array to sort</doc>
+          <array length="1" zero-terminated="0" c:type="void*">
+            <type name="gpointer" c:type="void"/>
+          </array>
+        </parameter>
+        <parameter name="n_elements" transfer-ownership="none">
+          <doc xml:space="preserve">number of elements in the array</doc>
+          <type name="gsize" c:type="size_t"/>
+        </parameter>
+        <parameter name="element_size" transfer-ownership="none">
+          <doc xml:space="preserve">size of each element</doc>
+          <type name="gsize" c:type="size_t"/>
+        </parameter>
+        <parameter name="compare_func" transfer-ownership="none" scope="call" closure="4">
+          <doc xml:space="preserve">function to compare elements</doc>
+          <type name="CompareDataFunc" c:type="GCompareDataFunc"/>
+        </parameter>
+        <parameter name="user_data" transfer-ownership="none" nullable="1" allow-none="1">
+          <doc xml:space="preserve">data to pass to @compare_func</doc>
+          <type name="gpointer" c:type="void*"/>
         </parameter>
       </parameters>
     </function>
