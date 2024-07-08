@@ -274,6 +274,9 @@ The 4 sides of the border can have different widths and colors.</doc>
       </method>
     </class>
     <class name="BroadwayRenderer" c:symbol-prefix="broadway_renderer" c:type="GskBroadwayRenderer" parent="Renderer" glib:type-name="GskBroadwayRenderer" glib:get-type="gsk_broadway_renderer_get_type" glib:type-struct="BroadwayRendererClass">
+      <doc xml:space="preserve">A Broadway based renderer.
+
+See [class@Gsk.Renderer].</doc>
       <constructor name="new" c:identifier="gsk_broadway_renderer_new">
         <doc xml:space="preserve">Creates a new Broadway renderer.
 
@@ -1061,9 +1064,21 @@ void mainImage(out vec4 fragColor,
 
   fragColor = position * source1 + (1.0 - position) * source2;
 }
-```</doc>
-      <constructor name="new_from_bytes" c:identifier="gsk_gl_shader_new_from_bytes">
+```
+
+# Deprecation
+
+This feature was deprecated in GTK 4.16 after the new rendering infrastructure
+introduced in 4.14 did not support it.
+The lack of Vulkan inegration would have made it a very hard feature to support.
+
+If you want to use OpenGL directly, you should look at [GtkGLArea](../gtk4/class.GLArea.html)
+which uses a different approach and is still well supported.</doc>
+      <constructor name="new_from_bytes" c:identifier="gsk_gl_shader_new_from_bytes" deprecated="1" deprecated-version="4.16">
         <doc xml:space="preserve">Creates a `GskGLShader` that will render pixels using the specified code.</doc>
+        <doc-deprecated xml:space="preserve">GTK's new Vulkan-focused rendering
+  does not support this feature. Use [GtkGLArea](../gtk4/class.GLArea.html)
+  for OpenGL rendering.</doc-deprecated>
         <return-value transfer-ownership="full">
           <doc xml:space="preserve">A new `GskGLShader`</doc>
           <type name="GLShader" c:type="GskGLShader*"/>
@@ -1075,8 +1090,11 @@ void mainImage(out vec4 fragColor,
           </parameter>
         </parameters>
       </constructor>
-      <constructor name="new_from_resource" c:identifier="gsk_gl_shader_new_from_resource">
+      <constructor name="new_from_resource" c:identifier="gsk_gl_shader_new_from_resource" deprecated="1" deprecated-version="4.16">
         <doc xml:space="preserve">Creates a `GskGLShader` that will render pixels using the specified code.</doc>
+        <doc-deprecated xml:space="preserve">GTK's new Vulkan-focused rendering
+  does not support this feature. Use [GtkGLArea](../gtk4/class.GLArea.html)
+  for OpenGL rendering.</doc-deprecated>
         <return-value transfer-ownership="full">
           <doc xml:space="preserve">A new `GskGLShader`</doc>
           <type name="GLShader" c:type="GskGLShader*"/>
@@ -1089,7 +1107,7 @@ void mainImage(out vec4 fragColor,
           </parameter>
         </parameters>
       </constructor>
-      <method name="compile" c:identifier="gsk_gl_shader_compile" throws="1">
+      <method name="compile" c:identifier="gsk_gl_shader_compile" deprecated="1" deprecated-version="4.16" throws="1">
         <doc xml:space="preserve">Tries to compile the @shader for the given @renderer.
 
 If there is a problem, this function returns %FALSE and reports
@@ -1102,6 +1120,9 @@ change the current GL context) and requires the renderer to be
 set up. This means that the widget has to be realized. Commonly you
 want to call this from the realize signal of a widget, or during
 widget snapshot.</doc>
+        <doc-deprecated xml:space="preserve">GTK's new Vulkan-focused rendering
+  does not support this feature. Use [GtkGLArea](../gtk4/class.GLArea.html)
+  for OpenGL rendering.</doc-deprecated>
         <return-value transfer-ownership="none">
           <doc xml:space="preserve">%TRUE on success, %FALSE if an error occurred</doc>
           <type name="gboolean" c:type="gboolean"/>
@@ -1117,9 +1138,12 @@ widget snapshot.</doc>
           </parameter>
         </parameters>
       </method>
-      <method name="find_uniform_by_name" c:identifier="gsk_gl_shader_find_uniform_by_name">
+      <method name="find_uniform_by_name" c:identifier="gsk_gl_shader_find_uniform_by_name" deprecated="1" deprecated-version="4.16">
         <doc xml:space="preserve">Looks for a uniform by the name @name, and returns the index
 of the uniform, or -1 if it was not found.</doc>
+        <doc-deprecated xml:space="preserve">GTK's new Vulkan-focused rendering
+  does not support this feature. Use [GtkGLArea](../gtk4/class.GLArea.html)
+  for OpenGL rendering.</doc-deprecated>
         <return-value transfer-ownership="none">
           <doc xml:space="preserve">The index of the uniform, or -1</doc>
           <type name="gint" c:type="int"/>
@@ -1135,7 +1159,7 @@ of the uniform, or -1 if it was not found.</doc>
           </parameter>
         </parameters>
       </method>
-      <method name="format_args" c:identifier="gsk_gl_shader_format_args" introspectable="0">
+      <method name="format_args" c:identifier="gsk_gl_shader_format_args" introspectable="0" deprecated="1" deprecated-version="4.16">
         <doc xml:space="preserve">Formats the uniform data as needed for feeding the named uniforms
 values into the shader.
 
@@ -1145,6 +1169,9 @@ primitive values and `graphene_vecN_t *` for vecN uniforms).
 
 Any uniforms of the shader that are not included in the argument list
 are zero-initialized.</doc>
+        <doc-deprecated xml:space="preserve">GTK's new Vulkan-focused rendering
+  does not support this feature. Use [GtkGLArea](../gtk4/class.GLArea.html)
+  for OpenGL rendering.</doc-deprecated>
         <return-value transfer-ownership="full">
           <doc xml:space="preserve">A newly allocated block of data which can be
     passed to [ctor@Gsk.GLShaderNode.new].</doc>
@@ -1162,7 +1189,7 @@ are zero-initialized.</doc>
           </parameter>
         </parameters>
       </method>
-      <method name="format_args_va" c:identifier="gsk_gl_shader_format_args_va" introspectable="0">
+      <method name="format_args_va" c:identifier="gsk_gl_shader_format_args_va" introspectable="0" deprecated="1" deprecated-version="4.16">
         <doc xml:space="preserve">Formats the uniform data as needed for feeding the named uniforms
 values into the shader.
 
@@ -1174,6 +1201,9 @@ It is an error to pass a uniform name that is not declared by the shader.
 
 Any uniforms of the shader that are not included in the argument list
 are zero-initialized.</doc>
+        <doc-deprecated xml:space="preserve">GTK's new Vulkan-focused rendering
+  does not support this feature. Use [GtkGLArea](../gtk4/class.GLArea.html)
+  for OpenGL rendering.</doc-deprecated>
         <return-value transfer-ownership="full">
           <doc xml:space="preserve">A newly allocated block of data which can be
     passed to [ctor@Gsk.GLShaderNode.new].</doc>
@@ -1191,10 +1221,13 @@ are zero-initialized.</doc>
           </parameter>
         </parameters>
       </method>
-      <method name="get_arg_bool" c:identifier="gsk_gl_shader_get_arg_bool">
+      <method name="get_arg_bool" c:identifier="gsk_gl_shader_get_arg_bool" deprecated="1" deprecated-version="4.16">
         <doc xml:space="preserve">Gets the value of the uniform @idx in the @args block.
 
 The uniform must be of bool type.</doc>
+        <doc-deprecated xml:space="preserve">GTK's new Vulkan-focused rendering
+  does not support this feature. Use [GtkGLArea](../gtk4/class.GLArea.html)
+  for OpenGL rendering.</doc-deprecated>
         <return-value transfer-ownership="none">
           <doc xml:space="preserve">The value</doc>
           <type name="gboolean" c:type="gboolean"/>
@@ -1214,10 +1247,13 @@ The uniform must be of bool type.</doc>
           </parameter>
         </parameters>
       </method>
-      <method name="get_arg_float" c:identifier="gsk_gl_shader_get_arg_float">
+      <method name="get_arg_float" c:identifier="gsk_gl_shader_get_arg_float" deprecated="1" deprecated-version="4.16">
         <doc xml:space="preserve">Gets the value of the uniform @idx in the @args block.
 
 The uniform must be of float type.</doc>
+        <doc-deprecated xml:space="preserve">GTK's new Vulkan-focused rendering
+  does not support this feature. Use [GtkGLArea](../gtk4/class.GLArea.html)
+  for OpenGL rendering.</doc-deprecated>
         <return-value transfer-ownership="none">
           <doc xml:space="preserve">The value</doc>
           <type name="gfloat" c:type="float"/>
@@ -1237,10 +1273,13 @@ The uniform must be of float type.</doc>
           </parameter>
         </parameters>
       </method>
-      <method name="get_arg_int" c:identifier="gsk_gl_shader_get_arg_int">
+      <method name="get_arg_int" c:identifier="gsk_gl_shader_get_arg_int" deprecated="1" deprecated-version="4.16">
         <doc xml:space="preserve">Gets the value of the uniform @idx in the @args block.
 
 The uniform must be of int type.</doc>
+        <doc-deprecated xml:space="preserve">GTK's new Vulkan-focused rendering
+  does not support this feature. Use [GtkGLArea](../gtk4/class.GLArea.html)
+  for OpenGL rendering.</doc-deprecated>
         <return-value transfer-ownership="none">
           <doc xml:space="preserve">The value</doc>
           <type name="gint32" c:type="gint32"/>
@@ -1260,10 +1299,13 @@ The uniform must be of int type.</doc>
           </parameter>
         </parameters>
       </method>
-      <method name="get_arg_uint" c:identifier="gsk_gl_shader_get_arg_uint">
+      <method name="get_arg_uint" c:identifier="gsk_gl_shader_get_arg_uint" deprecated="1" deprecated-version="4.16">
         <doc xml:space="preserve">Gets the value of the uniform @idx in the @args block.
 
 The uniform must be of uint type.</doc>
+        <doc-deprecated xml:space="preserve">GTK's new Vulkan-focused rendering
+  does not support this feature. Use [GtkGLArea](../gtk4/class.GLArea.html)
+  for OpenGL rendering.</doc-deprecated>
         <return-value transfer-ownership="none">
           <doc xml:space="preserve">The value</doc>
           <type name="guint32" c:type="guint32"/>
@@ -1283,10 +1325,13 @@ The uniform must be of uint type.</doc>
           </parameter>
         </parameters>
       </method>
-      <method name="get_arg_vec2" c:identifier="gsk_gl_shader_get_arg_vec2">
+      <method name="get_arg_vec2" c:identifier="gsk_gl_shader_get_arg_vec2" deprecated="1" deprecated-version="4.16">
         <doc xml:space="preserve">Gets the value of the uniform @idx in the @args block.
 
 The uniform must be of vec2 type.</doc>
+        <doc-deprecated xml:space="preserve">GTK's new Vulkan-focused rendering
+  does not support this feature. Use [GtkGLArea](../gtk4/class.GLArea.html)
+  for OpenGL rendering.</doc-deprecated>
         <return-value transfer-ownership="none">
           <type name="none" c:type="void"/>
         </return-value>
@@ -1309,10 +1354,13 @@ The uniform must be of vec2 type.</doc>
           </parameter>
         </parameters>
       </method>
-      <method name="get_arg_vec3" c:identifier="gsk_gl_shader_get_arg_vec3">
+      <method name="get_arg_vec3" c:identifier="gsk_gl_shader_get_arg_vec3" deprecated="1" deprecated-version="4.16">
         <doc xml:space="preserve">Gets the value of the uniform @idx in the @args block.
 
 The uniform must be of vec3 type.</doc>
+        <doc-deprecated xml:space="preserve">GTK's new Vulkan-focused rendering
+  does not support this feature. Use [GtkGLArea](../gtk4/class.GLArea.html)
+  for OpenGL rendering.</doc-deprecated>
         <return-value transfer-ownership="none">
           <type name="none" c:type="void"/>
         </return-value>
@@ -1335,10 +1383,13 @@ The uniform must be of vec3 type.</doc>
           </parameter>
         </parameters>
       </method>
-      <method name="get_arg_vec4" c:identifier="gsk_gl_shader_get_arg_vec4">
+      <method name="get_arg_vec4" c:identifier="gsk_gl_shader_get_arg_vec4" deprecated="1" deprecated-version="4.16">
         <doc xml:space="preserve">Gets the value of the uniform @idx in the @args block.
 
 The uniform must be of vec4 type.</doc>
+        <doc-deprecated xml:space="preserve">GTK's new Vulkan-focused rendering
+  does not support this feature. Use [GtkGLArea](../gtk4/class.GLArea.html)
+  for OpenGL rendering.</doc-deprecated>
         <return-value transfer-ownership="none">
           <type name="none" c:type="void"/>
         </return-value>
@@ -1361,8 +1412,11 @@ The uniform must be of vec4 type.</doc>
           </parameter>
         </parameters>
       </method>
-      <method name="get_args_size" c:identifier="gsk_gl_shader_get_args_size">
+      <method name="get_args_size" c:identifier="gsk_gl_shader_get_args_size" deprecated="1" deprecated-version="4.16">
         <doc xml:space="preserve">Get the size of the data block used to specify arguments for this shader.</doc>
+        <doc-deprecated xml:space="preserve">GTK's new Vulkan-focused rendering
+  does not support this feature. Use [GtkGLArea](../gtk4/class.GLArea.html)
+  for OpenGL rendering.</doc-deprecated>
         <return-value transfer-ownership="none">
           <doc xml:space="preserve">The size of the data block</doc>
           <type name="gsize" c:type="gsize"/>
@@ -1374,12 +1428,15 @@ The uniform must be of vec4 type.</doc>
           </instance-parameter>
         </parameters>
       </method>
-      <method name="get_n_textures" c:identifier="gsk_gl_shader_get_n_textures">
+      <method name="get_n_textures" c:identifier="gsk_gl_shader_get_n_textures" deprecated="1" deprecated-version="4.16">
         <doc xml:space="preserve">Returns the number of textures that the shader requires.
 
 This can be used to check that the a passed shader works
 in your usecase. It is determined by looking at the highest
 u_textureN value that the shader defines.</doc>
+        <doc-deprecated xml:space="preserve">GTK's new Vulkan-focused rendering
+  does not support this feature. Use [GtkGLArea](../gtk4/class.GLArea.html)
+  for OpenGL rendering.</doc-deprecated>
         <return-value transfer-ownership="none">
           <doc xml:space="preserve">The number of texture inputs required by @shader</doc>
           <type name="gint" c:type="int"/>
@@ -1391,8 +1448,11 @@ u_textureN value that the shader defines.</doc>
           </instance-parameter>
         </parameters>
       </method>
-      <method name="get_n_uniforms" c:identifier="gsk_gl_shader_get_n_uniforms">
+      <method name="get_n_uniforms" c:identifier="gsk_gl_shader_get_n_uniforms" deprecated="1" deprecated-version="4.16">
         <doc xml:space="preserve">Get the number of declared uniforms for this shader.</doc>
+        <doc-deprecated xml:space="preserve">GTK's new Vulkan-focused rendering
+  does not support this feature. Use [GtkGLArea](../gtk4/class.GLArea.html)
+  for OpenGL rendering.</doc-deprecated>
         <return-value transfer-ownership="none">
           <doc xml:space="preserve">The number of declared uniforms</doc>
           <type name="gint" c:type="int"/>
@@ -1404,10 +1464,13 @@ u_textureN value that the shader defines.</doc>
           </instance-parameter>
         </parameters>
       </method>
-      <method name="get_resource" c:identifier="gsk_gl_shader_get_resource" glib:get-property="resource">
+      <method name="get_resource" c:identifier="gsk_gl_shader_get_resource" glib:get-property="resource" deprecated="1" deprecated-version="4.16">
         <attribute name="org.gtk.Method.get_property" value="resource"/>
         <doc xml:space="preserve">Gets the resource path for the GLSL sourcecode being used
 to render this shader.</doc>
+        <doc-deprecated xml:space="preserve">GTK's new Vulkan-focused rendering
+  does not support this feature. Use [GtkGLArea](../gtk4/class.GLArea.html)
+  for OpenGL rendering.</doc-deprecated>
         <return-value transfer-ownership="none" nullable="1">
           <doc xml:space="preserve">The resource path for the shader</doc>
           <type name="utf8" c:type="const char*"/>
@@ -1419,9 +1482,12 @@ to render this shader.</doc>
           </instance-parameter>
         </parameters>
       </method>
-      <method name="get_source" c:identifier="gsk_gl_shader_get_source" glib:get-property="source">
+      <method name="get_source" c:identifier="gsk_gl_shader_get_source" glib:get-property="source" deprecated="1" deprecated-version="4.16">
         <attribute name="org.gtk.Method.get_property" value="source"/>
         <doc xml:space="preserve">Gets the GLSL sourcecode being used to render this shader.</doc>
+        <doc-deprecated xml:space="preserve">GTK's new Vulkan-focused rendering
+  does not support this feature. Use [GtkGLArea](../gtk4/class.GLArea.html)
+  for OpenGL rendering.</doc-deprecated>
         <return-value transfer-ownership="none">
           <doc xml:space="preserve">The source code for the shader</doc>
           <type name="GLib.Bytes" c:type="GBytes*"/>
@@ -1433,8 +1499,11 @@ to render this shader.</doc>
           </instance-parameter>
         </parameters>
       </method>
-      <method name="get_uniform_name" c:identifier="gsk_gl_shader_get_uniform_name">
+      <method name="get_uniform_name" c:identifier="gsk_gl_shader_get_uniform_name" deprecated="1" deprecated-version="4.16">
         <doc xml:space="preserve">Get the name of the declared uniform for this shader at index @idx.</doc>
+        <doc-deprecated xml:space="preserve">GTK's new Vulkan-focused rendering
+  does not support this feature. Use [GtkGLArea](../gtk4/class.GLArea.html)
+  for OpenGL rendering.</doc-deprecated>
         <return-value transfer-ownership="none">
           <doc xml:space="preserve">The name of the declared uniform</doc>
           <type name="utf8" c:type="const char*"/>
@@ -1450,8 +1519,11 @@ to render this shader.</doc>
           </parameter>
         </parameters>
       </method>
-      <method name="get_uniform_offset" c:identifier="gsk_gl_shader_get_uniform_offset">
+      <method name="get_uniform_offset" c:identifier="gsk_gl_shader_get_uniform_offset" deprecated="1" deprecated-version="4.16">
         <doc xml:space="preserve">Get the offset into the data block where data for this uniforms is stored.</doc>
+        <doc-deprecated xml:space="preserve">GTK's new Vulkan-focused rendering
+  does not support this feature. Use [GtkGLArea](../gtk4/class.GLArea.html)
+  for OpenGL rendering.</doc-deprecated>
         <return-value transfer-ownership="none">
           <doc xml:space="preserve">The data offset</doc>
           <type name="gint" c:type="int"/>
@@ -1467,8 +1539,11 @@ to render this shader.</doc>
           </parameter>
         </parameters>
       </method>
-      <method name="get_uniform_type" c:identifier="gsk_gl_shader_get_uniform_type">
+      <method name="get_uniform_type" c:identifier="gsk_gl_shader_get_uniform_type" deprecated="1" deprecated-version="4.16">
         <doc xml:space="preserve">Get the type of the declared uniform for this shader at index @idx.</doc>
+        <doc-deprecated xml:space="preserve">GTK's new Vulkan-focused rendering
+  does not support this feature. Use [GtkGLArea](../gtk4/class.GLArea.html)
+  for OpenGL rendering.</doc-deprecated>
         <return-value transfer-ownership="none">
           <doc xml:space="preserve">The type of the declared uniform</doc>
           <type name="GLUniformType" c:type="GskGLUniformType"/>
@@ -1505,7 +1580,7 @@ will be %NULL.</doc>
     </record>
     <class name="GLShaderNode" c:symbol-prefix="gl_shader_node" c:type="GskGLShaderNode" parent="RenderNode" glib:type-name="GskGLShaderNode" glib:get-type="gsk_gl_shader_node_get_type" glib:fundamental="1">
       <doc xml:space="preserve">A render node using a GL shader when drawing its children nodes.</doc>
-      <constructor name="new" c:identifier="gsk_gl_shader_node_new">
+      <constructor name="new" c:identifier="gsk_gl_shader_node_new" deprecated="1" deprecated-version="4.16">
         <doc xml:space="preserve">Creates a `GskRenderNode` that will render the given @shader into the
 area given by @bounds.
 
@@ -1523,6 +1598,9 @@ If the renderer doesn't support GL shaders, or if there is any problem
 when compiling the shader, then the node will draw pink. You should use
 [method@Gsk.GLShader.compile] to ensure the @shader will work for the
 renderer before using it.</doc>
+        <doc-deprecated xml:space="preserve">GTK's new Vulkan-focused rendering
+  does not support this feature. Use [GtkGLArea](../gtk4/class.GLArea.html)
+  for OpenGL rendering.</doc-deprecated>
         <return-value transfer-ownership="full">
           <doc xml:space="preserve">A new `GskRenderNode`</doc>
           <type name="GLShaderNode" c:type="GskRenderNode*"/>
@@ -1554,8 +1632,11 @@ renderer before using it.</doc>
           </parameter>
         </parameters>
       </constructor>
-      <method name="get_args" c:identifier="gsk_gl_shader_node_get_args">
+      <method name="get_args" c:identifier="gsk_gl_shader_node_get_args" deprecated="1" deprecated-version="4.16">
         <doc xml:space="preserve">Gets args for the node.</doc>
+        <doc-deprecated xml:space="preserve">GTK's new Vulkan-focused rendering
+  does not support this feature. Use [GtkGLArea](../gtk4/class.GLArea.html)
+  for OpenGL rendering.</doc-deprecated>
         <return-value transfer-ownership="none">
           <doc xml:space="preserve">A `GBytes` with the uniform arguments</doc>
           <type name="GLib.Bytes" c:type="GBytes*"/>
@@ -1567,8 +1648,11 @@ renderer before using it.</doc>
           </instance-parameter>
         </parameters>
       </method>
-      <method name="get_child" c:identifier="gsk_gl_shader_node_get_child">
+      <method name="get_child" c:identifier="gsk_gl_shader_node_get_child" deprecated="1" deprecated-version="4.16">
         <doc xml:space="preserve">Gets one of the children.</doc>
+        <doc-deprecated xml:space="preserve">GTK's new Vulkan-focused rendering
+  does not support this feature. Use [GtkGLArea](../gtk4/class.GLArea.html)
+  for OpenGL rendering.</doc-deprecated>
         <return-value transfer-ownership="none">
           <doc xml:space="preserve">the @idx'th child of @node</doc>
           <type name="RenderNode" c:type="GskRenderNode*"/>
@@ -1584,8 +1668,11 @@ renderer before using it.</doc>
           </parameter>
         </parameters>
       </method>
-      <method name="get_n_children" c:identifier="gsk_gl_shader_node_get_n_children">
+      <method name="get_n_children" c:identifier="gsk_gl_shader_node_get_n_children" deprecated="1" deprecated-version="4.16">
         <doc xml:space="preserve">Returns the number of children</doc>
+        <doc-deprecated xml:space="preserve">GTK's new Vulkan-focused rendering
+  does not support this feature. Use [GtkGLArea](../gtk4/class.GLArea.html)
+  for OpenGL rendering.</doc-deprecated>
         <return-value transfer-ownership="none">
           <doc xml:space="preserve">The number of children</doc>
           <type name="guint" c:type="guint"/>
@@ -2075,9 +2162,14 @@ the 'mask value' with the alpha of the source.</doc>
         </parameters>
       </method>
     </class>
-    <class name="NglRenderer" c:symbol-prefix="ngl_renderer" parent="Renderer" glib:type-name="GskNglRenderer" glib:get-type="gsk_ngl_renderer_get_type">
+    <class name="NglRenderer" c:symbol-prefix="ngl_renderer" version="4.2" parent="Renderer" glib:type-name="GskNglRenderer" glib:get-type="gsk_ngl_renderer_get_type">
+      <doc xml:space="preserve">A GL based renderer.
+
+See [class@Gsk.Renderer].</doc>
       <constructor name="new" c:identifier="gsk_ngl_renderer_new">
+        <doc xml:space="preserve">Creates an instance of the new experimental GL renderer.</doc>
         <return-value transfer-ownership="full">
+          <doc xml:space="preserve">a new GL renderer</doc>
           <type name="Renderer" c:type="GskRenderer*"/>
         </return-value>
       </constructor>
@@ -4268,7 +4360,7 @@ For a discussion of the supported format, see that function.</doc>
             <doc xml:space="preserve">Callback on parsing errors</doc>
             <type name="ParseErrorFunc" c:type="GskParseErrorFunc"/>
           </parameter>
-          <parameter name="user_data" transfer-ownership="none" nullable="1" allow-none="1" closure="1">
+          <parameter name="user_data" transfer-ownership="none" nullable="1" allow-none="1">
             <doc xml:space="preserve">user_data for @error_func</doc>
             <type name="gpointer" c:type="gpointer"/>
           </parameter>
@@ -5167,9 +5259,12 @@ rendering pipeline.</doc>
     </enumeration>
     <record name="ShaderArgsBuilder" c:type="GskShaderArgsBuilder" opaque="1" glib:type-name="GskShaderArgsBuilder" glib:get-type="gsk_shader_args_builder_get_type" c:symbol-prefix="shader_args_builder">
       <doc xml:space="preserve">An object to build the uniforms data for a `GskGLShader`.</doc>
-      <constructor name="new" c:identifier="gsk_shader_args_builder_new">
+      <constructor name="new" c:identifier="gsk_shader_args_builder_new" deprecated="1" deprecated-version="4.16">
         <doc xml:space="preserve">Allocates a builder that can be used to construct a new uniform data
 chunk.</doc>
+        <doc-deprecated xml:space="preserve">GTK's new Vulkan-focused rendering
+  does not support this feature. Use [GtkGLArea](../gtk4/class.GLArea.html)
+  for OpenGL rendering.</doc-deprecated>
         <return-value transfer-ownership="full">
           <doc xml:space="preserve">The newly allocated builder, free with
     [method@Gsk.ShaderArgsBuilder.unref]</doc>
@@ -5186,12 +5281,15 @@ chunk.</doc>
           </parameter>
         </parameters>
       </constructor>
-      <method name="free_to_args" c:identifier="gsk_shader_args_builder_free_to_args" introspectable="0">
+      <method name="free_to_args" c:identifier="gsk_shader_args_builder_free_to_args" introspectable="0" deprecated="1" deprecated-version="4.16">
         <doc xml:space="preserve">Creates a new `GBytes` args from the current state of the
 given @builder, and frees the @builder instance.
 
 Any uniforms of the shader that have not been explicitly set
 on the @builder are zero-initialized.</doc>
+        <doc-deprecated xml:space="preserve">GTK's new Vulkan-focused rendering
+  does not support this feature. Use [GtkGLArea](../gtk4/class.GLArea.html)
+  for OpenGL rendering.</doc-deprecated>
         <return-value transfer-ownership="full">
           <doc xml:space="preserve">the newly allocated buffer with
   all the args added to @builder</doc>
@@ -5204,8 +5302,11 @@ on the @builder are zero-initialized.</doc>
           </instance-parameter>
         </parameters>
       </method>
-      <method name="ref" c:identifier="gsk_shader_args_builder_ref">
+      <method name="ref" c:identifier="gsk_shader_args_builder_ref" deprecated="1" deprecated-version="4.16">
         <doc xml:space="preserve">Increases the reference count of a `GskShaderArgsBuilder` by one.</doc>
+        <doc-deprecated xml:space="preserve">GTK's new Vulkan-focused rendering
+  does not support this feature. Use [GtkGLArea](../gtk4/class.GLArea.html)
+  for OpenGL rendering.</doc-deprecated>
         <return-value transfer-ownership="full">
           <doc xml:space="preserve">the passed in `GskShaderArgsBuilder`</doc>
           <type name="ShaderArgsBuilder" c:type="GskShaderArgsBuilder*"/>
@@ -5217,10 +5318,13 @@ on the @builder are zero-initialized.</doc>
           </instance-parameter>
         </parameters>
       </method>
-      <method name="set_bool" c:identifier="gsk_shader_args_builder_set_bool">
+      <method name="set_bool" c:identifier="gsk_shader_args_builder_set_bool" deprecated="1" deprecated-version="4.16">
         <doc xml:space="preserve">Sets the value of the uniform @idx.
 
 The uniform must be of bool type.</doc>
+        <doc-deprecated xml:space="preserve">GTK's new Vulkan-focused rendering
+  does not support this feature. Use [GtkGLArea](../gtk4/class.GLArea.html)
+  for OpenGL rendering.</doc-deprecated>
         <return-value transfer-ownership="none">
           <type name="none" c:type="void"/>
         </return-value>
@@ -5261,10 +5365,13 @@ The uniform must be of float type.</doc>
           </parameter>
         </parameters>
       </method>
-      <method name="set_int" c:identifier="gsk_shader_args_builder_set_int">
+      <method name="set_int" c:identifier="gsk_shader_args_builder_set_int" deprecated="1" deprecated-version="4.16">
         <doc xml:space="preserve">Sets the value of the uniform @idx.
 
 The uniform must be of int type.</doc>
+        <doc-deprecated xml:space="preserve">GTK's new Vulkan-focused rendering
+  does not support this feature. Use [GtkGLArea](../gtk4/class.GLArea.html)
+  for OpenGL rendering.</doc-deprecated>
         <return-value transfer-ownership="none">
           <type name="none" c:type="void"/>
         </return-value>
@@ -5283,10 +5390,13 @@ The uniform must be of int type.</doc>
           </parameter>
         </parameters>
       </method>
-      <method name="set_uint" c:identifier="gsk_shader_args_builder_set_uint">
+      <method name="set_uint" c:identifier="gsk_shader_args_builder_set_uint" deprecated="1" deprecated-version="4.16">
         <doc xml:space="preserve">Sets the value of the uniform @idx.
 
 The uniform must be of uint type.</doc>
+        <doc-deprecated xml:space="preserve">GTK's new Vulkan-focused rendering
+  does not support this feature. Use [GtkGLArea](../gtk4/class.GLArea.html)
+  for OpenGL rendering.</doc-deprecated>
         <return-value transfer-ownership="none">
           <type name="none" c:type="void"/>
         </return-value>
@@ -5305,10 +5415,13 @@ The uniform must be of uint type.</doc>
           </parameter>
         </parameters>
       </method>
-      <method name="set_vec2" c:identifier="gsk_shader_args_builder_set_vec2">
+      <method name="set_vec2" c:identifier="gsk_shader_args_builder_set_vec2" deprecated="1" deprecated-version="4.16">
         <doc xml:space="preserve">Sets the value of the uniform @idx.
 
 The uniform must be of vec2 type.</doc>
+        <doc-deprecated xml:space="preserve">GTK's new Vulkan-focused rendering
+  does not support this feature. Use [GtkGLArea](../gtk4/class.GLArea.html)
+  for OpenGL rendering.</doc-deprecated>
         <return-value transfer-ownership="none">
           <type name="none" c:type="void"/>
         </return-value>
@@ -5327,10 +5440,13 @@ The uniform must be of vec2 type.</doc>
           </parameter>
         </parameters>
       </method>
-      <method name="set_vec3" c:identifier="gsk_shader_args_builder_set_vec3">
+      <method name="set_vec3" c:identifier="gsk_shader_args_builder_set_vec3" deprecated="1" deprecated-version="4.16">
         <doc xml:space="preserve">Sets the value of the uniform @idx.
 
 The uniform must be of vec3 type.</doc>
+        <doc-deprecated xml:space="preserve">GTK's new Vulkan-focused rendering
+  does not support this feature. Use [GtkGLArea](../gtk4/class.GLArea.html)
+  for OpenGL rendering.</doc-deprecated>
         <return-value transfer-ownership="none">
           <type name="none" c:type="void"/>
         </return-value>
@@ -5349,10 +5465,13 @@ The uniform must be of vec3 type.</doc>
           </parameter>
         </parameters>
       </method>
-      <method name="set_vec4" c:identifier="gsk_shader_args_builder_set_vec4">
+      <method name="set_vec4" c:identifier="gsk_shader_args_builder_set_vec4" deprecated="1" deprecated-version="4.16">
         <doc xml:space="preserve">Sets the value of the uniform @idx.
 
 The uniform must be of vec4 type.</doc>
+        <doc-deprecated xml:space="preserve">GTK's new Vulkan-focused rendering
+  does not support this feature. Use [GtkGLArea](../gtk4/class.GLArea.html)
+  for OpenGL rendering.</doc-deprecated>
         <return-value transfer-ownership="none">
           <type name="none" c:type="void"/>
         </return-value>
@@ -5371,7 +5490,7 @@ The uniform must be of vec4 type.</doc>
           </parameter>
         </parameters>
       </method>
-      <method name="to_args" c:identifier="gsk_shader_args_builder_to_args">
+      <method name="to_args" c:identifier="gsk_shader_args_builder_to_args" deprecated="1" deprecated-version="4.16">
         <doc xml:space="preserve">Creates a new `GBytes` args from the current state of the
 given @builder.
 
@@ -5383,6 +5502,9 @@ you cannot call this function multiple times on the same @builder instance.
 
 This function is intended primarily for bindings. C code should use
 [method@Gsk.ShaderArgsBuilder.free_to_args].</doc>
+        <doc-deprecated xml:space="preserve">GTK's new Vulkan-focused rendering
+  does not support this feature. Use [GtkGLArea](../gtk4/class.GLArea.html)
+  for OpenGL rendering.</doc-deprecated>
         <return-value transfer-ownership="full">
           <doc xml:space="preserve">the newly allocated buffer with
   all the args added to @builder</doc>
@@ -5395,10 +5517,13 @@ This function is intended primarily for bindings. C code should use
           </instance-parameter>
         </parameters>
       </method>
-      <method name="unref" c:identifier="gsk_shader_args_builder_unref">
+      <method name="unref" c:identifier="gsk_shader_args_builder_unref" deprecated="1" deprecated-version="4.16">
         <doc xml:space="preserve">Decreases the reference count of a `GskShaderArgBuilder` by one.
 
 If the resulting reference count is zero, frees the builder.</doc>
+        <doc-deprecated xml:space="preserve">GTK's new Vulkan-focused rendering
+  does not support this feature. Use [GtkGLArea](../gtk4/class.GLArea.html)
+  for OpenGL rendering.</doc-deprecated>
         <return-value transfer-ownership="none">
           <type name="none" c:type="void"/>
         </return-value>
@@ -6904,7 +7029,15 @@ with the given @transform.</doc>
 
 This renderer will fail to realize if Vulkan is not supported.</doc>
       <constructor name="new" c:identifier="gsk_vulkan_renderer_new">
+        <doc xml:space="preserve">Creates a new Vulkan renderer.
+
+The Vulkan renderer is a renderer that uses the Vulkan library for
+rendering.
+
+This renderer will fail to realize when GTK was not compiled with
+Vulkan support.</doc>
         <return-value transfer-ownership="full">
+          <doc xml:space="preserve">a new Vulkan renderer</doc>
           <type name="Renderer" c:type="GskRenderer*"/>
         </return-value>
       </constructor>
