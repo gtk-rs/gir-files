@@ -1070,7 +1070,7 @@ void mainImage(out vec4 fragColor,
 
 This feature was deprecated in GTK 4.16 after the new rendering infrastructure
 introduced in 4.14 did not support it.
-The lack of Vulkan inegration would have made it a very hard feature to support.
+The lack of Vulkan integration would have made it a very hard feature to support.
 
 If you want to use OpenGL directly, you should look at [GtkGLArea](../gtk4/class.GLArea.html)
 which uses a different approach and is still well supported.</doc>
@@ -1465,7 +1465,6 @@ u_textureN value that the shader defines.</doc>
         </parameters>
       </method>
       <method name="get_resource" c:identifier="gsk_gl_shader_get_resource" glib:get-property="resource" deprecated="1" deprecated-version="4.16">
-        <attribute name="org.gtk.Method.get_property" value="resource"/>
         <doc xml:space="preserve">Gets the resource path for the GLSL sourcecode being used
 to render this shader.</doc>
         <doc-deprecated xml:space="preserve">GTK's new Vulkan-focused rendering
@@ -1483,7 +1482,6 @@ to render this shader.</doc>
         </parameters>
       </method>
       <method name="get_source" c:identifier="gsk_gl_shader_get_source" glib:get-property="source" deprecated="1" deprecated-version="4.16">
-        <attribute name="org.gtk.Method.get_property" value="source"/>
         <doc xml:space="preserve">Gets the GLSL sourcecode being used to render this shader.</doc>
         <doc-deprecated xml:space="preserve">GTK's new Vulkan-focused rendering
   does not support this feature. Use [GtkGLArea](../gtk4/class.GLArea.html)
@@ -1560,7 +1558,6 @@ to render this shader.</doc>
         </parameters>
       </method>
       <property name="resource" writable="1" construct-only="1" transfer-ownership="none" getter="get_resource" default-value="NULL">
-        <attribute name="org.gtk.Property.get" value="gsk_gl_shader_get_resource"/>
         <doc xml:space="preserve">Resource containing the source code for the shader.
 
 If the shader source is not coming from a resource, this
@@ -1568,7 +1565,6 @@ will be %NULL.</doc>
         <type name="utf8" c:type="gchar*"/>
       </property>
       <property name="source" writable="1" construct-only="1" transfer-ownership="none" getter="get_source">
-        <attribute name="org.gtk.Property.get" value="gsk_gl_shader_get_source"/>
         <doc xml:space="preserve">The source code for the shader, as a `GBytes`.</doc>
         <type name="GLib.Bytes"/>
       </property>
@@ -4420,6 +4416,30 @@ The node will not draw outside of its boundaries.</doc>
           </instance-parameter>
         </parameters>
       </method>
+      <method name="get_opaque_rect" c:identifier="gsk_render_node_get_opaque_rect" version="4.16">
+        <doc xml:space="preserve">Gets an opaque rectangle inside the node that GTK can determine to
+be fully opaque.
+
+There is no guarantee that this is indeed the largest opaque rectangle or
+that regions outside the rectangle are not opaque. This function is a best
+effort with that goal.
+
+The rectangle will be fully contained in the bounds of the node.</doc>
+        <return-value transfer-ownership="none">
+          <doc xml:space="preserve">%TRUE if part or all of the rendernode is opaque, %FALSE if no
+  opaque region could be found.</doc>
+          <type name="gboolean" c:type="gboolean"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="self" transfer-ownership="none">
+            <doc xml:space="preserve">a `GskRenderNode`</doc>
+            <type name="RenderNode" c:type="GskRenderNode*"/>
+          </instance-parameter>
+          <parameter name="out_opaque" direction="out" caller-allocates="1" transfer-ownership="none">
+            <type name="Graphene.Rect" c:type="graphene_rect_t*"/>
+          </parameter>
+        </parameters>
+      </method>
       <method name="ref" c:identifier="gsk_render_node_ref">
         <doc xml:space="preserve">Acquires a reference on the given `GskRenderNode`.</doc>
         <return-value transfer-ownership="full">
@@ -4621,7 +4641,6 @@ The renderer will be realized before it is returned.</doc>
         </parameters>
       </constructor>
       <method name="get_surface" c:identifier="gsk_renderer_get_surface" glib:get-property="surface">
-        <attribute name="org.gtk.Method.get_property" value="surface"/>
         <doc xml:space="preserve">Retrieves the `GdkSurface` set using gsk_enderer_realize().
 
 If the renderer has not been realized yet, %NULL will be returned.</doc>
@@ -4637,7 +4656,6 @@ If the renderer has not been realized yet, %NULL will be returned.</doc>
         </parameters>
       </method>
       <method name="is_realized" c:identifier="gsk_renderer_is_realized" glib:get-property="realized">
-        <attribute name="org.gtk.Method.get_property" value="realized"/>
         <doc xml:space="preserve">Checks whether the @renderer is realized or not.</doc>
         <return-value transfer-ownership="none">
           <doc xml:space="preserve">%TRUE if the `GskRenderer` was realized, and %FALSE otherwise</doc>
@@ -4770,12 +4788,10 @@ transform node and pass that node instead.</doc>
         </parameters>
       </method>
       <property name="realized" transfer-ownership="none" getter="is_realized" default-value="FALSE">
-        <attribute name="org.gtk.Property.get" value="gsk_renderer_is_realized"/>
         <doc xml:space="preserve">Whether the renderer has been associated with a surface or draw context.</doc>
         <type name="gboolean" c:type="gboolean"/>
       </property>
       <property name="surface" transfer-ownership="none" getter="get_surface">
-        <attribute name="org.gtk.Property.get" value="gsk_renderer_get_surface"/>
         <doc xml:space="preserve">The surface associated with renderer.</doc>
         <type name="Gdk.Surface"/>
       </property>
