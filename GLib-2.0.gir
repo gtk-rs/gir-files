@@ -19313,6 +19313,41 @@ and all memory allocated by the @group is released.</doc>
         </parameter>
       </parameters>
     </callback>
+    <function-macro name="PASTE" c:identifier="G_PASTE" version="2.20" introspectable="0">
+      <doc xml:space="preserve">Yields a new preprocessor pasted identifier
+@identifier1identifier2 from its expanded
+arguments @identifier1 and @identifier2. For example,
+the following code:
+|[&lt;!-- language="C" --&gt;
+#define GET(traveller,method) G_PASTE(traveller_get_, method) (traveller)
+const gchar *name = GET (traveller, name);
+const gchar *quest = GET (traveller, quest);
+GdkColor *favourite = GET (traveller, favourite_colour);
+]|
+
+is transformed by the preprocessor into:
+|[&lt;!-- language="C" --&gt;
+const gchar *name = traveller_get_name (traveller);
+const gchar *quest = traveller_get_quest (traveller);
+GdkColor *favourite = traveller_get_favourite_colour (traveller);
+]|</doc>
+      <parameters>
+        <parameter name="identifier1">
+          <doc xml:space="preserve">an identifier</doc>
+        </parameter>
+        <parameter name="identifier2">
+          <doc xml:space="preserve">an identifier</doc>
+        </parameter>
+      </parameters>
+    </function-macro>
+    <function-macro name="PASTE_ARGS" c:identifier="G_PASTE_ARGS" introspectable="0">
+      <parameters>
+        <parameter name="identifier1">
+        </parameter>
+        <parameter name="identifier2">
+        </parameter>
+      </parameters>
+    </function-macro>
     <constant name="PDP_ENDIAN" value="3412" c:type="G_PDP_ENDIAN">
       <doc xml:space="preserve">Specifies one of the possible types of byte order
 (currently unused). See %G_BYTE_ORDER.</doc>
@@ -25109,6 +25144,43 @@ the #GSource from the main loop.</doc>
       <doc xml:space="preserve">The square root of two.</doc>
       <type name="gdouble" c:type="gdouble"/>
     </constant>
+    <function-macro name="STATIC_ASSERT" c:identifier="G_STATIC_ASSERT" version="2.20" introspectable="0">
+      <doc xml:space="preserve">The G_STATIC_ASSERT() macro lets the programmer check
+a condition at compile time, the condition needs to
+be compile time computable. The macro can be used in
+any place where a typedef is valid.
+
+A typedef is generally allowed in exactly the same places that
+a variable declaration is allowed. For this reason, you should
+not use G_STATIC_ASSERT() in the middle of blocks of code.
+
+The macro should only be used once per source code line.</doc>
+      <parameters>
+        <parameter name="expr">
+          <doc xml:space="preserve">a constant expression</doc>
+        </parameter>
+      </parameters>
+    </function-macro>
+    <function-macro name="STATIC_ASSERT_EXPR" c:identifier="G_STATIC_ASSERT_EXPR" version="2.30" introspectable="0">
+      <doc xml:space="preserve">The G_STATIC_ASSERT_EXPR() macro lets the programmer check
+a condition at compile time. The condition needs to be
+compile time computable.
+
+Unlike G_STATIC_ASSERT(), this macro evaluates to an expression
+and, as such, can be used in the middle of other expressions.
+Its value should be ignored. This can be accomplished by placing
+it as the first argument of a comma expression.
+
+|[&lt;!-- language="C" --&gt;
+#define ADD_ONE_TO_INT(x) \
+  (G_STATIC_ASSERT_EXPR(sizeof (x) == sizeof (int)), ((x) + 1))
+]|</doc>
+      <parameters>
+        <parameter name="expr">
+          <doc xml:space="preserve">a constant expression</doc>
+        </parameter>
+      </parameters>
+    </function-macro>
     <function-macro name="STRINGIFY" c:identifier="G_STRINGIFY" introspectable="0">
       <doc xml:space="preserve">Accepts a macro or a string and converts it into a string after
 preprocessor argument expansion. For example, the following code:
@@ -32306,16 +32378,38 @@ stopped.</doc>
     </callback>
     <enumeration name="TraverseType" c:type="GTraverseType">
       <doc xml:space="preserve">Specifies the type of traversal performed by g_tree_traverse(),
-g_node_traverse() and g_node_find(). The different orders are
-illustrated here:
+g_node_traverse() and g_node_find().
+
+The different orders are illustrated here:
+
 - In order: A, B, C, D, E, F, G, H, I
-  ![](Sorted_binary_tree_inorder.svg)
+  &lt;picture&gt;
+    &lt;source srcset="Sorted_binary_tree_inorder-dark.svg"
+     media="(prefers-color-scheme: dark)"&gt;
+    &lt;img src="Sorted_binary_tree_inorder.svg"
+     alt="Sorted binary tree, in-order traversal"&gt;
+  &lt;/picture&gt;
 - Pre order: F, B, A, D, C, E, G, I, H
-  ![](Sorted_binary_tree_preorder.svg)
+  &lt;picture&gt;
+    &lt;source srcset="Sorted_binary_tree_preorder-dark.svg"
+     media="(prefers-color-scheme: dark)"&gt;
+    &lt;img src="Sorted_binary_tree_preorder.svg"
+     alt="Sorted binary tree, pre-order traversal"&gt;
+  &lt;/picture&gt;
 - Post order: A, C, E, D, B, H, I, G, F
-  ![](Sorted_binary_tree_postorder.svg)
+  &lt;picture&gt;
+    &lt;source srcset="Sorted_binary_tree_postorder-dark.svg"
+     media="(prefers-color-scheme: dark)"&gt;
+    &lt;img src="Sorted_binary_tree_postorder.svg"
+     alt="Sorted binary tree, post-order traversal"&gt;
+  &lt;/picture&gt;
 - Level order: F, B, G, A, D, I, C, E, H
-  ![](Sorted_binary_tree_breadth-first_traversal.svg)</doc>
+  &lt;picture&gt;
+    &lt;source srcset="Sorted_binary_tree_breadth-first_traversal-dark.svg"
+     media="(prefers-color-scheme: dark)"&gt;
+    &lt;img src="Sorted_binary_tree_breadth-first_traversal.svg"
+     alt="Sorted binary tree, breadth-first level order traversal"&gt;
+  &lt;/picture&gt;</doc>
       <member name="in_order" value="0" c:identifier="G_IN_ORDER">
         <doc xml:space="preserve">vists a node's left child first, then the node itself,
              then its right child. This is the one to use if you
@@ -53520,7 +53614,7 @@ the Single Unix Specification.</doc>
         </parameter>
       </parameters>
     </function>
-    <function name="sort_array" c:identifier="g_sort_array" introspectable="0">
+    <function name="sort_array" c:identifier="g_sort_array" version="2.82" introspectable="0">
       <doc xml:space="preserve">This is just like the standard C [`qsort()`](man:qsort(3)) function, but
 the comparison routine accepts a user data argument
 (like [`qsort_r()`](man:qsort_r(3))).
