@@ -3206,7 +3206,7 @@ thread.</doc>
         </parameters>
       </function>
     </record>
-    <record name="Bytes" c:type="GBytes" opaque="1" version="2.32" glib:type-name="GBytes" glib:get-type="g_bytes_get_type" c:symbol-prefix="bytes">
+    <record name="Bytes" c:type="GBytes" opaque="1" copy-function="g_bytes_ref" free-function="g_bytes_unref" version="2.32" glib:type-name="GBytes" glib:get-type="g_bytes_get_type" c:symbol-prefix="bytes">
       <doc xml:space="preserve">A simple refcounted data type representing an immutable sequence of zero or
 more bytes from an unspecified origin.
 
@@ -3234,7 +3234,10 @@ a mutable #GByteArray, use the g_byte_array_free_to_bytes() function.</doc>
       <constructor name="new" c:identifier="g_bytes_new" version="2.32">
         <doc xml:space="preserve">Creates a new #GBytes from @data.
 
-@data is copied. If @size is 0, @data may be %NULL.</doc>
+@data is copied. If @size is 0, @data may be %NULL.
+
+As an optimization, g_bytes_new() may avoid an extra allocation by copying
+the data within the resulting bytes structure if sufficiently small (since GLib 2.84).</doc>
         <return-value transfer-ownership="full">
           <doc xml:space="preserve">a new #GBytes</doc>
           <type name="Bytes" c:type="GBytes*"/>
@@ -3553,8 +3556,9 @@ the same byte data.
 
 As an optimization, the byte data is transferred to the array without copying
 if this was the last reference to bytes and bytes was created with
-g_bytes_new(), g_bytes_new_take() or g_byte_array_free_to_bytes(). In all
-other cases the data is copied.
+g_bytes_new(), g_bytes_new_take() or g_byte_array_free_to_bytes() and the
+buffer was larger than the size #GBytes may internalize within its allocation.
+In all other cases the data is copied.
 
 Do not use it if @bytes contains more than %G_MAXUINT
 bytes. #GByteArray stores the length of its data in #guint, which
@@ -3578,8 +3582,9 @@ contents.
 
 As an optimization, the byte data is returned without copying if this was
 the last reference to bytes and bytes was created with g_bytes_new(),
-g_bytes_new_take() or g_byte_array_free_to_bytes(). In all other cases the
-data is copied.</doc>
+g_bytes_new_take() or g_byte_array_free_to_bytes() and the buffer was larger
+than the size #GBytes may internalize within its allocation. In all other
+cases the data is copied.</doc>
         <return-value transfer-ownership="full">
           <doc xml:space="preserve">a pointer to the same byte data, which should be
          freed with g_free()</doc>
@@ -4102,8 +4107,8 @@ date to include new hashing algorithm types.</doc>
       <doc xml:space="preserve">Prototype of a #GChildWatchSource callback, called when a child
 process has exited.
 
-To interpret @wait_status, see the documentation
-for g_spawn_check_wait_status(). In particular,
+To interpret @wait_status, see the documentation for
+[func@GLib.spawn_check_wait_status]. In particular,
 on Unix platforms, note that it is usually not equal
 to the integer passed to `exit()` or returned from `main()`.</doc>
       <return-value transfer-ownership="none">
@@ -4120,16 +4125,16 @@ to the integer passed to `exit()` or returned from `main()`.</doc>
           <type name="gint" c:type="gint"/>
         </parameter>
         <parameter name="user_data" transfer-ownership="none" nullable="1" allow-none="1" closure="2">
-          <doc xml:space="preserve">user data passed to g_child_watch_add()</doc>
+          <doc xml:space="preserve">user data passed to [func@GLib.child_watch_add]</doc>
           <type name="gpointer" c:type="gpointer"/>
         </parameter>
       </parameters>
     </callback>
     <callback name="ClearHandleFunc" c:type="GClearHandleFunc" version="2.56">
-      <doc xml:space="preserve">Specifies the type of function passed to g_clear_handle_id().
-The implementation is expected to free the resource identified
-by @handle_id; for instance, if @handle_id is a #GSource ID,
-g_source_remove() can be used.</doc>
+      <doc xml:space="preserve">Specifies the type of function passed to [func@GLib.clear_handle_id] The
+implementation is expected to free the resource identified by @handle_id;
+for instance, if @handle_id is a [struct@GLib.Source] ID,
+[func@GLib.Source.remove] can be used.</doc>
       <return-value transfer-ownership="none">
         <type name="none" c:type="void"/>
       </return-value>
@@ -5124,6 +5129,12 @@ in the macro, so you shouldn't use double quotes.</doc>
         </parameter>
       </parameters>
     </function-macro>
+    <function-macro name="DEPRECATED_ENUMERATOR_IN_2_84_FOR" c:identifier="GLIB_DEPRECATED_ENUMERATOR_IN_2_84_FOR" introspectable="0">
+      <parameters>
+        <parameter name="f">
+        </parameter>
+      </parameters>
+    </function-macro>
     <function-macro name="DEPRECATED_FOR" c:identifier="GLIB_DEPRECATED_FOR" introspectable="0">
       <parameters>
         <parameter name="f">
@@ -5299,6 +5310,12 @@ in the macro, so you shouldn't use double quotes.</doc>
       </parameters>
     </function-macro>
     <function-macro name="DEPRECATED_IN_2_82_FOR" c:identifier="GLIB_DEPRECATED_IN_2_82_FOR" introspectable="0">
+      <parameters>
+        <parameter name="f">
+        </parameter>
+      </parameters>
+    </function-macro>
+    <function-macro name="DEPRECATED_IN_2_84_FOR" c:identifier="GLIB_DEPRECATED_IN_2_84_FOR" introspectable="0">
       <parameters>
         <parameter name="f">
         </parameter>
@@ -5484,6 +5501,12 @@ in the macro, so you shouldn't use double quotes.</doc>
         </parameter>
       </parameters>
     </function-macro>
+    <function-macro name="DEPRECATED_MACRO_IN_2_84_FOR" c:identifier="GLIB_DEPRECATED_MACRO_IN_2_84_FOR" introspectable="0">
+      <parameters>
+        <parameter name="f">
+        </parameter>
+      </parameters>
+    </function-macro>
     <function-macro name="DEPRECATED_TYPE_FOR" c:identifier="GLIB_DEPRECATED_TYPE_FOR" introspectable="0">
       <parameters>
         <parameter name="f">
@@ -5659,6 +5682,12 @@ in the macro, so you shouldn't use double quotes.</doc>
       </parameters>
     </function-macro>
     <function-macro name="DEPRECATED_TYPE_IN_2_82_FOR" c:identifier="GLIB_DEPRECATED_TYPE_IN_2_82_FOR" introspectable="0">
+      <parameters>
+        <parameter name="f">
+        </parameter>
+      </parameters>
+    </function-macro>
+    <function-macro name="DEPRECATED_TYPE_IN_2_84_FOR" c:identifier="GLIB_DEPRECATED_TYPE_IN_2_84_FOR" introspectable="0">
       <parameters>
         <parameter name="f">
         </parameter>
@@ -6521,7 +6550,7 @@ For example, don't expect that using g_date_strftime() would
 make the \%F provided by the C99 strftime() work on Windows
 where the C library only complies to C89.</doc>
         <return-value transfer-ownership="none">
-          <doc xml:space="preserve">number of characters written to the buffer, or 0 the buffer was too small</doc>
+          <doc xml:space="preserve">number of characters written to the buffer, or `0` if the buffer was too small</doc>
           <type name="gsize" c:type="gsize"/>
         </return-value>
         <parameters>
@@ -6786,7 +6815,7 @@ when you are done with it.</doc>
       <constructor name="new_from_iso8601" c:identifier="g_date_time_new_from_iso8601" version="2.56">
         <doc xml:space="preserve">Creates a #GDateTime corresponding to the given
 [ISO 8601 formatted string](https://en.wikipedia.org/wiki/ISO_8601)
-@text. ISO 8601 strings of the form &lt;date&gt;&lt;sep&gt;&lt;time&gt;&lt;tz&gt; are supported, with
+@text. ISO 8601 strings of the form `&lt;date&gt;&lt;sep&gt;&lt;time&gt;&lt;tz&gt;` are supported, with
 some extensions from [RFC 3339](https://tools.ietf.org/html/rfc3339) as
 mentioned below.
 
@@ -6794,11 +6823,11 @@ Note that as #GDateTime "is oblivious to leap seconds", leap seconds information
 in an ISO-8601 string will be ignored, so a `23:59:60` time would be parsed as
 `23:59:59`.
 
-&lt;sep&gt; is the separator and can be either 'T', 't' or ' '. The latter two
+`&lt;sep&gt;` is the separator and can be either 'T', 't' or ' '. The latter two
 separators are an extension from
 [RFC 3339](https://tools.ietf.org/html/rfc3339#section-5.6).
 
-&lt;date&gt; is in the form:
+`&lt;date&gt;` is in the form:
 
 - `YYYY-MM-DD` - Year/month/day, e.g. 2016-08-24.
 - `YYYYMMDD` - Same as above without dividers.
@@ -6808,12 +6837,12 @@ separators are an extension from
   e.g. 2016-W34-3.
 - `YYYYWwwD` - Same as above without dividers.
 
-&lt;time&gt; is in the form:
+`&lt;time&gt;` is in the form:
 
 - `hh:mm:ss(.sss)` - Hours, minutes, seconds (subseconds), e.g. 22:10:42.123.
 - `hhmmss(.sss)` - Same as above without dividers.
 
-&lt;tz&gt; is an optional timezone suffix of the form:
+`&lt;tz&gt;` is an optional timezone suffix of the form:
 
 - `Z` - UTC.
 - `+hh:mm` or `-hh:mm` - Offset from UTC in hours and minutes, e.g. +12:00.
@@ -9218,13 +9247,18 @@ it is active and it has not been destroyed.</doc>
     </function-macro>
     <callback name="HRFunc" c:type="GHRFunc">
       <doc xml:space="preserve">Specifies the type of the function passed to
-g_hash_table_foreach_remove(). It is called with each key/value
-pair, together with the @user_data parameter passed to
-g_hash_table_foreach_remove(). It should return %TRUE if the
-key/value pair should be removed from the #GHashTable.</doc>
+[func@GLib.HashTable.find], [func@GLib.HashTable.foreach_remove], and
+[func@GLib.HashTable.foreach_steal].
+
+The function is called with each key/value pair, together with
+the @user_data parameter passed to the calling function.
+
+The function should return true if the key/value pair should be
+selected, meaning it has been found or it should be removed from the
+[struct@GLib.HashTable], depending on the calling function.</doc>
       <return-value transfer-ownership="none">
-        <doc xml:space="preserve">%TRUE if the key/value pair should be removed from the
-    #GHashTable</doc>
+        <doc xml:space="preserve">true if the key/value pair should be selected, and
+  false otherwise</doc>
         <type name="gboolean" c:type="gboolean"/>
       </return-value>
       <parameters>
@@ -9237,7 +9271,7 @@ key/value pair should be removed from the #GHashTable.</doc>
           <type name="gpointer" c:type="gpointer"/>
         </parameter>
         <parameter name="user_data" transfer-ownership="none" nullable="1" allow-none="1" closure="2">
-          <doc xml:space="preserve">user data passed to g_hash_table_remove()</doc>
+          <doc xml:space="preserve">user data passed to the calling function</doc>
           <type name="gpointer" c:type="gpointer"/>
         </parameter>
       </parameters>
@@ -10046,8 +10080,9 @@ You can pass %NULL for @lookup_key, provided the hash and equal functions
 of @hash_table are %NULL-safe.
 
 The dictionary implementation optimizes for having all values identical to
-their keys, for example by using g_hash_table_add(). When stealing both the
-key and the value from such a dictionary, the value will be %NULL.</doc>
+their keys, for example by using g_hash_table_add(). Before 2.82, when
+stealing both the key and the value from such a dictionary, the value was
+%NULL. Since 2.82, the returned value and key will be the same.</doc>
         <return-value transfer-ownership="none">
           <doc xml:space="preserve">%TRUE if the key was found in the #GHashTable</doc>
           <type name="gboolean" c:type="gboolean"/>
@@ -11472,7 +11507,8 @@ the internal values of these flags.</doc>
       <method name="get_line_term" c:identifier="g_io_channel_get_line_term">
         <doc xml:space="preserve">This returns the string that #GIOChannel uses to determine
 where in the file a line break occurs. A value of %NULL
-indicates autodetection.</doc>
+indicates autodetection. Since 2.84, the return value is always
+nul-terminated.</doc>
         <return-value transfer-ownership="none">
           <doc xml:space="preserve">The line termination string. This value
   is owned by GLib and must not be freed.</doc>
@@ -15227,7 +15263,7 @@ linked against at application run time.</doc>
       <doc xml:space="preserve">The minimum value which can be held in a #gint8.</doc>
       <type name="gint8" c:type="gint8"/>
     </constant>
-    <constant name="MINOR_VERSION" value="81" c:type="GLIB_MINOR_VERSION">
+    <constant name="MINOR_VERSION" value="83" c:type="GLIB_MINOR_VERSION">
       <doc xml:space="preserve">The minor version number of the GLib library.
 
 Like #gtk_minor_version, but from the headers used at
@@ -15281,14 +15317,14 @@ variable, which could be before any statement in the case
       <doc xml:space="preserve">The `GMainContext` struct is an opaque data
 type representing a set of sources to be handled in a main loop.</doc>
       <constructor name="new" c:identifier="g_main_context_new">
-        <doc xml:space="preserve">Creates a new #GMainContext structure.</doc>
+        <doc xml:space="preserve">Creates a new [struct@GLib.MainContext] structure.</doc>
         <return-value transfer-ownership="full">
           <doc xml:space="preserve">the new #GMainContext</doc>
           <type name="MainContext" c:type="GMainContext*"/>
         </return-value>
       </constructor>
       <constructor name="new_with_flags" c:identifier="g_main_context_new_with_flags" version="2.72">
-        <doc xml:space="preserve">Creates a new #GMainContext structure.</doc>
+        <doc xml:space="preserve">Creates a new [struct@GLib.MainContext] structure.</doc>
         <return-value transfer-ownership="full">
           <doc xml:space="preserve">the new #GMainContext</doc>
           <type name="MainContext" c:type="GMainContext*"/>
@@ -15306,12 +15342,13 @@ type representing a set of sources to be handled in a main loop.</doc>
 If some other thread is the owner of the context,
 returns %FALSE immediately. Ownership is properly
 recursive: the owner can require ownership again
-and will release ownership when g_main_context_release()
-is called as many times as g_main_context_acquire().
+and will release ownership when [method@GLib.MainContext.release]
+is called as many times as [method@GLib.MainContext.acquire].
 
 You must be the owner of a context before you
-can call g_main_context_prepare(), g_main_context_query(),
-g_main_context_check(), g_main_context_dispatch(), g_main_context_release().
+can call [method@GLib.MainContext.prepare], [method@GLib.MainContext.query],
+[method@GLib.MainContext.check], [method@GLib.MainContext.dispatch],
+[method@GLib.MainContext.release].
 
 Since 2.76 @context can be %NULL to use the global-default
 main context.</doc>
@@ -15331,7 +15368,7 @@ main context.</doc>
       <method name="add_poll" c:identifier="g_main_context_add_poll">
         <doc xml:space="preserve">Adds a file descriptor to the set of file descriptors polled for
 this context. This will very seldom be used directly. Instead
-a typical event source will use g_source_add_unix_fd() instead.</doc>
+a typical event source will use `g_source_add_unix_fd` instead.</doc>
         <return-value transfer-ownership="none">
           <type name="none" c:type="void"/>
         </return-value>
@@ -15348,8 +15385,8 @@ a typical event source will use g_source_add_unix_fd() instead.</doc>
           </parameter>
           <parameter name="priority" transfer-ownership="none">
             <doc xml:space="preserve">the priority for this file descriptor which should be
-     the same as the priority used for g_source_attach() to ensure that the
-     file descriptor is polled whenever the results may be needed.</doc>
+     the same as the priority used for [method@GLib.Source.attach] to ensure
+     that the file descriptor is polled whenever the results may be needed.</doc>
             <type name="gint" c:type="gint"/>
           </parameter>
         </parameters>
@@ -15357,11 +15394,11 @@ a typical event source will use g_source_add_unix_fd() instead.</doc>
       <method name="check" c:identifier="g_main_context_check">
         <doc xml:space="preserve">Passes the results of polling back to the main loop. You should be
 careful to pass @fds and its length @n_fds as received from
-g_main_context_query(), as this functions relies on assumptions
+[method@GLib.MainContext.query], as this functions relies on assumptions
 on how @fds is filled.
 
 You must have successfully acquired the context with
-g_main_context_acquire() before you may call this function.
+[method@GLib.MainContext.acquire] before you may call this function.
 
 Since 2.76 @context can be %NULL to use the global-default
 main context.</doc>
@@ -15381,13 +15418,13 @@ main context.</doc>
           </parameter>
           <parameter name="fds" transfer-ownership="none">
             <doc xml:space="preserve">array of #GPollFD's that was passed to
-      the last call to g_main_context_query()</doc>
+      the last call to [method@GLib.MainContext.query]</doc>
             <array length="2" zero-terminated="0" c:type="GPollFD*">
               <type name="PollFD" c:type="GPollFD"/>
             </array>
           </parameter>
           <parameter name="n_fds" transfer-ownership="none">
-            <doc xml:space="preserve">return value of g_main_context_query()</doc>
+            <doc xml:space="preserve">return value of [method@GLib.MainContext.query]</doc>
             <type name="gint" c:type="gint"/>
           </parameter>
         </parameters>
@@ -15396,7 +15433,7 @@ main context.</doc>
         <doc xml:space="preserve">Dispatches all pending sources.
 
 You must have successfully acquired the context with
-g_main_context_acquire() before you may call this function.
+[method@GLib.MainContext.acquire] before you may call this function.
 
 Since 2.76 @context can be %NULL to use the global-default
 main context.</doc>
@@ -15426,7 +15463,7 @@ the first one found will be returned.</doc>
             <type name="MainContext" c:type="GMainContext*"/>
           </instance-parameter>
           <parameter name="funcs" transfer-ownership="none">
-            <doc xml:space="preserve">the @source_funcs passed to g_source_new().</doc>
+            <doc xml:space="preserve">the @source_funcs passed to [ctor@GLib.Source.new].</doc>
             <type name="SourceFuncs" c:type="GSourceFuncs*"/>
           </parameter>
           <parameter name="user_data" transfer-ownership="none" nullable="1" allow-none="1">
@@ -15443,7 +15480,7 @@ It is a programmer error to attempt to look up a non-existent source.
 More specifically: source IDs can be reissued after a source has been
 destroyed and therefore it is never valid to use this function with a
 source ID which may have already been removed.  An example is when
-scheduling an idle to run in another thread with g_idle_add(): the
+scheduling an idle to run in another thread with [func@GLib.idle_add]: the
 idle may already have run and been removed by the time this function
 is called on its (now invalid) source ID.  This source ID may have
 been reissued, leading to the operation being performed against the
@@ -15459,7 +15496,7 @@ wrong source.</doc>
             <type name="MainContext" c:type="GMainContext*"/>
           </instance-parameter>
           <parameter name="source_id" transfer-ownership="none">
-            <doc xml:space="preserve">the source ID, as returned by g_source_get_id().</doc>
+            <doc xml:space="preserve">the source ID, as returned by [method@GLib.Source.get_id].</doc>
             <type name="guint" c:type="guint"/>
           </parameter>
         </parameters>
@@ -15485,7 +15522,7 @@ one found will be returned.</doc>
         </parameters>
       </method>
       <method name="get_poll_func" c:identifier="g_main_context_get_poll_func" introspectable="0">
-        <doc xml:space="preserve">Gets the poll function set by g_main_context_set_poll_func().</doc>
+        <doc xml:space="preserve">Gets the poll function set by [method@GLib.MainContext.set_poll_func].</doc>
         <return-value>
           <doc xml:space="preserve">the poll function</doc>
           <type name="PollFunc" c:type="GPollFunc"/>
@@ -15503,19 +15540,19 @@ one found will be returned.</doc>
 invocation of @function.
 
 If @context is %NULL then the global-default main context &#x2014; as
-returned by g_main_context_default() &#x2014; is used.
+returned by [func@GLib.MainContext.default] &#x2014; is used.
 
 If @context is owned by the current thread, @function is called
 directly.  Otherwise, if @context is the thread-default main context
-of the current thread and g_main_context_acquire() succeeds, then
-@function is called and g_main_context_release() is called
+of the current thread and [method@GLib.MainContext.acquire] succeeds, then
+@function is called and [method@GLib.MainContext.release] is called
 afterwards.
 
 In any other case, an idle source is created to call @function and
 that source is attached to @context (presumably to be run in another
-thread).  The idle source is attached with %G_PRIORITY_DEFAULT
+thread).  The idle source is attached with [const@GLib.PRIORITY_DEFAULT]
 priority.  If you want a different priority, use
-g_main_context_invoke_full().
+[method@GLib.MainContext.invoke_full].
 
 Note that, as with normal idle functions, @function should probably
 return %FALSE.  If it returns %TRUE, it will be continuously run in a
@@ -15543,7 +15580,7 @@ loop (and may prevent this call from returning).</doc>
         <doc xml:space="preserve">Invokes a function in such a way that @context is owned during the
 invocation of @function.
 
-This function is the same as g_main_context_invoke() except that it
+This function is the same as [method@GLib.MainContext.invoke] except that it
 lets you specify the priority in case @function ends up being
 scheduled as an idle and also lets you give a #GDestroyNotify for @data.
 
@@ -15578,7 +15615,7 @@ thread or with any particular context acquired.</doc>
       </method>
       <method name="is_owner" c:identifier="g_main_context_is_owner" version="2.10">
         <doc xml:space="preserve">Determines whether this thread holds the (recursive)
-ownership of this #GMainContext. This is useful to
+ownership of this [struct@GLib.MainContext]. This is useful to
 know before waiting on another thread that may be
 blocking to get ownership of @context.</doc>
         <return-value transfer-ownership="none">
@@ -15604,7 +15641,7 @@ events sources will be dispatched (if any), that are ready at this
 given moment without further waiting.
 
 Note that even when @may_block is %TRUE, it is still possible for
-g_main_context_iteration() to return %FALSE, since the wait may
+[method@GLib.MainContext.iteration] to return %FALSE, since the wait may
 be interrupted for other reasons than an event source becoming ready.</doc>
         <return-value transfer-ownership="none">
           <doc xml:space="preserve">%TRUE if events were dispatched.</doc>
@@ -15652,10 +15689,10 @@ it was on the top of the stack).</doc>
       </method>
       <method name="prepare" c:identifier="g_main_context_prepare">
         <doc xml:space="preserve">Prepares to poll sources within a main loop. The resulting information
-for polling is determined by calling g_main_context_query ().
+for polling is determined by calling [method@GLib.MainContext.query].
 
 You must have successfully acquired the context with
-g_main_context_acquire() before you may call this function.</doc>
+[method@GLib.MainContext.acquire] before you may call this function.</doc>
         <return-value transfer-ownership="none">
           <doc xml:space="preserve">%TRUE if some source is ready to be dispatched
               prior to polling.</doc>
@@ -15681,32 +15718,33 @@ current thread. This will cause certain asynchronous operations
 started in this thread to run under @context and deliver their
 results to its main loop, rather than running under the global
 default main context in the main thread. Note that calling this function
-changes the context returned by g_main_context_get_thread_default(),
-not the one returned by g_main_context_default(), so it does not affect
-the context used by functions like g_idle_add().
+changes the context returned by [func@GLib.MainContext.get_thread_default],
+not the one returned by [func@GLib.MainContext.default], so it does not
+affect the context used by functions like [func@GLib.idle_add].
 
 Normally you would call this function shortly after creating a new
-thread, passing it a #GMainContext which will be run by a
-#GMainLoop in that thread, to set a new default context for all
+thread, passing it a [struct@GLib.MainContext] which will be run by a
+[struct@GLib.MainLoop] in that thread, to set a new default context for all
 async operations in that thread. In this case you may not need to
-ever call g_main_context_pop_thread_default(), assuming you want the
-new #GMainContext to be the default for the whole lifecycle of the
-thread.
+ever call [method@GLib.MainContext.pop_thread_default], assuming you want
+the new [struct@GLib.MainContext] to be the default for the whole lifecycle
+of the thread.
 
 If you don't have control over how the new thread was created (e.g.
 in the new thread isn't newly created, or if the thread life
 cycle is managed by a #GThreadPool), it is always suggested to wrap
-the logic that needs to use the new #GMainContext inside a
-g_main_context_push_thread_default() / g_main_context_pop_thread_default()
-pair, otherwise threads that are re-used will end up never explicitly
-releasing the #GMainContext reference they hold.
+the logic that needs to use the new [struct@GLib.MainContext] inside a
+[method@GLib.MainContext.push_thread_default] /
+[method@GLib.MainContext.pop_thread_default] pair, otherwise threads that
+are re-used will end up never explicitly releasing the
+[struct@GLib.MainContext] reference they hold.
 
 In some cases you may want to schedule a single operation in a
 non-default context, or temporarily use a non-default context in
 the main thread. In that case, you can wrap the call to the
 asynchronous operation inside a
-g_main_context_push_thread_default() /
-g_main_context_pop_thread_default() pair, but it is up to you to
+[method@GLib.MainContext.push_thread_default] /
+[method@GLib.MainContext.pop_thread_default] pair, but it is up to you to
 ensure that no other asynchronous operations accidentally get
 started while the non-default context is active.
 
@@ -15724,14 +15762,63 @@ see g_file_supports_thread_contexts().</doc>
           </instance-parameter>
         </parameters>
       </method>
+      <method name="pusher_new" c:identifier="g_main_context_pusher_new" version="2.64">
+        <doc xml:space="preserve">Push @main_context as the new thread-default main context for the current
+thread, using [method@GLib.MainContext.push_thread_default], and return a
+new [alias@GLib.MainContextPusher]. Pop with g_main_context_pusher_free().
+Using [method@GLib.MainContext.pop_thread_default] on @main_context while a
+[alias@GLib.MainContextPusher] exists for it can lead to undefined behaviour.
+
+Using two [alias@GLib.MainContextPusher]s in the same scope is not allowed,
+as it leads to an undefined pop order.
+
+This is intended to be used with g_autoptr().  Note that g_autoptr()
+is only available when using GCC or clang, so the following example
+will only work with those compilers:
+|[
+typedef struct
+{
+  ...
+  GMainContext *context;
+  ...
+} MyObject;
+
+static void
+my_object_do_stuff (MyObject *self)
+{
+  g_autoptr(GMainContextPusher) pusher = g_main_context_pusher_new (self-&gt;context);
+
+  // Code with main context as the thread default here
+
+  if (cond)
+    // No need to pop
+    return;
+
+  // Optionally early pop
+  g_clear_pointer (&amp;pusher, g_main_context_pusher_free);
+
+  // Code with main context no longer the thread default here
+}
+]|</doc>
+        <return-value transfer-ownership="full">
+          <doc xml:space="preserve">a #GMainContextPusher</doc>
+          <type name="MainContextPusher" c:type="GMainContextPusher*"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="main_context" transfer-ownership="none">
+            <doc xml:space="preserve">a main context to push</doc>
+            <type name="MainContext" c:type="GMainContext*"/>
+          </instance-parameter>
+        </parameters>
+      </method>
       <method name="query" c:identifier="g_main_context_query">
         <doc xml:space="preserve">Determines information necessary to poll this main loop. You should
 be careful to pass the resulting @fds array and its length @n_fds
-as is when calling g_main_context_check(), as this function relies
+as is when calling [method@GLib.MainContext.check], as this function relies
 on assumptions made when the array is filled.
 
 You must have successfully acquired the context with
-g_main_context_acquire() before you may call this function.</doc>
+[method@GLib.MainContext.acquire] before you may call this function.</doc>
         <return-value transfer-ownership="none">
           <doc xml:space="preserve">the number of records actually stored in @fds,
   or, if more than @n_fds records need to be stored, the number
@@ -15766,7 +15853,7 @@ g_main_context_acquire() before you may call this function.</doc>
         </parameters>
       </method>
       <method name="ref" c:identifier="g_main_context_ref">
-        <doc xml:space="preserve">Increases the reference count on a #GMainContext object by one.</doc>
+        <doc xml:space="preserve">Increases the reference count on a [struct@GLib.MainContext] object by one.</doc>
         <return-value transfer-ownership="full">
           <doc xml:space="preserve">the @context that was passed in (since 2.6)</doc>
           <type name="MainContext" c:type="GMainContext*"/>
@@ -15780,12 +15867,12 @@ g_main_context_acquire() before you may call this function.</doc>
       </method>
       <method name="release" c:identifier="g_main_context_release">
         <doc xml:space="preserve">Releases ownership of a context previously acquired by this thread
-with g_main_context_acquire(). If the context was acquired multiple
-times, the ownership will be released only when g_main_context_release()
+with [method@GLib.MainContext.acquire]. If the context was acquired multiple
+times, the ownership will be released only when [method@GLib.MainContext.release]
 is called as many times as it was acquired.
 
 You must have successfully acquired the context with
-g_main_context_acquire() before you may call this function.</doc>
+[method@GLib.MainContext.acquire] before you may call this function.</doc>
         <return-value transfer-ownership="none">
           <type name="none" c:type="void"/>
         </return-value>
@@ -15810,7 +15897,8 @@ polled for a particular context.</doc>
             <type name="MainContext" c:type="GMainContext*"/>
           </instance-parameter>
           <parameter name="fd" transfer-ownership="none">
-            <doc xml:space="preserve">a #GPollFD descriptor previously added with g_main_context_add_poll()</doc>
+            <doc xml:space="preserve">a #GPollFD descriptor previously added with
+  [method@GLib.MainContext.add_poll]</doc>
             <type name="PollFD" c:type="GPollFD*"/>
           </parameter>
         </parameters>
@@ -15839,7 +15927,8 @@ loop with an external event loop.</doc>
         </parameters>
       </method>
       <method name="unref" c:identifier="g_main_context_unref">
-        <doc xml:space="preserve">Decreases the reference count on a #GMainContext object by one. If
+        <doc xml:space="preserve">Decreases the reference count on a [struct@GLib.MainContext] object by one.
+If
 the result is zero, free the context and free all associated memory.</doc>
         <return-value transfer-ownership="none">
           <type name="none" c:type="void"/>
@@ -15853,11 +15942,12 @@ the result is zero, free the context and free all associated memory.</doc>
       </method>
       <method name="wait" c:identifier="g_main_context_wait" deprecated="1" deprecated-version="2.58">
         <doc xml:space="preserve">Tries to become the owner of the specified context,
-as with g_main_context_acquire(). But if another thread
+as with [method@GLib.MainContext.acquire]. But if another thread
 is the owner, atomically drop @mutex and wait on @cond until
 that owner releases ownership or until @cond is signaled, then
 try again (once) to become the owner.</doc>
-        <doc-deprecated xml:space="preserve">Use g_main_context_is_owner() and separate locking instead.</doc-deprecated>
+        <doc-deprecated xml:space="preserve">Use [method@GLib.MainContext.is_owner] and separate
+   locking instead.</doc-deprecated>
         <return-value transfer-ownership="none">
           <doc xml:space="preserve">%TRUE if the operation succeeded, and
   this thread is now the owner of @context.</doc>
@@ -15880,14 +15970,14 @@ try again (once) to become the owner.</doc>
         </parameters>
       </method>
       <method name="wakeup" c:identifier="g_main_context_wakeup">
-        <doc xml:space="preserve">If @context is currently blocking in g_main_context_iteration()
+        <doc xml:space="preserve">If @context is currently blocking in [method@GLib.MainContext.iteration]
 waiting for a source to become ready, cause it to stop blocking
 and return.  Otherwise, cause the next invocation of
-g_main_context_iteration() to return without blocking.
+[method@GLib.MainContext.iteration] to return without blocking.
 
-This API is useful for low-level control over #GMainContext; for
+This API is useful for low-level control over [struct@GLib.MainContext]; for
 example, integrating it with main loop implementations such as
-#GMainLoop.
+[struct@GLib.MainLoop].
 
 Another related use for this function is when implementing a main
 loop with a termination condition, computed from multiple threads:
@@ -15923,7 +16013,7 @@ Then in a thread:
         <doc xml:space="preserve">Returns the global-default main context. This is the main context
 used for main loop functions when a main loop is not explicitly
 specified, and corresponds to the "main" main loop. See also
-g_main_context_get_thread_default().</doc>
+[func@GLib.MainContext.get_thread_default].</doc>
         <return-value transfer-ownership="none">
           <doc xml:space="preserve">the global-default main context.</doc>
           <type name="MainContext" c:type="GMainContext*"/>
@@ -15933,37 +16023,54 @@ g_main_context_get_thread_default().</doc>
         <doc xml:space="preserve">Gets the thread-default #GMainContext for this thread. Asynchronous
 operations that want to be able to be run in contexts other than
 the default one should call this method or
-g_main_context_ref_thread_default() to get a #GMainContext to add
-their #GSources to. (Note that even in single-threaded
-programs applications may sometimes want to temporarily push a
-non-default context, so it is not safe to assume that this will
-always return %NULL if you are running in the default thread.)
+[func@GLib.MainContext.ref_thread_default] to get a
+[struct@GLib.MainContext] to add their [struct@GLib.Source]s to. (Note that
+even in single-threaded programs applications may sometimes want to
+temporarily push a non-default context, so it is not safe to assume that
+this will always return %NULL if you are running in the default thread.)
 
 If you need to hold a reference on the context, use
-g_main_context_ref_thread_default() instead.</doc>
+[func@GLib.MainContext.ref_thread_default] instead.</doc>
         <return-value transfer-ownership="none" nullable="1">
           <doc xml:space="preserve">the thread-default #GMainContext, or
 %NULL if the thread-default context is the global-default main context.</doc>
           <type name="MainContext" c:type="GMainContext*"/>
         </return-value>
       </function>
+      <function name="pusher_free" c:identifier="g_main_context_pusher_free" version="2.64" introspectable="0">
+        <doc xml:space="preserve">Pop @pusher&#x2019;s main context as the thread default main context.
+See g_main_context_pusher_new() for details.
+
+This will pop the [struct@GLib.MainContext] as the current thread-default
+main context, but will not call [method@GLib.MainContext.unref] on it.</doc>
+        <return-value transfer-ownership="none">
+          <type name="none" c:type="void"/>
+        </return-value>
+        <parameters>
+          <parameter name="pusher" transfer-ownership="full">
+            <doc xml:space="preserve">a #GMainContextPusher</doc>
+            <type name="MainContextPusher" c:type="GMainContextPusher*"/>
+          </parameter>
+        </parameters>
+      </function>
       <function name="ref_thread_default" c:identifier="g_main_context_ref_thread_default" version="2.32">
-        <doc xml:space="preserve">Gets the thread-default #GMainContext for this thread, as with
-g_main_context_get_thread_default(), but also adds a reference to
-it with g_main_context_ref(). In addition, unlike
-g_main_context_get_thread_default(), if the thread-default context
-is the global-default context, this will return that #GMainContext
-(with a ref added to it) rather than returning %NULL.</doc>
+        <doc xml:space="preserve">Gets the thread-default [struct@GLib.MainContext] for this thread, as with
+[func@GLib.MainContext.get_thread_default], but also adds a reference to
+it with [method@GLib.MainContext.ref]. In addition, unlike
+[func@GLib.MainContext.get_thread_default], if the thread-default context
+is the global-default context, this will return that
+[struct@GLib.MainContext] (with a ref added to it) rather than returning
+%NULL.</doc>
         <return-value transfer-ownership="full">
           <doc xml:space="preserve">the thread-default #GMainContext. Unref
-    with g_main_context_unref() when you are done with it.</doc>
+    with [method@GLib.MainContext.unref] when you are done with it.</doc>
           <type name="MainContext" c:type="GMainContext*"/>
         </return-value>
       </function>
     </record>
     <bitfield name="MainContextFlags" version="2.72" c:type="GMainContextFlags">
-      <doc xml:space="preserve">Flags to pass to g_main_context_new_with_flags() which affect the behaviour
-of a #GMainContext.</doc>
+      <doc xml:space="preserve">Flags to pass to [ctor@GLib.MainContext.new_with_flags] which affect the
+behaviour of a [struct@GLib.MainContext].</doc>
       <member name="none" value="0" c:identifier="G_MAIN_CONTEXT_FLAGS_NONE">
         <doc xml:space="preserve">Default behaviour.</doc>
       </member>
@@ -15978,7 +16085,7 @@ other event loops.</doc>
       <doc xml:space="preserve">The `GMainLoop` struct is an opaque data type
 representing the main event loop of a GLib or GTK application.</doc>
       <constructor name="new" c:identifier="g_main_loop_new">
-        <doc xml:space="preserve">Creates a new #GMainLoop structure.</doc>
+        <doc xml:space="preserve">Creates a new [struct@GLib.MainLoop] structure.</doc>
         <return-value transfer-ownership="full">
           <doc xml:space="preserve">a new #GMainLoop.</doc>
           <type name="MainLoop" c:type="GMainLoop*"/>
@@ -15991,16 +16098,16 @@ representing the main event loop of a GLib or GTK application.</doc>
           </parameter>
           <parameter name="is_running" transfer-ownership="none">
             <doc xml:space="preserve">set to %TRUE to indicate that the loop is running. This
-is not very important since calling g_main_loop_run() will set this to
-%TRUE anyway.</doc>
+is not very important since calling [method@GLib.MainLoop.run] will set this
+to %TRUE anyway.</doc>
             <type name="gboolean" c:type="gboolean"/>
           </parameter>
         </parameters>
       </constructor>
       <method name="get_context" c:identifier="g_main_loop_get_context">
-        <doc xml:space="preserve">Returns the #GMainContext of @loop.</doc>
+        <doc xml:space="preserve">Returns the [struct@GLib.MainContext] of @loop.</doc>
         <return-value transfer-ownership="none">
-          <doc xml:space="preserve">the #GMainContext of @loop</doc>
+          <doc xml:space="preserve">the [struct@GLib.MainContext] of @loop</doc>
           <type name="MainContext" c:type="GMainContext*"/>
         </return-value>
         <parameters>
@@ -16011,7 +16118,8 @@ is not very important since calling g_main_loop_run() will set this to
         </parameters>
       </method>
       <method name="is_running" c:identifier="g_main_loop_is_running">
-        <doc xml:space="preserve">Checks to see if the main loop is currently being run via g_main_loop_run().</doc>
+        <doc xml:space="preserve">Checks to see if the main loop is currently being run via
+[method@GLib.MainLoop.run].</doc>
         <return-value transfer-ownership="none">
           <doc xml:space="preserve">%TRUE if the mainloop is currently being run.</doc>
           <type name="gboolean" c:type="gboolean"/>
@@ -16024,11 +16132,11 @@ is not very important since calling g_main_loop_run() will set this to
         </parameters>
       </method>
       <method name="quit" c:identifier="g_main_loop_quit">
-        <doc xml:space="preserve">Stops a #GMainLoop from running. Any calls to g_main_loop_run()
-for the loop will return.
+        <doc xml:space="preserve">Stops a [struct@GLib.MainLoop] from running. Any calls to
+[method@GLib.MainLoop.run] for the loop will return.
 
 Note that sources that have already been dispatched when
-g_main_loop_quit() is called will still be executed.</doc>
+[method@GLib.MainLoop.quit] is called will still be executed.</doc>
         <return-value transfer-ownership="none">
           <type name="none" c:type="void"/>
         </return-value>
@@ -16040,7 +16148,7 @@ g_main_loop_quit() is called will still be executed.</doc>
         </parameters>
       </method>
       <method name="ref" c:identifier="g_main_loop_ref">
-        <doc xml:space="preserve">Increases the reference count on a #GMainLoop object by one.</doc>
+        <doc xml:space="preserve">Increases the reference count on a [struct@GLib.MainLoop] object by one.</doc>
         <return-value transfer-ownership="full">
           <doc xml:space="preserve">@loop</doc>
           <type name="MainLoop" c:type="GMainLoop*"/>
@@ -16053,7 +16161,7 @@ g_main_loop_quit() is called will still be executed.</doc>
         </parameters>
       </method>
       <method name="run" c:identifier="g_main_loop_run">
-        <doc xml:space="preserve">Runs a main loop until g_main_loop_quit() is called on the loop.
+        <doc xml:space="preserve">Runs a main loop until [method@GLib.MainLoop.quit] is called on the loop.
 If this is called for the thread of the loop's #GMainContext,
 it will process events from the loop, otherwise it will
 simply wait.</doc>
@@ -16068,7 +16176,7 @@ simply wait.</doc>
         </parameters>
       </method>
       <method name="unref" c:identifier="g_main_loop_unref">
-        <doc xml:space="preserve">Decreases the reference count on a #GMainLoop object by one. If
+        <doc xml:space="preserve">Decreases the reference count on a [struct@GLib.MainLoop] object by one. If
 the result is zero, free the loop and free all associated memory.</doc>
         <return-value transfer-ownership="none">
           <type name="none" c:type="void"/>
@@ -16184,7 +16292,7 @@ Note that the contents may not be zero-terminated,
 even if the #GMappedFile is backed by a text file.
 
 If the file is empty then %NULL is returned.</doc>
-        <return-value transfer-ownership="full">
+        <return-value transfer-ownership="none" nullable="1">
           <doc xml:space="preserve">the contents of @file, or %NULL.</doc>
           <type name="utf8" c:type="gchar*"/>
         </return-value>
@@ -16938,7 +17046,7 @@ so you cannot call this function after freeing the string.</doc>
         <doc xml:space="preserve">Retrieves the text matching the capturing parentheses named @name.
 
 If @name is a valid sub pattern name but it didn't match anything
-(e.g. sub pattern "X", matching "b" against "(?P&lt;X&gt;a)?b")
+(e.g. sub pattern `"X"`, matching `"b"` against `"(?P&lt;X&gt;a)?b"`)
 then an empty string is returned.
 
 The string is fetched from the string passed to the match function,
@@ -16963,7 +17071,7 @@ so you cannot call this function after freeing the string.</doc>
         <doc xml:space="preserve">Retrieves the position in bytes of the capturing parentheses named @name.
 
 If @name is a valid sub pattern name but it didn't match anything
-(e.g. sub pattern "X", matching "b" against "(?P&lt;X&gt;a)?b")
+(e.g. sub pattern `"X"`, matching `"b"` against `"(?P&lt;X&gt;a)?b"`)
 then @start_pos and @end_pos are set to -1 and %TRUE is returned.</doc>
         <return-value transfer-ownership="none">
           <doc xml:space="preserve">%TRUE if the position was fetched, %FALSE otherwise.
@@ -19313,6 +19421,41 @@ and all memory allocated by the @group is released.</doc>
         </parameter>
       </parameters>
     </callback>
+    <function-macro name="PASTE" c:identifier="G_PASTE" version="2.20" introspectable="0">
+      <doc xml:space="preserve">Yields a new preprocessor pasted identifier
+@identifier1identifier2 from its expanded
+arguments @identifier1 and @identifier2. For example,
+the following code:
+|[&lt;!-- language="C" --&gt;
+#define GET(traveller,method) G_PASTE(traveller_get_, method) (traveller)
+const gchar *name = GET (traveller, name);
+const gchar *quest = GET (traveller, quest);
+GdkColor *favourite = GET (traveller, favourite_colour);
+]|
+
+is transformed by the preprocessor into:
+|[&lt;!-- language="C" --&gt;
+const gchar *name = traveller_get_name (traveller);
+const gchar *quest = traveller_get_quest (traveller);
+GdkColor *favourite = traveller_get_favourite_colour (traveller);
+]|</doc>
+      <parameters>
+        <parameter name="identifier1">
+          <doc xml:space="preserve">an identifier</doc>
+        </parameter>
+        <parameter name="identifier2">
+          <doc xml:space="preserve">an identifier</doc>
+        </parameter>
+      </parameters>
+    </function-macro>
+    <function-macro name="PASTE_ARGS" c:identifier="G_PASTE_ARGS" introspectable="0">
+      <parameters>
+        <parameter name="identifier1">
+        </parameter>
+        <parameter name="identifier2">
+        </parameter>
+      </parameters>
+    </function-macro>
     <constant name="PDP_ENDIAN" value="3412" c:type="G_PDP_ENDIAN">
       <doc xml:space="preserve">Specifies one of the possible types of byte order
 (currently unused). See %G_BYTE_ORDER.</doc>
@@ -19344,7 +19487,7 @@ when printing the @fd member of a #GPollFD.</doc>
       <doc xml:space="preserve">Use this for default priority event sources.
 
 In GLib this priority is used when adding timeout functions
-with g_timeout_add(). In GDK this priority is used for events
+with [func@GLib.timeout_add]. In GDK this priority is used for events
 from the X server.</doc>
       <type name="gint" c:type="gint"/>
     </constant>
@@ -19352,7 +19495,7 @@ from the X server.</doc>
       <doc xml:space="preserve">Use this for default priority idle functions.
 
 In GLib this priority is used when adding idle functions with
-g_idle_add().</doc>
+[func@GLib.idle_add].</doc>
       <type name="gint" c:type="gint"/>
     </constant>
     <constant name="PRIORITY_HIGH" value="-100" c:type="G_PRIORITY_HIGH">
@@ -22965,15 +23108,15 @@ freeing or modifying @string then the behaviour is undefined.</doc>
         <doc xml:space="preserve">Using the standard algorithm for regular expression matching only
 the longest match in the @string is retrieved, it is not possible
 to obtain all the available matches. For instance matching
-"&lt;a&gt; &lt;b&gt; &lt;c&gt;" against the pattern "&lt;.*&gt;"
-you get "&lt;a&gt; &lt;b&gt; &lt;c&gt;".
+`"&lt;a&gt; &lt;b&gt; &lt;c&gt;"` against the pattern `"&lt;.*&gt;"`
+you get `"&lt;a&gt; &lt;b&gt; &lt;c&gt;"`.
 
 This function uses a different algorithm (called DFA, i.e. deterministic
 finite automaton), so it can retrieve all the possible matches, all
 starting at the same point in the string. For instance matching
-"&lt;a&gt; &lt;b&gt; &lt;c&gt;" against the pattern "&lt;.*&gt;;"
-you would obtain three matches: "&lt;a&gt; &lt;b&gt; &lt;c&gt;",
-"&lt;a&gt; &lt;b&gt;" and "&lt;a&gt;".
+`"&lt;a&gt; &lt;b&gt; &lt;c&gt;"` against the pattern `"&lt;.*&gt;"`
+you would obtain three matches: `"&lt;a&gt; &lt;b&gt; &lt;c&gt;"`,
+`"&lt;a&gt; &lt;b&gt;"` and `"&lt;a&gt;"`.
 
 The number of matched strings is retrieved using
 g_match_info_get_match_count(). To obtain the matched strings and
@@ -23135,13 +23278,13 @@ print_uppercase_words (const gchar *string)
       </method>
       <method name="replace" c:identifier="g_regex_replace" version="2.14" throws="1">
         <doc xml:space="preserve">Replaces all occurrences of the pattern in @regex with the
-replacement text. Backreferences of the form '\number' or
-'\g&lt;number&gt;' in the replacement text are interpolated by the
-number-th captured subexpression of the match, '\g&lt;name&gt;' refers
-to the captured subexpression with the given name. '\0' refers
-to the complete match, but '\0' followed by a number is the octal
-representation of a character. To include a literal '\' in the
-replacement, write '\\\\'.
+replacement text. Backreferences of the form `\number` or
+`\g&lt;number&gt;` in the replacement text are interpolated by the
+number-th captured subexpression of the match, `\g&lt;name&gt;` refers
+to the captured subexpression with the given name. `\0` refers
+to the complete match, but `\0` followed by a number is the octal
+representation of a character. To include a literal `\` in the
+replacement, write `\\\\`.
 
 There are also escapes that changes the case of the following text:
 
@@ -25080,20 +25223,21 @@ used is a stable sort.</doc>
       </function>
     </record>
     <constant name="SOURCE_CONTINUE" value="true" c:type="G_SOURCE_CONTINUE" version="2.32">
-      <doc xml:space="preserve">Use this macro as the return value of a #GSourceFunc to leave
-the #GSource in the main loop.</doc>
+      <doc xml:space="preserve">Use this macro as the return value of a [callback@GLib.SourceFunc] to leave
+the [struct@GLib.Source] in the main loop.</doc>
       <type name="gboolean" c:type="gboolean"/>
     </constant>
     <function-macro name="SOURCE_FUNC" c:identifier="G_SOURCE_FUNC" version="2.58" introspectable="0">
-      <doc xml:space="preserve">Cast a function pointer to a #GSourceFunc, suppressing warnings from GCC 8
-onwards with `-Wextra` or `-Wcast-function-type` enabled about the function
-types being incompatible.
+      <doc xml:space="preserve">Cast a function pointer to a [callback@GLib.SourceFunc], suppressing
+warnings from GCC 8 onwards with `-Wextra` or `-Wcast-function-type` enabled
+about the function types being incompatible.
 
 For example, the correct type of callback for a source created by
-g_child_watch_source_new() is #GChildWatchFunc, which accepts more arguments
-than #GSourceFunc. Casting the function with `(GSourceFunc)` to call
-g_source_set_callback() will trigger a warning, even though it will be cast
-back to the correct type before it is called by the source.</doc>
+[func@GLib.child_watch_source_new] is #GChildWatchFunc, which accepts more
+arguments than [callback@GLib.SourceFunc]. Casting the function with
+`(GSourceFunc)` to call [method@GLib.Source.set_callback] will trigger a
+warning, even though it will be cast back to the correct type before it is
+called by the source.</doc>
       <parameters>
         <parameter name="f">
           <doc xml:space="preserve">a function pointer.</doc>
@@ -25101,14 +25245,51 @@ back to the correct type before it is called by the source.</doc>
       </parameters>
     </function-macro>
     <constant name="SOURCE_REMOVE" value="false" c:type="G_SOURCE_REMOVE" version="2.32">
-      <doc xml:space="preserve">Use this macro as the return value of a #GSourceFunc to remove
-the #GSource from the main loop.</doc>
+      <doc xml:space="preserve">Use this macro as the return value of a [callback@GLib.SourceFunc] to remove
+the [struct@GLib.Source] from the main loop.</doc>
       <type name="gboolean" c:type="gboolean"/>
     </constant>
     <constant name="SQRT2" value="1.414214" c:type="G_SQRT2">
       <doc xml:space="preserve">The square root of two.</doc>
       <type name="gdouble" c:type="gdouble"/>
     </constant>
+    <function-macro name="STATIC_ASSERT" c:identifier="G_STATIC_ASSERT" version="2.20" introspectable="0">
+      <doc xml:space="preserve">The G_STATIC_ASSERT() macro lets the programmer check
+a condition at compile time, the condition needs to
+be compile time computable. The macro can be used in
+any place where a typedef is valid.
+
+A typedef is generally allowed in exactly the same places that
+a variable declaration is allowed. For this reason, you should
+not use G_STATIC_ASSERT() in the middle of blocks of code.
+
+The macro should only be used once per source code line.</doc>
+      <parameters>
+        <parameter name="expr">
+          <doc xml:space="preserve">a constant expression</doc>
+        </parameter>
+      </parameters>
+    </function-macro>
+    <function-macro name="STATIC_ASSERT_EXPR" c:identifier="G_STATIC_ASSERT_EXPR" version="2.30" introspectable="0">
+      <doc xml:space="preserve">The G_STATIC_ASSERT_EXPR() macro lets the programmer check
+a condition at compile time. The condition needs to be
+compile time computable.
+
+Unlike G_STATIC_ASSERT(), this macro evaluates to an expression
+and, as such, can be used in the middle of other expressions.
+Its value should be ignored. This can be accomplished by placing
+it as the first argument of a comma expression.
+
+|[&lt;!-- language="C" --&gt;
+#define ADD_ONE_TO_INT(x) \
+  (G_STATIC_ASSERT_EXPR(sizeof (x) == sizeof (int)), ((x) + 1))
+]|</doc>
+      <parameters>
+        <parameter name="expr">
+          <doc xml:space="preserve">a constant expression</doc>
+        </parameter>
+      </parameters>
+    </function-macro>
     <function-macro name="STRINGIFY" c:identifier="G_STRINGIFY" introspectable="0">
       <doc xml:space="preserve">Accepts a macro or a string and converts it into a string after
 preprocessor argument expansion. For example, the following code:
@@ -26800,13 +26981,13 @@ representing an event source.</doc>
         <type name="SourcePrivate" c:type="GSourcePrivate*"/>
       </field>
       <constructor name="new" c:identifier="g_source_new">
-        <doc xml:space="preserve">Creates a new #GSource structure. The size is specified to
-allow creating structures derived from #GSource that contain
+        <doc xml:space="preserve">Creates a new [struct@GLib.Source] structure. The size is specified to
+allow creating structures derived from [struct@GLib.Source] that contain
 additional data. The size passed in must be at least
 `sizeof (GSource)`.
 
 The source will not initially be associated with any #GMainContext
-and must be added to one with g_source_attach() before it will be
+and must be added to one with [method@GLib.Source.attach] before it will be
 executed.</doc>
         <return-value transfer-ownership="full">
           <doc xml:space="preserve">the newly-created #GSource.</doc>
@@ -26819,15 +27000,15 @@ executed.</doc>
             <type name="SourceFuncs" c:type="GSourceFuncs*"/>
           </parameter>
           <parameter name="struct_size" transfer-ownership="none">
-            <doc xml:space="preserve">size of the #GSource structure to create.</doc>
+            <doc xml:space="preserve">size of the [struct@GLib.Source] structure to create.</doc>
             <type name="guint" c:type="guint"/>
           </parameter>
         </parameters>
       </constructor>
       <method name="add_child_source" c:identifier="g_source_add_child_source" version="2.28">
         <doc xml:space="preserve">Adds @child_source to @source as a "polled" source; when @source is
-added to a #GMainContext, @child_source will be automatically added
-with the same priority, when @child_source is triggered, it will
+added to a [struct@GLib.MainContext], @child_source will be automatically
+added with the same priority, when @child_source is triggered, it will
 cause @source to dispatch (in addition to calling its own
 callback), and when @source is destroyed, it will destroy
 @child_source as well. (@source will also still be dispatched if
@@ -26840,8 +27021,9 @@ callback that does nothing (except return %TRUE if appropriate).
 @source will hold a reference on @child_source while @child_source
 is attached to it.
 
-This API is only intended to be used by implementations of #GSource.
-Do not call this API on a #GSource that you did not create.</doc>
+This API is only intended to be used by implementations of
+[struct@GLib.Source]. Do not call this API on a [struct@GLib.Source] that
+you did not create.</doc>
         <return-value transfer-ownership="none">
           <type name="none" c:type="void"/>
         </return-value>
@@ -26858,17 +27040,17 @@ Do not call this API on a #GSource that you did not create.</doc>
       </method>
       <method name="add_poll" c:identifier="g_source_add_poll">
         <doc xml:space="preserve">Adds a file descriptor to the set of file descriptors polled for
-this source. This is usually combined with g_source_new() to add an
+this source. This is usually combined with [ctor@GLib.Source.new] to add an
 event source. The event source's check function will typically test
 the @revents field in the #GPollFD struct and return %TRUE if events need
 to be processed.
 
-This API is only intended to be used by implementations of #GSource.
-Do not call this API on a #GSource that you did not create.
+This API is only intended to be used by implementations of [struct@GLib.Source].
+Do not call this API on a [struct@GLib.Source] that you did not create.
 
 Using this API forces the linear scanning of event sources on each
 main loop iteration.  Newly-written event sources should try to use
-g_source_add_unix_fd() instead of this API.</doc>
+`g_source_add_unix_fd` instead of this API.</doc>
         <return-value transfer-ownership="none">
           <type name="none" c:type="void"/>
         </return-value>
@@ -26888,8 +27070,8 @@ g_source_add_unix_fd() instead of this API.</doc>
         <doc xml:space="preserve">Monitors @fd for the IO events in @events.
 
 The tag returned by this function can be used to remove or modify the
-monitoring of the fd using g_source_remove_unix_fd() or
-g_source_modify_unix_fd().
+monitoring of the fd using [method@GLib.Source.remove_unix_fd] or
+[method@GLib.Source.modify_unix_fd].
 
 It is not necessary to remove the fd before destroying the source; it
 will be cleaned up automatically.
@@ -26918,8 +27100,8 @@ As the name suggests, this function is not available on Windows.</doc>
         </parameters>
       </method>
       <method name="attach" c:identifier="g_source_attach">
-        <doc xml:space="preserve">Adds a #GSource to a @context so that it will be executed within
-that context. Remove it by calling g_source_destroy().
+        <doc xml:space="preserve">Adds a [struct@GLib.Source] to a @context so that it will be executed within
+that context. Remove it by calling [method@GLib.Source.destroy].
 
 This function is safe to call from any thread, regardless of which thread
 the @context is running in.</doc>
@@ -26941,20 +27123,21 @@ the @context is running in.</doc>
         </parameters>
       </method>
       <method name="destroy" c:identifier="g_source_destroy">
-        <doc xml:space="preserve">Removes a source from its #GMainContext, if any, and mark it as
+        <doc xml:space="preserve">Removes a source from its [struct@GLib.MainContext], if any, and mark it as
 destroyed.  The source cannot be subsequently added to another
 context. It is safe to call this on sources which have already been
 removed from their context.
 
-This does not unref the #GSource: if you still hold a reference, use
-g_source_unref() to drop it.
+This does not unref the [struct@GLib.Source]: if you still hold a reference,
+use [method@GLib.Source.unref] to drop it.
 
 This function is safe to call from any thread, regardless of which thread
-the #GMainContext is running in.
+the [struct@GLib.MainContext] is running in.
 
-If the source is currently attached to a #GMainContext, destroying it
-will effectively unset the callback similar to calling g_source_set_callback().
-This can mean, that the data's #GDestroyNotify gets called right away.</doc>
+If the source is currently attached to a [struct@GLib.MainContext],
+destroying it will effectively unset the callback similar to calling
+[method@GLib.Source.set_callback]. This can mean, that the data's
+#GDestroyNotify gets called right away.</doc>
         <return-value transfer-ownership="none">
           <type name="none" c:type="void"/>
         </return-value>
@@ -26967,7 +27150,7 @@ This can mean, that the data's #GDestroyNotify gets called right away.</doc>
       </method>
       <method name="get_can_recurse" c:identifier="g_source_get_can_recurse">
         <doc xml:space="preserve">Checks whether a source is allowed to be called recursively.
-see g_source_set_can_recurse().</doc>
+see [method@GLib.Source.set_can_recurse].</doc>
         <return-value transfer-ownership="none">
           <doc xml:space="preserve">whether recursion is allowed.</doc>
           <type name="gboolean" c:type="gboolean"/>
@@ -26980,14 +27163,14 @@ see g_source_set_can_recurse().</doc>
         </parameters>
       </method>
       <method name="get_context" c:identifier="g_source_get_context">
-        <doc xml:space="preserve">Gets the #GMainContext with which the source is associated.
+        <doc xml:space="preserve">Gets the [struct@GLib.MainContext] with which the source is associated.
 
 You can call this on a source that has been destroyed, provided
-that the #GMainContext it was attached to still exists (in which
-case it will return that #GMainContext). In particular, you can
+that the [struct@GLib.MainContext] it was attached to still exists (in which
+case it will return that [struct@GLib.MainContext]). In particular, you can
 always call this function on the source returned from
-g_main_current_source(). But calling this function on a source
-whose #GMainContext has been destroyed is an error.</doc>
+[func@GLib.main_current_source]. But calling this function on a source
+whose [struct@GLib.MainContext] has been destroyed is an error.</doc>
         <return-value transfer-ownership="none" nullable="1">
           <doc xml:space="preserve">the #GMainContext with which the
               source is associated, or %NULL if the context has not
@@ -27003,8 +27186,8 @@ whose #GMainContext has been destroyed is an error.</doc>
       </method>
       <method name="get_current_time" c:identifier="g_source_get_current_time" deprecated="1" deprecated-version="2.28">
         <doc xml:space="preserve">This function ignores @source and is otherwise the same as
-g_get_current_time().</doc>
-        <doc-deprecated xml:space="preserve">use g_source_get_time() instead</doc-deprecated>
+[func@GLib.get_current_time].</doc>
+        <doc-deprecated xml:space="preserve">use [method@GLib.Source.get_time] instead</doc-deprecated>
         <return-value transfer-ownership="none">
           <type name="none" c:type="void"/>
         </return-value>
@@ -27022,13 +27205,14 @@ g_get_current_time().</doc>
       <method name="get_id" c:identifier="g_source_get_id">
         <doc xml:space="preserve">Returns the numeric ID for a particular source. The ID of a source
 is a positive integer which is unique within a particular main loop
-context. The reverse
-mapping from ID to source is done by g_main_context_find_source_by_id().
+context. The reverse mapping from ID to source is done by
+[method@GLib.MainContext.find_source_by_id].
 
 You can only call this function while the source is associated to a
-#GMainContext instance; calling this function before g_source_attach()
-or after g_source_destroy() yields undefined behavior. The ID returned
-is unique within the #GMainContext instance passed to g_source_attach().</doc>
+[struct@GLib.MainContext] instance; calling this function before
+[method@GLib.Source.attach] or after [method@GLib.Source.destroy] yields
+undefined behavior. The ID returned is unique within the
+[struct@GLib.MainContext] instance passed to [method@GLib.Source.attach].</doc>
         <return-value transfer-ownership="none">
           <doc xml:space="preserve">the ID (greater than 0) for the source</doc>
           <type name="guint" c:type="guint"/>
@@ -27042,7 +27226,7 @@ is unique within the #GMainContext instance passed to g_source_attach().</doc>
       </method>
       <method name="get_name" c:identifier="g_source_get_name" version="2.26">
         <doc xml:space="preserve">Gets a name for the source, used in debugging and profiling.  The
-name may be #NULL if it has never been set with g_source_set_name().</doc>
+name may be #NULL if it has never been set with [method@GLib.Source.set_name].</doc>
         <return-value transfer-ownership="none" nullable="1">
           <doc xml:space="preserve">the name of the source</doc>
           <type name="utf8" c:type="const char*"/>
@@ -27069,7 +27253,7 @@ name may be #NULL if it has never been set with g_source_set_name().</doc>
       </method>
       <method name="get_ready_time" c:identifier="g_source_get_ready_time">
         <doc xml:space="preserve">Gets the "ready time" of @source, as set by
-g_source_set_ready_time().
+[method@GLib.Source.set_ready_time].
 
 Any time before or equal to the current monotonic time (including 0)
 is an indication that the source will fire immediately.</doc>
@@ -27086,12 +27270,12 @@ is an indication that the source will fire immediately.</doc>
       </method>
       <method name="get_time" c:identifier="g_source_get_time" version="2.28">
         <doc xml:space="preserve">Gets the time to be used when checking this source. The advantage of
-calling this function over calling g_get_monotonic_time() directly is
+calling this function over calling [func@GLib.get_monotonic_time] directly is
 that when checking multiple sources, GLib can cache a single value
 instead of having to repeatedly get the system monotonic time.
 
 The time here is the system monotonic time, if available, or some
-other reasonable alternative otherwise.  See g_get_monotonic_time().</doc>
+other reasonable alternative otherwise.  See [func@GLib.get_monotonic_time].</doc>
         <return-value transfer-ownership="none">
           <doc xml:space="preserve">the monotonic time in microseconds</doc>
           <type name="gint64" c:type="gint64"/>
@@ -27178,10 +27362,10 @@ idle_callback (gpointer data)
 ]|
 
 Calls to this function from a thread other than the one acquired by the
-#GMainContext the #GSource is attached to are typically redundant, as the
-source could be destroyed immediately after this function returns. However,
-once a source is destroyed it cannot be un-destroyed, so this function can be
-used for opportunistic checks from any thread.</doc>
+[struct@GLib.MainContext] the #GSource is attached to are typically
+redundant, as the source could be destroyed immediately after this function
+returns. However, once a source is destroyed it cannot be un-destroyed, so
+this function can be used for opportunistic checks from any thread.</doc>
         <return-value transfer-ownership="none">
           <doc xml:space="preserve">%TRUE if the source has been destroyed</doc>
           <type name="gboolean" c:type="gboolean"/>
@@ -27196,10 +27380,10 @@ used for opportunistic checks from any thread.</doc>
       <method name="modify_unix_fd" c:identifier="g_source_modify_unix_fd" version="2.36">
         <doc xml:space="preserve">Updates the event mask to watch for the fd identified by @tag.
 
-@tag is the tag returned from g_source_add_unix_fd().
+@tag is the tag returned from [method@GLib.Source.add_unix_fd].
 
 If you want to remove a fd, don't set its event mask to zero.
-Instead, call g_source_remove_unix_fd().
+Instead, call [method@GLib.Source.remove_unix_fd].
 
 This API is only intended to be used by implementations of #GSource.
 Do not call this API on a #GSource that you did not create.
@@ -27214,7 +27398,7 @@ As the name suggests, this function is not available on Windows.</doc>
             <type name="Source" c:type="GSource*"/>
           </instance-parameter>
           <parameter name="tag" transfer-ownership="none">
-            <doc xml:space="preserve">the tag from g_source_add_unix_fd()</doc>
+            <doc xml:space="preserve">the tag from [method@GLib.Source.add_unix_fd]</doc>
             <type name="gpointer" c:type="gpointer"/>
           </parameter>
           <parameter name="new_events" transfer-ownership="none">
@@ -27244,7 +27428,7 @@ As the name suggests, this function is not available on Windows.</doc>
             <type name="Source" c:type="GSource*"/>
           </instance-parameter>
           <parameter name="tag" transfer-ownership="none">
-            <doc xml:space="preserve">the tag from g_source_add_unix_fd()</doc>
+            <doc xml:space="preserve">the tag from [method@GLib.Source.add_unix_fd]</doc>
             <type name="gpointer" c:type="gpointer"/>
           </parameter>
         </parameters>
@@ -27277,7 +27461,7 @@ Do not call this API on a #GSource that you did not create.</doc>
           </instance-parameter>
           <parameter name="child_source" transfer-ownership="none">
             <doc xml:space="preserve">a #GSource previously passed to
-    g_source_add_child_source().</doc>
+    [method@GLib.Source.add_child_source].</doc>
             <type name="Source" c:type="GSource*"/>
           </parameter>
         </parameters>
@@ -27286,8 +27470,8 @@ Do not call this API on a #GSource that you did not create.</doc>
         <doc xml:space="preserve">Removes a file descriptor from the set of file descriptors polled for
 this source.
 
-This API is only intended to be used by implementations of #GSource.
-Do not call this API on a #GSource that you did not create.</doc>
+This API is only intended to be used by implementations of [struct@GLib.Source].
+Do not call this API on a [struct@GLib.Source] that you did not create.</doc>
         <return-value transfer-ownership="none">
           <type name="none" c:type="void"/>
         </return-value>
@@ -27297,13 +27481,13 @@ Do not call this API on a #GSource that you did not create.</doc>
             <type name="Source" c:type="GSource*"/>
           </instance-parameter>
           <parameter name="fd" transfer-ownership="none">
-            <doc xml:space="preserve">a #GPollFD structure previously passed to g_source_add_poll().</doc>
+            <doc xml:space="preserve">a #GPollFD structure previously passed to [method@GLib.Source.add_poll].</doc>
             <type name="PollFD" c:type="GPollFD*"/>
           </parameter>
         </parameters>
       </method>
       <method name="remove_unix_fd" c:identifier="g_source_remove_unix_fd" version="2.36">
-        <doc xml:space="preserve">Reverses the effect of a previous call to g_source_add_unix_fd().
+        <doc xml:space="preserve">Reverses the effect of a previous call to [method@GLib.Source.add_unix_fd].
 
 You only need to call this if you want to remove an fd from being
 watched while keeping the same source around.  In the normal case you
@@ -27322,7 +27506,7 @@ As the name suggests, this function is not available on Windows.</doc>
             <type name="Source" c:type="GSource*"/>
           </instance-parameter>
           <parameter name="tag" transfer-ownership="none">
-            <doc xml:space="preserve">the tag from g_source_add_unix_fd()</doc>
+            <doc xml:space="preserve">the tag from [method@GLib.Source.add_unix_fd]</doc>
             <type name="gpointer" c:type="gpointer"/>
           </parameter>
         </parameters>
@@ -27333,20 +27517,21 @@ called from the source's dispatch function.
 
 The exact type of @func depends on the type of source; ie. you
 should not count on @func being called with @data as its first
-parameter. Cast @func with G_SOURCE_FUNC() to avoid warnings about
+parameter. Cast @func with [func@GLib.SOURCE_FUNC] to avoid warnings about
 incompatible function types.
 
 See [mainloop memory management](main-loop.html#memory-management-of-sources) for details
 on how to handle memory management of @data.
 
 Typically, you won't use this function. Instead use functions specific
-to the type of source you are using, such as g_idle_add() or g_timeout_add().
+to the type of source you are using, such as [func@GLib.idle_add] or
+[func@GLib.timeout_add].
 
 It is safe to call this function multiple times on a source which has already
 been attached to a context. The changes will take effect for the next time
 the source is dispatched after this call returns.
 
-Note that g_source_destroy() for a currently attached source has the effect
+Note that [method@GLib.Source.destroy] for a currently attached source has the effect
 of also unsetting the callback.</doc>
         <return-value transfer-ownership="none">
           <type name="none" c:type="void"/>
@@ -27373,7 +27558,7 @@ of also unsetting the callback.</doc>
       <method name="set_callback_indirect" c:identifier="g_source_set_callback_indirect">
         <doc xml:space="preserve">Sets the callback function storing the data as a refcounted callback
 "object". This is used internally. Note that calling
-g_source_set_callback_indirect() assumes
+[method@GLib.Source.set_callback_indirect] assumes
 an initial reference count on @callback_data, and thus
 @callback_funcs-&gt;unref will eventually be called once more
 than @callback_funcs-&gt;ref.
@@ -27424,8 +27609,9 @@ source is blocked until the dispatch function returns.</doc>
 the reference count of @source reaches 0 but before any of the state of the
 source is freed, especially before the finalize function is called.
 
-This means that at this point @source is still a valid #GSource and it is
-allow for the reference count to increase again until @dispose returns.
+This means that at this point @source is still a valid [struct@GLib.Source]
+and it is allow for the reference count to increase again until @dispose
+returns.
 
 The dispose function can be used to clear any "weak" references to the
 @source in other data structures in a thread-safe way where it is possible
@@ -27481,11 +27667,11 @@ one could change the name in the "check" function of a #GSourceFuncs
 to include details like the event type in the source name.
 
 Use caution if changing the name while another thread may be
-accessing it with g_source_get_name(); that function does not copy
+accessing it with [method@GLib.Source.get_name]; that function does not copy
 the value, and changing the value will free it while the other thread
 may be attempting to use it.
 
-Also see g_source_set_static_name().</doc>
+Also see [method@GLib.Source.set_static_name].</doc>
         <return-value transfer-ownership="none">
           <type name="none" c:type="void"/>
         </return-value>
@@ -27542,7 +27728,7 @@ for both sources is reached during the same main context iteration,
 then the order of dispatch is undefined.
 
 It is a no-op to call this function on a #GSource which has already been
-destroyed with g_source_destroy().
+destroyed with [method@GLib.Source.destroy].
 
 This API is only intended to be used by implementations of #GSource.
 Do not call this API on a #GSource that you did not create.</doc>
@@ -27562,7 +27748,7 @@ Do not call this API on a #GSource that you did not create.</doc>
         </parameters>
       </method>
       <method name="set_static_name" c:identifier="g_source_set_static_name" version="2.70">
-        <doc xml:space="preserve">A variant of g_source_set_name() that does not
+        <doc xml:space="preserve">A variant of [method@GLib.Source.set_name] that does not
 duplicate the @name, and can only be used with
 string literals.</doc>
         <return-value transfer-ownership="none">
@@ -27595,20 +27781,21 @@ memory will be destroyed.</doc>
       </method>
       <function name="remove" c:identifier="g_source_remove">
         <doc xml:space="preserve">Removes the source with the given ID from the default main context. You must
-use g_source_destroy() for sources added to a non-default main context.
+use [method@GLib.Source.destroy] for sources added to a non-default main context.
 
-The ID of a #GSource is given by g_source_get_id(), or will be
-returned by the functions g_source_attach(), g_idle_add(),
-g_idle_add_full(), g_timeout_add(), g_timeout_add_full(),
-g_child_watch_add(), g_child_watch_add_full(), g_io_add_watch(), and
-g_io_add_watch_full().
+The ID of a #GSource is given by [method@GLib.Source.get_id], or will be
+returned by the functions [method@GLib.Source.attach], [func@GLib.idle_add],
+[func@GLib.idle_add_full], [func@GLib.timeout_add],
+[func@GLib.timeout_add_full], [func@GLib.child_watch_add],
+[func@GLib.child_watch_add_full], [func@GLib.io_add_watch], and
+[func@GLib.io_add_watch_full].
 
 It is a programmer error to attempt to remove a non-existent source.
 
 More specifically: source IDs can be reissued after a source has been
 destroyed and therefore it is never valid to use this function with a
 source ID which may have already been removed.  An example is when
-scheduling an idle to run in another thread with g_idle_add(): the
+scheduling an idle to run in another thread with [func@GLib.idle_add]: the
 idle may already have run and been removed by the time this function
 is called on its (now invalid) source ID.  This source ID may have
 been reissued, leading to the operation being performed against the
@@ -27634,7 +27821,7 @@ same source functions and user data, only one will be destroyed.</doc>
         </return-value>
         <parameters>
           <parameter name="funcs" transfer-ownership="none">
-            <doc xml:space="preserve">The @source_funcs passed to g_source_new()</doc>
+            <doc xml:space="preserve">The @source_funcs passed to [ctor@GLib.Source.new]</doc>
             <type name="SourceFuncs" c:type="GSourceFuncs*"/>
           </parameter>
           <parameter name="user_data" transfer-ownership="none" nullable="1" allow-none="1">
@@ -27662,7 +27849,7 @@ data, only one will be destroyed.</doc>
         <doc xml:space="preserve">Sets the name of a source using its ID.
 
 This is a convenience utility to set source names from the return
-value of g_idle_add(), g_timeout_add(), etc.
+value of [func@GLib.idle_add], [func@GLib.timeout_add], etc.
 
 It is a programmer error to attempt to set the name of a non-existent
 source.
@@ -27670,7 +27857,7 @@ source.
 More specifically: source IDs can be reissued after a source has been
 destroyed and therefore it is never valid to use this function with a
 source ID which may have already been removed.  An example is when
-scheduling an idle to run in another thread with g_idle_add(): the
+scheduling an idle to run in another thread with [func@GLib.idle_add]: the
 idle may already have run and been removed by the time this function
 is called on its (now invalid) source ID.  This source ID may have
 been reissued, leading to the operation being performed against the
@@ -27744,8 +27931,8 @@ functions for managing callback objects.</doc>
       </field>
     </record>
     <callback name="SourceDisposeFunc" c:type="GSourceDisposeFunc" version="2.64">
-      <doc xml:space="preserve">Dispose function for @source. See g_source_set_dispose_function() for
-details.</doc>
+      <doc xml:space="preserve">Dispose function for @source. See [method@GLib.Source.set_dispose_function]
+for details.</doc>
       <return-value transfer-ownership="none">
         <type name="none" c:type="void"/>
       </return-value>
@@ -27764,15 +27951,17 @@ which cannot be used here for dependency reasons.</doc>
       </return-value>
     </callback>
     <callback name="SourceFunc" c:type="GSourceFunc">
-      <doc xml:space="preserve">Specifies the type of function passed to g_timeout_add(),
-g_timeout_add_full(), g_idle_add(), and g_idle_add_full().
+      <doc xml:space="preserve">Specifies the type of function passed to [func@GLib.timeout_add],
+[func@GLib.timeout_add_full], [func@GLib.idle_add], and
+[func@GLib.idle_add_full].
 
-When calling g_source_set_callback(), you may need to cast a function of a
-different type to this type. Use G_SOURCE_FUNC() to avoid warnings about
-incompatible function types.</doc>
+When calling [method@GLib.Source.set_callback], you may need to cast a
+function of a different type to this type. Use [func@GLib.SOURCE_FUNC] to
+avoid warnings about incompatible function types.</doc>
       <return-value transfer-ownership="none">
-        <doc xml:space="preserve">%FALSE if the source should be removed. %G_SOURCE_CONTINUE and
-%G_SOURCE_REMOVE are more memorable names for the return value.</doc>
+        <doc xml:space="preserve">%FALSE if the source should be removed.
+[const@GLib.SOURCE_CONTINUE] and [const@GLib.SOURCE_REMOVE] are more
+memorable names for the return value.</doc>
         <type name="gboolean" c:type="gboolean"/>
       </return-value>
       <parameters>
@@ -27832,18 +28021,20 @@ required condition has been met, and returns %TRUE if so.</doc>
     %TRUE in either its @prepare or its @check function, or if a ready time
     has been reached. The @dispatch function receives a callback function and
     user data. The callback function may be %NULL if the source was never
-    connected to a callback using g_source_set_callback(). The @dispatch
-    function should call the callback function with @user_data and whatever
-    additional parameters are needed for this type of event source. The
-    return value of the @dispatch function should be %G_SOURCE_REMOVE if the
-    source should be removed or %G_SOURCE_CONTINUE to keep it.</doc>
+    connected to a callback using [method@GLib.Source.set_callback]. The
+    @dispatch function should call the callback function with @user_data and
+    whatever additional parameters are needed for this type of event source.
+    The return value of the @dispatch function should be
+    [const@GLib.SOURCE_REMOVE] if the source should be removed or
+    [const@GLib.SOURCE_CONTINUE] to keep it.</doc>
         <type name="SourceFuncsDispatchFunc" c:type="GSourceFuncsDispatchFunc"/>
       </field>
       <field name="finalize" writable="1">
         <doc xml:space="preserve">Called when the source is finalized. At this point, the source
     will have been destroyed, had its callback cleared, and have been removed
-    from its #GMainContext, but it will still have its final reference count,
-    so methods can be called on it from within this function.</doc>
+    from its [struct@GLib.MainContext], but it will still have its final
+    reference count, so methods can be called on it from within this
+    function.</doc>
         <type name="SourceFuncsFinalizeFunc" c:type="GSourceFuncsFinalizeFunc"/>
       </field>
       <field name="closure_callback" readable="0" private="1">
@@ -27957,7 +28148,7 @@ function always returns `FALSE` with a timeout of `-1`.</doc>
       <doc xml:space="preserve">A source function that is only called once before being removed from the main
 context automatically.
 
-See: g_idle_add_once(), g_timeout_add_once()</doc>
+See: [func@GLib.idle_add_once], [func@GLib.timeout_add_once]</doc>
       <return-value transfer-ownership="none">
         <type name="none" c:type="void"/>
       </return-value>
@@ -30584,15 +30775,17 @@ but nothing happens except for the first call.
 Since version 2.32, GLib does not support custom thread implementations
 anymore and the @vtable parameter is ignored and you should pass %NULL.
 
-&lt;note&gt;&lt;para&gt;g_thread_init() must not be called directly or indirectly
-in a callback from GLib. Also no mutexes may be currently locked while
-calling g_thread_init().&lt;/para&gt;&lt;/note&gt;
+::: note
+    g_thread_init() must not be called directly or indirectly in a
+    callback from GLib. Also no mutexes may be currently locked
+    while calling g_thread_init().
 
-&lt;note&gt;&lt;para&gt;To use g_thread_init() in your program, you have to link
-with the libraries that the command &lt;command&gt;pkg-config --libs
-gthread-2.0&lt;/command&gt; outputs. This is not the case for all the
-other thread-related functions of GLib. Those can be used without
-having to link with the thread libraries.&lt;/para&gt;&lt;/note&gt;</doc>
+::: note
+    To use g_thread_init() in your program, you have to link with
+    the libraries that the command `pkg-config --libs gthread-2.0`
+    outputs. This is not the case for all the other thread-related
+    functions of GLib. Those can be used without having to link
+    with the thread libraries.</doc>
         <doc-deprecated xml:space="preserve">This function is no longer necessary. The GLib
     threading system is automatically initialized at the start
     of your program.</doc-deprecated>
@@ -32306,16 +32499,38 @@ stopped.</doc>
     </callback>
     <enumeration name="TraverseType" c:type="GTraverseType">
       <doc xml:space="preserve">Specifies the type of traversal performed by g_tree_traverse(),
-g_node_traverse() and g_node_find(). The different orders are
-illustrated here:
+g_node_traverse() and g_node_find().
+
+The different orders are illustrated here:
+
 - In order: A, B, C, D, E, F, G, H, I
-  ![](Sorted_binary_tree_inorder.svg)
+  &lt;picture&gt;
+    &lt;source srcset="Sorted_binary_tree_inorder-dark.svg"
+     media="(prefers-color-scheme: dark)"&gt;
+    &lt;img src="Sorted_binary_tree_inorder.svg"
+     alt="Sorted binary tree, in-order traversal"&gt;
+  &lt;/picture&gt;
 - Pre order: F, B, A, D, C, E, G, I, H
-  ![](Sorted_binary_tree_preorder.svg)
+  &lt;picture&gt;
+    &lt;source srcset="Sorted_binary_tree_preorder-dark.svg"
+     media="(prefers-color-scheme: dark)"&gt;
+    &lt;img src="Sorted_binary_tree_preorder.svg"
+     alt="Sorted binary tree, pre-order traversal"&gt;
+  &lt;/picture&gt;
 - Post order: A, C, E, D, B, H, I, G, F
-  ![](Sorted_binary_tree_postorder.svg)
+  &lt;picture&gt;
+    &lt;source srcset="Sorted_binary_tree_postorder-dark.svg"
+     media="(prefers-color-scheme: dark)"&gt;
+    &lt;img src="Sorted_binary_tree_postorder.svg"
+     alt="Sorted binary tree, post-order traversal"&gt;
+  &lt;/picture&gt;
 - Level order: F, B, G, A, D, I, C, E, H
-  ![](Sorted_binary_tree_breadth-first_traversal.svg)</doc>
+  &lt;picture&gt;
+    &lt;source srcset="Sorted_binary_tree_breadth-first_traversal-dark.svg"
+     media="(prefers-color-scheme: dark)"&gt;
+    &lt;img src="Sorted_binary_tree_breadth-first_traversal.svg"
+     alt="Sorted binary tree, breadth-first level order traversal"&gt;
+  &lt;/picture&gt;</doc>
       <member name="in_order" value="0" c:identifier="G_IN_ORDER">
         <doc xml:space="preserve">vists a node's left child first, then the node itself,
              then its right child. This is the one to use if you
@@ -33983,6 +34198,132 @@ on compilers that support that feature.</doc>
           <type name="gint" c:type="int"/>
         </array>
       </field>
+      <method-inline name="clear" c:identifier="g_unix_pipe_clear" version="2.80" introspectable="0">
+        <doc xml:space="preserve">Close both ends of the pipe, unless they have already been closed or
+stolen. Any errors are ignored: use g_unix_pipe_close() or g_clear_fd()
+if error-handling is required.
+
+This function is async-signal safe if @error is %NULL and each member
+of @fds are either negative or a valid open file descriptor.
+As a result, it is safe to call this function or use `g_auto(GUnixPipe)`
+(on compilers that support it) in a signal handler or a
+#GSpawnChildSetupFunc, as long as those conditions are ensured to be true.
+See [`signal(7)`](man:signal(7)) and
+[`signal-safety(7)`](man:signal-safety(7)) for more details.
+
+This function preserves the value of `errno`.</doc>
+        <return-value transfer-ownership="none">
+          <type name="none" c:type="void"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="self" transfer-ownership="none">
+            <doc xml:space="preserve">a #GUnixPipe</doc>
+            <type name="UnixPipe" c:type="GUnixPipe*"/>
+          </instance-parameter>
+        </parameters>
+      </method-inline>
+      <method-inline name="close" c:identifier="g_unix_pipe_close" version="2.80" introspectable="0" throws="1">
+        <doc xml:space="preserve">Close one of the ends of the pipe and set the relevant member of @fds
+to `-1` before returning, equivalent to g_clear_fd().
+
+Like g_close(), if closing the file descriptor fails, the error is
+stored in both %errno and @error. If this function succeeds,
+%errno is undefined.
+
+This function is async-signal safe if @error is %NULL and the relevant
+member of @fds is either negative or a valid open file descriptor.
+This makes it safe to call from a signal handler or a #GSpawnChildSetupFunc
+under those conditions.
+See [`signal(7)`](man:signal(7)) and
+[`signal-safety(7)`](man:signal-safety(7)) for more details.
+
+To close both file descriptors and ignore any errors, use
+g_unix_pipe_clear() instead.</doc>
+        <return-value transfer-ownership="none">
+          <doc xml:space="preserve">%TRUE on success</doc>
+          <type name="gboolean" c:type="gboolean"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="self" transfer-ownership="none">
+            <doc xml:space="preserve">A pair of file descriptors</doc>
+            <type name="UnixPipe" c:type="GUnixPipe*"/>
+          </instance-parameter>
+          <parameter name="end" transfer-ownership="none">
+            <doc xml:space="preserve">One of the ends of the pipe</doc>
+            <type name="UnixPipeEnd" c:type="GUnixPipeEnd"/>
+          </parameter>
+        </parameters>
+      </method-inline>
+      <method-inline name="get" c:identifier="g_unix_pipe_get" version="2.80" introspectable="0">
+        <doc xml:space="preserve">Return one of the ends of the pipe. It remains owned by @self.
+
+This function is async-signal safe (see [`signal(7)`](man:signal(7)) and
+[`signal-safety(7)`](man:signal-safety(7))), making it safe to call from a
+signal handler or a #GSpawnChildSetupFunc.
+
+This function preserves the value of `errno`.</doc>
+        <return-value transfer-ownership="none">
+          <doc xml:space="preserve">a non-negative file descriptor owned by @self, which must not
+ be closed by the caller, or a negative number if the corresponding
+ end of the pipe was already closed or stolen</doc>
+          <type name="gint" c:type="int"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="self" transfer-ownership="none">
+            <doc xml:space="preserve">A pair of file descriptors</doc>
+            <type name="UnixPipe" c:type="GUnixPipe*"/>
+          </instance-parameter>
+          <parameter name="end" transfer-ownership="none">
+            <doc xml:space="preserve">One of the ends of the pipe</doc>
+            <type name="UnixPipeEnd" c:type="GUnixPipeEnd"/>
+          </parameter>
+        </parameters>
+      </method-inline>
+      <method-inline name="open" c:identifier="g_unix_pipe_open" version="2.80" introspectable="0" throws="1">
+        <doc xml:space="preserve">Open a pipe. This is the same as g_unix_open_pipe(), but uses the
+#GUnixPipe data structure.</doc>
+        <return-value transfer-ownership="none">
+          <doc xml:space="preserve">%TRUE on success</doc>
+          <type name="gboolean" c:type="gboolean"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="self" transfer-ownership="none">
+            <doc xml:space="preserve">A pair of file descriptors</doc>
+            <type name="UnixPipe" c:type="GUnixPipe*"/>
+          </instance-parameter>
+          <parameter name="flags" transfer-ownership="none">
+            <doc xml:space="preserve">Flags to pass to g_unix_open_pipe(), typically `O_CLOEXEC`</doc>
+            <type name="gint" c:type="int"/>
+          </parameter>
+        </parameters>
+      </method-inline>
+      <method-inline name="steal" c:identifier="g_unix_pipe_steal" version="2.80" introspectable="0">
+        <doc xml:space="preserve">Return one of the ends of the pipe. It becomes owned by the caller,
+and the file descriptor in the data structure is set to `-1`,
+similar to g_steal_fd().
+
+This function is async-signal safe (see [`signal(7)`](man:signal(7)) and
+[`signal-safety(7)`](man:signal-safety(7))), making it safe to call from a
+signal handler or a #GSpawnChildSetupFunc.
+
+This function preserves the value of `errno`.</doc>
+        <return-value transfer-ownership="none">
+          <doc xml:space="preserve">a non-negative file descriptor, which becomes owned by the
+ caller and must be closed by the caller if required, or a negative
+ number if the corresponding end of the pipe was already closed or stolen</doc>
+          <type name="gint" c:type="int"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="self" transfer-ownership="none">
+            <doc xml:space="preserve">A pair of file descriptors</doc>
+            <type name="UnixPipe" c:type="GUnixPipe*"/>
+          </instance-parameter>
+          <parameter name="end" transfer-ownership="none">
+            <doc xml:space="preserve">One of the ends of the pipe</doc>
+            <type name="UnixPipeEnd" c:type="GUnixPipeEnd"/>
+          </parameter>
+        </parameters>
+      </method-inline>
     </record>
     <enumeration name="UnixPipeEnd" version="2.80" c:type="GUnixPipeEnd">
       <doc xml:space="preserve">Mnemonic constants for the ends of a Unix pipe.</doc>
@@ -35546,7 +35887,7 @@ functions, then using functions that were deprecated in version
 using functions deprecated in later releases will not).</doc>
       <type name="gint" c:type="gint"/>
     </constant>
-    <record name="Variant" c:type="GVariant" opaque="1" version="2.24" glib:type-name="GVariant" glib:get-type="intern" c:symbol-prefix="variant">
+    <record name="Variant" c:type="GVariant" opaque="1" copy-function="g_variant_ref_sink" free-function="g_variant_unref" version="2.24" glib:type-name="GVariant" glib:get-type="intern" c:symbol-prefix="variant">
       <doc xml:space="preserve">`GVariant` is a variant datatype; it can contain one or more values
 along with information about the type of the values.
 
@@ -38097,7 +38438,7 @@ any other call.
 
 In most cases it is easier to place a #GVariantBuilder directly on
 the stack of the calling function and initialise it with
-g_variant_builder_init().</doc>
+g_variant_builder_init_static().</doc>
         <return-value transfer-ownership="full">
           <doc xml:space="preserve">a #GVariantBuilder</doc>
           <type name="VariantBuilder" c:type="GVariantBuilder*"/>
@@ -38128,7 +38469,7 @@ make_pointless_dictionary (void)
   GVariantBuilder builder;
   int i;
 
-  g_variant_builder_init (&amp;builder, G_VARIANT_TYPE_ARRAY);
+  g_variant_builder_init_static (&amp;builder, G_VARIANT_TYPE_ARRAY);
   for (i = 0; i &lt; 16; i++)
     {
       gchar buf[3];
@@ -38178,7 +38519,7 @@ make_pointless_dictionary (void)
   GVariantBuilder builder;
   int i;
 
-  g_variant_builder_init (&amp;builder, G_VARIANT_TYPE_ARRAY);
+  g_variant_builder_init_static (&amp;builder, G_VARIANT_TYPE_ARRAY);
   g_variant_builder_add_parsed (&amp;builder, "{'width', &lt;%i&gt;}", 600);
   g_variant_builder_add_parsed (&amp;builder, "{'title', &lt;%s&gt;}", "foo");
   g_variant_builder_add_parsed (&amp;builder, "{'transparency', &lt;0.5&gt;}");
@@ -38308,6 +38649,10 @@ construct.  It can be an indefinite type such as
 Maybe, array, tuple, dictionary entry and variant-typed values may be
 constructed.
 
+If using a static type such as one of the `G_VARIANT_TYPE_*` constants
+or a `G_VARIANT_TYPE ("(ii)")` macro, it is more performant to use
+g_variant_builder_init_static() rather than g_variant_builder_init().
+
 After the builder is initialised, values are added using
 g_variant_builder_add_value() or g_variant_builder_add().
 
@@ -38329,6 +38674,27 @@ with this function.  If you ever pass a reference to a
 should assume that the person receiving that reference may try to use
 reference counting; you should use g_variant_builder_new() instead of
 this function.</doc>
+        <return-value transfer-ownership="none">
+          <type name="none" c:type="void"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="builder" transfer-ownership="none">
+            <doc xml:space="preserve">a #GVariantBuilder</doc>
+            <type name="VariantBuilder" c:type="GVariantBuilder*"/>
+          </instance-parameter>
+          <parameter name="type" transfer-ownership="none">
+            <doc xml:space="preserve">a container type</doc>
+            <type name="VariantType" c:type="const GVariantType*"/>
+          </parameter>
+        </parameters>
+      </method>
+      <method name="init_static" c:identifier="g_variant_builder_init_static" version="2.84" introspectable="0">
+        <doc xml:space="preserve">Initialises a #GVariantBuilder structure.
+
+This function works exactly like g_variant_builder_init() but does
+not make a copy of @type. Therefore, @type must remain valid for the
+lifetime of @builder. This is always true of type constants like
+`G_VARIANT_TYPE_*` or `G_VARIANT_TYPE ("(ii)")`.</doc>
         <return-value transfer-ownership="none">
           <type name="none" c:type="void"/>
         </return-value>
@@ -43394,24 +43760,25 @@ not supported.</doc>
     </function>
     <function name="child_watch_add" c:identifier="g_child_watch_add" shadowed-by="child_watch_add_full" version="2.4" introspectable="0">
       <doc xml:space="preserve">Sets a function to be called when the child indicated by @pid
-exits, at a default priority, %G_PRIORITY_DEFAULT.
+exits, at a default priority, [const@GLib.PRIORITY_DEFAULT].
 
-If you obtain @pid from g_spawn_async() or g_spawn_async_with_pipes()
-you will need to pass %G_SPAWN_DO_NOT_REAP_CHILD as flag to
-the spawn function for the child watching to work.
+If you obtain @pid from [func@GLib.spawn_async] or
+[func@GLib.spawn_async_with_pipes] you will need to pass
+%G_SPAWN_DO_NOT_REAP_CHILD as flag to the spawn function for the child
+watching to work.
 
 Note that on platforms where #GPid must be explicitly closed
-(see g_spawn_close_pid()) @pid must not be closed while the
+(see [func@GLib.spawn_close_pid]) @pid must not be closed while the
 source is still active. Typically, you will want to call
-g_spawn_close_pid() in the callback function for the source.
+[func@GLib.spawn_close_pid] in the callback function for the source.
 
 GLib supports only a single callback per process id.
 On POSIX platforms, the same restrictions mentioned for
-g_child_watch_source_new() apply to this function.
+[func@GLib.child_watch_source_new] apply to this function.
 
 This internally creates a main loop source using
-g_child_watch_source_new() and attaches it to the main loop context
-using g_source_attach(). You can do these steps manually if you
+[func@GLib.child_watch_source_new] and attaches it to the main loop context
+using [method@GLib.Source.attach]. You can do these steps manually if you
 need greater control.</doc>
       <return-value transfer-ownership="none">
         <doc xml:space="preserve">the ID (greater than 0) of the event source.</doc>
@@ -43438,26 +43805,27 @@ need greater control.</doc>
       <doc xml:space="preserve">Sets a function to be called when the child indicated by @pid
 exits, at the priority @priority.
 
-If you obtain @pid from g_spawn_async() or g_spawn_async_with_pipes()
-you will need to pass %G_SPAWN_DO_NOT_REAP_CHILD as flag to
-the spawn function for the child watching to work.
+If you obtain @pid from [func@GLib.spawn_async] or
+[func@GLib.spawn_async_with_pipes] you will need to pass
+%G_SPAWN_DO_NOT_REAP_CHILD as flag to the spawn function for the child
+watching to work.
 
-In many programs, you will want to call g_spawn_check_wait_status()
+In many programs, you will want to call [func@GLib.spawn_check_wait_status]
 in the callback to determine whether or not the child exited
 successfully.
 
 Also, note that on platforms where #GPid must be explicitly closed
-(see g_spawn_close_pid()) @pid must not be closed while the source
-is still active.  Typically, you should invoke g_spawn_close_pid()
+(see [func@GLib.spawn_close_pid]) @pid must not be closed while the source
+is still active.  Typically, you should invoke [func@GLib.spawn_close_pid]
 in the callback function for the source.
 
 GLib supports only a single callback per process id.
 On POSIX platforms, the same restrictions mentioned for
-g_child_watch_source_new() apply to this function.
+[func@GLib.child_watch_source_new] apply to this function.
 
 This internally creates a main loop source using
-g_child_watch_source_new() and attaches it to the main loop context
-using g_source_attach(). You can do these steps manually if you
+[func@GLib.child_watch_source_new] and attaches it to the main loop context
+using [method@GLib.Source.attach]. You can do these steps manually if you
 need greater control.</doc>
       <return-value transfer-ownership="none">
         <doc xml:space="preserve">the ID (greater than 0) of the event source.</doc>
@@ -43466,7 +43834,8 @@ need greater control.</doc>
       <parameters>
         <parameter name="priority" transfer-ownership="none">
           <doc xml:space="preserve">the priority of the idle source. Typically this will be in the
-  range between %G_PRIORITY_DEFAULT_IDLE and %G_PRIORITY_HIGH_IDLE.</doc>
+  range between [const@GLib.PRIORITY_DEFAULT_IDLE] and
+  [const@GLib.PRIORITY_HIGH_IDLE].</doc>
           <type name="gint" c:type="gint"/>
         </parameter>
         <parameter name="pid" transfer-ownership="none">
@@ -43491,17 +43860,17 @@ Windows a handle for a process (which doesn't have to be a child).</doc>
     <function name="child_watch_source_new" c:identifier="g_child_watch_source_new" version="2.4">
       <doc xml:space="preserve">Creates a new child_watch source.
 
-The source will not initially be associated with any #GMainContext
-and must be added to one with g_source_attach() before it will be
-executed.
+The source will not initially be associated with any
+[struct@GLib.MainContext] and must be added to one with
+[method@GLib.Source.attach] before it will be executed.
 
 Note that child watch sources can only be used in conjunction with
 `g_spawn...` when the %G_SPAWN_DO_NOT_REAP_CHILD flag is used.
 
 Note that on platforms where #GPid must be explicitly closed
-(see g_spawn_close_pid()) @pid must not be closed while the
+(see [func@GLib.spawn_close_pid]) @pid must not be closed while the
 source is still active. Typically, you will want to call
-g_spawn_close_pid() in the callback function for the source.
+[func@GLib.spawn_close_pid] in the callback function for the source.
 
 On POSIX platforms, the following restrictions apply to this API
 due to limitations in POSIX process interfaces:
@@ -43516,8 +43885,8 @@ due to limitations in POSIX process interfaces:
 * the application must not ignore `SIGCHLD`
 * Before 2.78, the application could not send a signal (`kill()`) to the
   watched @pid in a race free manner. Since 2.78, you can do that while the
-  associated #GMainContext is acquired.
-* Before 2.78, even after destroying the #GSource, you could not
+  associated [struct@GLib.MainContext] is acquired.
+* Before 2.78, even after destroying the [struct@GLib.Source], you could not
   be sure that @pid wasn't already reaped. Hence, it was also not
   safe to `kill()` or `waitpid()` on the process ID after the child watch
   source was gone. Destroying the source before it fired made it
@@ -43599,13 +43968,77 @@ calls g_error_free() on *@err and sets *@err to %NULL.</doc>
         <type name="none" c:type="void"/>
       </return-value>
     </function>
+    <function-inline name="clear_fd" c:identifier="g_clear_fd" version="2.76" introspectable="0" throws="1">
+      <doc xml:space="preserve">If @fd_ptr points to a file descriptor, close it and return
+whether closing it was successful, like g_close().
+If @fd_ptr points to a negative number, return %TRUE without closing
+anything.
+In both cases, set @fd_ptr to `-1` before returning.
+
+Like g_close(), if closing the file descriptor fails, the error is
+stored in both %errno and @error. If this function succeeds,
+%errno is undefined.
+
+On POSIX platforms, this function is async-signal safe
+if @error is %NULL and @fd_ptr points to either a negative number or a
+valid open file descriptor.
+This makes it safe to call from a signal handler or a #GSpawnChildSetupFunc
+under those conditions.
+See [`signal(7)`](man:signal(7)) and
+[`signal-safety(7)`](man:signal-safety(7)) for more details.
+
+It is a programming error for @fd_ptr to point to a non-negative
+number that is not a valid file descriptor.
+
+A typical use of this function is to clean up a file descriptor at
+the end of its scope, whether it has been set successfully or not:
+
+|[
+gboolean
+operate_on_fd (GError **error)
+{
+  gboolean ret = FALSE;
+  int fd = -1;
+
+  fd = open_a_fd (error);
+
+  if (fd &lt; 0)
+    goto out;
+
+  if (!do_something (fd, error))
+    goto out;
+
+  if (!g_clear_fd (&amp;fd, error))
+    goto out;
+
+  ret = TRUE;
+
+out:
+  // OK to call even if fd was never opened or was already closed
+  g_clear_fd (&amp;fd, NULL);
+  return ret;
+}
+]|
+
+This function is also useful in conjunction with #g_autofd.</doc>
+      <return-value transfer-ownership="none">
+        <doc xml:space="preserve">%TRUE on success</doc>
+        <type name="gboolean" c:type="gboolean"/>
+      </return-value>
+      <parameters>
+        <parameter name="fd_ptr" direction="inout" caller-allocates="0" transfer-ownership="full">
+          <doc xml:space="preserve">a pointer to a file descriptor</doc>
+          <type name="gint" c:type="int*"/>
+        </parameter>
+      </parameters>
+    </function-inline>
     <function name="clear_handle_id" c:identifier="g_clear_handle_id" version="2.56" introspectable="0">
       <doc xml:space="preserve">Clears a numeric handler, such as a #GSource ID.
 
 @tag_ptr must be a valid pointer to the variable holding the handler.
 
 If the ID is zero then this function does nothing.
-Otherwise, clear_func() is called with the ID as a parameter, and the tag is
+Otherwise, @clear_func is called with the ID as a parameter, and the tag is
 set to zero.
 
 A macro is also included that allows this function to be used without
@@ -44945,7 +45378,7 @@ For example, don't expect that using g_date_strftime() would
 make the \%F provided by the C99 strftime() work on Windows
 where the C library only complies to C89.</doc>
       <return-value transfer-ownership="none">
-        <doc xml:space="preserve">number of characters written to the buffer, or 0 the buffer was too small</doc>
+        <doc xml:space="preserve">number of characters written to the buffer, or `0` if the buffer was too small</doc>
         <type name="gsize" c:type="gsize"/>
       </return-value>
       <parameters>
@@ -46457,9 +46890,9 @@ the current directory is the target of a symbolic link.</doc>
     <function name="get_current_time" c:identifier="g_get_current_time" deprecated="1" deprecated-version="2.62">
       <doc xml:space="preserve">Equivalent to the UNIX gettimeofday() function, but portable.
 
-You may find g_get_real_time() to be more convenient.</doc>
-      <doc-deprecated xml:space="preserve">#GTimeVal is not year-2038-safe. Use g_get_real_time()
-   instead.</doc-deprecated>
+You may find [func@GLib.get_real_time] to be more convenient.</doc>
+      <doc-deprecated xml:space="preserve">#GTimeVal is not year-2038-safe. Use
+   [func@GLib.get_real_time] instead.</doc-deprecated>
       <return-value transfer-ownership="none">
         <type name="none" c:type="void"/>
       </return-value>
@@ -46728,12 +47161,12 @@ returned.</doc>
     <function name="get_real_time" c:identifier="g_get_real_time" version="2.28">
       <doc xml:space="preserve">Queries the system wall-clock time.
 
-This call is functionally equivalent to g_get_current_time() except
+This call is functionally equivalent to [func@GLib.get_current_time] except
 that the return value is often more convenient than dealing with a
 #GTimeVal.
 
 You should only use this call if you are actually interested in the real
-wall-clock time.  g_get_monotonic_time() is probably more useful for
+wall-clock time. [func@GLib.get_monotonic_time] is probably more useful for
 measuring intervals.</doc>
       <return-value transfer-ownership="none">
         <doc xml:space="preserve">the number of microseconds since January 1, 1970 UTC.</doc>
@@ -47604,8 +48037,9 @@ You can pass %NULL for @lookup_key, provided the hash and equal functions
 of @hash_table are %NULL-safe.
 
 The dictionary implementation optimizes for having all values identical to
-their keys, for example by using g_hash_table_add(). When stealing both the
-key and the value from such a dictionary, the value will be %NULL.</doc>
+their keys, for example by using g_hash_table_add(). Before 2.82, when
+stealing both the key and the value from such a dictionary, the value was
+%NULL. Since 2.82, the returned value and key will be the same.</doc>
       <return-value transfer-ownership="none">
         <doc xml:space="preserve">%TRUE if the key was found in the #GHashTable</doc>
         <type name="gboolean" c:type="gboolean"/>
@@ -47972,18 +48406,18 @@ more convenient than the raw iconv wrappers.</doc>
     <function name="idle_add" c:identifier="g_idle_add" shadowed-by="idle_add_full" introspectable="0">
       <doc xml:space="preserve">Adds a function to be called whenever there are no higher priority
 events pending to the default main loop. The function is given the
-default idle priority, %G_PRIORITY_DEFAULT_IDLE.  If the function
+default idle priority, [const@GLib.PRIORITY_DEFAULT_IDLE].  If the function
 returns %FALSE it is automatically removed from the list of event
 sources and will not be called again.
 
 See [mainloop memory management](main-loop.html#memory-management-of-sources) for details
 on how to handle the return value and memory management of @data.
 
-This internally creates a main loop source using g_idle_source_new()
-and attaches it to the global #GMainContext using g_source_attach(), so
-the callback will be invoked in whichever thread is running that main
-context. You can do these steps manually if you need greater control or to
-use a custom main context.</doc>
+This internally creates a main loop source using [func@GLib.idle_source_new]
+and attaches it to the global [struct@GLib.MainContext] using
+[method@GLib.Source.attach], so the callback will be invoked in whichever
+thread is running that main context. You can do these steps manually if you
+need greater control or to use a custom main context.</doc>
       <return-value transfer-ownership="none">
         <doc xml:space="preserve">the ID (greater than 0) of the event source.</doc>
         <type name="guint" c:type="guint"/>
@@ -48003,17 +48437,17 @@ use a custom main context.</doc>
       <doc xml:space="preserve">Adds a function to be called whenever there are no higher priority
 events pending.
 
-If the function returns %G_SOURCE_REMOVE or %FALSE it is automatically
+If the function returns [const@GLib.SOURCE_REMOVE] or %FALSE it is automatically
 removed from the list of event sources and will not be called again.
 
 See [mainloop memory management](main-loop.html#memory-management-of-sources) for details
 on how to handle the return value and memory management of @data.
 
-This internally creates a main loop source using g_idle_source_new()
-and attaches it to the global #GMainContext using g_source_attach(), so
-the callback will be invoked in whichever thread is running that main
-context. You can do these steps manually if you need greater control or to
-use a custom main context.</doc>
+This internally creates a main loop source using [func@GLib.idle_source_new]
+and attaches it to the global [struct@GLib.MainContext] using
+[method@GLib.Source.attach], so the callback will be invoked in whichever
+thread is running that main context. You can do these steps manually if you
+need greater control or to use a custom main context.</doc>
       <return-value transfer-ownership="none">
         <doc xml:space="preserve">the ID (greater than 0) of the event source.</doc>
         <type name="guint" c:type="guint"/>
@@ -48021,7 +48455,8 @@ use a custom main context.</doc>
       <parameters>
         <parameter name="priority" transfer-ownership="none">
           <doc xml:space="preserve">the priority of the idle source. Typically this will be in the
-  range between %G_PRIORITY_DEFAULT_IDLE and %G_PRIORITY_HIGH_IDLE.</doc>
+  range between [const@GLib.PRIORITY_DEFAULT_IDLE] and
+  [const@GLib.PRIORITY_HIGH_IDLE].</doc>
           <type name="gint" c:type="gint"/>
         </parameter>
         <parameter name="function" transfer-ownership="none" scope="notified" closure="2" destroy="3">
@@ -48041,12 +48476,12 @@ use a custom main context.</doc>
     <function name="idle_add_once" c:identifier="g_idle_add_once" version="2.74" introspectable="0">
       <doc xml:space="preserve">Adds a function to be called whenever there are no higher priority
 events pending to the default main loop. The function is given the
-default idle priority, %G_PRIORITY_DEFAULT_IDLE.
+default idle priority, [const@GLib.PRIORITY_DEFAULT_IDLE].
 
 The function will only be called once and then the source will be
 automatically removed from the main context.
 
-This function otherwise behaves like g_idle_add().</doc>
+This function otherwise behaves like [func@GLib.idle_add].</doc>
       <return-value transfer-ownership="none">
         <doc xml:space="preserve">the ID (greater than 0) of the event source</doc>
         <type name="guint" c:type="guint"/>
@@ -48078,11 +48513,12 @@ This function otherwise behaves like g_idle_add().</doc>
     <function name="idle_source_new" c:identifier="g_idle_source_new">
       <doc xml:space="preserve">Creates a new idle source.
 
-The source will not initially be associated with any #GMainContext
-and must be added to one with g_source_attach() before it will be
-executed. Note that the default priority for idle sources is
-%G_PRIORITY_DEFAULT_IDLE, as compared to other sources which
-have a default priority of %G_PRIORITY_DEFAULT.</doc>
+The source will not initially be associated with any
+[struct@GLib.MainContext] and must be added to one with
+[method@GLib.Source.attach] before it will be executed. Note that the
+default priority for idle sources is [const@GLib.PRIORITY_DEFAULT_IDLE], as
+compared to other sources which have a default priority of
+[const@GLib.PRIORITY_DEFAULT].</doc>
       <return-value transfer-ownership="full">
         <doc xml:space="preserve">the newly-created idle source</doc>
         <type name="Source" c:type="GSource*"/>
@@ -49497,7 +49933,7 @@ See your C library manual for more details about lstat().</doc>
       <doc xml:space="preserve">Returns the global-default main context. This is the main context
 used for main loop functions when a main loop is not explicitly
 specified, and corresponds to the "main" main loop. See also
-g_main_context_get_thread_default().</doc>
+[func@GLib.MainContext.get_thread_default].</doc>
       <return-value transfer-ownership="none">
         <doc xml:space="preserve">the global-default main context.</doc>
         <type name="MainContext" c:type="GMainContext*"/>
@@ -49507,14 +49943,14 @@ g_main_context_get_thread_default().</doc>
       <doc xml:space="preserve">Gets the thread-default #GMainContext for this thread. Asynchronous
 operations that want to be able to be run in contexts other than
 the default one should call this method or
-g_main_context_ref_thread_default() to get a #GMainContext to add
-their #GSources to. (Note that even in single-threaded
-programs applications may sometimes want to temporarily push a
-non-default context, so it is not safe to assume that this will
-always return %NULL if you are running in the default thread.)
+[func@GLib.MainContext.ref_thread_default] to get a
+[struct@GLib.MainContext] to add their [struct@GLib.Source]s to. (Note that
+even in single-threaded programs applications may sometimes want to
+temporarily push a non-default context, so it is not safe to assume that
+this will always return %NULL if you are running in the default thread.)
 
 If you need to hold a reference on the context, use
-g_main_context_ref_thread_default() instead.</doc>
+[func@GLib.MainContext.ref_thread_default] instead.</doc>
       <return-value transfer-ownership="none" nullable="1">
         <doc xml:space="preserve">the thread-default #GMainContext, or
 %NULL if the thread-default context is the global-default main context.</doc>
@@ -49522,15 +49958,16 @@ g_main_context_ref_thread_default() instead.</doc>
       </return-value>
     </function>
     <function name="main_context_ref_thread_default" c:identifier="g_main_context_ref_thread_default" moved-to="MainContext.ref_thread_default" version="2.32">
-      <doc xml:space="preserve">Gets the thread-default #GMainContext for this thread, as with
-g_main_context_get_thread_default(), but also adds a reference to
-it with g_main_context_ref(). In addition, unlike
-g_main_context_get_thread_default(), if the thread-default context
-is the global-default context, this will return that #GMainContext
-(with a ref added to it) rather than returning %NULL.</doc>
+      <doc xml:space="preserve">Gets the thread-default [struct@GLib.MainContext] for this thread, as with
+[func@GLib.MainContext.get_thread_default], but also adds a reference to
+it with [method@GLib.MainContext.ref]. In addition, unlike
+[func@GLib.MainContext.get_thread_default], if the thread-default context
+is the global-default context, this will return that
+[struct@GLib.MainContext] (with a ref added to it) rather than returning
+%NULL.</doc>
       <return-value transfer-ownership="full">
         <doc xml:space="preserve">the thread-default #GMainContext. Unref
-    with g_main_context_unref() when you are done with it.</doc>
+    with [method@GLib.MainContext.unref] when you are done with it.</doc>
         <type name="MainContext" c:type="GMainContext*"/>
       </return-value>
     </function>
@@ -49543,11 +49980,11 @@ is the global-default context, this will return that #GMainContext
     </function>
     <function name="main_depth" c:identifier="g_main_depth">
       <doc xml:space="preserve">Returns the depth of the stack of calls to
-g_main_context_dispatch() on any #GMainContext in the current thread.
+[method@GLib.MainContext.dispatch] on any #GMainContext in the current thread.
 That is, when called from the toplevel, it gives 0. When
-called from within a callback from g_main_context_iteration()
-(or g_main_loop_run(), etc.) it returns 1. When called from within
-a callback to a recursive call to g_main_context_iteration(),
+called from within a callback from [method@GLib.MainContext.iteration]
+(or [method@GLib.MainLoop.run], etc.) it returns 1. When called from within
+a callback to a recursive call to [method@GLib.MainContext.iteration],
 it returns 2. And so forth.
 
 This function is useful in a situation like the following:
@@ -49588,7 +50025,7 @@ thing from a library, it gets more difficult, since you no longer
 control the main loop. You might think you can simply use an idle
 function to make the call to free_allocated_memory(), but that
 doesn't work, since the idle function could be called from a
-recursive callback. This can be fixed by using g_main_depth()
+recursive callback. This can be fixed by using [func@GLib.main_depth]
 
 |[&lt;!-- language="C" --&gt;
 gpointer
@@ -49623,12 +50060,12 @@ free_allocated_memory (void)
   }
 ]|
 
-There is a temptation to use g_main_depth() to solve
+There is a temptation to use [func@GLib.main_depth] to solve
 problems with reentrancy. For instance, while waiting for data
 to be received from the network in response to a menu item,
 the menu item might be selected again. It might seem that
 one could make the menu item's callback return immediately
-and do nothing if g_main_depth() returns a value greater than 1.
+and do nothing if [func@GLib.main_depth] returns a value greater than 1.
 However, this should be avoided since the user then sees selecting
 the menu item do nothing. Furthermore, you'll find yourself adding
 these checks all over your code, since there are doubtless many,
@@ -52143,6 +52580,28 @@ g_ref_count_init() to be used again.</doc>
         </parameter>
       </parameters>
     </function>
+    <function name="ref_string_equal" c:identifier="g_ref_string_equal" version="2.84">
+      <doc xml:space="preserve">Compares two ref-counted strings for byte-by-byte equality.
+
+It can be passed to [func@GLib.HashTable.new] as the key equality function,
+and behaves exactly the same as [func@GLib.str_equal] (or `strcmp()`), but
+can return slightly faster as it can check the string lengths before checking
+all the bytes.</doc>
+      <return-value transfer-ownership="none">
+        <doc xml:space="preserve">`TRUE` if the strings are equal, otherwise `FALSE`</doc>
+        <type name="gboolean" c:type="gboolean"/>
+      </return-value>
+      <parameters>
+        <parameter name="str1" transfer-ownership="none">
+          <doc xml:space="preserve">a reference counted string</doc>
+          <type name="utf8" c:type="const char*"/>
+        </parameter>
+        <parameter name="str2" transfer-ownership="none">
+          <doc xml:space="preserve">a reference counted string</doc>
+          <type name="utf8" c:type="const char*"/>
+        </parameter>
+      </parameters>
+    </function>
     <function name="ref_string_length" c:identifier="g_ref_string_length" version="2.58">
       <doc xml:space="preserve">Retrieves the length of @str.</doc>
       <return-value transfer-ownership="none">
@@ -53001,6 +53460,45 @@ Before GLib 2.76, this was `NULL`.</doc>
         </parameter>
       </parameters>
     </function>
+    <function-inline name="set_str" c:identifier="g_set_str" version="2.76" introspectable="0">
+      <doc xml:space="preserve">Updates a pointer to a string to a copy of @new_str and returns whether the
+string was changed.
+
+If @new_str matches the previous string, this function is a no-op. If
+@new_str is different, a copy of it will be assigned to @str_pointer and
+the previous string pointed to by @str_pointer will be freed with
+[func@GLib.free].
+
+@str_pointer must not be `NULL`, but can point to a `NULL` value.
+
+One convenient usage of this function is in implementing property settings:
+```C
+void
+foo_set_bar (Foo        *foo,
+             const char *new_bar)
+{
+  g_return_if_fail (IS_FOO (foo));
+
+  if (g_set_str (&amp;foo-&gt;bar, new_bar))
+    g_object_notify (foo, "bar");
+}
+```</doc>
+      <return-value transfer-ownership="none">
+        <doc xml:space="preserve">true if the value of @str_pointer changed, false otherwise</doc>
+        <type name="gboolean" c:type="gboolean"/>
+      </return-value>
+      <parameters>
+        <parameter name="str_pointer" direction="inout" caller-allocates="0" transfer-ownership="full">
+          <doc xml:space="preserve">a pointer to either
+  a string or `NULL`</doc>
+          <type name="utf8" c:type="char**"/>
+        </parameter>
+        <parameter name="new_str" transfer-ownership="none" nullable="1" allow-none="1">
+          <doc xml:space="preserve">a string to assign to @str_pointer</doc>
+          <type name="utf8" c:type="const char*"/>
+        </parameter>
+      </parameters>
+    </function-inline>
     <function name="setenv" c:identifier="g_setenv" version="2.4">
       <doc xml:space="preserve">Sets an environment variable. On UNIX, both the variable's name and
 value can be arbitrary byte strings, except that the variable's name
@@ -53520,7 +54018,7 @@ the Single Unix Specification.</doc>
         </parameter>
       </parameters>
     </function>
-    <function name="sort_array" c:identifier="g_sort_array" introspectable="0">
+    <function name="sort_array" c:identifier="g_sort_array" version="2.82" introspectable="0">
       <doc xml:space="preserve">This is just like the standard C [`qsort()`](man:qsort(3)) function, but
 the comparison routine accepts a user data argument
 (like [`qsort_r()`](man:qsort_r(3))).
@@ -53556,20 +54054,21 @@ Unlike `qsort()`, this is guaranteed to be a stable sort.</doc>
     </function>
     <function name="source_remove" c:identifier="g_source_remove" moved-to="Source.remove">
       <doc xml:space="preserve">Removes the source with the given ID from the default main context. You must
-use g_source_destroy() for sources added to a non-default main context.
+use [method@GLib.Source.destroy] for sources added to a non-default main context.
 
-The ID of a #GSource is given by g_source_get_id(), or will be
-returned by the functions g_source_attach(), g_idle_add(),
-g_idle_add_full(), g_timeout_add(), g_timeout_add_full(),
-g_child_watch_add(), g_child_watch_add_full(), g_io_add_watch(), and
-g_io_add_watch_full().
+The ID of a #GSource is given by [method@GLib.Source.get_id], or will be
+returned by the functions [method@GLib.Source.attach], [func@GLib.idle_add],
+[func@GLib.idle_add_full], [func@GLib.timeout_add],
+[func@GLib.timeout_add_full], [func@GLib.child_watch_add],
+[func@GLib.child_watch_add_full], [func@GLib.io_add_watch], and
+[func@GLib.io_add_watch_full].
 
 It is a programmer error to attempt to remove a non-existent source.
 
 More specifically: source IDs can be reissued after a source has been
 destroyed and therefore it is never valid to use this function with a
 source ID which may have already been removed.  An example is when
-scheduling an idle to run in another thread with g_idle_add(): the
+scheduling an idle to run in another thread with [func@GLib.idle_add]: the
 idle may already have run and been removed by the time this function
 is called on its (now invalid) source ID.  This source ID may have
 been reissued, leading to the operation being performed against the
@@ -53595,7 +54094,7 @@ same source functions and user data, only one will be destroyed.</doc>
       </return-value>
       <parameters>
         <parameter name="funcs" transfer-ownership="none">
-          <doc xml:space="preserve">The @source_funcs passed to g_source_new()</doc>
+          <doc xml:space="preserve">The @source_funcs passed to [ctor@GLib.Source.new]</doc>
           <type name="SourceFuncs" c:type="GSourceFuncs*"/>
         </parameter>
         <parameter name="user_data" transfer-ownership="none" nullable="1" allow-none="1">
@@ -53623,7 +54122,7 @@ data, only one will be destroyed.</doc>
       <doc xml:space="preserve">Sets the name of a source using its ID.
 
 This is a convenience utility to set source names from the return
-value of g_idle_add(), g_timeout_add(), etc.
+value of [func@GLib.idle_add], [func@GLib.timeout_add], etc.
 
 It is a programmer error to attempt to set the name of a non-existent
 source.
@@ -53631,7 +54130,7 @@ source.
 More specifically: source IDs can be reissued after a source has been
 destroyed and therefore it is never valid to use this function with a
 source ID which may have already been removed.  An example is when
-scheduling an idle to run in another thread with g_idle_add(): the
+scheduling an idle to run in another thread with [func@GLib.idle_add]: the
 idle may already have run and been removed by the time this function
 is called on its (now invalid) source ID.  This source ID may have
 been reissued, leading to the operation being performed against the
@@ -54482,7 +54981,69 @@ See your C library manual for more details about stat().</doc>
         </parameter>
       </parameters>
     </function-macro>
-    <function-macro name="steal_pointer" c:identifier="g_steal_pointer" version="2.44" introspectable="0">
+    <function-inline name="steal_fd" c:identifier="g_steal_fd" version="2.70" introspectable="0">
+      <doc xml:space="preserve">Sets @fd_ptr to `-1`, returning the value that was there before.
+
+Conceptually, this transfers the ownership of the file descriptor
+from the referenced variable to the caller of the function (i.e.
+&#x2018;steals&#x2019; the reference). This is very similar to [func@GLib.steal_pointer],
+but for file descriptors.
+
+On POSIX platforms, this function is async-signal safe
+(see [`signal(7)`](man:signal(7)) and
+[`signal-safety(7)`](man:signal-safety(7))), making it safe to call from a
+signal handler or a #GSpawnChildSetupFunc.
+
+This function preserves the value of `errno`.</doc>
+      <return-value transfer-ownership="none">
+        <doc xml:space="preserve">the value that @fd_ptr previously had</doc>
+        <type name="gint" c:type="int"/>
+      </return-value>
+      <parameters>
+        <parameter name="fd_ptr" direction="inout" caller-allocates="0" transfer-ownership="full">
+          <doc xml:space="preserve">A pointer to a file descriptor</doc>
+          <type name="gint" c:type="int*"/>
+        </parameter>
+      </parameters>
+    </function-inline>
+    <function-inline name="steal_handle_id" c:identifier="g_steal_handle_id" version="2.84" introspectable="0">
+      <doc xml:space="preserve">Sets @handle_pointer to `0`, returning the value that was there before.
+
+Conceptually, this transfers the ownership of the handle ID from the
+referenced variable to the &#x2018;caller&#x2019; of the macro (ie: &#x2018;steals&#x2019; the
+handle ID).
+
+This can be very useful to make ownership transfer explicit, or to prevent
+a handle from being released multiple times. For example:
+
+```c
+void
+maybe_unsubscribe_signal (ContextStruct *data)
+{
+  if (some_complex_logic (data))
+    {
+      g_dbus_connection_signal_unsubscribe (data-&gt;connection,
+                                            g_steal_handle_id (&amp;data-&gt;subscription_id));
+      // now data-&gt;subscription_id isn&#x2019;t a dangling handle
+    }
+}
+```
+
+While [func@GLib.clear_handle_id] can be used in many of the same situations
+as `g_steal_handle_id()`, this is one situation where it cannot be used, as
+there is no way to pass the `GDBusConnection` to a
+[type@GLib.ClearHandleFunc].</doc>
+      <return-value transfer-ownership="none">
+        <type name="guint" c:type="unsigned int"/>
+      </return-value>
+      <parameters>
+        <parameter name="handle_pointer" direction="inout" caller-allocates="0" transfer-ownership="full">
+          <doc xml:space="preserve">a pointer to a handle ID</doc>
+          <type name="guint" c:type="unsigned int*"/>
+        </parameter>
+      </parameters>
+    </function-inline>
+    <function-inline name="steal_pointer" c:identifier="g_steal_pointer" version="2.44" introspectable="0">
       <doc xml:space="preserve">Sets @pp to %NULL, returning the value that was there before.
 
 Conceptually, this transfers the ownership of the pointer from the
@@ -54531,12 +55092,16 @@ get_object (GObject **obj_out)
 In the above example, the object will be automatically freed in the
 early error case and also in the case that %NULL was given for
 @obj_out.</doc>
+      <return-value transfer-ownership="none" nullable="1">
+        <type name="gpointer" c:type="gpointer"/>
+      </return-value>
       <parameters>
-        <parameter name="pp">
+        <parameter name="pp" transfer-ownership="none">
           <doc xml:space="preserve">a pointer to a pointer</doc>
+          <type name="gpointer" c:type="gpointer"/>
         </parameter>
       </parameters>
-    </function-macro>
+    </function-inline>
     <function name="stpcpy" c:identifier="g_stpcpy">
       <doc xml:space="preserve">Copies a nul-terminated string into the destination buffer, including
 the trailing nul byte, and returns a pointer to the trailing nul byte
@@ -57207,15 +57772,17 @@ but nothing happens except for the first call.
 Since version 2.32, GLib does not support custom thread implementations
 anymore and the @vtable parameter is ignored and you should pass %NULL.
 
-&lt;note&gt;&lt;para&gt;g_thread_init() must not be called directly or indirectly
-in a callback from GLib. Also no mutexes may be currently locked while
-calling g_thread_init().&lt;/para&gt;&lt;/note&gt;
+::: note
+    g_thread_init() must not be called directly or indirectly in a
+    callback from GLib. Also no mutexes may be currently locked
+    while calling g_thread_init().
 
-&lt;note&gt;&lt;para&gt;To use g_thread_init() in your program, you have to link
-with the libraries that the command &lt;command&gt;pkg-config --libs
-gthread-2.0&lt;/command&gt; outputs. This is not the case for all the
-other thread-related functions of GLib. Those can be used without
-having to link with the thread libraries.&lt;/para&gt;&lt;/note&gt;</doc>
+::: note
+    To use g_thread_init() in your program, you have to link with
+    the libraries that the command `pkg-config --libs gthread-2.0`
+    outputs. This is not the case for all the other thread-related
+    functions of GLib. Those can be used without having to link
+    with the thread libraries.</doc>
       <doc-deprecated xml:space="preserve">This function is no longer necessary. The GLib
     threading system is automatically initialized at the start
     of your program.</doc-deprecated>
@@ -57382,12 +57949,12 @@ g_date_time_unref (dt);
     </function>
     <function name="timeout_add" c:identifier="g_timeout_add" shadowed-by="timeout_add_full" introspectable="0">
       <doc xml:space="preserve">Sets a function to be called at regular intervals, with the default
-priority, %G_PRIORITY_DEFAULT.
+priority, [const@GLib.PRIORITY_DEFAULT].
 
-The given @function is called repeatedly until it returns %G_SOURCE_REMOVE
-or %FALSE, at which point the timeout is automatically destroyed and the
-function will not be called again. The first call to the function will be
-at the end of the first @interval.
+The given @function is called repeatedly until it returns
+[const@GLib.SOURCE_REMOVE] or %FALSE, at which point the timeout is
+automatically destroyed and the function will not be called again. The first
+call to the function will be at the end of the first @interval.
 
 Note that timeout functions may be delayed, due to the processing of other
 event sources. Thus they should not be relied on for precise timing.
@@ -57400,19 +57967,20 @@ on how to handle the return value and memory management of @data.
 
 If you want to have a timer in the "seconds" range and do not care
 about the exact time of the first call of the timer, use the
-g_timeout_add_seconds() function; this function allows for more
+[func@GLib.timeout_add_seconds] function; this function allows for more
 optimizations and more efficient system power usage.
 
-This internally creates a main loop source using g_timeout_source_new()
-and attaches it to the global #GMainContext using g_source_attach(), so
-the callback will be invoked in whichever thread is running that main
-context. You can do these steps manually if you need greater control or to
-use a custom main context.
+This internally creates a main loop source using
+[func@GLib.timeout_source_new] and attaches it to the global
+[struct@GLib.MainContext] using [method@GLib.Source.attach], so the callback
+will be invoked in whichever thread is running that main context. You can do
+these steps manually if you need greater control or to use a custom main
+context.
 
 It is safe to call this function from any thread.
 
 The interval given is in terms of monotonic time, not wall clock
-time.  See g_get_monotonic_time().</doc>
+time. See [func@GLib.get_monotonic_time].</doc>
       <return-value transfer-ownership="none">
         <doc xml:space="preserve">the ID (greater than 0) of the event source.</doc>
         <type name="guint" c:type="guint"/>
@@ -57450,14 +58018,15 @@ timeout is recalculated based on the current time and the given interval
 See [mainloop memory management](main-loop.html#memory-management-of-sources) for details
 on how to handle the return value and memory management of @data.
 
-This internally creates a main loop source using g_timeout_source_new()
-and attaches it to the global #GMainContext using g_source_attach(), so
-the callback will be invoked in whichever thread is running that main
-context. You can do these steps manually if you need greater control or to
-use a custom main context.
+This internally creates a main loop source using
+[func@GLib.timeout_source_new] and attaches it to the global
+[struct@GLib.MainContext] using [method@GLib.Source.attach], so the callback
+will be invoked in whichever thread is running that main context. You can do
+these steps manually if you need greater control or to use a custom main
+context.
 
 The interval given is in terms of monotonic time, not wall clock time.
-See g_get_monotonic_time().</doc>
+See [func@GLib.get_monotonic_time].</doc>
       <return-value transfer-ownership="none">
         <doc xml:space="preserve">the ID (greater than 0) of the event source.</doc>
         <type name="guint" c:type="guint"/>
@@ -57465,7 +58034,8 @@ See g_get_monotonic_time().</doc>
       <parameters>
         <parameter name="priority" transfer-ownership="none">
           <doc xml:space="preserve">the priority of the timeout source. Typically this will be in
-  the range between %G_PRIORITY_DEFAULT and %G_PRIORITY_HIGH.</doc>
+  the range between [const@GLib.PRIORITY_DEFAULT] and
+  [const@GLib.PRIORITY_HIGH].</doc>
           <type name="gint" c:type="gint"/>
         </parameter>
         <parameter name="interval" transfer-ownership="none">
@@ -57489,12 +58059,12 @@ See g_get_monotonic_time().</doc>
     </function>
     <function name="timeout_add_once" c:identifier="g_timeout_add_once" version="2.74" introspectable="0">
       <doc xml:space="preserve">Sets a function to be called after @interval milliseconds have elapsed,
-with the default priority, %G_PRIORITY_DEFAULT.
+with the default priority, [const@GLib.PRIORITY_DEFAULT].
 
 The given @function is called once and then the source will be automatically
 removed from the main context.
 
-This function otherwise behaves like g_timeout_add().</doc>
+This function otherwise behaves like [func@GLib.timeout_add].</doc>
       <return-value transfer-ownership="none">
         <doc xml:space="preserve">the ID (greater than 0) of the event source</doc>
         <type name="guint" c:type="guint"/>
@@ -57517,28 +58087,28 @@ This function otherwise behaves like g_timeout_add().</doc>
     </function>
     <function name="timeout_add_seconds" c:identifier="g_timeout_add_seconds" shadowed-by="timeout_add_seconds_full" version="2.14" introspectable="0">
       <doc xml:space="preserve">Sets a function to be called at regular intervals with the default
-priority, %G_PRIORITY_DEFAULT.
+priority, [const@GLib.PRIORITY_DEFAULT].
 
-The function is called repeatedly until it returns %G_SOURCE_REMOVE
+The function is called repeatedly until it returns [const@GLib.SOURCE_REMOVE]
 or %FALSE, at which point the timeout is automatically destroyed
 and the function will not be called again.
 
 This internally creates a main loop source using
-g_timeout_source_new_seconds() and attaches it to the main loop context
-using g_source_attach(). You can do these steps manually if you need
-greater control. Also see g_timeout_add_seconds_full().
+[func@GLib.timeout_source_new_seconds] and attaches it to the main loop context
+using [method@GLib.Source.attach]. You can do these steps manually if you need
+greater control. Also see [func@GLib.timeout_add_seconds_full].
 
 It is safe to call this function from any thread.
 
 Note that the first call of the timer may not be precise for timeouts
 of one second. If you need finer precision and have such a timeout,
-you may want to use g_timeout_add() instead.
+you may want to use [func@GLib.timeout_add] instead.
 
 See [mainloop memory management](main-loop.html#memory-management-of-sources) for details
 on how to handle the return value and memory management of @data.
 
 The interval given is in terms of monotonic time, not wall clock
-time.  See g_get_monotonic_time().</doc>
+time. See [func@GLib.get_monotonic_time].</doc>
       <return-value transfer-ownership="none">
         <doc xml:space="preserve">the ID (greater than 0) of the event source.</doc>
         <type name="guint" c:type="guint"/>
@@ -57561,17 +58131,17 @@ time.  See g_get_monotonic_time().</doc>
     <function name="timeout_add_seconds_full" c:identifier="g_timeout_add_seconds_full" shadows="timeout_add_seconds" version="2.14">
       <doc xml:space="preserve">Sets a function to be called at regular intervals, with @priority.
 
-The function is called repeatedly until it returns %G_SOURCE_REMOVE
+The function is called repeatedly until it returns [const@GLib.SOURCE_REMOVE]
 or %FALSE, at which point the timeout is automatically destroyed and
 the function will not be called again.
 
-Unlike g_timeout_add(), this function operates at whole second granularity.
-The initial starting point of the timer is determined by the implementation
-and the implementation is expected to group multiple timers together so that
-they fire all at the same time. To allow this grouping, the @interval to the
-first timer is rounded and can deviate up to one second from the specified
-interval. Subsequent timer iterations will generally run at the specified
-interval.
+Unlike [func@GLib.timeout_add], this function operates at whole second
+granularity. The initial starting point of the timer is determined by the
+implementation and the implementation is expected to group multiple timers
+together so that they fire all at the same time. To allow this grouping, the
+@interval to the first timer is rounded and can deviate up to one second
+from the specified interval. Subsequent timer iterations will generally run
+at the specified interval.
 
 Note that timeout functions may be delayed, due to the processing of other
 event sources. Thus they should not be relied on for precise timing.
@@ -57581,23 +58151,24 @@ timeout is recalculated based on the current time and the given @interval
 See [mainloop memory management](main-loop.html#memory-management-of-sources) for details
 on how to handle the return value and memory management of @data.
 
-If you want timing more precise than whole seconds, use g_timeout_add()
-instead.
+If you want timing more precise than whole seconds, use
+[func@GLib.timeout_add] instead.
 
 The grouping of timers to fire at the same time results in a more power
 and CPU efficient behavior so if your timer is in multiples of seconds
 and you don't require the first timer exactly one second from now, the
-use of g_timeout_add_seconds() is preferred over g_timeout_add().
+use of [func@GLib.timeout_add_seconds] is preferred over
+[func@GLib.timeout_add].
 
 This internally creates a main loop source using
-g_timeout_source_new_seconds() and attaches it to the main loop context
-using g_source_attach(). You can do these steps manually if you need
-greater control.
+[func@GLib.timeout_source_new_seconds] and attaches it to the main loop
+context using [method@GLib.Source.attach]. You can do these steps manually
+if you need greater control.
 
 It is safe to call this function from any thread.
 
 The interval given is in terms of monotonic time, not wall clock
-time.  See g_get_monotonic_time().</doc>
+time. See [func@GLib.get_monotonic_time].</doc>
       <return-value transfer-ownership="none">
         <doc xml:space="preserve">the ID (greater than 0) of the event source.</doc>
         <type name="guint" c:type="guint"/>
@@ -57605,7 +58176,8 @@ time.  See g_get_monotonic_time().</doc>
       <parameters>
         <parameter name="priority" transfer-ownership="none">
           <doc xml:space="preserve">the priority of the timeout source. Typically this will be in
-  the range between %G_PRIORITY_DEFAULT and %G_PRIORITY_HIGH.</doc>
+  the range between [const@GLib.PRIORITY_DEFAULT] and
+  [const@GLib.PRIORITY_HIGH].</doc>
           <type name="gint" c:type="gint"/>
         </parameter>
         <parameter name="interval" transfer-ownership="none">
@@ -57627,7 +58199,8 @@ time.  See g_get_monotonic_time().</doc>
       </parameters>
     </function>
     <function name="timeout_add_seconds_once" c:identifier="g_timeout_add_seconds_once" version="2.78" introspectable="0">
-      <doc xml:space="preserve">This function behaves like g_timeout_add_once() but with a range in seconds.</doc>
+      <doc xml:space="preserve">This function behaves like [func@GLib.timeout_add_once] but with a range in
+seconds.</doc>
       <return-value transfer-ownership="none">
         <doc xml:space="preserve">the ID (greater than 0) of the event source</doc>
         <type name="guint" c:type="guint"/>
@@ -57650,12 +58223,12 @@ time.  See g_get_monotonic_time().</doc>
     <function name="timeout_source_new" c:identifier="g_timeout_source_new">
       <doc xml:space="preserve">Creates a new timeout source.
 
-The source will not initially be associated with any #GMainContext
-and must be added to one with g_source_attach() before it will be
+The source will not initially be associated with any [struct@GLib.MainContext]
+and must be added to one with [method@GLib.Source.attach] before it will be
 executed.
 
 The interval given is in terms of monotonic time, not wall clock
-time.  See g_get_monotonic_time().</doc>
+time.  See [func@GLib.get_monotonic_time].</doc>
       <return-value transfer-ownership="full">
         <doc xml:space="preserve">the newly-created timeout source</doc>
         <type name="Source" c:type="GSource*"/>
@@ -57670,15 +58243,15 @@ time.  See g_get_monotonic_time().</doc>
     <function name="timeout_source_new_seconds" c:identifier="g_timeout_source_new_seconds" version="2.14">
       <doc xml:space="preserve">Creates a new timeout source.
 
-The source will not initially be associated with any #GMainContext
-and must be added to one with g_source_attach() before it will be
-executed.
+The source will not initially be associated with any
+[struct@GLib.MainContext] and must be added to one with
+[method@GLib.Source.attach] before it will be executed.
 
 The scheduling granularity/accuracy of this timeout source will be
 in seconds.
 
 The interval given is in terms of monotonic time, not wall clock time.
-See g_get_monotonic_time().</doc>
+See [func@GLib.get_monotonic_time].</doc>
       <return-value transfer-ownership="full">
         <doc xml:space="preserve">the newly-created timeout source</doc>
         <type name="Source" c:type="GSource*"/>
@@ -57914,12 +58487,12 @@ The function returns %NULL if an overflow occurs.</doc>
       </parameters>
     </function-macro>
     <function name="ucs4_to_utf16" c:identifier="g_ucs4_to_utf16" throws="1">
-      <doc xml:space="preserve">Convert a string from UCS-4 to UTF-16. A 0 character will be
-added to the result after the converted text.</doc>
+      <doc xml:space="preserve">Convert a string from UCS-4 to UTF-16.
+
+A nul character (U+0000) will be added to the result after the converted text.</doc>
       <return-value transfer-ownership="full">
         <doc xml:space="preserve">a pointer to a newly allocated UTF-16 string.
-    This value must be freed with g_free(). If an error occurs,
-    %NULL will be returned and @error set.</doc>
+  This value must be freed with [func@GLib.free].</doc>
         <type name="guint16" c:type="gunichar2*"/>
       </return-value>
       <parameters>
@@ -57931,31 +58504,33 @@ added to the result after the converted text.</doc>
         </parameter>
         <parameter name="len" transfer-ownership="none">
           <doc xml:space="preserve">the maximum length (number of characters) of @str to use.
-    If @len &lt; 0, then the string is nul-terminated.</doc>
+  If @len is negative, then the string is nul-terminated.</doc>
           <type name="glong" c:type="glong"/>
         </parameter>
         <parameter name="items_read" direction="out" caller-allocates="0" transfer-ownership="full" optional="1" allow-none="1">
           <doc xml:space="preserve">location to store number of
-    bytes read, or %NULL. If an error occurs then the index of the invalid
-    input is stored here.</doc>
+  bytes read, or `NULL`. If an error occurs then the index of the invalid
+  input is stored here.</doc>
           <type name="glong" c:type="glong*"/>
         </parameter>
         <parameter name="items_written" direction="out" caller-allocates="0" transfer-ownership="full" optional="1" allow-none="1">
           <doc xml:space="preserve">location to store number
-    of #gunichar2  written, or %NULL. The value stored here does not include
-    the trailing 0.</doc>
+  of `gunichar2` written, or `NULL`. The value stored here does not include
+  the trailing nul.</doc>
           <type name="glong" c:type="glong*"/>
         </parameter>
       </parameters>
     </function>
     <function name="ucs4_to_utf8" c:identifier="g_ucs4_to_utf8" throws="1">
       <doc xml:space="preserve">Convert a string from a 32-bit fixed width representation as UCS-4.
-to UTF-8. The result will be terminated with a 0 byte.</doc>
+to UTF-8.
+
+The result will be terminated with a nul byte.</doc>
       <return-value transfer-ownership="full">
         <doc xml:space="preserve">a pointer to a newly allocated UTF-8 string.
-    This value must be freed with g_free(). If an error occurs,
-    %NULL will be returned and @error set. In that case, @items_read
-    will be set to the position of the first invalid input character.</doc>
+  This value must be freed with [func@GLib.free]. If an error occurs,
+  @items_read will be set to the position of the first invalid input
+  character.</doc>
         <type name="utf8" c:type="gchar*"/>
       </return-value>
       <parameters>
@@ -57967,18 +58542,18 @@ to UTF-8. The result will be terminated with a 0 byte.</doc>
         </parameter>
         <parameter name="len" transfer-ownership="none">
           <doc xml:space="preserve">the maximum length (number of characters) of @str to use.
-    If @len &lt; 0, then the string is nul-terminated.</doc>
+  If @len is negative, then the string is nul-terminated.</doc>
           <type name="glong" c:type="glong"/>
         </parameter>
         <parameter name="items_read" direction="out" caller-allocates="0" transfer-ownership="full" optional="1" allow-none="1">
           <doc xml:space="preserve">location to store number of
-    characters read, or %NULL.</doc>
+  characters read, or `NULL`.</doc>
           <type name="glong" c:type="glong*"/>
         </parameter>
         <parameter name="items_written" direction="out" caller-allocates="0" transfer-ownership="full" optional="1" allow-none="1">
           <doc xml:space="preserve">location to store number
-    of bytes written or %NULL. The value here stored does not include the
-    trailing 0 byte.</doc>
+  of bytes written or `NULL`. The value here stored does not include the
+  trailing nul byte.</doc>
           <type name="glong" c:type="glong*"/>
         </parameter>
       </parameters>
@@ -58562,8 +59137,8 @@ terminals support zero-width rendering of zero-width marks.</doc>
         </parameter>
         <parameter name="outbuf" direction="out" caller-allocates="1" transfer-ownership="none" optional="1" allow-none="1">
           <doc xml:space="preserve">output buffer, must have at
-      least 6 bytes of space. If %NULL, the length will be computed and
-      returned and nothing will be written to @outbuf.</doc>
+  least 6 bytes of space. If `NULL`, the length will be computed and
+  returned and nothing will be written to @outbuf.</doc>
           <type name="utf8" c:type="gchar*"/>
         </parameter>
       </parameters>
@@ -58627,11 +59202,12 @@ terminals support zero-width rendering of zero-width marks.</doc>
       </parameters>
     </function>
     <function name="unichar_validate" c:identifier="g_unichar_validate">
-      <doc xml:space="preserve">Checks whether @ch is a valid Unicode character. Some possible
-integer values of @ch will not be valid. 0 is considered a valid
-character, though it's normally a string terminator.</doc>
+      <doc xml:space="preserve">Checks whether @ch is a valid Unicode character.
+
+Some possible integer values of @ch will not be valid. U+0000 is considered a
+valid character, though it&#x2019;s normally a string terminator.</doc>
       <return-value transfer-ownership="none">
-        <doc xml:space="preserve">%TRUE if @ch is a valid Unicode character</doc>
+        <doc xml:space="preserve">`TRUE` if @ch is a valid Unicode character</doc>
         <type name="gboolean" c:type="gboolean"/>
       </return-value>
       <parameters>
@@ -59833,12 +60409,12 @@ length of the sleep.</doc>
       </parameters>
     </function>
     <function name="utf16_to_ucs4" c:identifier="g_utf16_to_ucs4" throws="1">
-      <doc xml:space="preserve">Convert a string from UTF-16 to UCS-4. The result will be
-nul-terminated.</doc>
+      <doc xml:space="preserve">Convert a string from UTF-16 to UCS-4.
+
+The result will be nul-terminated.</doc>
       <return-value transfer-ownership="full">
         <doc xml:space="preserve">a pointer to a newly allocated UCS-4 string.
-    This value must be freed with g_free(). If an error occurs,
-    %NULL will be returned and @error set.</doc>
+  This value must be freed with [func@GLib.free].</doc>
         <type name="gunichar" c:type="gunichar*"/>
       </return-value>
       <parameters>
@@ -59850,42 +60426,42 @@ nul-terminated.</doc>
         </parameter>
         <parameter name="len" transfer-ownership="none">
           <doc xml:space="preserve">the maximum length (number of #gunichar2) of @str to use.
-    If @len &lt; 0, then the string is nul-terminated.</doc>
+  If @len is negative, then the string is nul-terminated.</doc>
           <type name="glong" c:type="glong"/>
         </parameter>
         <parameter name="items_read" direction="out" caller-allocates="0" transfer-ownership="full" optional="1" allow-none="1">
-          <doc xml:space="preserve">location to store number of
-    words read, or %NULL. If %NULL, then %G_CONVERT_ERROR_PARTIAL_INPUT will
-    be returned in case @str contains a trailing partial character. If
-    an error occurs then the index of the invalid input is stored here.</doc>
+          <doc xml:space="preserve">location to store number of words read, or
+  `NULL`. If `NULL`, then [error@GLib.ConvertError.PARTIAL_INPUT] will be
+  returned in case @str contains a trailing partial character. If
+  an error occurs then the index of the invalid input is stored here.</doc>
           <type name="glong" c:type="glong*"/>
         </parameter>
         <parameter name="items_written" direction="out" caller-allocates="0" transfer-ownership="full" optional="1" allow-none="1">
           <doc xml:space="preserve">location to store number
-    of characters written, or %NULL. The value stored here does not include
-    the trailing 0 character.</doc>
+  of characters written, or `NULL`. The value stored here does not include
+  the trailing nul character.</doc>
           <type name="glong" c:type="glong*"/>
         </parameter>
       </parameters>
     </function>
     <function name="utf16_to_utf8" c:identifier="g_utf16_to_utf8" throws="1">
-      <doc xml:space="preserve">Convert a string from UTF-16 to UTF-8. The result will be
-terminated with a 0 byte.
+      <doc xml:space="preserve">Convert a string from UTF-16 to UTF-8.
+
+The result will be terminated with a nul byte.
 
 Note that the input is expected to be already in native endianness,
 an initial byte-order-mark character is not handled specially.
-g_convert() can be used to convert a byte buffer of UTF-16 data of
+[func@GLib.convert] can be used to convert a byte buffer of UTF-16 data of
 ambiguous endianness.
 
 Further note that this function does not validate the result
-string; it may e.g. include embedded NUL characters. The only
+string; it may (for example) include embedded nul characters. The only
 validation done by this function is to ensure that the input can
-be correctly interpreted as UTF-16, i.e. it doesn't contain
+be correctly interpreted as UTF-16, i.e. it doesn&#x2019;t contain
 unpaired surrogates or partial character sequences.</doc>
       <return-value transfer-ownership="full">
         <doc xml:space="preserve">a pointer to a newly allocated UTF-8 string.
-    This value must be freed with g_free(). If an error occurs,
-    %NULL will be returned and @error set.</doc>
+  This value must be freed with [func@GLib.free].</doc>
         <type name="utf8" c:type="gchar*"/>
       </return-value>
       <parameters>
@@ -59897,21 +60473,21 @@ unpaired surrogates or partial character sequences.</doc>
         </parameter>
         <parameter name="len" transfer-ownership="none">
           <doc xml:space="preserve">the maximum length (number of #gunichar2) of @str to use.
-    If @len &lt; 0, then the string is nul-terminated.</doc>
+  If @len is negative, then the string is nul-terminated.</doc>
           <type name="glong" c:type="glong"/>
         </parameter>
         <parameter name="items_read" direction="out" caller-allocates="0" transfer-ownership="full" optional="1" allow-none="1">
-          <doc xml:space="preserve">location to store number of
-    words read, or %NULL. If %NULL, then %G_CONVERT_ERROR_PARTIAL_INPUT will
-    be returned in case @str contains a trailing partial character. If
-    an error occurs then the index of the invalid input is stored here.
-    It&#x2019;s guaranteed to be non-negative.</doc>
+          <doc xml:space="preserve">location to store number of words read, or
+  `NULL`. If `NULL`, then [error@GLib.ConvertError.PARTIAL_INPUT] will
+  be returned in case @str contains a trailing partial character. If
+  an error occurs then the index of the invalid input is stored here.
+  It&#x2019;s guaranteed to be non-negative.</doc>
           <type name="glong" c:type="glong*"/>
         </parameter>
         <parameter name="items_written" direction="out" caller-allocates="0" transfer-ownership="full" optional="1" allow-none="1">
           <doc xml:space="preserve">location to store number
-    of bytes written, or %NULL. The value stored here does not include the
-    trailing 0 byte. It&#x2019;s guaranteed to be non-negative.</doc>
+  of bytes written, or `NULL`. The value stored here does not include the
+  trailing nul byte. It&#x2019;s guaranteed to be non-negative.</doc>
           <type name="glong" c:type="glong*"/>
         </parameter>
       </parameters>
@@ -59980,11 +60556,16 @@ The results of comparing the collation keys of two strings
 with strcmp() will always be the same as comparing the two
 original keys with g_utf8_collate().
 
-Note that this function depends on the [current locale][setlocale].</doc>
+Note that this function depends on the [current locale][setlocale].
+
+Note that the returned string is not guaranteed to be in any
+encoding, especially UTF-8. The returned value is meant to be
+used only for comparisons.</doc>
       <return-value transfer-ownership="full">
-        <doc xml:space="preserve">a newly allocated string. This string should
-  be freed with g_free() when you are done with it.</doc>
-        <type name="utf8" c:type="gchar*"/>
+        <doc xml:space="preserve">a newly allocated string.
+  The contents of the string are only meant to be used when sorting.
+  This string should be freed with g_free() when you are done with it.</doc>
+        <type name="filename" c:type="gchar*"/>
       </return-value>
       <parameters>
         <parameter name="str" transfer-ownership="none">
@@ -60008,11 +60589,16 @@ insignificant, thus producing the ordering "event.c" "eventgenerator.c"
 would like to treat numbers intelligently so that "file1" "file10" "file5"
 is sorted as "file1" "file5" "file10".
 
-Note that this function depends on the [current locale][setlocale].</doc>
+Note that this function depends on the [current locale][setlocale].
+
+Note that the returned string is not guaranteed to be in any
+encoding, especially UTF-8. The returned value is meant to be
+used only for comparisons.</doc>
       <return-value transfer-ownership="full">
-        <doc xml:space="preserve">a newly allocated string. This string should
-  be freed with g_free() when you are done with it.</doc>
-        <type name="utf8" c:type="gchar*"/>
+        <doc xml:space="preserve">a newly allocated string.
+  The contents of the string are only meant to be used when sorting.
+  This string should be freed with g_free() when you are done with it.</doc>
+        <type name="filename" c:type="gchar*"/>
       </return-value>
       <parameters>
         <parameter name="str" transfer-ownership="none">
@@ -60032,12 +60618,12 @@ Note that this function depends on the [current locale][setlocale].</doc>
 is made to see if the character found is actually valid other than
 it starts with an appropriate byte.
 
-If @end is %NULL, the return value will never be %NULL: if the end of the
+If @end is `NULL`, the return value will never be `NULL`: if the end of the
 string is reached, a pointer to the terminating nul byte is returned. If
-@end is non-%NULL, the return value will be %NULL if the end of the string
+@end is non-`NULL`, the return value will be `NULL` if the end of the string
 is reached.</doc>
       <return-value transfer-ownership="none" nullable="1">
-        <doc xml:space="preserve">a pointer to the found character or %NULL if @end is
+        <doc xml:space="preserve">a pointer to the found character or `NULL` if @end is
    set and is reached</doc>
         <type name="utf8" c:type="gchar*"/>
       </return-value>
@@ -60048,21 +60634,21 @@ is reached.</doc>
         </parameter>
         <parameter name="end" transfer-ownership="none" nullable="1" allow-none="1">
           <doc xml:space="preserve">a pointer to the byte following the end of the string,
-    or %NULL to indicate that the string is nul-terminated</doc>
+    or `NULL` to indicate that the string is nul-terminated</doc>
           <type name="utf8" c:type="const gchar*"/>
         </parameter>
       </parameters>
     </function>
     <function name="utf8_find_prev_char" c:identifier="g_utf8_find_prev_char">
       <doc xml:space="preserve">Given a position @p with a UTF-8 encoded string @str, find the start
-of the previous UTF-8 character starting before @p. Returns %NULL if no
+of the previous UTF-8 character starting before @p. Returns `NULL` if no
 UTF-8 characters are present in @str before @p.
 
 @p does not have to be at the beginning of a UTF-8 character. No check
 is made to see if the character found is actually valid other than
 it starts with an appropriate byte.</doc>
       <return-value transfer-ownership="none" nullable="1">
-        <doc xml:space="preserve">a pointer to the found character or %NULL.</doc>
+        <doc xml:space="preserve">a pointer to the found character</doc>
         <type name="utf8" c:type="gchar*"/>
       </return-value>
       <parameters>
@@ -60081,7 +60667,7 @@ it starts with an appropriate byte.</doc>
 
 If @p does not point to a valid UTF-8 encoded character, results
 are undefined. If you are not sure that the bytes are complete
-valid Unicode characters, you should use g_utf8_get_char_validated()
+valid Unicode characters, you should use [func@GLib.utf8_get_char_validated]
 instead.</doc>
       <return-value transfer-ownership="none">
         <doc xml:space="preserve">the resulting character</doc>
@@ -60096,19 +60682,20 @@ instead.</doc>
     </function>
     <function name="utf8_get_char_validated" c:identifier="g_utf8_get_char_validated">
       <doc xml:space="preserve">Convert a sequence of bytes encoded as UTF-8 to a Unicode character.
+
 This function checks for incomplete characters, for invalid characters
 such as characters that are out of the range of Unicode, and for
 overlong encodings of valid characters.
 
-Note that g_utf8_get_char_validated() returns (gunichar)-2 if
+Note that [func@GLib.utf8_get_char_validated] returns `(gunichar)-2` if
 @max_len is positive and any of the bytes in the first UTF-8 character
 sequence are nul.</doc>
       <return-value transfer-ownership="none">
         <doc xml:space="preserve">the resulting character. If @p points to a partial
-    sequence at the end of a string that could begin a valid
-    character (or if @max_len is zero), returns (gunichar)-2;
-    otherwise, if @p does not point to a valid UTF-8 encoded
-    Unicode character, returns (gunichar)-1.</doc>
+  sequence at the end of a string that could begin a valid
+  character (or if @max_len is zero), returns `(gunichar)-2`;
+  otherwise, if @p does not point to a valid UTF-8 encoded
+  Unicode character, returns `(gunichar)-1`.</doc>
         <type name="gunichar" c:type="gunichar"/>
       </return-value>
       <parameters>
@@ -60117,7 +60704,7 @@ sequence are nul.</doc>
           <type name="utf8" c:type="const gchar*"/>
         </parameter>
         <parameter name="max_len" transfer-ownership="none">
-          <doc xml:space="preserve">the maximum number of bytes to read, or -1 if @p is nul-terminated</doc>
+          <doc xml:space="preserve">the maximum number of bytes to read, or `-1` if @p is nul-terminated</doc>
           <type name="gssize" c:type="gssize"/>
         </parameter>
       </parameters>
@@ -60142,8 +60729,8 @@ readable as-is.</doc>
           <type name="utf8" c:type="const gchar*"/>
         </parameter>
         <parameter name="len" transfer-ownership="none">
-          <doc xml:space="preserve">the maximum length of @str to use, in bytes. If @len &lt; 0,
-    then the string is nul-terminated.</doc>
+          <doc xml:space="preserve">the maximum length of @str to use, in bytes. If @len is negative,
+  then the string is nul-terminated.</doc>
           <type name="gssize" c:type="gssize"/>
         </parameter>
       </parameters>
@@ -60222,9 +60809,9 @@ step backwards. It is usually worth stepping backwards from the end
 instead of forwards if @offset is in the last fourth of the string,
 since moving forward is about 3 times faster than moving backward.
 
-Note that this function doesn't abort when reaching the end of @str.
+Note that this function doesn&#x2019;t abort when reaching the end of @str.
 Therefore you should be sure that @offset is within string boundaries
-before calling that function. Call g_utf8_strlen() when unsure.
+before calling that function. Call [func@GLib.utf8_strlen] when unsure.
 This limitation exists as this function is called frequently during
 text rendering and therefore has to be as fast as possible.</doc>
       <return-value transfer-ownership="none">
@@ -60269,7 +60856,8 @@ a negative offset in this case.</doc>
 @p does not have to be at the beginning of a UTF-8 character. No check
 is made to see if the character found is actually valid other than
 it starts with an appropriate byte. If @p might be the first
-character of the string, you must use g_utf8_find_prev_char() instead.</doc>
+character of the string, you must use [func@GLib.utf8_find_prev_char]
+instead.</doc>
       <return-value transfer-ownership="none">
         <doc xml:space="preserve">a pointer to the found character</doc>
         <type name="utf8" c:type="gchar*"/>
@@ -60284,11 +60872,12 @@ character of the string, you must use g_utf8_find_prev_char() instead.</doc>
     <function name="utf8_strchr" c:identifier="g_utf8_strchr">
       <doc xml:space="preserve">Finds the leftmost occurrence of the given Unicode character
 in a UTF-8 encoded string, while limiting the search to @len bytes.
-If @len is -1, allow unbounded search.</doc>
+
+If @len is `-1`, allow unbounded search.</doc>
       <return-value transfer-ownership="none" nullable="1">
-        <doc xml:space="preserve">%NULL if the string does not contain the character,
-    otherwise, a pointer to the start of the leftmost occurrence
-    of the character in the string.</doc>
+        <doc xml:space="preserve">`NULL` if the string does not contain
+  the character, otherwise, a pointer to the start of the leftmost occurrence
+  of the character in the string.</doc>
         <type name="utf8" c:type="gchar*"/>
       </return-value>
       <parameters>
@@ -60329,7 +60918,7 @@ characters in the string changing.</doc>
     </function>
     <function name="utf8_strlen" c:identifier="g_utf8_strlen">
       <doc xml:space="preserve">Computes the length of the string in characters, not including
-the terminating nul character. If the @max'th byte falls in the
+the terminating nul character. If the @max&#x2019;th byte falls in the
 middle of a character, the last (partial) character is not counted.</doc>
       <return-value transfer-ownership="none">
         <doc xml:space="preserve">the length of the string in characters</doc>
@@ -60342,19 +60931,21 @@ middle of a character, the last (partial) character is not counted.</doc>
         </parameter>
         <parameter name="max" transfer-ownership="none">
           <doc xml:space="preserve">the maximum number of bytes to examine. If @max
-      is less than 0, then the string is assumed to be
-      nul-terminated. If @max is 0, @p will not be examined and
-      may be %NULL. If @max is greater than 0, up to @max
-      bytes are examined</doc>
+  is less than 0, then the string is assumed to be
+  nul-terminated. If @max is 0, @p will not be examined and
+  may be `NULL`. If @max is greater than 0, up to @max
+  bytes are examined</doc>
           <type name="gssize" c:type="gssize"/>
         </parameter>
       </parameters>
     </function>
     <function name="utf8_strncpy" c:identifier="g_utf8_strncpy">
-      <doc xml:space="preserve">Like the standard C strncpy() function, but copies a given number
-of characters instead of a given number of bytes. The @src string
-must be valid UTF-8 encoded text. (Use g_utf8_validate() on all
-text before trying to use UTF-8 utility functions with it.)
+      <doc xml:space="preserve">Like the standard C [`strncpy()`](man:strncpy) function, but copies a given
+number of characters instead of a given number of bytes.
+
+The @src string must be valid UTF-8 encoded text. (Use
+[func@GLib.utf8_validate] on all text before trying to use UTF-8 utility
+functions with it.)
 
 Note you must ensure @dest is at least 4 * @n + 1 to fit the
 largest possible UTF-8 characters</doc>
@@ -60380,11 +60971,12 @@ largest possible UTF-8 characters</doc>
     <function name="utf8_strrchr" c:identifier="g_utf8_strrchr">
       <doc xml:space="preserve">Find the rightmost occurrence of the given Unicode character
 in a UTF-8 encoded string, while limiting the search to @len bytes.
-If @len is -1, allow unbounded search.</doc>
+
+If @len is `-1`, allow unbounded search.</doc>
       <return-value transfer-ownership="none" nullable="1">
-        <doc xml:space="preserve">%NULL if the string does not contain the character,
-    otherwise, a pointer to the start of the rightmost occurrence
-    of the character in the string.</doc>
+        <doc xml:space="preserve">`NULL` if the string does not contain
+  the character, otherwise, a pointer to the start of the rightmost
+  occurrence of the character in the string.</doc>
         <type name="utf8" c:type="gchar*"/>
       </return-value>
       <parameters>
@@ -60403,9 +60995,10 @@ If @len is -1, allow unbounded search.</doc>
       </parameters>
     </function>
     <function name="utf8_strreverse" c:identifier="g_utf8_strreverse" version="2.2">
-      <doc xml:space="preserve">Reverses a UTF-8 string. @str must be valid UTF-8 encoded text.
-(Use g_utf8_validate() on all text before trying to use UTF-8
-utility functions with it.)
+      <doc xml:space="preserve">Reverses a UTF-8 string.
+
+@str must be valid UTF-8 encoded text. (Use [func@GLib.utf8_validate] on all
+text before trying to use UTF-8 utility functions with it.)
 
 This function is intended for programmatic uses of reversed strings.
 It pays no attention to decomposed characters, combining marks, byte
@@ -60413,8 +61006,8 @@ order marks, directional indicators (LRM, LRO, etc) and similar
 characters which might need special handling when reversing a string
 for display purposes.
 
-Note that unlike g_strreverse(), this function returns
-newly-allocated memory, which should be freed with g_free() when
+Note that unlike [func@GLib.strreverse], this function returns
+newly-allocated memory, which should be freed with [func@GLib.free] when
 no longer needed.</doc>
       <return-value transfer-ownership="full">
         <doc xml:space="preserve">a newly-allocated string which is the reverse of @str</doc>
@@ -60426,8 +61019,8 @@ no longer needed.</doc>
           <type name="utf8" c:type="const gchar*"/>
         </parameter>
         <parameter name="len" transfer-ownership="none">
-          <doc xml:space="preserve">the maximum length of @str to use, in bytes. If @len &lt; 0,
-    then the string is nul-terminated.</doc>
+          <doc xml:space="preserve">the maximum length of @str to use, in bytes. If @len is negative,
+  then the string is nul-terminated.</doc>
           <type name="gssize" c:type="gssize"/>
         </parameter>
       </parameters>
@@ -60462,7 +61055,7 @@ Since GLib 2.72, `-1` can be passed to @end_pos to indicate the
 end of the string.</doc>
       <return-value transfer-ownership="full">
         <doc xml:space="preserve">a newly allocated copy of the requested
-    substring. Free with g_free() when no longer needed.</doc>
+  substring. Free with [func@GLib.free] when no longer needed.</doc>
         <type name="utf8" c:type="gchar*"/>
       </return-value>
       <parameters>
@@ -60482,13 +61075,13 @@ end of the string.</doc>
       </parameters>
     </function>
     <function name="utf8_to_ucs4" c:identifier="g_utf8_to_ucs4" throws="1">
-      <doc xml:space="preserve">Convert a string from UTF-8 to a 32-bit fixed width
-representation as UCS-4. A trailing 0 character will be added to the
-string after the converted text.</doc>
+      <doc xml:space="preserve">Convert a string from UTF-8 to a 32-bit fixed width representation as UCS-4.
+
+A trailing nul character (U+0000) will be added to the string after the
+converted text.</doc>
       <return-value transfer-ownership="full">
         <doc xml:space="preserve">a pointer to a newly allocated UCS-4 string.
-    This value must be freed with g_free(). If an error occurs,
-    %NULL will be returned and @error set.</doc>
+  This value must be freed with [func@GLib.free].</doc>
         <type name="gunichar" c:type="gunichar*"/>
       </return-value>
       <parameters>
@@ -60497,23 +61090,23 @@ string after the converted text.</doc>
           <type name="utf8" c:type="const gchar*"/>
         </parameter>
         <parameter name="len" transfer-ownership="none">
-          <doc xml:space="preserve">the maximum length of @str to use, in bytes. If @len &lt; 0,
-    then the string is nul-terminated.</doc>
+          <doc xml:space="preserve">the maximum length of @str to use, in bytes. If @len is negative,
+  then the string is nul-terminated.</doc>
           <type name="glong" c:type="glong"/>
         </parameter>
         <parameter name="items_read" direction="out" caller-allocates="0" transfer-ownership="full" optional="1" allow-none="1">
           <doc xml:space="preserve">location to store number of
-   bytes read, or %NULL.
-    If %NULL, then %G_CONVERT_ERROR_PARTIAL_INPUT will be
-    returned in case @str contains a trailing partial
-    character. If an error occurs then the index of the
-    invalid input is stored here.</doc>
+ bytes read, or `NULL`.
+  If `NULL`, then %G_CONVERT_ERROR_PARTIAL_INPUT will be
+  returned in case @str contains a trailing partial
+  character. If an error occurs then the index of the
+  invalid input is stored here.</doc>
           <type name="glong" c:type="glong*"/>
         </parameter>
         <parameter name="items_written" direction="out" caller-allocates="0" transfer-ownership="full" optional="1" allow-none="1">
           <doc xml:space="preserve">location to store number
-    of characters written or %NULL. The value here stored does not include
-    the trailing 0 character.</doc>
+  of characters written or `NULL`. The value here stored does not include
+  the trailing nul character.</doc>
           <type name="glong" c:type="glong*"/>
         </parameter>
       </parameters>
@@ -60521,12 +61114,13 @@ string after the converted text.</doc>
     <function name="utf8_to_ucs4_fast" c:identifier="g_utf8_to_ucs4_fast">
       <doc xml:space="preserve">Convert a string from UTF-8 to a 32-bit fixed width
 representation as UCS-4, assuming valid UTF-8 input.
-This function is roughly twice as fast as g_utf8_to_ucs4()
-but does no error checking on the input. A trailing 0 character
+
+This function is roughly twice as fast as [func@GLib.utf8_to_ucs4]
+but does no error checking on the input. A trailing nul character (U+0000)
 will be added to the string after the converted text.</doc>
       <return-value transfer-ownership="full">
         <doc xml:space="preserve">a pointer to a newly allocated UCS-4 string.
-    This value must be freed with g_free().</doc>
+  This value must be freed with [func@GLib.free].</doc>
         <type name="gunichar" c:type="gunichar*"/>
       </return-value>
       <parameters>
@@ -60535,24 +61129,24 @@ will be added to the string after the converted text.</doc>
           <type name="utf8" c:type="const gchar*"/>
         </parameter>
         <parameter name="len" transfer-ownership="none">
-          <doc xml:space="preserve">the maximum length of @str to use, in bytes. If @len &lt; 0,
-    then the string is nul-terminated.</doc>
+          <doc xml:space="preserve">the maximum length of @str to use, in bytes. If @len is negative,
+  then the string is nul-terminated.</doc>
           <type name="glong" c:type="glong"/>
         </parameter>
         <parameter name="items_written" direction="out" caller-allocates="0" transfer-ownership="full" optional="1" allow-none="1">
           <doc xml:space="preserve">location to store the
-    number of characters in the result, or %NULL.</doc>
+  number of characters in the result, or `NULL`.</doc>
           <type name="glong" c:type="glong*"/>
         </parameter>
       </parameters>
     </function>
     <function name="utf8_to_utf16" c:identifier="g_utf8_to_utf16" throws="1">
-      <doc xml:space="preserve">Convert a string from UTF-8 to UTF-16. A 0 character will be
-added to the result after the converted text.</doc>
+      <doc xml:space="preserve">Convert a string from UTF-8 to UTF-16.
+
+A nul character (U+0000) will be added to the result after the converted text.</doc>
       <return-value transfer-ownership="full">
         <doc xml:space="preserve">a pointer to a newly allocated UTF-16 string.
-    This value must be freed with g_free(). If an error occurs,
-    %NULL will be returned and @error set.</doc>
+  This value must be freed with [func@GLib.free].</doc>
         <type name="guint16" c:type="gunichar2*"/>
       </return-value>
       <parameters>
@@ -60562,20 +61156,20 @@ added to the result after the converted text.</doc>
         </parameter>
         <parameter name="len" transfer-ownership="none">
           <doc xml:space="preserve">the maximum length (number of bytes) of @str to use.
-    If @len &lt; 0, then the string is nul-terminated.</doc>
+  If @len is negative, then the string is nul-terminated.</doc>
           <type name="glong" c:type="glong"/>
         </parameter>
         <parameter name="items_read" direction="out" caller-allocates="0" transfer-ownership="full" optional="1" allow-none="1">
-          <doc xml:space="preserve">location to store number of
-    bytes read, or %NULL. If %NULL, then %G_CONVERT_ERROR_PARTIAL_INPUT will
-    be returned in case @str contains a trailing partial character. If
-    an error occurs then the index of the invalid input is stored here.</doc>
+          <doc xml:space="preserve">location to store number of bytes read, or
+  `NULL`. If `NULL`, then [error@GLib.ConvertError.PARTIAL_INPUT] will
+  be returned in case @str contains a trailing partial character. If
+  an error occurs then the index of the invalid input is stored here.</doc>
           <type name="glong" c:type="glong*"/>
         </parameter>
         <parameter name="items_written" direction="out" caller-allocates="0" transfer-ownership="full" optional="1" allow-none="1">
           <doc xml:space="preserve">location to store number
-    of #gunichar2 written, or %NULL. The value stored here does not include
-    the trailing 0.</doc>
+  of `gunichar2` written, or `NULL`. The value stored here does not include
+  the trailing nul.</doc>
           <type name="glong" c:type="glong*"/>
         </parameter>
       </parameters>
@@ -60602,23 +61196,25 @@ If @truncate_length is `0`, an empty string is returned.</doc>
       </parameters>
     </function>
     <function name="utf8_validate" c:identifier="g_utf8_validate">
-      <doc xml:space="preserve">Validates UTF-8 encoded text. @str is the text to validate;
-if @str is nul-terminated, then @max_len can be -1, otherwise
-@max_len should be the number of bytes to validate.
-If @end is non-%NULL, then the end of the valid range
-will be stored there (i.e. the start of the first invalid
-character if some bytes were invalid, or the end of the text
-being validated otherwise).
+      <doc xml:space="preserve">Validates UTF-8 encoded text.
 
-Note that g_utf8_validate() returns %FALSE if @max_len is
-positive and any of the @max_len bytes are nul.
+@str is the text to validate; if @str is nul-terminated, then @max_len can be
+`-1`, otherwise @max_len should be the number of bytes to validate.
 
-Returns %TRUE if all of @str was valid. Many GLib and GTK
+If @end is non-`NULL`, then the end of the valid range will be stored there.
+This is the first byte of the first invalid character if some bytes were
+invalid, or the end of the text being validated otherwise &#x2014; either the
+trailing nul byte, or the first byte beyond @max_len (if it&#x2019;s positive).
+
+Note that `g_utf8_validate()` returns `FALSE` if @max_len is  positive and
+any of the @max_len bytes are nul.
+
+Returns `TRUE` if all of @str was valid. Many GLib and GTK
 routines require valid UTF-8 as input; so data read from a file
-or the network should be checked with g_utf8_validate() before
+or the network should be checked with `g_utf8_validate()` before
 doing anything else with it.</doc>
       <return-value transfer-ownership="none">
-        <doc xml:space="preserve">%TRUE if the text was valid UTF-8</doc>
+        <doc xml:space="preserve">`TRUE` if the text was valid UTF-8</doc>
         <type name="gboolean" c:type="gboolean"/>
       </return-value>
       <parameters>
@@ -60629,7 +61225,7 @@ doing anything else with it.</doc>
           </array>
         </parameter>
         <parameter name="max_len" transfer-ownership="none">
-          <doc xml:space="preserve">max bytes to validate, or -1 to go until NUL</doc>
+          <doc xml:space="preserve">max bytes to validate, or `-1` to go until nul</doc>
           <type name="gssize" c:type="gssize"/>
         </parameter>
         <parameter name="end" direction="out" caller-allocates="0" transfer-ownership="none" optional="1" allow-none="1">
@@ -60641,10 +61237,10 @@ doing anything else with it.</doc>
     <function name="utf8_validate_len" c:identifier="g_utf8_validate_len" version="2.60">
       <doc xml:space="preserve">Validates UTF-8 encoded text.
 
-As with g_utf8_validate(), but @max_len must be set, and hence this function
-will always return %FALSE if any of the bytes of @str are nul.</doc>
+As with [func@GLib.utf8_validate], but @max_len must be set, and hence this
+function will always return `FALSE` if any of the bytes of @str are nul.</doc>
       <return-value transfer-ownership="none">
-        <doc xml:space="preserve">%TRUE if the text was valid UTF-8</doc>
+        <doc xml:space="preserve">`TRUE` if the text was valid UTF-8</doc>
         <type name="gboolean" c:type="gboolean"/>
       </return-value>
       <parameters>
