@@ -397,6 +397,228 @@ The returned context is guaranteed to be valid until
         </parameters>
       </method>
     </class>
+    <class name="CicpParams" c:symbol-prefix="cicp_params" c:type="GdkCicpParams" version="4.16" parent="GObject.Object" glib:type-name="GdkCicpParams" glib:get-type="gdk_cicp_params_get_type" glib:type-struct="CicpParamsClass">
+      <doc xml:space="preserve">The `GdkCicpParams` struct contains the parameters that define
+a colorstate according to the ITU-T H.273
+[specification](https://www.itu.int/rec/T-REC-H.273/en).
+
+See the documentation of individual properties for supported values.
+
+The 'unspecified' value (2) is not treated in any special way, and
+must be replaced by a different value before creating a color state.
+
+`GdkCicpParams` can be used as a builder object to construct a color
+state from Cicp data with [method@Gdk.CicpParams.build_color_state].
+The function will return an error if the given parameters are not
+supported.
+
+You can obtain a `GdkCicpParams` object from a color state with
+[method@Gdk.ColorState.create_cicp_params]. This can be used to
+create a variant of a color state, by changing just one of the cicp
+parameters, or just to obtain information about the color state.</doc>
+      <constructor name="new" c:identifier="gdk_cicp_params_new" version="4.16">
+        <doc xml:space="preserve">Creates a new `GdkCicpParams` object.
+
+The initial values of the properties are the values for "undefined"
+and need to be set before a color state object can be built.</doc>
+        <return-value transfer-ownership="full">
+          <doc xml:space="preserve">a new `GdkCicpParams`</doc>
+          <type name="CicpParams" c:type="GdkCicpParams*"/>
+        </return-value>
+      </constructor>
+      <method name="build_color_state" c:identifier="gdk_cicp_params_build_color_state" version="4.16" throws="1">
+        <doc xml:space="preserve">Creates a new `GdkColorState` object for the cicp parameters in @self.
+
+Note that this may fail if the cicp parameters in @self are not
+supported by GTK. In that case, `NULL` is returned, and @error is set
+with an error message that can be presented to the user.</doc>
+        <return-value transfer-ownership="full" nullable="1">
+          <doc xml:space="preserve">A newly allocated `GdkColorState`</doc>
+          <type name="ColorState" c:type="GdkColorState*"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="self" transfer-ownership="none">
+            <doc xml:space="preserve">a `GdkCicpParams`</doc>
+            <type name="CicpParams" c:type="GdkCicpParams*"/>
+          </instance-parameter>
+        </parameters>
+      </method>
+      <method name="get_color_primaries" c:identifier="gdk_cicp_params_get_color_primaries" glib:get-property="color-primaries" version="4.16">
+        <doc xml:space="preserve">Returns the value of the color-primaries property
+of @self.</doc>
+        <return-value transfer-ownership="none">
+          <doc xml:space="preserve">the color-primaries value</doc>
+          <type name="guint" c:type="guint"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="self" transfer-ownership="none">
+            <doc xml:space="preserve">a `GdkCicpParams`</doc>
+            <type name="CicpParams" c:type="GdkCicpParams*"/>
+          </instance-parameter>
+        </parameters>
+      </method>
+      <method name="get_matrix_coefficients" c:identifier="gdk_cicp_params_get_matrix_coefficients" glib:get-property="matrix-coefficients" version="4.16">
+        <doc xml:space="preserve">Gets the matrix-coefficients property of @self.</doc>
+        <return-value transfer-ownership="none">
+          <doc xml:space="preserve">the matrix-coefficients value</doc>
+          <type name="guint" c:type="guint"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="self" transfer-ownership="none">
+            <doc xml:space="preserve">a `GdkCicpParams`</doc>
+            <type name="CicpParams" c:type="GdkCicpParams*"/>
+          </instance-parameter>
+        </parameters>
+      </method>
+      <method name="get_range" c:identifier="gdk_cicp_params_get_range" glib:get-property="range" version="4.16">
+        <doc xml:space="preserve">Gets the range property of @self.</doc>
+        <return-value transfer-ownership="none">
+          <doc xml:space="preserve">the range value</doc>
+          <type name="CicpRange" c:type="GdkCicpRange"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="self" transfer-ownership="none">
+            <doc xml:space="preserve">a `GdkCicpParams`</doc>
+            <type name="CicpParams" c:type="GdkCicpParams*"/>
+          </instance-parameter>
+        </parameters>
+      </method>
+      <method name="get_transfer_function" c:identifier="gdk_cicp_params_get_transfer_function" glib:get-property="transfer-function" version="4.16">
+        <doc xml:space="preserve">Gets the transfer-function property of @self.</doc>
+        <return-value transfer-ownership="none">
+          <doc xml:space="preserve">the transfer-function value</doc>
+          <type name="guint" c:type="guint"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="self" transfer-ownership="none">
+            <doc xml:space="preserve">a `GdkCicpParams`</doc>
+            <type name="CicpParams" c:type="GdkCicpParams*"/>
+          </instance-parameter>
+        </parameters>
+      </method>
+      <method name="set_color_primaries" c:identifier="gdk_cicp_params_set_color_primaries" glib:set-property="color-primaries" version="4.16">
+        <doc xml:space="preserve">Sets the color-primaries property of @self.</doc>
+        <return-value transfer-ownership="none">
+          <type name="none" c:type="void"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="self" transfer-ownership="none">
+            <doc xml:space="preserve">a `GdkCicpParams`</doc>
+            <type name="CicpParams" c:type="GdkCicpParams*"/>
+          </instance-parameter>
+          <parameter name="color_primaries" transfer-ownership="none">
+            <doc xml:space="preserve">the new color primaries value</doc>
+            <type name="guint" c:type="guint"/>
+          </parameter>
+        </parameters>
+      </method>
+      <method name="set_matrix_coefficients" c:identifier="gdk_cicp_params_set_matrix_coefficients" glib:set-property="matrix-coefficients" version="4.16">
+        <doc xml:space="preserve">@self a `GdkCicpParams`
+Sets the matrix-coefficients property of @self.</doc>
+        <return-value transfer-ownership="none">
+          <type name="none" c:type="void"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="self" transfer-ownership="none">
+            <type name="CicpParams" c:type="GdkCicpParams*"/>
+          </instance-parameter>
+          <parameter name="matrix_coefficients" transfer-ownership="none">
+            <doc xml:space="preserve">the new matrix-coefficients value</doc>
+            <type name="guint" c:type="guint"/>
+          </parameter>
+        </parameters>
+      </method>
+      <method name="set_range" c:identifier="gdk_cicp_params_set_range" glib:set-property="range" version="4.16">
+        <doc xml:space="preserve">Sets the range property of @self</doc>
+        <return-value transfer-ownership="none">
+          <type name="none" c:type="void"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="self" transfer-ownership="none">
+            <doc xml:space="preserve">a `GdkCipParams`</doc>
+            <type name="CicpParams" c:type="GdkCicpParams*"/>
+          </instance-parameter>
+          <parameter name="range" transfer-ownership="none">
+            <doc xml:space="preserve">the range value</doc>
+            <type name="CicpRange" c:type="GdkCicpRange"/>
+          </parameter>
+        </parameters>
+      </method>
+      <method name="set_transfer_function" c:identifier="gdk_cicp_params_set_transfer_function" glib:set-property="transfer-function" version="4.16">
+        <doc xml:space="preserve">Sets the transfer-function property of @self.</doc>
+        <return-value transfer-ownership="none">
+          <type name="none" c:type="void"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="self" transfer-ownership="none">
+            <doc xml:space="preserve">a `GdkCicpParams`</doc>
+            <type name="CicpParams" c:type="GdkCicpParams*"/>
+          </instance-parameter>
+          <parameter name="transfer_function" transfer-ownership="none">
+            <doc xml:space="preserve">the new transfer-function value</doc>
+            <type name="guint" c:type="guint"/>
+          </parameter>
+        </parameters>
+      </method>
+      <property name="color-primaries" version="4.16" writable="1" transfer-ownership="none" setter="set_color_primaries" getter="get_color_primaries" default-value="2">
+        <doc xml:space="preserve">The color primaries to use.
+
+Supported values:
+
+- 1: BT.709 / sRGB
+- 2: unspecified
+- 5: PAL
+- 6,7: BT.601 / NTSC
+- 9: BT.2020
+- 12: Display P3</doc>
+        <type name="guint" c:type="guint"/>
+      </property>
+      <property name="matrix-coefficients" version="4.16" writable="1" transfer-ownership="none" setter="set_matrix_coefficients" getter="get_matrix_coefficients" default-value="2">
+        <doc xml:space="preserve">The matrix coefficients (for YUV to RGB conversion).
+
+Supported values:
+
+- 0: RGB
+- 2: unspecified</doc>
+        <type name="guint" c:type="guint"/>
+      </property>
+      <property name="range" version="4.16" writable="1" transfer-ownership="none" setter="set_range" getter="get_range" default-value="GDK_CICP_RANGE_NARROW">
+        <doc xml:space="preserve">Whether the data is using the full range of values.
+
+The range of the data.</doc>
+        <type name="CicpRange"/>
+      </property>
+      <property name="transfer-function" version="4.16" writable="1" transfer-ownership="none" setter="set_transfer_function" getter="get_transfer_function" default-value="2">
+        <doc xml:space="preserve">The transfer function to use.
+
+Supported values:
+
+- 1,6,14,15: BT.709, BT.601, BT.2020
+- 2: unspecified
+- 4: gamma 2.2
+- 5: gamma 2.8
+- 8: linear
+- 13: sRGB
+- 16: BT.2100 PQ
+- 18: BT.2100 HLG</doc>
+        <type name="guint" c:type="guint"/>
+      </property>
+    </class>
+    <record name="CicpParamsClass" c:type="GdkCicpParamsClass" disguised="1" opaque="1" glib:is-gtype-struct-for="CicpParams"/>
+    <enumeration name="CicpRange" version="4.16" glib:type-name="GdkCicpRange" glib:get-type="gdk_cicp_range_get_type" c:type="GdkCicpRange">
+      <doc xml:space="preserve">The values of this enumeration describe whether image data uses
+the full range of 8-bit values.
+
+In digital broadcasting, it is common to reserve the lowest and
+highest values. Typically the allowed values for the narrow range
+are 16-235 for Y and 16-240 for u,v (when dealing with YUV data).</doc>
+      <member name="narrow" value="0" c:identifier="GDK_CICP_RANGE_NARROW" glib:nick="narrow" glib:name="GDK_CICP_RANGE_NARROW">
+        <doc xml:space="preserve">The values use the range of 16-235 (for Y) and 16-240 for u and v.</doc>
+      </member>
+      <member name="full" value="1" c:identifier="GDK_CICP_RANGE_FULL" glib:nick="full" glib:name="GDK_CICP_RANGE_FULL">
+        <doc xml:space="preserve">The values use the full range.</doc>
+      </member>
+    </enumeration>
     <class name="Clipboard" c:symbol-prefix="clipboard" c:type="GdkClipboard" parent="GObject.Object" glib:type-name="GdkClipboard" glib:get-type="gdk_clipboard_get_type">
       <doc xml:space="preserve">The `GdkClipboard` object represents data shared between applications or
 inside an application.
@@ -898,6 +1120,153 @@ provided otherwise.</doc>
         </return-value>
       </glib:signal>
     </class>
+    <record name="ColorState" c:type="GdkColorState" opaque="1" version="4.16" glib:type-name="GdkColorState" glib:get-type="gdk_color_state_get_type" c:symbol-prefix="color_state">
+      <doc xml:space="preserve">A `GdkColorState` object provides the information to interpret
+colors and pixels in a variety of ways.
+
+They are also known as
+[*color spaces*](https://en.wikipedia.org/wiki/Color_space).
+
+Crucially, GTK knows how to convert colors from one color
+state to another.
+
+`GdkColorState` objects are immutable and therefore threadsafe.</doc>
+      <method name="create_cicp_params" c:identifier="gdk_color_state_create_cicp_params" version="4.16">
+        <doc xml:space="preserve">Create a [class@Gdk.CicpParams] representing the colorstate.
+
+It is not guaranteed that every `GdkColorState` can be
+represented with Cicp parameters. If that is the case,
+this function returns `NULL`.</doc>
+        <return-value transfer-ownership="full" nullable="1">
+          <doc xml:space="preserve">A new [class@Gdk.CicpParams]</doc>
+          <type name="CicpParams" c:type="GdkCicpParams*"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="self" transfer-ownership="none">
+            <doc xml:space="preserve">a `GdkColorState`</doc>
+            <type name="ColorState" c:type="GdkColorState*"/>
+          </instance-parameter>
+        </parameters>
+      </method>
+      <method name="equal" c:identifier="gdk_color_state_equal" version="4.16">
+        <doc xml:space="preserve">Compares two `GdkColorStates` for equality.
+
+Note that this function is not guaranteed to be perfect and two objects
+describing the same color state may compare not equal. However, different
+color states will never compare equal.</doc>
+        <return-value transfer-ownership="none">
+          <doc xml:space="preserve">%TRUE if the two color states compare equal</doc>
+          <type name="gboolean" c:type="gboolean"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="self" transfer-ownership="none">
+            <doc xml:space="preserve">a `GdkColorState`</doc>
+            <type name="ColorState" c:type="GdkColorState*"/>
+          </instance-parameter>
+          <parameter name="other" transfer-ownership="none">
+            <doc xml:space="preserve">another `GdkColorStatee`</doc>
+            <type name="ColorState" c:type="GdkColorState*"/>
+          </parameter>
+        </parameters>
+      </method>
+      <method name="ref" c:identifier="gdk_color_state_ref" version="4.16">
+        <doc xml:space="preserve">Increase the reference count of @self.</doc>
+        <return-value transfer-ownership="full">
+          <doc xml:space="preserve">the object that was passed in</doc>
+          <type name="ColorState" c:type="GdkColorState*"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="self" transfer-ownership="none">
+            <doc xml:space="preserve">a `GdkColorState`</doc>
+            <type name="ColorState" c:type="GdkColorState*"/>
+          </instance-parameter>
+        </parameters>
+      </method>
+      <method name="unref" c:identifier="gdk_color_state_unref" version="4.16">
+        <doc xml:space="preserve">Decrease the reference count of @self.
+
+Unless @self is static, it will be freed
+when the reference count reaches zero.</doc>
+        <return-value transfer-ownership="none">
+          <type name="none" c:type="void"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="self" transfer-ownership="none">
+            <doc xml:space="preserve">a `GdkColorState`</doc>
+            <type name="ColorState" c:type="GdkColorState*"/>
+          </instance-parameter>
+        </parameters>
+      </method>
+      <function name="get_oklab" c:identifier="gdk_color_state_get_oklab">
+        <return-value transfer-ownership="full">
+          <type name="ColorState" c:type="GdkColorState*"/>
+        </return-value>
+      </function>
+      <function name="get_oklch" c:identifier="gdk_color_state_get_oklch">
+        <return-value transfer-ownership="full">
+          <type name="ColorState" c:type="GdkColorState*"/>
+        </return-value>
+      </function>
+      <function name="get_rec2100_linear" c:identifier="gdk_color_state_get_rec2100_linear" version="4.16">
+        <doc xml:space="preserve">Returns the color state object representing the linear rec2100 color space.
+
+This color state uses the primaries defined by BT.2020-2 and BT.2100-0 and a linear
+transfer function.
+
+It is equivalent to the [Cicp](class.CicpParams.html) tuple 9/8/0/1.
+
+See e.g. [the CSS HDR Module](https://drafts.csswg.org/css-color-hdr/#valdef-color-rec2100-linear)
+for details about this colorstate.</doc>
+        <return-value transfer-ownership="full">
+          <doc xml:space="preserve">the color state object for linearized rec2100</doc>
+          <type name="ColorState" c:type="GdkColorState*"/>
+        </return-value>
+      </function>
+      <function name="get_rec2100_pq" c:identifier="gdk_color_state_get_rec2100_pq" version="4.16">
+        <doc xml:space="preserve">Returns the color state object representing the rec2100-pq color space.
+
+This color state uses the primaries defined by BT.2020-2 and BT.2100-0 and the transfer
+function defined by SMPTE ST 2084 and BT.2100-2.
+
+It is equivalent to the [Cicp](class.CicpParams.html) tuple 9/16/0/1.
+
+See e.g. [the CSS HDR Module](https://drafts.csswg.org/css-color-hdr/#valdef-color-rec2100-pq)
+for details about this colorstate.</doc>
+        <return-value transfer-ownership="full">
+          <doc xml:space="preserve">the color state object for rec2100-pq</doc>
+          <type name="ColorState" c:type="GdkColorState*"/>
+        </return-value>
+      </function>
+      <function name="get_srgb" c:identifier="gdk_color_state_get_srgb" version="4.16">
+        <doc xml:space="preserve">Returns the color state object representing the sRGB color space.
+
+This color state uses the primaries defined by BT.709-6 and the transfer function
+defined by IEC 61966-2-1.
+
+It is equivalent to the [Cicp](class.CicpParams.html) tuple 1/13/0/1.
+
+See e.g. [the CSS Color Module](https://www.w3.org/TR/css-color-4/#predefined-sRGB)
+for details about this colorstate.</doc>
+        <return-value transfer-ownership="full">
+          <doc xml:space="preserve">the color state object for sRGB</doc>
+          <type name="ColorState" c:type="GdkColorState*"/>
+        </return-value>
+      </function>
+      <function name="get_srgb_linear" c:identifier="gdk_color_state_get_srgb_linear" version="4.16">
+        <doc xml:space="preserve">Returns the color state object representing the linearized sRGB color space.
+
+This color state uses the primaries defined by BT.709-6 and a linear transfer function.
+
+It is equivalent to the [Cicp](class.CicpParams.html) tuple 1/8/0/1.
+
+See e.g. [the CSS Color Module](https://www.w3.org/TR/css-color-4/#predefined-sRGB-linear)
+for details about this colorstate.</doc>
+        <return-value transfer-ownership="full">
+          <doc xml:space="preserve">the color state object for linearized sRGB</doc>
+          <type name="ColorState" c:type="GdkColorState*"/>
+        </return-value>
+      </function>
+    </record>
     <callback name="ContentDeserializeFunc" c:type="GdkContentDeserializeFunc">
       <doc xml:space="preserve">The type of a function that can be registered with gdk_content_register_deserializer().
 
@@ -4547,6 +4916,19 @@ possibly with changing properties in between.</doc>
           </parameter>
         </parameters>
       </method>
+      <method name="get_color_state" c:identifier="gdk_dmabuf_texture_builder_get_color_state" glib:get-property="color-state" version="4.16">
+        <doc xml:space="preserve">Gets the color state previously set via gdk_dmabuf_texture_builder_set_color_state().</doc>
+        <return-value transfer-ownership="full" nullable="1">
+          <doc xml:space="preserve">the color state</doc>
+          <type name="ColorState" c:type="GdkColorState*"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="self" transfer-ownership="none">
+            <doc xml:space="preserve">a `GdkDmabufTextureBuilder`</doc>
+            <type name="DmabufTextureBuilder" c:type="GdkDmabufTextureBuilder*"/>
+          </instance-parameter>
+        </parameters>
+      </method>
       <method name="get_display" c:identifier="gdk_dmabuf_texture_builder_get_display" glib:get-property="display" version="4.14">
         <doc xml:space="preserve">Returns the display that this texture builder is
 associated with.</doc>
@@ -4721,6 +5103,26 @@ The format is specified as a fourcc code.</doc>
             <doc xml:space="preserve">a `GdkDmabufTextureBuilder`</doc>
             <type name="DmabufTextureBuilder" c:type="GdkDmabufTextureBuilder*"/>
           </instance-parameter>
+        </parameters>
+      </method>
+      <method name="set_color_state" c:identifier="gdk_dmabuf_texture_builder_set_color_state" glib:set-property="color-state" version="4.16">
+        <doc xml:space="preserve">Sets the color state for the texture.
+
+By default, the colorstate is `NULL`. In that case, GTK will choose the
+correct colorstate based on the format.
+If you don't know what colorstates are, this is probably the right thing.</doc>
+        <return-value transfer-ownership="none">
+          <type name="none" c:type="void"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="self" transfer-ownership="none">
+            <doc xml:space="preserve">a `GdkDmabufTextureBuilder`</doc>
+            <type name="DmabufTextureBuilder" c:type="GdkDmabufTextureBuilder*"/>
+          </instance-parameter>
+          <parameter name="color_state" transfer-ownership="none" nullable="1" allow-none="1">
+            <doc xml:space="preserve">a `GdkColorState` or `NULL` to unset the colorstate.</doc>
+            <type name="ColorState" c:type="GdkColorState*"/>
+          </parameter>
         </parameters>
       </method>
       <method name="set_display" c:identifier="gdk_dmabuf_texture_builder_set_display" glib:set-property="display" version="4.14">
@@ -4954,6 +5356,10 @@ The width must be set before calling [method@Gdk.GLTextureBuilder.build].</doc>
           </parameter>
         </parameters>
       </method>
+      <property name="color-state" version="4.16" writable="1" transfer-ownership="none" setter="set_color_state" getter="get_color_state">
+        <doc xml:space="preserve">The color state of the texture.</doc>
+        <type name="ColorState"/>
+      </property>
       <property name="display" version="4.14" writable="1" transfer-ownership="none" setter="set_display" getter="get_display">
         <doc xml:space="preserve">The display that this texture will be used on.</doc>
         <type name="Display"/>
@@ -5403,7 +5809,7 @@ It provides shared functionality between those contexts.
 You will always interact with one of those subclasses.
 
 A `GdkDrawContext` is always associated with a single toplevel surface.</doc>
-      <method name="begin_frame" c:identifier="gdk_draw_context_begin_frame">
+      <method name="begin_frame" c:identifier="gdk_draw_context_begin_frame" deprecated="1" deprecated-version="4.16">
         <doc xml:space="preserve">Indicates that you are beginning the process of redrawing @region
 on the @context's surface.
 
@@ -5428,6 +5834,8 @@ When using GTK, the widget system automatically places calls to
 gdk_draw_context_begin_frame() and gdk_draw_context_end_frame() via the
 use of [GskRenderer](../gsk4/class.Renderer.html)s, so application code
 does not need to call these functions explicitly.</doc>
+        <doc-deprecated xml:space="preserve">Drawing directly to the surface is no longer recommended.
+  Use `GskRenderNode` and `GskRenderer`.</doc-deprecated>
         <return-value transfer-ownership="none">
           <type name="none" c:type="void"/>
         </return-value>
@@ -5443,7 +5851,7 @@ does not need to call these functions explicitly.</doc>
           </parameter>
         </parameters>
       </method>
-      <method name="end_frame" c:identifier="gdk_draw_context_end_frame">
+      <method name="end_frame" c:identifier="gdk_draw_context_end_frame" deprecated="1" deprecated-version="4.16">
         <doc xml:space="preserve">Ends a drawing operation started with gdk_draw_context_begin_frame().
 
 This makes the drawing available on screen.
@@ -5452,6 +5860,8 @@ See [method@Gdk.DrawContext.begin_frame] for more details about drawing.
 When using a [class@Gdk.GLContext], this function may call `glFlush()`
 implicitly before returning; it is not recommended to call `glFlush()`
 explicitly before calling this function.</doc>
+        <doc-deprecated xml:space="preserve">Drawing directly to the surface is no longer recommended.
+  Use `GskRenderNode` and `GskRenderer`.</doc-deprecated>
         <return-value transfer-ownership="none">
           <type name="none" c:type="void"/>
         </return-value>
@@ -5475,7 +5885,7 @@ explicitly before calling this function.</doc>
           </instance-parameter>
         </parameters>
       </method>
-      <method name="get_frame_region" c:identifier="gdk_draw_context_get_frame_region">
+      <method name="get_frame_region" c:identifier="gdk_draw_context_get_frame_region" deprecated="1" deprecated-version="4.16">
         <doc xml:space="preserve">Retrieves the region that is currently being repainted.
 
 After a call to [method@Gdk.DrawContext.begin_frame] this function will
@@ -5484,6 +5894,8 @@ surface that the @context determined needs to be repainted.
 
 If @context is not in between calls to [method@Gdk.DrawContext.begin_frame]
 and [method@Gdk.DrawContext.end_frame], %NULL will be returned.</doc>
+        <doc-deprecated xml:space="preserve">Drawing directly to the surface is no longer recommended.
+  Use `GskRenderNode` and `GskRenderer`.</doc-deprecated>
         <return-value transfer-ownership="none" nullable="1">
           <doc xml:space="preserve">a Cairo region</doc>
           <type name="cairo.Region" c:type="const cairo_region_t*"/>
@@ -5508,12 +5920,14 @@ and [method@Gdk.DrawContext.end_frame], %NULL will be returned.</doc>
           </instance-parameter>
         </parameters>
       </method>
-      <method name="is_in_frame" c:identifier="gdk_draw_context_is_in_frame">
+      <method name="is_in_frame" c:identifier="gdk_draw_context_is_in_frame" deprecated="1" deprecated-version="4.16">
         <doc xml:space="preserve">Returns %TRUE if @context is in the process of drawing to its surface.
 
 This is the case between calls to [method@Gdk.DrawContext.begin_frame]
 and [method@Gdk.DrawContext.end_frame]. In this situation, drawing commands
 may be effecting the contents of the @context's surface.</doc>
+        <doc-deprecated xml:space="preserve">Drawing directly to the surface is no longer recommended.
+  Use `GskRenderNode` and `GskRenderer`.</doc-deprecated>
         <return-value transfer-ownership="none">
           <doc xml:space="preserve">%TRUE if the context is between [method@Gdk.DrawContext.begin_frame]
   and [method@Gdk.DrawContext.end_frame] calls.</doc>
@@ -6214,9 +6628,13 @@ returns %GDK_CURRENT_TIME.</doc>
 according to platform conventions.
 
 The right mouse button typically triggers context menus.
+On macOS, Control+left mouse button also triggers.
 
 This function should always be used instead of simply checking for
-event-&gt;button == %GDK_BUTTON_SECONDARY.</doc>
+
+```c
+event-&gt;button == GDK_BUTTON_SECONDARY
+```</doc>
         <return-value transfer-ownership="none">
           <doc xml:space="preserve">%TRUE if the event should trigger a context menu.</doc>
           <type name="gboolean" c:type="gboolean"/>
@@ -7551,6 +7969,19 @@ possibly with changing properties in between.</doc>
           </parameter>
         </parameters>
       </method>
+      <method name="get_color_state" c:identifier="gdk_gl_texture_builder_get_color_state" glib:get-property="color-state" version="4.16">
+        <doc xml:space="preserve">Gets the color state previously set via gdk_gl_texture_builder_set_color_state().</doc>
+        <return-value transfer-ownership="full">
+          <doc xml:space="preserve">the color state</doc>
+          <type name="ColorState" c:type="GdkColorState*"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="self" transfer-ownership="none">
+            <doc xml:space="preserve">a `GdkGLTextureBuilder`</doc>
+            <type name="GLTextureBuilder" c:type="GdkGLTextureBuilder*"/>
+          </instance-parameter>
+        </parameters>
+      </method>
       <method name="get_context" c:identifier="gdk_gl_texture_builder_get_context" glib:get-property="context" version="4.12">
         <doc xml:space="preserve">Gets the context previously set via gdk_gl_texture_builder_set_context() or
 %NULL if none was set.</doc>
@@ -7674,6 +8105,25 @@ possibly with changing properties in between.</doc>
           </instance-parameter>
         </parameters>
       </method>
+      <method name="set_color_state" c:identifier="gdk_gl_texture_builder_set_color_state" glib:set-property="color-state" version="4.16">
+        <doc xml:space="preserve">Sets the color state for the texture.
+
+By default, the sRGB colorstate is used. If you don't know what
+colorstates are, this is probably the right thing.</doc>
+        <return-value transfer-ownership="none">
+          <type name="none" c:type="void"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="self" transfer-ownership="none">
+            <doc xml:space="preserve">a `GdkGLTextureBuilder`</doc>
+            <type name="GLTextureBuilder" c:type="GdkGLTextureBuilder*"/>
+          </instance-parameter>
+          <parameter name="color_state" transfer-ownership="none">
+            <doc xml:space="preserve">a `GdkColorState`</doc>
+            <type name="ColorState" c:type="GdkColorState*"/>
+          </parameter>
+        </parameters>
+      </method>
       <method name="set_context" c:identifier="gdk_gl_texture_builder_set_context" glib:set-property="context" version="4.12">
         <doc xml:space="preserve">Sets the context to be used for the texture. This is the context that owns
 the texture.
@@ -7688,7 +8138,7 @@ The context must be set before calling [method@Gdk.GLTextureBuilder.build].</doc
             <type name="GLTextureBuilder" c:type="GdkGLTextureBuilder*"/>
           </instance-parameter>
           <parameter name="context" transfer-ownership="none" nullable="1" allow-none="1">
-            <doc xml:space="preserve">The context the texture beongs to or %NULL to unset</doc>
+            <doc xml:space="preserve">The context the texture belongs to or %NULL to unset</doc>
             <type name="GLContext" c:type="GdkGLContext*"/>
           </parameter>
         </parameters>
@@ -7864,6 +8314,10 @@ The width must be set before calling [method@Gdk.GLTextureBuilder.build].</doc>
           </parameter>
         </parameters>
       </method>
+      <property name="color-state" version="4.16" writable="1" transfer-ownership="none" setter="set_color_state" getter="get_color_state">
+        <doc xml:space="preserve">The color state of the texture.</doc>
+        <type name="ColorState"/>
+      </property>
       <property name="context" version="4.12" writable="1" transfer-ownership="none" setter="set_context" getter="get_context">
         <doc xml:space="preserve">The context owning the texture.</doc>
         <type name="GLContext"/>
@@ -13353,6 +13807,21 @@ If this is set, GTK will wait on it before using the texture.</doc>
     <constant name="KEY_colon" value="58" c:type="GDK_KEY_colon">
       <type name="gint" c:type="gint"/>
     </constant>
+    <constant name="KEY_combining_acute" value="16777985" c:type="GDK_KEY_combining_acute">
+      <type name="gint" c:type="gint"/>
+    </constant>
+    <constant name="KEY_combining_belowdot" value="16778019" c:type="GDK_KEY_combining_belowdot">
+      <type name="gint" c:type="gint"/>
+    </constant>
+    <constant name="KEY_combining_grave" value="16777984" c:type="GDK_KEY_combining_grave">
+      <type name="gint" c:type="gint"/>
+    </constant>
+    <constant name="KEY_combining_hook" value="16777993" c:type="GDK_KEY_combining_hook">
+      <type name="gint" c:type="gint"/>
+    </constant>
+    <constant name="KEY_combining_tilde" value="16777987" c:type="GDK_KEY_combining_tilde">
+      <type name="gint" c:type="gint"/>
+    </constant>
     <constant name="KEY_comma" value="44" c:type="GDK_KEY_comma">
       <type name="gint" c:type="gint"/>
     </constant>
@@ -13399,6 +13868,9 @@ If this is set, GTK will wait on it before using the texture.</doc>
       <type name="gint" c:type="gint"/>
     </constant>
     <constant name="KEY_dead_O" value="65159" c:type="GDK_KEY_dead_O">
+      <type name="gint" c:type="gint"/>
+    </constant>
+    <constant name="KEY_dead_SCHWA" value="65163" c:type="GDK_KEY_dead_SCHWA">
       <type name="gint" c:type="gint"/>
     </constant>
     <constant name="KEY_dead_U" value="65161" c:type="GDK_KEY_dead_U">
@@ -13491,6 +13963,9 @@ If this is set, GTK will wait on it before using the texture.</doc>
     <constant name="KEY_dead_greek" value="65164" c:type="GDK_KEY_dead_greek">
       <type name="gint" c:type="gint"/>
     </constant>
+    <constant name="KEY_dead_hamza" value="65165" c:type="GDK_KEY_dead_hamza">
+      <type name="gint" c:type="gint"/>
+    </constant>
     <constant name="KEY_dead_hook" value="65121" c:type="GDK_KEY_dead_hook">
       <type name="gint" c:type="gint"/>
     </constant>
@@ -13525,6 +14000,9 @@ If this is set, GTK will wait on it before using the texture.</doc>
       <type name="gint" c:type="gint"/>
     </constant>
     <constant name="KEY_dead_psili" value="65124" c:type="GDK_KEY_dead_psili">
+      <type name="gint" c:type="gint"/>
+    </constant>
+    <constant name="KEY_dead_schwa" value="65162" c:type="GDK_KEY_dead_schwa">
       <type name="gint" c:type="gint"/>
     </constant>
     <constant name="KEY_dead_semivoiced_sound" value="65119" c:type="GDK_KEY_dead_semivoiced_sound">
@@ -13807,6 +14285,12 @@ If this is set, GTK will wait on it before using the texture.</doc>
       <type name="gint" c:type="gint"/>
     </constant>
     <constant name="KEY_greaterthanequal" value="2238" c:type="GDK_KEY_greaterthanequal">
+      <type name="gint" c:type="gint"/>
+    </constant>
+    <constant name="KEY_guillemetleft" value="171" c:type="GDK_KEY_guillemetleft">
+      <type name="gint" c:type="gint"/>
+    </constant>
+    <constant name="KEY_guillemetright" value="187" c:type="GDK_KEY_guillemetright">
       <type name="gint" c:type="gint"/>
     </constant>
     <constant name="KEY_guillemotleft" value="171" c:type="GDK_KEY_guillemotleft">
@@ -14536,6 +15020,9 @@ If this is set, GTK will wait on it before using the texture.</doc>
       <type name="gint" c:type="gint"/>
     </constant>
     <constant name="KEY_ordfeminine" value="170" c:type="GDK_KEY_ordfeminine">
+      <type name="gint" c:type="gint"/>
+    </constant>
+    <constant name="KEY_ordmasculine" value="186" c:type="GDK_KEY_ordmasculine">
       <type name="gint" c:type="gint"/>
     </constant>
     <constant name="KEY_oslash" value="248" c:type="GDK_KEY_oslash">
@@ -15381,6 +15868,343 @@ in the given format.</doc>
         </parameters>
       </constructor>
     </class>
+    <class name="MemoryTextureBuilder" c:symbol-prefix="memory_texture_builder" c:type="GdkMemoryTextureBuilder" version="4.16" parent="GObject.Object" glib:type-name="GdkMemoryTextureBuilder" glib:get-type="gdk_memory_texture_builder_get_type" glib:type-struct="MemoryTextureBuilderClass">
+      <doc xml:space="preserve">`GdkMemoryTextureBuilder` is a builder used to construct [class@Gdk.Texture] objects
+from system memory provided via [struct@GLib.Bytes].
+
+The operation is quite simple: Create a texture builder, set all the necessary
+properties - keep in mind that the properties [property@Gdk.MemoryTextureBuilder:bytes],
+[property@Gdk.MemoryTextureBuilder:stride], [property@Gdk.MemoryTextureBuilder:width],
+and [property@Gdk.MemoryTextureBuilder:height] are mandatory - and then call
+[method@Gdk.MemoryTextureBuilder.build] to create the new texture.
+
+`GdkMemoryTextureBuilder` can be used for quick one-shot construction of
+textures as well as kept around and reused to construct multiple textures.</doc>
+      <constructor name="new" c:identifier="gdk_memory_texture_builder_new" version="4.16">
+        <doc xml:space="preserve">Creates a new texture builder.</doc>
+        <return-value transfer-ownership="full">
+          <doc xml:space="preserve">the new `GdkTextureBuilder`</doc>
+          <type name="MemoryTextureBuilder" c:type="GdkMemoryTextureBuilder*"/>
+        </return-value>
+      </constructor>
+      <method name="build" c:identifier="gdk_memory_texture_builder_build" version="4.16">
+        <doc xml:space="preserve">Builds a new `GdkTexture` with the values set up in the builder.
+
+Note that it is a programming error to call this function if any mandatory
+property has not been set.
+
+It is possible to call this function multiple times to create multiple textures,
+possibly with changing properties in between.</doc>
+        <return-value transfer-ownership="full">
+          <doc xml:space="preserve">a newly built `GdkTexture`</doc>
+          <type name="Texture" c:type="GdkTexture*"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="self" transfer-ownership="none">
+            <doc xml:space="preserve">a `GdkMemoryTextureBuilder`</doc>
+            <type name="MemoryTextureBuilder" c:type="GdkMemoryTextureBuilder*"/>
+          </instance-parameter>
+        </parameters>
+      </method>
+      <method name="get_bytes" c:identifier="gdk_memory_texture_builder_get_bytes" glib:get-property="bytes" version="4.16">
+        <doc xml:space="preserve">Gets the bytes previously set via gdk_memory_texture_builder_set_bytes()
+or %NULL if none was set.</doc>
+        <return-value transfer-ownership="none" nullable="1">
+          <doc xml:space="preserve">The bytes</doc>
+          <type name="GLib.Bytes" c:type="GBytes*"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="self" transfer-ownership="none">
+            <doc xml:space="preserve">a `GdkMemoryTextureBuilder`</doc>
+            <type name="MemoryTextureBuilder" c:type="GdkMemoryTextureBuilder*"/>
+          </instance-parameter>
+        </parameters>
+      </method>
+      <method name="get_color_state" c:identifier="gdk_memory_texture_builder_get_color_state" glib:get-property="color-state" version="4.16">
+        <doc xml:space="preserve">Gets the colorstate previously set via gdk_memory_texture_builder_set_color_state().</doc>
+        <return-value transfer-ownership="none">
+          <doc xml:space="preserve">The colorstate</doc>
+          <type name="ColorState" c:type="GdkColorState*"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="self" transfer-ownership="none">
+            <doc xml:space="preserve">a `GdkMemoryTextureBuilder`</doc>
+            <type name="MemoryTextureBuilder" c:type="GdkMemoryTextureBuilder*"/>
+          </instance-parameter>
+        </parameters>
+      </method>
+      <method name="get_format" c:identifier="gdk_memory_texture_builder_get_format" glib:get-property="format" version="4.16">
+        <doc xml:space="preserve">Gets the format previously set via gdk_memory_texture_builder_set_format().</doc>
+        <return-value transfer-ownership="none">
+          <doc xml:space="preserve">The format</doc>
+          <type name="MemoryFormat" c:type="GdkMemoryFormat"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="self" transfer-ownership="none">
+            <doc xml:space="preserve">a `GdkMemoryTextureBuilder`</doc>
+            <type name="MemoryTextureBuilder" c:type="GdkMemoryTextureBuilder*"/>
+          </instance-parameter>
+        </parameters>
+      </method>
+      <method name="get_height" c:identifier="gdk_memory_texture_builder_get_height" glib:get-property="height" version="4.16">
+        <doc xml:space="preserve">Gets the height previously set via gdk_memory_texture_builder_set_height()
+or 0 if the height wasn't set.</doc>
+        <return-value transfer-ownership="none">
+          <doc xml:space="preserve">The height</doc>
+          <type name="gint" c:type="int"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="self" transfer-ownership="none">
+            <doc xml:space="preserve">a `GdkMemoryTextureBuilder`</doc>
+            <type name="MemoryTextureBuilder" c:type="GdkMemoryTextureBuilder*"/>
+          </instance-parameter>
+        </parameters>
+      </method>
+      <method name="get_stride" c:identifier="gdk_memory_texture_builder_get_stride" glib:get-property="stride" version="4.16">
+        <doc xml:space="preserve">Gets the stride previously set via gdk_memory_texture_builder_set_stride().</doc>
+        <return-value transfer-ownership="none">
+          <doc xml:space="preserve">the stride</doc>
+          <type name="gsize" c:type="gsize"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="self" transfer-ownership="none">
+            <doc xml:space="preserve">a `GdkMemoryTextureBuilder`</doc>
+            <type name="MemoryTextureBuilder" c:type="GdkMemoryTextureBuilder*"/>
+          </instance-parameter>
+        </parameters>
+      </method>
+      <method name="get_update_region" c:identifier="gdk_memory_texture_builder_get_update_region" glib:get-property="update-region" version="4.16">
+        <doc xml:space="preserve">Gets the region previously set via gdk_memory_texture_builder_set_update_region()
+or %NULL if none was set.</doc>
+        <return-value transfer-ownership="none" nullable="1">
+          <doc xml:space="preserve">The update region</doc>
+          <type name="cairo.Region" c:type="cairo_region_t*"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="self" transfer-ownership="none">
+            <doc xml:space="preserve">a `GdkMemoryTextureBuilder`</doc>
+            <type name="MemoryTextureBuilder" c:type="GdkMemoryTextureBuilder*"/>
+          </instance-parameter>
+        </parameters>
+      </method>
+      <method name="get_update_texture" c:identifier="gdk_memory_texture_builder_get_update_texture" glib:get-property="update-texture" version="4.16">
+        <doc xml:space="preserve">Gets the texture previously set via gdk_memory_texture_builder_set_update_texture()
+or %NULL if none was set.</doc>
+        <return-value transfer-ownership="none" nullable="1">
+          <doc xml:space="preserve">The update texture</doc>
+          <type name="Texture" c:type="GdkTexture*"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="self" transfer-ownership="none">
+            <doc xml:space="preserve">a `GdkMemoryTextureBuilder`</doc>
+            <type name="MemoryTextureBuilder" c:type="GdkMemoryTextureBuilder*"/>
+          </instance-parameter>
+        </parameters>
+      </method>
+      <method name="get_width" c:identifier="gdk_memory_texture_builder_get_width" glib:get-property="width" version="4.16">
+        <doc xml:space="preserve">Gets the width previously set via gdk_memory_texture_builder_set_width()
+or 0 if the width wasn't set.</doc>
+        <return-value transfer-ownership="none">
+          <doc xml:space="preserve">The width</doc>
+          <type name="gint" c:type="int"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="self" transfer-ownership="none">
+            <doc xml:space="preserve">a `GdkMemoryTextureBuilder`</doc>
+            <type name="MemoryTextureBuilder" c:type="GdkMemoryTextureBuilder*"/>
+          </instance-parameter>
+        </parameters>
+      </method>
+      <method name="set_bytes" c:identifier="gdk_memory_texture_builder_set_bytes" glib:set-property="bytes" version="4.16">
+        <doc xml:space="preserve">Sets the data to be shown but the texture.
+
+The bytes must be set before calling [method@Gdk.MemoryTextureBuilder.build].</doc>
+        <return-value transfer-ownership="none">
+          <type name="none" c:type="void"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="self" transfer-ownership="none">
+            <doc xml:space="preserve">a `GdkMemoryTextureBuilder`</doc>
+            <type name="MemoryTextureBuilder" c:type="GdkMemoryTextureBuilder*"/>
+          </instance-parameter>
+          <parameter name="bytes" transfer-ownership="none" nullable="1" allow-none="1">
+            <doc xml:space="preserve">The bytes the texture shows or %NULL to unset</doc>
+            <type name="GLib.Bytes" c:type="GBytes*"/>
+          </parameter>
+        </parameters>
+      </method>
+      <method name="set_color_state" c:identifier="gdk_memory_texture_builder_set_color_state" glib:set-property="color-state" version="4.16">
+        <doc xml:space="preserve">Sets the colorstate describing the data.
+
+By default, the sRGB colorstate is used. If you don't know
+what colorstates are, this is probably the right thing.</doc>
+        <return-value transfer-ownership="none">
+          <type name="none" c:type="void"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="self" transfer-ownership="none">
+            <doc xml:space="preserve">a `GdkMemoryTextureBuilder`</doc>
+            <type name="MemoryTextureBuilder" c:type="GdkMemoryTextureBuilder*"/>
+          </instance-parameter>
+          <parameter name="color_state" transfer-ownership="none" nullable="1" allow-none="1">
+            <doc xml:space="preserve">The colorstate describing the data</doc>
+            <type name="ColorState" c:type="GdkColorState*"/>
+          </parameter>
+        </parameters>
+      </method>
+      <method name="set_format" c:identifier="gdk_memory_texture_builder_set_format" glib:set-property="format" version="4.16">
+        <doc xml:space="preserve">Sets the format of the bytes.
+
+The default is `GDK_MEMORY_R8G8B8A8_PREMULTIPLIED`.</doc>
+        <return-value transfer-ownership="none">
+          <type name="none" c:type="void"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="self" transfer-ownership="none">
+            <doc xml:space="preserve">a `GdkMemoryTextureBuilder`</doc>
+            <type name="MemoryTextureBuilder" c:type="GdkMemoryTextureBuilder*"/>
+          </instance-parameter>
+          <parameter name="format" transfer-ownership="none">
+            <doc xml:space="preserve">The texture's format</doc>
+            <type name="MemoryFormat" c:type="GdkMemoryFormat"/>
+          </parameter>
+        </parameters>
+      </method>
+      <method name="set_height" c:identifier="gdk_memory_texture_builder_set_height" glib:set-property="height" version="4.16">
+        <doc xml:space="preserve">Sets the height of the texture.
+
+The height must be set before calling [method@Gdk.MemoryTextureBuilder.build].</doc>
+        <return-value transfer-ownership="none">
+          <type name="none" c:type="void"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="self" transfer-ownership="none">
+            <doc xml:space="preserve">a `GdkMemoryTextureBuilder`</doc>
+            <type name="MemoryTextureBuilder" c:type="GdkMemoryTextureBuilder*"/>
+          </instance-parameter>
+          <parameter name="height" transfer-ownership="none">
+            <doc xml:space="preserve">The texture's height or 0 to unset</doc>
+            <type name="gint" c:type="int"/>
+          </parameter>
+        </parameters>
+      </method>
+      <method name="set_stride" c:identifier="gdk_memory_texture_builder_set_stride" glib:set-property="stride" version="4.16">
+        <doc xml:space="preserve">Sets the rowstride of the bytes used.
+
+The rowstride must be set before calling [method@Gdk.MemoryTextureBuilder.build].</doc>
+        <return-value transfer-ownership="none">
+          <type name="none" c:type="void"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="self" transfer-ownership="none">
+            <doc xml:space="preserve">a `GdkMemoryTextureBuilder`</doc>
+            <type name="MemoryTextureBuilder" c:type="GdkMemoryTextureBuilder*"/>
+          </instance-parameter>
+          <parameter name="stride" transfer-ownership="none">
+            <doc xml:space="preserve">the stride or 0 to unset</doc>
+            <type name="gsize" c:type="gsize"/>
+          </parameter>
+        </parameters>
+      </method>
+      <method name="set_update_region" c:identifier="gdk_memory_texture_builder_set_update_region" glib:set-property="update-region" version="4.16">
+        <doc xml:space="preserve">Sets the region to be updated by this texture.
+
+Together with [property@Gdk.MemoryTextureBuilder:update-texture],
+this describes an update of a previous texture.
+
+When rendering animations of large textures, it is possible that
+consecutive textures are only updating contents in parts of the texture.
+It is then possible to describe this update via these two properties,
+so that GTK can avoid rerendering parts that did not change.
+
+An example would be a screen recording where only the mouse pointer moves.</doc>
+        <return-value transfer-ownership="none">
+          <type name="none" c:type="void"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="self" transfer-ownership="none">
+            <doc xml:space="preserve">a `GdkMemoryTextureBuilder`</doc>
+            <type name="MemoryTextureBuilder" c:type="GdkMemoryTextureBuilder*"/>
+          </instance-parameter>
+          <parameter name="region" transfer-ownership="none" nullable="1" allow-none="1">
+            <doc xml:space="preserve">the region to update</doc>
+            <type name="cairo.Region" c:type="cairo_region_t*"/>
+          </parameter>
+        </parameters>
+      </method>
+      <method name="set_update_texture" c:identifier="gdk_memory_texture_builder_set_update_texture" glib:set-property="update-texture" version="4.16">
+        <doc xml:space="preserve">Sets the texture to be updated by this texture.
+
+See [method@Gdk.MemoryTextureBuilder.set_update_region] for an explanation.</doc>
+        <return-value transfer-ownership="none">
+          <type name="none" c:type="void"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="self" transfer-ownership="none">
+            <doc xml:space="preserve">a `GdkMemoryTextureBuilder`</doc>
+            <type name="MemoryTextureBuilder" c:type="GdkMemoryTextureBuilder*"/>
+          </instance-parameter>
+          <parameter name="texture" transfer-ownership="none" nullable="1" allow-none="1">
+            <doc xml:space="preserve">the texture to update</doc>
+            <type name="Texture" c:type="GdkTexture*"/>
+          </parameter>
+        </parameters>
+      </method>
+      <method name="set_width" c:identifier="gdk_memory_texture_builder_set_width" glib:set-property="width" version="4.16">
+        <doc xml:space="preserve">Sets the width of the texture.
+
+The width must be set before calling [method@Gdk.MemoryTextureBuilder.build].</doc>
+        <return-value transfer-ownership="none">
+          <type name="none" c:type="void"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="self" transfer-ownership="none">
+            <doc xml:space="preserve">a `GdkMemoryTextureBuilder`</doc>
+            <type name="MemoryTextureBuilder" c:type="GdkMemoryTextureBuilder*"/>
+          </instance-parameter>
+          <parameter name="width" transfer-ownership="none">
+            <doc xml:space="preserve">The texture's width or 0 to unset</doc>
+            <type name="gint" c:type="int"/>
+          </parameter>
+        </parameters>
+      </method>
+      <property name="bytes" version="4.16" writable="1" transfer-ownership="none" setter="set_bytes" getter="get_bytes">
+        <doc xml:space="preserve">The bytes holding the data.</doc>
+        <type name="GLib.Bytes"/>
+      </property>
+      <property name="color-state" version="4.16" writable="1" transfer-ownership="none" setter="set_color_state" getter="get_color_state">
+        <doc xml:space="preserve">The colorstate describing the data.</doc>
+        <type name="ColorState"/>
+      </property>
+      <property name="format" version="4.16" writable="1" transfer-ownership="none" setter="set_format" getter="get_format" default-value="GDK_MEMORY_R8G8B8A8_PREMULTIPLIED">
+        <doc xml:space="preserve">The format of the data.</doc>
+        <type name="MemoryFormat"/>
+      </property>
+      <property name="height" version="4.16" writable="1" transfer-ownership="none" setter="set_height" getter="get_height" default-value="0">
+        <doc xml:space="preserve">The height of the texture.</doc>
+        <type name="gint" c:type="gint"/>
+      </property>
+      <property name="stride" version="4.16" writable="1" transfer-ownership="none" setter="set_stride" getter="get_stride" default-value="0">
+        <doc xml:space="preserve">The rowstride of the texture.
+
+The rowstride is the number of bytes between the first pixel
+in a row of image data, and the first pixel in the next row.</doc>
+        <type name="guint64" c:type="guint64"/>
+      </property>
+      <property name="update-region" version="4.16" writable="1" transfer-ownership="none" setter="set_update_region" getter="get_update_region">
+        <doc xml:space="preserve">The update region for [property@Gdk.MemoryTextureBuilder:update-texture].</doc>
+        <type name="cairo.Region"/>
+      </property>
+      <property name="update-texture" version="4.16" writable="1" transfer-ownership="none" setter="set_update_texture" getter="get_update_texture">
+        <doc xml:space="preserve">The texture [property@Gdk.MemoryTextureBuilder:update-region] is an update for.</doc>
+        <type name="Texture"/>
+      </property>
+      <property name="width" version="4.16" writable="1" transfer-ownership="none" setter="set_width" getter="get_width" default-value="0">
+        <doc xml:space="preserve">The width of the texture.</doc>
+        <type name="gint" c:type="gint"/>
+      </property>
+    </class>
+    <record name="MemoryTextureBuilderClass" c:type="GdkMemoryTextureBuilderClass" disguised="1" opaque="1" glib:is-gtype-struct-for="MemoryTextureBuilder"/>
     <record name="MemoryTextureClass" c:type="GdkMemoryTextureClass" disguised="1" opaque="1" glib:is-gtype-struct-for="MemoryTexture"/>
     <bitfield name="ModifierType" glib:type-name="GdkModifierType" glib:get-type="gdk_modifier_type_get_type" c:type="GdkModifierType">
       <doc xml:space="preserve">Flags to indicate the state of modifier keys and mouse buttons
@@ -18074,7 +18898,7 @@ a particular backend supports input regions.</doc>
           </parameter>
         </parameters>
       </method>
-      <method name="set_opaque_region" c:identifier="gdk_surface_set_opaque_region">
+      <method name="set_opaque_region" c:identifier="gdk_surface_set_opaque_region" deprecated="1" deprecated-version="4.16">
         <doc xml:space="preserve">Marks a region of the `GdkSurface` as opaque.
 
 For optimisation purposes, compositing window managers may
@@ -18090,6 +18914,8 @@ GTK will update this property automatically if the @surface background
 is opaque, as we know where the opaque regions are. If your surface
 background is not opaque, please update this property in your
 [GtkWidgetClass.css_changed](../gtk4/vfunc.Widget.css_changed.html) handler.</doc>
+        <doc-deprecated xml:space="preserve">GDK can figure out the opaque parts of a window itself
+  by inspecting the contents that are drawn.</doc-deprecated>
         <return-value transfer-ownership="none">
           <type name="none" c:type="void"/>
         </return-value>
@@ -18288,7 +19114,18 @@ instance; you can only make a copy of it, via [method@Gdk.Texture.download].
 
 `GdkTexture` is an immutable object: That means you cannot change
 anything about it other than increasing the reference count via
-[method@GObject.Object.ref], and consequently, it is a thread-safe object.</doc>
+[method@GObject.Object.ref], and consequently, it is a threadsafe object.
+
+GDK provides a number of threadsafe texture loading functions:
+[ctor@Gdk.Texture.new_from_resource],
+[ctor@Gdk.Texture.new_from_bytes],
+[ctor@Gdk.Texture.new_from_file],
+[ctor@Gdk.Texture.new_from_filename],
+[ctor@Gdk.Texture.new_for_pixbuf]. Note that these are meant for loading
+icons and resources that are shipped with the toolkit or application. It
+is recommended that you use a dedicated image loading framework such as
+[glycin](https://lib.rs/crates/glycin), if you need to load untrusted image
+data.</doc>
       <implements name="Paintable"/>
       <implements name="Gio.Icon"/>
       <implements name="Gio.LoadableIcon"/>
@@ -18444,6 +19281,19 @@ For more flexible download capabilities, see
           </parameter>
         </parameters>
       </method>
+      <method name="get_color_state" c:identifier="gdk_texture_get_color_state" glib:get-property="color-state" version="4.16">
+        <doc xml:space="preserve">Returns the color state associated with the texture.</doc>
+        <return-value transfer-ownership="none">
+          <doc xml:space="preserve">the color state of the `GdkTexture`</doc>
+          <type name="ColorState" c:type="GdkColorState*"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="self" transfer-ownership="none">
+            <doc xml:space="preserve">a `GdkTexture`</doc>
+            <type name="Texture" c:type="GdkTexture*"/>
+          </instance-parameter>
+        </parameters>
+      </method>
       <method name="get_format" c:identifier="gdk_texture_get_format" version="4.10">
         <doc xml:space="preserve">Gets the memory format most closely associated with the data of
 the texture.
@@ -18583,6 +19433,10 @@ use [method@Gdk.Texture.save_to_png_bytes].</doc>
           </instance-parameter>
         </parameters>
       </method>
+      <property name="color-state" version="4.16" writable="1" construct-only="1" transfer-ownership="none" getter="get_color_state">
+        <doc xml:space="preserve">The color state of the texture.</doc>
+        <type name="ColorState"/>
+      </property>
       <property name="height" writable="1" construct-only="1" transfer-ownership="none" getter="get_height" default-value="1">
         <doc xml:space="preserve">The height of the texture, in pixels.</doc>
         <type name="gint" c:type="gint"/>
@@ -18605,7 +19459,10 @@ settings.
 Create a `GdkTexture` for the existing format and then download it in a
 different format.</doc>
       <constructor name="new" c:identifier="gdk_texture_downloader_new" version="4.10">
-        <doc xml:space="preserve">Creates a new texture downloader for @texture.</doc>
+        <doc xml:space="preserve">Creates a new texture downloader for @texture.
+
+By default, the downloader will convert the data to
+the default memory format, and to the sRGB color state.</doc>
         <return-value transfer-ownership="full">
           <doc xml:space="preserve">A new texture downloader</doc>
           <type name="TextureDownloader" c:type="GdkTextureDownloader*"/>
@@ -18690,6 +19547,19 @@ once allocation succeeded.</doc>
           </instance-parameter>
         </parameters>
       </method>
+      <method name="get_color_state" c:identifier="gdk_texture_downloader_get_color_state" version="4.16">
+        <doc xml:space="preserve">Gets the color state that the data will be downloaded in.</doc>
+        <return-value transfer-ownership="full">
+          <doc xml:space="preserve">The color state of the download</doc>
+          <type name="ColorState" c:type="GdkColorState*"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="self" transfer-ownership="none">
+            <doc xml:space="preserve">a texture downloader</doc>
+            <type name="TextureDownloader" c:type="const GdkTextureDownloader*"/>
+          </instance-parameter>
+        </parameters>
+      </method>
       <method name="get_format" c:identifier="gdk_texture_downloader_get_format" version="4.10">
         <doc xml:space="preserve">Gets the format that the data will be downloaded in.</doc>
         <return-value transfer-ownership="none">
@@ -18714,6 +19584,25 @@ once allocation succeeded.</doc>
             <doc xml:space="preserve">a texture downloader</doc>
             <type name="TextureDownloader" c:type="const GdkTextureDownloader*"/>
           </instance-parameter>
+        </parameters>
+      </method>
+      <method name="set_color_state" c:identifier="gdk_texture_downloader_set_color_state" version="4.16">
+        <doc xml:space="preserve">Sets the color state the downloader will convert the data to.
+
+By default, the sRGB colorstate returned by [func@ColorState.get_srgb]
+is used.</doc>
+        <return-value transfer-ownership="none">
+          <type name="none" c:type="void"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="self" transfer-ownership="none">
+            <doc xml:space="preserve">a texture downloader</doc>
+            <type name="TextureDownloader" c:type="GdkTextureDownloader*"/>
+          </instance-parameter>
+          <parameter name="color_state" transfer-ownership="none">
+            <doc xml:space="preserve">the color state to use</doc>
+            <type name="ColorState" c:type="GdkColorState*"/>
+          </parameter>
         </parameters>
       </method>
       <method name="set_format" c:identifier="gdk_texture_downloader_set_format" version="4.10">
@@ -19682,8 +20571,8 @@ being set.</doc>
       <member name="left_resizable" value="32768" c:identifier="GDK_TOPLEVEL_STATE_LEFT_RESIZABLE" glib:nick="left-resizable" glib:name="GDK_TOPLEVEL_STATE_LEFT_RESIZABLE">
         <doc xml:space="preserve">whether the left edge is resizable</doc>
       </member>
-      <member name="suspended" value="65536" c:identifier="GDK_TOPLEVEL_STATE_SUSPENDED" glib:nick="suspended" glib:name="GDK_TOPLEVEL_STATE_SUSPENDED">
-        <doc xml:space="preserve">the surface is not visible to the user</doc>
+      <member name="suspended" value="65536" c:identifier="GDK_TOPLEVEL_STATE_SUSPENDED" version="4.12" glib:nick="suspended" glib:name="GDK_TOPLEVEL_STATE_SUSPENDED">
+        <doc xml:space="preserve">The surface is not visible to the user.</doc>
       </member>
     </bitfield>
     <class name="TouchEvent" c:symbol-prefix="touch_event" c:type="GdkTouchEvent" parent="Event" glib:type-name="GdkTouchEvent" glib:get-type="gdk_touch_event_get_type" glib:fundamental="1">
@@ -20019,6 +20908,75 @@ so that the origin of @pixbuf is @pixbuf_x, @pixbuf_y.</doc>
           <type name="RGBA" c:type="const GdkRGBA*"/>
         </parameter>
       </parameters>
+    </function>
+    <function name="color_state_get_oklab" c:identifier="gdk_color_state_get_oklab" moved-to="ColorState.get_oklab">
+      <return-value transfer-ownership="full">
+        <type name="ColorState" c:type="GdkColorState*"/>
+      </return-value>
+    </function>
+    <function name="color_state_get_oklch" c:identifier="gdk_color_state_get_oklch" moved-to="ColorState.get_oklch">
+      <return-value transfer-ownership="full">
+        <type name="ColorState" c:type="GdkColorState*"/>
+      </return-value>
+    </function>
+    <function name="color_state_get_rec2100_linear" c:identifier="gdk_color_state_get_rec2100_linear" moved-to="ColorState.get_rec2100_linear" version="4.16">
+      <doc xml:space="preserve">Returns the color state object representing the linear rec2100 color space.
+
+This color state uses the primaries defined by BT.2020-2 and BT.2100-0 and a linear
+transfer function.
+
+It is equivalent to the [Cicp](class.CicpParams.html) tuple 9/8/0/1.
+
+See e.g. [the CSS HDR Module](https://drafts.csswg.org/css-color-hdr/#valdef-color-rec2100-linear)
+for details about this colorstate.</doc>
+      <return-value transfer-ownership="full">
+        <doc xml:space="preserve">the color state object for linearized rec2100</doc>
+        <type name="ColorState" c:type="GdkColorState*"/>
+      </return-value>
+    </function>
+    <function name="color_state_get_rec2100_pq" c:identifier="gdk_color_state_get_rec2100_pq" moved-to="ColorState.get_rec2100_pq" version="4.16">
+      <doc xml:space="preserve">Returns the color state object representing the rec2100-pq color space.
+
+This color state uses the primaries defined by BT.2020-2 and BT.2100-0 and the transfer
+function defined by SMPTE ST 2084 and BT.2100-2.
+
+It is equivalent to the [Cicp](class.CicpParams.html) tuple 9/16/0/1.
+
+See e.g. [the CSS HDR Module](https://drafts.csswg.org/css-color-hdr/#valdef-color-rec2100-pq)
+for details about this colorstate.</doc>
+      <return-value transfer-ownership="full">
+        <doc xml:space="preserve">the color state object for rec2100-pq</doc>
+        <type name="ColorState" c:type="GdkColorState*"/>
+      </return-value>
+    </function>
+    <function name="color_state_get_srgb" c:identifier="gdk_color_state_get_srgb" moved-to="ColorState.get_srgb" version="4.16">
+      <doc xml:space="preserve">Returns the color state object representing the sRGB color space.
+
+This color state uses the primaries defined by BT.709-6 and the transfer function
+defined by IEC 61966-2-1.
+
+It is equivalent to the [Cicp](class.CicpParams.html) tuple 1/13/0/1.
+
+See e.g. [the CSS Color Module](https://www.w3.org/TR/css-color-4/#predefined-sRGB)
+for details about this colorstate.</doc>
+      <return-value transfer-ownership="full">
+        <doc xml:space="preserve">the color state object for sRGB</doc>
+        <type name="ColorState" c:type="GdkColorState*"/>
+      </return-value>
+    </function>
+    <function name="color_state_get_srgb_linear" c:identifier="gdk_color_state_get_srgb_linear" moved-to="ColorState.get_srgb_linear" version="4.16">
+      <doc xml:space="preserve">Returns the color state object representing the linearized sRGB color space.
+
+This color state uses the primaries defined by BT.709-6 and a linear transfer function.
+
+It is equivalent to the [Cicp](class.CicpParams.html) tuple 1/8/0/1.
+
+See e.g. [the CSS Color Module](https://www.w3.org/TR/css-color-4/#predefined-sRGB-linear)
+for details about this colorstate.</doc>
+      <return-value transfer-ownership="full">
+        <doc xml:space="preserve">the color state object for linearized sRGB</doc>
+        <type name="ColorState" c:type="GdkColorState*"/>
+      </return-value>
     </function>
     <function name="content_deserialize_async" c:identifier="gdk_content_deserialize_async">
       <doc xml:space="preserve">Read content from the given input stream and deserialize it, asynchronously.
