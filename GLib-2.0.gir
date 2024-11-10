@@ -376,7 +376,7 @@ underlying array for use elsewhere. If the reference count of
 the size of  @array will be set to zero.
 
 If array contents point to dynamically-allocated memory, they should
-be freed separately if @free_seg is %TRUE and no @clear_func
+be freed separately if @free_segment is %TRUE and no @clear_func
 function has been set for @array.
 
 This function is not thread-safe. If using a #GArray from multiple
@@ -3207,45 +3207,49 @@ thread.</doc>
       </function>
     </record>
     <record name="Bytes" c:type="GBytes" opaque="1" copy-function="g_bytes_ref" free-function="g_bytes_unref" version="2.32" glib:type-name="GBytes" glib:get-type="g_bytes_get_type" c:symbol-prefix="bytes">
-      <doc xml:space="preserve">A simple refcounted data type representing an immutable sequence of zero or
-more bytes from an unspecified origin.
+      <doc xml:space="preserve">A simple reference counted data type representing an immutable sequence of
+zero or more bytes from an unspecified origin.
 
-The purpose of a #GBytes is to keep the memory region that it holds
+The purpose of a `GBytes` is to keep the memory region that it holds
 alive for as long as anyone holds a reference to the bytes.  When
 the last reference count is dropped, the memory is released. Multiple
-unrelated callers can use byte data in the #GBytes without coordinating
+unrelated callers can use byte data in the `GBytes` without coordinating
 their activities, resting assured that the byte data will not change or
 move while they hold a reference.
 
-A #GBytes can come from many different origins that may have
+A `GBytes` can come from many different origins that may have
 different procedures for freeing the memory region.  Examples are
-memory from g_malloc(), from memory slices, from a #GMappedFile or
-memory from other allocators.
+memory from [func@GLib.malloc], from memory slices, from a
+[struct@GLib.MappedFile] or memory from other allocators.
 
-#GBytes work well as keys in #GHashTable. Use g_bytes_equal() and
-g_bytes_hash() as parameters to g_hash_table_new() or g_hash_table_new_full().
-#GBytes can also be used as keys in a #GTree by passing the g_bytes_compare()
-function to g_tree_new().
+`GBytes` work well as keys in [struct@GLib.HashTable]. Use
+[method@GLib.Bytes.equal] and [method@GLib.Bytes.hash] as parameters to
+[func@GLib.HashTable.new] or [func@GLib.HashTable.new_full].
+`GBytes` can also be used as keys in a [struct@GLib.Tree] by passing the
+[method@GLib.Bytes.compare] function to [ctor@GLib.Tree.new].
 
 The data pointed to by this bytes must not be modified. For a mutable
-array of bytes see #GByteArray. Use g_bytes_unref_to_array() to create a
-mutable array for a #GBytes sequence. To create an immutable #GBytes from
-a mutable #GByteArray, use the g_byte_array_free_to_bytes() function.</doc>
+array of bytes see [struct@GLib.ByteArray]. Use
+[method@GLib.Bytes.unref_to_array] to create a mutable array for a `GBytes`
+sequence. To create an immutable `GBytes` from a mutable
+[struct@GLib.ByteArray], use the [func@GLib.ByteArray.free_to_bytes]
+function.</doc>
       <constructor name="new" c:identifier="g_bytes_new" version="2.32">
-        <doc xml:space="preserve">Creates a new #GBytes from @data.
+        <doc xml:space="preserve">Creates a new [struct@GLib.Bytes] from @data.
 
-@data is copied. If @size is 0, @data may be %NULL.
+@data is copied. If @size is 0, @data may be `NULL`.
 
-As an optimization, g_bytes_new() may avoid an extra allocation by copying
-the data within the resulting bytes structure if sufficiently small (since GLib 2.84).</doc>
+As an optimization, [ctor@GLib.Bytes.new] may avoid an extra allocation by
+copying the data within the resulting bytes structure if sufficiently small
+(since GLib 2.84).</doc>
         <return-value transfer-ownership="full">
-          <doc xml:space="preserve">a new #GBytes</doc>
+          <doc xml:space="preserve">a new [struct@GLib.Bytes]</doc>
           <type name="Bytes" c:type="GBytes*"/>
         </return-value>
         <parameters>
           <parameter name="data" transfer-ownership="none" nullable="1" allow-none="1">
             <doc xml:space="preserve">
-       the data to be used for the bytes</doc>
+  the data to be used for the bytes</doc>
             <array length="1" zero-terminated="0" c:type="gconstpointer">
               <type name="guint8"/>
             </array>
@@ -3257,18 +3261,18 @@ the data within the resulting bytes structure if sufficiently small (since GLib 
         </parameters>
       </constructor>
       <constructor name="new_static" c:identifier="g_bytes_new_static" version="2.32" introspectable="0">
-        <doc xml:space="preserve">Creates a new #GBytes from static data.
+        <doc xml:space="preserve">Creates a new [struct@GLib.Bytes] from static data.
 
-@data must be static (ie: never modified or freed). It may be %NULL if @size
+@data must be static (ie: never modified or freed). It may be `NULL` if @size
 is 0.</doc>
         <return-value transfer-ownership="full">
-          <doc xml:space="preserve">a new #GBytes</doc>
+          <doc xml:space="preserve">a new [struct@GLib.Bytes]</doc>
           <type name="Bytes" c:type="GBytes*"/>
         </return-value>
         <parameters>
           <parameter name="data" transfer-ownership="full" nullable="1" allow-none="1">
             <doc xml:space="preserve">
-       the data to be used for the bytes</doc>
+  the data to be used for the bytes</doc>
             <array length="1" zero-terminated="0" c:type="gconstpointer">
               <type name="guint8"/>
             </array>
@@ -3280,24 +3284,24 @@ is 0.</doc>
         </parameters>
       </constructor>
       <constructor name="new_take" c:identifier="g_bytes_new_take" version="2.32">
-        <doc xml:space="preserve">Creates a new #GBytes from @data.
+        <doc xml:space="preserve">Creates a new [struct@GLib.Bytes] from @data.
 
-After this call, @data belongs to the #GBytes and may no longer be
+After this call, @data belongs to the `GBytes` and may no longer be
 modified by the caller. The memory of @data has to be dynamically
-allocated and will eventually be freed with g_free().
+allocated and will eventually be freed with [func@GLib.free].
 
-For creating #GBytes with memory from other allocators, see
-g_bytes_new_with_free_func().
+For creating `GBytes` with memory from other allocators, see
+[ctor@GLib.Bytes.new_with_free_func].
 
-@data may be %NULL if @size is 0.</doc>
+@data may be `NULL` if @size is 0.</doc>
         <return-value transfer-ownership="full">
-          <doc xml:space="preserve">a new #GBytes</doc>
+          <doc xml:space="preserve">a new [struct@GLib.Bytes]</doc>
           <type name="Bytes" c:type="GBytes*"/>
         </return-value>
         <parameters>
           <parameter name="data" transfer-ownership="full" nullable="1" allow-none="1">
             <doc xml:space="preserve">
-       the data to be used for the bytes</doc>
+  the data to be used for the bytes</doc>
             <array length="1" zero-terminated="0" c:type="gpointer">
               <type name="guint8"/>
             </array>
@@ -3309,7 +3313,7 @@ g_bytes_new_with_free_func().
         </parameters>
       </constructor>
       <constructor name="new_with_free_func" c:identifier="g_bytes_new_with_free_func" version="2.32" introspectable="0">
-        <doc xml:space="preserve">Creates a #GBytes from @data.
+        <doc xml:space="preserve">Creates a [struct@GLib.Bytes] from @data.
 
 When the last reference is dropped, @free_func will be called with the
 @user_data argument.
@@ -3317,15 +3321,15 @@ When the last reference is dropped, @free_func will be called with the
 @data must not be modified after this call is made until @free_func has
 been called to indicate that the bytes is no longer in use.
 
-@data may be %NULL if @size is 0.</doc>
+@data may be `NULL` if @size is 0.</doc>
         <return-value transfer-ownership="full">
-          <doc xml:space="preserve">a new #GBytes</doc>
+          <doc xml:space="preserve">a new [struct@GLib.Bytes]</doc>
           <type name="Bytes" c:type="GBytes*"/>
         </return-value>
         <parameters>
           <parameter name="data" transfer-ownership="none" nullable="1" allow-none="1">
             <doc xml:space="preserve">
-       the data to be used for the bytes</doc>
+  the data to be used for the bytes</doc>
             <array length="1" zero-terminated="0" c:type="gconstpointer">
               <type name="guint8"/>
             </array>
@@ -3345,9 +3349,10 @@ been called to indicate that the bytes is no longer in use.
         </parameters>
       </constructor>
       <method name="compare" c:identifier="g_bytes_compare" version="2.32">
-        <doc xml:space="preserve">Compares the two #GBytes values.
+        <doc xml:space="preserve">Compares the two [struct@GLib.Bytes] values.
 
-This function can be used to sort GBytes instances in lexicographical order.
+This function can be used to sort `GBytes` instances in lexicographical
+order.
 
 If @bytes1 and @bytes2 have different length but the shorter one is a
 prefix of the longer one then the shorter one is considered to be less than
@@ -3356,60 +3361,62 @@ comparison. If @bytes1 has a smaller value at that position it is
 considered less, otherwise greater than @bytes2.</doc>
         <return-value transfer-ownership="none">
           <doc xml:space="preserve">a negative value if @bytes1 is less than @bytes2, a positive value
-         if @bytes1 is greater than @bytes2, and zero if @bytes1 is equal to
-         @bytes2</doc>
+  if @bytes1 is greater than @bytes2, and zero if @bytes1 is equal to @bytes2</doc>
           <type name="gint" c:type="gint"/>
         </return-value>
         <parameters>
           <instance-parameter name="bytes1" transfer-ownership="none">
-            <doc xml:space="preserve">a pointer to a #GBytes</doc>
+            <doc xml:space="preserve">a pointer to a [struct@GLib.Bytes]</doc>
             <type name="Bytes" c:type="gconstpointer"/>
           </instance-parameter>
           <parameter name="bytes2" transfer-ownership="none">
-            <doc xml:space="preserve">a pointer to a #GBytes to compare with @bytes1</doc>
+            <doc xml:space="preserve">a pointer to a [struct@GLib.Bytes] to compare with @bytes1</doc>
             <type name="Bytes" c:type="gconstpointer"/>
           </parameter>
         </parameters>
       </method>
       <method name="equal" c:identifier="g_bytes_equal" version="2.32">
-        <doc xml:space="preserve">Compares the two #GBytes values being pointed to and returns
-%TRUE if they are equal.
+        <doc xml:space="preserve">Compares the two [struct@GLib.Bytes] values being pointed to and returns
+`TRUE` if they are equal.
 
-This function can be passed to g_hash_table_new() as the @key_equal_func
-parameter, when using non-%NULL #GBytes pointers as keys in a #GHashTable.</doc>
+This function can be passed to [func@GLib.HashTable.new] as the
+@key_equal_func parameter, when using non-`NULL` `GBytes` pointers as keys in
+a [struct@GLib.HashTable].</doc>
         <return-value transfer-ownership="none">
-          <doc xml:space="preserve">%TRUE if the two keys match.</doc>
+          <doc xml:space="preserve">`TRUE` if the two keys match.</doc>
           <type name="gboolean" c:type="gboolean"/>
         </return-value>
         <parameters>
           <instance-parameter name="bytes1" transfer-ownership="none">
-            <doc xml:space="preserve">a pointer to a #GBytes</doc>
+            <doc xml:space="preserve">a pointer to a [struct@GLib.Bytes]</doc>
             <type name="Bytes" c:type="gconstpointer"/>
           </instance-parameter>
           <parameter name="bytes2" transfer-ownership="none">
-            <doc xml:space="preserve">a pointer to a #GBytes to compare with @bytes1</doc>
+            <doc xml:space="preserve">a pointer to a [struct@GLib.Bytes] to compare with @bytes1</doc>
             <type name="Bytes" c:type="gconstpointer"/>
           </parameter>
         </parameters>
       </method>
       <method name="get_data" c:identifier="g_bytes_get_data" version="2.32">
-        <doc xml:space="preserve">Get the byte data in the #GBytes. This data should not be modified.
+        <doc xml:space="preserve">Get the byte data in the [struct@GLib.Bytes].
 
-This function will always return the same pointer for a given #GBytes.
+This data should not be modified.
 
-%NULL may be returned if @size is 0. This is not guaranteed, as the #GBytes
-may represent an empty string with @data non-%NULL and @size as 0. %NULL will
-not be returned if @size is non-zero.</doc>
+This function will always return the same pointer for a given `GBytes`.
+
+`NULL` may be returned if @size is 0. This is not guaranteed, as the `GBytes`
+may represent an empty string with @data non-`NULL` and @size as 0. `NULL`
+will not be returned if @size is non-zero.</doc>
         <return-value transfer-ownership="none" nullable="1">
           <doc xml:space="preserve">
-         a pointer to the byte data, or %NULL</doc>
+  a pointer to the byte data</doc>
           <array length="0" zero-terminated="0" c:type="gconstpointer">
             <type name="guint8"/>
           </array>
         </return-value>
         <parameters>
           <instance-parameter name="bytes" transfer-ownership="none">
-            <doc xml:space="preserve">a #GBytes</doc>
+            <doc xml:space="preserve">a [struct@GLib.Bytes]</doc>
             <type name="Bytes" c:type="GBytes*"/>
           </instance-parameter>
           <parameter name="size" direction="out" caller-allocates="0" transfer-ownership="full" optional="1" allow-none="1">
@@ -3425,27 +3432,27 @@ The region starts at @offset many bytes from the start of the data
 and contains @n_elements many elements of @element_size size.
 
 @n_elements may be zero, but @element_size must always be non-zero.
-Ideally, @element_size is a static constant (eg: sizeof a struct).
+Ideally, @element_size is a static constant (eg: `sizeof` a struct).
 
 This function does careful bounds checking (including checking for
-arithmetic overflows) and returns a non-%NULL pointer if the
+arithmetic overflows) and returns a non-`NULL` pointer if the
 specified region lies entirely within the @bytes. If the region is
-in some way out of range, or if an overflow has occurred, then %NULL
+in some way out of range, or if an overflow has occurred, then `NULL`
 is returned.
 
 Note: it is possible to have a valid zero-size region. In this case,
 the returned pointer will be equal to the base pointer of the data of
-@bytes, plus @offset.  This will be non-%NULL except for the case
+@bytes, plus @offset.  This will be non-`NULL` except for the case
 where @bytes itself was a zero-sized region.  Since it is unlikely
 that you will be using this function to check for a zero-sized region
-in a zero-sized @bytes, %NULL effectively always means "error".</doc>
+in a zero-sized @bytes, `NULL` effectively always means &#x2018;error&#x2019;.</doc>
         <return-value transfer-ownership="none" nullable="1">
-          <doc xml:space="preserve">the requested region, or %NULL in case of an error</doc>
+          <doc xml:space="preserve">the requested region, or `NULL` in case of an error</doc>
           <type name="gpointer" c:type="gconstpointer"/>
         </return-value>
         <parameters>
           <instance-parameter name="bytes" transfer-ownership="none">
-            <doc xml:space="preserve">a #GBytes</doc>
+            <doc xml:space="preserve">a [struct@GLib.Bytes]</doc>
             <type name="Bytes" c:type="GBytes*"/>
           </instance-parameter>
           <parameter name="element_size" transfer-ownership="none">
@@ -3463,55 +3470,57 @@ in a zero-sized @bytes, %NULL effectively always means "error".</doc>
         </parameters>
       </method>
       <method name="get_size" c:identifier="g_bytes_get_size" version="2.32">
-        <doc xml:space="preserve">Get the size of the byte data in the #GBytes.
+        <doc xml:space="preserve">Get the size of the byte data in the [struct@GLib.Bytes].
 
-This function will always return the same value for a given #GBytes.</doc>
+This function will always return the same value for a given `GBytes`.</doc>
         <return-value transfer-ownership="none">
           <doc xml:space="preserve">the size</doc>
           <type name="gsize" c:type="gsize"/>
         </return-value>
         <parameters>
           <instance-parameter name="bytes" transfer-ownership="none">
-            <doc xml:space="preserve">a #GBytes</doc>
+            <doc xml:space="preserve">a [struct@GLib.Bytes]</doc>
             <type name="Bytes" c:type="GBytes*"/>
           </instance-parameter>
         </parameters>
       </method>
       <method name="hash" c:identifier="g_bytes_hash" version="2.32">
-        <doc xml:space="preserve">Creates an integer hash code for the byte data in the #GBytes.
+        <doc xml:space="preserve">Creates an integer hash code for the byte data in the [struct@GLib.Bytes].
 
-This function can be passed to g_hash_table_new() as the @key_hash_func
-parameter, when using non-%NULL #GBytes pointers as keys in a #GHashTable.</doc>
+This function can be passed to [func@GLib.HashTable.new] as the
+@key_hash_func parameter, when using non-`NULL` `GBytes` pointers as keys in
+a [struct@GLib.HashTable].</doc>
         <return-value transfer-ownership="none">
           <doc xml:space="preserve">a hash value corresponding to the key.</doc>
           <type name="guint" c:type="guint"/>
         </return-value>
         <parameters>
           <instance-parameter name="bytes" transfer-ownership="none">
-            <doc xml:space="preserve">a pointer to a #GBytes key</doc>
+            <doc xml:space="preserve">a pointer to a [struct@GLib.Bytes] key</doc>
             <type name="Bytes" c:type="gconstpointer"/>
           </instance-parameter>
         </parameters>
       </method>
       <method name="new_from_bytes" c:identifier="g_bytes_new_from_bytes" version="2.32">
-        <doc xml:space="preserve">Creates a #GBytes which is a subsection of another #GBytes. The @offset +
-@length may not be longer than the size of @bytes.
+        <doc xml:space="preserve">Creates a [struct@GLib.Bytes] which is a subsection of another `GBytes`.
 
-A reference to @bytes will be held by the newly created #GBytes until
+The @offset + @length may not be longer than the size of @bytes.
+
+A reference to @bytes will be held by the newly created `GBytes` until
 the byte data is no longer needed.
 
 Since 2.56, if @offset is 0 and @length matches the size of @bytes, then
 @bytes will be returned with the reference count incremented by 1. If @bytes
-is a slice of another #GBytes, then the resulting #GBytes will reference
-the same #GBytes instead of @bytes. This allows consumers to simplify the
-usage of #GBytes when asynchronously writing to streams.</doc>
+is a slice of another `GBytes`, then the resulting `GBytes` will reference
+the same `GBytes` instead of @bytes. This allows consumers to simplify the
+usage of `GBytes` when asynchronously writing to streams.</doc>
         <return-value transfer-ownership="full">
-          <doc xml:space="preserve">a new #GBytes</doc>
+          <doc xml:space="preserve">a new [struct@GLib.Bytes]</doc>
           <type name="Bytes" c:type="GBytes*"/>
         </return-value>
         <parameters>
           <instance-parameter name="bytes" transfer-ownership="none">
-            <doc xml:space="preserve">a #GBytes</doc>
+            <doc xml:space="preserve">a [struct@GLib.Bytes]</doc>
             <type name="Bytes" c:type="GBytes*"/>
           </instance-parameter>
           <parameter name="offset" transfer-ownership="none">
@@ -3527,51 +3536,55 @@ usage of #GBytes when asynchronously writing to streams.</doc>
       <method name="ref" c:identifier="g_bytes_ref" version="2.32">
         <doc xml:space="preserve">Increase the reference count on @bytes.</doc>
         <return-value transfer-ownership="full">
-          <doc xml:space="preserve">the #GBytes</doc>
+          <doc xml:space="preserve">the [struct@GLib.Bytes]</doc>
           <type name="Bytes" c:type="GBytes*"/>
         </return-value>
         <parameters>
           <instance-parameter name="bytes" transfer-ownership="none">
-            <doc xml:space="preserve">a #GBytes</doc>
+            <doc xml:space="preserve">a [struct@GLib.Bytes]</doc>
             <type name="Bytes" c:type="GBytes*"/>
           </instance-parameter>
         </parameters>
       </method>
       <method name="unref" c:identifier="g_bytes_unref" version="2.32">
-        <doc xml:space="preserve">Releases a reference on @bytes.  This may result in the bytes being
-freed. If @bytes is %NULL, it will return immediately.</doc>
+        <doc xml:space="preserve">Releases a reference on @bytes.
+
+This may result in the bytes being freed. If @bytes is `NULL`, it will
+return immediately.</doc>
         <return-value transfer-ownership="none">
           <type name="none" c:type="void"/>
         </return-value>
         <parameters>
           <instance-parameter name="bytes" transfer-ownership="none" nullable="1" allow-none="1">
-            <doc xml:space="preserve">a #GBytes</doc>
+            <doc xml:space="preserve">a [struct@GLib.Bytes]</doc>
             <type name="Bytes" c:type="GBytes*"/>
           </instance-parameter>
         </parameters>
       </method>
       <method name="unref_to_array" c:identifier="g_bytes_unref_to_array" version="2.32">
-        <doc xml:space="preserve">Unreferences the bytes, and returns a new mutable #GByteArray containing
-the same byte data.
+        <doc xml:space="preserve">Unreferences the bytes, and returns a new mutable [struct@GLib.ByteArray]
+containing the same byte data.
 
 As an optimization, the byte data is transferred to the array without copying
-if this was the last reference to bytes and bytes was created with
-g_bytes_new(), g_bytes_new_take() or g_byte_array_free_to_bytes() and the
-buffer was larger than the size #GBytes may internalize within its allocation.
-In all other cases the data is copied.
+if this was the last reference to @bytes and @bytes was created with
+[ctor@GLib.Bytes.new], [ctor@GLib.Bytes.new_take] or
+[func@GLib.ByteArray.free_to_bytes] and the buffer was larger than the size
+[struct@GLib.Bytes] may internalize within its allocation. In all other cases
+the data is copied.
 
 Do not use it if @bytes contains more than %G_MAXUINT
-bytes. #GByteArray stores the length of its data in #guint, which
-may be shorter than #gsize, that @bytes is using.</doc>
+bytes. [struct@GLib.ByteArray] stores the length of its data in `guint`,
+which may be shorter than `gsize`, that @bytes is using.</doc>
         <return-value transfer-ownership="full">
-          <doc xml:space="preserve">a new mutable #GByteArray containing the same byte data</doc>
+          <doc xml:space="preserve">a new mutable [struct@GLib.ByteArray] containing
+  the same byte data</doc>
           <array name="GLib.ByteArray" c:type="GByteArray*">
             <type name="guint8" c:type="guint8"/>
           </array>
         </return-value>
         <parameters>
           <instance-parameter name="bytes" transfer-ownership="full">
-            <doc xml:space="preserve">a #GBytes</doc>
+            <doc xml:space="preserve">a [struct@GLib.Bytes]</doc>
             <type name="Bytes" c:type="GBytes*"/>
           </instance-parameter>
         </parameters>
@@ -3581,20 +3594,21 @@ may be shorter than #gsize, that @bytes is using.</doc>
 contents.
 
 As an optimization, the byte data is returned without copying if this was
-the last reference to bytes and bytes was created with g_bytes_new(),
-g_bytes_new_take() or g_byte_array_free_to_bytes() and the buffer was larger
-than the size #GBytes may internalize within its allocation. In all other
-cases the data is copied.</doc>
+the last reference to @bytes and @bytes was created with
+[ctor@GLib.Bytes.new], [ctor@GLib.Bytes.new_take] or
+[func@GLib.ByteArray.free_to_bytes] and the buffer was larger than the size
+[struct@GLib.Bytes] may internalize within its allocation. In all other cases
+the data is copied.</doc>
         <return-value transfer-ownership="full">
-          <doc xml:space="preserve">a pointer to the same byte data, which should be
-         freed with g_free()</doc>
+          <doc xml:space="preserve">
+  a pointer to the same byte data, which should be freed with [func@GLib.free]</doc>
           <array length="0" zero-terminated="0" c:type="gpointer">
             <type name="guint8"/>
           </array>
         </return-value>
         <parameters>
           <instance-parameter name="bytes" transfer-ownership="full">
-            <doc xml:space="preserve">a #GBytes</doc>
+            <doc xml:space="preserve">a [struct@GLib.Bytes]</doc>
             <type name="Bytes" c:type="GBytes*"/>
           </instance-parameter>
           <parameter name="size" direction="out" caller-allocates="0" transfer-ownership="full">
@@ -20452,7 +20466,7 @@ add elements to or remove elements from the array.</doc>
         </parameters>
       </function>
       <function name="free" c:identifier="g_ptr_array_free" introspectable="0">
-        <doc xml:space="preserve">Frees the memory allocated for the #GPtrArray. If @free_seg is %TRUE
+        <doc xml:space="preserve">Frees the memory allocated for the #GPtrArray. If @free_segment is %TRUE
 it frees the memory block holding the elements as well. Pass %FALSE
 if you want to free the #GPtrArray wrapper but preserve the
 underlying array for use elsewhere. If the reference count of @array
@@ -20460,10 +20474,10 @@ is greater than one, the #GPtrArray wrapper is preserved but the
 size of @array will be set to zero.
 
 If array contents point to dynamically-allocated memory, they should
-be freed separately if @free_seg is %TRUE and no #GDestroyNotify
+be freed separately if @free_segment is %TRUE and no #GDestroyNotify
 function has been set for @array.
 
-Note that if the array is %NULL terminated and @free_seg is %FALSE
+Note that if the array is %NULL terminated and @free_segment is %FALSE
 then this will always return an allocated %NULL terminated buffer.
 If pdata is previously %NULL, a new buffer will be allocated.
 
@@ -20471,7 +20485,7 @@ This function is not thread-safe. If using a #GPtrArray from multiple
 threads, use only the atomic g_ptr_array_ref() and g_ptr_array_unref()
 functions.</doc>
         <return-value transfer-ownership="full" nullable="1">
-          <doc xml:space="preserve">the pointer array if @free_seg is
+          <doc xml:space="preserve">the pointer array if @free_segment is
     %FALSE, otherwise %NULL. The pointer array should be freed using g_free().</doc>
           <type name="gpointer" c:type="gpointer*"/>
         </return-value>
@@ -20482,7 +20496,7 @@ functions.</doc>
               <type name="gpointer" c:type="gpointer"/>
             </array>
           </parameter>
-          <parameter name="free_seg" transfer-ownership="none">
+          <parameter name="free_segment" transfer-ownership="none">
             <doc xml:space="preserve">if %TRUE the actual pointer array is freed as well</doc>
             <type name="gboolean" c:type="gboolean"/>
           </parameter>
@@ -34022,6 +34036,27 @@ See [Unicode Standard Annex #24: Script names](http://www.unicode.org/reports/tr
       <member name="nag_mundari" value="164" c:identifier="G_UNICODE_SCRIPT_NAG_MUNDARI" glib:nick="nag-mundari" glib:name="G_UNICODE_SCRIPT_NAG_MUNDARI">
         <doc xml:space="preserve">Nag Mundari. Since 2.74</doc>
       </member>
+      <member name="todhri" value="165" c:identifier="G_UNICODE_SCRIPT_TODHRI" glib:nick="todhri" glib:name="G_UNICODE_SCRIPT_TODHRI">
+        <doc xml:space="preserve">Todhri. Since: 2.84</doc>
+      </member>
+      <member name="garay" value="166" c:identifier="G_UNICODE_SCRIPT_GARAY" glib:nick="garay" glib:name="G_UNICODE_SCRIPT_GARAY">
+        <doc xml:space="preserve">Garay. Since: 2.84</doc>
+      </member>
+      <member name="tulu_tigalari" value="167" c:identifier="G_UNICODE_SCRIPT_TULU_TIGALARI" glib:nick="tulu-tigalari" glib:name="G_UNICODE_SCRIPT_TULU_TIGALARI">
+        <doc xml:space="preserve">Tulu-Tigalari. Since: 2.84</doc>
+      </member>
+      <member name="sunuwar" value="168" c:identifier="G_UNICODE_SCRIPT_SUNUWAR" glib:nick="sunuwar" glib:name="G_UNICODE_SCRIPT_SUNUWAR">
+        <doc xml:space="preserve">Sunuwar. Since: 2.84</doc>
+      </member>
+      <member name="gurung_khema" value="169" c:identifier="G_UNICODE_SCRIPT_GURUNG_KHEMA" glib:nick="gurung-khema" glib:name="G_UNICODE_SCRIPT_GURUNG_KHEMA">
+        <doc xml:space="preserve">Gurung Khema. Since: 2.84</doc>
+      </member>
+      <member name="kirat_rai" value="170" c:identifier="G_UNICODE_SCRIPT_KIRAT_RAI" glib:nick="kirat-rai" glib:name="G_UNICODE_SCRIPT_KIRAT_RAI">
+        <doc xml:space="preserve">Kirat Rai. Since: 2.84</doc>
+      </member>
+      <member name="ol_onal" value="171" c:identifier="G_UNICODE_SCRIPT_OL_ONAL" glib:nick="ol-onal" glib:name="G_UNICODE_SCRIPT_OL_ONAL">
+        <doc xml:space="preserve">Ol Onal. Since: 2.84</doc>
+      </member>
       <function name="from_iso15924" c:identifier="g_unicode_script_from_iso15924" version="2.30">
         <doc xml:space="preserve">Looks up the Unicode script for @iso15924.  ISO 15924 assigns four-letter
 codes to scripts.  For example, the code for Arabic is 'Arab'.
@@ -35802,28 +35837,53 @@ enumeration.</doc>
       </member>
     </enumeration>
     <function-macro name="VARIANT_BUILDER_INIT" c:identifier="G_VARIANT_BUILDER_INIT" version="2.50" introspectable="0">
-      <doc xml:space="preserve">A stack-allocated #GVariantBuilder must be initialized if it is
-used together with g_auto() to avoid warnings or crashes if
-function returns before g_variant_builder_init() is called on the
-builder.
+      <doc xml:space="preserve">A stack-allocated [struct@GLib.VariantBuilder] must be initialized
+if it is used together with
+[`g_auto()`](auto-cleanup.html#variable-declaration). This macro can
+be used as initializer when declaring the builder, but it cannot be
+assigned to a variable.
 
-This macro can be used as initializer instead of an
-explicit zeroing a variable when declaring it and a following
-g_variant_builder_init(), but it cannot be assigned to a variable.
+The effects of initializing the builder with
+`G_VARIANT_BUILDER_INIT` is the same as initializing it with
+[func@GLib.VARIANT_BUILDER_INIT_UNSET], followed by a call to
+[method@GLib.VariantBuilder.init].
 
-The passed @variant_type should be a static GVariantType to avoid
-lifetime issues, as copying the @variant_type does not happen in
-the G_VARIANT_BUILDER_INIT() call, but rather in functions that
-make sure that #GVariantBuilder is valid.
+The passed @variant_type should be a static [type@GLib.VariantType]
+to avoid lifetime issues, as copying the @variant_type does not
+happen in the `G_VARIANT_BUILDER_INIT` call, but rather in functions
+that make sure that [struct@GLib.VariantBuilder] is valid.
 
-|[&lt;!-- language="C" --&gt;
+```c
   g_auto(GVariantBuilder) builder = G_VARIANT_BUILDER_INIT (G_VARIANT_TYPE_BYTESTRING);
-]|</doc>
+```</doc>
       <parameters>
         <parameter name="variant_type">
           <doc xml:space="preserve">a const GVariantType*</doc>
         </parameter>
       </parameters>
+    </function-macro>
+    <function-macro name="VARIANT_BUILDER_INIT_UNSET" c:identifier="G_VARIANT_BUILDER_INIT_UNSET" version="2.84" introspectable="0">
+      <doc xml:space="preserve">A stack-allocated [struct@GLib.VariantBuilder] must be initialized
+if it is used together with
+[`g_auto()`](auto-cleanup.html#variable-declaration). This macro can
+be used as initializer when declaring the builder, but it cannot be
+assigned to a variable.
+
+The builder can be initialized to a specific [type@GLib.VariantType]
+later with [method@GLib.VariantBuilder.init].
+
+Use [func@GLib.VARIANT_BUILDER_INIT] to directly initialize the
+builder with a specific [type@GLib.VariantType].
+
+```c
+  g_auto(GVariantBuilder) builder = G_VARIANT_BUILDER_INIT_UNSET ();
+
+  if (condition)
+    return NULL;
+
+  g_variant_builder_init (&amp;builder, G_VARIANT_TYPE ("a{su}"));
+  return g_variant_ref_sink (g_variant_builder_end (&amp;builder));
+```</doc>
     </function-macro>
     <function-macro name="VARIANT_DICT_INIT" c:identifier="G_VARIANT_DICT_INIT" version="2.50" introspectable="0">
       <doc xml:space="preserve">A stack-allocated #GVariantDict must be initialized if it is used
@@ -35854,18 +35914,19 @@ initialized with G_VARIANT_DICT_INIT().
       </parameters>
     </function-macro>
     <function-macro name="VARIANT_TYPE" c:identifier="G_VARIANT_TYPE" introspectable="0">
-      <doc xml:space="preserve">Converts a string to a const #GVariantType.  Depending on the
-current debugging level, this function may perform a runtime check
-to ensure that @string is a valid GVariant type string.
+      <doc xml:space="preserve">Converts a string to a const [type@GLib.VariantType].
+
+Depending on the current debugging level, this function may perform a runtime
+check to ensure that @string is a valid [type@GLib.Variant] type string.
 
 It is always a programmer error to use this macro with an invalid
-type string. If in doubt, use g_variant_type_string_is_valid() to
+type string. If in doubt, use [func@GLib.variant_type_string_is_valid] to
 check if the string is valid.
 
 Since 2.24</doc>
       <parameters>
         <parameter name="type_string">
-          <doc xml:space="preserve">a well-formed #GVariantType type string</doc>
+          <doc xml:space="preserve">a well-formed [type@GLib.VariantType] type string</doc>
         </parameter>
       </parameters>
     </function-macro>
@@ -39726,19 +39787,20 @@ so this type string corresponds to `G_VARIANT_TYPE_DICTIONARY`. Note
 that, due to the restriction that the key of a dictionary entry must
 be a basic type, `{**}` is not a valid type string.</doc>
       <constructor name="new" c:identifier="g_variant_type_new" version="2.24">
-        <doc xml:space="preserve">Creates a new #GVariantType corresponding to the type string given
-by @type_string.  It is appropriate to call g_variant_type_free() on
-the return value.
+        <doc xml:space="preserve">Creates a new [type@GLib.VariantType] corresponding to the type string given
+by @type_string.
+
+It is appropriate to call [method@GLib.VariantType.free] on the return value.
 
 It is a programmer error to call this function with an invalid type
-string.  Use g_variant_type_string_is_valid() if you are unsure.</doc>
+string.  Use [func@GLib.VariantType.string_is_valid] if you are unsure.</doc>
         <return-value transfer-ownership="full">
-          <doc xml:space="preserve">a new #GVariantType</doc>
+          <doc xml:space="preserve">a new [type@GLib.VariantType]</doc>
           <type name="VariantType" c:type="GVariantType*"/>
         </return-value>
         <parameters>
           <parameter name="type_string" transfer-ownership="none">
-            <doc xml:space="preserve">a valid GVariant type string</doc>
+            <doc xml:space="preserve">a valid [GVariant type string](./struct.VariantType.html#gvariant-type-strings)</doc>
             <type name="utf8" c:type="const gchar*"/>
           </parameter>
         </parameters>
@@ -39747,16 +39809,15 @@ string.  Use g_variant_type_string_is_valid() if you are unsure.</doc>
         <doc xml:space="preserve">Constructs the type corresponding to an array of elements of the
 type @type.
 
-It is appropriate to call g_variant_type_free() on the return value.</doc>
+It is appropriate to call [method@GLib.VariantType.first] on the return value.</doc>
         <return-value transfer-ownership="full">
-          <doc xml:space="preserve">a new array #GVariantType
-
+          <doc xml:space="preserve">a new array type
 Since 2.24</doc>
           <type name="VariantType" c:type="GVariantType*"/>
         </return-value>
         <parameters>
           <parameter name="element" transfer-ownership="none">
-            <doc xml:space="preserve">a #GVariantType</doc>
+            <doc xml:space="preserve">an element type</doc>
             <type name="VariantType" c:type="const GVariantType*"/>
           </parameter>
         </parameters>
@@ -39765,38 +39826,36 @@ Since 2.24</doc>
         <doc xml:space="preserve">Constructs the type corresponding to a dictionary entry with a key
 of type @key and a value of type @value.
 
-It is appropriate to call g_variant_type_free() on the return value.</doc>
+It is appropriate to call [method@GLib.VariantType.free] on the return value.</doc>
         <return-value transfer-ownership="full">
-          <doc xml:space="preserve">a new dictionary entry #GVariantType
-
+          <doc xml:space="preserve">a new dictionary entry type
 Since 2.24</doc>
           <type name="VariantType" c:type="GVariantType*"/>
         </return-value>
         <parameters>
           <parameter name="key" transfer-ownership="none">
-            <doc xml:space="preserve">a basic #GVariantType</doc>
+            <doc xml:space="preserve">a basic type to use for the key</doc>
             <type name="VariantType" c:type="const GVariantType*"/>
           </parameter>
           <parameter name="value" transfer-ownership="none">
-            <doc xml:space="preserve">a #GVariantType</doc>
+            <doc xml:space="preserve">a type to use for the value</doc>
             <type name="VariantType" c:type="const GVariantType*"/>
           </parameter>
         </parameters>
       </constructor>
       <constructor name="new_maybe" c:identifier="g_variant_type_new_maybe">
-        <doc xml:space="preserve">Constructs the type corresponding to a maybe instance containing
-type @type or Nothing.
+        <doc xml:space="preserve">Constructs the type corresponding to a &#x2018;maybe&#x2019; instance containing
+type @type or `Nothing`.
 
-It is appropriate to call g_variant_type_free() on the return value.</doc>
+It is appropriate to call [method@GLib.VariantType.free] on the return value.</doc>
         <return-value transfer-ownership="full">
-          <doc xml:space="preserve">a new maybe #GVariantType
-
+          <doc xml:space="preserve">a new &#x2018;maybe&#x2019; type
 Since 2.24</doc>
           <type name="VariantType" c:type="GVariantType*"/>
         </return-value>
         <parameters>
           <parameter name="element" transfer-ownership="none">
-            <doc xml:space="preserve">a #GVariantType</doc>
+            <doc xml:space="preserve">an element type</doc>
             <type name="VariantType" c:type="const GVariantType*"/>
           </parameter>
         </parameters>
@@ -39804,75 +39863,74 @@ Since 2.24</doc>
       <constructor name="new_tuple" c:identifier="g_variant_type_new_tuple">
         <doc xml:space="preserve">Constructs a new tuple type, from @items.
 
-@length is the number of items in @items, or -1 to indicate that
-@items is %NULL-terminated.
+@length is the number of items in @items, or `-1` to indicate that
+@items is `NULL`-terminated.
 
-It is appropriate to call g_variant_type_free() on the return value.</doc>
+It is appropriate to call [method@GLib.VariantType.free] on the return value.</doc>
         <return-value transfer-ownership="full">
-          <doc xml:space="preserve">a new tuple #GVariantType
-
+          <doc xml:space="preserve">a new tuple type
 Since 2.24</doc>
           <type name="VariantType" c:type="GVariantType*"/>
         </return-value>
         <parameters>
           <parameter name="items" transfer-ownership="none">
-            <doc xml:space="preserve">an array of #GVariantTypes, one for each item</doc>
+            <doc xml:space="preserve">an array of types, one for each item</doc>
             <array length="1" zero-terminated="0" c:type="const GVariantType* const*">
               <type name="VariantType" c:type="GVariantType*"/>
             </array>
           </parameter>
           <parameter name="length" transfer-ownership="none">
-            <doc xml:space="preserve">the length of @items, or -1</doc>
+            <doc xml:space="preserve">the length of @items, or `-1`</doc>
             <type name="gint" c:type="gint"/>
           </parameter>
         </parameters>
       </constructor>
       <method name="copy" c:identifier="g_variant_type_copy">
-        <doc xml:space="preserve">Makes a copy of a #GVariantType.  It is appropriate to call
-g_variant_type_free() on the return value.  @type may not be %NULL.</doc>
-        <return-value transfer-ownership="full">
-          <doc xml:space="preserve">a new #GVariantType
+        <doc xml:space="preserve">Makes a copy of a [type@GLib.VariantType].
 
+It is appropriate to call [method@GLib.VariantType.free] on the return value.
+@type may not be `NULL`.</doc>
+        <return-value transfer-ownership="full">
+          <doc xml:space="preserve">a new [type@GLib.VariantType]
 Since 2.24</doc>
           <type name="VariantType" c:type="GVariantType*"/>
         </return-value>
         <parameters>
           <instance-parameter name="type" transfer-ownership="none">
-            <doc xml:space="preserve">a #GVariantType</doc>
+            <doc xml:space="preserve">type to copy</doc>
             <type name="VariantType" c:type="const GVariantType*"/>
           </instance-parameter>
         </parameters>
       </method>
       <method name="dup_string" c:identifier="g_variant_type_dup_string">
-        <doc xml:space="preserve">Returns a newly-allocated copy of the type string corresponding to
-@type.  The returned string is nul-terminated.  It is appropriate to
-call g_free() on the return value.</doc>
+        <doc xml:space="preserve">Returns a newly-allocated copy of the type string corresponding to @type.
+
+The returned string is nul-terminated.  It is appropriate to call
+[func@GLib.free] on the return value.</doc>
         <return-value transfer-ownership="full">
           <doc xml:space="preserve">the corresponding type string
-
 Since 2.24</doc>
           <type name="utf8" c:type="gchar*"/>
         </return-value>
         <parameters>
           <instance-parameter name="type" transfer-ownership="none">
-            <doc xml:space="preserve">a #GVariantType</doc>
+            <doc xml:space="preserve">type to copy</doc>
             <type name="VariantType" c:type="const GVariantType*"/>
           </instance-parameter>
         </parameters>
       </method>
       <method name="element" c:identifier="g_variant_type_element">
-        <doc xml:space="preserve">Determines the element type of an array or maybe type.
+        <doc xml:space="preserve">Determines the element type of an array or &#x2018;maybe&#x2019; type.
 
-This function may only be used with array or maybe types.</doc>
+This function may only be used with array or &#x2018;maybe&#x2019; types.</doc>
         <return-value transfer-ownership="none">
           <doc xml:space="preserve">the element type of @type
-
 Since 2.24</doc>
           <type name="VariantType" c:type="const GVariantType*"/>
         </return-value>
         <parameters>
           <instance-parameter name="type" transfer-ownership="none">
-            <doc xml:space="preserve">an array or maybe #GVariantType</doc>
+            <doc xml:space="preserve">an array or &#x2018;maybe&#x2019; type</doc>
             <type name="VariantType" c:type="const GVariantType*"/>
           </instance-parameter>
         </parameters>
@@ -39880,27 +39938,26 @@ Since 2.24</doc>
       <method name="equal" c:identifier="g_variant_type_equal">
         <doc xml:space="preserve">Compares @type1 and @type2 for equality.
 
-Only returns %TRUE if the types are exactly equal.  Even if one type
-is an indefinite type and the other is a subtype of it, %FALSE will
+Only returns true if the types are exactly equal.  Even if one type
+is an indefinite type and the other is a subtype of it, false will
 be returned if they are not exactly equal.  If you want to check for
-subtypes, use g_variant_type_is_subtype_of().
+subtypes, use [method@GLib.VariantType.is_subtype_of].
 
-The argument types of @type1 and @type2 are only #gconstpointer to
-allow use with #GHashTable without function pointer casting.  For
-both arguments, a valid #GVariantType must be provided.</doc>
+The argument types of @type1 and @type2 are only `gconstpointer` to
+allow use with [type@GLib.HashTable] without function pointer casting.  For
+both arguments, a valid [type@GLib.VariantType] must be provided.</doc>
         <return-value transfer-ownership="none">
-          <doc xml:space="preserve">%TRUE if @type1 and @type2 are exactly equal
-
+          <doc xml:space="preserve">true if @type1 and @type2 are exactly equal
 Since 2.24</doc>
           <type name="gboolean" c:type="gboolean"/>
         </return-value>
         <parameters>
           <instance-parameter name="type1" transfer-ownership="none">
-            <doc xml:space="preserve">a #GVariantType</doc>
+            <doc xml:space="preserve">type to compare</doc>
             <type name="VariantType" c:type="gconstpointer"/>
           </instance-parameter>
           <parameter name="type2" transfer-ownership="none">
-            <doc xml:space="preserve">a #GVariantType</doc>
+            <doc xml:space="preserve">another type to compare</doc>
             <type name="VariantType" c:type="gconstpointer"/>
           </parameter>
         </parameters>
@@ -39911,34 +39968,34 @@ type.
 
 This function may only be used with tuple or dictionary entry types,
 but must not be used with the generic tuple type
-%G_VARIANT_TYPE_TUPLE.
+`G_VARIANT_TYPE_TUPLE`.
 
 In the case of a dictionary entry type, this returns the type of
 the key.
 
-%NULL is returned in case of @type being %G_VARIANT_TYPE_UNIT.
+`NULL` is returned in case of @type being `G_VARIANT_TYPE_UNIT`.
 
-This call, together with g_variant_type_next() provides an iterator
+This call, together with [method@GLib.VariantType.next] provides an iterator
 interface over tuple and dictionary entry types.</doc>
-        <return-value transfer-ownership="none">
-          <doc xml:space="preserve">the first item type of @type, or %NULL
-
+        <return-value transfer-ownership="none" nullable="1">
+          <doc xml:space="preserve">the first item type of @type, or `NULL`
+  if the type has no item types
 Since 2.24</doc>
           <type name="VariantType" c:type="const GVariantType*"/>
         </return-value>
         <parameters>
           <instance-parameter name="type" transfer-ownership="none">
-            <doc xml:space="preserve">a tuple or dictionary entry #GVariantType</doc>
+            <doc xml:space="preserve">a tuple or dictionary entry type</doc>
             <type name="VariantType" c:type="const GVariantType*"/>
           </instance-parameter>
         </parameters>
       </method>
       <method name="free" c:identifier="g_variant_type_free">
-        <doc xml:space="preserve">Frees a #GVariantType that was allocated with
-g_variant_type_copy(), g_variant_type_new() or one of the container
-type constructor functions.
+        <doc xml:space="preserve">Frees a [type@GLib.VariantType] that was allocated with
+[method@GLib.VariantType.copy], [ctor@GLib.VariantType.new] or one of the
+container type constructor functions.
 
-In the case that @type is %NULL, this function does nothing.
+In the case that @type is `NULL`, this function does nothing.
 
 Since 2.24</doc>
         <return-value transfer-ownership="none">
@@ -39946,24 +40003,24 @@ Since 2.24</doc>
         </return-value>
         <parameters>
           <instance-parameter name="type" transfer-ownership="none" nullable="1" allow-none="1">
-            <doc xml:space="preserve">a #GVariantType, or %NULL</doc>
+            <doc xml:space="preserve">type to free</doc>
             <type name="VariantType" c:type="GVariantType*"/>
           </instance-parameter>
         </parameters>
       </method>
       <method name="get_string_length" c:identifier="g_variant_type_get_string_length">
-        <doc xml:space="preserve">Returns the length of the type string corresponding to the given
-@type.  This function must be used to determine the valid extent of
-the memory region returned by g_variant_type_peek_string().</doc>
+        <doc xml:space="preserve">Returns the length of the type string corresponding to the given @type.
+
+This function must be used to determine the valid extent of
+the memory region returned by [method@GLib.VariantType.peek_string].</doc>
         <return-value transfer-ownership="none">
           <doc xml:space="preserve">the length of the corresponding type string
-
 Since 2.24</doc>
           <type name="gsize" c:type="gsize"/>
         </return-value>
         <parameters>
           <instance-parameter name="type" transfer-ownership="none">
-            <doc xml:space="preserve">a #GVariantType</doc>
+            <doc xml:space="preserve">type to measure</doc>
             <type name="VariantType" c:type="const GVariantType*"/>
           </instance-parameter>
         </parameters>
@@ -39971,38 +40028,37 @@ Since 2.24</doc>
       <method name="hash" c:identifier="g_variant_type_hash">
         <doc xml:space="preserve">Hashes @type.
 
-The argument type of @type is only #gconstpointer to allow use with
-#GHashTable without function pointer casting.  A valid
-#GVariantType must be provided.</doc>
+The argument type of @type is only `gconstpointer` to allow use with
+[type@GLib.HashTable] without function pointer casting.  A valid
+[type@GLib.VariantType] must be provided.</doc>
         <return-value transfer-ownership="none">
           <doc xml:space="preserve">the hash value
-
 Since 2.24</doc>
           <type name="guint" c:type="guint"/>
         </return-value>
         <parameters>
           <instance-parameter name="type" transfer-ownership="none">
-            <doc xml:space="preserve">a #GVariantType</doc>
+            <doc xml:space="preserve">type to hash</doc>
             <type name="VariantType" c:type="gconstpointer"/>
           </instance-parameter>
         </parameters>
       </method>
       <method name="is_array" c:identifier="g_variant_type_is_array">
-        <doc xml:space="preserve">Determines if the given @type is an array type.  This is true if the
-type string for @type starts with an 'a'.
+        <doc xml:space="preserve">Determines if the given @type is an array type.
 
-This function returns %TRUE for any indefinite type for which every
-definite subtype is an array type -- %G_VARIANT_TYPE_ARRAY, for
+This is true if the type string for @type starts with an `a`.
+
+This function returns true for any indefinite type for which every
+definite subtype is an array type &#x2014; `G_VARIANT_TYPE_ARRAY`, for
 example.</doc>
         <return-value transfer-ownership="none">
-          <doc xml:space="preserve">%TRUE if @type is an array type
-
+          <doc xml:space="preserve">true if @type is an array type
 Since 2.24</doc>
           <type name="gboolean" c:type="gboolean"/>
         </return-value>
         <parameters>
           <instance-parameter name="type" transfer-ownership="none">
-            <doc xml:space="preserve">a #GVariantType</doc>
+            <doc xml:space="preserve">type to check</doc>
             <type name="VariantType" c:type="const GVariantType*"/>
           </instance-parameter>
         </parameters>
@@ -40015,17 +40071,16 @@ paths and signatures.
 
 Only a basic type may be used as the key of a dictionary entry.
 
-This function returns %FALSE for all indefinite types except
-%G_VARIANT_TYPE_BASIC.</doc>
+This function returns `FALSE` for all indefinite types except
+`G_VARIANT_TYPE_BASIC`.</doc>
         <return-value transfer-ownership="none">
-          <doc xml:space="preserve">%TRUE if @type is a basic type
-
+          <doc xml:space="preserve">true if @type is a basic type
 Since 2.24</doc>
           <type name="gboolean" c:type="gboolean"/>
         </return-value>
         <parameters>
           <instance-parameter name="type" transfer-ownership="none">
-            <doc xml:space="preserve">a #GVariantType</doc>
+            <doc xml:space="preserve">type to check</doc>
             <type name="VariantType" c:type="const GVariantType*"/>
           </instance-parameter>
         </parameters>
@@ -40036,18 +40091,17 @@ Since 2.24</doc>
 Container types are any array, maybe, tuple, or dictionary
 entry types plus the variant type.
 
-This function returns %TRUE for any indefinite type for which every
-definite subtype is a container -- %G_VARIANT_TYPE_ARRAY, for
+This function returns true for any indefinite type for which every
+definite subtype is a container &#x2014; `G_VARIANT_TYPE_ARRAY`, for
 example.</doc>
         <return-value transfer-ownership="none">
-          <doc xml:space="preserve">%TRUE if @type is a container type
-
+          <doc xml:space="preserve">true if @type is a container type
 Since 2.24</doc>
           <type name="gboolean" c:type="gboolean"/>
         </return-value>
         <parameters>
           <instance-parameter name="type" transfer-ownership="none">
-            <doc xml:space="preserve">a #GVariantType</doc>
+            <doc xml:space="preserve">type to check</doc>
             <type name="VariantType" c:type="const GVariantType*"/>
           </instance-parameter>
         </parameters>
@@ -40056,62 +40110,61 @@ Since 2.24</doc>
         <doc xml:space="preserve">Determines if the given @type is definite (ie: not indefinite).
 
 A type is definite if its type string does not contain any indefinite
-type characters ('*', '?', or 'r').
+type characters (`*`, `?`, or `r`).
 
-A #GVariant instance may not have an indefinite type, so calling
-this function on the result of g_variant_get_type() will always
-result in %TRUE being returned.  Calling this function on an
-indefinite type like %G_VARIANT_TYPE_ARRAY, however, will result in
-%FALSE being returned.</doc>
+A [type@GLib.Variant] instance may not have an indefinite type, so calling
+this function on the result of [method@GLib.Variant.get_type] will always
+result in true being returned.  Calling this function on an
+indefinite type like `G_VARIANT_TYPE_ARRAY`, however, will result in
+`FALSE` being returned.</doc>
         <return-value transfer-ownership="none">
-          <doc xml:space="preserve">%TRUE if @type is definite
-
+          <doc xml:space="preserve">true if @type is definite
 Since 2.24</doc>
           <type name="gboolean" c:type="gboolean"/>
         </return-value>
         <parameters>
           <instance-parameter name="type" transfer-ownership="none">
-            <doc xml:space="preserve">a #GVariantType</doc>
+            <doc xml:space="preserve">type to check</doc>
             <type name="VariantType" c:type="const GVariantType*"/>
           </instance-parameter>
         </parameters>
       </method>
       <method name="is_dict_entry" c:identifier="g_variant_type_is_dict_entry">
-        <doc xml:space="preserve">Determines if the given @type is a dictionary entry type.  This is
-true if the type string for @type starts with a '{'.
+        <doc xml:space="preserve">Determines if the given @type is a dictionary entry type.
 
-This function returns %TRUE for any indefinite type for which every
-definite subtype is a dictionary entry type --
-%G_VARIANT_TYPE_DICT_ENTRY, for example.</doc>
+This is true if the type string for @type starts with a `{`.
+
+This function returns true for any indefinite type for which every
+definite subtype is a dictionary entry type &#x2014;
+`G_VARIANT_TYPE_DICT_ENTRY`, for example.</doc>
         <return-value transfer-ownership="none">
-          <doc xml:space="preserve">%TRUE if @type is a dictionary entry type
-
+          <doc xml:space="preserve">true if @type is a dictionary entry type
 Since 2.24</doc>
           <type name="gboolean" c:type="gboolean"/>
         </return-value>
         <parameters>
           <instance-parameter name="type" transfer-ownership="none">
-            <doc xml:space="preserve">a #GVariantType</doc>
+            <doc xml:space="preserve">type to check</doc>
             <type name="VariantType" c:type="const GVariantType*"/>
           </instance-parameter>
         </parameters>
       </method>
       <method name="is_maybe" c:identifier="g_variant_type_is_maybe">
-        <doc xml:space="preserve">Determines if the given @type is a maybe type.  This is true if the
-type string for @type starts with an 'm'.
+        <doc xml:space="preserve">Determines if the given @type is a &#x2018;maybe&#x2019; type.
 
-This function returns %TRUE for any indefinite type for which every
-definite subtype is a maybe type -- %G_VARIANT_TYPE_MAYBE, for
+This is true if the type string for @type starts with an `m`.
+
+This function returns true for any indefinite type for which every
+definite subtype is a &#x2018;maybe&#x2019; type &#x2014; `G_VARIANT_TYPE_MAYBE`, for
 example.</doc>
         <return-value transfer-ownership="none">
-          <doc xml:space="preserve">%TRUE if @type is a maybe type
-
+          <doc xml:space="preserve">true if @type is a &#x2018;maybe&#x2019; type
 Since 2.24</doc>
           <type name="gboolean" c:type="gboolean"/>
         </return-value>
         <parameters>
           <instance-parameter name="type" transfer-ownership="none">
-            <doc xml:space="preserve">a #GVariantType</doc>
+            <doc xml:space="preserve">type to check</doc>
             <type name="VariantType" c:type="const GVariantType*"/>
           </instance-parameter>
         </parameters>
@@ -40119,43 +40172,42 @@ Since 2.24</doc>
       <method name="is_subtype_of" c:identifier="g_variant_type_is_subtype_of">
         <doc xml:space="preserve">Checks if @type is a subtype of @supertype.
 
-This function returns %TRUE if @type is a subtype of @supertype.  All
+This function returns true if @type is a subtype of @supertype.  All
 types are considered to be subtypes of themselves.  Aside from that,
 only indefinite types can have subtypes.</doc>
         <return-value transfer-ownership="none">
-          <doc xml:space="preserve">%TRUE if @type is a subtype of @supertype
-
+          <doc xml:space="preserve">true if @type is a subtype of @supertype
 Since 2.24</doc>
           <type name="gboolean" c:type="gboolean"/>
         </return-value>
         <parameters>
           <instance-parameter name="type" transfer-ownership="none">
-            <doc xml:space="preserve">a #GVariantType</doc>
+            <doc xml:space="preserve">type to check</doc>
             <type name="VariantType" c:type="const GVariantType*"/>
           </instance-parameter>
           <parameter name="supertype" transfer-ownership="none">
-            <doc xml:space="preserve">a #GVariantType</doc>
+            <doc xml:space="preserve">type of potential supertype</doc>
             <type name="VariantType" c:type="const GVariantType*"/>
           </parameter>
         </parameters>
       </method>
       <method name="is_tuple" c:identifier="g_variant_type_is_tuple">
-        <doc xml:space="preserve">Determines if the given @type is a tuple type.  This is true if the
-type string for @type starts with a '(' or if @type is
-%G_VARIANT_TYPE_TUPLE.
+        <doc xml:space="preserve">Determines if the given @type is a tuple type.
 
-This function returns %TRUE for any indefinite type for which every
-definite subtype is a tuple type -- %G_VARIANT_TYPE_TUPLE, for
+This is true if the type string for @type starts with a `(` or if @type is
+`G_VARIANT_TYPE_TUPLE`.
+
+This function returns true for any indefinite type for which every
+definite subtype is a tuple type &#x2014; `G_VARIANT_TYPE_TUPLE`, for
 example.</doc>
         <return-value transfer-ownership="none">
-          <doc xml:space="preserve">%TRUE if @type is a tuple type
-
+          <doc xml:space="preserve">true if @type is a tuple type
 Since 2.24</doc>
           <type name="gboolean" c:type="gboolean"/>
         </return-value>
         <parameters>
           <instance-parameter name="type" transfer-ownership="none">
-            <doc xml:space="preserve">a #GVariantType</doc>
+            <doc xml:space="preserve">type to check</doc>
             <type name="VariantType" c:type="const GVariantType*"/>
           </instance-parameter>
         </parameters>
@@ -40163,14 +40215,13 @@ Since 2.24</doc>
       <method name="is_variant" c:identifier="g_variant_type_is_variant">
         <doc xml:space="preserve">Determines if the given @type is the variant type.</doc>
         <return-value transfer-ownership="none">
-          <doc xml:space="preserve">%TRUE if @type is the variant type
-
+          <doc xml:space="preserve">true if @type is the variant type
 Since 2.24</doc>
           <type name="gboolean" c:type="gboolean"/>
         </return-value>
         <parameters>
           <instance-parameter name="type" transfer-ownership="none">
-            <doc xml:space="preserve">a #GVariantType</doc>
+            <doc xml:space="preserve">type to check</doc>
             <type name="VariantType" c:type="const GVariantType*"/>
           </instance-parameter>
         </parameters>
@@ -40180,16 +40231,15 @@ Since 2.24</doc>
 
 This function may only be used with a dictionary entry type.  Other
 than the additional restriction, this call is equivalent to
-g_variant_type_first().</doc>
+[method@GLib.VariantType.first].</doc>
         <return-value transfer-ownership="none">
           <doc xml:space="preserve">the key type of the dictionary entry
-
 Since 2.24</doc>
           <type name="VariantType" c:type="const GVariantType*"/>
         </return-value>
         <parameters>
           <instance-parameter name="type" transfer-ownership="none">
-            <doc xml:space="preserve">a dictionary entry #GVariantType</doc>
+            <doc xml:space="preserve">a dictionary entry type</doc>
             <type name="VariantType" c:type="const GVariantType*"/>
           </instance-parameter>
         </parameters>
@@ -40200,19 +40250,18 @@ dictionary entry type.
 
 This function may only be used with tuple or dictionary entry types,
 but must not be used with the generic tuple type
-%G_VARIANT_TYPE_TUPLE.
+`G_VARIANT_TYPE_TUPLE`.
 
 In the case of a dictionary entry type, this function will always
-return 2.</doc>
+return `2`.</doc>
         <return-value transfer-ownership="none">
           <doc xml:space="preserve">the number of items in @type
-
 Since 2.24</doc>
           <type name="gsize" c:type="gsize"/>
         </return-value>
         <parameters>
           <instance-parameter name="type" transfer-ownership="none">
-            <doc xml:space="preserve">a tuple or dictionary entry #GVariantType</doc>
+            <doc xml:space="preserve">a tuple or dictionary entry type</doc>
             <type name="VariantType" c:type="const GVariantType*"/>
           </instance-parameter>
         </parameters>
@@ -40222,41 +40271,41 @@ Since 2.24</doc>
 type.
 
 @type must be the result of a previous call to
-g_variant_type_first() or g_variant_type_next().
+[method@GLib.VariantType.first] or [method@GLib.VariantType.next].
 
 If called on the key type of a dictionary entry then this call
 returns the value type.  If called on the value type of a dictionary
-entry then this call returns %NULL.
+entry then this call returns `NULL`.
 
-For tuples, %NULL is returned when @type is the last item in a tuple.</doc>
-        <return-value transfer-ownership="none">
-          <doc xml:space="preserve">the next #GVariantType after @type, or %NULL
-
+For tuples, `NULL` is returned when @type is the last item in the tuple.</doc>
+        <return-value transfer-ownership="none" nullable="1">
+          <doc xml:space="preserve">the next type after @type, or `NULL` if
+  there are no further types
 Since 2.24</doc>
           <type name="VariantType" c:type="const GVariantType*"/>
         </return-value>
         <parameters>
           <instance-parameter name="type" transfer-ownership="none">
-            <doc xml:space="preserve">a #GVariantType from a previous call</doc>
+            <doc xml:space="preserve">a type from a previous call</doc>
             <type name="VariantType" c:type="const GVariantType*"/>
           </instance-parameter>
         </parameters>
       </method>
       <method name="peek_string" c:identifier="g_variant_type_peek_string" introspectable="0">
-        <doc xml:space="preserve">Returns the type string corresponding to the given @type.  The
-result is not nul-terminated; in order to determine its length you
-must call g_variant_type_get_string_length().
+        <doc xml:space="preserve">Returns the type string corresponding to the given @type.
 
-To get a nul-terminated string, see g_variant_type_dup_string().</doc>
+The result is not nul-terminated; in order to determine its length you
+must call [method@GLib.VariantType.get_string_length].
+
+To get a nul-terminated string, see [method@GLib.VariantType.dup_string].</doc>
         <return-value transfer-ownership="none">
           <doc xml:space="preserve">the corresponding type string (not nul-terminated)
-
 Since 2.24</doc>
           <type name="utf8" c:type="const gchar*"/>
         </return-value>
         <parameters>
           <instance-parameter name="type" transfer-ownership="none">
-            <doc xml:space="preserve">a #GVariantType</doc>
+            <doc xml:space="preserve">type to peek at</doc>
             <type name="VariantType" c:type="const GVariantType*"/>
           </instance-parameter>
         </parameters>
@@ -40267,13 +40316,12 @@ Since 2.24</doc>
 This function may only be used with a dictionary entry type.</doc>
         <return-value transfer-ownership="none">
           <doc xml:space="preserve">the value type of the dictionary entry
-
 Since 2.24</doc>
           <type name="VariantType" c:type="const GVariantType*"/>
         </return-value>
         <parameters>
           <instance-parameter name="type" transfer-ownership="none">
-            <doc xml:space="preserve">a dictionary entry #GVariantType</doc>
+            <doc xml:space="preserve">a dictionary entry type</doc>
             <type name="VariantType" c:type="const GVariantType*"/>
           </instance-parameter>
         </parameters>
@@ -40299,12 +40347,13 @@ Since 2.24</doc>
         </parameters>
       </function>
       <function name="string_is_valid" c:identifier="g_variant_type_string_is_valid">
-        <doc xml:space="preserve">Checks if @type_string is a valid GVariant type string.  This call is
-equivalent to calling g_variant_type_string_scan() and confirming
-that the following character is a nul terminator.</doc>
-        <return-value transfer-ownership="none">
-          <doc xml:space="preserve">%TRUE if @type_string is exactly one valid type string
+        <doc xml:space="preserve">Checks if @type_string is a valid
+[GVariant type string](./struct.VariantType.html#gvariant-type-strings).
 
+This call is equivalent to calling [func@GLib.VariantType.string_scan] and
+confirming that the following character is a nul terminator.</doc>
+        <return-value transfer-ownership="none">
+          <doc xml:space="preserve">true if @type_string is exactly one valid type string
 Since 2.24</doc>
           <type name="gboolean" c:type="gboolean"/>
         </return-value>
@@ -40317,6 +40366,7 @@ Since 2.24</doc>
       </function>
       <function name="string_scan" c:identifier="g_variant_type_string_scan" version="2.24">
         <doc xml:space="preserve">Scan for a single complete and valid GVariant type string in @string.
+
 The memory pointed to by @limit (or bytes beyond it) is never
 accessed.
 
@@ -40328,9 +40378,9 @@ If there is no valid type string starting at @string, or if the type
 string does not end before @limit then %FALSE is returned.
 
 For the simple case of checking if a string is a valid type string,
-see g_variant_type_string_is_valid().</doc>
+see [func@GLib.VariantType.string_is_valid].</doc>
         <return-value transfer-ownership="none">
-          <doc xml:space="preserve">%TRUE if a valid type string was found</doc>
+          <doc xml:space="preserve">true if a valid type string was found</doc>
           <type name="gboolean" c:type="gboolean"/>
         </return-value>
         <parameters>
@@ -40339,11 +40389,11 @@ see g_variant_type_string_is_valid().</doc>
             <type name="utf8" c:type="const gchar*"/>
           </parameter>
           <parameter name="limit" transfer-ownership="none" nullable="1" allow-none="1">
-            <doc xml:space="preserve">the end of @string, or %NULL</doc>
+            <doc xml:space="preserve">the end of @string</doc>
             <type name="utf8" c:type="const gchar*"/>
           </parameter>
           <parameter name="endptr" direction="out" caller-allocates="0" transfer-ownership="full" optional="1" allow-none="1">
-            <doc xml:space="preserve">location to store the end pointer, or %NULL</doc>
+            <doc xml:space="preserve">location to store the end pointer</doc>
             <type name="utf8" c:type="const gchar**"/>
           </parameter>
         </parameters>
@@ -49316,7 +49366,8 @@ Note that keys that expect UTF-8 strings (specifically `"MESSAGE"` and
 `"GLIB_DOMAIN"`) must be passed as nul-terminated UTF-8 strings until GLib
 version 2.74.1 because the default log handler did not consider the length of
 the `GLogField`. Starting with GLib 2.74.1 this is fixed and
-non-nul-terminated UTF-8 strings can be passed with their correct length.
+non-nul-terminated UTF-8 strings can be passed with their correct length,
+with the exception of `"GLIB_DOMAIN"` which was only fixed with GLib 2.82.3.
 
 The @log_domain will be converted into a `GLIB_DOMAIN` field. @log_level will
 be converted into a
@@ -49909,6 +49960,12 @@ See your C library manual for more details about lstat().</doc>
       </parameters>
     </function-macro>
     <constant name="macro__has_attribute___noreturn__" value="0" c:type="g_macro__has_attribute___noreturn__">
+      <type name="gint" c:type="gint"/>
+    </constant>
+    <constant name="macro__has_attribute_ifunc" value="0" c:type="g_macro__has_attribute_ifunc">
+      <type name="gint" c:type="gint"/>
+    </constant>
+    <constant name="macro__has_attribute_no_sanitize_address" value="0" c:type="g_macro__has_attribute_no_sanitize_address">
       <type name="gint" c:type="gint"/>
     </constant>
     <function-macro name="macro__has_builtin" c:identifier="g_macro__has_builtin" introspectable="0">
@@ -50989,9 +51046,9 @@ handle that exception (see [Running GLib Applications](glib-running.html)).</doc
         <type name="none" c:type="void"/>
       </return-value>
       <parameters>
-        <parameter name="prg_name" transfer-ownership="none">
-          <doc xml:space="preserve">the program name, needed by gdb for the "[S]tack trace"
-    option</doc>
+        <parameter name="prg_name" transfer-ownership="none" nullable="1" allow-none="1">
+          <doc xml:space="preserve">the program name, needed by gdb for the
+  "[S]tack trace" option, or `NULL` to use a default string</doc>
           <type name="utf8" c:type="const gchar*"/>
         </parameter>
       </parameters>
@@ -61492,12 +61549,13 @@ function.</doc>
       </parameters>
     </function>
     <function name="variant_type_string_is_valid" c:identifier="g_variant_type_string_is_valid" moved-to="VariantType.string_is_valid">
-      <doc xml:space="preserve">Checks if @type_string is a valid GVariant type string.  This call is
-equivalent to calling g_variant_type_string_scan() and confirming
-that the following character is a nul terminator.</doc>
-      <return-value transfer-ownership="none">
-        <doc xml:space="preserve">%TRUE if @type_string is exactly one valid type string
+      <doc xml:space="preserve">Checks if @type_string is a valid
+[GVariant type string](./struct.VariantType.html#gvariant-type-strings).
 
+This call is equivalent to calling [func@GLib.VariantType.string_scan] and
+confirming that the following character is a nul terminator.</doc>
+      <return-value transfer-ownership="none">
+        <doc xml:space="preserve">true if @type_string is exactly one valid type string
 Since 2.24</doc>
         <type name="gboolean" c:type="gboolean"/>
       </return-value>
@@ -61510,6 +61568,7 @@ Since 2.24</doc>
     </function>
     <function name="variant_type_string_scan" c:identifier="g_variant_type_string_scan" moved-to="VariantType.string_scan" version="2.24">
       <doc xml:space="preserve">Scan for a single complete and valid GVariant type string in @string.
+
 The memory pointed to by @limit (or bytes beyond it) is never
 accessed.
 
@@ -61521,9 +61580,9 @@ If there is no valid type string starting at @string, or if the type
 string does not end before @limit then %FALSE is returned.
 
 For the simple case of checking if a string is a valid type string,
-see g_variant_type_string_is_valid().</doc>
+see [func@GLib.VariantType.string_is_valid].</doc>
       <return-value transfer-ownership="none">
-        <doc xml:space="preserve">%TRUE if a valid type string was found</doc>
+        <doc xml:space="preserve">true if a valid type string was found</doc>
         <type name="gboolean" c:type="gboolean"/>
       </return-value>
       <parameters>
@@ -61532,11 +61591,11 @@ see g_variant_type_string_is_valid().</doc>
           <type name="utf8" c:type="const gchar*"/>
         </parameter>
         <parameter name="limit" transfer-ownership="none" nullable="1" allow-none="1">
-          <doc xml:space="preserve">the end of @string, or %NULL</doc>
+          <doc xml:space="preserve">the end of @string</doc>
           <type name="utf8" c:type="const gchar*"/>
         </parameter>
         <parameter name="endptr" direction="out" caller-allocates="0" transfer-ownership="full" optional="1" allow-none="1">
-          <doc xml:space="preserve">location to store the end pointer, or %NULL</doc>
+          <doc xml:space="preserve">location to store the end pointer</doc>
           <type name="utf8" c:type="const gchar**"/>
         </parameter>
       </parameters>
