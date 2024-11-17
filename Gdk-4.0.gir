@@ -2039,7 +2039,7 @@ contents with a call such as
 ```c
 gdk_content_provider_new_union ((GdkContentProvider *[2]) {
                                   gdk_content_provider_new_typed (G_TYPE_FILE, file),
-                                  gdk_content_provider_new_typed (G_TYPE_TEXTURE, texture)
+                                  gdk_content_provider_new_typed (GDK_TYPE_TEXTURE, texture)
                                 }, 2);
 ```</doc>
         <return-value transfer-ownership="full">
@@ -4927,7 +4927,7 @@ possibly with changing properties in between.</doc>
       </method>
       <method name="get_color_state" c:identifier="gdk_dmabuf_texture_builder_get_color_state" glib:get-property="color-state" version="4.16">
         <doc xml:space="preserve">Gets the color state previously set via gdk_dmabuf_texture_builder_set_color_state().</doc>
-        <return-value transfer-ownership="full" nullable="1">
+        <return-value transfer-ownership="none" nullable="1">
           <doc xml:space="preserve">the color state</doc>
           <type name="ColorState" c:type="GdkColorState*"/>
         </return-value>
@@ -5179,7 +5179,7 @@ dma-buf formats.</doc>
 
 The format is specified as a fourcc code.
 
-The format must be set before calling [method@Gdk.GLTextureBuilder.build].</doc>
+The format must be set before calling [method@Gdk.DmabufTextureBuilder.build].</doc>
         <return-value transfer-ownership="none">
           <type name="none" c:type="void"/>
         </return-value>
@@ -5197,7 +5197,7 @@ The format must be set before calling [method@Gdk.GLTextureBuilder.build].</doc>
       <method name="set_height" c:identifier="gdk_dmabuf_texture_builder_set_height" glib:set-property="height" version="4.14">
         <doc xml:space="preserve">Sets the height of the texture.
 
-The height must be set before calling [method@Gdk.GLTextureBuilder.build].</doc>
+The height must be set before calling [method@Gdk.DmabufTextureBuilder.build].</doc>
         <return-value transfer-ownership="none">
           <type name="none" c:type="void"/>
         </return-value>
@@ -5286,7 +5286,7 @@ to be premultiplied.</doc>
       <method name="set_stride" c:identifier="gdk_dmabuf_texture_builder_set_stride" version="4.14">
         <doc xml:space="preserve">Sets the stride for a plane.
 
-The stride must be set for all planes before calling [method@Gdk.GLTextureBuilder.build].</doc>
+The stride must be set for all planes before calling [method@Gdk.DmabufTextureBuilder.build].</doc>
         <return-value transfer-ownership="none">
           <type name="none" c:type="void"/>
         </return-value>
@@ -5350,7 +5350,7 @@ An example would be a screen recording where only the mouse pointer moves.</doc>
       <method name="set_width" c:identifier="gdk_dmabuf_texture_builder_set_width" glib:set-property="width" version="4.14">
         <doc xml:space="preserve">Sets the width of the texture.
 
-The width must be set before calling [method@Gdk.GLTextureBuilder.build].</doc>
+The width must be set before calling [method@Gdk.DmabufTextureBuilder.build].</doc>
         <return-value transfer-ownership="none">
           <type name="none" c:type="void"/>
         </return-value>
@@ -5399,7 +5399,7 @@ Only relevant if the format has alpha.</doc>
         <type name="gboolean" c:type="gboolean"/>
       </property>
       <property name="update-region" version="4.14" writable="1" transfer-ownership="none" setter="set_update_region" getter="get_update_region">
-        <doc xml:space="preserve">The update region for [property@Gdk.GLTextureBuilder:update-texture].</doc>
+        <doc xml:space="preserve">The update region for [property@Gdk.DmabufTextureBuilder:update-texture].</doc>
         <type name="cairo.Region"/>
       </property>
       <property name="update-texture" version="4.14" writable="1" transfer-ownership="none" setter="set_update_texture" getter="get_update_texture">
@@ -7980,7 +7980,7 @@ possibly with changing properties in between.</doc>
       </method>
       <method name="get_color_state" c:identifier="gdk_gl_texture_builder_get_color_state" glib:get-property="color-state" version="4.16">
         <doc xml:space="preserve">Gets the color state previously set via gdk_gl_texture_builder_set_color_state().</doc>
-        <return-value transfer-ownership="full">
+        <return-value transfer-ownership="none">
           <doc xml:space="preserve">the color state</doc>
           <type name="ColorState" c:type="GdkColorState*"/>
         </return-value>
@@ -16223,7 +16223,7 @@ Typical modifier keys are Shift, Control, Meta, Super, Hyper, Alt, Compose,
 Apple, CapsLock or ShiftLock.
 
 Note that GDK may add internal values to events which include values outside
-of this enumeration. Your code should preserve and ignore them.  You can use
+of this enumeration. Your code should preserve and ignore them. You can use
 %GDK_MODIFIER_MASK to remove all private values.</doc>
       <member name="no_modifier_mask" value="0" c:identifier="GDK_NO_MODIFIER_MASK" version="4.14" glib:nick="no-modifier-mask" glib:name="GDK_NO_MODIFIER_MASK">
         <doc xml:space="preserve">No modifier.</doc>
@@ -16232,16 +16232,16 @@ of this enumeration. Your code should preserve and ignore them.  You can use
         <doc xml:space="preserve">the Shift key.</doc>
       </member>
       <member name="lock_mask" value="2" c:identifier="GDK_LOCK_MASK" glib:nick="lock-mask" glib:name="GDK_LOCK_MASK">
-        <doc xml:space="preserve">a Lock key (depending on the modifier mapping of the
- X server this may either be CapsLock or ShiftLock).</doc>
+        <doc xml:space="preserve">a Lock key (depending on the Windowing System configuration,
+   this may either be &lt;kbd&gt;CapsLock&lt;/kbd&gt; or &lt;kbd&gt;ShiftLock&lt;/kbd&gt;).</doc>
       </member>
       <member name="control_mask" value="4" c:identifier="GDK_CONTROL_MASK" glib:nick="control-mask" glib:name="GDK_CONTROL_MASK">
         <doc xml:space="preserve">the Control key.</doc>
       </member>
       <member name="alt_mask" value="8" c:identifier="GDK_ALT_MASK" glib:nick="alt-mask" glib:name="GDK_ALT_MASK">
-        <doc xml:space="preserve">the fourth modifier key (it depends on the modifier
- mapping of the X server which key is interpreted as this modifier, but
- normally it is the Alt key).</doc>
+        <doc xml:space="preserve">the fourth modifier key (it depends on the Windowing System
+   configuration which key is interpreted as this modifier, but normally it
+   is the &lt;kbd&gt;Alt&lt;/kbd&gt; key).</doc>
       </member>
       <member name="button1_mask" value="256" c:identifier="GDK_BUTTON1_MASK" glib:nick="button1-mask" glib:name="GDK_BUTTON1_MASK">
         <doc xml:space="preserve">the first mouse button.</doc>
