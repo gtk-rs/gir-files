@@ -30072,7 +30072,9 @@ g_strfreev (array);
       </method>
     </record>
     <constant name="TEST_OPTION_ISOLATE_DIRS" value="isolate_dirs" c:type="G_TEST_OPTION_ISOLATE_DIRS" version="2.60">
-      <doc xml:space="preserve">Creates a unique temporary directory for each unit test and uses
+      <doc xml:space="preserve">A value that can be passed as an option to [func@GLib.test_init].
+
+Creates a unique temporary directory for each unit test and uses
 g_set_user_dirs() to set XDG directories to point into subdirectories of it
 for the duration of the unit test. The directory tree is cleaned up after the
 test finishes successfully. Note that this doesn&#x2019;t take effect until
@@ -30095,6 +30097,19 @@ guaranteed to be stable API &#x2014; always use a getter function to retrieve th
 The subdirectories may not be created by the test harness; as with normal
 calls to functions like g_get_user_cache_dir(), the caller must be prepared
 to create the directory if it doesn&#x2019;t exist.</doc>
+      <type name="utf8" c:type="gchar*"/>
+    </constant>
+    <constant name="TEST_OPTION_NONFATAL_ASSERTIONS" value="nonfatal-assertions" c:type="G_TEST_OPTION_NONFATAL_ASSERTIONS" version="2.84">
+      <doc xml:space="preserve">A value that can be passed as an option to [func@GLib.test_init].
+
+If this option is given, assertions will not abort the process, but
+call [func@GLib.test_fail]. Equivalent to [func@GLib.test_set_nonfatal_assertions].</doc>
+      <type name="utf8" c:type="gchar*"/>
+    </constant>
+    <constant name="TEST_OPTION_NO_PRGNAME" value="no_g_set_prgname" c:type="G_TEST_OPTION_NO_PRGNAME" version="2.84">
+      <doc xml:space="preserve">A value that can be passed as an option to [func@GLib.test_init].
+
+If this option is given, [func@GLib.test_init] will not call [func@GLib.set_prgname].</doc>
       <type name="utf8" c:type="gchar*"/>
     </constant>
     <constant name="TIME_SPAN_DAY" value="86400000000" c:type="G_TIME_SPAN_DAY" version="2.26">
@@ -42761,7 +42776,12 @@ resources allocated for @mem_block.</doc>
 
 If the reference was the last one, it will call @clear_func
 to clear the contents of @mem_block, and then will free the
-resources allocated for @mem_block.</doc>
+resources allocated for @mem_block.
+
+Note that implementing weak references via @clear_func is not thread-safe:
+clearing a pointer to the memory from the callback can race with another
+thread trying to access it as @mem_block already has a reference count of 0
+when the callback is called and will be freed.</doc>
       <return-value transfer-ownership="none">
         <type name="none" c:type="void"/>
       </return-value>
@@ -56917,11 +56937,14 @@ So far, the following arguments are understood:
 
 Options which can be passed to @... are:
 
- - `"no_g_set_prgname"`: Causes g_test_init() to not call g_set_prgname().
- - %G_TEST_OPTION_ISOLATE_DIRS: Creates a unique temporary directory for each
+ - `G_TEST_OPTION_NO_PRGNAME`: Causes g_test_init() to not call
+   [func@GLib.set_prgname]. Since. 2.84
+ - `G_TEST_OPTION_ISOLATE_DIRS`: Creates a unique temporary directory for each
    unit test and uses g_set_user_dirs() to set XDG directories to point into
    that temporary directory for the duration of the unit test. See the
    documentation for %G_TEST_OPTION_ISOLATE_DIRS.
+ - `G_TEST_OPTION_NONFATAL_ASSERTIONS`: This has the same effect as
+   [func@GLib.test_set_nonfatal_assertions]. Since 2.84
 
 Since 2.58, if tests are compiled with `G_DISABLE_ASSERT` defined,
 g_test_init() will print an error and exit. This is to prevent no-op tests
