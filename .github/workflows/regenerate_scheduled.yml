@@ -15,16 +15,19 @@ jobs:
           token: ${{ secrets.GITHUB_TOKEN }}
       - name: Redownload, regenerate, reformat
         id: changes
+        env:
+            GITLAB_KEY: ${{ secrets.GITLAB_KEY }}
         run: |
           sudo apt-get -q update
           sudo apt-get -q upgrade
-          sudo apt-get -q install binutils wget tar xmlstarlet flatpak
+          sudo apt-get -q install binutils wget tar xmlstarlet flatpak python3-requests
           flatpak remote-add --user --if-not-exists gnome-nightly https://nightly.gnome.org/gnome-nightly.flatpakrepo 
           flatpak install org.gnome.Sdk//master -y --noninteractive
           flatpak info org.gnome.Sdk//master
           flatpak run --command=ls org.gnome.Sdk//master /usr/share/gir-1.0/ -lh
           flatpak run --command=python3 --filesystem=home org.gnome.Sdk//master dl.py
           ./dl-win32.sh
+          python3 ./dl-gtk-macos.py
           ./reformat.sh && ./fix.sh
           echo ::set-output name=pr_title::"Update GIR files ($(date +%Y-%m-%d))"
           echo ::set-output name=pr_body::"This PR was auto-generated on $(date +%Y-%m-%d). Please review and manually edit before merging."
