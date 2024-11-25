@@ -30074,29 +30074,31 @@ g_strfreev (array);
     <constant name="TEST_OPTION_ISOLATE_DIRS" value="isolate_dirs" c:type="G_TEST_OPTION_ISOLATE_DIRS" version="2.60">
       <doc xml:space="preserve">A value that can be passed as an option to [func@GLib.test_init].
 
-Creates a unique temporary directory for each unit test and uses
-g_set_user_dirs() to set XDG directories to point into subdirectories of it
-for the duration of the unit test. The directory tree is cleaned up after the
-test finishes successfully. Note that this doesn&#x2019;t take effect until
-g_test_run() is called, so calls to (for example) g_get_user_home_dir() will
-return the system-wide value when made in a test program&#x2019;s main() function.
+Creates a unique temporary directory for each unit test and uses sets
+XDG directories to point into subdirectories of it for the duration of
+the unit test. The directory tree is cleaned up after the test finishes
+successfully.
+
+Note that this doesn&#x2019;t take effect until [func@GLib.test_run] is called,
+so calls to (for example) [func@GLib.get_home_dir] will return the
+system-wide value when made in a test program&#x2019;s main() function.
 
 The following functions will return subdirectories of the temporary directory
 when this option is used. The specific subdirectory paths in use are not
 guaranteed to be stable API &#x2014; always use a getter function to retrieve them.
 
- - g_get_home_dir()
- - g_get_user_cache_dir()
- - g_get_system_config_dirs()
- - g_get_user_config_dir()
- - g_get_system_data_dirs()
- - g_get_user_data_dir()
- - g_get_user_state_dir()
- - g_get_user_runtime_dir()
+ - [func@GLib.get_home_dir]
+ - [func@GLib.get_user_cache_dir]
+ - [func@GLib.get_system_config_dirs]
+ - [func@GLib.get_user_config_dir]
+ - [func@GLib.get_system_data_dirs]
+ - [func@GLib.get_user_data_dir]
+ - [func@GLib.get_user_state_dir]
+ - [func@GLib.get_user_runtime_dir]
 
 The subdirectories may not be created by the test harness; as with normal
-calls to functions like g_get_user_cache_dir(), the caller must be prepared
-to create the directory if it doesn&#x2019;t exist.</doc>
+calls to functions like [func@GLib.get_user_cache_dir], the caller must
+be prepared to create the directory if it doesn&#x2019;t exist.</doc>
       <type name="utf8" c:type="gchar*"/>
     </constant>
     <constant name="TEST_OPTION_NONFATAL_ASSERTIONS" value="nonfatal-assertions" c:type="G_TEST_OPTION_NONFATAL_ASSERTIONS" version="2.84">
@@ -30150,7 +30152,7 @@ If this option is given, [func@GLib.test_init] will not call [func@GLib.set_prgn
         </return-value>
         <parameters>
           <instance-parameter name="test_case" transfer-ownership="none">
-            <doc xml:space="preserve">a #GTestCase</doc>
+            <doc xml:space="preserve">a test case</doc>
             <type name="TestCase" c:type="GTestCase*"/>
           </instance-parameter>
         </parameters>
@@ -30191,21 +30193,22 @@ argument.</doc>
     </callback>
     <enumeration name="TestFileType" version="2.38" c:type="GTestFileType">
       <doc xml:space="preserve">The type of file to return the filename for, when used with
-g_test_build_filename().
+[func@GLib.test_build_filename].
 
 These two options correspond rather directly to the 'dist' and
 'built' terminology that automake uses and are explicitly used to
-distinguish between the 'srcdir' and 'builddir' being separate.  All
-files in your project should either be dist (in the
-`EXTRA_DIST` or `dist_schema_DATA`
-sense, in which case they will always be in the srcdir) or built (in
-the `BUILT_SOURCES` sense, in which case they will
-always be in the builddir).
+distinguish between the 'srcdir' and 'builddir' being separate. All
+files in your project should either be dist (in the `EXTRA_DIST` or
+`dist_schema_DATA` sense, in which case they will always be in the
+srcdir) or built (in the `BUILT_SOURCES` sense, in which case they
+will always be in the builddir).
 
-Note: as a general rule of automake, files that are generated only as
+Note: As a general rule of automake, files that are generated only as
 part of the build-from-git process (but then are distributed with the
 tarball) always go in srcdir (even if doing a srcdir != builddir
-build from git) and are considered as distributed files.</doc>
+build from git) and are considered as distributed files.
+
+The same principles apply for other build systems, such as meson.</doc>
       <member name="dist" value="0" c:identifier="G_TEST_DIST">
         <doc xml:space="preserve">a file that was included in the distribution tarball</doc>
       </member>
@@ -30214,12 +30217,13 @@ build from git) and are considered as distributed files.</doc>
       </member>
     </enumeration>
     <callback name="TestFixtureFunc" c:type="GTestFixtureFunc" version="2.28">
-      <doc xml:space="preserve">The type used for functions that operate on test fixtures.  This is
-used for the fixture setup and teardown functions as well as for the
-testcases themselves.
+      <doc xml:space="preserve">The type used for functions that operate on test fixtures.
 
-@user_data is a pointer to the data that was given when registering
-the test case.
+This is used for the fixture setup and teardown functions
+as well as for the testcases themselves.
+
+@user_data is a pointer to the data that was given when
+registering the test case.
 
 @fixture will be a pointer to the area of memory allocated by the
 test framework, of the size requested.  If the requested size was
@@ -30389,29 +30393,30 @@ zero then @fixture will be equal to @user_data.</doc>
       </member>
     </enumeration>
     <bitfield name="TestSubprocessFlags" c:type="GTestSubprocessFlags">
-      <doc xml:space="preserve">Flags to pass to g_test_trap_subprocess() to control input and output.
+      <doc xml:space="preserve">Flags to pass to [func@GLib.test_trap_subprocess] to control input and output.
 
-Note that in contrast with g_test_trap_fork(), the default is to
-not show stdout and stderr.</doc>
+Note that in contrast with [func@GLib.test_trap_fork], the default
+behavior of [func@GLib.test_trap_subprocess] is to not show stdout
+and stderr.</doc>
       <member name="default" value="0" c:identifier="G_TEST_SUBPROCESS_DEFAULT">
         <doc xml:space="preserve">Default behaviour. Since: 2.74</doc>
       </member>
       <member name="inherit_stdin" value="1" c:identifier="G_TEST_SUBPROCESS_INHERIT_STDIN">
         <doc xml:space="preserve">If this flag is given, the child
-    process will inherit the parent's stdin. Otherwise, the child's
-    stdin is redirected to `/dev/null`.</doc>
+  process will inherit the parent's stdin. Otherwise, the child's
+  stdin is redirected to `/dev/null`.</doc>
       </member>
       <member name="inherit_stdout" value="2" c:identifier="G_TEST_SUBPROCESS_INHERIT_STDOUT">
         <doc xml:space="preserve">If this flag is given, the child
-    process will inherit the parent's stdout. Otherwise, the child's
-    stdout will not be visible, but it will be captured to allow
-    later tests with g_test_trap_assert_stdout().</doc>
+  process will inherit the parent's stdout. Otherwise, the child's
+  stdout will not be visible, but it will be captured to allow
+  later tests with [func@GLib.test_trap_assert_stdout].</doc>
       </member>
       <member name="inherit_stderr" value="4" c:identifier="G_TEST_SUBPROCESS_INHERIT_STDERR">
         <doc xml:space="preserve">If this flag is given, the child
-    process will inherit the parent's stderr. Otherwise, the child's
-    stderr will not be visible, but it will be captured to allow
-    later tests with g_test_trap_assert_stderr().</doc>
+  process will inherit the parent's stderr. Otherwise, the child's
+  stderr will not be visible, but it will be captured to allow
+  later tests with [func@GLib.test_trap_assert_stderr].</doc>
       </member>
     </bitfield>
     <record name="TestSuite" c:type="GTestSuite" disguised="1" opaque="1">
@@ -30423,11 +30428,11 @@ not show stdout and stderr.</doc>
         </return-value>
         <parameters>
           <instance-parameter name="suite" transfer-ownership="none">
-            <doc xml:space="preserve">a #GTestSuite</doc>
+            <doc xml:space="preserve">a test suite</doc>
             <type name="TestSuite" c:type="GTestSuite*"/>
           </instance-parameter>
           <parameter name="test_case" transfer-ownership="none">
-            <doc xml:space="preserve">a #GTestCase</doc>
+            <doc xml:space="preserve">a test case</doc>
             <type name="TestCase" c:type="GTestCase*"/>
           </parameter>
         </parameters>
@@ -30439,34 +30444,35 @@ not show stdout and stderr.</doc>
         </return-value>
         <parameters>
           <instance-parameter name="suite" transfer-ownership="none">
-            <doc xml:space="preserve">a #GTestSuite</doc>
+            <doc xml:space="preserve">a test suite</doc>
             <type name="TestSuite" c:type="GTestSuite*"/>
           </instance-parameter>
           <parameter name="nestedsuite" transfer-ownership="none">
-            <doc xml:space="preserve">another #GTestSuite</doc>
+            <doc xml:space="preserve">another test suite</doc>
             <type name="TestSuite" c:type="GTestSuite*"/>
           </parameter>
         </parameters>
       </method>
       <method name="free" c:identifier="g_test_suite_free" version="2.70">
-        <doc xml:space="preserve">Free the @suite and all nested #GTestSuites.</doc>
+        <doc xml:space="preserve">Frees the @suite and all nested suites.</doc>
         <return-value transfer-ownership="none">
           <type name="none" c:type="void"/>
         </return-value>
         <parameters>
           <instance-parameter name="suite" transfer-ownership="none">
-            <doc xml:space="preserve">a #GTestSuite</doc>
+            <doc xml:space="preserve">a test suite</doc>
             <type name="TestSuite" c:type="GTestSuite*"/>
           </instance-parameter>
         </parameters>
       </method>
     </record>
     <bitfield name="TestTrapFlags" deprecated="1" deprecated-version="2.38" c:type="GTestTrapFlags">
-      <doc xml:space="preserve">Test traps are guards around forked tests.
-These flags determine what traps to set.</doc>
-      <doc-deprecated xml:space="preserve">#GTestTrapFlags is used only with g_test_trap_fork(),
-which is deprecated. g_test_trap_subprocess() uses
-#GTestSubprocessFlags.</doc-deprecated>
+      <doc xml:space="preserve">Flags to pass to [func@GLib.test_trap_fork] to control input and output.
+
+Test traps are guards around forked tests. These flags determine what traps to set.</doc>
+      <doc-deprecated xml:space="preserve">`GTestTrapFlags` is used only with [func@GLib.test_trap_fork],
+  which is deprecated. Its replacement, [func@GLib.test_trap_subprocess] uses
+  [flags@GLib.TestSubprocessFlags].</doc-deprecated>
       <member name="default" value="0" c:identifier="G_TEST_TRAP_DEFAULT">
         <doc xml:space="preserve">Default behaviour. Since: 2.74</doc>
       </member>
@@ -41442,15 +41448,17 @@ there's no worry about sign extension if characters are signed.</doc>
     </function>
     <function-macro name="assert" c:identifier="g_assert" introspectable="0">
       <doc xml:space="preserve">Debugging macro to terminate the application if the assertion
-fails. If the assertion fails (i.e. the expression is not true),
+fails.
+
+If the assertion fails (i.e. the expression is not true),
 an error message is logged and the application is terminated.
 
 The macro can be turned off in final releases of code by defining
-`G_DISABLE_ASSERT` when compiling the application, so code must
-not depend on any side effects from @expr. Similarly, it must not be used
-in unit tests, otherwise the unit tests will be ineffective if compiled with
-`G_DISABLE_ASSERT`. Use g_assert_true() and related macros in unit tests
-instead.</doc>
+`G_DISABLE_ASSERT` when compiling the application, so code must not
+depend on any side effects from @expr. Similarly, it must not be used
+in unit tests, otherwise the unit tests will be ineffective if compiled
+with `G_DISABLE_ASSERT`. Use [func@GLib.assert_true] and related macros
+in unit tests instead.</doc>
       <parameters>
         <parameter name="expr">
           <doc xml:space="preserve">the expression to check</doc>
@@ -41460,17 +41468,17 @@ instead.</doc>
     <function-macro name="assert_cmpfloat" c:identifier="g_assert_cmpfloat" version="2.16" introspectable="0">
       <doc xml:space="preserve">Debugging macro to compare two floating point numbers.
 
-The effect of `g_assert_cmpfloat (n1, op, n2)` is
-the same as `g_assert_true (n1 op n2)`. The advantage
-of this macro is that it can produce a message that includes the
-actual values of @n1 and @n2.</doc>
+The effect of `g_assert_cmpfloat (n1, op, n2)` is the same as
+`g_assert_true (n1 op n2)`. The advantage of this macro is
+that it can produce a message that includes the actual values
+of @n1 and @n2.</doc>
       <parameters>
         <parameter name="n1">
           <doc xml:space="preserve">a floating point number</doc>
         </parameter>
         <parameter name="cmp">
-          <doc xml:space="preserve">The comparison operator to use.
-    One of `==`, `!=`, `&lt;`, `&gt;`, `&lt;=`, `&gt;=`.</doc>
+          <doc xml:space="preserve">the comparison operator to use.
+  One of `==`, `!=`, `&lt;`, `&gt;`, `&lt;=`, `&gt;=`</doc>
         </parameter>
         <parameter name="n2">
           <doc xml:space="preserve">another floating point number</doc>
@@ -41500,15 +41508,15 @@ actual values of @n1 and @n2.</doc>
     <function-macro name="assert_cmphex" c:identifier="g_assert_cmphex" version="2.16" introspectable="0">
       <doc xml:space="preserve">Debugging macro to compare to unsigned integers.
 
-This is a variant of g_assert_cmpuint() that displays the numbers
-in hexadecimal notation in the message.</doc>
+This is a variant of [func@GLib.assert_cmpuint] that displays
+the numbers in hexadecimal notation in the message.</doc>
       <parameters>
         <parameter name="n1">
           <doc xml:space="preserve">an unsigned integer</doc>
         </parameter>
         <parameter name="cmp">
-          <doc xml:space="preserve">The comparison operator to use.
-    One of `==`, `!=`, `&lt;`, `&gt;`, `&lt;=`, `&gt;=`.</doc>
+          <doc xml:space="preserve">the comparison operator to use.
+  One of `==`, `!=`, `&lt;`, `&gt;`, `&lt;=`, `&gt;=`</doc>
         </parameter>
         <parameter name="n2">
           <doc xml:space="preserve">another unsigned integer</doc>
@@ -41518,17 +41526,17 @@ in hexadecimal notation in the message.</doc>
     <function-macro name="assert_cmpint" c:identifier="g_assert_cmpint" version="2.16" introspectable="0">
       <doc xml:space="preserve">Debugging macro to compare two integers.
 
-The effect of `g_assert_cmpint (n1, op, n2)` is
-the same as `g_assert_true (n1 op n2)`. The advantage
-of this macro is that it can produce a message that includes the
-actual values of @n1 and @n2.</doc>
+The effect of `g_assert_cmpint (n1, op, n2)` is the same as
+`g_assert_true (n1 op n2)`. The advantage of this macro is
+that it can produce a message that includes the actual values
+of @n1 and @n2.</doc>
       <parameters>
         <parameter name="n1">
           <doc xml:space="preserve">an integer</doc>
         </parameter>
         <parameter name="cmp">
-          <doc xml:space="preserve">The comparison operator to use.
-    One of `==`, `!=`, `&lt;`, `&gt;`, `&lt;=`, `&gt;=`.</doc>
+          <doc xml:space="preserve">the comparison operator to use.
+  One of `==`, `!=`, `&lt;`, `&gt;`, `&lt;=`, `&gt;=`</doc>
         </parameter>
         <parameter name="n2">
           <doc xml:space="preserve">another integer</doc>
@@ -41536,101 +41544,105 @@ actual values of @n1 and @n2.</doc>
       </parameters>
     </function-macro>
     <function-macro name="assert_cmpmem" c:identifier="g_assert_cmpmem" version="2.46" introspectable="0">
-      <doc xml:space="preserve">Debugging macro to compare memory regions. If the comparison fails,
-an error message is logged and the application is either terminated
-or the testcase marked as failed.
+      <doc xml:space="preserve">Debugging macro to compare memory regions.
 
-The effect of `g_assert_cmpmem (m1, l1, m2, l2)` is
-the same as `g_assert_true (l1 == l2 &amp;&amp; memcmp (m1, m2, l1) == 0)`.
-The advantage of this macro is that it can produce a message that
-includes the actual values of @l1 and @l2.
+If the comparison fails, an error message is logged and the
+application is either terminated or the testcase marked as failed.
 
-@m1 may be %NULL if (and only if) @l1 is zero; similarly for @m2 and @l2.
+The effect of `g_assert_cmpmem (m1, l1, m2, l2)` is the same as
+`g_assert_true (l1 == l2 &amp;&amp; memcmp (m1, m2, l1) == 0)`. The advantage
+of this macro is that it can produce a message that includes the actual
+values of @l1 and @l2.
 
-|[&lt;!-- language="C" --&gt;
+@m1 may be `NULL` if (and only if) @l1 is zero; similarly for @m2 and @l2.
+
+```c
   g_assert_cmpmem (buf-&gt;data, buf-&gt;len, expected, sizeof (expected));
-]|</doc>
+```</doc>
       <parameters>
         <parameter name="m1">
           <doc xml:space="preserve">pointer to a buffer</doc>
         </parameter>
         <parameter name="l1">
-          <doc xml:space="preserve">length of @m1</doc>
+          <doc xml:space="preserve">length of @m1 in bytes</doc>
         </parameter>
         <parameter name="m2">
           <doc xml:space="preserve">pointer to another buffer</doc>
         </parameter>
         <parameter name="l2">
-          <doc xml:space="preserve">length of @m2</doc>
+          <doc xml:space="preserve">length of @m2 in bytes</doc>
         </parameter>
       </parameters>
     </function-macro>
     <function-macro name="assert_cmpstr" c:identifier="g_assert_cmpstr" version="2.16" introspectable="0">
-      <doc xml:space="preserve">Debugging macro to compare two strings. If the comparison fails,
-an error message is logged and the application is either terminated
-or the testcase marked as failed.
-The strings are compared using g_strcmp0().
+      <doc xml:space="preserve">Debugging macro to compare two strings.
 
-The effect of `g_assert_cmpstr (s1, op, s2)` is
-the same as `g_assert_true (g_strcmp0 (s1, s2) op 0)`.
-The advantage of this macro is that it can produce a message that
-includes the actual values of @s1 and @s2.
+If the comparison fails, an error message is logged and the
+application is either terminated or the testcase marked as failed.
+The strings are compared using [GLib.strcmp0].
 
-|[&lt;!-- language="C" --&gt;
+The effect of `g_assert_cmpstr (s1, op, s2)` is the same as
+`g_assert_true (g_strcmp0 (s1, s2) op 0)`. The advantage of this
+macro is that it can produce a message that includes the actual
+values of @s1 and @s2.
+
+```c
   g_assert_cmpstr (mystring, ==, "fubar");
-]|</doc>
+```</doc>
       <parameters>
         <parameter name="s1">
-          <doc xml:space="preserve">a string (may be %NULL)</doc>
+          <doc xml:space="preserve">a string</doc>
         </parameter>
         <parameter name="cmp">
-          <doc xml:space="preserve">The comparison operator to use.
-    One of `==`, `!=`, `&lt;`, `&gt;`, `&lt;=`, `&gt;=`.</doc>
+          <doc xml:space="preserve">the comparison operator to use.
+    One of `==`, `!=`, `&lt;`, `&gt;`, `&lt;=`, `&gt;=`</doc>
         </parameter>
         <parameter name="s2">
-          <doc xml:space="preserve">another string (may be %NULL)</doc>
+          <doc xml:space="preserve">another string</doc>
         </parameter>
       </parameters>
     </function-macro>
     <function-macro name="assert_cmpstrv" c:identifier="g_assert_cmpstrv" version="2.68" introspectable="0">
-      <doc xml:space="preserve">Debugging macro to check if two %NULL-terminated string arrays (i.e. 2
-#GStrv) are equal. If they are not equal, an error message is logged and the
-application is either terminated or the testcase marked as failed.
-If both arrays are %NULL, the check passes. If one array is %NULL but the
-other is not, an error message is logged.
+      <doc xml:space="preserve">Debugging macro to check if two `NULL`-terminated string arrays (i.e. 2
+`GStrv`) are equal.
+
+If they are not equal, an error message is logged and the application is
+either terminated or the testcase marked as failed. If both arrays are
+`NULL`, the check passes. If one array is `NULL` but the other is not,
+an error message is logged.
 
 The effect of `g_assert_cmpstrv (strv1, strv2)` is the same as
 `g_assert_true (g_strv_equal (strv1, strv2))` (if both arrays are not
-%NULL). The advantage of this macro is that it can produce a message that
+`NULL`). The advantage of this macro is that it can produce a message that
 includes how @strv1 and @strv2 are different.
 
-|[&lt;!-- language="C" --&gt;
+```c
   const char *expected[] = { "one", "two", "three", NULL };
   g_assert_cmpstrv (mystrv, expected);
-]|</doc>
+```</doc>
       <parameters>
         <parameter name="strv1">
-          <doc xml:space="preserve">a string array (may be %NULL)</doc>
+          <doc xml:space="preserve">a string array</doc>
         </parameter>
         <parameter name="strv2">
-          <doc xml:space="preserve">another string array (may be %NULL)</doc>
+          <doc xml:space="preserve">another string array</doc>
         </parameter>
       </parameters>
     </function-macro>
     <function-macro name="assert_cmpuint" c:identifier="g_assert_cmpuint" version="2.16" introspectable="0">
       <doc xml:space="preserve">Debugging macro to compare two unsigned integers.
 
-The effect of `g_assert_cmpuint (n1, op, n2)` is
-the same as `g_assert_true (n1 op n2)`. The advantage
-of this macro is that it can produce a message that includes the
-actual values of @n1 and @n2.</doc>
+The effect of `g_assert_cmpuint (n1, op, n2)` is the same as
+`g_assert_true (n1 op n2)`. The advantage of this macro is
+that it can produce a message that includes the actual values
+of @n1 and @n2.</doc>
       <parameters>
         <parameter name="n1">
           <doc xml:space="preserve">an unsigned integer</doc>
         </parameter>
         <parameter name="cmp">
-          <doc xml:space="preserve">The comparison operator to use.
-    One of `==`, `!=`, `&lt;`, `&gt;`, `&lt;=`, `&gt;=`.</doc>
+          <doc xml:space="preserve">the comparison operator to use.
+  One of `==`, `!=`, `&lt;`, `&gt;`, `&lt;=`, `&gt;=`</doc>
         </parameter>
         <parameter name="n2">
           <doc xml:space="preserve">another unsigned integer</doc>
@@ -41638,42 +41650,43 @@ actual values of @n1 and @n2.</doc>
       </parameters>
     </function-macro>
     <function-macro name="assert_cmpvariant" c:identifier="g_assert_cmpvariant" version="2.60" introspectable="0">
-      <doc xml:space="preserve">Debugging macro to compare two #GVariants. If the comparison fails,
-an error message is logged and the application is either terminated
-or the testcase marked as failed. The variants are compared using
-g_variant_equal().
+      <doc xml:space="preserve">Debugging macro to compare two [struct@GLib.Variant] values.
+
+If the comparison fails, an error message is logged and the
+application is either terminated or the testcase marked as failed.
+The variants are compared using [method@GLib.Variant.equal].
 
 The effect of `g_assert_cmpvariant (v1, v2)` is the same as
-`g_assert_true (g_variant_equal (v1, v2))`. The advantage of this macro is
-that it can produce a message that includes the actual values of @v1 and @v2.</doc>
+`g_assert_true (g_variant_equal (v1, v2))`. The advantage of
+this macro is that it can produce a message that includes the
+actual values of @v1 and @v2.</doc>
       <parameters>
         <parameter name="v1">
-          <doc xml:space="preserve">pointer to a #GVariant</doc>
+          <doc xml:space="preserve">pointer to a `GVariant`</doc>
         </parameter>
         <parameter name="v2">
-          <doc xml:space="preserve">pointer to another #GVariant</doc>
+          <doc xml:space="preserve">pointer to another `GVariant`</doc>
         </parameter>
       </parameters>
     </function-macro>
     <function-macro name="assert_error" c:identifier="g_assert_error" version="2.20" introspectable="0">
       <doc xml:space="preserve">Debugging macro to check that a method has returned
-the correct #GError.
+the correct [struct@GLib.Error].
 
-The effect of `g_assert_error (err, dom, c)` is
-the same as `g_assert_true (err != NULL &amp;&amp; err-&gt;domain
-== dom &amp;&amp; err-&gt;code == c)`. The advantage of this
-macro is that it can produce a message that includes the incorrect
-error message and code.
+The effect of `g_assert_error (err, dom, c)` is the same as
+`g_assert_true (err != NULL &amp;&amp; err-&gt;domain == dom &amp;&amp; err-&gt;code == c)`.
+The advantage of this macro is that it can produce a message that
+includes the incorrect error message and code.
 
 This can only be used to test for a specific error. If you want to
 test that @err is set, but don't care what it's set to, just use
 `g_assert_nonnull (err)`.</doc>
       <parameters>
         <parameter name="err">
-          <doc xml:space="preserve">a #GError, possibly %NULL</doc>
+          <doc xml:space="preserve">a `GError`</doc>
         </parameter>
         <parameter name="dom">
-          <doc xml:space="preserve">the expected error domain (a #GQuark)</doc>
+          <doc xml:space="preserve">the expected error domain (a `GQuark`)</doc>
         </parameter>
         <parameter name="c">
           <doc xml:space="preserve">the expected error code</doc>
@@ -41687,11 +41700,11 @@ If the assertion fails (i.e. the expression is not false),
 an error message is logged and the application is either
 terminated or the testcase marked as failed.
 
-Note that unlike g_assert(), this macro is unaffected by whether
+Note that unlike [func@GLib.assert], this macro is unaffected by whether
 `G_DISABLE_ASSERT` is defined. Hence it should only be used in tests and,
-conversely, g_assert() should not be used in tests.
+conversely, [func@GLib.assert] should not be used in tests.
 
-See g_test_set_nonfatal_assertions().</doc>
+See [func@GLib.test_set_nonfatal_assertions].</doc>
       <parameters>
         <parameter name="expr">
           <doc xml:space="preserve">the expression to check</doc>
@@ -41706,7 +41719,7 @@ success.
 If the assertion fails (i.e. the @expr returns a negative value), an error
 message is logged and the testcase is marked as failed. The error message
 will contain the value of `errno` and its human-readable message from
-g_strerror().
+[func@GLib.strerror].
 
 This macro will clear the value of `errno` before executing @expr.</doc>
       <parameters>
@@ -41716,30 +41729,30 @@ This macro will clear the value of `errno` before executing @expr.</doc>
       </parameters>
     </function-macro>
     <function-macro name="assert_no_error" c:identifier="g_assert_no_error" version="2.20" introspectable="0">
-      <doc xml:space="preserve">Debugging macro to check that a #GError is not set.
+      <doc xml:space="preserve">Debugging macro to check that a [struct@GLib.Error] is not set.
 
-The effect of `g_assert_no_error (err)` is
-the same as `g_assert_true (err == NULL)`. The advantage
-of this macro is that it can produce a message that includes
-the error message and code.</doc>
+The effect of `g_assert_no_error (err)` is the same as
+`g_assert_true (err == NULL)`. The advantage of this macro
+is that it can produce a message that includes the error
+message and code.</doc>
       <parameters>
         <parameter name="err">
-          <doc xml:space="preserve">a #GError, possibly %NULL</doc>
+          <doc xml:space="preserve">a `GError`</doc>
         </parameter>
       </parameters>
     </function-macro>
     <function-macro name="assert_nonnull" c:identifier="g_assert_nonnull" version="2.40" introspectable="0">
-      <doc xml:space="preserve">Debugging macro to check an expression is not %NULL.
+      <doc xml:space="preserve">Debugging macro to check an expression is not `NULL`.
 
-If the assertion fails (i.e. the expression is %NULL),
+If the assertion fails (i.e. the expression is `NULL`),
 an error message is logged and the application is either
 terminated or the testcase marked as failed.
 
-Note that unlike g_assert(), this macro is unaffected by whether
+Note that unlike [func@GLib.assert], this macro is unaffected by whether
 `G_DISABLE_ASSERT` is defined. Hence it should only be used in tests and,
-conversely, g_assert() should not be used in tests.
+conversely, [func@GLib.assert] should not be used in tests.
 
-See g_test_set_nonfatal_assertions().</doc>
+See [func@GLib.test_set_nonfatal_assertions].</doc>
       <parameters>
         <parameter name="expr">
           <doc xml:space="preserve">the expression to check</doc>
@@ -41747,26 +41760,27 @@ See g_test_set_nonfatal_assertions().</doc>
       </parameters>
     </function-macro>
     <function-macro name="assert_not_reached" c:identifier="g_assert_not_reached" introspectable="0">
-      <doc xml:space="preserve">Debugging macro to terminate the application if it is ever
-reached. If it is reached, an error message is logged and the
-application is terminated.
+      <doc xml:space="preserve">Debugging macro to terminate the application if it is ever reached.
+
+If it is reached, an error message is logged and the application
+is terminated.
 
 The macro can be turned off in final releases of code by defining
-`G_DISABLE_ASSERT` when compiling the application. Hence, it should not be
-used in unit tests, where assertions should always be effective.</doc>
+`G_DISABLE_ASSERT` when compiling the application. Hence, it should
+not be used in unit tests, where assertions should always be effective.</doc>
     </function-macro>
     <function-macro name="assert_null" c:identifier="g_assert_null" version="2.38" introspectable="0">
-      <doc xml:space="preserve">Debugging macro to check an expression is %NULL.
+      <doc xml:space="preserve">Debugging macro to check an expression is `NULL`.
 
-If the assertion fails (i.e. the expression is not %NULL),
+If the assertion fails (i.e. the expression is not `NULL`),
 an error message is logged and the application is either
 terminated or the testcase marked as failed.
 
-Note that unlike g_assert(), this macro is unaffected by whether
+Note that unlike [func@GLib.assert], this macro is unaffected by whether
 `G_DISABLE_ASSERT` is defined. Hence it should only be used in tests and,
-conversely, g_assert() should not be used in tests.
+conversely, [func@GLib.assert] should not be used in tests.
 
-See g_test_set_nonfatal_assertions().</doc>
+See [func@GLib.test_set_nonfatal_assertions].</doc>
       <parameters>
         <parameter name="expr">
           <doc xml:space="preserve">the expression to check</doc>
@@ -41780,11 +41794,12 @@ If the assertion fails (i.e. the expression is not true),
 an error message is logged and the application is either
 terminated or the testcase marked as failed.
 
-Note that unlike g_assert(), this macro is unaffected by whether
-`G_DISABLE_ASSERT` is defined. Hence it should only be used in tests and,
-conversely, g_assert() should not be used in tests.
+Note that unlike [func@GLib.assert], this macro is unaffected by
+whether `G_DISABLE_ASSERT` is defined. Hence it should only be used
+in tests and, conversely, [func@GLib.assert] should not be used
+in tests.
 
-See g_test_set_nonfatal_assertions().</doc>
+See [func@GLib.test_set_nonfatal_assertions].</doc>
       <parameters>
         <parameter name="expr">
           <doc xml:space="preserve">the expression to check</doc>
@@ -41997,8 +42012,8 @@ See g_test_set_nonfatal_assertions().</doc>
       </parameters>
     </function>
     <function name="assertion_message_expr" c:identifier="g_assertion_message_expr" introspectable="0">
-      <doc xml:space="preserve">Internal function used to print messages from the public g_assert() and
-g_assert_not_reached() macros.</doc>
+      <doc xml:space="preserve">Internal function used to print messages from the public
+g_assert() and g_assert_not_reached() macros.</doc>
       <return-value transfer-ownership="none">
         <type name="none" c:type="void"/>
       </return-value>
@@ -55514,20 +55529,22 @@ Also see [func@GLib.strchomp] and [func@GLib.strstrip].</doc>
       </parameters>
     </function>
     <function name="strcmp0" c:identifier="g_strcmp0" version="2.16">
-      <doc xml:space="preserve">Compares @str1 and @str2 like strcmp(). Handles %NULL
-gracefully by sorting it before non-%NULL strings.
-Comparing two %NULL pointers returns 0.</doc>
+      <doc xml:space="preserve">Compares @str1 and @str2 like `strcmp()`.
+
+Handles `NULL` gracefully by sorting it before non-`NULL` strings.
+Comparing two `NULL` pointers returns 0.</doc>
       <return-value transfer-ownership="none">
-        <doc xml:space="preserve">an integer less than, equal to, or greater than zero, if @str1 is &lt;, == or &gt; than @str2.</doc>
+        <doc xml:space="preserve">an integer less than, equal to, or greater than zero,
+  if @str1 is &lt;, == or &gt; than @str2</doc>
         <type name="gint" c:type="int"/>
       </return-value>
       <parameters>
         <parameter name="str1" transfer-ownership="none" nullable="1" allow-none="1">
-          <doc xml:space="preserve">a C string or %NULL</doc>
+          <doc xml:space="preserve">a string</doc>
           <type name="utf8" c:type="const char*"/>
         </parameter>
         <parameter name="str2" transfer-ownership="none" nullable="1" allow-none="1">
-          <doc xml:space="preserve">another C string or %NULL</doc>
+          <doc xml:space="preserve">another string</doc>
           <type name="utf8" c:type="const char*"/>
         </parameter>
       </parameters>
@@ -56352,114 +56369,124 @@ Two empty arrays are considered equal. Neither @strv1 nor @strv2 may be
       </parameters>
     </function>
     <function-macro name="test_add" c:identifier="g_test_add" version="2.16" introspectable="0">
-      <doc xml:space="preserve">Hook up a new test case at @testpath, similar to g_test_add_func().
-A fixture data structure with setup and teardown functions may be provided,
-similar to g_test_create_case().
+      <doc xml:space="preserve">Hooks up a new test case at @testpath.
 
-g_test_add() is implemented as a macro, so that the fsetup(), ftest() and
-fteardown() callbacks can expect a @Fixture pointer as their first argument
-in a type safe manner. They otherwise have type #GTestFixtureFunc.</doc>
+This function is similar to [func@GLib.test_add_func].
+
+A fixture data structure with setup and teardown functions
+may be provided, similar to [func@GLib.test_create_case].
+
+`g_test_add()` is implemented as a macro, so that the @fsetup,
+@ftest and @fteardown callbacks can expect a @Fixture pointer
+as their first argument in a type safe manner. They otherwise
+have type `GTestFixtureFunc`.</doc>
       <parameters>
         <parameter name="testpath">
-          <doc xml:space="preserve">The test path for a new test case.</doc>
+          <doc xml:space="preserve">the test path for a new test case</doc>
         </parameter>
         <parameter name="Fixture">
-          <doc xml:space="preserve">The type of a fixture data structure.</doc>
+          <doc xml:space="preserve">the type of a fixture data structure</doc>
         </parameter>
         <parameter name="tdata">
-          <doc xml:space="preserve">Data argument for the test functions.</doc>
+          <doc xml:space="preserve">data argument for the test functions</doc>
         </parameter>
         <parameter name="fsetup">
-          <doc xml:space="preserve">The function to set up the fixture data.</doc>
+          <doc xml:space="preserve">the function to set up the fixture data</doc>
         </parameter>
         <parameter name="ftest">
-          <doc xml:space="preserve">The actual test function.</doc>
+          <doc xml:space="preserve">the actual test function</doc>
         </parameter>
         <parameter name="fteardown">
-          <doc xml:space="preserve">The function to tear down the fixture data.</doc>
+          <doc xml:space="preserve">the function to tear down the fixture data</doc>
         </parameter>
       </parameters>
     </function-macro>
     <function name="test_add_data_func" c:identifier="g_test_add_data_func" version="2.16">
-      <doc xml:space="preserve">Create a new test case, similar to g_test_create_case(). However
-the test is assumed to use no fixture, and test suites are automatically
-created on the fly and added to the root fixture, based on the
-slash-separated portions of @testpath. The @test_data argument
-will be passed as first argument to @test_func.
+      <doc xml:space="preserve">Creates a new test case.
+
+This function is similar to [func@GLib.test_create_case].
+However the test is assumed to use no fixture, and test suites are
+automatically created on the fly and added to the root fixture,
+based on the /-separated portions of @testpath. The @test_data
+argument will be passed as first argument to @test_func.
 
 If @testpath includes the component "subprocess" anywhere in it,
 the test will be skipped by default, and only run if explicitly
-required via the `-p` command-line option or g_test_trap_subprocess().
+required via the `-p` command-line option or [func@GLib.test_trap_subprocess].
 
 No component of @testpath may start with a dot (`.`) if the
-%G_TEST_OPTION_ISOLATE_DIRS option is being used; and it is recommended to
-do so even if it isn&#x2019;t.</doc>
+[const@GLib.TEST_OPTION_ISOLATE_DIRS] option is being used;
+and it is recommended to do so even if it isn&#x2019;t.</doc>
       <return-value transfer-ownership="none">
         <type name="none" c:type="void"/>
       </return-value>
       <parameters>
         <parameter name="testpath" transfer-ownership="none">
-          <doc xml:space="preserve">/-separated test case path name for the test.</doc>
+          <doc xml:space="preserve">a /-separated name for the test</doc>
           <type name="utf8" c:type="const char*"/>
         </parameter>
         <parameter name="test_data" transfer-ownership="none" nullable="1" allow-none="1">
-          <doc xml:space="preserve">Test data argument for the test function.</doc>
+          <doc xml:space="preserve">data for the @test_func</doc>
           <type name="gpointer" c:type="gconstpointer"/>
         </parameter>
         <parameter name="test_func" transfer-ownership="none" scope="async">
-          <doc xml:space="preserve">The test function to invoke for this test.</doc>
+          <doc xml:space="preserve">the test function to invoke for this test</doc>
           <type name="TestDataFunc" c:type="GTestDataFunc"/>
         </parameter>
       </parameters>
     </function>
     <function name="test_add_data_func_full" c:identifier="g_test_add_data_func_full" version="2.34">
-      <doc xml:space="preserve">Create a new test case, as with g_test_add_data_func(), but freeing
-@test_data after the test run is complete.</doc>
+      <doc xml:space="preserve">Creates a new test case.
+
+In constract to [func@GLib.test_add_data_func], this function
+is freeing @test_data after the test run is complete.</doc>
       <return-value transfer-ownership="none">
         <type name="none" c:type="void"/>
       </return-value>
       <parameters>
         <parameter name="testpath" transfer-ownership="none">
-          <doc xml:space="preserve">/-separated test case path name for the test.</doc>
+          <doc xml:space="preserve">a /-separated name for the test</doc>
           <type name="utf8" c:type="const char*"/>
         </parameter>
         <parameter name="test_data" transfer-ownership="none" nullable="1" allow-none="1">
-          <doc xml:space="preserve">Test data argument for the test function.</doc>
+          <doc xml:space="preserve">data for @test_func</doc>
           <type name="gpointer" c:type="gpointer"/>
         </parameter>
         <parameter name="test_func" transfer-ownership="none" scope="notified" destroy="3">
-          <doc xml:space="preserve">The test function to invoke for this test.</doc>
+          <doc xml:space="preserve">the test function to invoke for this test</doc>
           <type name="TestDataFunc" c:type="GTestDataFunc"/>
         </parameter>
         <parameter name="data_free_func" transfer-ownership="none" scope="async">
-          <doc xml:space="preserve">#GDestroyNotify for @test_data.</doc>
+          <doc xml:space="preserve">#GDestroyNotify for @test_data</doc>
           <type name="DestroyNotify" c:type="GDestroyNotify"/>
         </parameter>
       </parameters>
     </function>
     <function name="test_add_func" c:identifier="g_test_add_func" version="2.16">
-      <doc xml:space="preserve">Create a new test case, similar to g_test_create_case(). However
-the test is assumed to use no fixture, and test suites are automatically
-created on the fly and added to the root fixture, based on the
-slash-separated portions of @testpath.
+      <doc xml:space="preserve">Creates a new test case.
+
+This function is similar to [func@GLib.test_create_case].
+However the test is assumed to use no fixture, and test suites are
+automatically created on the fly and added to the root fixture,
+based on the /-separated portions of @testpath.
 
 If @testpath includes the component "subprocess" anywhere in it,
 the test will be skipped by default, and only run if explicitly
-required via the `-p` command-line option or g_test_trap_subprocess().
+required via the `-p` command-line option or [func@GLib.test_trap_subprocess].
 
 No component of @testpath may start with a dot (`.`) if the
-%G_TEST_OPTION_ISOLATE_DIRS option is being used; and it is recommended to
-do so even if it isn&#x2019;t.</doc>
+[const@GLib.TEST_OPTION_ISOLATE_DIRS] option is being used; and
+it is recommended to do so even if it isn&#x2019;t.</doc>
       <return-value transfer-ownership="none">
         <type name="none" c:type="void"/>
       </return-value>
       <parameters>
         <parameter name="testpath" transfer-ownership="none">
-          <doc xml:space="preserve">/-separated test case path name for the test.</doc>
+          <doc xml:space="preserve">a /-separated name for the test</doc>
           <type name="utf8" c:type="const char*"/>
         </parameter>
         <parameter name="test_func" transfer-ownership="none" scope="async">
-          <doc xml:space="preserve">The test function to invoke for this test.</doc>
+          <doc xml:space="preserve">the test function to invoke for this test</doc>
           <type name="TestFunc" c:type="GTestFunc"/>
         </parameter>
       </parameters>
@@ -56520,18 +56547,17 @@ expected via [func@GLib.test_expect_message] then they will be ignored.</doc>
       </parameters>
     </function>
     <function name="test_bug" c:identifier="g_test_bug" version="2.16">
-      <doc xml:space="preserve">This function adds a message to test reports that
-associates a bug URI with a test case.
+      <doc xml:space="preserve">Adds a message to test reports that associates a bug URI with a test case.
 
-Bug URIs are constructed from a base URI set with g_test_bug_base()
-and @bug_uri_snippet. If g_test_bug_base() has not been called, it is
+Bug URIs are constructed from a base URI set with [func@GLib.test_bug_base]
+and @bug_uri_snippet. If [func@GLib.test_bug_base] has not been called, it is
 assumed to be the empty string, so a full URI can be provided to
-g_test_bug() instead.
+[func@GLib.test_bug] instead.
 
-Since GLib 2.70, the base URI is not prepended to @bug_uri_snippet if it
-is already a valid URI.</doc>
-      <doc-version xml:space="preserve">
-See also: g_test_summary()</doc-version>
+See also [func@GLib.test_summary].
+
+Since GLib 2.70, the base URI is not prepended to @bug_uri_snippet
+if it is already a valid URI.</doc>
       <return-value transfer-ownership="none">
         <type name="none" c:type="void"/>
       </return-value>
@@ -56543,10 +56569,10 @@ See also: g_test_summary()</doc-version>
       </parameters>
     </function>
     <function name="test_bug_base" c:identifier="g_test_bug_base" version="2.16">
-      <doc xml:space="preserve">Specify the base URI for bug reports.
+      <doc xml:space="preserve">Specifies the base URI for bug reports.
 
 The base URI is used to construct bug report messages for
-g_test_message() when g_test_bug() is called.
+[func@GLib.test_message] when [func@GLib.test_bug] is called.
 Calling this function outside of a test case sets the
 default base URI for all test cases. Calling it from within
 a test case changes the base URI for the scope of the test
@@ -56555,8 +56581,8 @@ Bug URIs are constructed by appending a bug specific URI
 portion to @uri_pattern, or by replacing the special string
 `%s` within @uri_pattern if that is present.
 
-If g_test_bug_base() is not called, bug URIs are formed solely
-from the value provided by g_test_bug().</doc>
+If [func@GLib.test_bug_base] is not called, bug URIs are formed
+solely from the value provided by [func@GLib.test_bug].</doc>
       <return-value transfer-ownership="none">
         <type name="none" c:type="void"/>
       </return-value>
@@ -56570,28 +56596,28 @@ from the value provided by g_test_bug().</doc>
     <function name="test_build_filename" c:identifier="g_test_build_filename" version="2.38" introspectable="0">
       <doc xml:space="preserve">Creates the pathname to a data file that is required for a test.
 
-This function is conceptually similar to g_build_filename() except
-that the first argument has been replaced with a #GTestFileType
-argument.
+This function is conceptually similar to [func@GLib.build_filename]
+except that the first argument has been replaced with a
+[enum@GLib.TestFileType] argument.
 
 The data file should either have been distributed with the module
-containing the test (%G_TEST_DIST) or built as part of the build
-system of that module (%G_TEST_BUILT).
+containing the test ([enum@GLib.TestFileType.dist] or built as part of the
+buildcsystem of that module ([enum@GLib.TestFileType.built]).
 
 In order for this function to work in srcdir != builddir situations,
-the G_TEST_SRCDIR and G_TEST_BUILDDIR environment variables need to
-have been defined.  As of 2.38, this is done by the glib.mk
-included in GLib.  Please ensure that your copy is up to date before
+the `G_TEST_SRCDIR` and `G_TEST_BUILDDIR` environment variables need
+to have been defined. As of 2.38, this is done by the glib.mk that is
+included in GLib. Please ensure that your copy is up to date before
 using this function.
 
 In case neither variable is set, this function will fall back to
-using the dirname portion of argv[0], possibly removing ".libs".
+using the dirname portion of `argv[0]`, possibly removing ".libs".
 This allows for casual running of tests directly from the commandline
 in the srcdir == builddir case and should also support running of
 installed tests, assuming the data files have been installed in the
 same relative path as the test binary.</doc>
       <return-value transfer-ownership="full">
-        <doc xml:space="preserve">the path of the file, to be freed using g_free()</doc>
+        <doc xml:space="preserve">the path of the file, to be freed using [func@GLib.free]</doc>
         <type name="utf8" c:type="gchar*"/>
       </return-value>
       <parameters>
@@ -56604,31 +56630,31 @@ same relative path as the test binary.</doc>
           <type name="utf8" c:type="const gchar*"/>
         </parameter>
         <parameter name="..." transfer-ownership="none">
-          <doc xml:space="preserve">%NULL-terminated additional path segments</doc>
+          <doc xml:space="preserve">`NULL`-terminated additional path segments</doc>
           <varargs/>
         </parameter>
       </parameters>
     </function>
     <function name="test_create_case" c:identifier="g_test_create_case" version="2.16" introspectable="0">
-      <doc xml:space="preserve">Create a new #GTestCase, named @test_name.
+      <doc xml:space="preserve">Creates a new [struct@GLib.TestCase].
 
-This API is fairly low level, and calling g_test_add() or g_test_add_func()
-is preferable.
+This API is fairly low level, and calling [func@GLib.test_add] or
+[func@GLib.test_add_func] is preferable.
 
 When this test is executed, a fixture structure of size @data_size
-will be automatically allocated and filled with zeros. Then @data_setup is
-called to initialize the fixture. After fixture setup, the actual test
+will be automatically allocated and filled with zeros. Then @data_setup
+is called to initialize the fixture. After fixture setup, the actual test
 function @data_test is called. Once the test run completes, the
-fixture structure is torn down by calling @data_teardown and
-after that the memory is automatically released by the test framework.
+fixture structure is torn down by calling @data_teardown and after
+that the memory is automatically released by the test framework.
 
 Splitting up a test run into fixture setup, test function and
 fixture teardown is most useful if the same fixture type is used for
-multiple tests. In this cases, g_test_create_case() will be
-called with the same type of fixture (the @data_size argument), but varying
-@test_name and @data_test arguments.</doc>
+multiple tests. In this cases, [func@GLib.test_create_case] will be
+called with the same type of fixture (the @data_size argument), but
+varying @test_name and @data_test arguments.</doc>
       <return-value>
-        <doc xml:space="preserve">a newly allocated #GTestCase.</doc>
+        <doc xml:space="preserve">a newly allocated test case</doc>
         <type name="TestCase" c:type="GTestCase*"/>
       </return-value>
       <parameters>
@@ -56659,9 +56685,9 @@ called with the same type of fixture (the @data_size argument), but varying
       </parameters>
     </function>
     <function name="test_create_suite" c:identifier="g_test_create_suite" version="2.16" introspectable="0">
-      <doc xml:space="preserve">Create a new test suite with the name @suite_name.</doc>
+      <doc xml:space="preserve">Creates a new test suite with the name @suite_name.</doc>
       <return-value>
-        <doc xml:space="preserve">A newly allocated #GTestSuite instance.</doc>
+        <doc xml:space="preserve">a newly allocated test suite</doc>
         <type name="TestSuite" c:type="GTestSuite*"/>
       </return-value>
       <parameters>
@@ -56672,7 +56698,7 @@ called with the same type of fixture (the @data_size argument), but varying
       </parameters>
     </function>
     <function name="test_disable_crash_reporting" c:identifier="g_test_disable_crash_reporting" version="2.78">
-      <doc xml:space="preserve">Attempt to disable system crash reporting infrastructure.
+      <doc xml:space="preserve">Attempts to disable system crash reporting infrastructure.
 
 This function should be called before exercising code paths that are
 expected or intended to crash, to avoid wasting resources in system-wide
@@ -56736,9 +56762,10 @@ expected via [func@GLib.test_expect_message] then they will be ignored.</doc>
       </parameters>
     </function>
     <function name="test_fail" c:identifier="g_test_fail" version="2.30">
-      <doc xml:space="preserve">Indicates that a test failed. This function can be called
-multiple times from the same test. You can use this function
-if your test failed in a recoverable way.
+      <doc xml:space="preserve">Indicates that a test failed.
+
+This function can be called multiple times from the same test.
+You can use this function if your test failed in a recoverable way.
 
 Do not use this function if the failure of a test could cause
 other tests to malfunction.
@@ -56750,18 +56777,21 @@ the test.
 
 If not called from inside a test, this function does nothing.
 
-Note that unlike g_test_skip() and g_test_incomplete(), this
-function does not log a message alongside the test failure.
+Note that unlike [func@GLib.test_skip] and [func@GLib.test_incomplete],
+this function does not log a message alongside the test failure.
 If details of the test failure are available, either log them with
-g_test_message() before g_test_fail(), or use g_test_fail_printf()
-instead.</doc>
+[func@GLib.test_message] before [func@GLib.test_fail], or use
+[func@GLib.test_fail_printf] instead.</doc>
       <return-value transfer-ownership="none">
         <type name="none" c:type="void"/>
       </return-value>
     </function>
     <function name="test_fail_printf" c:identifier="g_test_fail_printf" version="2.70" introspectable="0">
-      <doc xml:space="preserve">Equivalent to g_test_fail(), but also record a message like
-g_test_skip_printf().</doc>
+      <doc xml:space="preserve">Indicates that a test failed and records a message.
+
+Also see [func@GLib.test_fail].
+
+The message is formatted as if by [func@GLib.strdup_printf].</doc>
       <return-value transfer-ownership="none">
         <type name="none" c:type="void"/>
       </return-value>
@@ -56777,10 +56807,11 @@ g_test_skip_printf().</doc>
       </parameters>
     </function>
     <function name="test_failed" c:identifier="g_test_failed" version="2.38">
-      <doc xml:space="preserve">Returns whether a test has already failed. This will
-be the case when g_test_fail(), g_test_incomplete()
-or g_test_skip() have been called, but also if an
-assertion has failed.
+      <doc xml:space="preserve">Returns whether a test has already failed.
+
+This will be the case when [func@GLib.test_fail],
+[func@GLib.test_incomplete] or [func@GLib.test_skip] have
+been called, but also if an assertion has failed.
 
 This can be useful to return early from a test if
 continuing after a failed assertion might be harmful.
@@ -56788,7 +56819,7 @@ continuing after a failed assertion might be harmful.
 The return value of this function is only meaningful
 if it is called from inside a test function.</doc>
       <return-value transfer-ownership="none">
-        <doc xml:space="preserve">%TRUE if the test has failed</doc>
+        <doc xml:space="preserve">true if the test has failed</doc>
         <type name="gboolean" c:type="gboolean"/>
       </return-value>
     </function>
@@ -56796,7 +56827,7 @@ if it is called from inside a test function.</doc>
       <doc xml:space="preserve">Gets the pathname of the directory containing test files of the type
 specified by @file_type.
 
-This is approximately the same as calling g_test_build_filename("."),
+This is approximately the same as calling `g_test_build_filename(".")`,
 but you don't need to free the return value.</doc>
       <return-value transfer-ownership="none">
         <doc xml:space="preserve">the path of the directory, owned by GLib</doc>
@@ -56812,9 +56843,9 @@ but you don't need to free the return value.</doc>
     <function name="test_get_filename" c:identifier="g_test_get_filename" version="2.38" introspectable="0">
       <doc xml:space="preserve">Gets the pathname to a data file that is required for a test.
 
-This is the same as g_test_build_filename() with two differences.
+This is the same as [func@GLib.test_build_filename] with two differences.
 The first difference is that you must only use this function from within
-a testcase function.  The second difference is that you need not free
+a testcase function. The second difference is that you need not free
 the return value &#x2014; it will be automatically freed when the testcase
 finishes running.
 
@@ -56836,7 +56867,7 @@ joined).</doc>
           <type name="utf8" c:type="const gchar*"/>
         </parameter>
         <parameter name="..." transfer-ownership="none">
-          <doc xml:space="preserve">%NULL-terminated additional path segments</doc>
+          <doc xml:space="preserve">`NULL`-terminated additional path segments</doc>
           <varargs/>
         </parameter>
       </parameters>
@@ -56844,8 +56875,8 @@ joined).</doc>
     <function name="test_get_path" c:identifier="g_test_get_path" version="2.68">
       <doc xml:space="preserve">Gets the test path for the test currently being run.
 
-In essence, it will be the same string passed as the first argument to
-e.g. g_test_add() when the test was added.
+In essence, it will be the same string passed as the first argument
+to e.g. [func@GLib.test_add] when the test was added.
 
 This function returns a valid string only within a test function.
 
@@ -56856,16 +56887,17 @@ Note that this is a test path, not a file system path.</doc>
       </return-value>
     </function>
     <function name="test_get_root" c:identifier="g_test_get_root" version="2.16" introspectable="0">
-      <doc xml:space="preserve">Get the toplevel test suite for the test path API.</doc>
+      <doc xml:space="preserve">Gets the toplevel test suite for the test path API.</doc>
       <return-value>
-        <doc xml:space="preserve">the toplevel #GTestSuite</doc>
+        <doc xml:space="preserve">the toplevel test suite</doc>
         <type name="TestSuite" c:type="GTestSuite*"/>
       </return-value>
     </function>
     <function name="test_incomplete" c:identifier="g_test_incomplete" version="2.38">
       <doc xml:space="preserve">Indicates that a test failed because of some incomplete
-functionality. This function can be called multiple times
-from the same test.
+functionality.
+
+This function can be called multiple times from the same test.
 
 Calling this function will not stop the test from running, you
 need to return from the test function yourself. So you can
@@ -56884,8 +56916,11 @@ If not called from inside a test, this function does nothing.</doc>
       </parameters>
     </function>
     <function name="test_incomplete_printf" c:identifier="g_test_incomplete_printf" version="2.70" introspectable="0">
-      <doc xml:space="preserve">Equivalent to g_test_incomplete(), but the explanation is formatted
-as if by g_strdup_printf().</doc>
+      <doc xml:space="preserve">Indicates that a test failed because of some incomplete
+functionality.
+
+Equivalent to [func@GLib.test_incomplete], but the explanation
+is formatted as if by [func@GLib.strdup_printf].</doc>
       <return-value transfer-ownership="none">
         <type name="none" c:type="void"/>
       </return-value>
@@ -56901,13 +56936,14 @@ as if by g_strdup_printf().</doc>
       </parameters>
     </function>
     <function name="test_init" c:identifier="g_test_init" version="2.16" introspectable="0">
-      <doc xml:space="preserve">Initialize the GLib testing framework, e.g. by seeding the
-test random number generator, the name for g_get_prgname()
-and parsing test related command line args.
+      <doc xml:space="preserve">Initializes the GLib testing framework.
+
+This includes seeding the test random number generator,
+setting the program name, and parsing test-related commandline args.
 
 This should be called before calling any other `g_test_*()` functions.
 
-So far, the following arguments are understood:
+The following arguments are understood:
 
 - `-l`: List test cases available in a test executable.
 - `--seed=SEED`: Provide a random seed to reproduce test
@@ -56918,61 +56954,61 @@ So far, the following arguments are understood:
 - `-s PATH`: Skip all tests matching the given path.
   This can also be used to force a test to run that would otherwise
   be skipped (ie, a test whose name contains "/subprocess").
-- `-m {perf|slow|thorough|quick|undefined|no-undefined}`: Execute tests according to these test modes:
+- `-m {perf|slow|thorough|quick|undefined|no-undefined}`: Execute tests according
+  to these test modes:
 
   `perf`: Performance tests, may take long and report results (off by default).
 
-  `slow`, `thorough`: Slow and thorough tests, may take quite long and maximize coverage
-  (off by default).
+  `slow`, `thorough`: Slow and thorough tests, may take quite long and maximize
+  coverage (off by default).
 
   `quick`: Quick tests, should run really quickly and give good coverage (the default).
 
   `undefined`: Tests for undefined behaviour, may provoke programming errors
-  under g_test_trap_subprocess() or g_test_expect_message() to check
-  that appropriate assertions or warnings are given (the default).
+  under [func@GLib.test_trap_subprocess] or [func@GLib.test_expect_message]
+  to check that appropriate assertions or warnings are given (the default).
 
-  `no-undefined`: Avoid tests for undefined behaviour
+  `no-undefined`: Avoid tests for undefined behaviour.
 
 - `--debug-log`: Debug test logging output.
 
-Options which can be passed to @... are:
+Any parsed arguments are removed from @argv, and @argc is adjust accordingly.
 
- - `G_TEST_OPTION_NO_PRGNAME`: Causes g_test_init() to not call
-   [func@GLib.set_prgname]. Since. 2.84
- - `G_TEST_OPTION_ISOLATE_DIRS`: Creates a unique temporary directory for each
-   unit test and uses g_set_user_dirs() to set XDG directories to point into
-   that temporary directory for the duration of the unit test. See the
-   documentation for %G_TEST_OPTION_ISOLATE_DIRS.
- - `G_TEST_OPTION_NONFATAL_ASSERTIONS`: This has the same effect as
-   [func@GLib.test_set_nonfatal_assertions]. Since 2.84
+The following options are supported:
 
-Since 2.58, if tests are compiled with `G_DISABLE_ASSERT` defined,
-g_test_init() will print an error and exit. This is to prevent no-op tests
-from being executed, as g_assert() is commonly (erroneously) used in unit
-tests, and is a no-op when compiled with `G_DISABLE_ASSERT`. Ensure your
-tests are compiled without `G_DISABLE_ASSERT` defined.</doc>
+- `G_TEST_OPTION_NO_PRGNAME`: Causes g_test_init() to not call
+  [func@GLib.set_prgname]. Since. 2.84
+- `G_TEST_OPTION_ISOLATE_DIRS`: Creates a unique temporary directory for each
+  unit test and sets XDG directories to point there for the duration of the unit
+  test. See [const@GLib.TEST_OPTION_ISOLATE_DIRS].
+- `G_TEST_OPTION_NONFATAL_ASSERTIONS`: This has the same effect as
+  [func@GLib.test_set_nonfatal_assertions]. Since 2.84
+
+Since 2.58, if tests are compiled with `G_DISABLE_ASSERT` defined, `g_test_init()`
+will print an error and exit. This is to prevent no-op tests from being executed,
+as [func@GLib.assert] is commonly (erroneously) used in unit tests, and is a no-op
+when compiled with `G_DISABLE_ASSERT`. Ensure your tests are compiled without
+`G_DISABLE_ASSERT` defined.</doc>
       <return-value transfer-ownership="none">
         <type name="none" c:type="void"/>
       </return-value>
       <parameters>
         <parameter name="argc" transfer-ownership="none">
-          <doc xml:space="preserve">Address of the @argc parameter of the main() function.
-       Changed if any arguments were handled.</doc>
+          <doc xml:space="preserve">address of the @argc parameter of `main()`</doc>
           <type name="gint" c:type="int*"/>
         </parameter>
         <parameter name="argv" transfer-ownership="none">
-          <doc xml:space="preserve">Address of the @argv parameter of main().
-       Any parameters understood by g_test_init() stripped before return.</doc>
+          <doc xml:space="preserve">address of the @argv parameter of `main()`</doc>
           <type name="utf8" c:type="char***"/>
         </parameter>
         <parameter name="..." transfer-ownership="none">
-          <doc xml:space="preserve">%NULL-terminated list of special options, documented below.</doc>
+          <doc xml:space="preserve">`NULL`-terminated list of special options</doc>
           <varargs/>
         </parameter>
       </parameters>
     </function>
     <function-macro name="test_initialized" c:identifier="g_test_initialized" version="2.36" introspectable="0">
-      <doc xml:space="preserve">Returns %TRUE if g_test_init() has been called.</doc>
+      <doc xml:space="preserve">Returns true if [func@GLib.test_init] has been called.</doc>
     </function-macro>
     <function name="test_log_set_fatal_handler" c:identifier="g_test_log_set_fatal_handler" version="2.22" introspectable="0">
       <doc xml:space="preserve">Installs a non-error fatal log handler which can be
@@ -57021,7 +57057,8 @@ writer function using [func@GLib.log_set_writer_func].See
       </parameters>
     </function>
     <function name="test_maximized_result" c:identifier="g_test_maximized_result" version="2.16" introspectable="0">
-      <doc xml:space="preserve">Report the result of a performance or measurement test.
+      <doc xml:space="preserve">Reports the result of a performance or measurement test.
+
 The test should generally strive to maximize the reported
 quantities (larger values are better than smaller ones),
 this and @maximized_quantity can determine sorting
@@ -57039,13 +57076,13 @@ order for test result reports.</doc>
           <type name="utf8" c:type="const char*"/>
         </parameter>
         <parameter name="..." transfer-ownership="none">
-          <doc xml:space="preserve">arguments to pass to the printf() function</doc>
+          <doc xml:space="preserve">printf-like arguments to @format</doc>
           <varargs/>
         </parameter>
       </parameters>
     </function>
     <function name="test_message" c:identifier="g_test_message" version="2.16" introspectable="0">
-      <doc xml:space="preserve">Add a message to the test report.</doc>
+      <doc xml:space="preserve">Adds a message to the test report.</doc>
       <return-value transfer-ownership="none">
         <type name="none" c:type="void"/>
       </return-value>
@@ -57061,7 +57098,8 @@ order for test result reports.</doc>
       </parameters>
     </function>
     <function name="test_minimized_result" c:identifier="g_test_minimized_result" version="2.16" introspectable="0">
-      <doc xml:space="preserve">Report the result of a performance or measurement test.
+      <doc xml:space="preserve">Reports the result of a performance or measurement test.
+
 The test should generally strive to minimize the reported
 quantities (smaller values are better than larger ones),
 this and @minimized_quantity can determine sorting
@@ -57079,24 +57117,24 @@ order for test result reports.</doc>
           <type name="utf8" c:type="const char*"/>
         </parameter>
         <parameter name="..." transfer-ownership="none">
-          <doc xml:space="preserve">arguments to pass to the printf() function</doc>
+          <doc xml:space="preserve">printf-like arguments to @format</doc>
           <varargs/>
         </parameter>
       </parameters>
     </function>
     <function-macro name="test_perf" c:identifier="g_test_perf" introspectable="0">
-      <doc xml:space="preserve">Returns %TRUE if tests are run in performance mode.
+      <doc xml:space="preserve">Returns true if tests are run in performance mode.
 
 By default, tests are run in quick mode. In tests that use
-g_test_init(), the option `-m perf` enables performance tests, while
+[func@GLib.test_init], the option `-m perf` enables performance tests, while
 `-m quick` disables them.</doc>
     </function-macro>
     <function name="test_queue_destroy" c:identifier="g_test_queue_destroy" version="2.16">
       <doc xml:space="preserve">Enqueues a callback @destroy_func to be executed during the next test case
 teardown phase.
 
-This is most useful to auto destroy allocated test resources at the end of a
-test run. Resources are released in reverse queue order, that means
+This is most useful to auto destroy allocated test resources at the end
+of a test run. Resources are released in reverse queue order, that means
 enqueueing callback `A` before callback `B` will cause `B()` to be called
 before `A()` during teardown.</doc>
       <return-value transfer-ownership="none">
@@ -57104,33 +57142,37 @@ before `A()` during teardown.</doc>
       </return-value>
       <parameters>
         <parameter name="destroy_func" transfer-ownership="none" scope="async">
-          <doc xml:space="preserve">Destroy callback for teardown phase.</doc>
+          <doc xml:space="preserve">destroy callback for teardown phase</doc>
           <type name="DestroyNotify" c:type="GDestroyNotify"/>
         </parameter>
         <parameter name="destroy_data" transfer-ownership="none" nullable="1" allow-none="1">
-          <doc xml:space="preserve">Destroy callback data.</doc>
+          <doc xml:space="preserve">destroy callback data</doc>
           <type name="gpointer" c:type="gpointer"/>
         </parameter>
       </parameters>
     </function>
     <function name="test_queue_free" c:identifier="g_test_queue_free" version="2.16">
-      <doc xml:space="preserve">Enqueue a pointer to be released with g_free() during the next
-teardown phase. This is equivalent to calling g_test_queue_destroy()
-with a destroy callback of g_free().</doc>
+      <doc xml:space="preserve">Enqueues a pointer to be released with [func@GLib.free]
+during the next teardown phase.
+
+This is equivalent to calling [func@GLib.test_queue_destroy]
+with a destroy callback of [func@GLib.free].</doc>
       <return-value transfer-ownership="none">
         <type name="none" c:type="void"/>
       </return-value>
       <parameters>
         <parameter name="gfree_pointer" transfer-ownership="none" nullable="1" allow-none="1">
-          <doc xml:space="preserve">the pointer to be stored.</doc>
+          <doc xml:space="preserve">the pointer to be stored</doc>
           <type name="gpointer" c:type="gpointer"/>
         </parameter>
       </parameters>
     </function>
     <function-macro name="test_queue_unref" c:identifier="g_test_queue_unref" version="2.16" introspectable="0">
       <doc xml:space="preserve">Enqueue an object to be released with g_object_unref() during
-the next teardown phase. This is equivalent to calling
-g_test_queue_destroy() with a destroy callback of g_object_unref().</doc>
+the next teardown phase.
+
+This is equivalent to calling [func@GLib.test_queue_destroy]
+with a destroy callback of g_object_unref().</doc>
       <parameters>
         <parameter name="gobject">
           <doc xml:space="preserve">the object to unref</doc>
@@ -57138,37 +57180,42 @@ g_test_queue_destroy() with a destroy callback of g_object_unref().</doc>
       </parameters>
     </function-macro>
     <function-macro name="test_quick" c:identifier="g_test_quick" introspectable="0">
-      <doc xml:space="preserve">Returns %TRUE if tests are run in quick mode.
-Exactly one of g_test_quick() and g_test_slow() is active in any run;
-there is no "medium speed".
+      <doc xml:space="preserve">Returns true if tests are run in quick mode.
+
+Tests are always run in slow mode or in fast mode; there is no "medium speed".
 
 By default, tests are run in quick mode. In tests that use
-g_test_init(), the options `-m quick`, `-m slow` and `-m thorough`
+[func@GLib.test_init], the options `-m quick`, `-m slow` and `-m thorough`
 can be used to change this.</doc>
     </function-macro>
     <function-macro name="test_quiet" c:identifier="g_test_quiet" introspectable="0">
-      <doc xml:space="preserve">Returns %TRUE if tests are run in quiet mode.
-In tests that use g_test_init(), the option `-q` or `--quiet` enables
+      <doc xml:space="preserve">Returns true if tests are run in quiet mode.
+
+In tests that use [func@GLib.test_init], the option `-q` or `--quiet` enables
 this, while `--verbose` disables it.
-The default is neither g_test_verbose() nor g_test_quiet().</doc>
+
+The default is neither verbose nor quiet.</doc>
     </function-macro>
     <function-macro name="test_rand_bit" c:identifier="g_test_rand_bit" version="2.16" introspectable="0">
-      <doc xml:space="preserve">Get a reproducible random bit (0 or 1), see g_test_rand_int()
-for details on test case random numbers.</doc>
+      <doc xml:space="preserve">Get a reproducible random bit (0 or 1).
+
+See [func@GLib.test_rand_int] for details on test case random numbers.</doc>
     </function-macro>
     <function name="test_rand_double" c:identifier="g_test_rand_double" version="2.16">
-      <doc xml:space="preserve">Get a reproducible random floating point number,
-see g_test_rand_int() for details on test case random numbers.</doc>
+      <doc xml:space="preserve">Gets a reproducible random floating point number.
+
+See [func@GLib.test_rand_int] for details on test case random numbers.</doc>
       <return-value transfer-ownership="none">
-        <doc xml:space="preserve">a random number from the seeded random number generator.</doc>
+        <doc xml:space="preserve">a random number from the seeded random number generator</doc>
         <type name="gdouble" c:type="double"/>
       </return-value>
     </function>
     <function name="test_rand_double_range" c:identifier="g_test_rand_double_range" version="2.16">
-      <doc xml:space="preserve">Get a reproducible random floating pointer number out of a specified range,
-see g_test_rand_int() for details on test case random numbers.</doc>
+      <doc xml:space="preserve">Gets a reproducible random floating point number out of a specified range.
+
+See [func@GLib.test_rand_int] for details on test case random numbers.</doc>
       <return-value transfer-ownership="none">
-        <doc xml:space="preserve">a number with @range_start &lt;= number &lt; @range_end.</doc>
+        <doc xml:space="preserve">a number with @range_start &lt;= number &lt; @range_end</doc>
         <type name="gdouble" c:type="double"/>
       </return-value>
       <parameters>
@@ -57183,7 +57230,7 @@ see g_test_rand_int() for details on test case random numbers.</doc>
       </parameters>
     </function>
     <function name="test_rand_int" c:identifier="g_test_rand_int" version="2.16">
-      <doc xml:space="preserve">Get a reproducible random integer number.
+      <doc xml:space="preserve">Gets a reproducible random integer number.
 
 The random numbers generated by the g_test_rand_*() family of functions
 change with every new test program start, unless the --seed option is
@@ -57193,15 +57240,16 @@ For individual test cases however, the random number generator is
 reseeded, to avoid dependencies between tests and to make --seed
 effective for all test cases.</doc>
       <return-value transfer-ownership="none">
-        <doc xml:space="preserve">a random number from the seeded random number generator.</doc>
+        <doc xml:space="preserve">a random number from the seeded random number generator</doc>
         <type name="gint32" c:type="gint32"/>
       </return-value>
     </function>
     <function name="test_rand_int_range" c:identifier="g_test_rand_int_range" version="2.16">
-      <doc xml:space="preserve">Get a reproducible random integer number out of a specified range,
-see g_test_rand_int() for details on test case random numbers.</doc>
+      <doc xml:space="preserve">Gets a reproducible random integer number out of a specified range.
+
+See [func@GLib.test_rand_int] for details on test case random numbers.</doc>
       <return-value transfer-ownership="none">
-        <doc xml:space="preserve">a number with @begin &lt;= number &lt; @end.</doc>
+        <doc xml:space="preserve">a number with @begin &lt;= number &lt; @end</doc>
         <type name="gint32" c:type="gint32"/>
       </return-value>
       <parameters>
@@ -57216,12 +57264,14 @@ see g_test_rand_int() for details on test case random numbers.</doc>
       </parameters>
     </function>
     <function name="test_run" c:identifier="g_test_run" version="2.16">
-      <doc xml:space="preserve">Runs all tests under the toplevel suite which can be retrieved
-with g_test_get_root(). Similar to g_test_run_suite(), the test
-cases to be run are filtered according to test path arguments
-(`-p testpath` and `-s testpath`) as parsed by g_test_init().
-g_test_run_suite() or g_test_run() may only be called once in a
-program.
+      <doc xml:space="preserve">Runs all tests under the toplevel suite.
+
+The toplevel suite can be retrieved with [func@GLib.test_get_root].
+
+Similar to [func@GLib.test_run_suite], the test cases to be run are
+filtered according to test path arguments (`-p testpath` and `-s testpath`)
+as parsed by [func@GLib.test_init]. [func@GLib.test_run_suite] or
+[func@GLib.test_run] may only be called once in a program.
 
 In general, the tests and sub-suites within each suite are run in
 the order in which they are defined. However, note that prior to
@@ -57229,7 +57279,7 @@ GLib 2.36, there was a bug in the `g_test_add_*`
 functions which caused them to create multiple suites with the same
 name, meaning that if you created tests "/foo/simple",
 "/bar/simple", and "/foo/using-bar" in that order, they would get
-run in that order (since g_test_run() would run the first "/foo"
+run in that order (since [func@GLib.test_run] would run the first "/foo"
 suite, then the "/bar" suite, then the second "/foo" suite). As of
 2.36, this bug is fixed, and adding the tests in that order would
 result in a running order of "/foo/simple", "/foo/using-bar",
@@ -57243,50 +57293,54 @@ desired running order. Eg, "/simple/foo", "/simple/bar",
 However, you should never make the actual result of a test depend
 on the order that tests are run in. If you need to ensure that some
 particular code runs before or after a given test case, use
-g_test_add(), which lets you specify setup and teardown functions.
+[func@GLib.test_add], which lets you specify setup and teardown functions.
 
 If all tests are skipped or marked as incomplete (expected failures),
 this function will return 0 if producing TAP output, or 77 (treated
 as "skip test" by Automake) otherwise.</doc>
       <return-value transfer-ownership="none">
         <doc xml:space="preserve">0 on success, 1 on failure (assuming it returns at all),
-  0 or 77 if all tests were skipped with g_test_skip() and/or
-  g_test_incomplete()</doc>
+  0 or 77 if all tests were skipped or marked as incomplete</doc>
         <type name="gint" c:type="int"/>
       </return-value>
     </function>
     <function name="test_run_suite" c:identifier="g_test_run_suite" version="2.16">
-      <doc xml:space="preserve">Execute the tests within @suite and all nested #GTestSuites.
+      <doc xml:space="preserve">Executes the tests within @suite and all nested test suites.
+
 The test suites to be executed are filtered according to
 test path arguments (`-p testpath` and `-s testpath`) as parsed by
-g_test_init(). See the g_test_run() documentation for more
-information on the order that tests are run in.
+[func@GLib.test_init]. See the [func@GLib.test_run] documentation
+for more information on the order that tests are run in.
 
-g_test_run_suite() or g_test_run() may only be called once
-in a program.</doc>
+[func@GLib.test_run_suite] or [func@GLib.test_run] may only be
+called once in a program.</doc>
       <return-value transfer-ownership="none">
         <doc xml:space="preserve">0 on success</doc>
         <type name="gint" c:type="int"/>
       </return-value>
       <parameters>
         <parameter name="suite" transfer-ownership="none">
-          <doc xml:space="preserve">a #GTestSuite</doc>
+          <doc xml:space="preserve">a test suite</doc>
           <type name="TestSuite" c:type="GTestSuite*"/>
         </parameter>
       </parameters>
     </function>
     <function name="test_set_nonfatal_assertions" c:identifier="g_test_set_nonfatal_assertions" version="2.38">
-      <doc xml:space="preserve">Changes the behaviour of the various `g_assert_*()` macros,
-g_test_assert_expected_messages() and the various
-`g_test_trap_assert_*()` macros to not abort to program, but instead
-call g_test_fail() and continue. (This also changes the behavior of
-g_test_fail() so that it will not cause the test program to abort
-after completing the failed test.)
+      <doc xml:space="preserve">Changes the behaviour of the various assertion macros.
 
-Note that the g_assert_not_reached() and g_assert() macros are not
-affected by this.
+The `g_assert_*()` macros, `g_test_assert_expected_messages()`
+and the various `g_test_trap_assert_*()` macros are changed
+to not abort to program.
 
-This function can only be called after g_test_init().</doc>
+Instead, they will call [func@GLib.test_fail] and continue.
+(This also changes the behavior of [func@GLib.test_fail] so that
+it will not cause the test program to abort after completing
+the failed test.)
+
+Note that the [func@GLib.assert_not_reached] and [func@GLib.assert]
+macros are not affected by this.
+
+This function can only be called after [func@GLib.test_init].</doc>
       <return-value transfer-ownership="none">
         <type name="none" c:type="void"/>
       </return-value>
@@ -57311,8 +57365,10 @@ If not called from inside a test, this function does nothing.</doc>
       </parameters>
     </function>
     <function name="test_skip_printf" c:identifier="g_test_skip_printf" version="2.70" introspectable="0">
-      <doc xml:space="preserve">Equivalent to g_test_skip(), but the explanation is formatted
-as if by g_strdup_printf().</doc>
+      <doc xml:space="preserve">Indicates that a test was skipped.
+
+Equivalent to [func@GLib.test_skip], but the explanation
+is formatted as if by [func@GLib.strdup_printf].</doc>
       <return-value transfer-ownership="none">
         <type name="none" c:type="void"/>
       </return-value>
@@ -57328,80 +57384,82 @@ as if by g_strdup_printf().</doc>
       </parameters>
     </function>
     <function-macro name="test_slow" c:identifier="g_test_slow" introspectable="0">
-      <doc xml:space="preserve">Returns %TRUE if tests are run in slow mode.
-Exactly one of g_test_quick() and g_test_slow() is active in any run;
-there is no "medium speed".
+      <doc xml:space="preserve">Returns true if tests are run in slow mode.
+
+Tests are always run in slow mode or in fast mode; there is no "medium speed".
 
 By default, tests are run in quick mode. In tests that use
-g_test_init(), the options `-m quick`, `-m slow` and `-m thorough`
+[func@GLib.test_init], the options `-m quick`, `-m slow` and `-m thorough`
 can be used to change this.</doc>
     </function-macro>
     <function name="test_subprocess" c:identifier="g_test_subprocess" version="2.38">
-      <doc xml:space="preserve">Returns %TRUE (after g_test_init() has been called) if the test
-program is running under g_test_trap_subprocess().</doc>
+      <doc xml:space="preserve">Returns true if the test program is running under [func@GLib.test_trap_subprocess].</doc>
       <return-value transfer-ownership="none">
-        <doc xml:space="preserve">%TRUE if the test program is running under
-g_test_trap_subprocess().</doc>
+        <doc xml:space="preserve">true if the test program is running under [func@GLib.test_trap_subprocess]</doc>
         <type name="gboolean" c:type="gboolean"/>
       </return-value>
     </function>
     <function name="test_summary" c:identifier="g_test_summary" version="2.62">
-      <doc xml:space="preserve">Set the summary for a test, which describes what the test checks, and how it
-goes about checking it. This may be included in test report output, and is
-useful documentation for anyone reading the source code or modifying a test
-in future. It must be a single line.
+      <doc xml:space="preserve">Sets the summary for a test.
+
+This may be included in test report output, and is useful documentation for
+anyone reading the source code or modifying a test in future. It must be a
+single line, and it should summarise what the test checks, and how.
 
 This should be called at the top of a test function.
 
 For example:
-|[&lt;!-- language="C" --&gt;
+
+```c
 static void
 test_array_sort (void)
 {
   g_test_summary ("Test my_array_sort() sorts the array correctly and stably, "
                   "including testing zero length and one-element arrays.");
 
-  &#x2026;
+  // ...
 }
-]|</doc>
-      <doc-version xml:space="preserve">
-See also: g_test_bug()</doc-version>
+```
+
+See also [func@GLib.test_bug].</doc>
       <return-value transfer-ownership="none">
         <type name="none" c:type="void"/>
       </return-value>
       <parameters>
         <parameter name="summary" transfer-ownership="none">
-          <doc xml:space="preserve">One or two sentences summarising what the test checks, and how it
-   checks it.</doc>
+          <doc xml:space="preserve">summary of the test purpose</doc>
           <type name="utf8" c:type="const char*"/>
         </parameter>
       </parameters>
     </function>
     <function-macro name="test_thorough" c:identifier="g_test_thorough" introspectable="0">
-      <doc xml:space="preserve">Returns %TRUE if tests are run in thorough mode, equivalent to
-g_test_slow().
+      <doc xml:space="preserve">Returns true if tests are run in thorough mode.
+
+Thorough mode is equivalent to slow mode.
 
 By default, tests are run in quick mode. In tests that use
-g_test_init(), the options `-m quick`, `-m slow` and `-m thorough`
+[func@GLib.test_init], the options `-m quick`, `-m slow` and `-m thorough`
 can be used to change this.</doc>
     </function-macro>
     <function name="test_timer_elapsed" c:identifier="g_test_timer_elapsed" version="2.16">
-      <doc xml:space="preserve">Get the number of seconds since the last start of the timer with
-g_test_timer_start().</doc>
+      <doc xml:space="preserve">Gets the number of seconds since the last start of the timer with
+[func@GLib.test_timer_start].</doc>
       <return-value transfer-ownership="none">
-        <doc xml:space="preserve">the time since the last start of the timer in seconds, as a double</doc>
+        <doc xml:space="preserve">the time since the last start of the timer in seconds</doc>
         <type name="gdouble" c:type="double"/>
       </return-value>
     </function>
     <function name="test_timer_last" c:identifier="g_test_timer_last" version="2.16">
-      <doc xml:space="preserve">Report the last result of g_test_timer_elapsed().</doc>
+      <doc xml:space="preserve">Reports the last result of [func@GLib.test_timer_elapsed].</doc>
       <return-value transfer-ownership="none">
-        <doc xml:space="preserve">the last result of g_test_timer_elapsed(), as a double</doc>
+        <doc xml:space="preserve">the last result of [func@GLib.test_timer_elapsed]</doc>
         <type name="gdouble" c:type="double"/>
       </return-value>
     </function>
     <function name="test_timer_start" c:identifier="g_test_timer_start" version="2.16">
-      <doc xml:space="preserve">Start a timing test. Call g_test_timer_elapsed() when the task is supposed
+      <doc xml:space="preserve">Starts a timing test.
+
+Call [func@GLib.test_timer_elapsed] when the task is supposed
 to be done. Call this function again to restart the timer.</doc>
       <return-value transfer-ownership="none">
         <type name="none" c:type="void"/>
@@ -57409,27 +57467,31 @@ to be done. Call this function again to restart the timer.</doc>
     </function>
     <function-macro name="test_trap_assert_failed" c:identifier="g_test_trap_assert_failed" version="2.16" introspectable="0">
       <doc xml:space="preserve">Assert that the last test subprocess failed.
-See g_test_trap_subprocess().
+
+See [func@GLib.test_trap_subprocess].
 
 This is sometimes used to test situations that are formally considered to
-be undefined behaviour, like inputs that fail a g_return_if_fail()
+be undefined behaviour, like inputs that fail a [func@GLib.return_if_fail]
 check. In these situations you should skip the entire test, including the
-call to g_test_trap_subprocess(), unless g_test_undefined() returns %TRUE
-to indicate that undefined behaviour may be tested.</doc>
+call to [func@GLib.test_trap_subprocess], unless [func@GLib.test_undefined]
+returns true to indicate that undefined behaviour may be tested.</doc>
     </function-macro>
     <function-macro name="test_trap_assert_passed" c:identifier="g_test_trap_assert_passed" version="2.16" introspectable="0">
       <doc xml:space="preserve">Assert that the last test subprocess passed.
-See g_test_trap_subprocess().</doc>
+
+See [func@GLib.test_trap_subprocess].</doc>
     </function-macro>
     <function-macro name="test_trap_assert_stderr" c:identifier="g_test_trap_assert_stderr" version="2.16" introspectable="0">
       <doc xml:space="preserve">Assert that the stderr output of the last test subprocess
-matches @serrpattern. See  g_test_trap_subprocess().
+matches @serrpattern.
 
-This is sometimes used to test situations that are formally
-considered to be undefined behaviour, like code that hits a
-g_assert() or g_error(). In these situations you should skip the
-entire test, including the call to g_test_trap_subprocess(), unless
-g_test_undefined() returns %TRUE to indicate that undefined
+See [func@GLib.test_trap_subprocess].
+
+This is sometimes used to test situations that are formally considered
+to be undefined behaviour, like code that hits a [func@GLib.assert] or
+[func@GLib.error]. In these situations you should skip the entire test,
+including the call to [func@GLib.test_trap_subprocess], unless
+[func@GLib.test_undefined] returns true to indicate that undefined
 behaviour may be tested.</doc>
       <parameters>
         <parameter name="serrpattern">
@@ -57439,7 +57501,9 @@ behaviour may be tested.</doc>
     </function-macro>
     <function-macro name="test_trap_assert_stderr_unmatched" c:identifier="g_test_trap_assert_stderr_unmatched" version="2.16" introspectable="0">
       <doc xml:space="preserve">Assert that the stderr output of the last test subprocess
-does not match @serrpattern. See g_test_trap_subprocess().</doc>
+does not match @serrpattern.
+
+See [func@GLib.test_trap_subprocess].</doc>
       <parameters>
         <parameter name="serrpattern">
           <doc xml:space="preserve">a glob-style [pattern][glib-Glob-style-pattern-matching]</doc>
@@ -57448,7 +57512,9 @@ does not match @serrpattern. See g_test_trap_subprocess().</doc>
     </function-macro>
     <function-macro name="test_trap_assert_stdout" c:identifier="g_test_trap_assert_stdout" version="2.16" introspectable="0">
       <doc xml:space="preserve">Assert that the stdout output of the last test subprocess matches
-@soutpattern. See g_test_trap_subprocess().</doc>
+@soutpattern.
+
+See [func@GLib.test_trap_subprocess].</doc>
       <parameters>
         <parameter name="soutpattern">
           <doc xml:space="preserve">a glob-style [pattern][glib-Glob-style-pattern-matching]</doc>
@@ -57457,7 +57523,9 @@ does not match @serrpattern. See g_test_trap_subprocess().</doc>
     </function-macro>
     <function-macro name="test_trap_assert_stdout_unmatched" c:identifier="g_test_trap_assert_stdout_unmatched" version="2.16" introspectable="0">
       <doc xml:space="preserve">Assert that the stdout output of the last test subprocess
-does not match @soutpattern. See g_test_trap_subprocess().</doc>
+does not match @soutpattern.
+
+See [func@GLib.test_trap_subprocess].</doc>
       <parameters>
         <parameter name="soutpattern">
           <doc xml:space="preserve">a glob-style [pattern][glib-Glob-style-pattern-matching]</doc>
@@ -57490,100 +57558,104 @@ does not match @soutpattern. See g_test_trap_subprocess().</doc>
       </parameters>
     </function>
     <function name="test_trap_fork" c:identifier="g_test_trap_fork" version="2.16" deprecated="1">
-      <doc xml:space="preserve">Fork the current test program to execute a test case that might
+      <doc xml:space="preserve">Forks the current test program to execute a test case that might
 not return or that might abort.
 
 If @usec_timeout is non-0, the forked test case is aborted and
 considered failing if its run time exceeds it.
 
-The forking behavior can be configured with the #GTestTrapFlags flags.
+The forking behavior can be configured with [flags@GLib.TestTrapFlags]
+flags.
 
 In the following example, the test code forks, the forked child
 process produces some sample output and exits successfully.
 The forking parent process then asserts successful child program
 termination and validates child program outputs.
 
-|[&lt;!-- language="C" --&gt;
+```c
   static void
   test_fork_patterns (void)
   {
     if (g_test_trap_fork (0, G_TEST_TRAP_SILENCE_STDOUT | G_TEST_TRAP_SILENCE_STDERR))
       {
-        g_print ("some stdout text: somagic17\n");
-        g_printerr ("some stderr text: semagic43\n");
+        g_print ("some stdout text: somagic17
+");
+        g_printerr ("some stderr text: semagic43
+");
         exit (0); // successful test run
       }
     g_test_trap_assert_passed ();
     g_test_trap_assert_stdout ("*somagic17*");
     g_test_trap_assert_stderr ("*semagic43*");
   }
-]|</doc>
+```</doc>
       <doc-deprecated xml:space="preserve">This function is implemented only on Unix platforms,
 is not always reliable due to problems inherent in fork-without-exec
 and doesn't set close-on-exec flag on its file descriptors.
-Use g_test_trap_subprocess() instead.</doc-deprecated>
+Use func@GLib.test_trap_subprocess] instead.</doc-deprecated>
       <return-value transfer-ownership="none">
-        <doc xml:space="preserve">%TRUE for the forked child and %FALSE for the executing parent process.</doc>
+        <doc xml:space="preserve">true for the forked child and false for the executing parent process.</doc>
         <type name="gboolean" c:type="gboolean"/>
       </return-value>
       <parameters>
         <parameter name="usec_timeout" transfer-ownership="none">
-          <doc xml:space="preserve">Timeout for the forked test in micro seconds.</doc>
+          <doc xml:space="preserve">timeout for the forked test in microseconds</doc>
           <type name="guint64" c:type="guint64"/>
         </parameter>
         <parameter name="test_trap_flags" transfer-ownership="none">
-          <doc xml:space="preserve">Flags to modify forking behaviour.</doc>
+          <doc xml:space="preserve">flags to modify forking behaviour</doc>
           <type name="TestTrapFlags" c:type="GTestTrapFlags"/>
         </parameter>
       </parameters>
     </function>
     <function name="test_trap_has_passed" c:identifier="g_test_trap_has_passed" version="2.16">
-      <doc xml:space="preserve">Check the result of the last g_test_trap_subprocess() call.</doc>
+      <doc xml:space="preserve">Checks the result of the last [func@GLib.test_trap_subprocess] call.</doc>
       <return-value transfer-ownership="none">
-        <doc xml:space="preserve">%TRUE if the last test subprocess terminated successfully.</doc>
+        <doc xml:space="preserve">true if the last test subprocess terminated successfully</doc>
         <type name="gboolean" c:type="gboolean"/>
       </return-value>
     </function>
     <function name="test_trap_reached_timeout" c:identifier="g_test_trap_reached_timeout" version="2.16">
-      <doc xml:space="preserve">Check the result of the last g_test_trap_subprocess() call.</doc>
+      <doc xml:space="preserve">Checks the result of the last [func@GLib.test_trap_subprocess] call.</doc>
       <return-value transfer-ownership="none">
-        <doc xml:space="preserve">%TRUE if the last test subprocess got killed due to a timeout.</doc>
+        <doc xml:space="preserve">true if the last test subprocess got killed due to a timeout</doc>
         <type name="gboolean" c:type="gboolean"/>
       </return-value>
     </function>
     <function name="test_trap_subprocess" c:identifier="g_test_trap_subprocess" version="2.38">
       <doc xml:space="preserve">Respawns the test program to run only @test_path in a subprocess.
 
-This is equivalent to calling g_test_trap_subprocess_with_envp() with `envp`
-set to %NULL. See the documentation for that function for full details.</doc>
+This is equivalent to calling [func@GLib.test_trap_subprocess_with_envp]
+with `envp` set to `NULL`. See the documentation for that function
+for full details.</doc>
       <return-value transfer-ownership="none">
         <type name="none" c:type="void"/>
       </return-value>
       <parameters>
         <parameter name="test_path" transfer-ownership="none" nullable="1" allow-none="1">
-          <doc xml:space="preserve">Test to run in a subprocess</doc>
+          <doc xml:space="preserve">test to run in a subprocess</doc>
           <type name="utf8" c:type="const char*"/>
         </parameter>
         <parameter name="usec_timeout" transfer-ownership="none">
-          <doc xml:space="preserve">Timeout for the subprocess test in micro seconds.</doc>
+          <doc xml:space="preserve">timeout for the subprocess test in microseconds.</doc>
           <type name="guint64" c:type="guint64"/>
         </parameter>
         <parameter name="test_flags" transfer-ownership="none">
-          <doc xml:space="preserve">Flags to modify subprocess behaviour.</doc>
+          <doc xml:space="preserve">flags to modify subprocess behaviour</doc>
           <type name="TestSubprocessFlags" c:type="GTestSubprocessFlags"/>
         </parameter>
       </parameters>
     </function>
     <function name="test_trap_subprocess_with_envp" c:identifier="g_test_trap_subprocess_with_envp" version="2.80">
-      <doc xml:space="preserve">Respawns the test program to run only @test_path in a subprocess with the
-given @envp environment.
+      <doc xml:space="preserve">Respawns the test program to run only @test_path in a subprocess with
+a given environment.
 
 This can be used for a test case that might not return, or that
 might abort.
 
-If @test_path is %NULL then the same test is re-run in a subprocess.
-You can use g_test_subprocess() to determine whether the test is in
-a subprocess or not.
+If @test_path is `NULL` then the same test is re-run in a subprocess.
+You can use [func@GLib.test_subprocess] to determine whether the test
+is in a subprocess or not.
 
 @test_path can also be the name of the parent test, followed by
 "`/subprocess/`" and then a name for the specific subtest (or just
@@ -57591,35 +57663,34 @@ ending with "`/subprocess`" if the test only has one child test);
 tests with names of this form will automatically be skipped in the
 parent process.
 
-If @envp is %NULL, the parent process&#x2019; environment will be inherited.
+If @envp is `NULL`, the parent process&#x2019; environment will be inherited.
 
 If @usec_timeout is non-0, the test subprocess is aborted and
 considered failing if its run time exceeds it.
 
-The subprocess behavior can be configured with the
-#GTestSubprocessFlags flags.
+The subprocess behavior can be configured with [flags@GLib.TestSubprocessFlags]
+flags.
 
-You can use methods such as g_test_trap_assert_passed(),
-g_test_trap_assert_failed(), and g_test_trap_assert_stderr() to
+You can use methods such as [func@GLib.test_trap_assert_passed],
+[func@GLib.test_trap_assert_failed], and [func@GLib.test_trap_assert_stderr] to
 check the results of the subprocess. (But note that
-g_test_trap_assert_stdout() and g_test_trap_assert_stderr()
+[func@GLib.test_trap_assert_stdout] and [func@GLib.test_trap_assert_stderr]
 cannot be used if @test_flags specifies that the child should
 inherit the parent stdout/stderr.)
 
-If your `main ()` needs to behave differently in
-the subprocess, you can call g_test_subprocess() (after calling
-g_test_init()) to see whether you are in a subprocess.
+If your `main ()` needs to behave differently in the subprocess, you can
+call [func@GLib.test_subprocess] (after calling [func@GLib.test_init])
+to see whether you are in a subprocess.
 
 Internally, this function tracks the child process using
-g_child_watch_source_new(), so your process must not ignore `SIGCHLD`, and
-must not attempt to watch or wait for the child process via another
-mechanism.
+[func@GLib.child_watch_source_new], so your process must not ignore
+`SIGCHLD`, and must not attempt to watch or wait for the child process
+via another mechanism.
 
-The following example tests that calling
-`my_object_new(1000000)` will abort with an error
-message.
+The following example tests that calling `my_object_new(1000000)` will
+abort with an error message.
 
-|[&lt;!-- language="C" --&gt;
+```c
   static void
   test_create_large_object (void)
   {
@@ -57664,38 +57735,40 @@ message.
                      test_different_username);
     return g_test_run ();
   }
-]|</doc>
+```</doc>
       <return-value transfer-ownership="none">
         <type name="none" c:type="void"/>
       </return-value>
       <parameters>
         <parameter name="test_path" transfer-ownership="none" nullable="1" allow-none="1">
-          <doc xml:space="preserve">Test to run in a subprocess</doc>
+          <doc xml:space="preserve">test to run in a subprocess</doc>
           <type name="utf8" c:type="const char*"/>
         </parameter>
         <parameter name="envp" transfer-ownership="none" nullable="1" allow-none="1">
-          <doc xml:space="preserve">Environment
-  to run the test in, or %NULL to inherit the parent&#x2019;s environment. This must
-  be in the GLib filename encoding.</doc>
+          <doc xml:space="preserve">environment
+  to run the test in</doc>
           <array c:type="const char* const*">
             <type name="filename"/>
           </array>
         </parameter>
         <parameter name="usec_timeout" transfer-ownership="none">
-          <doc xml:space="preserve">Timeout for the subprocess test in micro seconds.</doc>
+          <doc xml:space="preserve">timeout for the subprocess test in microseconds</doc>
           <type name="guint64" c:type="guint64"/>
         </parameter>
         <parameter name="test_flags" transfer-ownership="none">
-          <doc xml:space="preserve">Flags to modify subprocess behaviour.</doc>
+          <doc xml:space="preserve">flags to modify subprocess behaviour</doc>
           <type name="TestSubprocessFlags" c:type="GTestSubprocessFlags"/>
         </parameter>
       </parameters>
     </function>
     <function-macro name="test_undefined" c:identifier="g_test_undefined" introspectable="0">
-      <doc xml:space="preserve">Returns %TRUE if tests may provoke assertions and other formally-undefined
-behaviour, to verify that appropriate warnings are given. It might, in some
-cases, be useful to turn this off with if running tests under valgrind;
-in tests that use g_test_init(), the option `-m no-undefined` disables
+      <doc xml:space="preserve">Returns true if tests may provoke assertions and other formally-undefined
+behaviour, to verify that appropriate warnings are given.
+
+This might, in some cases, be useful to turn this off (e.g. if running tests
+under valgrind).
+
+In tests that use [func@GLib.test_init], the option `-m no-undefined` disables
 those tests, while `-m undefined` explicitly enables them (normally
 the default behaviour).
 
@@ -57704,10 +57777,12 @@ Since GLib 2.68, if GLib was compiled with gcc or clang and
 is enabled, the default changes to not exercising undefined behaviour.</doc>
     </function-macro>
     <function-macro name="test_verbose" c:identifier="g_test_verbose" introspectable="0">
-      <doc xml:space="preserve">Returns %TRUE if tests are run in verbose mode.
-In tests that use g_test_init(), the option `--verbose` enables this,
+      <doc xml:space="preserve">Returns true if tests are run in verbose mode.
+
+In tests that use [func@GLib.test_init], the option `--verbose` enables this,
 while `-q` or `--quiet` disables it.
-The default is neither g_test_verbose() nor g_test_quiet().</doc>
+
+The default is neither verbose nor quiet.</doc>
     </function-macro>
     <function name="thread_create" c:identifier="g_thread_create" moved-to="Thread.create" introspectable="0" deprecated="1" deprecated-version="2.32" throws="1">
       <doc xml:space="preserve">This function creates a new thread.

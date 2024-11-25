@@ -432,7 +432,7 @@ and need to be set before a color state object can be built.</doc>
 Note that this may fail if the cicp parameters in @self are not
 supported by GTK. In that case, `NULL` is returned, and @error is set
 with an error message that can be presented to the user.</doc>
-        <return-value transfer-ownership="full" nullable="1">
+        <return-value transfer-ownership="full">
           <doc xml:space="preserve">A newly allocated `GdkColorState`</doc>
           <type name="ColorState" c:type="GdkColorState*"/>
         </return-value>
@@ -1621,6 +1621,19 @@ when they are empty. In that case %NULL will be returned.</doc>
           </parameter>
         </parameters>
       </method>
+      <method name="is_empty" c:identifier="gdk_content_formats_is_empty" version="4.18">
+        <doc xml:space="preserve">Returns whether the content formats contain any formats.</doc>
+        <return-value transfer-ownership="none">
+          <doc xml:space="preserve">true if @formats contains no mime types and no GTypes</doc>
+          <type name="gboolean" c:type="gboolean"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="formats" transfer-ownership="none">
+            <doc xml:space="preserve">content formats</doc>
+            <type name="ContentFormats" c:type="GdkContentFormats*"/>
+          </instance-parameter>
+        </parameters>
+      </method>
       <method name="match" c:identifier="gdk_content_formats_match">
         <doc xml:space="preserve">Checks if @first and @second have any matching formats.</doc>
         <return-value transfer-ownership="none">
@@ -1838,8 +1851,6 @@ is returned.</doc>
       </function>
     </record>
     <record name="ContentFormatsBuilder" c:type="GdkContentFormatsBuilder" opaque="1" glib:type-name="GdkContentFormatsBuilder" glib:get-type="gdk_content_formats_builder_get_type" c:symbol-prefix="content_formats_builder">
-      <doc xml:space="preserve">A `GdkContentFormatsBuilder` is an auxiliary struct used to create
-new `GdkContentFormats`, and should not be kept around.</doc>
       <constructor name="new" c:identifier="gdk_content_formats_builder_new">
         <doc xml:space="preserve">Create a new `GdkContentFormatsBuilder` object.
 
