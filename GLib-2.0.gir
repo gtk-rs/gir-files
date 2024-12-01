@@ -31574,7 +31574,7 @@ The default value is 15000 (15 seconds).</doc>
 If @max_threads is -1, no limit is imposed on the number
 of unused threads.
 
-The default value is 2.</doc>
+The default value is 8 since GLib 2.84. Previously the default value was 2.</doc>
         <return-value transfer-ownership="none">
           <type name="none" c:type="void"/>
         </return-value>
@@ -33534,19 +33534,19 @@ See [Unicode Line Breaking Algorithm](https://www.unicode.org/reports/tr14/).</d
         <doc xml:space="preserve">Zero Width Joiner (ZWJ). Since: 2.50</doc>
       </member>
       <member name="aksara" value="43" c:identifier="G_UNICODE_BREAK_AKSARA" glib:nick="aksara" glib:name="G_UNICODE_BREAK_AKSARA">
-        <doc xml:space="preserve">Aksara (AK). Since: 2.80
-@G_UNICODE_BREAK_AKSARA_PRE_BASE (AP). Since: 2.80
-@G_UNICODE_BREAK_AKSARA_START (AS). Since: 2.80
-@G_UNICODE_BREAK_VIRAMA_FINAL (VF). Since: 2.80
-@G_UNICODE_BREAK_VIRAMA (VI). Since: 2.80</doc>
+        <doc xml:space="preserve">Aksara (AK). Since: 2.80</doc>
       </member>
       <member name="aksara_pre_base" value="44" c:identifier="G_UNICODE_BREAK_AKSARA_PRE_BASE" glib:nick="aksara-pre-base" glib:name="G_UNICODE_BREAK_AKSARA_PRE_BASE">
+        <doc xml:space="preserve">Aksara Pre-Base (AP). Since: 2.80</doc>
       </member>
       <member name="aksara_start" value="45" c:identifier="G_UNICODE_BREAK_AKSARA_START" glib:nick="aksara-start" glib:name="G_UNICODE_BREAK_AKSARA_START">
+        <doc xml:space="preserve">Aksara Start (AS). Since: 2.80</doc>
       </member>
       <member name="virama_final" value="46" c:identifier="G_UNICODE_BREAK_VIRAMA_FINAL" glib:nick="virama-final" glib:name="G_UNICODE_BREAK_VIRAMA_FINAL">
+        <doc xml:space="preserve">Virama Final (VF). Since: 2.80</doc>
       </member>
       <member name="virama" value="47" c:identifier="G_UNICODE_BREAK_VIRAMA" glib:nick="virama" glib:name="G_UNICODE_BREAK_VIRAMA">
+        <doc xml:space="preserve">Virama (VI). Since: 2.80</doc>
       </member>
     </enumeration>
     <enumeration name="UnicodeScript" glib:type-name="GUnicodeScript" glib:get-type="g_unicode_script_get_type" c:type="GUnicodeScript">
@@ -45613,8 +45613,9 @@ character will automatically be appended to @..., and need not be entered
 manually.
 
 Such messages are suppressed by the [func@GLib.log_default_handler] and
-[func@GLib.log_writer_default] unless the `G_MESSAGES_DEBUG` environment variable is
-set appropriately. If you need to set the allowed domains at runtime, use
+[func@GLib.log_writer_default] unless the `G_MESSAGES_DEBUG` or
+`DEBUG_INVOCATION` environment variables are set appropriately. If you need
+to set the allowed domains at runtime, use
 [func@GLib.log_writer_default_set_debug_domains].
 
 If structured logging is enabled, this will use [func@GLib.log_structured];
@@ -48619,8 +48620,9 @@ character will automatically be appended to @..., and need not be entered
 manually.
 
 Such messages are suppressed by the [func@GLib.log_default_handler] and
-[func@GLib.log_writer_default] unless the `G_MESSAGES_DEBUG` environment variable is
-set appropriately. If you need to set the allowed domains at runtime, use
+[func@GLib.log_writer_default] unless the `G_MESSAGES_DEBUG` or
+`DEBUG_INVOCATION` environment variables are set appropriately. If you need
+to set the allowed domains at runtime, use
 [func@GLib.log_writer_default_set_debug_domains].
 
 If structured logging is enabled, this will use [func@GLib.log_structured];
@@ -49078,6 +49080,9 @@ environment variables:
     which debug and informational messages are printed. By default
     these messages are not printed. If you need to set the allowed
     domains at runtime, use [func@GLib.log_writer_default_set_debug_domains].
+  - `DEBUG_INVOCATION`: If set to `1`, this is equivalent to
+    `G_MESSAGES_DEBUG=all`. `DEBUG_INVOCATION` is a standard environment
+    variable set by systemd to prompt debug output. (Since: 2.84)
 
 `stderr` is used for levels [flags@GLib.LogLevelFlags.LEVEL_ERROR],
 [flags@GLib.LogLevelFlags.LEVEL_CRITICAL], [flags@GLib.LogLevelFlags.LEVEL_WARNING] and
@@ -49118,7 +49123,8 @@ other logging functions; it should only be used from [type@GLib.LogWriterFunc]
 implementations.
 
 Note also that the value of this does not depend on `G_MESSAGES_DEBUG`, nor
-[func@GLib.log_writer_default_set_debug_domains]; see the docs for [func@GLib.log_set_debug_enabled].</doc>
+`DEBUG_INVOCATION`, nor [func@GLib.log_writer_default_set_debug_domains]; see
+the docs for [func@GLib.log_set_debug_enabled].</doc>
       <return-value transfer-ownership="none">
         <doc xml:space="preserve">`TRUE` if debug output is enabled, `FALSE` otherwise</doc>
         <type name="gboolean" c:type="gboolean"/>
@@ -49177,7 +49183,7 @@ are fatal. See [Using Structured Logging](logging.html#using-structured-logging)
     <function name="log_set_debug_enabled" c:identifier="g_log_set_debug_enabled" version="2.72">
       <doc xml:space="preserve">Enable or disable debug output from the GLib logging system for all domains.
 
-This value interacts disjunctively with `G_MESSAGES_DEBUG` and
+This value interacts disjunctively with `G_MESSAGES_DEBUG`, `DEBUG_INVOCATION` and
 [func@GLib.log_writer_default_set_debug_domains] &#x2014; if any of them would allow
 a debug message to be outputted, it will be.
 
@@ -49602,7 +49608,8 @@ if no other is set using [func@GLib.log_set_writer_func].
 
 As with [func@GLib.log_default_handler], this function drops debug and informational
 messages unless their log domain (or `all`) is listed in the space-separated
-`G_MESSAGES_DEBUG` environment variable, or set at runtime by [func@GLib.log_writer_default_set_debug_domains].
+`G_MESSAGES_DEBUG` environment variable, or `DEBUG_INVOCATION=1` is set in
+the environment, or set at runtime by [func@GLib.log_writer_default_set_debug_domains].
 
 [func@GLib.log_writer_default] uses the mask set by [func@GLib.log_set_always_fatal] to
 determine which messages are fatal. When using a custom writer function instead it is
@@ -49637,7 +49644,7 @@ up to the writer function to determine which log messages are fatal.</doc>
     </function>
     <function name="log_writer_default_set_debug_domains" c:identifier="g_log_writer_default_set_debug_domains" version="2.80">
       <doc xml:space="preserve">Reset the list of domains to be logged, that might be initially set by the
-`G_MESSAGES_DEBUG` environment variable.
+`G_MESSAGES_DEBUG` or `DEBUG_INVOCATION` environment variables.
 
 This function is thread-safe.</doc>
       <return-value transfer-ownership="none">
@@ -49684,7 +49691,8 @@ ignore a message with the given domain and level.
 
 As with [func@GLib.log_default_handler], this function drops debug and informational
 messages unless their log domain (or `all`) is listed in the space-separated
-`G_MESSAGES_DEBUG` environment variable, or by [func@GLib.log_writer_default_set_debug_domains].
+`G_MESSAGES_DEBUG` environment variable, or `DEBUG_INVOCATION=1` is set in
+the environment, or by [func@GLib.log_writer_default_set_debug_domains].
 
 This can be used when implementing log writers with the same filtering
 behaviour as the default, but a different destination or output format:
@@ -49695,7 +49703,7 @@ if (g_log_writer_default_would_drop (log_level, log_domain))
 ]|
 
 or to skip an expensive computation if it is only needed for a debugging
-message, and `G_MESSAGES_DEBUG` is not set:
+message, and `G_MESSAGES_DEBUG` and `DEBUG_INVOCATION` are not set:
 
 ```c
 if (!g_log_writer_default_would_drop (G_LOG_LEVEL_DEBUG, G_LOG_DOMAIN))
@@ -58017,7 +58025,7 @@ The default value is 15000 (15 seconds).</doc>
 If @max_threads is -1, no limit is imposed on the number
 of unused threads.
 
-The default value is 2.</doc>
+The default value is 8 since GLib 2.84. Previously the default value was 2.</doc>
       <return-value transfer-ownership="none">
         <type name="none" c:type="void"/>
       </return-value>
