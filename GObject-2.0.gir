@@ -14343,70 +14343,6 @@ without first having or creating a strong reference to the object.</doc>
           <type name="gpointer" c:type="gpointer"/>
         </field>
       </union>
-      <method name="clear" c:identifier="g_weak_ref_clear" version="2.32" introspectable="0">
-        <doc xml:space="preserve">Frees resources associated with a non-statically-allocated #GWeakRef.
-After this call, the #GWeakRef is left in an undefined state.
-
-You should only call this on a #GWeakRef that previously had
-g_weak_ref_init() called on it.</doc>
-        <return-value transfer-ownership="none">
-          <type name="none" c:type="void"/>
-        </return-value>
-        <parameters>
-          <instance-parameter name="weak_ref" direction="inout" caller-allocates="0" transfer-ownership="full">
-            <doc xml:space="preserve">location of a weak reference, which
- may be empty</doc>
-            <type name="WeakRef" c:type="GWeakRef*"/>
-          </instance-parameter>
-        </parameters>
-      </method>
-      <method name="get" c:identifier="g_weak_ref_get" version="2.32" introspectable="0">
-        <doc xml:space="preserve">If @weak_ref is not empty, atomically acquire a strong
-reference to the object it points to, and return that reference.
-
-This function is needed because of the potential race between taking
-the pointer value and g_object_ref() on it, if the object was losing
-its last reference at the same time in a different thread.
-
-The caller should release the resulting reference in the usual way,
-by using g_object_unref().</doc>
-        <return-value transfer-ownership="full">
-          <doc xml:space="preserve">the object pointed to
-    by @weak_ref, or %NULL if it was empty</doc>
-          <type name="Object" c:type="gpointer"/>
-        </return-value>
-        <parameters>
-          <instance-parameter name="weak_ref" direction="inout" caller-allocates="0" transfer-ownership="full">
-            <doc xml:space="preserve">location of a weak reference to a #GObject</doc>
-            <type name="WeakRef" c:type="GWeakRef*"/>
-          </instance-parameter>
-        </parameters>
-      </method>
-      <method name="init" c:identifier="g_weak_ref_init" version="2.32" introspectable="0">
-        <doc xml:space="preserve">Initialise a non-statically-allocated #GWeakRef.
-
-This function also calls g_weak_ref_set() with @object on the
-freshly-initialised weak reference.
-
-This function should always be matched with a call to
-g_weak_ref_clear().  It is not necessary to use this function for a
-#GWeakRef in static storage because it will already be
-properly initialised.  Just use g_weak_ref_set() directly.</doc>
-        <return-value transfer-ownership="none">
-          <type name="none" c:type="void"/>
-        </return-value>
-        <parameters>
-          <instance-parameter name="weak_ref" direction="inout" caller-allocates="0" transfer-ownership="full">
-            <doc xml:space="preserve">uninitialized or empty location for a weak
-   reference</doc>
-            <type name="WeakRef" c:type="GWeakRef*"/>
-          </instance-parameter>
-          <parameter name="object" transfer-ownership="none" nullable="1" allow-none="1">
-            <doc xml:space="preserve">a #GObject or %NULL</doc>
-            <type name="Object" c:type="gpointer"/>
-          </parameter>
-        </parameters>
-      </method>
       <method name="set" c:identifier="g_weak_ref_set" version="2.32" introspectable="0">
         <doc xml:space="preserve">Change the object to which @weak_ref points, or set it to
 %NULL.
@@ -14427,6 +14363,70 @@ function.</doc>
           </parameter>
         </parameters>
       </method>
+      <function name="clear" c:identifier="g_weak_ref_clear" version="2.32" introspectable="0">
+        <doc xml:space="preserve">Frees resources associated with a non-statically-allocated #GWeakRef.
+After this call, the #GWeakRef is left in an undefined state.
+
+You should only call this on a #GWeakRef that previously had
+g_weak_ref_init() called on it.</doc>
+        <return-value transfer-ownership="none">
+          <type name="none" c:type="void"/>
+        </return-value>
+        <parameters>
+          <parameter name="weak_ref" direction="inout" caller-allocates="0" transfer-ownership="full">
+            <doc xml:space="preserve">location of a weak reference, which
+ may be empty</doc>
+            <type name="WeakRef" c:type="GWeakRef*"/>
+          </parameter>
+        </parameters>
+      </function>
+      <function name="get" c:identifier="g_weak_ref_get" version="2.32" introspectable="0">
+        <doc xml:space="preserve">If @weak_ref is not empty, atomically acquire a strong
+reference to the object it points to, and return that reference.
+
+This function is needed because of the potential race between taking
+the pointer value and g_object_ref() on it, if the object was losing
+its last reference at the same time in a different thread.
+
+The caller should release the resulting reference in the usual way,
+by using g_object_unref().</doc>
+        <return-value transfer-ownership="full">
+          <doc xml:space="preserve">the object pointed to
+    by @weak_ref, or %NULL if it was empty</doc>
+          <type name="Object" c:type="gpointer"/>
+        </return-value>
+        <parameters>
+          <parameter name="weak_ref" direction="inout" caller-allocates="0" transfer-ownership="full">
+            <doc xml:space="preserve">location of a weak reference to a #GObject</doc>
+            <type name="WeakRef" c:type="GWeakRef*"/>
+          </parameter>
+        </parameters>
+      </function>
+      <function name="init" c:identifier="g_weak_ref_init" version="2.32" introspectable="0">
+        <doc xml:space="preserve">Initialise a non-statically-allocated #GWeakRef.
+
+This function also calls g_weak_ref_set() with @object on the
+freshly-initialised weak reference.
+
+This function should always be matched with a call to
+g_weak_ref_clear().  It is not necessary to use this function for a
+#GWeakRef in static storage because it will already be
+properly initialised.  Just use g_weak_ref_set() directly.</doc>
+        <return-value transfer-ownership="none">
+          <type name="none" c:type="void"/>
+        </return-value>
+        <parameters>
+          <parameter name="weak_ref" direction="inout" caller-allocates="0" transfer-ownership="full">
+            <doc xml:space="preserve">uninitialized or empty location for a weak
+   reference</doc>
+            <type name="WeakRef" c:type="GWeakRef*"/>
+          </parameter>
+          <parameter name="object" transfer-ownership="none" nullable="1" allow-none="1">
+            <doc xml:space="preserve">a #GObject or %NULL</doc>
+            <type name="Object" c:type="gpointer"/>
+          </parameter>
+        </parameters>
+      </function>
     </record>
     <union name="_Value__data__union">
       <field name="v_int" writable="1">
@@ -17048,8 +17048,13 @@ The handler will be called synchronously, before the default handler of the sign
 See [memory management of signal handlers](signals.html#Memory_management_of_signal_handlers) for
 details on how to handle the return value and memory management of @data.
 
-This function cannot fail. If the given signal doesn&#x2019;t exist, a critical
-warning is emitted.</doc>
+This function cannot fail. If the given signal name doesn&#x2019;t exist,
+a critical warning is emitted. No validation is performed on the
+&#x2018;detail&#x2019; string when specified in @detailed_signal, other than a
+non-empty check.
+
+Refer to the [signals documentation](signals.html) for more
+details.</doc>
       <parameters>
         <parameter name="instance">
           <doc xml:space="preserve">the instance to connect to.</doc>
@@ -17070,8 +17075,13 @@ warning is emitted.</doc>
 
 The handler will be called synchronously, after the default handler of the signal.
 
-This function cannot fail. If the given signal doesn&#x2019;t exist, a critical
-warning is emitted.</doc>
+This function cannot fail. If the given signal name doesn&#x2019;t exist,
+a critical warning is emitted. No validation is performed on the
+&#x2018;detail&#x2019; string when specified in @detailed_signal, other than a
+non-empty check.
+
+Refer to the [signals documentation](signals.html) for more
+details.</doc>
       <parameters>
         <parameter name="instance">
           <doc xml:space="preserve">the instance to connect to.</doc>
@@ -17093,8 +17103,13 @@ warning is emitted.</doc>
 If @closure is a floating reference (see g_closure_sink()), this function
 takes ownership of @closure.
 
-This function cannot fail. If the given signal doesn&#x2019;t exist, a critical
-warning is emitted.</doc>
+This function cannot fail. If the given signal name doesn&#x2019;t exist,
+a critical warning is emitted. No validation is performed on the
+&#x2018;detail&#x2019; string when specified in @detailed_signal, other than a
+non-empty check.
+
+Refer to the [signals documentation](signals.html) for more
+details.</doc>
       <return-value transfer-ownership="none">
         <doc xml:space="preserve">the handler ID (always greater than 0)</doc>
         <type name="gulong" c:type="gulong"/>
@@ -17125,8 +17140,13 @@ warning is emitted.</doc>
 If @closure is a floating reference (see g_closure_sink()), this function
 takes ownership of @closure.
 
-This function cannot fail. If the given signal doesn&#x2019;t exist, a critical
-warning is emitted.</doc>
+This function cannot fail. If the given signal name doesn&#x2019;t exist,
+a critical warning is emitted. No validation is performed on the
+&#x2018;detail&#x2019; string when specified in @detailed_signal, other than a
+non-empty check.
+
+Refer to the [signals documentation](signals.html) for more
+details.</doc>
       <return-value transfer-ownership="none">
         <doc xml:space="preserve">the handler ID (always greater than 0)</doc>
         <type name="gulong" c:type="gulong"/>
@@ -17162,8 +17182,13 @@ which will be called when the signal handler is disconnected and no longer
 used. Specify @connect_flags if you need `..._after()` or
 `..._swapped()` variants of this function.
 
-This function cannot fail. If the given signal doesn&#x2019;t exist, a critical
-warning is emitted.</doc>
+This function cannot fail. If the given signal name doesn&#x2019;t exist,
+a critical warning is emitted. No validation is performed on the
+&#x2018;detail&#x2019; string when specified in @detailed_signal, other than a
+non-empty check.
+
+Refer to the [signals documentation](signals.html) for more
+details.</doc>
       <return-value transfer-ownership="none">
         <doc xml:space="preserve">the handler ID (always greater than 0)</doc>
         <type name="gulong" c:type="gulong"/>
@@ -17203,7 +17228,15 @@ by temporarily adding a reference count to @gobject.
 When the @gobject is destroyed the signal handler will be automatically
 disconnected.  Note that this is not currently threadsafe (ie:
 emitting a signal while @gobject is being destroyed in another thread
-is not safe).</doc>
+is not safe).
+
+This function cannot fail. If the given signal name doesn&#x2019;t exist,
+a critical warning is emitted. No validation is performed on the
+"detail" string when specified in @detailed_signal, other than a
+non-empty check.
+
+Refer to the [signals documentation](signals.html) for more
+details.</doc>
       <return-value transfer-ownership="none">
         <doc xml:space="preserve">the handler id.</doc>
         <type name="gulong" c:type="gulong"/>
@@ -17260,8 +17293,13 @@ g_signal_connect (button, "clicked",
                   (GCallback) button_clicked_cb, other_widget);
 ]|
 
-This function cannot fail. If the given signal doesn&#x2019;t exist, a critical
-warning is emitted.</doc>
+This function cannot fail. If the given signal name doesn&#x2019;t exist,
+a critical warning is emitted. No validation is performed on the
+&#x2018;detail&#x2019; string when specified in @detailed_signal, other than a
+non-empty check.
+
+Refer to the [signals documentation](signals.html) for more
+details.</doc>
       <parameters>
         <parameter name="instance">
           <doc xml:space="preserve">the instance to connect to.</doc>
@@ -19567,6 +19605,70 @@ transformation function must be registered.</doc>
       <return-value transfer-ownership="none">
         <type name="GType" c:type="GType"/>
       </return-value>
+    </function>
+    <function name="weak_ref_clear" c:identifier="g_weak_ref_clear" moved-to="WeakRef.clear" version="2.32" introspectable="0">
+      <doc xml:space="preserve">Frees resources associated with a non-statically-allocated #GWeakRef.
+After this call, the #GWeakRef is left in an undefined state.
+
+You should only call this on a #GWeakRef that previously had
+g_weak_ref_init() called on it.</doc>
+      <return-value transfer-ownership="none">
+        <type name="none" c:type="void"/>
+      </return-value>
+      <parameters>
+        <parameter name="weak_ref" direction="inout" caller-allocates="0" transfer-ownership="full">
+          <doc xml:space="preserve">location of a weak reference, which
+ may be empty</doc>
+          <type name="WeakRef" c:type="GWeakRef*"/>
+        </parameter>
+      </parameters>
+    </function>
+    <function name="weak_ref_get" c:identifier="g_weak_ref_get" moved-to="WeakRef.get" version="2.32" introspectable="0">
+      <doc xml:space="preserve">If @weak_ref is not empty, atomically acquire a strong
+reference to the object it points to, and return that reference.
+
+This function is needed because of the potential race between taking
+the pointer value and g_object_ref() on it, if the object was losing
+its last reference at the same time in a different thread.
+
+The caller should release the resulting reference in the usual way,
+by using g_object_unref().</doc>
+      <return-value transfer-ownership="full">
+        <doc xml:space="preserve">the object pointed to
+    by @weak_ref, or %NULL if it was empty</doc>
+        <type name="Object" c:type="gpointer"/>
+      </return-value>
+      <parameters>
+        <parameter name="weak_ref" direction="inout" caller-allocates="0" transfer-ownership="full">
+          <doc xml:space="preserve">location of a weak reference to a #GObject</doc>
+          <type name="WeakRef" c:type="GWeakRef*"/>
+        </parameter>
+      </parameters>
+    </function>
+    <function name="weak_ref_init" c:identifier="g_weak_ref_init" moved-to="WeakRef.init" version="2.32" introspectable="0">
+      <doc xml:space="preserve">Initialise a non-statically-allocated #GWeakRef.
+
+This function also calls g_weak_ref_set() with @object on the
+freshly-initialised weak reference.
+
+This function should always be matched with a call to
+g_weak_ref_clear().  It is not necessary to use this function for a
+#GWeakRef in static storage because it will already be
+properly initialised.  Just use g_weak_ref_set() directly.</doc>
+      <return-value transfer-ownership="none">
+        <type name="none" c:type="void"/>
+      </return-value>
+      <parameters>
+        <parameter name="weak_ref" direction="inout" caller-allocates="0" transfer-ownership="full">
+          <doc xml:space="preserve">uninitialized or empty location for a weak
+   reference</doc>
+          <type name="WeakRef" c:type="GWeakRef*"/>
+        </parameter>
+        <parameter name="object" transfer-ownership="none" nullable="1" allow-none="1">
+          <doc xml:space="preserve">a #GObject or %NULL</doc>
+          <type name="Object" c:type="gpointer"/>
+        </parameter>
+      </parameters>
     </function>
   </namespace>
 </repository>
