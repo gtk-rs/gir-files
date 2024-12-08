@@ -15101,13 +15101,16 @@ custom log handler functions behave similarly, so that logging calls in user
 code do not need modifying to add a new-line character to the message if the
 log handler is changed.
 
+The `log_domain` parameter can be set to `NULL` or an empty string to use the default
+application domain.
+
 This is not used if structured logging is enabled; see
 [Using Structured Logging](logging.html#using-structured-logging).</doc>
       <return-value transfer-ownership="none">
         <type name="none" c:type="void"/>
       </return-value>
       <parameters>
-        <parameter name="log_domain" transfer-ownership="none">
+        <parameter name="log_domain" transfer-ownership="none" nullable="1" allow-none="1">
           <doc xml:space="preserve">the log domain of the message</doc>
           <type name="utf8" c:type="const gchar*"/>
         </parameter>
@@ -30592,6 +30595,21 @@ If a thread can not be created (due to resource limits),
           </parameter>
         </parameters>
       </constructor>
+      <method name="get_name" c:identifier="g_thread_get_name" version="2.84">
+        <doc xml:space="preserve">Gets the name of the thread.
+
+This function is intended for debugging purposes.</doc>
+        <return-value transfer-ownership="none">
+          <doc xml:space="preserve">the name of the thread</doc>
+          <type name="utf8" c:type="const char*"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="thread" transfer-ownership="none">
+            <doc xml:space="preserve">a thread</doc>
+            <type name="Thread" c:type="GThread*"/>
+          </instance-parameter>
+        </parameters>
+      </method>
       <method name="join" c:identifier="g_thread_join">
         <doc xml:space="preserve">Waits until @thread finishes, i.e. the function @func, as
 given to g_thread_new(), returns or g_thread_exit() is called.
@@ -49267,6 +49285,9 @@ you want to set a handler for this log level you must combine it with
 This has no effect if structured logging is enabled; see
 [Using Structured Logging](logging.html#using-structured-logging).
 
+The `log_domain` parameter can be set to `NULL` or an empty string to use the default
+application domain.
+
 Here is an example for adding a log handler for all warning messages
 in the default domain:
 
@@ -49294,7 +49315,7 @@ g_log_set_handler ("GLib", G_LOG_LEVEL_MASK | G_LOG_FLAG_FATAL
       </return-value>
       <parameters>
         <parameter name="log_domain" transfer-ownership="none" nullable="1" allow-none="1">
-          <doc xml:space="preserve">the log domain, or `NULL` for the default `""`
+          <doc xml:space="preserve">the log domain
    application domain</doc>
           <type name="utf8" c:type="const gchar*"/>
         </parameter>
@@ -49319,14 +49340,17 @@ g_log_set_handler ("GLib", G_LOG_LEVEL_MASK | G_LOG_FLAG_FATAL
       <doc xml:space="preserve">Like [func@GLib.log_set_handler], but takes a destroy notify for the @user_data.
 
 This has no effect if structured logging is enabled; see
-[Using Structured Logging](logging.html#using-structured-logging).</doc>
+[Using Structured Logging](logging.html#using-structured-logging).
+
+The `log_domain` parameter can be set to `NULL` or an empty string to use the default
+application domain.</doc>
       <return-value transfer-ownership="none">
         <doc xml:space="preserve">the ID of the new handler</doc>
         <type name="guint" c:type="guint"/>
       </return-value>
       <parameters>
         <parameter name="log_domain" transfer-ownership="none" nullable="1" allow-none="1">
-          <doc xml:space="preserve">the log domain, or `NULL` for the default `""`
+          <doc xml:space="preserve">the log domain
   application domain</doc>
           <type name="utf8" c:type="const gchar*"/>
         </parameter>
@@ -49946,13 +49970,16 @@ character will automatically be appended to @..., and need not be entered
 manually.
 
 If [structured logging is enabled](logging.html#using-structured-logging) this will
-output via the structured log writer function (see [func@GLib.log_set_writer_func]).</doc>
+output via the structured log writer function (see [func@GLib.log_set_writer_func]).
+
+The `log_domain` parameter can be set to `NULL` or an empty string to use the default
+application domain.</doc>
       <return-value transfer-ownership="none">
         <type name="none" c:type="void"/>
       </return-value>
       <parameters>
         <parameter name="log_domain" transfer-ownership="none" nullable="1" allow-none="1">
-          <doc xml:space="preserve">the log domain, or `NULL` for the default `""`
+          <doc xml:space="preserve">the log domain
   application domain</doc>
           <type name="utf8" c:type="const gchar*"/>
         </parameter>
