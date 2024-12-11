@@ -176,3 +176,8 @@ xmlstarlet ed -L \
 	-u '//_:class[@name="StackSwitcher"]/_:property[@name="icon-size"]/_:type/@c:type' -v "GtkIconSize" \
 	-u '//_:class[@name="StackSwitcher"]/_:property[@name="icon-size"]/_:type/@name' -v "IconSize" \
 	Gtk-3.0.gir
+
+# Fix return value of VfsFileLookupFunc that is nullable (according to the description of the function type)
+xmlstarlet ed -L \
+	-a '//_:callback[@name="VfsFileLookupFunc"]/_:return-value' -type attr -n "nullable" -v "1" \
+	Gio-2.0.gir
