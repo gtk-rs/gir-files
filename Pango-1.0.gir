@@ -751,11 +751,13 @@ This mode is useful for merging two lists of attributes together.</doc>
 In the resulting string, serialized attributes are separated by newlines or commas.
 Individual attributes are serialized to a string of the form
 
-  START END TYPE VALUE
+    [START END] TYPE VALUE
 
 Where START and END are the indices (with -1 being accepted in place
 of MAXUINT), TYPE is the nickname of the attribute value type, e.g.
 _weight_ or _stretch_, and the value is serialized according to its type:
+
+Optionally, START and END can be omitted to indicate unlimited extent.
 
 - enum values as nick or numeric value
 - boolean values as _true_ or _false_
@@ -768,14 +770,12 @@ _weight_ or _stretch_, and the value is serialized according to its type:
 
 Examples:
 
-```
-0 10 foreground red, 5 15 weight bold, 0 200 font-desc "Sans 10"
-```
+    0 10 foreground red, 5 15 weight bold, 0 200 font-desc "Sans 10"
 
-```
-0 -1 weight 700
-0 100 family Times
-```
+    0 -1 weight 700
+    0 100 family Times
+
+    weight bold
 
 To parse the returned value, use [func@Pango.AttrList.from_string].
 
@@ -3260,6 +3260,23 @@ See [method@Pango.FontDescription.set_family].</doc>
           </instance-parameter>
         </parameters>
       </method>
+      <method name="get_features" c:identifier="pango_font_description_get_features" version="1.56">
+        <doc xml:space="preserve">Gets the features field of a font description.
+
+See [method@Pango.FontDescription.set_features].</doc>
+        <return-value transfer-ownership="none" nullable="1">
+          <doc xml:space="preserve">the features field for the font
+  description, or %NULL if not previously set. This has the same
+  life-time as the font description itself and should not be freed.</doc>
+          <type name="utf8" c:type="const char*"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="desc" transfer-ownership="none">
+            <doc xml:space="preserve">a `PangoFontDescription`</doc>
+            <type name="FontDescription" c:type="const PangoFontDescription*"/>
+          </instance-parameter>
+        </parameters>
+      </method>
       <method name="get_gravity" c:identifier="pango_font_description_get_gravity" version="1.16">
         <doc xml:space="preserve">Gets the gravity field of a font description.
 
@@ -3556,6 +3573,68 @@ string such as a C string literal, or if @desc is only needed temporarily.</doc>
           </parameter>
         </parameters>
       </method>
+      <method name="set_features" c:identifier="pango_font_description_set_features" version="1.56">
+        <doc xml:space="preserve">Sets the features field of a font description.
+
+OpenType font features allow to enable or disable certain optional
+features of a font, such as tabular numbers.
+
+The format of the features string is comma-separated list of
+feature assignments, with each assignment being one of these forms:
+
+    FEATURE=n
+
+where FEATURE must be a 4 character tag that identifies and OpenType
+feature, and n an integer (depending on the feature, the allowed
+values may be 0, 1 or bigger numbers). Unknown features are ignored.
+
+Note that font features set in this way are enabled for the entire text
+that is using the font, which is not appropriate for all OpenType features.
+The intended use case is to select character variations (features cv01 - c99),
+style sets (ss01 - ss20) and the like.
+
+Pango does not currently have a way to find supported OpenType features
+of a font. Both harfbuzz and freetype have API for this. See for example
+[hb_ot_layout_table_get_feature_tags](https://harfbuzz.github.io/harfbuzz-hb-ot-layout.html#hb-ot-layout-table-get-feature-tags).
+
+Features that are not supported by the font are silently ignored.</doc>
+        <return-value transfer-ownership="none">
+          <type name="none" c:type="void"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="desc" transfer-ownership="none">
+            <doc xml:space="preserve">a `PangoFontDescription`.</doc>
+            <type name="FontDescription" c:type="PangoFontDescription*"/>
+          </instance-parameter>
+          <parameter name="features" transfer-ownership="none" nullable="1" allow-none="1">
+            <doc xml:space="preserve">a string representing the features</doc>
+            <type name="utf8" c:type="const char*"/>
+          </parameter>
+        </parameters>
+      </method>
+      <method name="set_features_static" c:identifier="pango_font_description_set_features_static" version="1.56">
+        <doc xml:space="preserve">Sets the features field of a font description.
+
+This is like [method@Pango.FontDescription.set_features], except
+that no copy of @featuresis made. The caller must make sure that
+the string passed in stays around until @desc has been freed
+or the name is set again. This function can be used if
+@features is a static string such as a C string literal,
+or if @desc is only needed temporarily.</doc>
+        <return-value transfer-ownership="none">
+          <type name="none" c:type="void"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="desc" transfer-ownership="none">
+            <doc xml:space="preserve">a `PangoFontDescription`</doc>
+            <type name="FontDescription" c:type="PangoFontDescription*"/>
+          </instance-parameter>
+          <parameter name="features" transfer-ownership="none">
+            <doc xml:space="preserve">a string representing the features</doc>
+            <type name="utf8" c:type="const char*"/>
+          </parameter>
+        </parameters>
+      </method>
       <method name="set_gravity" c:identifier="pango_font_description_set_gravity" version="1.16">
         <doc xml:space="preserve">Sets the gravity field of a font description.
 
@@ -3803,15 +3882,13 @@ The unset fields will get back to their default values.</doc>
 
 The string must have the form
 
-    "[FAMILY-LIST] [STYLE-OPTIONS] [SIZE] [VARIATIONS]",
+    [FAMILY-LIST] [STYLE-OPTIONS] [SIZE] [VARIATIONS] [FEATURES]
 
 where FAMILY-LIST is a comma-separated list of families optionally
 terminated by a comma, STYLE_OPTIONS is a whitespace-separated list
 of words where each word describes one of style, variant, weight,
 stretch, or gravity, and SIZE is a decimal number (size in points)
 or optionally followed by the unit modifier "px" for absolute size.
-VARIATIONS is a comma-separated list of font variation
-specifications of the form @&#x200D;axis=value (the = sign is optional).
 
 The following words are understood as styles:
 "Normal", "Roman", "Oblique", "Italic".
@@ -3834,6 +3911,12 @@ The following words are understood as gravity values:
 "Not-Rotated", "South", "Upside-Down", "North", "Rotated-Left",
 "East", "Rotated-Right", "West".
 
+VARIATIONS is a comma-separated list of font variations
+of the form @&#x200D;axis1=value,axis2=value,...
+
+FEATURES is a comma-separated list of font features of the form
+\#&#x200D;feature1=value,feature2=value,...
+
 Any one of the options may be absent. If FAMILY-LIST is absent, then
 the family_name field of the resulting font description will be
 initialized to %NULL. If STYLE-OPTIONS is missing, then all style
@@ -3842,7 +3925,7 @@ size in the resulting font description will be set to 0.
 
 A typical example:
 
-    "Cantarell Italic Light 15 @&#x200D;wght=200"</doc>
+    Cantarell Italic Light 15 @&#x200D;wght=200 #&#x200D;tnum=1</doc>
         <return-value transfer-ownership="full">
           <doc xml:space="preserve">a new `PangoFontDescription`.</doc>
           <type name="FontDescription" c:type="PangoFontDescription*"/>
@@ -5082,11 +5165,14 @@ See pango_font_map_get_serial().</doc>
       <member name="size" value="32" c:identifier="PANGO_FONT_MASK_SIZE" glib:nick="size" glib:name="PANGO_FONT_MASK_SIZE">
         <doc xml:space="preserve">the font size is specified.</doc>
       </member>
-      <member name="gravity" value="64" c:identifier="PANGO_FONT_MASK_GRAVITY" glib:nick="gravity" glib:name="PANGO_FONT_MASK_GRAVITY">
-        <doc xml:space="preserve">the font gravity is specified (Since: 1.16.)</doc>
+      <member name="gravity" value="64" c:identifier="PANGO_FONT_MASK_GRAVITY" version="1.16" glib:nick="gravity" glib:name="PANGO_FONT_MASK_GRAVITY">
+        <doc xml:space="preserve">The font gravity is specified.</doc>
       </member>
-      <member name="variations" value="128" c:identifier="PANGO_FONT_MASK_VARIATIONS" glib:nick="variations" glib:name="PANGO_FONT_MASK_VARIATIONS">
-        <doc xml:space="preserve">OpenType font variations are specified (Since: 1.42)</doc>
+      <member name="variations" value="128" c:identifier="PANGO_FONT_MASK_VARIATIONS" version="1.42" glib:nick="variations" glib:name="PANGO_FONT_MASK_VARIATIONS">
+        <doc xml:space="preserve">OpenType font variations are specified.</doc>
+      </member>
+      <member name="features" value="256" c:identifier="PANGO_FONT_MASK_FEATURES" version="1.56" glib:nick="features" glib:name="PANGO_FONT_MASK_FEATURES">
+        <doc xml:space="preserve">OpenType font features are specified.</doc>
       </member>
     </bitfield>
     <record name="FontMetrics" c:type="PangoFontMetrics" glib:type-name="PangoFontMetrics" glib:get-type="pango_font_metrics_get_type" c:symbol-prefix="font_metrics">
@@ -8010,25 +8096,10 @@ ellipsized.</doc>
           </instance-parameter>
         </parameters>
       </method>
-      <method name="is_truncated" c:identifier="pango_layout_is_truncated" version="1.56">
-        <doc xml:space="preserve">Queries whether the layout does not show all content because of
-height limitations.</doc>
-        <return-value transfer-ownership="none">
-          <doc xml:space="preserve">true if any paragraphs have been omitted due to height</doc>
-          <type name="gboolean" c:type="gboolean"/>
-        </return-value>
-        <parameters>
-          <instance-parameter name="layout" transfer-ownership="none">
-            <doc xml:space="preserve">a `PangoLayout`</doc>
-            <type name="Layout" c:type="PangoLayout*"/>
-          </instance-parameter>
-        </parameters>
-      </method>
       <method name="is_wrapped" c:identifier="pango_layout_is_wrapped" version="1.16">
         <doc xml:space="preserve">Queries whether the layout had to wrap any paragraphs.
 
 This returns %TRUE if a positive width is set on @layout,
-ellipsization mode of @layout is set to %PANGO_ELLIPSIZE_NONE,
 and there are paragraphs exceeding the layout width that have
 to be wrapped.</doc>
         <return-value transfer-ownership="none">
@@ -8586,7 +8657,7 @@ not clear attributes.</doc>
       </method>
       <method name="set_width" c:identifier="pango_layout_set_width">
         <doc xml:space="preserve">Sets the width to which the lines of the `PangoLayout` should wrap or
-ellipsized.
+get ellipsized.
 
 The default value is -1: no width set.</doc>
         <return-value transfer-ownership="none">
@@ -12041,12 +12112,22 @@ pixels.</doc>
       <method name="to_string" c:identifier="pango_tab_array_to_string" version="1.50">
         <doc xml:space="preserve">Serializes a `PangoTabArray` to a string.
 
-No guarantees are made about the format of the string,
-it may change between Pango versions.
+In the resulting string, serialized tabs are separated by newlines or commas.
 
-The intended use of this function is testing and
-debugging. The format is not meant as a permanent
-storage format.</doc>
+Individual tabs are serialized to a string of the form
+
+    [ALIGNMENT:]POSITION[:DECIMAL_POINT]
+
+Where ALIGNMENT is one of _left_, _right_, _center_ or _decimal_, and
+POSITION is the position of the tab, optionally followed by the unit _px_.
+If ALIGNMENT is omitted, it defaults to _left_. If ALIGNMENT is _decimal_,
+the DECIMAL_POINT character may be specified as a Unicode codepoint.
+
+Note that all tabs in the array must use the same unit.
+
+A typical example:
+
+    100px 200px center:300px right:400px</doc>
         <return-value transfer-ownership="full">
           <doc xml:space="preserve">a newly allocated string</doc>
           <type name="utf8" c:type="char*"/>
@@ -12302,6 +12383,9 @@ segmentation algorithm.</doc>
       <member name="word_char" value="2" c:identifier="PANGO_WRAP_WORD_CHAR" glib:nick="word-char" glib:name="PANGO_WRAP_WORD_CHAR">
         <doc xml:space="preserve">wrap lines at word boundaries, but fall back to
   character boundaries if there is not enough space for a full word.</doc>
+      </member>
+      <member name="none" value="3" c:identifier="PANGO_WRAP_NONE" version="1.56" glib:nick="none" glib:name="PANGO_WRAP_NONE">
+        <doc xml:space="preserve">do not wrap.</doc>
       </member>
     </enumeration>
     <function name="attr_allow_breaks_new" c:identifier="pango_attr_allow_breaks_new" version="1.44">
@@ -13270,15 +13354,13 @@ and @next_paragraph_start are filled with the length of @text
 
 The string must have the form
 
-    "[FAMILY-LIST] [STYLE-OPTIONS] [SIZE] [VARIATIONS]",
+    [FAMILY-LIST] [STYLE-OPTIONS] [SIZE] [VARIATIONS] [FEATURES]
 
 where FAMILY-LIST is a comma-separated list of families optionally
 terminated by a comma, STYLE_OPTIONS is a whitespace-separated list
 of words where each word describes one of style, variant, weight,
 stretch, or gravity, and SIZE is a decimal number (size in points)
 or optionally followed by the unit modifier "px" for absolute size.
-VARIATIONS is a comma-separated list of font variation
-specifications of the form @&#x200D;axis=value (the = sign is optional).
 
 The following words are understood as styles:
 "Normal", "Roman", "Oblique", "Italic".
@@ -13301,6 +13383,12 @@ The following words are understood as gravity values:
 "Not-Rotated", "South", "Upside-Down", "North", "Rotated-Left",
 "East", "Rotated-Right", "West".
 
+VARIATIONS is a comma-separated list of font variations
+of the form @&#x200D;axis1=value,axis2=value,...
+
+FEATURES is a comma-separated list of font features of the form
+\#&#x200D;feature1=value,feature2=value,...
+
 Any one of the options may be absent. If FAMILY-LIST is absent, then
 the family_name field of the resulting font description will be
 initialized to %NULL. If STYLE-OPTIONS is missing, then all style
@@ -13309,7 +13397,7 @@ size in the resulting font description will be set to 0.
 
 A typical example:
 
-    "Cantarell Italic Light 15 @&#x200D;wght=200"</doc>
+    Cantarell Italic Light 15 @&#x200D;wght=200 #&#x200D;tnum=1</doc>
       <return-value transfer-ownership="full">
         <doc xml:space="preserve">a new `PangoFontDescription`.</doc>
         <type name="FontDescription" c:type="PangoFontDescription*"/>
