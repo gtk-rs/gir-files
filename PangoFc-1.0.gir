@@ -561,8 +561,8 @@ configuration.</doc>
         </parameters>
       </method>
       <method name="config_changed" c:identifier="pango_fc_font_map_config_changed" version="1.38">
-        <doc xml:space="preserve">Informs font map that the fontconfig configuration (i.e., FcConfig
-object) used by this font map has changed.
+        <doc xml:space="preserve">Informs font map that the fontconfig configuration (i.e.,
+the `FcConfig` object) used by this font map has changed.
 
 This currently calls [method@PangoFc.FontMap.cache_clear] which
 ensures that list of fonts, etc will be regenerated using the
@@ -655,10 +655,9 @@ See also: [method@PangoFc.FontMap.set_config].</doc>
       <method name="set_config" c:identifier="pango_fc_font_map_set_config" version="1.38" introspectable="0">
         <doc xml:space="preserve">Set the `FcConfig` for this font map to use.
 
-The default value
-is %NULL, which causes Fontconfig to use its global "current config".
-You can create a new `FcConfig` object and use this API to attach it
-to a font map.
+The default value is `NULL`, which causes Fontconfig to use its global
+"current config". You can create a new `FcConfig` object and use this
+API to attach it to a font map.
 
 This is particularly useful for example, if you want to use application
 fonts with Pango. For that, you would create a fresh `FcConfig`, add your
@@ -668,7 +667,10 @@ If @fcconfig is different from the previous config attached to the font map,
 [method@PangoFc.FontMap.config_changed] is called.
 
 This function acquires a reference to the `FcConfig` object; the caller
-does **not** need to retain a reference.</doc>
+does **not** need to retain a reference.
+
+See [method@Pango.FontMap.add_font_file] for a backend-independent way
+of using application fonts with Pango.</doc>
         <return-value transfer-ownership="none">
           <type name="none" c:type="void"/>
         </return-value>

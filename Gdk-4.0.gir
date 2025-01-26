@@ -3194,6 +3194,24 @@ as a keyboard, a mouse, or a touchpad.
 
 See the [class@Gdk.Seat] documentation for more information
 about the various kinds of devices, and their relationships.</doc>
+      <method name="get_active_layout_index" c:identifier="gdk_device_get_active_layout_index" glib:get-property="active-layout-index" version="4.18">
+        <doc xml:space="preserve">Retrieves the index of the active layout of the keyboard.
+
+If there is no valid active layout for the `GdkDevice`, this function will
+return -1;
+
+This is only relevant for keyboard devices.</doc>
+        <return-value transfer-ownership="none">
+          <doc xml:space="preserve">The layout index of the active layout or -1.</doc>
+          <type name="gint" c:type="gint"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="device" transfer-ownership="none">
+            <doc xml:space="preserve">a `GdkDevice`</doc>
+            <type name="Device" c:type="GdkDevice*"/>
+          </instance-parameter>
+        </parameters>
+      </method>
       <method name="get_caps_lock_state" c:identifier="gdk_device_get_caps_lock_state" glib:get-property="caps-lock-state">
         <doc xml:space="preserve">Retrieves whether the Caps Lock modifier of the keyboard is locked.
 
@@ -3263,6 +3281,24 @@ don't have a pointer.</doc>
         <return-value transfer-ownership="none">
           <doc xml:space="preserve">%TRUE if the pointer follows device motion</doc>
           <type name="gboolean" c:type="gboolean"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="device" transfer-ownership="none">
+            <doc xml:space="preserve">a `GdkDevice`</doc>
+            <type name="Device" c:type="GdkDevice*"/>
+          </instance-parameter>
+        </parameters>
+      </method>
+      <method name="get_layout_names" c:identifier="gdk_device_get_layout_names" glib:get-property="layout-names" version="4.18">
+        <doc xml:space="preserve">Retrieves the names of the layouts of the keyboard.
+
+This is only relevant for keyboard devices.</doc>
+        <return-value transfer-ownership="full" nullable="1">
+          <doc xml:space="preserve">
+  %NULL-terminated array of strings of layouts,</doc>
+          <array c:type="gchar**">
+            <type name="utf8"/>
+          </array>
         </return-value>
         <parameters>
           <instance-parameter name="device" transfer-ownership="none">
@@ -3485,6 +3521,14 @@ This is only relevant for keyboard devices.</doc>
           </instance-parameter>
         </parameters>
       </method>
+      <property name="active-layout-index" version="4.18" transfer-ownership="none" getter="get_active_layout_index" default-value="0">
+        <doc xml:space="preserve">The index of the keyboard active layout of a `GdkDevice`.
+
+Will be -1 if there is no valid active layout.
+
+This is only relevant for keyboard devices.</doc>
+        <type name="gint" c:type="gint"/>
+      </property>
       <property name="caps-lock-state" transfer-ownership="none" getter="get_caps_lock_state" default-value="FALSE">
         <doc xml:space="preserve">Whether Caps Lock is on.
 
@@ -3510,6 +3554,14 @@ This is only relevant for keyboard devices.</doc>
       <property name="has-cursor" writable="1" construct-only="1" transfer-ownership="none" getter="get_has_cursor" default-value="FALSE">
         <doc xml:space="preserve">Whether the device is represented by a cursor on the screen.</doc>
         <type name="gboolean" c:type="gboolean"/>
+      </property>
+      <property name="layout-names" version="4.18" transfer-ownership="none" getter="get_layout_names">
+        <doc xml:space="preserve">The names of the keyboard layouts of a `GdkDevice`.
+
+This is only relevant for keyboard devices.</doc>
+        <array>
+          <type name="utf8"/>
+        </array>
       </property>
       <property name="modifier-state" transfer-ownership="none" getter="get_modifier_state" default-value="GDK_NO_MODIFIER_MASK">
         <doc xml:space="preserve">The current modifier state of the device.
