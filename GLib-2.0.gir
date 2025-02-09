@@ -18541,31 +18541,31 @@ option: `--name arg` or combined in a single argument: `--name=arg`.</doc>
         <doc xml:space="preserve">The option takes an integer argument.</doc>
       </member>
       <member name="callback" value="3" c:identifier="G_OPTION_ARG_CALLBACK">
-        <doc xml:space="preserve">The option provides a callback (of type
-    #GOptionArgFunc) to parse the extra argument.</doc>
+        <doc xml:space="preserve">The option provides a callback (of type #GOptionArgFunc)
+  to parse the extra argument.</doc>
       </member>
       <member name="filename" value="4" c:identifier="G_OPTION_ARG_FILENAME">
         <doc xml:space="preserve">The option takes a filename as argument, which will
-       be in the GLib filename encoding rather than UTF-8.</doc>
+     be in the GLib filename encoding rather than UTF-8.</doc>
       </member>
       <member name="string_array" value="5" c:identifier="G_OPTION_ARG_STRING_ARRAY">
         <doc xml:space="preserve">The option takes a string argument, multiple
-    uses of the option are collected into an array of strings.</doc>
+  uses of the option are collected into an array of strings.</doc>
       </member>
       <member name="filename_array" value="6" c:identifier="G_OPTION_ARG_FILENAME_ARRAY">
         <doc xml:space="preserve">The option takes a filename as argument,
-    multiple uses of the option are collected into an array of strings.</doc>
+  multiple uses of the option are collected into an array of strings.</doc>
       </member>
       <member name="double" value="7" c:identifier="G_OPTION_ARG_DOUBLE">
         <doc xml:space="preserve">The option takes a double argument. The argument
-    can be formatted either for the user's locale or for the "C" locale.
-    Since 2.12</doc>
+  can be formatted either for the user's locale or for the "C" locale.
+  Since 2.12</doc>
       </member>
       <member name="int64" value="8" c:identifier="G_OPTION_ARG_INT64">
         <doc xml:space="preserve">The option takes a 64-bit integer. Like
-    %G_OPTION_ARG_INT but for larger numbers. The number can be in
-    decimal base, or in hexadecimal (when prefixed with `0x`, for
-    example, `0xffffffff`). Since 2.12</doc>
+  %G_OPTION_ARG_INT but for larger numbers. The number can be in
+  decimal base, or in hexadecimal (when prefixed with `0x`, for
+  example, `0xffffffff`). Since 2.12</doc>
       </member>
     </enumeration>
     <callback name="OptionArgFunc" c:type="GOptionArgFunc" throws="1">
@@ -19177,44 +19177,51 @@ or g_option_group_add_entries().</doc>
     </callback>
     <bitfield name="OptionFlags" c:type="GOptionFlags">
       <doc xml:space="preserve">Flags which modify individual options.</doc>
-      <member name="none" value="0" c:identifier="G_OPTION_FLAG_NONE">
-        <doc xml:space="preserve">No flags. Since: 2.42.</doc>
+      <member name="none" value="0" c:identifier="G_OPTION_FLAG_NONE" version="2.42">
+        <doc xml:space="preserve">No flags.</doc>
       </member>
       <member name="hidden" value="1" c:identifier="G_OPTION_FLAG_HIDDEN">
         <doc xml:space="preserve">The option doesn't appear in `--help` output.</doc>
       </member>
       <member name="in_main" value="2" c:identifier="G_OPTION_FLAG_IN_MAIN">
         <doc xml:space="preserve">The option appears in the main section of the
-    `--help` output, even if it is defined in a group.</doc>
+  `--help` output, even if it is defined in a group.</doc>
       </member>
       <member name="reverse" value="4" c:identifier="G_OPTION_FLAG_REVERSE">
         <doc xml:space="preserve">For options of the %G_OPTION_ARG_NONE kind, this
-    flag indicates that the sense of the option is reversed. i.e. %FALSE will
-    be stored into the argument rather than %TRUE.</doc>
+  flag indicates that the sense of the option is reversed. i.e. %FALSE will
+  be stored into the argument rather than %TRUE.</doc>
       </member>
       <member name="no_arg" value="8" c:identifier="G_OPTION_FLAG_NO_ARG">
         <doc xml:space="preserve">For options of the %G_OPTION_ARG_CALLBACK kind,
-    this flag indicates that the callback does not take any argument
-    (like a %G_OPTION_ARG_NONE option). Since 2.8</doc>
+  this flag indicates that the callback does not take any argument
+  (like a %G_OPTION_ARG_NONE option). Since 2.8</doc>
       </member>
       <member name="filename" value="16" c:identifier="G_OPTION_FLAG_FILENAME">
         <doc xml:space="preserve">For options of the %G_OPTION_ARG_CALLBACK
-    kind, this flag indicates that the argument should be passed to the
-    callback in the GLib filename encoding rather than UTF-8. Since 2.8</doc>
+  kind, this flag indicates that the argument should be passed to the
+  callback in the GLib filename encoding rather than UTF-8. Since 2.8</doc>
       </member>
       <member name="optional_arg" value="32" c:identifier="G_OPTION_FLAG_OPTIONAL_ARG">
         <doc xml:space="preserve">For options of the %G_OPTION_ARG_CALLBACK
-    kind, this flag indicates that the argument supply is optional.
-    If no argument is given then data of %GOptionParseFunc will be
-    set to NULL. Since 2.8</doc>
+  kind, this flag indicates that the argument supply is optional.
+  If no argument is given then data of %GOptionParseFunc will be
+  set to NULL. Since 2.8</doc>
       </member>
       <member name="noalias" value="64" c:identifier="G_OPTION_FLAG_NOALIAS">
         <doc xml:space="preserve">This flag turns off the automatic conflict
-    resolution which prefixes long option names with `groupname-` if
-    there is a conflict. This option should only be used in situations
-    where aliasing is necessary to model some legacy commandline interface.
-    It is not safe to use this option, unless all option groups are under
-    your direct control. Since 2.8.</doc>
+  resolution which prefixes long option names with `groupname-` if
+  there is a conflict. This option should only be used in situations
+  where aliasing is necessary to model some legacy commandline interface.
+  It is not safe to use this option, unless all option groups are under
+  your direct control. Since 2.8.</doc>
+      </member>
+      <member name="deprecated" value="128" c:identifier="G_OPTION_FLAG_DEPRECATED" version="2.84">
+        <doc xml:space="preserve">This flag marks the option as deprecated in the `--help`.
+
+You should update the description of the option to describe what
+the user should do in response to the deprecation, for instance:
+remove the option, or replace it with another one.</doc>
       </member>
     </bitfield>
     <record name="OptionGroup" c:type="GOptionGroup" opaque="1" glib:type-name="GOptionGroup" glib:get-type="g_option_group_get_type" c:symbol-prefix="option_group">
