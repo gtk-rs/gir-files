@@ -16391,7 +16391,7 @@ support other types.</doc>
     returned pointer. The pointer must be freed with g_free()</doc>
       </member>
       <member name="boolean" value="3" c:identifier="G_MARKUP_COLLECT_BOOLEAN">
-        <doc xml:space="preserve">expects a parameter of type (gboolean *)
+        <doc xml:space="preserve">expects a parameter of type (`gboolean *`)
     and parses the attribute value as a boolean. Sets %FALSE if the
     attribute isn't present. Valid boolean values consist of
     (case-insensitive) "false", "f", "no", "n", "0" and "true", "t",
@@ -16400,7 +16400,7 @@ support other types.</doc>
       <member name="tristate" value="4" c:identifier="G_MARKUP_COLLECT_TRISTATE">
         <doc xml:space="preserve">as with %G_MARKUP_COLLECT_BOOLEAN, but
     in the case of a missing attribute a value is set that compares
-    equal to neither %FALSE nor %TRUE G_MARKUP_COLLECT_OPTIONAL is
+    equal to neither %FALSE nor %TRUE %G_MARKUP_COLLECT_OPTIONAL is
     implied</doc>
       </member>
       <member name="optional" value="65536" c:identifier="G_MARKUP_COLLECT_OPTIONAL">
@@ -19080,7 +19080,20 @@ it should normally be passed untranslated.</doc>
       </function>
     </record>
     <record name="OptionEntry" c:type="GOptionEntry">
-      <doc xml:space="preserve">A GOptionEntry struct defines a single option. To have an effect, they
+      <doc xml:space="preserve">- %G_OPTION_ARG_NONE: %gboolean
+    - %G_OPTION_ARG_STRING: %gchar*
+    - %G_OPTION_ARG_INT: %gint
+    - %G_OPTION_ARG_FILENAME: %gchar*
+    - %G_OPTION_ARG_STRING_ARRAY: %gchar**
+    - %G_OPTION_ARG_FILENAME_ARRAY: %gchar**
+    - %G_OPTION_ARG_DOUBLE: %gdouble
+
+    If @arg type is %G_OPTION_ARG_STRING or %G_OPTION_ARG_FILENAME,
+    the location will contain a newly allocated string if the option
+    was given. That string needs to be freed by the callee using g_free().
+    Likewise if @arg type is %G_OPTION_ARG_STRING_ARRAY or
+    %G_OPTION_ARG_FILENAME_ARRAY, the data should be freed using g_strfreev().
+A GOptionEntry struct defines a single option. To have an effect, they
 must be added to a #GOptionGroup with g_option_context_add_main_entries()
 or g_option_group_add_entries().</doc>
       <field name="long_name" writable="1">
@@ -19111,19 +19124,7 @@ or g_option_group_add_entries().</doc>
     must point to a #GOptionArgFunc callback function, which will be
     called to handle the extra argument. Otherwise, @arg_data is a
     pointer to a location to store the value, the required type of
-    the location depends on the @arg type:
-     - %G_OPTION_ARG_NONE: %gboolean
-     - %G_OPTION_ARG_STRING: %gchar*
-     - %G_OPTION_ARG_INT: %gint
-     - %G_OPTION_ARG_FILENAME: %gchar*
-     - %G_OPTION_ARG_STRING_ARRAY: %gchar**
-     - %G_OPTION_ARG_FILENAME_ARRAY: %gchar**
-     - %G_OPTION_ARG_DOUBLE: %gdouble
-    If @arg type is %G_OPTION_ARG_STRING or %G_OPTION_ARG_FILENAME,
-    the location will contain a newly allocated string if the option
-    was given. That string needs to be freed by the callee using g_free().
-    Likewise if @arg type is %G_OPTION_ARG_STRING_ARRAY or
-    %G_OPTION_ARG_FILENAME_ARRAY, the data should be freed using g_strfreev().</doc>
+    the location depends on the @arg type:</doc>
         <type name="gpointer" c:type="gpointer"/>
       </field>
       <field name="description" writable="1">
@@ -55822,14 +55823,14 @@ g_strerror (saved_errno);
       <doc xml:space="preserve">It replaces the following special characters in the string @source
 with their corresponding C escape sequence:
 
- Symbol | Escape
----|---
- [U+0008 Backspace](https://en.wikipedia.org/wiki/Backspace) | `\b`
- [U+000C Form Feed](https://en.wikipedia.org/wiki/Form_feed) | `\f`
- [U+000A Line Feed](https://en.wikipedia.org/wiki/Newline) | `\n`
- [U+000D Carriage Return](https://en.wikipedia.org/wiki/Carriage_return) | `\r`
- [U+0009 Horizontal Tabulation](https://en.wikipedia.org/wiki/Tab_character) | `\t`
- [U+000B Vertical Tabulation](https://en.wikipedia.org/wiki/Vertical_Tab) | `\v`
+| Symbol                                                                      | Escape |
+|-----------------------------------------------------------------------------|--------|
+| [U+0008 Backspace](https://en.wikipedia.org/wiki/Backspace)                 | `\b`   |
+| [U+000C Form Feed](https://en.wikipedia.org/wiki/Form_feed)                 | `\f`   |
+| [U+000A Line Feed](https://en.wikipedia.org/wiki/Newline)                   | `\n`   |
+| [U+000D Carriage Return](https://en.wikipedia.org/wiki/Carriage_return)     | `\r`   |
+| [U+0009 Horizontal Tabulation](https://en.wikipedia.org/wiki/Tab_character) | `\t`   |
+| [U+000B Vertical Tabulation](https://en.wikipedia.org/wiki/Vertical_Tab)    | `\v`   |
 
 It also inserts a backslash (`\`) before any backslash or a double quote (`"`).
 Additionally all characters in the range 0x01-0x1F (everything
