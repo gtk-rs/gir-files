@@ -8,13 +8,13 @@ and/or use gtk-doc annotations.  -->
   <include name="GObject" version="2.0"/>
   <include name="Gio" version="2.0"/>
   <package name="gio-unix-2.0"/>
-  <c:include name="/buildstream/gnome/sdk/glib.bst/gio/gdesktopappinfo.h"/>
-  <c:include name="/buildstream/gnome/sdk/glib.bst/gio/gfiledescriptorbased.h"/>
-  <c:include name="/buildstream/gnome/sdk/glib.bst/gio/gunixfdmessage.h"/>
-  <c:include name="/buildstream/gnome/sdk/glib.bst/gio/gunixinputstream.h"/>
-  <c:include name="/buildstream/gnome/sdk/glib.bst/gio/gunixmounts.h"/>
-  <c:include name="/buildstream/gnome/sdk/glib.bst/gio/gunixoutputstream.h"/>
+  <c:include name="gio/gdesktopappinfo.h"/>
+  <c:include name="gio/gfiledescriptorbased.h"/>
   <c:include name="gio/gio.h"/>
+  <c:include name="gio/gunixfdmessage.h"/>
+  <c:include name="gio/gunixinputstream.h"/>
+  <c:include name="gio/gunixmounts.h"/>
+  <c:include name="gio/gunixoutputstream.h"/>
   <namespace name="GioUnix" version="2.0" shared-library="libgio-2.0.so.0" c:identifier-prefixes="GUnix,G" c:symbol-prefixes="gio,g_unix,g">
     <function-macro name="DESKTOP_APP_INFO" c:identifier="G_DESKTOP_APP_INFO" introspectable="0">
       <parameters>
@@ -42,7 +42,7 @@ and/or use gtk-doc annotations.  -->
     </function-macro>
     <constant name="DESKTOP_APP_INFO_LOOKUP_EXTENSION_POINT_NAME" value="gio-desktop-app-info-lookup" c:type="G_DESKTOP_APP_INFO_LOOKUP_EXTENSION_POINT_NAME" deprecated="1" deprecated-version="2.28">
       <doc xml:space="preserve">Extension point for default handler to URI association. See
-[Extending GIO][extending-gio].</doc>
+[Extending GIO](overview.html#extending-gio).</doc>
       <doc-deprecated xml:space="preserve">The #GDesktopAppInfoLookup interface is deprecated and
    unused by GIO.</doc-deprecated>
       <type name="utf8" c:type="gchar*"/>
@@ -1174,43 +1174,45 @@ when the stream is closed.</doc>
       <doc xml:space="preserve">Defines a Unix mount entry (e.g. `/media/cdrom`).
 This corresponds roughly to a mtab entry.</doc>
       <function name="at" c:identifier="g_unix_mount_entry_at" version="2.84">
-        <doc xml:space="preserve">Gets a #GUnixMountEntry for a given mount path. If @time_read
-is set, it will be filled with a unix timestamp for checking
-if the mounts have changed since with g_unix_mount_entries_changed_since().
+        <doc xml:space="preserve">Gets a [struct@GioUnix.MountEntry] for a given mount path.
+
+If @time_read is set, it will be filled with a Unix timestamp for checking
+if the mounts have changed since with
+[func@GioUnix.mount_entries_changed_since].
 
 If more mounts have the same mount path, the last matching mount
 is returned.
 
-This will return %NULL if there is no mount point at @mount_path.</doc>
+This will return `NULL` if there is no mount point at @mount_path.</doc>
         <return-value transfer-ownership="full" nullable="1">
-          <doc xml:space="preserve">a #GUnixMountEntry.</doc>
+          <doc xml:space="preserve">a [struct@GioUnix.MountEntry]</doc>
           <type name="Gio.UnixMountEntry" c:type="GUnixMountEntry*"/>
         </return-value>
         <parameters>
           <parameter name="mount_path" transfer-ownership="none">
-            <doc xml:space="preserve">path for a possible unix mount.</doc>
+            <doc xml:space="preserve">path for a possible Unix mount</doc>
             <type name="filename" c:type="const char*"/>
           </parameter>
           <parameter name="time_read" direction="out" caller-allocates="0" transfer-ownership="full" optional="1" allow-none="1">
-            <doc xml:space="preserve">guint64 to contain a timestamp.</doc>
+            <doc xml:space="preserve">return location for a timestamp</doc>
             <type name="guint64" c:type="guint64*"/>
           </parameter>
         </parameters>
       </function>
       <function name="compare" c:identifier="g_unix_mount_entry_compare" version="2.84">
-        <doc xml:space="preserve">Compares two unix mounts.</doc>
+        <doc xml:space="preserve">Compares two Unix mounts.</doc>
         <return-value transfer-ownership="none">
-          <doc xml:space="preserve">1, 0 or -1 if @mount1 is greater than, equal to,
-or less than @mount2, respectively.</doc>
+          <doc xml:space="preserve">`1`, `0` or `-1` if @mount1 is greater than, equal to,
+   or less than @mount2, respectively</doc>
           <type name="gint" c:type="gint"/>
         </return-value>
         <parameters>
           <parameter name="mount1" transfer-ownership="none">
-            <doc xml:space="preserve">first #GUnixMountEntry to compare.</doc>
+            <doc xml:space="preserve">first [struct@GioUnix.MountEntry] to compare</doc>
             <type name="Gio.UnixMountEntry" c:type="GUnixMountEntry*"/>
           </parameter>
           <parameter name="mount2" transfer-ownership="none">
-            <doc xml:space="preserve">second #GUnixMountEntry to compare.</doc>
+            <doc xml:space="preserve">second [struct@GioUnix.MountEntry] to compare</doc>
             <type name="Gio.UnixMountEntry" c:type="GUnixMountEntry*"/>
           </parameter>
         </parameters>
@@ -1218,106 +1220,109 @@ or less than @mount2, respectively.</doc>
       <function name="copy" c:identifier="g_unix_mount_entry_copy" version="2.84">
         <doc xml:space="preserve">Makes a copy of @mount_entry.</doc>
         <return-value transfer-ownership="full">
-          <doc xml:space="preserve">a new #GUnixMountEntry</doc>
+          <doc xml:space="preserve">a new [struct@GioUnix.MountEntry]</doc>
           <type name="Gio.UnixMountEntry" c:type="GUnixMountEntry*"/>
         </return-value>
         <parameters>
           <parameter name="mount_entry" transfer-ownership="none">
-            <doc xml:space="preserve">a #GUnixMountEntry.</doc>
+            <doc xml:space="preserve">a [struct@GioUnix.MountEntry]</doc>
             <type name="Gio.UnixMountEntry" c:type="GUnixMountEntry*"/>
           </parameter>
         </parameters>
       </function>
       <function name="for" c:identifier="g_unix_mount_entry_for" version="2.84">
-        <doc xml:space="preserve">Gets a #GUnixMountEntry for a given file path. If @time_read
-is set, it will be filled with a unix timestamp for checking
-if the mounts have changed since with g_unix_mount_entries_changed_since().
+        <doc xml:space="preserve">Gets a [struct@GioUnix.MountEntry] for a given file path.
+
+If @time_read is set, it will be filled with a Unix timestamp for checking
+if the mounts have changed since with
+[func@GioUnix.mount_entries_changed_since].
 
 If more mounts have the same mount path, the last matching mount
 is returned.
 
-This will return %NULL if looking up the mount entry fails, if
+This will return `NULL` if looking up the mount entry fails, if
 @file_path doesn&#x2019;t exist or there is an I/O error.</doc>
         <return-value transfer-ownership="full" nullable="1">
-          <doc xml:space="preserve">a #GUnixMountEntry.</doc>
+          <doc xml:space="preserve">a [struct@GioUnix.MountEntry]</doc>
           <type name="Gio.UnixMountEntry" c:type="GUnixMountEntry*"/>
         </return-value>
         <parameters>
           <parameter name="file_path" transfer-ownership="none">
-            <doc xml:space="preserve">file path on some unix mount.</doc>
+            <doc xml:space="preserve">file path on some Unix mount</doc>
             <type name="filename" c:type="const char*"/>
           </parameter>
           <parameter name="time_read" direction="out" caller-allocates="0" transfer-ownership="full" optional="1" allow-none="1">
-            <doc xml:space="preserve">guint64 to contain a timestamp.</doc>
+            <doc xml:space="preserve">return location for a timestamp</doc>
             <type name="guint64" c:type="guint64*"/>
           </parameter>
         </parameters>
       </function>
       <function name="free" c:identifier="g_unix_mount_entry_free" version="2.84">
-        <doc xml:space="preserve">Frees a unix mount.</doc>
+        <doc xml:space="preserve">Frees a Unix mount.</doc>
         <return-value transfer-ownership="none">
           <type name="none" c:type="void"/>
         </return-value>
         <parameters>
           <parameter name="mount_entry" transfer-ownership="none">
-            <doc xml:space="preserve">a #GUnixMountEntry.</doc>
+            <doc xml:space="preserve">a [struct@GioUnix.MountEntry]</doc>
             <type name="Gio.UnixMountEntry" c:type="GUnixMountEntry*"/>
           </parameter>
         </parameters>
       </function>
       <function name="get_device_path" c:identifier="g_unix_mount_entry_get_device_path" version="2.84">
-        <doc xml:space="preserve">Gets the device path for a unix mount.</doc>
+        <doc xml:space="preserve">Gets the device path for a Unix mount.</doc>
         <return-value transfer-ownership="none">
-          <doc xml:space="preserve">a string containing the device path.</doc>
+          <doc xml:space="preserve">a string containing the device path</doc>
           <type name="filename" c:type="const char*"/>
         </return-value>
         <parameters>
           <parameter name="mount_entry" transfer-ownership="none">
-            <doc xml:space="preserve">a #GUnixMount.</doc>
+            <doc xml:space="preserve">a [struct@GioUnix.MountEntry]</doc>
             <type name="Gio.UnixMountEntry" c:type="GUnixMountEntry*"/>
           </parameter>
         </parameters>
       </function>
       <function name="get_fs_type" c:identifier="g_unix_mount_entry_get_fs_type" version="2.84">
-        <doc xml:space="preserve">Gets the filesystem type for the unix mount.</doc>
+        <doc xml:space="preserve">Gets the filesystem type for the Unix mount.</doc>
         <return-value transfer-ownership="none">
-          <doc xml:space="preserve">a string containing the file system type.</doc>
+          <doc xml:space="preserve">a string containing the file system type</doc>
           <type name="utf8" c:type="const char*"/>
         </return-value>
         <parameters>
           <parameter name="mount_entry" transfer-ownership="none">
-            <doc xml:space="preserve">a #GUnixMount.</doc>
+            <doc xml:space="preserve">a [struct@GioUnix.MountEntry]</doc>
             <type name="Gio.UnixMountEntry" c:type="GUnixMountEntry*"/>
           </parameter>
         </parameters>
       </function>
       <function name="get_mount_path" c:identifier="g_unix_mount_entry_get_mount_path" version="2.84">
-        <doc xml:space="preserve">Gets the mount path for a unix mount.</doc>
+        <doc xml:space="preserve">Gets the mount path for a Unix mount.</doc>
         <return-value transfer-ownership="none">
-          <doc xml:space="preserve">the mount path for @mount_entry.</doc>
+          <doc xml:space="preserve">the mount path for @mount_entry</doc>
           <type name="filename" c:type="const char*"/>
         </return-value>
         <parameters>
           <parameter name="mount_entry" transfer-ownership="none">
-            <doc xml:space="preserve">input #GUnixMountEntry to get the mount path for.</doc>
+            <doc xml:space="preserve">a [struct@GioUnix.MountEntry] to get the mount path for</doc>
             <type name="Gio.UnixMountEntry" c:type="GUnixMountEntry*"/>
           </parameter>
         </parameters>
       </function>
       <function name="get_options" c:identifier="g_unix_mount_entry_get_options" version="2.84">
-        <doc xml:space="preserve">Gets a comma-separated list of mount options for the unix mount. For example,
-`rw,relatime,seclabel,data=ordered`.
+        <doc xml:space="preserve">Gets a comma separated list of mount options for the Unix mount.
 
-This is similar to g_unix_mount_point_get_options(), but it takes
-a #GUnixMountEntry as an argument.</doc>
+For example: `rw,relatime,seclabel,data=ordered`.
+
+This is similar to [func@GioUnix.MountPoint.get_options], but it takes
+a [struct@GioUnix.MountEntry] as an argument.</doc>
         <return-value transfer-ownership="none" nullable="1">
-          <doc xml:space="preserve">a string containing the options, or %NULL if not
-available.</doc>
+          <doc xml:space="preserve">a string containing the options, or `NULL` if not
+   available.</doc>
           <type name="utf8" c:type="const char*"/>
         </return-value>
         <parameters>
           <parameter name="mount_entry" transfer-ownership="none">
-            <doc xml:space="preserve">a #GUnixMountEntry.</doc>
+            <doc xml:space="preserve">a [struct@GioUnix.MountEntry]</doc>
             <type name="Gio.UnixMountEntry" c:type="GUnixMountEntry*"/>
           </parameter>
         </parameters>
@@ -1326,144 +1331,153 @@ available.</doc>
         <doc xml:space="preserve">Gets the root of the mount within the filesystem. This is useful e.g. for
 mounts created by bind operation, or btrfs subvolumes.
 
-For example, the root path is equal to "/" for mount created by
-"mount /dev/sda1 /mnt/foo" and "/bar" for
-"mount --bind /mnt/foo/bar /mnt/bar".</doc>
+For example, the root path is equal to `/` for a mount created by
+`mount /dev/sda1 /mnt/foo` and `/bar` for
+`mount --bind /mnt/foo/bar /mnt/bar`.</doc>
         <return-value transfer-ownership="none" nullable="1">
-          <doc xml:space="preserve">a string containing the root, or %NULL if not supported.</doc>
+          <doc xml:space="preserve">a string containing the root, or `NULL` if not supported</doc>
           <type name="utf8" c:type="const char*"/>
         </return-value>
         <parameters>
           <parameter name="mount_entry" transfer-ownership="none">
-            <doc xml:space="preserve">a #GUnixMountEntry.</doc>
+            <doc xml:space="preserve">a [struct@GioUnix.MountEntry]</doc>
             <type name="Gio.UnixMountEntry" c:type="GUnixMountEntry*"/>
           </parameter>
         </parameters>
       </function>
       <function name="guess_can_eject" c:identifier="g_unix_mount_entry_guess_can_eject" version="2.84">
-        <doc xml:space="preserve">Guesses whether a Unix mount can be ejected.</doc>
+        <doc xml:space="preserve">Guesses whether a Unix mount entry can be ejected.</doc>
         <return-value transfer-ownership="none">
-          <doc xml:space="preserve">%TRUE if @mount_entry is deemed to be ejectable.</doc>
+          <doc xml:space="preserve">true if @mount_entry is deemed to be ejectable; false otherwise</doc>
           <type name="gboolean" c:type="gboolean"/>
         </return-value>
         <parameters>
           <parameter name="mount_entry" transfer-ownership="none">
-            <doc xml:space="preserve">a #GUnixMountEntry</doc>
+            <doc xml:space="preserve">a [struct@GioUnix.MountEntry]</doc>
             <type name="Gio.UnixMountEntry" c:type="GUnixMountEntry*"/>
           </parameter>
         </parameters>
       </function>
       <function name="guess_icon" c:identifier="g_unix_mount_entry_guess_icon" version="2.84">
-        <doc xml:space="preserve">Guesses the icon of a Unix mount.</doc>
+        <doc xml:space="preserve">Guesses the icon of a Unix mount entry.</doc>
         <return-value transfer-ownership="full">
-          <doc xml:space="preserve">a #GIcon</doc>
+          <doc xml:space="preserve">a [iface@Gio.Icon]</doc>
           <type name="Gio.Icon" c:type="GIcon*"/>
         </return-value>
         <parameters>
           <parameter name="mount_entry" transfer-ownership="none">
-            <doc xml:space="preserve">a #GUnixMountEntry</doc>
+            <doc xml:space="preserve">a [struct@GioUnix.MountEntry]</doc>
             <type name="Gio.UnixMountEntry" c:type="GUnixMountEntry*"/>
           </parameter>
         </parameters>
       </function>
       <function name="guess_name" c:identifier="g_unix_mount_entry_guess_name" version="2.84">
-        <doc xml:space="preserve">Guesses the name of a Unix mount.
+        <doc xml:space="preserve">Guesses the name of a Unix mount entry.
+
 The result is a translated string.</doc>
         <return-value transfer-ownership="full">
-          <doc xml:space="preserve">A newly allocated string that must
-    be freed with g_free()</doc>
+          <doc xml:space="preserve">a newly allocated translated string</doc>
           <type name="utf8" c:type="char*"/>
         </return-value>
         <parameters>
           <parameter name="mount_entry" transfer-ownership="none">
-            <doc xml:space="preserve">a #GUnixMountEntry</doc>
+            <doc xml:space="preserve">a [struct@GioUnix.MountEntry]</doc>
             <type name="Gio.UnixMountEntry" c:type="GUnixMountEntry*"/>
           </parameter>
         </parameters>
       </function>
       <function name="guess_should_display" c:identifier="g_unix_mount_entry_guess_should_display" version="2.84">
-        <doc xml:space="preserve">Guesses whether a Unix mount should be displayed in the UI.</doc>
+        <doc xml:space="preserve">Guesses whether a Unix mount entry should be displayed in the UI.</doc>
         <return-value transfer-ownership="none">
-          <doc xml:space="preserve">%TRUE if @mount_entry is deemed to be displayable.</doc>
+          <doc xml:space="preserve">true if @mount_entry is deemed to be displayable; false otherwise</doc>
           <type name="gboolean" c:type="gboolean"/>
         </return-value>
         <parameters>
           <parameter name="mount_entry" transfer-ownership="none">
-            <doc xml:space="preserve">a #GUnixMountEntry</doc>
+            <doc xml:space="preserve">a [struct@GioUnix.MountEntry]</doc>
             <type name="Gio.UnixMountEntry" c:type="GUnixMountEntry*"/>
           </parameter>
         </parameters>
       </function>
       <function name="guess_symbolic_icon" c:identifier="g_unix_mount_entry_guess_symbolic_icon" version="2.84">
-        <doc xml:space="preserve">Guesses the symbolic icon of a Unix mount.</doc>
+        <doc xml:space="preserve">Guesses the symbolic icon of a Unix mount entry.</doc>
         <return-value transfer-ownership="full">
-          <doc xml:space="preserve">a #GIcon</doc>
+          <doc xml:space="preserve">a [iface@Gio.Icon]</doc>
           <type name="Gio.Icon" c:type="GIcon*"/>
         </return-value>
         <parameters>
           <parameter name="mount_entry" transfer-ownership="none">
-            <doc xml:space="preserve">a #GUnixMountEntry</doc>
+            <doc xml:space="preserve">a [struct@GioUnix.MountEntry]</doc>
             <type name="Gio.UnixMountEntry" c:type="GUnixMountEntry*"/>
           </parameter>
         </parameters>
       </function>
       <function name="is_readonly" c:identifier="g_unix_mount_entry_is_readonly" version="2.84">
-        <doc xml:space="preserve">Checks if a unix mount is mounted read only.</doc>
+        <doc xml:space="preserve">Checks if a Unix mount is mounted read only.</doc>
         <return-value transfer-ownership="none">
-          <doc xml:space="preserve">%TRUE if @mount_entry is read only.</doc>
+          <doc xml:space="preserve">true if @mount_entry is read only; false otherwise</doc>
           <type name="gboolean" c:type="gboolean"/>
         </return-value>
         <parameters>
           <parameter name="mount_entry" transfer-ownership="none">
-            <doc xml:space="preserve">a #GUnixMount.</doc>
+            <doc xml:space="preserve">a [struct@GioUnix.MountEntry]</doc>
             <type name="Gio.UnixMountEntry" c:type="GUnixMountEntry*"/>
           </parameter>
         </parameters>
       </function>
       <function name="is_system_internal" c:identifier="g_unix_mount_entry_is_system_internal" version="2.84">
-        <doc xml:space="preserve">Checks if a Unix mount is a system mount. This is the Boolean OR of
-g_unix_is_system_fs_type(), g_unix_is_system_device_path() and
-g_unix_is_mount_path_system_internal() on @mount_entry&#x2019;s properties.
+        <doc xml:space="preserve">Checks if a Unix mount is a system mount.
+
+This is the Boolean OR of
+[func@GioUnix.is_system_fs_type], [func@GioUnix.is_system_device_path] and
+[func@GioUnix.is_mount_path_system_internal] on @mount_entry&#x2019;s properties.
 
 The definition of what a &#x2018;system&#x2019; mount entry is may change over time as new
 file system types and device paths are ignored.</doc>
         <return-value transfer-ownership="none">
-          <doc xml:space="preserve">%TRUE if the unix mount is for a system path.</doc>
+          <doc xml:space="preserve">true if the Unix mount is for a system path; false otherwise</doc>
           <type name="gboolean" c:type="gboolean"/>
         </return-value>
         <parameters>
           <parameter name="mount_entry" transfer-ownership="none">
-            <doc xml:space="preserve">a #GUnixMount.</doc>
+            <doc xml:space="preserve">a [struct@GioUnix.MountEntry]</doc>
             <type name="Gio.UnixMountEntry" c:type="GUnixMountEntry*"/>
           </parameter>
         </parameters>
       </function>
     </record>
     <class name="MountMonitor" c:symbol-prefix="mount_monitor" c:type="GUnixMountMonitor" parent="GObject.Object" glib:type-name="GUnixMountMonitor" glib:get-type="g_unix_mount_monitor_get_type" glib:type-struct="MountMonitorClass">
-      <doc xml:space="preserve">Watches #GUnixMounts for changes.</doc>
+      <doc xml:space="preserve">Watches for changes to the set of mount entries and mount points in the
+system.
+
+Connect to the [signal@GioUnix.MountMonitor::mounts-changed] signal to be
+notified of changes to the [struct@GioUnix.MountEntry] list.
+
+Connect to the [signal@GioUnix.MountMonitor::mountpoints-changed] signal to
+be notified of changes to the [struct@GioUnix.MountPoint] list.</doc>
       <constructor name="new" c:identifier="g_unix_mount_monitor_new" deprecated="1" deprecated-version="2.44">
-        <doc xml:space="preserve">Deprecated alias for g_unix_mount_monitor_get().
+        <doc xml:space="preserve">Deprecated alias for [func@GioUnix.MountMonitor.get].
 
 This function was never a true constructor, which is why it was
 renamed.</doc>
-        <doc-deprecated xml:space="preserve">Use g_unix_mount_monitor_get() instead.</doc-deprecated>
+        <doc-deprecated xml:space="preserve">Use [func@GioUnix.MountMonitor.get] instead.</doc-deprecated>
         <return-value transfer-ownership="full">
-          <doc xml:space="preserve">a #GUnixMountMonitor.</doc>
+          <doc xml:space="preserve">a [class@GioUnix.MountMonitor]</doc>
           <type name="Gio.UnixMountMonitor" c:type="GUnixMountMonitor*"/>
         </return-value>
       </constructor>
       <function name="get" c:identifier="g_unix_mount_monitor_get" version="2.44">
-        <doc xml:space="preserve">Gets the #GUnixMountMonitor for the current thread-default main
+        <doc xml:space="preserve">Gets the [class@GioUnix.MountMonitor] for the current thread-default main
 context.
 
 The mount monitor can be used to monitor for changes to the list of
 mounted filesystems as well as the list of mount points (ie: fstab
 entries).
 
-You must only call g_object_unref() on the return value from under
-the same main context as you called this function.</doc>
+You must only call [method@GObject.Object.unref] on the return value from
+under the same main context as you called this function.</doc>
         <return-value transfer-ownership="full">
-          <doc xml:space="preserve">the #GUnixMountMonitor.</doc>
+          <doc xml:space="preserve">the [class@GioUnix.MountMonitor]</doc>
           <type name="Gio.UnixMountMonitor" c:type="GUnixMountMonitor*"/>
         </return-value>
       </function>
@@ -1475,30 +1489,29 @@ rate at which events would be reported under some uncommon
 circumstances.  Since @mount_monitor is a singleton, it also meant
 that calling this function would have side effects for other users of
 the monitor.</doc>
-        <doc-deprecated xml:space="preserve">This function does nothing.  Don't call it.</doc-deprecated>
+        <doc-deprecated xml:space="preserve">This function does nothing. Don&#x2019;t call it.</doc-deprecated>
         <return-value transfer-ownership="none">
           <type name="none" c:type="void"/>
         </return-value>
         <parameters>
           <parameter name="mount_monitor" transfer-ownership="none">
-            <doc xml:space="preserve">a #GUnixMountMonitor</doc>
+            <doc xml:space="preserve">a [class@GioUnix.MountMonitor]</doc>
             <type name="Gio.UnixMountMonitor" c:type="GUnixMountMonitor*"/>
           </parameter>
           <parameter name="limit_msec" transfer-ownership="none">
-            <doc xml:space="preserve">a integer with the limit in milliseconds to
-    poll for changes.</doc>
+            <doc xml:space="preserve">a integer with the limit (in milliseconds) to poll for changes</doc>
             <type name="gint" c:type="int"/>
           </parameter>
         </parameters>
       </function>
       <glib:signal name="mountpoints-changed" when="last">
-        <doc xml:space="preserve">Emitted when the unix mount points have changed.</doc>
+        <doc xml:space="preserve">Emitted when the Unix mount points have changed.</doc>
         <return-value transfer-ownership="none">
           <type name="none" c:type="void"/>
         </return-value>
       </glib:signal>
       <glib:signal name="mounts-changed" when="last">
-        <doc xml:space="preserve">Emitted when the unix mounts have changed.</doc>
+        <doc xml:space="preserve">Emitted when the Unix mount entries have changed.</doc>
         <return-value transfer-ownership="none">
           <type name="none" c:type="void"/>
         </return-value>
@@ -1509,42 +1522,44 @@ the monitor.</doc>
       <doc xml:space="preserve">Defines a Unix mount point (e.g. `/dev`).
 This corresponds roughly to a fstab entry.</doc>
       <function name="at" c:identifier="g_unix_mount_point_at" version="2.66">
-        <doc xml:space="preserve">Gets a #GUnixMountPoint for a given mount path. If @time_read is set, it
-will be filled with a unix timestamp for checking if the mount points have
-changed since with g_unix_mount_points_changed_since().
+        <doc xml:space="preserve">Gets a [struct@GioUnix.MountPoint] for a given mount path.
+
+If @time_read is set, it will be filled with a Unix timestamp for checking if
+the mount points have changed since with
+[func@GioUnix.mount_points_changed_since].
 
 If more mount points have the same mount path, the last matching mount point
 is returned.</doc>
         <return-value transfer-ownership="full" nullable="1">
-          <doc xml:space="preserve">a #GUnixMountPoint, or %NULL if no match
-is found.</doc>
+          <doc xml:space="preserve">a [struct@GioUnix.MountPoint], or `NULL`
+   if no match is found</doc>
           <type name="Gio.UnixMountPoint" c:type="GUnixMountPoint*"/>
         </return-value>
         <parameters>
           <parameter name="mount_path" transfer-ownership="none">
-            <doc xml:space="preserve">path for a possible unix mount point.</doc>
+            <doc xml:space="preserve">path for a possible Unix mount point</doc>
             <type name="filename" c:type="const char*"/>
           </parameter>
           <parameter name="time_read" direction="out" caller-allocates="0" transfer-ownership="full" optional="1" allow-none="1">
-            <doc xml:space="preserve">guint64 to contain a timestamp.</doc>
+            <doc xml:space="preserve">return location for a timestamp</doc>
             <type name="guint64" c:type="guint64*"/>
           </parameter>
         </parameters>
       </function>
       <function name="compare" c:identifier="g_unix_mount_point_compare">
-        <doc xml:space="preserve">Compares two unix mount points.</doc>
+        <doc xml:space="preserve">Compares two Unix mount points.</doc>
         <return-value transfer-ownership="none">
-          <doc xml:space="preserve">1, 0 or -1 if @mount1 is greater than, equal to,
-or less than @mount2, respectively.</doc>
+          <doc xml:space="preserve">`1`, `0` or `-1` if @mount1 is greater than, equal to,
+   or less than @mount2, respectively</doc>
           <type name="gint" c:type="gint"/>
         </return-value>
         <parameters>
           <parameter name="mount1" transfer-ownership="none">
-            <doc xml:space="preserve">a #GUnixMount.</doc>
+            <doc xml:space="preserve">a [struct@GioUnix.MountPoint]</doc>
             <type name="Gio.UnixMountPoint" c:type="GUnixMountPoint*"/>
           </parameter>
           <parameter name="mount2" transfer-ownership="none">
-            <doc xml:space="preserve">a #GUnixMount.</doc>
+            <doc xml:space="preserve">a [struct@GioUnix.MountPoint]</doc>
             <type name="Gio.UnixMountPoint" c:type="GUnixMountPoint*"/>
           </parameter>
         </parameters>
@@ -1552,37 +1567,37 @@ or less than @mount2, respectively.</doc>
       <function name="copy" c:identifier="g_unix_mount_point_copy" version="2.54">
         <doc xml:space="preserve">Makes a copy of @mount_point.</doc>
         <return-value transfer-ownership="full">
-          <doc xml:space="preserve">a new #GUnixMountPoint</doc>
+          <doc xml:space="preserve">a new [struct@GioUnix.MountPoint]</doc>
           <type name="Gio.UnixMountPoint" c:type="GUnixMountPoint*"/>
         </return-value>
         <parameters>
           <parameter name="mount_point" transfer-ownership="none">
-            <doc xml:space="preserve">a #GUnixMountPoint.</doc>
+            <doc xml:space="preserve">a [struct@GioUnix.MountPoint]</doc>
             <type name="Gio.UnixMountPoint" c:type="GUnixMountPoint*"/>
           </parameter>
         </parameters>
       </function>
       <function name="free" c:identifier="g_unix_mount_point_free">
-        <doc xml:space="preserve">Frees a unix mount point.</doc>
+        <doc xml:space="preserve">Frees a Unix mount point.</doc>
         <return-value transfer-ownership="none">
           <type name="none" c:type="void"/>
         </return-value>
         <parameters>
           <parameter name="mount_point" transfer-ownership="none">
-            <doc xml:space="preserve">unix mount point to free.</doc>
+            <doc xml:space="preserve">Unix mount point to free.</doc>
             <type name="Gio.UnixMountPoint" c:type="GUnixMountPoint*"/>
           </parameter>
         </parameters>
       </function>
       <function name="get_device_path" c:identifier="g_unix_mount_point_get_device_path">
-        <doc xml:space="preserve">Gets the device path for a unix mount point.</doc>
+        <doc xml:space="preserve">Gets the device path for a Unix mount point.</doc>
         <return-value transfer-ownership="none">
-          <doc xml:space="preserve">a string containing the device path.</doc>
+          <doc xml:space="preserve">a string containing the device path</doc>
           <type name="filename" c:type="const char*"/>
         </return-value>
         <parameters>
           <parameter name="mount_point" transfer-ownership="none">
-            <doc xml:space="preserve">a #GUnixMountPoint.</doc>
+            <doc xml:space="preserve">a [struct@GioUnix.MountPoint]</doc>
             <type name="Gio.UnixMountPoint" c:type="GUnixMountPoint*"/>
           </parameter>
         </parameters>
@@ -1590,25 +1605,25 @@ or less than @mount2, respectively.</doc>
       <function name="get_fs_type" c:identifier="g_unix_mount_point_get_fs_type">
         <doc xml:space="preserve">Gets the file system type for the mount point.</doc>
         <return-value transfer-ownership="none">
-          <doc xml:space="preserve">a string containing the file system type.</doc>
+          <doc xml:space="preserve">a string containing the file system type</doc>
           <type name="utf8" c:type="const char*"/>
         </return-value>
         <parameters>
           <parameter name="mount_point" transfer-ownership="none">
-            <doc xml:space="preserve">a #GUnixMountPoint.</doc>
+            <doc xml:space="preserve">a [struct@GioUnix.MountPoint]</doc>
             <type name="Gio.UnixMountPoint" c:type="GUnixMountPoint*"/>
           </parameter>
         </parameters>
       </function>
       <function name="get_mount_path" c:identifier="g_unix_mount_point_get_mount_path">
-        <doc xml:space="preserve">Gets the mount path for a unix mount point.</doc>
+        <doc xml:space="preserve">Gets the mount path for a Unix mount point.</doc>
         <return-value transfer-ownership="none">
-          <doc xml:space="preserve">a string containing the mount path.</doc>
+          <doc xml:space="preserve">a string containing the mount path</doc>
           <type name="filename" c:type="const char*"/>
         </return-value>
         <parameters>
           <parameter name="mount_point" transfer-ownership="none">
-            <doc xml:space="preserve">a #GUnixMountPoint.</doc>
+            <doc xml:space="preserve">a [struct@GioUnix.MountPoint]</doc>
             <type name="Gio.UnixMountPoint" c:type="GUnixMountPoint*"/>
           </parameter>
         </parameters>
@@ -1616,12 +1631,12 @@ or less than @mount2, respectively.</doc>
       <function name="get_options" c:identifier="g_unix_mount_point_get_options" version="2.32">
         <doc xml:space="preserve">Gets the options for the mount point.</doc>
         <return-value transfer-ownership="none" nullable="1">
-          <doc xml:space="preserve">a string containing the options.</doc>
+          <doc xml:space="preserve">a string containing the options</doc>
           <type name="utf8" c:type="const char*"/>
         </return-value>
         <parameters>
           <parameter name="mount_point" transfer-ownership="none">
-            <doc xml:space="preserve">a #GUnixMountPoint.</doc>
+            <doc xml:space="preserve">a [struct@GioUnix.MountPoint]</doc>
             <type name="Gio.UnixMountPoint" c:type="GUnixMountPoint*"/>
           </parameter>
         </parameters>
@@ -1629,12 +1644,12 @@ or less than @mount2, respectively.</doc>
       <function name="guess_can_eject" c:identifier="g_unix_mount_point_guess_can_eject">
         <doc xml:space="preserve">Guesses whether a Unix mount point can be ejected.</doc>
         <return-value transfer-ownership="none">
-          <doc xml:space="preserve">%TRUE if @mount_point is deemed to be ejectable.</doc>
+          <doc xml:space="preserve">true if @mount_point is deemed to be ejectable; false otherwise</doc>
           <type name="gboolean" c:type="gboolean"/>
         </return-value>
         <parameters>
           <parameter name="mount_point" transfer-ownership="none">
-            <doc xml:space="preserve">a #GUnixMountPoint</doc>
+            <doc xml:space="preserve">a [struct@GioUnix.MountPoint]</doc>
             <type name="Gio.UnixMountPoint" c:type="GUnixMountPoint*"/>
           </parameter>
         </parameters>
@@ -1642,27 +1657,27 @@ or less than @mount2, respectively.</doc>
       <function name="guess_icon" c:identifier="g_unix_mount_point_guess_icon">
         <doc xml:space="preserve">Guesses the icon of a Unix mount point.</doc>
         <return-value transfer-ownership="full">
-          <doc xml:space="preserve">a #GIcon</doc>
+          <doc xml:space="preserve">a [iface@Gio.Icon]</doc>
           <type name="Gio.Icon" c:type="GIcon*"/>
         </return-value>
         <parameters>
           <parameter name="mount_point" transfer-ownership="none">
-            <doc xml:space="preserve">a #GUnixMountPoint</doc>
+            <doc xml:space="preserve">a [struct@GioUnix.MountPoint]</doc>
             <type name="Gio.UnixMountPoint" c:type="GUnixMountPoint*"/>
           </parameter>
         </parameters>
       </function>
       <function name="guess_name" c:identifier="g_unix_mount_point_guess_name">
         <doc xml:space="preserve">Guesses the name of a Unix mount point.
+
 The result is a translated string.</doc>
         <return-value transfer-ownership="full">
-          <doc xml:space="preserve">A newly allocated string that must
-    be freed with g_free()</doc>
+          <doc xml:space="preserve">a newly allocated translated string</doc>
           <type name="utf8" c:type="char*"/>
         </return-value>
         <parameters>
           <parameter name="mount_point" transfer-ownership="none">
-            <doc xml:space="preserve">a #GUnixMountPoint</doc>
+            <doc xml:space="preserve">a [struct@GioUnix.MountPoint]</doc>
             <type name="Gio.UnixMountPoint" c:type="GUnixMountPoint*"/>
           </parameter>
         </parameters>
@@ -1670,51 +1685,51 @@ The result is a translated string.</doc>
       <function name="guess_symbolic_icon" c:identifier="g_unix_mount_point_guess_symbolic_icon" version="2.34">
         <doc xml:space="preserve">Guesses the symbolic icon of a Unix mount point.</doc>
         <return-value transfer-ownership="full">
-          <doc xml:space="preserve">a #GIcon</doc>
+          <doc xml:space="preserve">a [iface@Gio.Icon]</doc>
           <type name="Gio.Icon" c:type="GIcon*"/>
         </return-value>
         <parameters>
           <parameter name="mount_point" transfer-ownership="none">
-            <doc xml:space="preserve">a #GUnixMountPoint</doc>
+            <doc xml:space="preserve">a [struct@GioUnix.MountPoint]</doc>
             <type name="Gio.UnixMountPoint" c:type="GUnixMountPoint*"/>
           </parameter>
         </parameters>
       </function>
       <function name="is_loopback" c:identifier="g_unix_mount_point_is_loopback">
-        <doc xml:space="preserve">Checks if a unix mount point is a loopback device.</doc>
+        <doc xml:space="preserve">Checks if a Unix mount point is a loopback device.</doc>
         <return-value transfer-ownership="none">
-          <doc xml:space="preserve">%TRUE if the mount point is a loopback. %FALSE otherwise.</doc>
+          <doc xml:space="preserve">true if the mount point is a loopback device; false otherwise</doc>
           <type name="gboolean" c:type="gboolean"/>
         </return-value>
         <parameters>
           <parameter name="mount_point" transfer-ownership="none">
-            <doc xml:space="preserve">a #GUnixMountPoint.</doc>
+            <doc xml:space="preserve">a [struct@GioUnix.MountPoint]</doc>
             <type name="Gio.UnixMountPoint" c:type="GUnixMountPoint*"/>
           </parameter>
         </parameters>
       </function>
       <function name="is_readonly" c:identifier="g_unix_mount_point_is_readonly">
-        <doc xml:space="preserve">Checks if a unix mount point is read only.</doc>
+        <doc xml:space="preserve">Checks if a Unix mount point is read only.</doc>
         <return-value transfer-ownership="none">
-          <doc xml:space="preserve">%TRUE if a mount point is read only.</doc>
+          <doc xml:space="preserve">true if a mount point is read only; false otherwise</doc>
           <type name="gboolean" c:type="gboolean"/>
         </return-value>
         <parameters>
           <parameter name="mount_point" transfer-ownership="none">
-            <doc xml:space="preserve">a #GUnixMountPoint.</doc>
+            <doc xml:space="preserve">a [struct@GioUnix.MountPoint]</doc>
             <type name="Gio.UnixMountPoint" c:type="GUnixMountPoint*"/>
           </parameter>
         </parameters>
       </function>
       <function name="is_user_mountable" c:identifier="g_unix_mount_point_is_user_mountable">
-        <doc xml:space="preserve">Checks if a unix mount point is mountable by the user.</doc>
+        <doc xml:space="preserve">Checks if a Unix mount point is mountable by the user.</doc>
         <return-value transfer-ownership="none">
-          <doc xml:space="preserve">%TRUE if the mount point is user mountable.</doc>
+          <doc xml:space="preserve">true if the mount point is user mountable; false otherwise</doc>
           <type name="gboolean" c:type="gboolean"/>
         </return-value>
         <parameters>
           <parameter name="mount_point" transfer-ownership="none">
-            <doc xml:space="preserve">a #GUnixMountPoint.</doc>
+            <doc xml:space="preserve">a [struct@GioUnix.MountPoint]</doc>
             <type name="Gio.UnixMountPoint" c:type="GUnixMountPoint*"/>
           </parameter>
         </parameters>
@@ -1913,12 +1928,14 @@ directly. Applications should use
     </function>
     <function name="is_mount_path_system_internal" c:identifier="g_unix_is_mount_path_system_internal">
       <doc xml:space="preserve">Determines if @mount_path is considered an implementation of the
-OS. This is primarily used for hiding mountable and mounted volumes
+OS.
+
+This is primarily used for hiding mountable and mounted volumes
 that only are used in the OS and has little to no relevance to the
 casual user.</doc>
       <return-value transfer-ownership="none">
-        <doc xml:space="preserve">%TRUE if @mount_path is considered an implementation detail
-    of the OS.</doc>
+        <doc xml:space="preserve">true if @mount_path is considered an implementation detail
+   of the OS; false otherwise</doc>
         <type name="gboolean" c:type="gboolean"/>
       </return-value>
       <parameters>
@@ -1930,15 +1947,17 @@ casual user.</doc>
     </function>
     <function name="is_system_device_path" c:identifier="g_unix_is_system_device_path" version="2.56">
       <doc xml:space="preserve">Determines if @device_path is considered a block device path which is only
-used in implementation of the OS. This is primarily used for hiding
-mounted volumes that are intended as APIs for programs to read, and system
-administrators at a shell; rather than something that should, for example,
-appear in a GUI. For example, the Linux `/proc` filesystem.
+used in implementation of the OS.
+
+This is primarily used for hiding mounted volumes that are intended as APIs
+for programs to read, and system administrators at a shell; rather than
+something that should, for example, appear in a GUI. For example, the Linux
+`/proc` filesystem.
 
 The list of device paths considered &#x2018;system&#x2019; ones may change over time.</doc>
       <return-value transfer-ownership="none">
-        <doc xml:space="preserve">%TRUE if @device_path is considered an implementation detail of
-   the OS.</doc>
+        <doc xml:space="preserve">true if @device_path is considered an implementation detail of
+   the OS; false otherwise</doc>
         <type name="gboolean" c:type="gboolean"/>
       </return-value>
       <parameters>
@@ -1950,14 +1969,17 @@ The list of device paths considered &#x2018;system&#x2019; ones may change over 
     </function>
     <function name="is_system_fs_type" c:identifier="g_unix_is_system_fs_type" version="2.56">
       <doc xml:space="preserve">Determines if @fs_type is considered a type of file system which is only
-used in implementation of the OS. This is primarily used for hiding
-mounted volumes that are intended as APIs for programs to read, and system
-administrators at a shell; rather than something that should, for example,
-appear in a GUI. For example, the Linux `/proc` filesystem.
+used in implementation of the OS.
+
+This is primarily used for hiding mounted volumes that are intended as APIs
+for programs to read, and system administrators at a shell; rather than
+something that should, for example, appear in a GUI. For example, the Linux
+`/proc` filesystem.
 
 The list of file system types considered &#x2018;system&#x2019; ones may change over time.</doc>
       <return-value transfer-ownership="none">
-        <doc xml:space="preserve">%TRUE if @fs_type is considered an implementation detail of the OS.</doc>
+        <doc xml:space="preserve">true if @fs_type is considered an implementation detail of the OS;
+   false otherwise</doc>
         <type name="gboolean" c:type="gboolean"/>
       </return-value>
       <parameters>
@@ -1968,92 +1990,106 @@ The list of file system types considered &#x2018;system&#x2019; ones may change 
       </parameters>
     </function>
     <function name="mount_at" c:identifier="g_unix_mount_at" deprecated="1" deprecated-version="2.84">
-      <doc xml:space="preserve">Gets a #GUnixMountEntry for a given mount path. If @time_read
-is set, it will be filled with a unix timestamp for checking
-if the mounts have changed since with g_unix_mount_entries_changed_since().
+      <doc xml:space="preserve">Gets a [struct@GioUnix.MountEntry] for a given mount path.
+
+If @time_read is set, it will be filled with a Unix timestamp for checking
+if the mounts have changed since with
+[func@GioUnix.mount_entries_changed_since].
 
 If more mounts have the same mount path, the last matching mount
 is returned.
 
-This will return %NULL if there is no mount point at @mount_path.</doc>
-      <doc-deprecated xml:space="preserve">Use g_unix_mount_entry_at() instead.</doc-deprecated>
+This will return `NULL` if there is no mount point at @mount_path.</doc>
+      <doc-deprecated xml:space="preserve">Use [func@GioUnix.MountEntry.at] instead.</doc-deprecated>
       <return-value transfer-ownership="full" nullable="1">
-        <doc xml:space="preserve">a #GUnixMountEntry.</doc>
+        <doc xml:space="preserve">a [struct@GioUnix.MountEntry]</doc>
         <type name="Gio.UnixMountEntry" c:type="GUnixMountEntry*"/>
       </return-value>
       <parameters>
         <parameter name="mount_path" transfer-ownership="none">
-          <doc xml:space="preserve">path for a possible unix mount.</doc>
+          <doc xml:space="preserve">path for a possible Unix mount</doc>
           <type name="filename" c:type="const char*"/>
         </parameter>
         <parameter name="time_read" direction="out" caller-allocates="0" transfer-ownership="full" optional="1" allow-none="1">
-          <doc xml:space="preserve">guint64 to contain a timestamp.</doc>
+          <doc xml:space="preserve">return location for a timestamp</doc>
           <type name="guint64" c:type="guint64*"/>
         </parameter>
       </parameters>
     </function>
     <function name="mount_compare" c:identifier="g_unix_mount_compare" deprecated="1" deprecated-version="2.84">
-      <doc xml:space="preserve">Compares two unix mounts.</doc>
-      <doc-deprecated xml:space="preserve">Use g_unix_mount_entry_compare() instead.</doc-deprecated>
+      <doc xml:space="preserve">Compares two Unix mounts.</doc>
+      <doc-deprecated xml:space="preserve">Use [func@GioUnix.MountEntry.compare] instead.</doc-deprecated>
       <return-value transfer-ownership="none">
-        <doc xml:space="preserve">1, 0 or -1 if @mount1 is greater than, equal to,
-or less than @mount2, respectively.</doc>
+        <doc xml:space="preserve">`1`, `0` or `-1` if @mount1 is greater than, equal to,
+   or less than @mount2, respectively</doc>
         <type name="gint" c:type="gint"/>
       </return-value>
       <parameters>
         <parameter name="mount1" transfer-ownership="none">
-          <doc xml:space="preserve">first #GUnixMountEntry to compare.</doc>
+          <doc xml:space="preserve">first [struct@GioUnix.MountEntry] to compare</doc>
           <type name="Gio.UnixMountEntry" c:type="GUnixMountEntry*"/>
         </parameter>
         <parameter name="mount2" transfer-ownership="none">
-          <doc xml:space="preserve">second #GUnixMountEntry to compare.</doc>
+          <doc xml:space="preserve">second [struct@GioUnix.MountEntry] to compare</doc>
           <type name="Gio.UnixMountEntry" c:type="GUnixMountEntry*"/>
         </parameter>
       </parameters>
     </function>
     <function name="mount_copy" c:identifier="g_unix_mount_copy" version="2.54" deprecated="1" deprecated-version="2.84">
       <doc xml:space="preserve">Makes a copy of @mount_entry.</doc>
-      <doc-deprecated xml:space="preserve">Use g_unix_mount_entry_copy() instead.</doc-deprecated>
+      <doc-deprecated xml:space="preserve">Use [func@GioUnix.MountEntry.copy] instead.</doc-deprecated>
       <return-value transfer-ownership="full">
-        <doc xml:space="preserve">a new #GUnixMountEntry</doc>
+        <doc xml:space="preserve">a new [struct@GioUnix.MountEntry]</doc>
         <type name="Gio.UnixMountEntry" c:type="GUnixMountEntry*"/>
       </return-value>
       <parameters>
         <parameter name="mount_entry" transfer-ownership="none">
-          <doc xml:space="preserve">a #GUnixMountEntry.</doc>
+          <doc xml:space="preserve">a [struct@GioUnix.MountEntry]</doc>
           <type name="Gio.UnixMountEntry" c:type="GUnixMountEntry*"/>
         </parameter>
       </parameters>
     </function>
     <function name="mount_entries_changed_since" c:identifier="g_unix_mount_entries_changed_since">
-      <doc xml:space="preserve">Checks if the unix mounts have changed since a given unix time.</doc>
+      <doc xml:space="preserve">Checks if the Unix mounts have changed since a given Unix time.
+
+This can only work reliably if a [class@GioUnix.MountMonitor] is running in
+the process, otherwise changes in the mount entries file (such as
+`/proc/self/mountinfo` on Linux) cannot be detected and, as a result, this
+function has to conservatively always return `TRUE`.
+
+It is more efficient to use [signal@GioUnix.MountMonitor::mounts-changed] to
+be signalled of changes to the mount entries, rather than polling using this
+function. This function is more appropriate for infrequently determining
+cache validity.</doc>
       <return-value transfer-ownership="none">
-        <doc xml:space="preserve">%TRUE if the mounts have changed since @time.
+        <doc xml:space="preserve">true if the mounts have changed since @time; false otherwise
 Since 2.84</doc>
         <type name="gboolean" c:type="gboolean"/>
       </return-value>
       <parameters>
         <parameter name="time" transfer-ownership="none">
-          <doc xml:space="preserve">guint64 to contain a timestamp.</doc>
+          <doc xml:space="preserve">a timestamp</doc>
           <type name="guint64" c:type="guint64"/>
         </parameter>
       </parameters>
     </function>
     <function name="mount_entries_get" c:identifier="g_unix_mount_entries_get" version="2.84">
-      <doc xml:space="preserve">Gets a #GList of #GUnixMountEntry containing the unix mounts.
-If @time_read is set, it will be filled with the mount
-timestamp, allowing for checking if the mounts have changed
-with g_unix_mount_entries_changed_since().</doc>
+      <doc xml:space="preserve">Gets a list of [struct@GioUnix.MountEntry] instances representing the Unix
+mounts.
+
+If @time_read is set, it will be filled with the mount timestamp, allowing
+for checking if the mounts have changed with
+[func@GioUnix.mount_entries_changed_since].</doc>
       <return-value transfer-ownership="full">
-        <doc xml:space="preserve">
-    a #GList of the UNIX mounts.</doc>
+        <doc xml:space="preserve">a list of the
+   Unix mounts</doc>
         <type name="GLib.List" c:type="GList*">
           <type name="Gio.UnixMountEntry"/>
         </type>
       </return-value>
       <parameters>
         <parameter name="time_read" direction="out" caller-allocates="0" transfer-ownership="full" optional="1" allow-none="1">
-          <doc xml:space="preserve">guint64 to contain a timestamp, or %NULL</doc>
+          <doc xml:space="preserve">return location for a timestamp</doc>
           <type name="guint64" c:type="guint64*"/>
         </parameter>
       </parameters>
@@ -2062,10 +2098,10 @@ with g_unix_mount_entries_changed_since().</doc>
       <doc xml:space="preserve">Gets an array of [struct@Gio.UnixMountEntry]s containing the Unix mounts
 listed in @table_path.
 
-This is a generalized version of g_unix_mount_entries_get(), mainly intended for
-internal testing use. Note that g_unix_mount_entries_get() may parse multiple
-hierarchical table files, so this function is not a direct superset of its
-functionality.
+This is a generalized version of [func@GioUnix.mount_entries_get], mainly
+intended for internal testing use. Note that [func@GioUnix.mount_entries_get]
+may parse multiple hierarchical table files, so this function is not a direct
+superset of its functionality.
 
 If there is an error reading or parsing the file, `NULL` will be returned
 and both out parameters will be set to `0`.</doc>
@@ -2094,43 +2130,45 @@ and both out parameters will be set to `0`.</doc>
       </parameters>
     </function>
     <function name="mount_entry_at" c:identifier="g_unix_mount_entry_at" moved-to="MountEntry.at" version="2.84">
-      <doc xml:space="preserve">Gets a #GUnixMountEntry for a given mount path. If @time_read
-is set, it will be filled with a unix timestamp for checking
-if the mounts have changed since with g_unix_mount_entries_changed_since().
+      <doc xml:space="preserve">Gets a [struct@GioUnix.MountEntry] for a given mount path.
+
+If @time_read is set, it will be filled with a Unix timestamp for checking
+if the mounts have changed since with
+[func@GioUnix.mount_entries_changed_since].
 
 If more mounts have the same mount path, the last matching mount
 is returned.
 
-This will return %NULL if there is no mount point at @mount_path.</doc>
+This will return `NULL` if there is no mount point at @mount_path.</doc>
       <return-value transfer-ownership="full" nullable="1">
-        <doc xml:space="preserve">a #GUnixMountEntry.</doc>
+        <doc xml:space="preserve">a [struct@GioUnix.MountEntry]</doc>
         <type name="Gio.UnixMountEntry" c:type="GUnixMountEntry*"/>
       </return-value>
       <parameters>
         <parameter name="mount_path" transfer-ownership="none">
-          <doc xml:space="preserve">path for a possible unix mount.</doc>
+          <doc xml:space="preserve">path for a possible Unix mount</doc>
           <type name="filename" c:type="const char*"/>
         </parameter>
         <parameter name="time_read" direction="out" caller-allocates="0" transfer-ownership="full" optional="1" allow-none="1">
-          <doc xml:space="preserve">guint64 to contain a timestamp.</doc>
+          <doc xml:space="preserve">return location for a timestamp</doc>
           <type name="guint64" c:type="guint64*"/>
         </parameter>
       </parameters>
     </function>
     <function name="mount_entry_compare" c:identifier="g_unix_mount_entry_compare" moved-to="MountEntry.compare" version="2.84">
-      <doc xml:space="preserve">Compares two unix mounts.</doc>
+      <doc xml:space="preserve">Compares two Unix mounts.</doc>
       <return-value transfer-ownership="none">
-        <doc xml:space="preserve">1, 0 or -1 if @mount1 is greater than, equal to,
-or less than @mount2, respectively.</doc>
+        <doc xml:space="preserve">`1`, `0` or `-1` if @mount1 is greater than, equal to,
+   or less than @mount2, respectively</doc>
         <type name="gint" c:type="gint"/>
       </return-value>
       <parameters>
         <parameter name="mount1" transfer-ownership="none">
-          <doc xml:space="preserve">first #GUnixMountEntry to compare.</doc>
+          <doc xml:space="preserve">first [struct@GioUnix.MountEntry] to compare</doc>
           <type name="Gio.UnixMountEntry" c:type="GUnixMountEntry*"/>
         </parameter>
         <parameter name="mount2" transfer-ownership="none">
-          <doc xml:space="preserve">second #GUnixMountEntry to compare.</doc>
+          <doc xml:space="preserve">second [struct@GioUnix.MountEntry] to compare</doc>
           <type name="Gio.UnixMountEntry" c:type="GUnixMountEntry*"/>
         </parameter>
       </parameters>
@@ -2138,106 +2176,109 @@ or less than @mount2, respectively.</doc>
     <function name="mount_entry_copy" c:identifier="g_unix_mount_entry_copy" moved-to="MountEntry.copy" version="2.84">
       <doc xml:space="preserve">Makes a copy of @mount_entry.</doc>
       <return-value transfer-ownership="full">
-        <doc xml:space="preserve">a new #GUnixMountEntry</doc>
+        <doc xml:space="preserve">a new [struct@GioUnix.MountEntry]</doc>
         <type name="Gio.UnixMountEntry" c:type="GUnixMountEntry*"/>
       </return-value>
       <parameters>
         <parameter name="mount_entry" transfer-ownership="none">
-          <doc xml:space="preserve">a #GUnixMountEntry.</doc>
+          <doc xml:space="preserve">a [struct@GioUnix.MountEntry]</doc>
           <type name="Gio.UnixMountEntry" c:type="GUnixMountEntry*"/>
         </parameter>
       </parameters>
     </function>
     <function name="mount_entry_for" c:identifier="g_unix_mount_entry_for" moved-to="MountEntry.for" version="2.84">
-      <doc xml:space="preserve">Gets a #GUnixMountEntry for a given file path. If @time_read
-is set, it will be filled with a unix timestamp for checking
-if the mounts have changed since with g_unix_mount_entries_changed_since().
+      <doc xml:space="preserve">Gets a [struct@GioUnix.MountEntry] for a given file path.
+
+If @time_read is set, it will be filled with a Unix timestamp for checking
+if the mounts have changed since with
+[func@GioUnix.mount_entries_changed_since].
 
 If more mounts have the same mount path, the last matching mount
 is returned.
 
-This will return %NULL if looking up the mount entry fails, if
+This will return `NULL` if looking up the mount entry fails, if
 @file_path doesn&#x2019;t exist or there is an I/O error.</doc>
       <return-value transfer-ownership="full" nullable="1">
-        <doc xml:space="preserve">a #GUnixMountEntry.</doc>
+        <doc xml:space="preserve">a [struct@GioUnix.MountEntry]</doc>
         <type name="Gio.UnixMountEntry" c:type="GUnixMountEntry*"/>
       </return-value>
       <parameters>
         <parameter name="file_path" transfer-ownership="none">
-          <doc xml:space="preserve">file path on some unix mount.</doc>
+          <doc xml:space="preserve">file path on some Unix mount</doc>
           <type name="filename" c:type="const char*"/>
         </parameter>
         <parameter name="time_read" direction="out" caller-allocates="0" transfer-ownership="full" optional="1" allow-none="1">
-          <doc xml:space="preserve">guint64 to contain a timestamp.</doc>
+          <doc xml:space="preserve">return location for a timestamp</doc>
           <type name="guint64" c:type="guint64*"/>
         </parameter>
       </parameters>
     </function>
     <function name="mount_entry_free" c:identifier="g_unix_mount_entry_free" moved-to="MountEntry.free" version="2.84">
-      <doc xml:space="preserve">Frees a unix mount.</doc>
+      <doc xml:space="preserve">Frees a Unix mount.</doc>
       <return-value transfer-ownership="none">
         <type name="none" c:type="void"/>
       </return-value>
       <parameters>
         <parameter name="mount_entry" transfer-ownership="none">
-          <doc xml:space="preserve">a #GUnixMountEntry.</doc>
+          <doc xml:space="preserve">a [struct@GioUnix.MountEntry]</doc>
           <type name="Gio.UnixMountEntry" c:type="GUnixMountEntry*"/>
         </parameter>
       </parameters>
     </function>
     <function name="mount_entry_get_device_path" c:identifier="g_unix_mount_entry_get_device_path" moved-to="MountEntry.get_device_path" version="2.84">
-      <doc xml:space="preserve">Gets the device path for a unix mount.</doc>
+      <doc xml:space="preserve">Gets the device path for a Unix mount.</doc>
       <return-value transfer-ownership="none">
-        <doc xml:space="preserve">a string containing the device path.</doc>
+        <doc xml:space="preserve">a string containing the device path</doc>
         <type name="filename" c:type="const char*"/>
       </return-value>
       <parameters>
         <parameter name="mount_entry" transfer-ownership="none">
-          <doc xml:space="preserve">a #GUnixMount.</doc>
+          <doc xml:space="preserve">a [struct@GioUnix.MountEntry]</doc>
           <type name="Gio.UnixMountEntry" c:type="GUnixMountEntry*"/>
         </parameter>
       </parameters>
     </function>
     <function name="mount_entry_get_fs_type" c:identifier="g_unix_mount_entry_get_fs_type" moved-to="MountEntry.get_fs_type" version="2.84">
-      <doc xml:space="preserve">Gets the filesystem type for the unix mount.</doc>
+      <doc xml:space="preserve">Gets the filesystem type for the Unix mount.</doc>
       <return-value transfer-ownership="none">
-        <doc xml:space="preserve">a string containing the file system type.</doc>
+        <doc xml:space="preserve">a string containing the file system type</doc>
         <type name="utf8" c:type="const char*"/>
       </return-value>
       <parameters>
         <parameter name="mount_entry" transfer-ownership="none">
-          <doc xml:space="preserve">a #GUnixMount.</doc>
+          <doc xml:space="preserve">a [struct@GioUnix.MountEntry]</doc>
           <type name="Gio.UnixMountEntry" c:type="GUnixMountEntry*"/>
         </parameter>
       </parameters>
     </function>
     <function name="mount_entry_get_mount_path" c:identifier="g_unix_mount_entry_get_mount_path" moved-to="MountEntry.get_mount_path" version="2.84">
-      <doc xml:space="preserve">Gets the mount path for a unix mount.</doc>
+      <doc xml:space="preserve">Gets the mount path for a Unix mount.</doc>
       <return-value transfer-ownership="none">
-        <doc xml:space="preserve">the mount path for @mount_entry.</doc>
+        <doc xml:space="preserve">the mount path for @mount_entry</doc>
         <type name="filename" c:type="const char*"/>
       </return-value>
       <parameters>
         <parameter name="mount_entry" transfer-ownership="none">
-          <doc xml:space="preserve">input #GUnixMountEntry to get the mount path for.</doc>
+          <doc xml:space="preserve">a [struct@GioUnix.MountEntry] to get the mount path for</doc>
           <type name="Gio.UnixMountEntry" c:type="GUnixMountEntry*"/>
         </parameter>
       </parameters>
     </function>
     <function name="mount_entry_get_options" c:identifier="g_unix_mount_entry_get_options" moved-to="MountEntry.get_options" version="2.84">
-      <doc xml:space="preserve">Gets a comma-separated list of mount options for the unix mount. For example,
-`rw,relatime,seclabel,data=ordered`.
+      <doc xml:space="preserve">Gets a comma separated list of mount options for the Unix mount.
 
-This is similar to g_unix_mount_point_get_options(), but it takes
-a #GUnixMountEntry as an argument.</doc>
+For example: `rw,relatime,seclabel,data=ordered`.
+
+This is similar to [func@GioUnix.MountPoint.get_options], but it takes
+a [struct@GioUnix.MountEntry] as an argument.</doc>
       <return-value transfer-ownership="none" nullable="1">
-        <doc xml:space="preserve">a string containing the options, or %NULL if not
-available.</doc>
+        <doc xml:space="preserve">a string containing the options, or `NULL` if not
+   available.</doc>
         <type name="utf8" c:type="const char*"/>
       </return-value>
       <parameters>
         <parameter name="mount_entry" transfer-ownership="none">
-          <doc xml:space="preserve">a #GUnixMountEntry.</doc>
+          <doc xml:space="preserve">a [struct@GioUnix.MountEntry]</doc>
           <type name="Gio.UnixMountEntry" c:type="GUnixMountEntry*"/>
         </parameter>
       </parameters>
@@ -2246,214 +2287,219 @@ available.</doc>
       <doc xml:space="preserve">Gets the root of the mount within the filesystem. This is useful e.g. for
 mounts created by bind operation, or btrfs subvolumes.
 
-For example, the root path is equal to "/" for mount created by
-"mount /dev/sda1 /mnt/foo" and "/bar" for
-"mount --bind /mnt/foo/bar /mnt/bar".</doc>
+For example, the root path is equal to `/` for a mount created by
+`mount /dev/sda1 /mnt/foo` and `/bar` for
+`mount --bind /mnt/foo/bar /mnt/bar`.</doc>
       <return-value transfer-ownership="none" nullable="1">
-        <doc xml:space="preserve">a string containing the root, or %NULL if not supported.</doc>
+        <doc xml:space="preserve">a string containing the root, or `NULL` if not supported</doc>
         <type name="utf8" c:type="const char*"/>
       </return-value>
       <parameters>
         <parameter name="mount_entry" transfer-ownership="none">
-          <doc xml:space="preserve">a #GUnixMountEntry.</doc>
+          <doc xml:space="preserve">a [struct@GioUnix.MountEntry]</doc>
           <type name="Gio.UnixMountEntry" c:type="GUnixMountEntry*"/>
         </parameter>
       </parameters>
     </function>
     <function name="mount_entry_guess_can_eject" c:identifier="g_unix_mount_entry_guess_can_eject" moved-to="MountEntry.guess_can_eject" version="2.84">
-      <doc xml:space="preserve">Guesses whether a Unix mount can be ejected.</doc>
+      <doc xml:space="preserve">Guesses whether a Unix mount entry can be ejected.</doc>
       <return-value transfer-ownership="none">
-        <doc xml:space="preserve">%TRUE if @mount_entry is deemed to be ejectable.</doc>
+        <doc xml:space="preserve">true if @mount_entry is deemed to be ejectable; false otherwise</doc>
         <type name="gboolean" c:type="gboolean"/>
       </return-value>
       <parameters>
         <parameter name="mount_entry" transfer-ownership="none">
-          <doc xml:space="preserve">a #GUnixMountEntry</doc>
+          <doc xml:space="preserve">a [struct@GioUnix.MountEntry]</doc>
           <type name="Gio.UnixMountEntry" c:type="GUnixMountEntry*"/>
         </parameter>
       </parameters>
     </function>
     <function name="mount_entry_guess_icon" c:identifier="g_unix_mount_entry_guess_icon" moved-to="MountEntry.guess_icon" version="2.84">
-      <doc xml:space="preserve">Guesses the icon of a Unix mount.</doc>
+      <doc xml:space="preserve">Guesses the icon of a Unix mount entry.</doc>
       <return-value transfer-ownership="full">
-        <doc xml:space="preserve">a #GIcon</doc>
+        <doc xml:space="preserve">a [iface@Gio.Icon]</doc>
         <type name="Gio.Icon" c:type="GIcon*"/>
       </return-value>
       <parameters>
         <parameter name="mount_entry" transfer-ownership="none">
-          <doc xml:space="preserve">a #GUnixMountEntry</doc>
+          <doc xml:space="preserve">a [struct@GioUnix.MountEntry]</doc>
           <type name="Gio.UnixMountEntry" c:type="GUnixMountEntry*"/>
         </parameter>
       </parameters>
     </function>
     <function name="mount_entry_guess_name" c:identifier="g_unix_mount_entry_guess_name" moved-to="MountEntry.guess_name" version="2.84">
-      <doc xml:space="preserve">Guesses the name of a Unix mount.
+      <doc xml:space="preserve">Guesses the name of a Unix mount entry.
+
 The result is a translated string.</doc>
       <return-value transfer-ownership="full">
-        <doc xml:space="preserve">A newly allocated string that must
-    be freed with g_free()</doc>
+        <doc xml:space="preserve">a newly allocated translated string</doc>
         <type name="utf8" c:type="char*"/>
       </return-value>
       <parameters>
         <parameter name="mount_entry" transfer-ownership="none">
-          <doc xml:space="preserve">a #GUnixMountEntry</doc>
+          <doc xml:space="preserve">a [struct@GioUnix.MountEntry]</doc>
           <type name="Gio.UnixMountEntry" c:type="GUnixMountEntry*"/>
         </parameter>
       </parameters>
     </function>
     <function name="mount_entry_guess_should_display" c:identifier="g_unix_mount_entry_guess_should_display" moved-to="MountEntry.guess_should_display" version="2.84">
-      <doc xml:space="preserve">Guesses whether a Unix mount should be displayed in the UI.</doc>
+      <doc xml:space="preserve">Guesses whether a Unix mount entry should be displayed in the UI.</doc>
       <return-value transfer-ownership="none">
-        <doc xml:space="preserve">%TRUE if @mount_entry is deemed to be displayable.</doc>
+        <doc xml:space="preserve">true if @mount_entry is deemed to be displayable; false otherwise</doc>
         <type name="gboolean" c:type="gboolean"/>
       </return-value>
       <parameters>
         <parameter name="mount_entry" transfer-ownership="none">
-          <doc xml:space="preserve">a #GUnixMountEntry</doc>
+          <doc xml:space="preserve">a [struct@GioUnix.MountEntry]</doc>
           <type name="Gio.UnixMountEntry" c:type="GUnixMountEntry*"/>
         </parameter>
       </parameters>
     </function>
     <function name="mount_entry_guess_symbolic_icon" c:identifier="g_unix_mount_entry_guess_symbolic_icon" moved-to="MountEntry.guess_symbolic_icon" version="2.84">
-      <doc xml:space="preserve">Guesses the symbolic icon of a Unix mount.</doc>
+      <doc xml:space="preserve">Guesses the symbolic icon of a Unix mount entry.</doc>
       <return-value transfer-ownership="full">
-        <doc xml:space="preserve">a #GIcon</doc>
+        <doc xml:space="preserve">a [iface@Gio.Icon]</doc>
         <type name="Gio.Icon" c:type="GIcon*"/>
       </return-value>
       <parameters>
         <parameter name="mount_entry" transfer-ownership="none">
-          <doc xml:space="preserve">a #GUnixMountEntry</doc>
+          <doc xml:space="preserve">a [struct@GioUnix.MountEntry]</doc>
           <type name="Gio.UnixMountEntry" c:type="GUnixMountEntry*"/>
         </parameter>
       </parameters>
     </function>
     <function name="mount_entry_is_readonly" c:identifier="g_unix_mount_entry_is_readonly" moved-to="MountEntry.is_readonly" version="2.84">
-      <doc xml:space="preserve">Checks if a unix mount is mounted read only.</doc>
+      <doc xml:space="preserve">Checks if a Unix mount is mounted read only.</doc>
       <return-value transfer-ownership="none">
-        <doc xml:space="preserve">%TRUE if @mount_entry is read only.</doc>
+        <doc xml:space="preserve">true if @mount_entry is read only; false otherwise</doc>
         <type name="gboolean" c:type="gboolean"/>
       </return-value>
       <parameters>
         <parameter name="mount_entry" transfer-ownership="none">
-          <doc xml:space="preserve">a #GUnixMount.</doc>
+          <doc xml:space="preserve">a [struct@GioUnix.MountEntry]</doc>
           <type name="Gio.UnixMountEntry" c:type="GUnixMountEntry*"/>
         </parameter>
       </parameters>
     </function>
     <function name="mount_entry_is_system_internal" c:identifier="g_unix_mount_entry_is_system_internal" moved-to="MountEntry.is_system_internal" version="2.84">
-      <doc xml:space="preserve">Checks if a Unix mount is a system mount. This is the Boolean OR of
-g_unix_is_system_fs_type(), g_unix_is_system_device_path() and
-g_unix_is_mount_path_system_internal() on @mount_entry&#x2019;s properties.
+      <doc xml:space="preserve">Checks if a Unix mount is a system mount.
+
+This is the Boolean OR of
+[func@GioUnix.is_system_fs_type], [func@GioUnix.is_system_device_path] and
+[func@GioUnix.is_mount_path_system_internal] on @mount_entry&#x2019;s properties.
 
 The definition of what a &#x2018;system&#x2019; mount entry is may change over time as new
 file system types and device paths are ignored.</doc>
       <return-value transfer-ownership="none">
-        <doc xml:space="preserve">%TRUE if the unix mount is for a system path.</doc>
+        <doc xml:space="preserve">true if the Unix mount is for a system path; false otherwise</doc>
         <type name="gboolean" c:type="gboolean"/>
       </return-value>
       <parameters>
         <parameter name="mount_entry" transfer-ownership="none">
-          <doc xml:space="preserve">a #GUnixMount.</doc>
+          <doc xml:space="preserve">a [struct@GioUnix.MountEntry]</doc>
           <type name="Gio.UnixMountEntry" c:type="GUnixMountEntry*"/>
         </parameter>
       </parameters>
     </function>
     <function name="mount_for" c:identifier="g_unix_mount_for" version="2.52" deprecated="1" deprecated-version="2.84">
-      <doc xml:space="preserve">Gets a #GUnixMountEntry for a given file path. If @time_read
-is set, it will be filled with a unix timestamp for checking
-if the mounts have changed since with g_unix_mount_entries_changed_since().
+      <doc xml:space="preserve">Gets a [struct@GioUnix.MountEntry] for a given file path.
+
+If @time_read is set, it will be filled with a Unix timestamp for checking
+if the mounts have changed since with
+[func@GioUnix.mount_entries_changed_since].
 
 If more mounts have the same mount path, the last matching mount
 is returned.
 
-This will return %NULL if looking up the mount entry fails, if
+This will return `NULL` if looking up the mount entry fails, if
 @file_path doesn&#x2019;t exist or there is an I/O error.</doc>
-      <doc-deprecated xml:space="preserve">Use g_unix_mount_entry_for() instead.</doc-deprecated>
+      <doc-deprecated xml:space="preserve">Use [func@GioUnix.MountEntry.for] instead.</doc-deprecated>
       <return-value transfer-ownership="full" nullable="1">
-        <doc xml:space="preserve">a #GUnixMountEntry.</doc>
+        <doc xml:space="preserve">a [struct@GioUnix.MountEntry]</doc>
         <type name="Gio.UnixMountEntry" c:type="GUnixMountEntry*"/>
       </return-value>
       <parameters>
         <parameter name="file_path" transfer-ownership="none">
-          <doc xml:space="preserve">file path on some unix mount.</doc>
+          <doc xml:space="preserve">file path on some Unix mount</doc>
           <type name="filename" c:type="const char*"/>
         </parameter>
         <parameter name="time_read" direction="out" caller-allocates="0" transfer-ownership="full" optional="1" allow-none="1">
-          <doc xml:space="preserve">guint64 to contain a timestamp.</doc>
+          <doc xml:space="preserve">return location for a timestamp</doc>
           <type name="guint64" c:type="guint64*"/>
         </parameter>
       </parameters>
     </function>
     <function name="mount_free" c:identifier="g_unix_mount_free" deprecated="1" deprecated-version="2.84">
-      <doc xml:space="preserve">Frees a unix mount.</doc>
-      <doc-deprecated xml:space="preserve">Use g_unix_mount_entry_free() instead.</doc-deprecated>
+      <doc xml:space="preserve">Frees a Unix mount.</doc>
+      <doc-deprecated xml:space="preserve">Use [func@GioUnix.MountEntry.free] instead.</doc-deprecated>
       <return-value transfer-ownership="none">
         <type name="none" c:type="void"/>
       </return-value>
       <parameters>
         <parameter name="mount_entry" transfer-ownership="none">
-          <doc xml:space="preserve">a #GUnixMountEntry.</doc>
+          <doc xml:space="preserve">a [struct@GioUnix.MountEntry]</doc>
           <type name="Gio.UnixMountEntry" c:type="GUnixMountEntry*"/>
         </parameter>
       </parameters>
     </function>
     <function name="mount_get_device_path" c:identifier="g_unix_mount_get_device_path" deprecated="1" deprecated-version="2.84">
-      <doc xml:space="preserve">Gets the device path for a unix mount.</doc>
-      <doc-deprecated xml:space="preserve">Use g_unix_mount_entry_get_device_path() instead.</doc-deprecated>
+      <doc xml:space="preserve">Gets the device path for a Unix mount.</doc>
+      <doc-deprecated xml:space="preserve">Use [func@GioUnix.MountEntry.get_device_path] instead.</doc-deprecated>
       <return-value transfer-ownership="none">
-        <doc xml:space="preserve">a string containing the device path.</doc>
+        <doc xml:space="preserve">a string containing the device path</doc>
         <type name="filename" c:type="const char*"/>
       </return-value>
       <parameters>
         <parameter name="mount_entry" transfer-ownership="none">
-          <doc xml:space="preserve">a #GUnixMount.</doc>
+          <doc xml:space="preserve">a [struct@GioUnix.MountEntry]</doc>
           <type name="Gio.UnixMountEntry" c:type="GUnixMountEntry*"/>
         </parameter>
       </parameters>
     </function>
     <function name="mount_get_fs_type" c:identifier="g_unix_mount_get_fs_type" deprecated="1" deprecated-version="2.84">
-      <doc xml:space="preserve">Gets the filesystem type for the unix mount.</doc>
-      <doc-deprecated xml:space="preserve">Use g_unix_mount_entry_get_fs_type() instead.</doc-deprecated>
+      <doc xml:space="preserve">Gets the filesystem type for the Unix mount.</doc>
+      <doc-deprecated xml:space="preserve">Use [func@GioUnix.MountEntry.get_fs_type] instead.</doc-deprecated>
       <return-value transfer-ownership="none">
-        <doc xml:space="preserve">a string containing the file system type.</doc>
+        <doc xml:space="preserve">a string containing the file system type</doc>
         <type name="utf8" c:type="const char*"/>
       </return-value>
       <parameters>
         <parameter name="mount_entry" transfer-ownership="none">
-          <doc xml:space="preserve">a #GUnixMount.</doc>
+          <doc xml:space="preserve">a [struct@GioUnix.MountEntry]</doc>
           <type name="Gio.UnixMountEntry" c:type="GUnixMountEntry*"/>
         </parameter>
       </parameters>
     </function>
     <function name="mount_get_mount_path" c:identifier="g_unix_mount_get_mount_path" deprecated="1" deprecated-version="2.84">
-      <doc xml:space="preserve">Gets the mount path for a unix mount.</doc>
-      <doc-deprecated xml:space="preserve">Use g_unix_mount_entry_get_mount_path() instead.</doc-deprecated>
+      <doc xml:space="preserve">Gets the mount path for a Unix mount.</doc>
+      <doc-deprecated xml:space="preserve">Use [func@GioUnix.MountEntry.get_mount_path] instead.</doc-deprecated>
       <return-value transfer-ownership="none">
-        <doc xml:space="preserve">the mount path for @mount_entry.</doc>
+        <doc xml:space="preserve">the mount path for @mount_entry</doc>
         <type name="filename" c:type="const char*"/>
       </return-value>
       <parameters>
         <parameter name="mount_entry" transfer-ownership="none">
-          <doc xml:space="preserve">input #GUnixMountEntry to get the mount path for.</doc>
+          <doc xml:space="preserve">a [struct@GioUnix.MountEntry] to get the mount path for</doc>
           <type name="Gio.UnixMountEntry" c:type="GUnixMountEntry*"/>
         </parameter>
       </parameters>
     </function>
     <function name="mount_get_options" c:identifier="g_unix_mount_get_options" version="2.58" deprecated="1" deprecated-version="2.84">
-      <doc xml:space="preserve">Gets a comma-separated list of mount options for the unix mount. For example,
-`rw,relatime,seclabel,data=ordered`.
+      <doc xml:space="preserve">Gets a comma separated list of mount options for the Unix mount.
 
-This is similar to g_unix_mount_point_get_options(), but it takes
-a #GUnixMountEntry as an argument.</doc>
-      <doc-deprecated xml:space="preserve">Use g_unix_mount_entry_get_options() instead.</doc-deprecated>
+For example: `rw,relatime,seclabel,data=ordered`.
+
+This is similar to [func@GioUnix.MountPoint.get_options], but it takes
+a [struct@GioUnix.MountEntry] as an argument.</doc>
+      <doc-deprecated xml:space="preserve">Use [func@GioUnix.MountEntry.get_options] instead.</doc-deprecated>
       <return-value transfer-ownership="none" nullable="1">
-        <doc xml:space="preserve">a string containing the options, or %NULL if not
-available.</doc>
+        <doc xml:space="preserve">a string containing the options, or `NULL` if not
+   available.</doc>
         <type name="utf8" c:type="const char*"/>
       </return-value>
       <parameters>
         <parameter name="mount_entry" transfer-ownership="none">
-          <doc xml:space="preserve">a #GUnixMountEntry.</doc>
+          <doc xml:space="preserve">a [struct@GioUnix.MountEntry]</doc>
           <type name="Gio.UnixMountEntry" c:type="GUnixMountEntry*"/>
         </parameter>
       </parameters>
@@ -2462,163 +2508,167 @@ available.</doc>
       <doc xml:space="preserve">Gets the root of the mount within the filesystem. This is useful e.g. for
 mounts created by bind operation, or btrfs subvolumes.
 
-For example, the root path is equal to "/" for mount created by
-"mount /dev/sda1 /mnt/foo" and "/bar" for
-"mount --bind /mnt/foo/bar /mnt/bar".</doc>
-      <doc-deprecated xml:space="preserve">Use g_unix_mount_entry_get_root_path() instead.</doc-deprecated>
+For example, the root path is equal to `/` for a mount created by
+`mount /dev/sda1 /mnt/foo` and `/bar` for
+`mount --bind /mnt/foo/bar /mnt/bar`.</doc>
+      <doc-deprecated xml:space="preserve">Use [func@GioUnix.MountEntry.get_root_path] instead.</doc-deprecated>
       <return-value transfer-ownership="none" nullable="1">
-        <doc xml:space="preserve">a string containing the root, or %NULL if not supported.</doc>
+        <doc xml:space="preserve">a string containing the root, or `NULL` if not supported</doc>
         <type name="utf8" c:type="const char*"/>
       </return-value>
       <parameters>
         <parameter name="mount_entry" transfer-ownership="none">
-          <doc xml:space="preserve">a #GUnixMountEntry.</doc>
+          <doc xml:space="preserve">a [struct@GioUnix.MountEntry]</doc>
           <type name="Gio.UnixMountEntry" c:type="GUnixMountEntry*"/>
         </parameter>
       </parameters>
     </function>
     <function name="mount_guess_can_eject" c:identifier="g_unix_mount_guess_can_eject" deprecated="1" deprecated-version="2.84">
-      <doc xml:space="preserve">Guesses whether a Unix mount can be ejected.</doc>
-      <doc-deprecated xml:space="preserve">Use g_unix_mount_entry_guess_can_eject() instead.</doc-deprecated>
+      <doc xml:space="preserve">Guesses whether a Unix mount entry can be ejected.</doc>
+      <doc-deprecated xml:space="preserve">Use [func@GioUnix.MountEntry.guess_can_eject] instead.</doc-deprecated>
       <return-value transfer-ownership="none">
-        <doc xml:space="preserve">%TRUE if @mount_entry is deemed to be ejectable.</doc>
+        <doc xml:space="preserve">true if @mount_entry is deemed to be ejectable; false otherwise</doc>
         <type name="gboolean" c:type="gboolean"/>
       </return-value>
       <parameters>
         <parameter name="mount_entry" transfer-ownership="none">
-          <doc xml:space="preserve">a #GUnixMountEntry</doc>
+          <doc xml:space="preserve">a [struct@GioUnix.MountEntry]</doc>
           <type name="Gio.UnixMountEntry" c:type="GUnixMountEntry*"/>
         </parameter>
       </parameters>
     </function>
     <function name="mount_guess_icon" c:identifier="g_unix_mount_guess_icon" deprecated="1" deprecated-version="2.84">
-      <doc xml:space="preserve">Guesses the icon of a Unix mount.</doc>
-      <doc-deprecated xml:space="preserve">Use g_unix_mount_entry_guess_icon() instead.</doc-deprecated>
+      <doc xml:space="preserve">Guesses the icon of a Unix mount entry.</doc>
+      <doc-deprecated xml:space="preserve">Use [func@GioUnix.MountEntry.guess_icon] instead.</doc-deprecated>
       <return-value transfer-ownership="full">
-        <doc xml:space="preserve">a #GIcon</doc>
+        <doc xml:space="preserve">a [iface@Gio.Icon]</doc>
         <type name="Gio.Icon" c:type="GIcon*"/>
       </return-value>
       <parameters>
         <parameter name="mount_entry" transfer-ownership="none">
-          <doc xml:space="preserve">a #GUnixMountEntry</doc>
+          <doc xml:space="preserve">a [struct@GioUnix.MountEntry]</doc>
           <type name="Gio.UnixMountEntry" c:type="GUnixMountEntry*"/>
         </parameter>
       </parameters>
     </function>
     <function name="mount_guess_name" c:identifier="g_unix_mount_guess_name" deprecated="1" deprecated-version="2.84">
-      <doc xml:space="preserve">Guesses the name of a Unix mount.
+      <doc xml:space="preserve">Guesses the name of a Unix mount entry.
+
 The result is a translated string.</doc>
-      <doc-deprecated xml:space="preserve">Use g_unix_mount_entry_guess_name() instead.</doc-deprecated>
+      <doc-deprecated xml:space="preserve">Use [func@GioUnix.MountEntry.guess_name] instead.</doc-deprecated>
       <return-value transfer-ownership="full">
-        <doc xml:space="preserve">A newly allocated string that must
-    be freed with g_free()</doc>
+        <doc xml:space="preserve">a newly allocated translated string</doc>
         <type name="utf8" c:type="char*"/>
       </return-value>
       <parameters>
         <parameter name="mount_entry" transfer-ownership="none">
-          <doc xml:space="preserve">a #GUnixMountEntry</doc>
+          <doc xml:space="preserve">a [struct@GioUnix.MountEntry]</doc>
           <type name="Gio.UnixMountEntry" c:type="GUnixMountEntry*"/>
         </parameter>
       </parameters>
     </function>
     <function name="mount_guess_should_display" c:identifier="g_unix_mount_guess_should_display" deprecated="1" deprecated-version="2.84">
-      <doc xml:space="preserve">Guesses whether a Unix mount should be displayed in the UI.</doc>
-      <doc-deprecated xml:space="preserve">Use g_unix_mount_entry_guess_should_display() instead.</doc-deprecated>
+      <doc xml:space="preserve">Guesses whether a Unix mount entry should be displayed in the UI.</doc>
+      <doc-deprecated xml:space="preserve">Use [func@GioUnix.MountEntry.guess_should_display] instead.</doc-deprecated>
       <return-value transfer-ownership="none">
-        <doc xml:space="preserve">%TRUE if @mount_entry is deemed to be displayable.</doc>
+        <doc xml:space="preserve">true if @mount_entry is deemed to be displayable; false otherwise</doc>
         <type name="gboolean" c:type="gboolean"/>
       </return-value>
       <parameters>
         <parameter name="mount_entry" transfer-ownership="none">
-          <doc xml:space="preserve">a #GUnixMountEntry</doc>
+          <doc xml:space="preserve">a [struct@GioUnix.MountEntry]</doc>
           <type name="Gio.UnixMountEntry" c:type="GUnixMountEntry*"/>
         </parameter>
       </parameters>
     </function>
     <function name="mount_guess_symbolic_icon" c:identifier="g_unix_mount_guess_symbolic_icon" version="2.34" deprecated="1" deprecated-version="2.84">
-      <doc xml:space="preserve">Guesses the symbolic icon of a Unix mount.</doc>
-      <doc-deprecated xml:space="preserve">Use g_unix_mount_entry_guess_symbolic_icon() instead.</doc-deprecated>
+      <doc xml:space="preserve">Guesses the symbolic icon of a Unix mount entry.</doc>
+      <doc-deprecated xml:space="preserve">Use [func@GioUnix.MountEntry.guess_symbolic_icon] instead.</doc-deprecated>
       <return-value transfer-ownership="full">
-        <doc xml:space="preserve">a #GIcon</doc>
+        <doc xml:space="preserve">a [iface@Gio.Icon]</doc>
         <type name="Gio.Icon" c:type="GIcon*"/>
       </return-value>
       <parameters>
         <parameter name="mount_entry" transfer-ownership="none">
-          <doc xml:space="preserve">a #GUnixMountEntry</doc>
+          <doc xml:space="preserve">a [struct@GioUnix.MountEntry]</doc>
           <type name="Gio.UnixMountEntry" c:type="GUnixMountEntry*"/>
         </parameter>
       </parameters>
     </function>
     <function name="mount_is_readonly" c:identifier="g_unix_mount_is_readonly" deprecated="1" deprecated-version="2.84">
-      <doc xml:space="preserve">Checks if a unix mount is mounted read only.</doc>
-      <doc-deprecated xml:space="preserve">Use g_unix_mount_entry_is_readonly() instead.</doc-deprecated>
+      <doc xml:space="preserve">Checks if a Unix mount is mounted read only.</doc>
+      <doc-deprecated xml:space="preserve">Use [func@GioUnix.MountEntry.is_readonly] instead.</doc-deprecated>
       <return-value transfer-ownership="none">
-        <doc xml:space="preserve">%TRUE if @mount_entry is read only.</doc>
+        <doc xml:space="preserve">true if @mount_entry is read only; false otherwise</doc>
         <type name="gboolean" c:type="gboolean"/>
       </return-value>
       <parameters>
         <parameter name="mount_entry" transfer-ownership="none">
-          <doc xml:space="preserve">a #GUnixMount.</doc>
+          <doc xml:space="preserve">a [struct@GioUnix.MountEntry]</doc>
           <type name="Gio.UnixMountEntry" c:type="GUnixMountEntry*"/>
         </parameter>
       </parameters>
     </function>
     <function name="mount_is_system_internal" c:identifier="g_unix_mount_is_system_internal" deprecated="1" deprecated-version="2.84">
-      <doc xml:space="preserve">Checks if a Unix mount is a system mount. This is the Boolean OR of
-g_unix_is_system_fs_type(), g_unix_is_system_device_path() and
-g_unix_is_mount_path_system_internal() on @mount_entry&#x2019;s properties.
+      <doc xml:space="preserve">Checks if a Unix mount is a system mount.
+
+This is the Boolean OR of
+[func@GioUnix.is_system_fs_type], [func@GioUnix.is_system_device_path] and
+[func@GioUnix.is_mount_path_system_internal] on @mount_entry&#x2019;s properties.
 
 The definition of what a &#x2018;system&#x2019; mount entry is may change over time as new
 file system types and device paths are ignored.</doc>
-      <doc-deprecated xml:space="preserve">Use g_unix_mount_entry_is_system_internal() instead.</doc-deprecated>
+      <doc-deprecated xml:space="preserve">Use [func@GioUnix.MountEntry.is_system_internal] instead.</doc-deprecated>
       <return-value transfer-ownership="none">
-        <doc xml:space="preserve">%TRUE if the unix mount is for a system path.</doc>
+        <doc xml:space="preserve">true if the Unix mount is for a system path; false otherwise</doc>
         <type name="gboolean" c:type="gboolean"/>
       </return-value>
       <parameters>
         <parameter name="mount_entry" transfer-ownership="none">
-          <doc xml:space="preserve">a #GUnixMount.</doc>
+          <doc xml:space="preserve">a [struct@GioUnix.MountEntry]</doc>
           <type name="Gio.UnixMountEntry" c:type="GUnixMountEntry*"/>
         </parameter>
       </parameters>
     </function>
     <function name="mount_point_at" c:identifier="g_unix_mount_point_at" moved-to="MountPoint.at" version="2.66">
-      <doc xml:space="preserve">Gets a #GUnixMountPoint for a given mount path. If @time_read is set, it
-will be filled with a unix timestamp for checking if the mount points have
-changed since with g_unix_mount_points_changed_since().
+      <doc xml:space="preserve">Gets a [struct@GioUnix.MountPoint] for a given mount path.
+
+If @time_read is set, it will be filled with a Unix timestamp for checking if
+the mount points have changed since with
+[func@GioUnix.mount_points_changed_since].
 
 If more mount points have the same mount path, the last matching mount point
 is returned.</doc>
       <return-value transfer-ownership="full" nullable="1">
-        <doc xml:space="preserve">a #GUnixMountPoint, or %NULL if no match
-is found.</doc>
+        <doc xml:space="preserve">a [struct@GioUnix.MountPoint], or `NULL`
+   if no match is found</doc>
         <type name="Gio.UnixMountPoint" c:type="GUnixMountPoint*"/>
       </return-value>
       <parameters>
         <parameter name="mount_path" transfer-ownership="none">
-          <doc xml:space="preserve">path for a possible unix mount point.</doc>
+          <doc xml:space="preserve">path for a possible Unix mount point</doc>
           <type name="filename" c:type="const char*"/>
         </parameter>
         <parameter name="time_read" direction="out" caller-allocates="0" transfer-ownership="full" optional="1" allow-none="1">
-          <doc xml:space="preserve">guint64 to contain a timestamp.</doc>
+          <doc xml:space="preserve">return location for a timestamp</doc>
           <type name="guint64" c:type="guint64*"/>
         </parameter>
       </parameters>
     </function>
     <function name="mount_point_compare" c:identifier="g_unix_mount_point_compare" moved-to="MountPoint.compare">
-      <doc xml:space="preserve">Compares two unix mount points.</doc>
+      <doc xml:space="preserve">Compares two Unix mount points.</doc>
       <return-value transfer-ownership="none">
-        <doc xml:space="preserve">1, 0 or -1 if @mount1 is greater than, equal to,
-or less than @mount2, respectively.</doc>
+        <doc xml:space="preserve">`1`, `0` or `-1` if @mount1 is greater than, equal to,
+   or less than @mount2, respectively</doc>
         <type name="gint" c:type="gint"/>
       </return-value>
       <parameters>
         <parameter name="mount1" transfer-ownership="none">
-          <doc xml:space="preserve">a #GUnixMount.</doc>
+          <doc xml:space="preserve">a [struct@GioUnix.MountPoint]</doc>
           <type name="Gio.UnixMountPoint" c:type="GUnixMountPoint*"/>
         </parameter>
         <parameter name="mount2" transfer-ownership="none">
-          <doc xml:space="preserve">a #GUnixMount.</doc>
+          <doc xml:space="preserve">a [struct@GioUnix.MountPoint]</doc>
           <type name="Gio.UnixMountPoint" c:type="GUnixMountPoint*"/>
         </parameter>
       </parameters>
@@ -2626,37 +2676,37 @@ or less than @mount2, respectively.</doc>
     <function name="mount_point_copy" c:identifier="g_unix_mount_point_copy" moved-to="MountPoint.copy" version="2.54">
       <doc xml:space="preserve">Makes a copy of @mount_point.</doc>
       <return-value transfer-ownership="full">
-        <doc xml:space="preserve">a new #GUnixMountPoint</doc>
+        <doc xml:space="preserve">a new [struct@GioUnix.MountPoint]</doc>
         <type name="Gio.UnixMountPoint" c:type="GUnixMountPoint*"/>
       </return-value>
       <parameters>
         <parameter name="mount_point" transfer-ownership="none">
-          <doc xml:space="preserve">a #GUnixMountPoint.</doc>
+          <doc xml:space="preserve">a [struct@GioUnix.MountPoint]</doc>
           <type name="Gio.UnixMountPoint" c:type="GUnixMountPoint*"/>
         </parameter>
       </parameters>
     </function>
     <function name="mount_point_free" c:identifier="g_unix_mount_point_free" moved-to="MountPoint.free">
-      <doc xml:space="preserve">Frees a unix mount point.</doc>
+      <doc xml:space="preserve">Frees a Unix mount point.</doc>
       <return-value transfer-ownership="none">
         <type name="none" c:type="void"/>
       </return-value>
       <parameters>
         <parameter name="mount_point" transfer-ownership="none">
-          <doc xml:space="preserve">unix mount point to free.</doc>
+          <doc xml:space="preserve">Unix mount point to free.</doc>
           <type name="Gio.UnixMountPoint" c:type="GUnixMountPoint*"/>
         </parameter>
       </parameters>
     </function>
     <function name="mount_point_get_device_path" c:identifier="g_unix_mount_point_get_device_path" moved-to="MountPoint.get_device_path">
-      <doc xml:space="preserve">Gets the device path for a unix mount point.</doc>
+      <doc xml:space="preserve">Gets the device path for a Unix mount point.</doc>
       <return-value transfer-ownership="none">
-        <doc xml:space="preserve">a string containing the device path.</doc>
+        <doc xml:space="preserve">a string containing the device path</doc>
         <type name="filename" c:type="const char*"/>
       </return-value>
       <parameters>
         <parameter name="mount_point" transfer-ownership="none">
-          <doc xml:space="preserve">a #GUnixMountPoint.</doc>
+          <doc xml:space="preserve">a [struct@GioUnix.MountPoint]</doc>
           <type name="Gio.UnixMountPoint" c:type="GUnixMountPoint*"/>
         </parameter>
       </parameters>
@@ -2664,25 +2714,25 @@ or less than @mount2, respectively.</doc>
     <function name="mount_point_get_fs_type" c:identifier="g_unix_mount_point_get_fs_type" moved-to="MountPoint.get_fs_type">
       <doc xml:space="preserve">Gets the file system type for the mount point.</doc>
       <return-value transfer-ownership="none">
-        <doc xml:space="preserve">a string containing the file system type.</doc>
+        <doc xml:space="preserve">a string containing the file system type</doc>
         <type name="utf8" c:type="const char*"/>
       </return-value>
       <parameters>
         <parameter name="mount_point" transfer-ownership="none">
-          <doc xml:space="preserve">a #GUnixMountPoint.</doc>
+          <doc xml:space="preserve">a [struct@GioUnix.MountPoint]</doc>
           <type name="Gio.UnixMountPoint" c:type="GUnixMountPoint*"/>
         </parameter>
       </parameters>
     </function>
     <function name="mount_point_get_mount_path" c:identifier="g_unix_mount_point_get_mount_path" moved-to="MountPoint.get_mount_path">
-      <doc xml:space="preserve">Gets the mount path for a unix mount point.</doc>
+      <doc xml:space="preserve">Gets the mount path for a Unix mount point.</doc>
       <return-value transfer-ownership="none">
-        <doc xml:space="preserve">a string containing the mount path.</doc>
+        <doc xml:space="preserve">a string containing the mount path</doc>
         <type name="filename" c:type="const char*"/>
       </return-value>
       <parameters>
         <parameter name="mount_point" transfer-ownership="none">
-          <doc xml:space="preserve">a #GUnixMountPoint.</doc>
+          <doc xml:space="preserve">a [struct@GioUnix.MountPoint]</doc>
           <type name="Gio.UnixMountPoint" c:type="GUnixMountPoint*"/>
         </parameter>
       </parameters>
@@ -2690,12 +2740,12 @@ or less than @mount2, respectively.</doc>
     <function name="mount_point_get_options" c:identifier="g_unix_mount_point_get_options" moved-to="MountPoint.get_options" version="2.32">
       <doc xml:space="preserve">Gets the options for the mount point.</doc>
       <return-value transfer-ownership="none" nullable="1">
-        <doc xml:space="preserve">a string containing the options.</doc>
+        <doc xml:space="preserve">a string containing the options</doc>
         <type name="utf8" c:type="const char*"/>
       </return-value>
       <parameters>
         <parameter name="mount_point" transfer-ownership="none">
-          <doc xml:space="preserve">a #GUnixMountPoint.</doc>
+          <doc xml:space="preserve">a [struct@GioUnix.MountPoint]</doc>
           <type name="Gio.UnixMountPoint" c:type="GUnixMountPoint*"/>
         </parameter>
       </parameters>
@@ -2703,12 +2753,12 @@ or less than @mount2, respectively.</doc>
     <function name="mount_point_guess_can_eject" c:identifier="g_unix_mount_point_guess_can_eject" moved-to="MountPoint.guess_can_eject">
       <doc xml:space="preserve">Guesses whether a Unix mount point can be ejected.</doc>
       <return-value transfer-ownership="none">
-        <doc xml:space="preserve">%TRUE if @mount_point is deemed to be ejectable.</doc>
+        <doc xml:space="preserve">true if @mount_point is deemed to be ejectable; false otherwise</doc>
         <type name="gboolean" c:type="gboolean"/>
       </return-value>
       <parameters>
         <parameter name="mount_point" transfer-ownership="none">
-          <doc xml:space="preserve">a #GUnixMountPoint</doc>
+          <doc xml:space="preserve">a [struct@GioUnix.MountPoint]</doc>
           <type name="Gio.UnixMountPoint" c:type="GUnixMountPoint*"/>
         </parameter>
       </parameters>
@@ -2716,27 +2766,27 @@ or less than @mount2, respectively.</doc>
     <function name="mount_point_guess_icon" c:identifier="g_unix_mount_point_guess_icon" moved-to="MountPoint.guess_icon">
       <doc xml:space="preserve">Guesses the icon of a Unix mount point.</doc>
       <return-value transfer-ownership="full">
-        <doc xml:space="preserve">a #GIcon</doc>
+        <doc xml:space="preserve">a [iface@Gio.Icon]</doc>
         <type name="Gio.Icon" c:type="GIcon*"/>
       </return-value>
       <parameters>
         <parameter name="mount_point" transfer-ownership="none">
-          <doc xml:space="preserve">a #GUnixMountPoint</doc>
+          <doc xml:space="preserve">a [struct@GioUnix.MountPoint]</doc>
           <type name="Gio.UnixMountPoint" c:type="GUnixMountPoint*"/>
         </parameter>
       </parameters>
     </function>
     <function name="mount_point_guess_name" c:identifier="g_unix_mount_point_guess_name" moved-to="MountPoint.guess_name">
       <doc xml:space="preserve">Guesses the name of a Unix mount point.
+
 The result is a translated string.</doc>
       <return-value transfer-ownership="full">
-        <doc xml:space="preserve">A newly allocated string that must
-    be freed with g_free()</doc>
+        <doc xml:space="preserve">a newly allocated translated string</doc>
         <type name="utf8" c:type="char*"/>
       </return-value>
       <parameters>
         <parameter name="mount_point" transfer-ownership="none">
-          <doc xml:space="preserve">a #GUnixMountPoint</doc>
+          <doc xml:space="preserve">a [struct@GioUnix.MountPoint]</doc>
           <type name="Gio.UnixMountPoint" c:type="GUnixMountPoint*"/>
         </parameter>
       </parameters>
@@ -2744,83 +2794,95 @@ The result is a translated string.</doc>
     <function name="mount_point_guess_symbolic_icon" c:identifier="g_unix_mount_point_guess_symbolic_icon" moved-to="MountPoint.guess_symbolic_icon" version="2.34">
       <doc xml:space="preserve">Guesses the symbolic icon of a Unix mount point.</doc>
       <return-value transfer-ownership="full">
-        <doc xml:space="preserve">a #GIcon</doc>
+        <doc xml:space="preserve">a [iface@Gio.Icon]</doc>
         <type name="Gio.Icon" c:type="GIcon*"/>
       </return-value>
       <parameters>
         <parameter name="mount_point" transfer-ownership="none">
-          <doc xml:space="preserve">a #GUnixMountPoint</doc>
+          <doc xml:space="preserve">a [struct@GioUnix.MountPoint]</doc>
           <type name="Gio.UnixMountPoint" c:type="GUnixMountPoint*"/>
         </parameter>
       </parameters>
     </function>
     <function name="mount_point_is_loopback" c:identifier="g_unix_mount_point_is_loopback" moved-to="MountPoint.is_loopback">
-      <doc xml:space="preserve">Checks if a unix mount point is a loopback device.</doc>
+      <doc xml:space="preserve">Checks if a Unix mount point is a loopback device.</doc>
       <return-value transfer-ownership="none">
-        <doc xml:space="preserve">%TRUE if the mount point is a loopback. %FALSE otherwise.</doc>
+        <doc xml:space="preserve">true if the mount point is a loopback device; false otherwise</doc>
         <type name="gboolean" c:type="gboolean"/>
       </return-value>
       <parameters>
         <parameter name="mount_point" transfer-ownership="none">
-          <doc xml:space="preserve">a #GUnixMountPoint.</doc>
+          <doc xml:space="preserve">a [struct@GioUnix.MountPoint]</doc>
           <type name="Gio.UnixMountPoint" c:type="GUnixMountPoint*"/>
         </parameter>
       </parameters>
     </function>
     <function name="mount_point_is_readonly" c:identifier="g_unix_mount_point_is_readonly" moved-to="MountPoint.is_readonly">
-      <doc xml:space="preserve">Checks if a unix mount point is read only.</doc>
+      <doc xml:space="preserve">Checks if a Unix mount point is read only.</doc>
       <return-value transfer-ownership="none">
-        <doc xml:space="preserve">%TRUE if a mount point is read only.</doc>
+        <doc xml:space="preserve">true if a mount point is read only; false otherwise</doc>
         <type name="gboolean" c:type="gboolean"/>
       </return-value>
       <parameters>
         <parameter name="mount_point" transfer-ownership="none">
-          <doc xml:space="preserve">a #GUnixMountPoint.</doc>
+          <doc xml:space="preserve">a [struct@GioUnix.MountPoint]</doc>
           <type name="Gio.UnixMountPoint" c:type="GUnixMountPoint*"/>
         </parameter>
       </parameters>
     </function>
     <function name="mount_point_is_user_mountable" c:identifier="g_unix_mount_point_is_user_mountable" moved-to="MountPoint.is_user_mountable">
-      <doc xml:space="preserve">Checks if a unix mount point is mountable by the user.</doc>
+      <doc xml:space="preserve">Checks if a Unix mount point is mountable by the user.</doc>
       <return-value transfer-ownership="none">
-        <doc xml:space="preserve">%TRUE if the mount point is user mountable.</doc>
+        <doc xml:space="preserve">true if the mount point is user mountable; false otherwise</doc>
         <type name="gboolean" c:type="gboolean"/>
       </return-value>
       <parameters>
         <parameter name="mount_point" transfer-ownership="none">
-          <doc xml:space="preserve">a #GUnixMountPoint.</doc>
+          <doc xml:space="preserve">a [struct@GioUnix.MountPoint]</doc>
           <type name="Gio.UnixMountPoint" c:type="GUnixMountPoint*"/>
         </parameter>
       </parameters>
     </function>
     <function name="mount_points_changed_since" c:identifier="g_unix_mount_points_changed_since">
-      <doc xml:space="preserve">Checks if the unix mount points have changed since a given unix time.</doc>
+      <doc xml:space="preserve">Checks if the Unix mount points have changed since a given Unix time.
+
+Unlike [func@GioUnix.mount_entries_changed_since], this function can work
+reliably without a [class@GioUnix.MountMonitor] running, as it accesses the
+static mount point information (such as `/etc/fstab` on Linux), which has a
+valid modification time.
+
+It is more efficient to use [signal@GioUnix.MountMonitor::mountpoints-changed]
+to be signalled of changes to the mount points, rather than polling using
+this function. This function is more appropriate for infrequently determining
+cache validity.</doc>
       <return-value transfer-ownership="none">
-        <doc xml:space="preserve">%TRUE if the mount points have changed since @time.</doc>
+        <doc xml:space="preserve">true if the mount points have changed since @time; false otherwise</doc>
         <type name="gboolean" c:type="gboolean"/>
       </return-value>
       <parameters>
         <parameter name="time" transfer-ownership="none">
-          <doc xml:space="preserve">guint64 to contain a timestamp.</doc>
+          <doc xml:space="preserve">a timestamp</doc>
           <type name="guint64" c:type="guint64"/>
         </parameter>
       </parameters>
     </function>
     <function name="mount_points_get" c:identifier="g_unix_mount_points_get">
-      <doc xml:space="preserve">Gets a #GList of #GUnixMountPoint containing the unix mount points.
-If @time_read is set, it will be filled with the mount timestamp,
-allowing for checking if the mounts have changed with
-g_unix_mount_points_changed_since().</doc>
+      <doc xml:space="preserve">Gets a list of [struct@GioUnix.MountPoint] instances representing the Unix
+mount points.
+
+If @time_read is set, it will be filled with the mount timestamp, allowing
+for checking if the mounts have changed with
+[func@GioUnix.mount_points_changed_since].</doc>
       <return-value transfer-ownership="full">
-        <doc xml:space="preserve">
-    a #GList of the UNIX mountpoints.</doc>
+        <doc xml:space="preserve">a list of the Unix
+   mount points</doc>
         <type name="GLib.List" c:type="GList*">
           <type name="Gio.UnixMountPoint"/>
         </type>
       </return-value>
       <parameters>
         <parameter name="time_read" direction="out" caller-allocates="0" transfer-ownership="full" optional="1" allow-none="1">
-          <doc xml:space="preserve">guint64 to contain a timestamp.</doc>
+          <doc xml:space="preserve">return location for a timestamp</doc>
           <type name="guint64" c:type="guint64*"/>
         </parameter>
       </parameters>
@@ -2829,10 +2891,10 @@ g_unix_mount_points_changed_since().</doc>
       <doc xml:space="preserve">Gets an array of [struct@Gio.UnixMountPoint]s containing the Unix mount
 points listed in @table_path.
 
-This is a generalized version of g_unix_mount_points_get(), mainly intended
-for internal testing use. Note that g_unix_mount_points_get() may parse
-multiple hierarchical table files, so this function is not a direct superset
-of its functionality.
+This is a generalized version of [func@GioUnix.mount_points_get], mainly
+intended for internal testing use. Note that [func@GioUnix.mount_points_get]
+may parse multiple hierarchical table files, so this function is not a direct
+superset of its functionality.
 
 If there is an error reading or parsing the file, `NULL` will be returned
 and both out parameters will be set to `0`.</doc>
@@ -2861,35 +2923,37 @@ and both out parameters will be set to `0`.</doc>
       </parameters>
     </function>
     <function name="mounts_changed_since" c:identifier="g_unix_mounts_changed_since" deprecated="1" deprecated-version="2.84">
-      <doc xml:space="preserve">Checks if the unix mounts have changed since a given unix time.</doc>
-      <doc-deprecated xml:space="preserve">Use g_unix_mount_entry_free() instead.</doc-deprecated>
+      <doc xml:space="preserve">Checks if the Unix mounts have changed since a given Unix time.</doc>
+      <doc-deprecated xml:space="preserve">Use [func@GioUnix.mount_entries_changed_since] instead.</doc-deprecated>
       <return-value transfer-ownership="none">
-        <doc xml:space="preserve">%TRUE if the mounts have changed since @time.</doc>
+        <doc xml:space="preserve">true if the mounts have changed since @time; false otherwise</doc>
         <type name="gboolean" c:type="gboolean"/>
       </return-value>
       <parameters>
         <parameter name="time" transfer-ownership="none">
-          <doc xml:space="preserve">guint64 to contain a timestamp.</doc>
+          <doc xml:space="preserve">a timestamp</doc>
           <type name="guint64" c:type="guint64"/>
         </parameter>
       </parameters>
     </function>
     <function name="mounts_get" c:identifier="g_unix_mounts_get" deprecated="1" deprecated-version="2.84">
-      <doc xml:space="preserve">Gets a #GList of #GUnixMountEntry containing the unix mounts.
-If @time_read is set, it will be filled with the mount
-timestamp, allowing for checking if the mounts have changed
-with g_unix_mount_entries_changed_since().</doc>
-      <doc-deprecated xml:space="preserve">Use g_unix_mount_entries_get() instead.</doc-deprecated>
+      <doc xml:space="preserve">Gets a list of [struct@GioUnix.MountEntry] instances representing the Unix
+mounts.
+
+If @time_read is set, it will be filled with the mount timestamp, allowing
+for checking if the mounts have changed with
+[func@GioUnix.mount_entries_changed_since].</doc>
+      <doc-deprecated xml:space="preserve">Use [func@GioUnix.mount_entries_get] instead.</doc-deprecated>
       <return-value transfer-ownership="full">
-        <doc xml:space="preserve">
-    a #GList of the UNIX mounts.</doc>
+        <doc xml:space="preserve">a list of the
+   Unix mounts</doc>
         <type name="GLib.List" c:type="GList*">
           <type name="Gio.UnixMountEntry"/>
         </type>
       </return-value>
       <parameters>
         <parameter name="time_read" direction="out" caller-allocates="0" transfer-ownership="full" optional="1" allow-none="1">
-          <doc xml:space="preserve">guint64 to contain a timestamp, or %NULL</doc>
+          <doc xml:space="preserve">return location for a timestamp</doc>
           <type name="guint64" c:type="guint64*"/>
         </parameter>
       </parameters>
@@ -2898,14 +2962,14 @@ with g_unix_mount_entries_changed_since().</doc>
       <doc xml:space="preserve">Gets an array of [struct@Gio.UnixMountEntry]s containing the Unix mounts
 listed in @table_path.
 
-This is a generalized version of g_unix_mount_entries_get(), mainly intended for
-internal testing use. Note that g_unix_mount_entries_get() may parse multiple
-hierarchical table files, so this function is not a direct superset of its
-functionality.
+This is a generalized version of [func@GioUnix.mount_entries_get], mainly
+intended for internal testing use. Note that [func@GioUnix.mount_entries_get]
+may parse multiple hierarchical table files, so this function is not a direct
+superset of its functionality.
 
 If there is an error reading or parsing the file, `NULL` will be returned
 and both out parameters will be set to `0`.</doc>
-      <doc-deprecated xml:space="preserve">Use g_unix_mount_entries_get_from_file() instead.</doc-deprecated>
+      <doc-deprecated xml:space="preserve">Use [func@GioUnix.mount_entries_get_from_file] instead.</doc-deprecated>
       <return-value transfer-ownership="full" nullable="1">
         <doc xml:space="preserve">mount
   entries, or `NULL` if there was an error loading them</doc>
