@@ -917,7 +917,7 @@ the @node.</doc>
       </method>
     </class>
     <enumeration name="FillRule" version="4.14" glib:type-name="GskFillRule" glib:get-type="gsk_fill_rule_get_type" c:type="GskFillRule">
-      <doc xml:space="preserve">`GskFillRule` is used to select how paths are filled.
+      <doc xml:space="preserve">Specifies how paths are filled.
 
 Whether or not a point is included in the fill is determined by taking
 a ray from that point to infinity and looking at intersections with the
@@ -956,7 +956,7 @@ See [class@Gsk.Renderer].</doc>
       </constructor>
     </class>
     <record name="GLRendererClass" c:type="GskGLRendererClass" disguised="1" opaque="1" glib:is-gtype-struct-for="GLRenderer"/>
-    <class name="GLShader" c:symbol-prefix="gl_shader" c:type="GskGLShader" parent="GObject.Object" glib:type-name="GskGLShader" glib:get-type="gsk_gl_shader_get_type" glib:type-struct="GLShaderClass">
+    <class name="GLShader" c:symbol-prefix="gl_shader" c:type="GskGLShader" deprecated="1" deprecated-version="4.16" parent="GObject.Object" glib:type-name="GskGLShader" glib:get-type="gsk_gl_shader_get_type" glib:type-struct="GLShaderClass">
       <doc xml:space="preserve">A `GskGLShader` is a snippet of GLSL that is meant to run in the
 fragment shader of the rendering pipeline.
 
@@ -1069,16 +1069,13 @@ void mainImage(out vec4 fragColor,
 
   fragColor = position * source1 + (1.0 - position) * source2;
 }
-```
-
-# Deprecation
-
-This feature was deprecated in GTK 4.16 after the new rendering infrastructure
-introduced in 4.14 did not support it.
-The lack of Vulkan integration would have made it a very hard feature to support.
-
-If you want to use OpenGL directly, you should look at [GtkGLArea](../gtk4/class.GLArea.html)
-which uses a different approach and is still well supported.</doc>
+```</doc>
+      <doc-deprecated xml:space="preserve">This feature was deprecated in GTK 4.16 after the new
+rendering infrastructure introduced in 4.14 did not support it. The lack
+of Vulkan integration would have made it a very hard feature to support.
+If you want to use OpenGL directly, you should look at
+[GtkGLArea](../gtk4/class.GLArea.html), which uses a different approach
+and is still well-supported.</doc-deprecated>
       <constructor name="new_from_bytes" c:identifier="gsk_gl_shader_new_from_bytes" deprecated="1" deprecated-version="4.16">
         <doc xml:space="preserve">Creates a `GskGLShader` that will render pixels using the specified code.</doc>
         <doc-deprecated xml:space="preserve">GTK's new Vulkan-focused rendering
@@ -1699,9 +1696,8 @@ renderer before using it.</doc>
         </parameters>
       </method>
     </class>
-    <enumeration name="GLUniformType" glib:type-name="GskGLUniformType" glib:get-type="gsk_gl_uniform_type_get_type" c:type="GskGLUniformType">
-      <doc xml:space="preserve">This defines the types of the uniforms that `GskGLShaders`
-declare.
+    <enumeration name="GLUniformType" deprecated="1" deprecated-version="4.16" glib:type-name="GskGLUniformType" glib:get-type="gsk_gl_uniform_type_get_type" c:type="GskGLUniformType">
+      <doc xml:space="preserve">Defines the types of the uniforms that `GskGLShaders` declare.
 
 It defines both what the type is called in the GLSL shader
 code, and what the corresponding C type is on the Gtk side.</doc>
@@ -2161,6 +2157,9 @@ the 'mask value' with the alpha of the source.</doc>
       </method>
     </class>
     <class name="NglRenderer" c:symbol-prefix="ngl_renderer" parent="Renderer" glib:type-name="GskNglRenderer" glib:get-type="gsk_ngl_renderer_get_type">
+      <doc xml:space="preserve">A GL based renderer.
+
+See [class@Gsk.Renderer].</doc>
       <constructor name="new" c:identifier="gsk_ngl_renderer_new" deprecated="1" deprecated-version="4.18">
         <doc xml:space="preserve">Same as gsk_gl_renderer_new().</doc>
         <doc-deprecated xml:space="preserve">Use gsk_gl_renderer_new()</doc-deprecated>
@@ -2747,7 +2746,7 @@ The `O` command is an extension that is not supported in SVG.</doc>
       </function>
     </record>
     <record name="PathBuilder" c:type="GskPathBuilder" opaque="1" version="4.14" glib:type-name="GskPathBuilder" glib:get-type="gsk_path_builder_get_type" c:symbol-prefix="path_builder">
-      <doc xml:space="preserve">An auxiliary object for constructing `GskPath` objects.
+      <doc xml:space="preserve">Constructs `GskPath` objects.
 
 A path is constructed like this:
 
@@ -3639,8 +3638,7 @@ C code should use [method@Gsk.PathBuilder.free_to_path].</doc>
       </method>
     </record>
     <enumeration name="PathDirection" version="4.14" glib:type-name="GskPathDirection" glib:get-type="gsk_path_direction_get_type" c:type="GskPathDirection">
-      <doc xml:space="preserve">The values of the `GskPathDirection` enum are used to pick one
-of the four tangents at a given point on the path.
+      <doc xml:space="preserve">Used to pick one of the four tangents at a given point on the path.
 
 Note that the directions for @GSK_PATH_FROM_START/@GSK_PATH_TO_END and
 @GSK_PATH_TO_START/@GSK_PATH_FROM_END will coincide for smooth points.
@@ -3689,8 +3687,7 @@ The only operations emitted will be `GSK_PATH_MOVE`, `GSK_PATH_LINE` and
       </member>
     </bitfield>
     <callback name="PathForeachFunc" c:type="GskPathForeachFunc">
-      <doc xml:space="preserve">Prototype of the callback to iterate through the operations of
-a path.
+      <doc xml:space="preserve">Type of the callback to iterate through the operations of a path.
 
 For each operation, the callback is given the @op itself, the points
 that the operation is applied to in @pts, and a @weight for conic
@@ -3728,8 +3725,7 @@ Closed contours end with a @GSK_PATH_CLOSE operation.</doc>
       </parameters>
     </callback>
     <record name="PathMeasure" c:type="GskPathMeasure" opaque="1" version="4.14" glib:type-name="GskPathMeasure" glib:get-type="gsk_path_measure_get_type" c:symbol-prefix="path_measure">
-      <doc xml:space="preserve">An object that allows measurements on paths such as determining
-the length of the path.
+      <doc xml:space="preserve">Performs measurements on paths such as determining the length of the path.
 
 Many measuring operations require sampling the path length
 at intermediate points. Therefore, a `GskPathMeasure` has
@@ -3862,7 +3858,7 @@ If the resulting reference count is zero, frees the object.</doc>
       </method>
     </record>
     <enumeration name="PathOperation" version="4.14" glib:type-name="GskPathOperation" glib:get-type="gsk_path_operation_get_type" c:type="GskPathOperation">
-      <doc xml:space="preserve">Path operations are used to describe the segments of a `GskPath`.
+      <doc xml:space="preserve">Describes the segments of a `GskPath`.
 
 More values may be added in the future.</doc>
       <member name="move" value="0" c:identifier="GSK_PATH_MOVE" glib:nick="move" glib:name="GSK_PATH_MOVE">
@@ -5267,8 +5263,8 @@ rendering pipeline.</doc>
         </return-value>
       </function>
     </enumeration>
-    <record name="ShaderArgsBuilder" c:type="GskShaderArgsBuilder" opaque="1" glib:type-name="GskShaderArgsBuilder" glib:get-type="gsk_shader_args_builder_get_type" c:symbol-prefix="shader_args_builder">
-      <doc xml:space="preserve">An object to build the uniforms data for a `GskGLShader`.</doc>
+    <record name="ShaderArgsBuilder" c:type="GskShaderArgsBuilder" opaque="1" deprecated="1" deprecated-version="4.16" glib:type-name="GskShaderArgsBuilder" glib:get-type="gsk_shader_args_builder_get_type" c:symbol-prefix="shader_args_builder">
+      <doc xml:space="preserve">Builds the uniforms data for a `GskGLShader`.</doc>
       <constructor name="new" c:identifier="gsk_shader_args_builder_new" deprecated="1" deprecated-version="4.16">
         <doc xml:space="preserve">Allocates a builder that can be used to construct a new uniform data
 chunk.</doc>
@@ -5635,7 +5631,7 @@ If the resulting reference count is zero, frees the builder.</doc>
       </method>
     </class>
     <record name="Stroke" c:type="GskStroke" opaque="1" version="4.14" glib:type-name="GskStroke" glib:get-type="gsk_stroke_get_type" c:symbol-prefix="stroke">
-      <doc xml:space="preserve">Collects the parameters that influence the operation of stroking a path.</doc>
+      <doc xml:space="preserve">Collects the parameters that are needed when stroking a path.</doc>
       <constructor name="new" c:identifier="gsk_stroke_new" version="4.14">
         <doc xml:space="preserve">Creates a new `GskStroke` with the given @line_width.</doc>
         <return-value transfer-ownership="full">
@@ -6218,7 +6214,7 @@ for a way to influence filtering.</doc>
       </method>
     </class>
     <class name="TextureScaleNode" c:symbol-prefix="texture_scale_node" c:type="GskTextureScaleNode" version="4.10" parent="RenderNode" glib:type-name="GskTextureScaleNode" glib:get-type="gsk_texture_scale_node_get_type" glib:fundamental="1">
-      <doc xml:space="preserve">A render node for a `GdkTexture`.</doc>
+      <doc xml:space="preserve">A render node for a `GdkTexture`, with control over scaling.</doc>
       <constructor name="new" c:identifier="gsk_texture_scale_node_new" version="4.10">
         <doc xml:space="preserve">Creates a node that scales the texture to the size given by the
 bounds using the filter and then places it at the bounds' position.
@@ -6279,7 +6275,7 @@ of this node.</doc>
       </method>
     </class>
     <record name="Transform" c:type="GskTransform" opaque="1" glib:type-name="GskTransform" glib:get-type="gsk_transform_get_type" c:symbol-prefix="transform">
-      <doc xml:space="preserve">An object to describe transform matrices.
+      <doc xml:space="preserve">Describes a 3D transform.
 
 Unlike `graphene_matrix_t`, `GskTransform` retains the steps in how
 a transform was constructed, and allows inspecting them. It is modeled
@@ -7018,7 +7014,7 @@ with the given @transform.</doc>
       </method>
     </class>
     <function-macro name="VALUE_HOLDS_RENDER_NODE" c:identifier="GSK_VALUE_HOLDS_RENDER_NODE" introspectable="0">
-      <doc xml:space="preserve">Evaluates to %TRUE if @value was initialized with %GSK_TYPE_RENDER_NODE.</doc>
+      <doc xml:space="preserve">Evaluates to true if @value was initialized with `GSK_TYPE_RENDER_NODE`.</doc>
       <parameters>
         <parameter name="value">
           <doc xml:space="preserve">a `GValue`</doc>
