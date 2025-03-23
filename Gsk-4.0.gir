@@ -2,11 +2,12 @@
 <!-- This file was automatically generated from C sources - DO NOT EDIT!
 To affect the contents of this file, edit the original C definitions,
 and/or use gtk-doc annotations.  -->
-<repository xmlns="http://www.gtk.org/introspection/core/1.0" xmlns:c="http://www.gtk.org/introspection/c/1.0" xmlns:glib="http://www.gtk.org/introspection/glib/1.0" version="1.2">
+<repository xmlns="http://www.gtk.org/introspection/core/1.0" xmlns:c="http://www.gtk.org/introspection/c/1.0" xmlns:doc="http://www.gtk.org/introspection/doc/1.0" xmlns:glib="http://www.gtk.org/introspection/glib/1.0" version="1.2">
   <include name="Gdk" version="4.0"/>
   <include name="Graphene" version="1.0"/>
   <package name="gtk4"/>
   <c:include name="gsk/gsk.h"/>
+  <doc:format name="unknown"/>
   <namespace name="Gsk" version="4.0" shared-library="libgtk-4.so.1" c:identifier-prefixes="Gsk" c:symbol-prefixes="gsk">
     <function-macro name="BROADWAY_RENDERER" c:identifier="GSK_BROADWAY_RENDERER" introspectable="0">
       <parameters>
@@ -364,7 +365,7 @@ rendering to @renderer.</doc>
       </method>
     </class>
     <class name="CairoRenderer" c:symbol-prefix="cairo_renderer" c:type="GskCairoRenderer" parent="Renderer" glib:type-name="GskCairoRenderer" glib:get-type="gsk_cairo_renderer_get_type" glib:type-struct="CairoRendererClass">
-      <doc xml:space="preserve">A GSK renderer that is using cairo.
+      <doc xml:space="preserve">Renders a GSK rendernode tree with cairo.
 
 Since it is using cairo, this renderer cannot support
 3D transformations.</doc>
@@ -944,7 +945,7 @@ New entries may be added in future versions.</doc>
       </member>
     </enumeration>
     <class name="GLRenderer" c:symbol-prefix="gl_renderer" c:type="GskGLRenderer" version="4.2" parent="Renderer" glib:type-name="GskGLRenderer" glib:get-type="gsk_gl_renderer_get_type" glib:type-struct="GLRendererClass">
-      <doc xml:space="preserve">A GL based renderer.
+      <doc xml:space="preserve">Renders a GSK rendernode tree with OpenGL.
 
 See [class@Gsk.Renderer].</doc>
       <constructor name="new" c:identifier="gsk_gl_renderer_new">
@@ -957,8 +958,7 @@ See [class@Gsk.Renderer].</doc>
     </class>
     <record name="GLRendererClass" c:type="GskGLRendererClass" disguised="1" opaque="1" glib:is-gtype-struct-for="GLRenderer"/>
     <class name="GLShader" c:symbol-prefix="gl_shader" c:type="GskGLShader" deprecated="1" deprecated-version="4.16" parent="GObject.Object" glib:type-name="GskGLShader" glib:get-type="gsk_gl_shader_get_type" glib:type-struct="GLShaderClass">
-      <doc xml:space="preserve">A `GskGLShader` is a snippet of GLSL that is meant to run in the
-fragment shader of the rendering pipeline.
+      <doc xml:space="preserve">Implements a fragment shader using GLSL.
 
 A fragment shader gets the coordinates being rendered as input and
 produces the pixel values for that particular pixel. Additionally,
@@ -2750,7 +2750,7 @@ The `O` command is an extension that is not supported in SVG.</doc>
 
 A path is constructed like this:
 
-|[&lt;!-- language="C" --&gt;
+```c
 GskPath *
 construct_path (void)
 {
@@ -2761,7 +2761,7 @@ construct_path (void)
   // add contours to the path here
 
   return gsk_path_builder_free_to_path (builder);
-]|
+```
 
 Adding contours to the path can be done in two ways.
 The easiest option is to use the `gsk_path_builder_add_*` group
@@ -3889,7 +3889,7 @@ More values may be added in the future.</doc>
       </member>
     </enumeration>
     <record name="PathPoint" c:type="GskPathPoint" version="4.14" glib:type-name="GskPathPoint" glib:get-type="gsk_path_point_get_type" c:symbol-prefix="path_point">
-      <doc xml:space="preserve">An opaque type representing a point on a path.
+      <doc xml:space="preserve">Represents a point on a path.
 
 It can be queried for properties of the path at that point,
 such as its tangent or its curvature.
@@ -4316,8 +4316,7 @@ in horizontal orientation and by @vradius in vertical orientation.</doc>
       </method>
     </class>
     <class name="RenderNode" c:symbol-prefix="render_node" c:type="GskRenderNode" abstract="1" glib:type-name="GskRenderNode" glib:get-type="gsk_render_node_get_type" glib:fundamental="1" glib:ref-func="gsk_render_node_ref" glib:unref-func="gsk_render_node_unref" glib:set-value-func="gsk_value_set_render_node" glib:get-value-func="gsk_value_get_render_node">
-      <doc xml:space="preserve">`GskRenderNode` is the basic block in a scene graph to be
-rendered using [class@Gsk.Renderer].
+      <doc xml:space="preserve">The basic block in a scene graph to be rendered using [class@Gsk.Renderer].
 
 Each node has a parent, except the top-level node; each node may have
 children nodes.
@@ -4601,8 +4600,7 @@ node to a file for later inspection.</doc>
       </member>
     </enumeration>
     <class name="Renderer" c:symbol-prefix="renderer" c:type="GskRenderer" parent="GObject.Object" abstract="1" glib:type-name="GskRenderer" glib:get-type="gsk_renderer_get_type" glib:type-struct="RendererClass">
-      <doc xml:space="preserve">A class that renders a scene graph defined via a tree of
-[class@Gsk.RenderNode] instances.
+      <doc xml:space="preserve">Renders a scene graph defined via a tree of [class@Gsk.RenderNode] instances.
 
 Typically you will use a `GskRenderer` instance to repeatedly call
 [method@Gsk.Renderer.render] to update the contents of its associated
@@ -7040,7 +7038,7 @@ with the given @transform.</doc>
       </parameters>
     </function-macro>
     <class name="VulkanRenderer" c:symbol-prefix="vulkan_renderer" c:type="GskVulkanRenderer" parent="Renderer" glib:type-name="GskVulkanRenderer" glib:get-type="gsk_vulkan_renderer_get_type" glib:type-struct="VulkanRendererClass">
-      <doc xml:space="preserve">A GSK renderer that is using Vulkan.
+      <doc xml:space="preserve">Renders a GSK rendernode tree with Vulkan.
 
 This renderer will fail to realize if Vulkan is not supported.</doc>
       <constructor name="new" c:identifier="gsk_vulkan_renderer_new">
