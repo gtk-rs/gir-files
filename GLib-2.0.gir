@@ -13386,8 +13386,10 @@ If the object cannot be created then a [error@GLib.KeyFileError is returned.</do
       </method>
       <method name="load_from_data_dirs" c:identifier="g_key_file_load_from_data_dirs" version="2.6" throws="1">
         <doc xml:space="preserve">Looks for a key file named @file in the paths returned from
-[func@GLib.get_user_data_dir] and [func@GLib.get_system_data_dirs],
-loads the file into @key_file and returns the file&#x2019;s full path in
+[func@GLib.get_user_data_dir] and [func@GLib.get_system_data_dirs].
+
+The search algorithm from [method@GLib.KeyFile.load_from_dirs] is used. If
+@file is found, it&#x2019;s loaded into @key_file and its full path is returned in
 @full_path.
 
 If the file could not be loaded then either a [error@GLib.FileError] or
@@ -13419,6 +13421,13 @@ If the file could not be loaded then either a [error@GLib.FileError] or
       <method name="load_from_dirs" c:identifier="g_key_file_load_from_dirs" version="2.14" throws="1">
         <doc xml:space="preserve">Looks for a key file named @file in the paths specified in @search_dirs,
 loads the file into @key_file and returns the file&#x2019;s full path in @full_path.
+
+@search_dirs are checked in the order listed in the array, with the highest
+priority directory listed first. Within each directory, @file is looked for.
+If it&#x2019;s not found, `-` characters in @file are progressively replaced with
+directory separators to search subdirectories of the search directory. If the
+file has not been found after all `-` characters have been replaced, the next
+search directory in @search_dirs is checked.
 
 If the file could not be found in any of the @search_dirs,
 [error@GLib.KeyFileError.NOT_FOUND] is returned. If
@@ -50761,8 +50770,9 @@ created. Returns -1 if an error occurred, with errno set.</doc>
       </parameters>
     </function>
     <function name="mkdtemp" c:identifier="g_mkdtemp" version="2.30" introspectable="0">
-      <doc xml:space="preserve">Creates a temporary directory. See the mkdtemp() documentation
-on most UNIX-like systems.
+      <doc xml:space="preserve">Creates a temporary directory in the current directory.
+
+See the [`mkdtemp()`](man:mkdtemp(3)) documentation on most UNIX-like systems.
 
 The parameter is a string that should follow the rules for
 mkdtemp() templates, i.e. contain the string "XXXXXX".
@@ -50790,8 +50800,9 @@ g_dir_make_tmp() instead.</doc>
       </parameters>
     </function>
     <function name="mkdtemp_full" c:identifier="g_mkdtemp_full" version="2.30" introspectable="0">
-      <doc xml:space="preserve">Creates a temporary directory. See the mkdtemp() documentation
-on most UNIX-like systems.
+      <doc xml:space="preserve">Creates a temporary directory in the current directory.
+
+See the [`mkdtemp()`](man:mkdtemp(3)) documentation on most UNIX-like systems.
 
 The parameter is a string that should follow the rules for
 mkdtemp() templates, i.e. contain the string "XXXXXX".
@@ -50823,8 +50834,9 @@ g_dir_make_tmp() instead.</doc>
       </parameters>
     </function>
     <function name="mkstemp" c:identifier="g_mkstemp" introspectable="0">
-      <doc xml:space="preserve">Opens a temporary file. See the mkstemp() documentation
-on most UNIX-like systems.
+      <doc xml:space="preserve">Opens a temporary file in the current directory.
+
+See the [`mkstemp()`](man:mkstemp(3)) documentation on most UNIX-like systems.
 
 The parameter is a string that should follow the rules for
 mkstemp() templates, i.e. contain the string "XXXXXX".
@@ -50849,8 +50861,9 @@ Most importantly, on Windows it should be in UTF-8.</doc>
       </parameters>
     </function>
     <function name="mkstemp_full" c:identifier="g_mkstemp_full" version="2.22" introspectable="0">
-      <doc xml:space="preserve">Opens a temporary file. See the mkstemp() documentation
-on most UNIX-like systems.
+      <doc xml:space="preserve">Opens a temporary file in the current directory.
+
+See the [`mkstemp()`](man:mkstemp(3)) documentation on most UNIX-like systems.
 
 The parameter is a string that should follow the rules for
 mkstemp() templates, i.e. contain the string "XXXXXX".
