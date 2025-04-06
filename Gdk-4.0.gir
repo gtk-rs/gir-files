@@ -20370,6 +20370,16 @@ calling this function.</doc>
           </parameter>
         </parameters>
       </method>
+      <method name="get_capabilities" c:identifier="gdk_toplevel_get_capabilities" glib:get-property="capabilities">
+        <return-value transfer-ownership="none">
+          <type name="ToplevelCapabilities" c:type="GdkToplevelCapabilities"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="toplevel" transfer-ownership="none">
+            <type name="Toplevel" c:type="GdkToplevel*"/>
+          </instance-parameter>
+        </parameters>
+      </method>
       <method name="get_state" c:identifier="gdk_toplevel_get_state" glib:get-property="state">
         <doc xml:space="preserve">Gets the bitwise or of the currently active surface state flags,
 from the `GdkToplevelState` enumeration.</doc>
@@ -20698,6 +20708,10 @@ tiled window states.</doc>
           </parameter>
         </parameters>
       </method>
+      <property name="capabilities" version="4.20" transfer-ownership="none" getter="get_capabilities" default-value="0">
+        <doc xml:space="preserve">The capabilities that are available for this toplevel.</doc>
+        <type name="ToplevelCapabilities"/>
+      </property>
       <property name="decorated" writable="1" transfer-ownership="none" setter="set_decorated" default-value="FALSE">
         <doc xml:space="preserve">Whether the window manager should add decorations.</doc>
         <type name="gboolean" c:type="gboolean"/>
@@ -20766,6 +20780,38 @@ will result in an arbitrary size being used as a result.</doc>
         </parameters>
       </glib:signal>
     </interface>
+    <bitfield name="ToplevelCapabilities" version="4.20" glib:type-name="GdkToplevelCapabilities" glib:get-type="gdk_toplevel_capabilities_get_type" c:type="GdkToplevelCapabilities">
+      <doc xml:space="preserve">Reflects what features a `GdkToplevel` supports.</doc>
+      <member name="edge_constraints" value="1" c:identifier="GDK_TOPLEVEL_CAPABILITIES_EDGE_CONSTRAINTS" version="4.20" glib:nick="edge-constraints" glib:name="GDK_TOPLEVEL_CAPABILITIES_EDGE_CONSTRAINTS">
+        <doc xml:space="preserve">Whether tiled window states are supported.</doc>
+      </member>
+      <member name="inhibit_shortcuts" value="2" c:identifier="GDK_TOPLEVEL_CAPABILITIES_INHIBIT_SHORTCUTS" version="4.20" glib:nick="inhibit-shortcuts" glib:name="GDK_TOPLEVEL_CAPABILITIES_INHIBIT_SHORTCUTS">
+        <doc xml:space="preserve">Whether inhibiting system shortcuts is supported.
+See [method@Gdk.Toplevel.inhibit_system_shortcuts].</doc>
+      </member>
+      <member name="titlebar_gestures" value="4" c:identifier="GDK_TOPLEVEL_CAPABILITIES_TITLEBAR_GESTURES" version="4.20" glib:nick="titlebar-gestures" glib:name="GDK_TOPLEVEL_CAPABILITIES_TITLEBAR_GESTURES">
+        <doc xml:space="preserve">Whether titlebar gestures are supported.
+See [method@Gdk.Toplevel.titlebar_gesture].</doc>
+      </member>
+      <member name="window_menu" value="8" c:identifier="GDK_TOPLEVEL_CAPABILITIES_WINDOW_MENU" version="4.20" glib:nick="window-menu" glib:name="GDK_TOPLEVEL_CAPABILITIES_WINDOW_MENU">
+        <doc xml:space="preserve">Whether showing the window menu is supported.
+See [method@Gdk.Toplevel.show_window_menu].</doc>
+      </member>
+      <member name="maximize" value="16" c:identifier="GDK_TOPLEVEL_CAPABILITIES_MAXIMIZE" version="4.20" glib:nick="maximize" glib:name="GDK_TOPLEVEL_CAPABILITIES_MAXIMIZE">
+        <doc xml:space="preserve">Whether the toplevel can be maximized.</doc>
+      </member>
+      <member name="fullscreen" value="32" c:identifier="GDK_TOPLEVEL_CAPABILITIES_FULLSCREEN" version="4.20" glib:nick="fullscreen" glib:name="GDK_TOPLEVEL_CAPABILITIES_FULLSCREEN">
+        <doc xml:space="preserve">Whether the toplevel can be made fullscreen.</doc>
+      </member>
+      <member name="minimize" value="64" c:identifier="GDK_TOPLEVEL_CAPABILITIES_MINIMIZE" version="4.20" glib:nick="minimize" glib:name="GDK_TOPLEVEL_CAPABILITIES_MINIMIZE">
+        <doc xml:space="preserve">Whether the toplevel can be minimized.
+See [method@Gdk.Toplevel.minimize].</doc>
+      </member>
+      <member name="lower" value="128" c:identifier="GDK_TOPLEVEL_CAPABILITIES_LOWER" version="4.20" glib:nick="lower" glib:name="GDK_TOPLEVEL_CAPABILITIES_LOWER">
+        <doc xml:space="preserve">Whether the toplevel can be lowered.
+See [method@Gdk.Toplevel.lower].</doc>
+      </member>
+    </bitfield>
     <record name="ToplevelInterface" c:type="GdkToplevelInterface" disguised="1" opaque="1" glib:is-gtype-struct-for="Toplevel"/>
     <record name="ToplevelLayout" c:type="GdkToplevelLayout" opaque="1" glib:type-name="GdkToplevelLayout" glib:get-type="gdk_toplevel_layout_get_type" c:symbol-prefix="toplevel_layout">
       <doc xml:space="preserve">Contains information that is necessary to present a sovereign
