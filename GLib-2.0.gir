@@ -5150,6 +5150,12 @@ in the macro, so you shouldn't use double quotes.</doc>
         </parameter>
       </parameters>
     </function-macro>
+    <function-macro name="DEPRECATED_ENUMERATOR_IN_2_86_FOR" c:identifier="GLIB_DEPRECATED_ENUMERATOR_IN_2_86_FOR" introspectable="0">
+      <parameters>
+        <parameter name="f">
+        </parameter>
+      </parameters>
+    </function-macro>
     <function-macro name="DEPRECATED_FOR" c:identifier="GLIB_DEPRECATED_FOR" introspectable="0">
       <parameters>
         <parameter name="f">
@@ -5331,6 +5337,12 @@ in the macro, so you shouldn't use double quotes.</doc>
       </parameters>
     </function-macro>
     <function-macro name="DEPRECATED_IN_2_84_FOR" c:identifier="GLIB_DEPRECATED_IN_2_84_FOR" introspectable="0">
+      <parameters>
+        <parameter name="f">
+        </parameter>
+      </parameters>
+    </function-macro>
+    <function-macro name="DEPRECATED_IN_2_86_FOR" c:identifier="GLIB_DEPRECATED_IN_2_86_FOR" introspectable="0">
       <parameters>
         <parameter name="f">
         </parameter>
@@ -5522,6 +5534,12 @@ in the macro, so you shouldn't use double quotes.</doc>
         </parameter>
       </parameters>
     </function-macro>
+    <function-macro name="DEPRECATED_MACRO_IN_2_86_FOR" c:identifier="GLIB_DEPRECATED_MACRO_IN_2_86_FOR" introspectable="0">
+      <parameters>
+        <parameter name="f">
+        </parameter>
+      </parameters>
+    </function-macro>
     <function-macro name="DEPRECATED_TYPE_FOR" c:identifier="GLIB_DEPRECATED_TYPE_FOR" introspectable="0">
       <parameters>
         <parameter name="f">
@@ -5703,6 +5721,12 @@ in the macro, so you shouldn't use double quotes.</doc>
       </parameters>
     </function-macro>
     <function-macro name="DEPRECATED_TYPE_IN_2_84_FOR" c:identifier="GLIB_DEPRECATED_TYPE_IN_2_84_FOR" introspectable="0">
+      <parameters>
+        <parameter name="f">
+        </parameter>
+      </parameters>
+    </function-macro>
+    <function-macro name="DEPRECATED_TYPE_IN_2_86_FOR" c:identifier="GLIB_DEPRECATED_TYPE_IN_2_86_FOR" introspectable="0">
       <parameters>
         <parameter name="f">
         </parameter>
@@ -6132,6 +6156,34 @@ Can return 0 if the day is before the first Sunday of the year.</doc>
           </instance-parameter>
         </parameters>
       </method>
+      <method name="get_week_of_year" c:identifier="g_date_get_week_of_year" version="2.86">
+        <doc xml:space="preserve">Calculates the week of the year during which this date falls.
+
+The result depends on which day is considered the first day of the week,
+which varies by locale. Both `date` and `first_day_of_week` must be valid.
+
+If @date is before the start of the first week of the year (for example,
+before the first Monday in January if @first_day_of_week is
+[enum@GLib.DateWeekday.MONDAY]) then zero will be returned.</doc>
+        <return-value transfer-ownership="none">
+          <doc xml:space="preserve">week number (starting from 1), or `0` if @date is before the start
+   of the first week of the year</doc>
+          <type name="guint" c:type="guint"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="date" transfer-ownership="none">
+            <doc xml:space="preserve">a [struct@GLib.Date]</doc>
+            <type name="Date" c:type="const GDate*"/>
+          </instance-parameter>
+          <parameter name="first_day_of_week" transfer-ownership="none">
+            <doc xml:space="preserve">the day which is considered the first day of the week
+   (for example, this would be [enum@GLib.DateWeekday.SUNDAY] in US locales,
+   [enum@GLib.DateWeekday.MONDAY] in British locales, and
+   [enum@GLib.DateWeekday.SATURDAY] in Egyptian locales</doc>
+            <type name="DateWeekday" c:type="GDateWeekday"/>
+          </parameter>
+        </parameters>
+      </method>
       <method name="get_weekday" c:identifier="g_date_get_weekday">
         <doc xml:space="preserve">Returns the day of the week for a #GDate. The date must be valid.</doc>
         <return-value transfer-ownership="none">
@@ -6531,6 +6583,34 @@ one of the extra days happens to be a Sunday.)</doc>
           <parameter name="year" transfer-ownership="none">
             <doc xml:space="preserve">year to count weeks in</doc>
             <type name="DateYear" c:type="GDateYear"/>
+          </parameter>
+        </parameters>
+      </function>
+      <function name="get_weeks_in_year" c:identifier="g_date_get_weeks_in_year" version="2.86">
+        <doc xml:space="preserve">Calculates the number of weeks in the year.
+
+The result depends on which day is considered the first day of the week,
+which varies by locale. `first_day_of_week` must be valid.
+
+The result will be either 52 or 53. Years always have 52 seven-day periods,
+plus one or two extra days depending on whether it&#x2019;s a leap year. This
+function effectively calculates how many @first_day_of_week days there are in
+the year.</doc>
+        <return-value transfer-ownership="none">
+          <doc xml:space="preserve">the number of weeks in @year</doc>
+          <type name="guint8" c:type="guint8"/>
+        </return-value>
+        <parameters>
+          <parameter name="year" transfer-ownership="none">
+            <doc xml:space="preserve">year to count weeks in</doc>
+            <type name="DateYear" c:type="GDateYear"/>
+          </parameter>
+          <parameter name="first_day_of_week" transfer-ownership="none">
+            <doc xml:space="preserve">the day which is considered the first day of the week
+   (for example, this would be [enum@GLib.DateWeekday.SUNDAY] in US locales,
+   [enum@GLib.DateWeekday.MONDAY] in British locales, and
+   [enum@GLib.DateWeekday.SATURDAY] in Egyptian locales</doc>
+            <type name="DateWeekday" c:type="GDateWeekday"/>
           </parameter>
         </parameters>
       </function>
@@ -15345,7 +15425,7 @@ linked against at application run time.</doc>
       <doc xml:space="preserve">The minimum value which can be held in a #gint8.</doc>
       <type name="gint8" c:type="gint8"/>
     </constant>
-    <constant name="MINOR_VERSION" value="84" c:type="GLIB_MINOR_VERSION">
+    <constant name="MINOR_VERSION" value="85" c:type="GLIB_MINOR_VERSION">
       <doc xml:space="preserve">The minor version number of the GLib library.
 
 Like #gtk_minor_version, but from the headers used at
@@ -39749,6 +39829,19 @@ Here is an example for iterating with g_variant_iter_next_value():
     <record name="VariantType" c:type="GVariantType" opaque="1" version="2.24" glib:type-name="GVariantType" glib:get-type="g_variant_type_get_gtype" c:symbol-prefix="variant_type">
       <doc xml:space="preserve">A type in the [type@GLib.Variant] type system.
 
+[type@GLib.Variant] types are represented as strings, but have a strict
+syntax described below. All [type@GLib.VariantType]s passed to GLib must be
+valid, and they are typically expected to be static (i.e. not provided by
+user input) as they determine how binary [type@GLib.Variant] data is
+interpreted.
+
+To convert a static string to a [type@GLib.VariantType] in C, use the
+[func@GLib.VARIANT_TYPE] casting macro. When GLib is compiled with checks
+enabled, it will validate the type. To check if an arbitrary string is a
+valid [type@GLib.VariantType], use [func@GLib.VariantType.string_is_valid].
+
+## GVariant Type System
+
 This section introduces the [type@GLib.Variant] type system. It is based, in
 large part, on the D-Bus type system, with two major changes and
 some minor lifting of restrictions. The
@@ -43206,6 +43299,30 @@ artifact and the argument passed to it should not be `volatile`.</doc>
         </parameter>
       </parameters>
     </function>
+    <function name="bit_lock_and_get" c:identifier="g_bit_lock_and_get" version="2.86">
+      <doc xml:space="preserve">Sets the indicated @lock_bit in @address and atomically returns the new value.
+
+This is like [func@GLib.bit_lock], except it can atomically return the new value at
+@address (right after obtaining the lock). Thus the value returned in @out_val
+always has the @lock_bit set.</doc>
+      <return-value transfer-ownership="none">
+        <type name="none" c:type="void"/>
+      </return-value>
+      <parameters>
+        <parameter name="address" transfer-ownership="none">
+          <doc xml:space="preserve">a pointer to an integer</doc>
+          <type name="gint" c:type="gint*"/>
+        </parameter>
+        <parameter name="lock_bit" transfer-ownership="none">
+          <doc xml:space="preserve">a bit value between 0 and 31</doc>
+          <type name="guint" c:type="guint"/>
+        </parameter>
+        <parameter name="out_val" direction="out" caller-allocates="0" transfer-ownership="full" optional="1" allow-none="1">
+          <doc xml:space="preserve">return location for the new value of the integer</doc>
+          <type name="gint" c:type="gint*"/>
+        </parameter>
+      </parameters>
+    </function>
     <function name="bit_nth_lsf" c:identifier="g_bit_nth_lsf">
       <doc xml:space="preserve">Find the position of the first bit set in @mask, searching
 from (but not including) @nth_bit upwards. Bits are numbered
@@ -43311,6 +43428,36 @@ artifact and the argument passed to it should not be `volatile`.</doc>
         </parameter>
         <parameter name="lock_bit" transfer-ownership="none">
           <doc xml:space="preserve">a bit value between 0 and 31</doc>
+          <type name="gint" c:type="gint"/>
+        </parameter>
+      </parameters>
+    </function>
+    <function name="bit_unlock_and_set" c:identifier="g_bit_unlock_and_set" version="2.86">
+      <doc xml:space="preserve">This is like [func@GLib.bit_unlock]() but also atomically sets @address to
+@val.
+
+If @preserve_mask is not zero, then the @preserve_mask bits will be
+preserved in @address and are not set to @val.
+
+Note that the @lock_bit bit will be always unset regardless of
+@val, @preserve_mask and the currently set value in @address.</doc>
+      <return-value transfer-ownership="none">
+        <type name="none" c:type="void"/>
+      </return-value>
+      <parameters>
+        <parameter name="address" transfer-ownership="none">
+          <doc xml:space="preserve">a pointer to an integer</doc>
+          <type name="gint" c:type="gint*"/>
+        </parameter>
+        <parameter name="lock_bit" transfer-ownership="none">
+          <doc xml:space="preserve">a bit value between 0 and 31</doc>
+          <type name="guint" c:type="guint"/>
+        </parameter>
+        <parameter name="new_val" transfer-ownership="none">
+          <type name="gint" c:type="gint"/>
+        </parameter>
+        <parameter name="preserve_mask" transfer-ownership="none">
+          <doc xml:space="preserve">mask for bits from @address to preserve</doc>
           <type name="gint" c:type="gint"/>
         </parameter>
       </parameters>
@@ -45517,6 +45664,34 @@ one of the extra days happens to be a Sunday.)</doc>
         <parameter name="year" transfer-ownership="none">
           <doc xml:space="preserve">year to count weeks in</doc>
           <type name="DateYear" c:type="GDateYear"/>
+        </parameter>
+      </parameters>
+    </function>
+    <function name="date_get_weeks_in_year" c:identifier="g_date_get_weeks_in_year" moved-to="Date.get_weeks_in_year" version="2.86">
+      <doc xml:space="preserve">Calculates the number of weeks in the year.
+
+The result depends on which day is considered the first day of the week,
+which varies by locale. `first_day_of_week` must be valid.
+
+The result will be either 52 or 53. Years always have 52 seven-day periods,
+plus one or two extra days depending on whether it&#x2019;s a leap year. This
+function effectively calculates how many @first_day_of_week days there are in
+the year.</doc>
+      <return-value transfer-ownership="none">
+        <doc xml:space="preserve">the number of weeks in @year</doc>
+        <type name="guint8" c:type="guint8"/>
+      </return-value>
+      <parameters>
+        <parameter name="year" transfer-ownership="none">
+          <doc xml:space="preserve">year to count weeks in</doc>
+          <type name="DateYear" c:type="GDateYear"/>
+        </parameter>
+        <parameter name="first_day_of_week" transfer-ownership="none">
+          <doc xml:space="preserve">the day which is considered the first day of the week
+   (for example, this would be [enum@GLib.DateWeekday.SUNDAY] in US locales,
+   [enum@GLib.DateWeekday.MONDAY] in British locales, and
+   [enum@GLib.DateWeekday.SATURDAY] in Egyptian locales</doc>
+          <type name="DateWeekday" c:type="GDateWeekday"/>
         </parameter>
       </parameters>
     </function>
@@ -51814,8 +51989,8 @@ only use this on the lowest bits.</doc>
         <parameter name="preserve_mask" transfer-ownership="none">
           <doc xml:space="preserve">if non-zero, those bits of the current pointer in @address
   are preserved.
-  Note that the @lock_bit bit will be always set according to @set,
-  regardless of @preserve_mask and the currently set value in @address.</doc>
+  Note that the @lock_bit bit will be always unset regardless of
+  @ptr, @preserve_mask and the currently set value in @address.</doc>
           <type name="guintptr" c:type="guintptr"/>
         </parameter>
       </parameters>
@@ -53594,12 +53769,15 @@ in contrast to g_set_application_name().
 If you are using #GApplication the program name is set in
 g_application_run(). In case of GDK or GTK it is set in
 gdk_init(), which is called by gtk_init() and the
-#GtkApplication::startup handler. The program name is found by
-taking the last component of @argv[0].
+#GtkApplication::startup handler. By default, the program name is
+found by taking the last component of @argv[0].
 
 Since GLib 2.72, this function can be called multiple times
 and is fully thread safe. Prior to GLib 2.72, this function
-could only be called once per process.</doc>
+could only be called once per process.
+
+See the [GTK documentation](https://docs.gtk.org/gtk4/migrating-3to4.html#set-a-proper-application-id)
+for requirements on integrating g_set_prgname() with GTK applications.</doc>
       <return-value transfer-ownership="none">
         <type name="none" c:type="void"/>
       </return-value>
