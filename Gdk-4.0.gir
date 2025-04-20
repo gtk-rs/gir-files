@@ -582,7 +582,10 @@ Supported values:
 Supported values:
 
 - 0: RGB
-- 2: unspecified</doc>
+- 1: BT.709
+- 2: unspecified
+- 5,6: BT.601
+- 9: BT.2020</doc>
         <type name="guint" c:type="guint"/>
       </property>
       <property name="range" version="4.16" writable="1" transfer-ownership="none" setter="set_range" getter="get_range" default-value="GDK_CICP_RANGE_NARROW">
@@ -16399,7 +16402,319 @@ the alpha value.</doc>
       <member name="x8b8g8r8" value="32" c:identifier="GDK_MEMORY_X8B8G8R8" version="4.14" glib:nick="x8b8g8r8" glib:name="GDK_MEMORY_X8B8G8R8">
         <doc xml:space="preserve">4 bytes; for unused, blue, green, red.</doc>
       </member>
-      <member name="n_formats" value="33" c:identifier="GDK_MEMORY_N_FORMATS" glib:nick="n-formats" glib:name="GDK_MEMORY_N_FORMATS">
+      <member name="g8_b8r8_420" value="33" c:identifier="GDK_MEMORY_G8_B8R8_420" version="4.20" glib:nick="g8-b8r8-420" glib:name="GDK_MEMORY_G8_B8R8_420">
+        <doc xml:space="preserve">Multiplane format with 2 planes.
+
+The first plane contains the first channel, usually containing
+luma values.
+The second plane with interleaved chroma values, Cb followed by Cr.
+Subsampled in both the X and Y direction.
+
+Commonly known by the fourcc "NV12".</doc>
+      </member>
+      <member name="g8_r8b8_420" value="34" c:identifier="GDK_MEMORY_G8_R8B8_420" version="4.20" glib:nick="g8-r8b8-420" glib:name="GDK_MEMORY_G8_R8B8_420">
+        <doc xml:space="preserve">Multiplane format with 2 planes.
+
+The first plane contains the first channel, usually containing
+luma values.
+The second plane with interleaved chroma values, Cr followed by Cb.
+Subsampled in both the X and Y direction.
+
+Commonly known by the fourcc "NV21".</doc>
+      </member>
+      <member name="g8_b8r8_422" value="35" c:identifier="GDK_MEMORY_G8_B8R8_422" version="4.20" glib:nick="g8-b8r8-422" glib:name="GDK_MEMORY_G8_B8R8_422">
+        <doc xml:space="preserve">Multiplane format with 2 planes.
+
+The first plane contains the first channel, usually containing
+luma values.
+The second plane with interleaved chroma values, Cb followed by Cr.
+Subsampled in the X direction.
+
+Commonly known by the fourcc "NV16".</doc>
+      </member>
+      <member name="g8_r8b8_422" value="36" c:identifier="GDK_MEMORY_G8_R8B8_422" version="4.20" glib:nick="g8-r8b8-422" glib:name="GDK_MEMORY_G8_R8B8_422">
+        <doc xml:space="preserve">Multiplane format with 2 planes.
+
+The first plane contains the first channel, usually containing
+luma values.
+The second plane with interleaved chroma values, Cr followed by Cb.
+Subsampled in the X direction.
+
+Commonly known by the fourcc "NV61".</doc>
+      </member>
+      <member name="g8_b8r8_444" value="37" c:identifier="GDK_MEMORY_G8_B8R8_444" version="4.20" glib:nick="g8-b8r8-444" glib:name="GDK_MEMORY_G8_B8R8_444">
+        <doc xml:space="preserve">Multiplane format with 2 planes.
+
+The first plane contains the first channel, usually containing
+luma values.
+The second plane with interleaved chroma values, Cb followed by Cr.
+This format is not subsampled.
+
+Commonly known by the fourcc "NV24".</doc>
+      </member>
+      <member name="g8_r8b8_444" value="38" c:identifier="GDK_MEMORY_G8_R8B8_444" version="4.20" glib:nick="g8-r8b8-444" glib:name="GDK_MEMORY_G8_R8B8_444">
+        <doc xml:space="preserve">Multiplane format with 2 planes.
+
+The first plane contains the first channel, usually containing
+luma values.
+The second plane with interleaved chroma values, Cr followed by Cb.
+This format is not subsampled.
+
+Commonly known by the fourcc "NV42".</doc>
+      </member>
+      <member name="g10x6_b10x6r10x6_420" value="39" c:identifier="GDK_MEMORY_G10X6_B10X6R10X6_420" version="4.20" glib:nick="g10x6-b10x6r10x6-420" glib:name="GDK_MEMORY_G10X6_B10X6R10X6_420">
+        <doc xml:space="preserve">Multiplane format with 2 planes.
+
+Each channel is a 16 bit integer, but only the highest 10 bits are used.
+
+The first plane contains the first channel, usually containing
+luma values.
+The second plane with interleaved chroma values, Cr followed by Cb.
+This format is not subsampled.
+
+Commonly known by the fourcc "P010".</doc>
+      </member>
+      <member name="g12x4_b12x4r12x4_420" value="40" c:identifier="GDK_MEMORY_G12X4_B12X4R12X4_420" version="4.20" glib:nick="g12x4-b12x4r12x4-420" glib:name="GDK_MEMORY_G12X4_B12X4R12X4_420">
+        <doc xml:space="preserve">Multiplane format with 2 planes.
+
+Each channel is a 16 bit integer, but only the highest 10 bits are used.
+
+The first plane contains the first channel, usually containing
+luma values.
+The second plane with interleaved chroma values, Cr followed by Cb.
+This format is not subsampled.
+
+Commonly known by the fourcc "P012".</doc>
+      </member>
+      <member name="g16_b16r16_420" value="41" c:identifier="GDK_MEMORY_G16_B16R16_420" version="4.20" glib:nick="g16-b16r16-420" glib:name="GDK_MEMORY_G16_B16R16_420">
+        <doc xml:space="preserve">Multiplane format with 2 planes.
+
+Each channel is a 16 bit integer.
+
+The first plane contains the first channel, usually containing
+luma values.
+The second plane with interleaved chroma values, Cr followed by Cb.
+This format is not subsampled.
+
+Commonly known by the fourcc "P016".</doc>
+      </member>
+      <member name="g8_b8_r8_410" value="42" c:identifier="GDK_MEMORY_G8_B8_R8_410" version="4.20" glib:nick="g8-b8-r8-410" glib:name="GDK_MEMORY_G8_B8_R8_410">
+        <doc xml:space="preserve">Multiplane format with 3 planes.
+
+Each channel is a 8 bit integer.
+
+The first plane usually contains the luma channel. It is mapped
+into the 2nd channel.
+
+The second plane usually contains the first chroma chanel.
+Subsampled in both the X and Y direction with 4:1 ratio. It is
+mapped into the 3rd channel.
+
+The third plane usually contains the second chroma channel.
+Subsampled in both the X and Y direction with 4:1 ratio. It is
+mapped into the 1st channel.
+
+Commonly known by the fourcc "YUV410".</doc>
+      </member>
+      <member name="g8_r8_b8_410" value="43" c:identifier="GDK_MEMORY_G8_R8_B8_410" version="4.20" glib:nick="g8-r8-b8-410" glib:name="GDK_MEMORY_G8_R8_B8_410">
+        <doc xml:space="preserve">Multiplane format with 3 planes.
+
+Each channel is a 8 bit integer.
+
+The first plane usually contains the luma channel. It is mapped
+into the 2nd channel.
+
+The second plane usually contains the second chroma chanel.
+Subsampled in both the X and Y direction with 4:1 ratio. It is
+mapped into the 1st channel.
+
+The third plane usually contains the first chroma channel.
+Subsampled in both the X and Y direction with 4:1 ratio. It is
+mapped into the 3rd channel.
+
+Commonly known by the fourcc "YVU410".</doc>
+      </member>
+      <member name="g8_b8_r8_411" value="44" c:identifier="GDK_MEMORY_G8_B8_R8_411" version="4.20" glib:nick="g8-b8-r8-411" glib:name="GDK_MEMORY_G8_B8_R8_411">
+        <doc xml:space="preserve">Multiplane format with 3 planes.
+
+Each channel is a 8 bit integer.
+
+The first plane usually contains the luma channel. It is mapped
+into the 2nd channel.
+
+The second plane usually contains the first chroma chanel.
+Subsampled in the X direction with 4:1 ratio. It is
+mapped into the 3rd channel.
+
+The third plane usually contains the second chroma channel.
+Subsampled in the X direction with 4:1 ratio. It is
+mapped into the 1st channel.
+
+Commonly known by the fourcc "YUV411".</doc>
+      </member>
+      <member name="g8_r8_b8_411" value="45" c:identifier="GDK_MEMORY_G8_R8_B8_411" version="4.20" glib:nick="g8-r8-b8-411" glib:name="GDK_MEMORY_G8_R8_B8_411">
+        <doc xml:space="preserve">Multiplane format with 3 planes.
+
+Each channel is a 8 bit integer.
+
+The first plane usually contains the luma channel. It is mapped
+into the 2nd channel.
+
+The second plane usually contains the second chroma chanel.
+Subsampled in the X direction with 4:1 ratio. It is
+mapped into the 1st channel.
+
+The third plane usually contains the first chroma channel.
+Subsampled in the X direction with 4:1 ratio. It is
+mapped into the 3rd channel.
+
+Commonly known by the fourcc "YVU411".</doc>
+      </member>
+      <member name="g8_b8_r8_420" value="46" c:identifier="GDK_MEMORY_G8_B8_R8_420" version="4.20" glib:nick="g8-b8-r8-420" glib:name="GDK_MEMORY_G8_B8_R8_420">
+        <doc xml:space="preserve">Multiplane format with 3 planes.
+
+Each channel is a 8 bit integer.
+
+The first plane usually contains the luma channel. It is mapped
+into the 2nd channel.
+
+The second plane usually contains the first chroma chanel.
+Subsampled in both the X and Y direction. It is mapped into the
+3rd channel.
+
+The third plane usually contains the second chroma channel.
+Subsampled in both the X and Y direction. It is mapped into the
+1st channel.
+
+Commonly known by the fourcc "YUV420".</doc>
+      </member>
+      <member name="g8_r8_b8_420" value="47" c:identifier="GDK_MEMORY_G8_R8_B8_420" version="4.20" glib:nick="g8-r8-b8-420" glib:name="GDK_MEMORY_G8_R8_B8_420">
+        <doc xml:space="preserve">Multiplane format with 3 planes.
+
+Each channel is a 8 bit integer.
+
+The first plane usually contains the luma channel. It is mapped
+into the 2nd channel.
+
+The second plane usually contains the second chroma chanel.
+Subsampled in both the X and Y direction. It is mapped into the
+1st channel.
+
+The third plane usually contains the first chroma channel.
+Subsampled in both the X and Y direction. It is mapped into the
+3rd channel.
+
+Commonly known by the fourcc "YVU420".</doc>
+      </member>
+      <member name="g8_b8_r8_422" value="48" c:identifier="GDK_MEMORY_G8_B8_R8_422" version="4.20" glib:nick="g8-b8-r8-422" glib:name="GDK_MEMORY_G8_B8_R8_422">
+        <doc xml:space="preserve">Multiplane format with 3 planes.
+
+Each channel is a 8 bit integer.
+
+The first plane usually contains the luma channel. It is mapped
+into the 2nd channel.
+
+The second plane usually contains the first chroma chanel.
+Subsampled in the X direction. It is mapped into the 3rd channel.
+
+The third plane usually contains the second chroma channel.
+Subsampled in the X direction. It is mapped into the 1st channel.
+
+Commonly known by the fourcc "YUV422".</doc>
+      </member>
+      <member name="g8_r8_b8_422" value="49" c:identifier="GDK_MEMORY_G8_R8_B8_422" version="4.20" glib:nick="g8-r8-b8-422" glib:name="GDK_MEMORY_G8_R8_B8_422">
+        <doc xml:space="preserve">Multiplane format with 3 planes.
+
+Each channel is a 8 bit integer.
+
+The first plane usually contains the luma channel. It is mapped
+into the 2nd channel.
+
+The second plane usually contains the second chroma chanel.
+Subsampled in the X direction. It is mapped into the 1st channel.
+
+The third plane usually contains the first chroma channel.
+Subsampled in the X direction. It is mapped into the 3rd channel.
+
+Commonly known by the fourcc "YVU422".</doc>
+      </member>
+      <member name="g8_b8_r8_444" value="50" c:identifier="GDK_MEMORY_G8_B8_R8_444" version="4.20" glib:nick="g8-b8-r8-444" glib:name="GDK_MEMORY_G8_B8_R8_444">
+        <doc xml:space="preserve">Multiplane format with 3 planes.
+
+Each channel is a 8 bit integer.
+
+The first plane usually contains the luma channel. It is mapped
+into the 2nd channel.
+
+The second plane usually contains the first chroma chanel. It is
+mapped into the 3rd channel.
+
+The third plane usually contains the second chroma channel. It is
+mapped into the 1st channel.
+
+Commonly known by the fourcc "YUV444".</doc>
+      </member>
+      <member name="g8_r8_b8_444" value="51" c:identifier="GDK_MEMORY_G8_R8_B8_444" version="4.20" glib:nick="g8-r8-b8-444" glib:name="GDK_MEMORY_G8_R8_B8_444">
+        <doc xml:space="preserve">Multiplane format with 3 planes.
+
+Each channel is a 8 bit integer.
+
+The first plane usually contains the luma channel. It is mapped
+into the 2nd channel.
+
+The second plane usually contains the second chroma chanel.
+Subsampled in the X direction. It is mapped into the 1st channel.
+
+The third plane usually contains the first chroma channel.
+Subsampled in the X direction. It is mapped into the 3rd channel.
+
+Commonly known by the fourcc "YVU444".</doc>
+      </member>
+      <member name="g8b8g8r8_422" value="52" c:identifier="GDK_MEMORY_G8B8G8R8_422" version="4.20" glib:nick="g8b8g8r8-422" glib:name="GDK_MEMORY_G8B8G8R8_422">
+        <doc xml:space="preserve">Packed format with subsampled channels.
+
+Each channel is a 8 bit integer. The red and blue/chroma channels
+are subsampled and interleaved with the green/luma channel.
+
+Each block contains 2 pixels, so the width must be a multiple of
+2.
+
+Commonly known by the fourcc "YUYV".</doc>
+      </member>
+      <member name="g8r8g8b8_422" value="53" c:identifier="GDK_MEMORY_G8R8G8B8_422" version="4.20" glib:nick="g8r8g8b8-422" glib:name="GDK_MEMORY_G8R8G8B8_422">
+        <doc xml:space="preserve">Packed format with subsampled channels.
+
+Each channel is a 8 bit integer. The red and blue/chroma channels
+are subsampled and interleaved with the green/luma channel.
+
+Each block contains 2 pixels, so the width must be a multiple of
+2.
+
+Commonly known by the fourcc "YVYU".</doc>
+      </member>
+      <member name="r8g8b8g8_422" value="54" c:identifier="GDK_MEMORY_R8G8B8G8_422" version="4.20" glib:nick="r8g8b8g8-422" glib:name="GDK_MEMORY_R8G8B8G8_422">
+        <doc xml:space="preserve">Packed format with subsampled channels.
+
+Each channel is a 8 bit integer. The red and blue/chroma channels
+are subsampled and interleaved with the green/luma channel.
+
+Each block contains 2 pixels, so the width must be a multiple of
+2.
+
+Commonly known by the fourcc "VYUY".</doc>
+      </member>
+      <member name="b8g8r8g8_422" value="55" c:identifier="GDK_MEMORY_B8G8R8G8_422" version="4.20" glib:nick="b8g8r8g8-422" glib:name="GDK_MEMORY_B8G8R8G8_422">
+        <doc xml:space="preserve">Packed format with subsampled channels.
+
+Each channel is a 8 bit integer. The red and blue/chroma channels
+are subsampled and interleaved with the green/luma channel.
+
+Each block contains 2 pixels, so the width must be a multiple of
+2.
+
+Commonly known by the fourcc "UYVY".</doc>
+      </member>
+      <member name="n_formats" value="56" c:identifier="GDK_MEMORY_N_FORMATS" glib:nick="n-formats" glib:name="GDK_MEMORY_N_FORMATS">
         <doc xml:space="preserve">The number of formats. This value will change as
   more formats get added, so do not rely on its concrete integer.</doc>
       </member>
@@ -16534,6 +16849,19 @@ or 0 if the height wasn't set.</doc>
           </instance-parameter>
         </parameters>
       </method>
+      <method name="get_offset" c:identifier="gdk_memory_texture_builder_get_offset">
+        <return-value transfer-ownership="none">
+          <type name="gsize" c:type="gsize"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="self" transfer-ownership="none">
+            <type name="MemoryTextureBuilder" c:type="GdkMemoryTextureBuilder*"/>
+          </instance-parameter>
+          <parameter name="plane" transfer-ownership="none">
+            <type name="guint" c:type="unsigned int"/>
+          </parameter>
+        </parameters>
+      </method>
       <method name="get_stride" c:identifier="gdk_memory_texture_builder_get_stride" glib:get-property="stride" version="4.16">
         <doc xml:space="preserve">Gets the stride previously set via gdk_memory_texture_builder_set_stride().</doc>
         <return-value transfer-ownership="none">
@@ -16545,6 +16873,19 @@ or 0 if the height wasn't set.</doc>
             <doc xml:space="preserve">a `GdkMemoryTextureBuilder`</doc>
             <type name="MemoryTextureBuilder" c:type="GdkMemoryTextureBuilder*"/>
           </instance-parameter>
+        </parameters>
+      </method>
+      <method name="get_stride_for_plane" c:identifier="gdk_memory_texture_builder_get_stride_for_plane">
+        <return-value transfer-ownership="none">
+          <type name="gsize" c:type="gsize"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="self" transfer-ownership="none">
+            <type name="MemoryTextureBuilder" c:type="GdkMemoryTextureBuilder*"/>
+          </instance-parameter>
+          <parameter name="plane" transfer-ownership="none">
+            <type name="guint" c:type="unsigned int"/>
+          </parameter>
         </parameters>
       </method>
       <method name="get_update_region" c:identifier="gdk_memory_texture_builder_get_update_region" glib:get-property="update-region" version="4.16">
@@ -16647,7 +16988,8 @@ The default is `GDK_MEMORY_R8G8B8A8_PREMULTIPLIED`.</doc>
       <method name="set_height" c:identifier="gdk_memory_texture_builder_set_height" glib:set-property="height" version="4.16">
         <doc xml:space="preserve">Sets the height of the texture.
 
-The height must be set before calling [method@Gdk.MemoryTextureBuilder.build].</doc>
+The height must be set before calling [method@Gdk.MemoryTextureBuilder.build]
+and conform to size requirements of the provided format.</doc>
         <return-value transfer-ownership="none">
           <type name="none" c:type="void"/>
         </return-value>
@@ -16659,6 +17001,22 @@ The height must be set before calling [method@Gdk.MemoryTextureBuilder.build].</
           <parameter name="height" transfer-ownership="none">
             <doc xml:space="preserve">The texture's height or 0 to unset</doc>
             <type name="gint" c:type="int"/>
+          </parameter>
+        </parameters>
+      </method>
+      <method name="set_offset" c:identifier="gdk_memory_texture_builder_set_offset">
+        <return-value transfer-ownership="none">
+          <type name="none" c:type="void"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="self" transfer-ownership="none">
+            <type name="MemoryTextureBuilder" c:type="GdkMemoryTextureBuilder*"/>
+          </instance-parameter>
+          <parameter name="plane" transfer-ownership="none">
+            <type name="guint" c:type="unsigned int"/>
+          </parameter>
+          <parameter name="offset" transfer-ownership="none">
+            <type name="gsize" c:type="gsize"/>
           </parameter>
         </parameters>
       </method>
@@ -16676,6 +17034,22 @@ The rowstride must be set before calling [method@Gdk.MemoryTextureBuilder.build]
           </instance-parameter>
           <parameter name="stride" transfer-ownership="none">
             <doc xml:space="preserve">the stride or 0 to unset</doc>
+            <type name="gsize" c:type="gsize"/>
+          </parameter>
+        </parameters>
+      </method>
+      <method name="set_stride_for_plane" c:identifier="gdk_memory_texture_builder_set_stride_for_plane">
+        <return-value transfer-ownership="none">
+          <type name="none" c:type="void"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="self" transfer-ownership="none">
+            <type name="MemoryTextureBuilder" c:type="GdkMemoryTextureBuilder*"/>
+          </instance-parameter>
+          <parameter name="plane" transfer-ownership="none">
+            <type name="guint" c:type="unsigned int"/>
+          </parameter>
+          <parameter name="stride" transfer-ownership="none">
             <type name="gsize" c:type="gsize"/>
           </parameter>
         </parameters>
@@ -16727,7 +17101,8 @@ See [method@Gdk.MemoryTextureBuilder.set_update_region] for an explanation.</doc
       <method name="set_width" c:identifier="gdk_memory_texture_builder_set_width" glib:set-property="width" version="4.16">
         <doc xml:space="preserve">Sets the width of the texture.
 
-The width must be set before calling [method@Gdk.MemoryTextureBuilder.build].</doc>
+The width must be set before calling [method@Gdk.MemoryTextureBuilder.build]
+and conform to size requirements of the provided format.</doc>
         <return-value transfer-ownership="none">
           <type name="none" c:type="void"/>
         </return-value>
@@ -20067,7 +20442,10 @@ be stored in the stride value.
 This function will abort if it tries to download a large texture and
 fails to allocate memory. If you think that may happen, you should handle
 memory allocation yourself and use [method@Gdk.TextureDownloader.download_into]
-once allocation succeeded.</doc>
+once allocation succeeded.
+
+This function cannot be used with a multiplanar format. Use
+[method@Gdk.TextureDownloader.download_bytes_with_planes] for that purpose.</doc>
         <return-value transfer-ownership="full">
           <doc xml:space="preserve">The downloaded pixels</doc>
           <type name="GLib.Bytes" c:type="GBytes*"/>
@@ -20083,8 +20461,39 @@ once allocation succeeded.</doc>
           </parameter>
         </parameters>
       </method>
+      <method name="download_bytes_with_planes" c:identifier="gdk_texture_downloader_download_bytes_with_planes" version="4.20">
+        <doc xml:space="preserve">Downloads the given texture pixels into a `GBytes`. The offsets and
+strides of the resulting buffer will be stored in the respective values.
+
+If the format does have less than 4 planes, the remaining offsets and strides will be
+set to `0`.</doc>
+        <return-value transfer-ownership="full">
+          <doc xml:space="preserve">The downloaded pixels</doc>
+          <type name="GLib.Bytes" c:type="GBytes*"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="self" transfer-ownership="none">
+            <doc xml:space="preserve">the downloader</doc>
+            <type name="TextureDownloader" c:type="const GdkTextureDownloader*"/>
+          </instance-parameter>
+          <parameter name="out_offsets" direction="out" caller-allocates="0" transfer-ownership="full">
+            <doc xml:space="preserve">The offsets of the resulting data planes in bytes</doc>
+            <array zero-terminated="0" c:type="gsize*" fixed-size="4">
+              <type name="gsize" c:type="gsize"/>
+            </array>
+          </parameter>
+          <parameter name="out_strides" direction="out" caller-allocates="0" transfer-ownership="full">
+            <doc xml:space="preserve">The stride of the resulting data planes in bytes</doc>
+            <array zero-terminated="0" c:type="gsize*" fixed-size="4">
+              <type name="gsize" c:type="gsize"/>
+            </array>
+          </parameter>
+        </parameters>
+      </method>
       <method name="download_into" c:identifier="gdk_texture_downloader_download_into" version="4.10">
-        <doc xml:space="preserve">Downloads the @texture into local memory.</doc>
+        <doc xml:space="preserve">Downloads the @texture into local memory.
+
+This function cannot be used with a multiplanar format.</doc>
         <return-value transfer-ownership="none">
           <type name="none" c:type="void"/>
         </return-value>
@@ -20370,12 +20779,28 @@ calling this function.</doc>
           </parameter>
         </parameters>
       </method>
-      <method name="get_capabilities" c:identifier="gdk_toplevel_get_capabilities" glib:get-property="capabilities">
+      <method name="get_capabilities" c:identifier="gdk_toplevel_get_capabilities" glib:get-property="capabilities" version="4.20">
+        <doc xml:space="preserve">The capabilities that are available for this toplevel.</doc>
         <return-value transfer-ownership="none">
           <type name="ToplevelCapabilities" c:type="GdkToplevelCapabilities"/>
         </return-value>
         <parameters>
           <instance-parameter name="toplevel" transfer-ownership="none">
+            <doc xml:space="preserve">a `GdkToplevel`</doc>
+            <type name="Toplevel" c:type="GdkToplevel*"/>
+          </instance-parameter>
+        </parameters>
+      </method>
+      <method name="get_gravity" c:identifier="gdk_toplevel_get_gravity" glib:get-property="gravity" version="4.20">
+        <doc xml:space="preserve">Returns the gravity that is used when changing the toplevel
+size programmatically.</doc>
+        <return-value transfer-ownership="none">
+          <doc xml:space="preserve">the gravity</doc>
+          <type name="Gravity" c:type="GdkGravity"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="toplevel" transfer-ownership="none">
+            <doc xml:space="preserve">a toplevel</doc>
             <type name="Toplevel" c:type="GdkToplevel*"/>
           </instance-parameter>
         </parameters>
@@ -20538,6 +20963,23 @@ that it should offer the user a way to close the surface.</doc>
           <parameter name="deletable" transfer-ownership="none">
             <doc xml:space="preserve">%TRUE to request a delete button</doc>
             <type name="gboolean" c:type="gboolean"/>
+          </parameter>
+        </parameters>
+      </method>
+      <method name="set_gravity" c:identifier="gdk_toplevel_set_gravity" glib:set-property="gravity" version="4.20">
+        <doc xml:space="preserve">Sets the gravity that is used when changing the toplevel
+size programmatically.</doc>
+        <return-value transfer-ownership="none">
+          <type name="none" c:type="void"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="toplevel" transfer-ownership="none">
+            <doc xml:space="preserve">a toplevel</doc>
+            <type name="Toplevel" c:type="GdkToplevel*"/>
+          </instance-parameter>
+          <parameter name="gravity" transfer-ownership="none">
+            <doc xml:space="preserve">the new gravity</doc>
+            <type name="Gravity" c:type="GdkGravity"/>
           </parameter>
         </parameters>
       </method>
@@ -20723,6 +21165,19 @@ tiled window states.</doc>
       <property name="fullscreen-mode" writable="1" transfer-ownership="none" default-value="GDK_FULLSCREEN_ON_CURRENT_MONITOR">
         <doc xml:space="preserve">The fullscreen mode of the surface.</doc>
         <type name="FullscreenMode"/>
+      </property>
+      <property name="gravity" version="4.20" writable="1" transfer-ownership="none" setter="set_gravity" getter="get_gravity" default-value="GDK_GRAVITY_NORTH_EAST">
+        <doc xml:space="preserve">The gravity to use when resizing a surface programmatically.
+
+Gravity describes which point of the surface we want to keep
+fixed (meaning that the surface will grow in the opposite direction).
+For example, a gravity of `GDK_GRAVITY_NORTH_EAST` means that we
+want to fix top right corner of the surface.
+
+This property is just a hint that may affect the result when negotiating
+toplevel sizes with the windowing system. It does not affect interactive
+resizes started with [method@Gdk.Toplevel.begin_resize].</doc>
+        <type name="Gravity"/>
       </property>
       <property name="icon-list" writable="1" transfer-ownership="none" setter="set_icon_list">
         <doc xml:space="preserve">A list of textures to use as icon.</doc>
