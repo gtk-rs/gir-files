@@ -2870,7 +2870,9 @@ The array will grow in size automatically if necessary.</doc>
           </parameter>
           <parameter name="data" transfer-ownership="none">
             <doc xml:space="preserve">the byte data to be added</doc>
-            <type name="guint8" c:type="const guint8*"/>
+            <array length="2" zero-terminated="0" c:type="const guint8*">
+              <type name="guint8" c:type="guint8"/>
+            </array>
           </parameter>
           <parameter name="len" transfer-ownership="none">
             <doc xml:space="preserve">the number of bytes to add</doc>
@@ -2883,10 +2885,13 @@ The array will grow in size automatically if necessary.</doc>
 %TRUE it frees the actual byte data. If the reference count of
 @array is greater than one, the #GByteArray wrapper is preserved but
 the size of @array will be set to zero.</doc>
-        <return-value transfer-ownership="none">
-          <doc xml:space="preserve">the element data if @free_segment is %FALSE, otherwise
-         %NULL.  The element data should be freed using g_free().</doc>
-          <type name="guint8" c:type="guint8*"/>
+        <return-value transfer-ownership="full" nullable="1">
+          <doc xml:space="preserve">the element data if
+  @free_segment is %FALSE, otherwise %NULL.  The element data
+  should be freed using g_free().</doc>
+          <array zero-terminated="0" c:type="guint8*">
+            <type name="guint8" c:type="guint8"/>
+          </array>
         </return-value>
         <parameters>
           <parameter name="array" transfer-ownership="none">
@@ -2979,7 +2984,9 @@ The array will grow in size automatically if necessary.</doc>
           </parameter>
           <parameter name="data" transfer-ownership="none">
             <doc xml:space="preserve">the byte data to be added</doc>
-            <type name="guint8" c:type="const guint8*"/>
+            <array length="2" zero-terminated="0" c:type="const guint8*">
+              <type name="guint8" c:type="guint8"/>
+            </array>
           </parameter>
           <parameter name="len" transfer-ownership="none">
             <doc xml:space="preserve">the number of bytes to add</doc>
@@ -3171,9 +3178,11 @@ user data argument.</doc>
 the underlying array is preserved for use elsewhere and returned
 to the caller.</doc>
         <return-value transfer-ownership="full">
-          <doc xml:space="preserve">the element data, which should be
-    freed using g_free().</doc>
-          <type name="guint8" c:type="guint8*"/>
+          <doc xml:space="preserve">the element data,
+  which should be freed using g_free().</doc>
+          <array length="1" zero-terminated="0" c:type="guint8*">
+            <type name="guint8" c:type="guint8"/>
+          </array>
         </return-value>
         <parameters>
           <parameter name="array" transfer-ownership="none">
@@ -20641,9 +20650,12 @@ This function is not thread-safe. If using a #GPtrArray from multiple
 threads, use only the atomic g_ptr_array_ref() and g_ptr_array_unref()
 functions.</doc>
         <return-value transfer-ownership="full" nullable="1">
-          <doc xml:space="preserve">the pointer array if @free_segment is
-    %FALSE, otherwise %NULL. The pointer array should be freed using g_free().</doc>
-          <type name="gpointer" c:type="gpointer*"/>
+          <doc xml:space="preserve">the pointer array if
+  @free_segment is %FALSE, otherwise %NULL. The pointer array should
+  be freed using g_free().</doc>
+          <array zero-terminated="0" c:type="gpointer*">
+            <type name="gpointer" c:type="gpointer"/>
+          </array>
         </return-value>
         <parameters>
           <parameter name="array" transfer-ownership="none">
@@ -21403,10 +21415,12 @@ g_free (chunks);
 g_assert (chunk_buffer-&gt;len == 0);
 ]|</doc>
         <return-value transfer-ownership="full" nullable="1">
-          <doc xml:space="preserve">the element data, which should be
-    freed using g_free(). This may be %NULL if the array doesn&#x2019;t have any
-    elements (i.e. if `*len` is zero).</doc>
-          <type name="gpointer" c:type="gpointer*"/>
+          <doc xml:space="preserve">the element data,
+  which should be freed using g_free(). This may be %NULL if the array
+  doesn&#x2019;t have any elements (i.e. if `*len` is zero).</doc>
+          <array length="1" zero-terminated="0" c:type="gpointer*">
+            <type name="gpointer" c:type="gpointer"/>
+          </array>
         </return-value>
         <parameters>
           <parameter name="array" transfer-ownership="none">
@@ -24646,8 +24660,8 @@ g_slist_insert_sorted() functions and so is rarely used on its own.</doc>
       <function name="append" c:identifier="g_slist_append" introspectable="0">
         <doc xml:space="preserve">Adds a new element on to the end of the list.
 
-The return value is the new start of the list, which may
-have changed, so make sure you store the new value.
+Note that the return value is the new start of the list
+if @list was empty; make sure you store the new value.
 
 Note that g_slist_append() has to traverse the entire list
 to find the end, which is inefficient when adding multiple
@@ -24667,7 +24681,7 @@ number_list = g_slist_append (number_list, GINT_TO_POINTER (27));
 number_list = g_slist_append (number_list, GINT_TO_POINTER (14));
 ]|</doc>
         <return-value>
-          <doc xml:space="preserve">the new start of the #GSList</doc>
+          <doc xml:space="preserve">either @list or the new start of the #GSList if @list was %NULL</doc>
           <type name="GLib.SList" c:type="GSList*">
             <type name="gpointer" c:type="gpointer"/>
           </type>
@@ -24982,7 +24996,7 @@ the given data (starting from 0).</doc>
       <function name="insert" c:identifier="g_slist_insert" introspectable="0">
         <doc xml:space="preserve">Inserts a new element into the list at the given position.</doc>
         <return-value>
-          <doc xml:space="preserve">the new start of the #GSList</doc>
+          <doc xml:space="preserve">the (possibly changed) start of the #GSList</doc>
           <type name="GLib.SList" c:type="GSList*">
             <type name="gpointer" c:type="gpointer"/>
           </type>
@@ -25206,8 +25220,8 @@ in the #GSList (starting from 0).</doc>
       <function name="prepend" c:identifier="g_slist_prepend" introspectable="0">
         <doc xml:space="preserve">Adds a new element on to the start of the list.
 
-The return value is the new start of the list, which
-may have changed, so make sure you store the new value.
+Note that the return value is the new start of the list,
+which will have changed, so make sure you store the new value.
 
 |[&lt;!-- language="C" --&gt;
 // Notice that it is initialized to the empty list.
@@ -25216,7 +25230,8 @@ list = g_slist_prepend (list, "last");
 list = g_slist_prepend (list, "first");
 ]|</doc>
         <return-value>
-          <doc xml:space="preserve">the new start of the #GSList</doc>
+          <doc xml:space="preserve">a pointer to the newly prepended element,
+which is the new start of the #GSList</doc>
           <type name="GLib.SList" c:type="GSList*">
             <type name="gpointer" c:type="gpointer"/>
           </type>
@@ -43660,7 +43675,9 @@ The array will grow in size automatically if necessary.</doc>
         </parameter>
         <parameter name="data" transfer-ownership="none">
           <doc xml:space="preserve">the byte data to be added</doc>
-          <type name="guint8" c:type="const guint8*"/>
+          <array length="2" zero-terminated="0" c:type="const guint8*">
+            <type name="guint8" c:type="guint8"/>
+          </array>
         </parameter>
         <parameter name="len" transfer-ownership="none">
           <doc xml:space="preserve">the number of bytes to add</doc>
@@ -43673,10 +43690,13 @@ The array will grow in size automatically if necessary.</doc>
 %TRUE it frees the actual byte data. If the reference count of
 @array is greater than one, the #GByteArray wrapper is preserved but
 the size of @array will be set to zero.</doc>
-      <return-value transfer-ownership="none">
-        <doc xml:space="preserve">the element data if @free_segment is %FALSE, otherwise
-         %NULL.  The element data should be freed using g_free().</doc>
-        <type name="guint8" c:type="guint8*"/>
+      <return-value transfer-ownership="full" nullable="1">
+        <doc xml:space="preserve">the element data if
+  @free_segment is %FALSE, otherwise %NULL.  The element data
+  should be freed using g_free().</doc>
+        <array zero-terminated="0" c:type="guint8*">
+          <type name="guint8" c:type="guint8"/>
+        </array>
       </return-value>
       <parameters>
         <parameter name="array" transfer-ownership="none">
@@ -43769,7 +43789,9 @@ The array will grow in size automatically if necessary.</doc>
         </parameter>
         <parameter name="data" transfer-ownership="none">
           <doc xml:space="preserve">the byte data to be added</doc>
-          <type name="guint8" c:type="const guint8*"/>
+          <array length="2" zero-terminated="0" c:type="const guint8*">
+            <type name="guint8" c:type="guint8"/>
+          </array>
         </parameter>
         <parameter name="len" transfer-ownership="none">
           <doc xml:space="preserve">the number of bytes to add</doc>
@@ -43961,9 +43983,11 @@ user data argument.</doc>
 the underlying array is preserved for use elsewhere and returned
 to the caller.</doc>
       <return-value transfer-ownership="full">
-        <doc xml:space="preserve">the element data, which should be
-    freed using g_free().</doc>
-        <type name="guint8" c:type="guint8*"/>
+        <doc xml:space="preserve">the element data,
+  which should be freed using g_free().</doc>
+        <array length="1" zero-terminated="0" c:type="guint8*">
+          <type name="guint8" c:type="guint8"/>
+        </array>
       </return-value>
       <parameters>
         <parameter name="array" transfer-ownership="none">
@@ -44991,7 +45015,7 @@ somewhere in the current program (or its libraries).
 
 You can make critical warnings fatal at runtime by
 setting the `G_DEBUG` environment variable (see
-[Running GLib Applications](glib-running.html)):
+[Running GLib Applications](running.html)):
 
 ```
 G_DEBUG=fatal-warnings gdb ./my-program
@@ -49399,6 +49423,40 @@ This has no effect if structured logging is enabled; see
         </parameter>
       </parameters>
     </function>
+    <function name="log_get_always_fatal" c:identifier="g_log_get_always_fatal" version="2.86">
+      <doc xml:space="preserve">Gets the current fatal mask.
+
+This is mostly used by custom log writers to make fatal messages
+(`fatal-warnings`, `fatal-criticals`) work as expected, when using the
+`G_DEBUG` environment variable (see [Running GLib Applications](running.html)).
+
+An example usage is shown below:
+
+```c
+static GLogWriterOutput
+my_custom_log_writer_fn (GLogLevelFlags log_level,
+                         const GLogField *fields,
+                         gsize n_fields,
+                         gpointer user_data)
+{
+
+   // abort if the message was fatal
+   if (log_level &amp; g_log_get_always_fatal ())
+     g_abort ();
+
+   // custom log handling code
+   ...
+   ...
+
+   // success
+   return G_LOG_WRITER_HANDLED;
+}
+```</doc>
+      <return-value transfer-ownership="none">
+        <doc xml:space="preserve">the current fatal mask</doc>
+        <type name="LogLevelFlags" c:type="GLogLevelFlags"/>
+      </return-value>
+    </function>
     <function name="log_get_debug_enabled" c:identifier="g_log_get_debug_enabled" version="2.72">
       <doc xml:space="preserve">Return whether debug output from the GLib logging system is enabled.
 
@@ -49443,7 +49501,7 @@ You can only set the levels defined by GLib to be fatal.
 
 You can also make some message levels fatal at runtime by setting
 the `G_DEBUG` environment variable (see
-[Running GLib Applications](glib-running.html)).
+[Running GLib Applications](running.html)).
 
 Libraries should not call this function, as it affects all messages logged
 by a process, including those from other libraries.
@@ -51353,7 +51411,7 @@ If "[P]roceed" is selected, the function returns.
 This function may cause different actions on non-UNIX platforms.
 
 On Windows consider using the `G_DEBUGGER` environment
-variable (see [Running GLib Applications](glib-running.html)) and
+variable (see [Running GLib Applications](running.html)) and
 calling g_on_error_stack_trace() instead.</doc>
       <return-value transfer-ownership="none">
         <type name="none" c:type="void"/>
@@ -51381,7 +51439,7 @@ When running on Windows, this function is *not* called by
 g_on_error_query(). If called directly, it will raise an
 exception, which will crash the program. If the `G_DEBUGGER` environment
 variable is set, a debugger will be invoked to attach and
-handle that exception (see [Running GLib Applications](glib-running.html)).</doc>
+handle that exception (see [Running GLib Applications](running.html)).</doc>
       <return-value transfer-ownership="none">
         <type name="none" c:type="void"/>
       </return-value>
@@ -62215,7 +62273,7 @@ parameters) then you should use [flags@GLib.LogLevelFlags.LEVEL_CRITICAL] instea
 
 You can make warnings fatal at runtime by setting the `G_DEBUG`
 environment variable (see
-[Running GLib Applications](glib-running.html)):
+[Running GLib Applications](running.html)):
 
 ```
 G_DEBUG=fatal-warnings gdb ./my-program
