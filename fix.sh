@@ -139,6 +139,8 @@ xmlstarlet ed -L \
 	-u '//_:class[@name="WaylandSeat"]/_:method[@name="get_wl_seat"]//_:type[@name="gpointer"]/@c:type' -v "gpointer" \
 	-u '//_:class[@name="WaylandSurface"]/_:method[@name="get_wl_surface"]//_:type[@name="gpointer"]/@c:type' -v "gpointer" \
 	-u '//_:class[@name="WaylandDevice"]/_:method[@name="get_xkb_keymap"]//_:type[@name="gpointer"]/@c:type' -v "gpointer" \
+	-u '//_:class[@name="WaylandDevice"]/_:method[@name="get_xkb_keymap"]//_:type[@name="gpointer"]/@c:type' -v "gpointer" \
+ 	-u '//_:class[@name="WaylandToplevel"]/_:method[@name="get_xdg_toplevel"]//_:type[@name="gpointer"]/@c:type' -v "gpointer" \
 	GdkWayland-4.0.gir
 
 # avoid always depending on x11 crate
