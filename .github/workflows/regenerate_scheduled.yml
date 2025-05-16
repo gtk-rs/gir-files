@@ -22,7 +22,7 @@ jobs:
           sudo apt-get -q upgrade
           sudo apt-get -q install binutils wget tar xmlstarlet podman python3-requests
           podman pull ghcr.io/gtk-rs/gtk4-rs/gtk4:latest
-          podman run --rm -v ./dl.py:/app/dl.py -w /app ghcr.io/gtk-rs/gtk4-rs/gtk4:latest python3 dl.py
+          podman run --rm -v "$(pwd)":/app -w /app ghcr.io/gtk-rs/gtk4-rs/gtk4:latest python3 dl.py
           ./dl-win32.sh
           python3 ./dl-gtk-macos.py
           ./reformat.sh && ./fix.sh
