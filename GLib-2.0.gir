@@ -27333,6 +27333,24 @@ destroying it will effectively unset the callback similar to calling
           </instance-parameter>
         </parameters>
       </method>
+      <method name="dup_context" c:identifier="g_source_dup_context" version="2.86">
+        <doc xml:space="preserve">Gets the [struct@GLib.MainContext] with which the source is associated.
+
+You can call this on a source that has been destroyed. You can
+always call this function on the source returned from
+[func@GLib.main_current_source].</doc>
+        <return-value transfer-ownership="full" nullable="1">
+          <doc xml:space="preserve">the [struct@GLib.MainContext] with which the
+              source is associated, or `NULL`.</doc>
+          <type name="MainContext" c:type="GMainContext*"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="source" transfer-ownership="none">
+            <doc xml:space="preserve">a #GSource</doc>
+            <type name="Source" c:type="GSource*"/>
+          </instance-parameter>
+        </parameters>
+      </method>
       <method name="get_can_recurse" c:identifier="g_source_get_can_recurse">
         <doc xml:space="preserve">Checks whether a source is allowed to be called recursively.
 see [method@GLib.Source.set_can_recurse].</doc>
@@ -27355,7 +27373,11 @@ that the [struct@GLib.MainContext] it was attached to still exists (in which
 case it will return that [struct@GLib.MainContext]). In particular, you can
 always call this function on the source returned from
 [func@GLib.main_current_source]. But calling this function on a source
-whose [struct@GLib.MainContext] has been destroyed is an error.</doc>
+whose [struct@GLib.MainContext] has been destroyed is an error.
+
+If the associated [struct@GLib.MainContext] could be destroy concurrently from
+a different thread, then this function is not safe to call and
+[method@GLib.Source.dup_context] should be used instead.</doc>
         <return-value transfer-ownership="none" nullable="1">
           <doc xml:space="preserve">the #GMainContext with which the
               source is associated, or %NULL if the context has not

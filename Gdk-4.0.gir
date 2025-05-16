@@ -1173,6 +1173,26 @@ color states will never compare equal.</doc>
           </parameter>
         </parameters>
       </method>
+      <method name="equivalent" c:identifier="gdk_color_state_equivalent" version="4.20">
+        <doc xml:space="preserve">Compares two `GdkColorStates` for equivalence.
+
+Two objects that represent the same color state should be equivalent,
+even though they may not be equal in the sense of [method@Gdk.ColorState.equal].</doc>
+        <return-value transfer-ownership="none">
+          <doc xml:space="preserve">%TRUE if the two color states are equivalent</doc>
+          <type name="gboolean" c:type="gboolean"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="self" transfer-ownership="none">
+            <doc xml:space="preserve">a `GdkColorState`</doc>
+            <type name="ColorState" c:type="GdkColorState*"/>
+          </instance-parameter>
+          <parameter name="other" transfer-ownership="none">
+            <doc xml:space="preserve">another `GdkColorStatee`</doc>
+            <type name="ColorState" c:type="GdkColorState*"/>
+          </parameter>
+        </parameters>
+      </method>
       <method name="ref" c:identifier="gdk_color_state_ref" version="4.16">
         <doc xml:space="preserve">Increase the reference count of @self.</doc>
         <return-value transfer-ownership="full">
@@ -6860,7 +6880,10 @@ If the last reference is dropped, the structure is freed.</doc>
         <doc xml:space="preserve">A touchpad hold gesture event, the current state is determined by its phase
 field.</doc>
       </member>
-      <member name="event_last" value="29" c:identifier="GDK_EVENT_LAST" glib:nick="event-last" glib:name="GDK_EVENT_LAST">
+      <member name="pad_dial" value="29" c:identifier="GDK_PAD_DIAL" glib:nick="pad-dial" glib:name="GDK_PAD_DIAL">
+        <doc xml:space="preserve">A tablet pad axis event from a "dial".</doc>
+      </member>
+      <member name="event_last" value="30" c:identifier="GDK_EVENT_LAST" glib:nick="event-last" glib:name="GDK_EVENT_LAST">
         <doc xml:space="preserve">marks the end of the GdkEventType enumeration.</doc>
       </member>
     </enumeration>
@@ -20092,12 +20115,14 @@ data.</doc>
       <implements name="Paintable"/>
       <implements name="Gio.Icon"/>
       <implements name="Gio.LoadableIcon"/>
-      <constructor name="new_for_pixbuf" c:identifier="gdk_texture_new_for_pixbuf">
+      <constructor name="new_for_pixbuf" c:identifier="gdk_texture_new_for_pixbuf" deprecated="1" deprecated-version="4.20">
         <doc xml:space="preserve">Creates a new texture object representing the `GdkPixbuf`.
 
 This function is threadsafe, so that you can e.g. use GTask
-and [method@Gio.Task.run_in_thread] to avoid blocking the main thread
-while loading a big image.</doc>
+and [method@Gio.Task.run_in_thread] to avoid blocking the main
+thread while loading a big image.</doc>
+        <doc-deprecated xml:space="preserve">Use e.g. libglycin, which can load many image
+  formats into a `GdkTexture`</doc-deprecated>
         <return-value transfer-ownership="full">
           <doc xml:space="preserve">a new `GdkTexture`</doc>
           <type name="Texture" c:type="GdkTexture*"/>
@@ -20114,6 +20139,10 @@ while loading a big image.</doc>
 
 The file format is detected automatically. The supported formats
 are PNG, JPEG and TIFF, though more formats might be available.
+
+Note that this function should not be used with untrusted data.
+Use a proper image loading framework such as libglycin, which can
+load many image formats into a `GdkTexture`.
 
 If %NULL is returned, then @error will be set.
 
@@ -20137,6 +20166,10 @@ while loading a big image.</doc>
 The file format is detected automatically. The supported formats
 are PNG, JPEG and TIFF, though more formats might be available.
 
+Note that this function should not be used with untrusted data.
+Use a proper image loading framework such as libglycin, which can
+load many image formats into a `GdkTexture`.
+
 If %NULL is returned, then @error will be set.
 
 This function is threadsafe, so that you can e.g. use GTask
@@ -20159,6 +20192,10 @@ while loading a big image.</doc>
 The file format is detected automatically. The supported formats
 are PNG, JPEG and TIFF, though more formats might be available.
 
+Note that this function should not be used with untrusted data.
+Use a proper image loading framework such as libglycin, which can
+load many image formats into a `GdkTexture`.
+
 If %NULL is returned, then @error will be set.
 
 This function is threadsafe, so that you can e.g. use GTask
@@ -20179,7 +20216,7 @@ while loading a big image.</doc>
         <doc xml:space="preserve">Creates a new texture by loading an image from a resource.
 
 The file format is detected automatically. The supported formats
-are PNG and JPEG, though more formats might be available.
+are PNG, JPEG and TIFF, though more formats might be available.
 
 It is a fatal error if @resource_path does not specify a valid
 image resource and the program will abort if that happens.
@@ -20309,9 +20346,9 @@ downloading the texture.</doc>
 
 This is a utility function intended for debugging and testing.
 If you want more control over formats, proper error handling or
-want to store to a [iface@Gio.File] or other location, you might want to
-use [method@Gdk.Texture.save_to_png_bytes] or look into the
-gdk-pixbuf library.</doc>
+want to store to a [iface@Gio.File] or other location, you might
+want to use [method@Gdk.Texture.save_to_png_bytes] or look into
+the libglycin library.</doc>
         <return-value transfer-ownership="none">
           <doc xml:space="preserve">%TRUE if saving succeeded, %FALSE on failure.</doc>
           <type name="gboolean" c:type="gboolean"/>
@@ -20337,7 +20374,7 @@ portable way to do that.
 
 If you need more control over the generated image, such as
 attaching metadata, you should look into an image handling
-library such as the gdk-pixbuf library.
+library such as the libglycin library.
 
 If you are dealing with high dynamic range float data, you
 might also want to consider [method@Gdk.Texture.save_to_tiff_bytes]
@@ -21952,11 +21989,12 @@ set with cairo_surface_set_device_offset().</doc>
         </parameter>
       </parameters>
     </function>
-    <function name="cairo_set_source_pixbuf" c:identifier="gdk_cairo_set_source_pixbuf">
+    <function name="cairo_set_source_pixbuf" c:identifier="gdk_cairo_set_source_pixbuf" deprecated="1" deprecated-version="4.20">
       <doc xml:space="preserve">Sets the given pixbuf as the source pattern for @cr.
 
 The pattern has an extend mode of %CAIRO_EXTEND_NONE and is aligned
 so that the origin of @pixbuf is @pixbuf_x, @pixbuf_y.</doc>
+      <doc-deprecated xml:space="preserve">Use cairo_set_source_surface() and gdk_texture_download()</doc-deprecated>
       <return-value transfer-ownership="none">
         <type name="none" c:type="void"/>
       </return-value>
@@ -22152,7 +22190,11 @@ is returned.</doc>
       </parameters>
     </function>
     <function name="content_register_deserializer" c:identifier="gdk_content_register_deserializer">
-      <doc xml:space="preserve">Registers a function to deserialize object of a given type.</doc>
+      <doc xml:space="preserve">Registers a function to deserialize object of a given type.
+
+Since 4.20, when looking up a deserializer to use, GTK will
+use the last registered deserializer for a given mime type,
+so applications can override the built-in deserializers.</doc>
       <return-value transfer-ownership="none">
         <type name="none" c:type="void"/>
       </return-value>
@@ -22180,7 +22222,11 @@ is returned.</doc>
       </parameters>
     </function>
     <function name="content_register_serializer" c:identifier="gdk_content_register_serializer">
-      <doc xml:space="preserve">Registers a function to serialize objects of a given type.</doc>
+      <doc xml:space="preserve">Registers a function to serialize objects of a given type.
+
+Since 4.20, when looking up a serializer to use, GTK will
+use the last registered serializer for a given mime type,
+so applications can override the built-in serializers.</doc>
       <return-value transfer-ownership="none">
         <type name="none" c:type="void"/>
       </return-value>
