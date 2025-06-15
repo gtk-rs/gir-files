@@ -20140,15 +20140,16 @@ thread while loading a big image.</doc>
 The file format is detected automatically. The supported formats
 are PNG, JPEG and TIFF, though more formats might be available.
 
-Note that this function should not be used with untrusted data.
-Use a proper image loading framework such as libglycin, which can
-load many image formats into a `GdkTexture`.
-
-If %NULL is returned, then @error will be set.
+If `NULL` is returned, then @error will be set.
 
 This function is threadsafe, so that you can e.g. use GTask
 and [method@Gio.Task.run_in_thread] to avoid blocking the main thread
-while loading a big image.</doc>
+while loading a big image.
+
+::: warning
+    Note that this function should not be used with untrusted data.
+    Use a proper image loading framework such as libglycin, which can
+    load many image formats into a `GdkTexture`.</doc>
         <return-value transfer-ownership="full">
           <doc xml:space="preserve">A newly-created `GdkTexture`</doc>
           <type name="Texture" c:type="GdkTexture*"/>
@@ -20166,15 +20167,16 @@ while loading a big image.</doc>
 The file format is detected automatically. The supported formats
 are PNG, JPEG and TIFF, though more formats might be available.
 
-Note that this function should not be used with untrusted data.
-Use a proper image loading framework such as libglycin, which can
-load many image formats into a `GdkTexture`.
-
-If %NULL is returned, then @error will be set.
+If `NULL` is returned, then @error will be set.
 
 This function is threadsafe, so that you can e.g. use GTask
 and [method@Gio.Task.run_in_thread] to avoid blocking the main thread
-while loading a big image.</doc>
+while loading a big image.
+
+::: warning
+    Note that this function should not be used with untrusted data.
+    Use a proper image loading framework such as libglycin, which can
+    load many image formats into a `GdkTexture`.</doc>
         <return-value transfer-ownership="full">
           <doc xml:space="preserve">A newly-created `GdkTexture`</doc>
           <type name="Texture" c:type="GdkTexture*"/>
@@ -20192,15 +20194,16 @@ while loading a big image.</doc>
 The file format is detected automatically. The supported formats
 are PNG, JPEG and TIFF, though more formats might be available.
 
-Note that this function should not be used with untrusted data.
-Use a proper image loading framework such as libglycin, which can
-load many image formats into a `GdkTexture`.
-
-If %NULL is returned, then @error will be set.
+If `NULL` is returned, then @error will be set.
 
 This function is threadsafe, so that you can e.g. use GTask
 and [method@Gio.Task.run_in_thread] to avoid blocking the main thread
-while loading a big image.</doc>
+while loading a big image.
+
+::: warning
+    Note that this function should not be used with untrusted data.
+    Use a proper image loading framework such as libglycin, which can
+    load many image formats into a `GdkTexture`.</doc>
         <return-value transfer-ownership="full">
           <doc xml:space="preserve">A newly-created `GdkTexture`</doc>
           <type name="Texture" c:type="GdkTexture*"/>
@@ -20529,14 +20532,16 @@ set to `0`.</doc>
             <doc xml:space="preserve">the downloader</doc>
             <type name="TextureDownloader" c:type="const GdkTextureDownloader*"/>
           </instance-parameter>
-          <parameter name="out_offsets" direction="out" caller-allocates="0" transfer-ownership="full">
-            <doc xml:space="preserve">The offsets of the resulting data planes in bytes</doc>
+          <parameter name="out_offsets" direction="out" caller-allocates="1" transfer-ownership="none">
+            <doc xml:space="preserve">
+  The offsets of the resulting data planes in bytes</doc>
             <array zero-terminated="0" c:type="gsize*" fixed-size="4">
               <type name="gsize" c:type="gsize"/>
             </array>
           </parameter>
-          <parameter name="out_strides" direction="out" caller-allocates="0" transfer-ownership="full">
-            <doc xml:space="preserve">The stride of the resulting data planes in bytes</doc>
+          <parameter name="out_strides" direction="out" caller-allocates="1" transfer-ownership="none">
+            <doc xml:space="preserve">
+  The stride of the resulting data planes in bytes</doc>
             <array zero-terminated="0" c:type="gsize*" fixed-size="4">
               <type name="gsize" c:type="gsize"/>
             </array>
@@ -21846,7 +21851,6 @@ Support for `GdkVulkanContext` is platform-specific and context creation
 can fail, returning %NULL context.</doc>
       <doc-deprecated xml:space="preserve">GTK does not expose any Vulkan internals. This
   struct is a leftover that was accidentally exposed.</doc-deprecated>
-      <implements name="Gio.Initable"/>
       <glib:signal name="images-updated" when="last">
         <doc xml:space="preserve">Emitted when the images managed by this context have changed.
 

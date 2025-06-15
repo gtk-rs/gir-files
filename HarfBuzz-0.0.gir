@@ -7322,9 +7322,12 @@ text segments.</doc>
       <doc xml:space="preserve">Fetches the list of variation coordinates (in design-space units) currently
 set on a font.
 
-Note that this returned array may only contain values for some
-(or none) of the axes; omitted axes effectively have their default
-values.
+&lt;note&gt;Note that if no variation coordinates are set, this function may
+return %NULL.&lt;/note&gt;
+
+&lt;note&gt;If variations have been set on the font using normalized coordinates
+(i.e. via hb_font_set_var_coords_normalized()), the design coordinates will
+have NaN (Not a Number) values.&lt;/note&gt;
 
 Return value is valid as long as variation coordinates of the font
 are not modified.</doc>
@@ -7347,8 +7350,8 @@ are not modified.</doc>
       <doc xml:space="preserve">Fetches the list of normalized variation coordinates currently
 set on a font.
 
-Note that this returned array may only contain values for some
-(or none) of the axes; omitted axes effectively have zero values.
+&lt;note&gt;Note that if no variation coordinates are set, this function may
+return %NULL.&lt;/note&gt;
 
 Return value is valid as long as variation coordinates of the font
 are not modified.</doc>
@@ -12595,7 +12598,11 @@ The normalized values have 14 bits of fixed-point sub-integer precision as per
 OpenType specification.
 
 Any additional scaling defined in the face's `avar` table is also
-applied, as described at https://docs.microsoft.com/en-us/typography/opentype/spec/avar</doc>
+applied, as described at https://docs.microsoft.com/en-us/typography/opentype/spec/avar
+
+Note: @coords_length must be the same as the number of axes in the face, as
+for example returned by hb_ot_var_get_axis_count().
+Otherwise, the behavior is undefined.</doc>
       <return-value transfer-ownership="none">
         <type name="none" c:type="void"/>
       </return-value>
