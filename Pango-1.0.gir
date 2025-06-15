@@ -1174,7 +1174,7 @@ by using [func@Pango.AttrType.get_name].</doc>
         </parameters>
       </function>
     </enumeration>
-    <record name="Attribute" c:type="PangoAttribute" glib:type-name="PangoAttribute" glib:get-type="pango_attribute_get_type" c:symbol-prefix="attribute">
+    <record name="Attribute" c:type="PangoAttribute" copy-function="pango_attribute_copy" free-function="pango_attribute_destroy" glib:type-name="PangoAttribute" glib:get-type="pango_attribute_get_type" c:symbol-prefix="attribute">
       <doc xml:space="preserve">The `PangoAttribute` structure represents the common portions of all
 attributes.
 
@@ -13298,11 +13298,11 @@ as @nearest.</doc>
         <type name="none" c:type="void"/>
       </return-value>
       <parameters>
-        <parameter name="inclusive" transfer-ownership="none" nullable="1" allow-none="1">
+        <parameter name="inclusive" direction="inout" caller-allocates="0" transfer-ownership="full" optional="1">
           <doc xml:space="preserve">rectangle to round to pixels inclusively</doc>
           <type name="Rectangle" c:type="PangoRectangle*"/>
         </parameter>
-        <parameter name="nearest" transfer-ownership="none" nullable="1" allow-none="1">
+        <parameter name="nearest" direction="inout" caller-allocates="0" transfer-ownership="full" optional="1">
           <doc xml:space="preserve">rectangle to round to nearest pixels</doc>
           <type name="Rectangle" c:type="PangoRectangle*"/>
         </parameter>
@@ -13354,14 +13354,14 @@ and @next_paragraph_start are filled with the length of @text
           <doc xml:space="preserve">length of @text in bytes, or -1 if nul-terminated</doc>
           <type name="gint" c:type="int"/>
         </parameter>
-        <parameter name="paragraph_delimiter_index" direction="out" caller-allocates="0" transfer-ownership="full">
-          <doc xml:space="preserve">return location for index of
-  delimiter</doc>
+        <parameter name="paragraph_delimiter_index" direction="out" caller-allocates="0" transfer-ownership="full" optional="1" allow-none="1">
+          <doc xml:space="preserve">return location
+ for index of delimiter</doc>
           <type name="gint" c:type="int*"/>
         </parameter>
-        <parameter name="next_paragraph_start" direction="out" caller-allocates="0" transfer-ownership="full">
-          <doc xml:space="preserve">return location for start of next
-  paragraph</doc>
+        <parameter name="next_paragraph_start" direction="out" caller-allocates="0" transfer-ownership="full" optional="1" allow-none="1">
+          <doc xml:space="preserve">return location for
+ start of next paragraph</doc>
           <type name="gint" c:type="int*"/>
         </parameter>
       </parameters>
