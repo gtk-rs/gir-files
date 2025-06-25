@@ -9,7 +9,7 @@ and/or use gtk-doc annotations.  -->
   <include name="cairo" version="1.0"/>
   <package name="pango"/>
   <c:include name="pango/pango.h"/>
-  <doc:format name="unknown"/>
+  <doc:format name="gi-docgen"/>
   <namespace name="Pango" version="1.0" shared-library="libpango-1.0.so.0" c:identifier-prefixes="Pango" c:symbol-prefixes="pango">
     <alias name="Glyph" c:type="PangoGlyph">
       <doc xml:space="preserve">A `PangoGlyph` represents a single glyph in the output form of a string.</doc>
@@ -2771,8 +2771,11 @@ Use [method@Pango.Font.describe] if you want the font size in points.</doc>
         </parameters>
       </method>
       <method name="get_face" c:identifier="pango_font_get_face" version="1.46">
-        <doc xml:space="preserve">Gets the `PangoFontFace` to which @font belongs.</doc>
-        <return-value transfer-ownership="none">
+        <doc xml:space="preserve">Gets the `PangoFontFace` to which @font belongs.
+
+Note that this function can return `NULL` in cases
+where the font outlives its font map.</doc>
+        <return-value transfer-ownership="none" nullable="1">
           <doc xml:space="preserve">the `PangoFontFace`</doc>
           <type name="FontFace" c:type="PangoFontFace*"/>
         </return-value>
@@ -4490,11 +4493,11 @@ for enumerating faces.</doc>
         <doc xml:space="preserve">Is this a variable font</doc>
         <type name="gboolean" c:type="gboolean"/>
       </property>
-      <property name="item-type" transfer-ownership="none">
+      <property name="item-type" version="1.52" transfer-ownership="none">
         <doc xml:space="preserve">The type of items contained in this list.</doc>
         <type name="GType" c:type="GType"/>
       </property>
-      <property name="n-items" transfer-ownership="none" default-value="0">
+      <property name="n-items" version="1.52" transfer-ownership="none" default-value="0">
         <doc xml:space="preserve">The number of items contained in this list.</doc>
         <type name="guint" c:type="guint"/>
       </property>
@@ -4617,13 +4620,13 @@ This is a virtual object with implementations being specific to
 particular rendering systems.</doc>
       <implements name="Gio.ListModel"/>
       <virtual-method name="changed" invoker="changed" version="1.34">
-        <doc xml:space="preserve">Forces a change in the context, which will cause any `PangoContext`
+        <doc xml:space="preserve">Forces a change in the fontmap, which will cause any `PangoContext`
 using this fontmap to change.
 
 This function is only useful when implementing a new backend
 for Pango, something applications won't do. Backends should
 call this function if they have attached extra data to the
-context and such data is changed.</doc>
+fontmap and such data is changed.</doc>
         <return-value transfer-ownership="none">
           <type name="none" c:type="void"/>
         </return-value>
@@ -4788,13 +4791,13 @@ fonts with the same name.</doc>
         </parameters>
       </method>
       <method name="changed" c:identifier="pango_font_map_changed" version="1.34">
-        <doc xml:space="preserve">Forces a change in the context, which will cause any `PangoContext`
+        <doc xml:space="preserve">Forces a change in the fontmap, which will cause any `PangoContext`
 using this fontmap to change.
 
 This function is only useful when implementing a new backend
 for Pango, something applications won't do. Backends should
 call this function if they have attached extra data to the
-context and such data is changed.</doc>
+fontmap and such data is changed.</doc>
         <return-value transfer-ownership="none">
           <type name="none" c:type="void"/>
         </return-value>
@@ -4982,11 +4985,11 @@ without changing its optical size.</doc>
           </parameter>
         </parameters>
       </method>
-      <property name="item-type" transfer-ownership="none">
+      <property name="item-type" version="1.52" transfer-ownership="none">
         <doc xml:space="preserve">The type of items contained in this list.</doc>
         <type name="GType" c:type="GType"/>
       </property>
-      <property name="n-items" transfer-ownership="none" default-value="0">
+      <property name="n-items" version="1.52" transfer-ownership="none" default-value="0">
         <doc xml:space="preserve">The number of items contained in this list.</doc>
         <type name="guint" c:type="guint"/>
       </property>

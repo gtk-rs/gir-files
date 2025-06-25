@@ -282,6 +282,12 @@ interpolation is just as fast and results in higher quality.</doc>
         </parameter>
       </parameters>
     </function-macro>
+    <function-macro name="PIXBUF_DEPRECATED_IN_2_44_FOR" c:identifier="GDK_PIXBUF_DEPRECATED_IN_2_44_FOR" introspectable="0">
+      <parameters>
+        <parameter name="f">
+        </parameter>
+      </parameters>
+    </function-macro>
     <function-macro name="PIXBUF_DEPRECATED_IN_2_4_FOR" c:identifier="GDK_PIXBUF_DEPRECATED_IN_2_4_FOR" introspectable="0">
       <parameters>
         <parameter name="f">
@@ -323,7 +329,7 @@ interpolation is just as fast and results in higher quality.</doc>
 "0.8.2" for example.</doc>
       <type name="gint" c:type="gint"/>
     </constant>
-    <constant name="PIXBUF_MICRO" value="1" c:type="GDK_PIXBUF_MICRO">
+    <constant name="PIXBUF_MICRO" value="3" c:type="GDK_PIXBUF_MICRO">
       <doc xml:space="preserve">Micro version of gdk-pixbuf library, that is the "2" in
 "0.8.2" for example.</doc>
       <type name="gint" c:type="gint"/>
@@ -357,7 +363,7 @@ interpolation is just as fast and results in higher quality.</doc>
         </parameter>
       </parameters>
     </function-macro>
-    <constant name="PIXBUF_VERSION" value="2.43.1" c:type="GDK_PIXBUF_VERSION">
+    <constant name="PIXBUF_VERSION" value="2.43.3" c:type="GDK_PIXBUF_VERSION">
       <doc xml:space="preserve">Contains the full version of GdkPixbuf as a string.
 
 This is the version being compiled against; contrast with
@@ -392,9 +398,6 @@ equivalent to allocating a data buffer using `malloc()` and then
 wrapping it with `gdk_pixbuf_new_from_data()`. The `gdk_pixbuf_new()`
 function will compute an optimal rowstride so that rendering can be
 performed with an efficient algorithm.
-
-As a special case, you can use the [`ctor@GdkPixbuf.Pixbuf.new_from_xpm_data`]
-function to create a pixbuf from inline XPM image data.
 
 You can also copy an existing pixbuf with the [method@Pixbuf.copy]
 function. This is not the same as just acquiring a reference to
@@ -626,12 +629,14 @@ See also: [ctor@GdkPixbuf.Pixbuf.new_from_bytes]</doc>
             <type name="gint" c:type="int"/>
           </parameter>
           <parameter name="destroy_fn" transfer-ownership="none" nullable="1" allow-none="1" scope="async" closure="8">
-            <doc xml:space="preserve">Function used to free the data when the pixbuf's reference count
-drops to zero, or %NULL if the data should not be freed</doc>
+            <doc xml:space="preserve">Function
+  used to free the data when the pixbuf's reference count
+  drops to zero, or `NULL` if the data should not be freed</doc>
             <type name="PixbufDestroyNotify" c:type="GdkPixbufDestroyNotify"/>
           </parameter>
           <parameter name="destroy_fn_data" transfer-ownership="none" nullable="1" allow-none="1">
-            <doc xml:space="preserve">Closure data to pass to the destroy notification function</doc>
+            <doc xml:space="preserve">Closure data to pass to the destroy
+  notification function</doc>
             <type name="gpointer" c:type="gpointer"/>
           </parameter>
         </parameters>
@@ -950,11 +955,14 @@ gdk_pixbuf_new_from_stream_async().</doc>
           </parameter>
         </parameters>
       </constructor>
-      <constructor name="new_from_xpm_data" c:identifier="gdk_pixbuf_new_from_xpm_data">
+      <constructor name="new_from_xpm_data" c:identifier="gdk_pixbuf_new_from_xpm_data" deprecated="1" deprecated-version="2.44">
         <doc xml:space="preserve">Creates a new pixbuf by parsing XPM data in memory.
 
 This data is commonly the result of including an XPM file into a
 program's C source.</doc>
+        <doc-deprecated xml:space="preserve">Use [ctor@GdkPixbuf.Pixbuf.new_from_stream] with
+  a [class@Gio.MemoryInputStream], making sure to handle errors in
+  case the XPM format loader is not available</doc-deprecated>
         <return-value transfer-ownership="full" nullable="1">
           <doc xml:space="preserve">A newly-created pixbuf</doc>
           <type name="Pixbuf" c:type="GdkPixbuf*"/>
@@ -1113,7 +1121,7 @@ provided modules.</doc>
           </parameter>
         </parameters>
       </function>
-      <function name="new_from_stream_async" c:identifier="gdk_pixbuf_new_from_stream_async" version="2.24" glib:finish-func="new_from_stream_finish">
+      <function name="new_from_stream_async" c:identifier="gdk_pixbuf_new_from_stream_async" version="2.24" glib:finish-func="gdk_pixbuf_new_from_stream_finish">
         <doc xml:space="preserve">Creates a new pixbuf by asynchronously loading an image from an input stream.
 
 For more details see gdk_pixbuf_new_from_stream(), which is the synchronous
@@ -1144,7 +1152,7 @@ the operation.</doc>
           </parameter>
         </parameters>
       </function>
-      <function name="new_from_stream_at_scale_async" c:identifier="gdk_pixbuf_new_from_stream_at_scale_async" version="2.24">
+      <function name="new_from_stream_at_scale_async" c:identifier="gdk_pixbuf_new_from_stream_at_scale_async" version="2.24" glib:finish-func="gdk_pixbuf_new_from_stream_finish">
         <doc xml:space="preserve">Creates a new pixbuf by asynchronously loading an image from an input stream.
 
 For more details see gdk_pixbuf_new_from_stream_at_scale(), which is the synchronous
@@ -2086,7 +2094,7 @@ See `gdk_pixbuf_save()` for more details.</doc>
             <doc xml:space="preserve">name of file format.</doc>
             <type name="utf8" c:type="const char*"/>
           </parameter>
-          <parameter name="error" transfer-ownership="none" nullable="1" allow-none="1">
+          <parameter name="error" transfer-ownership="none">
             <doc xml:space="preserve">return location for error, or `NULL`</doc>
             <type name="GLib.Error" c:type="GError**"/>
           </parameter>
@@ -2200,20 +2208,20 @@ See [method@GdkPixbuf.Pixbuf.save_to_callback] for more details.</doc>
         </return-value>
         <parameters>
           <instance-parameter name="pixbuf" transfer-ownership="none">
-            <doc xml:space="preserve">a `GdkPixbuf`.</doc>
+            <doc xml:space="preserve">a `GdkPixbuf`</doc>
             <type name="Pixbuf" c:type="GdkPixbuf*"/>
           </instance-parameter>
           <parameter name="save_func" transfer-ownership="none" scope="call" closure="1">
-            <doc xml:space="preserve">a function that is called to save each block of data that
-  the save routine generates.</doc>
+            <doc xml:space="preserve">a function that is called to
+  save each block of data that the save routine generates</doc>
             <type name="PixbufSaveFunc" c:type="GdkPixbufSaveFunc"/>
           </parameter>
           <parameter name="user_data" transfer-ownership="none" nullable="1" allow-none="1">
-            <doc xml:space="preserve">user data to pass to the save function.</doc>
+            <doc xml:space="preserve">user data to pass to the save function</doc>
             <type name="gpointer" c:type="gpointer"/>
           </parameter>
           <parameter name="type" transfer-ownership="none">
-            <doc xml:space="preserve">name of file format.</doc>
+            <doc xml:space="preserve">name of file format</doc>
             <type name="utf8" c:type="const char*"/>
           </parameter>
           <parameter name="option_keys" transfer-ownership="none" nullable="1" allow-none="1">
@@ -2274,7 +2282,7 @@ The stream is not closed at the end of this call.</doc>
           </parameter>
         </parameters>
       </method>
-      <method name="save_to_stream_async" c:identifier="gdk_pixbuf_save_to_stream_async" version="2.24" introspectable="0">
+      <method name="save_to_stream_async" c:identifier="gdk_pixbuf_save_to_stream_async" version="2.24" introspectable="0" glib:finish-func="gdk_pixbuf_save_to_stream_finish">
         <doc xml:space="preserve">Saves `pixbuf` to an output stream asynchronously.
 
 For more details see gdk_pixbuf_save_to_stream(), which is the synchronous
@@ -2361,7 +2369,7 @@ See [method@GdkPixbuf.Pixbuf.save_to_stream] for more details.</doc>
           </parameter>
         </parameters>
       </method>
-      <method name="save_to_streamv_async" c:identifier="gdk_pixbuf_save_to_streamv_async" version="2.36">
+      <method name="save_to_streamv_async" c:identifier="gdk_pixbuf_save_to_streamv_async" version="2.36" glib:finish-func="gdk_pixbuf_save_to_stream_finish">
         <doc xml:space="preserve">Saves `pixbuf` to an output stream asynchronously.
 
 For more details see gdk_pixbuf_save_to_streamv(), which is the synchronous
