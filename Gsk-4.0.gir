@@ -2438,6 +2438,45 @@ This function serves two purposes:
           </parameter>
         </parameters>
       </method>
+      <method name="foreach_intersection" c:identifier="gsk_path_foreach_intersection" version="4.20">
+        <doc xml:space="preserve">Finds intersections between two paths.
+
+This function finds intersections between @path1 and @path2,
+and calls @func for each of them, in increasing order for @path1.
+
+If @path2 is not provided or equal to @path1, the function finds
+non-trivial self-intersections of @path1.
+
+When segments of the paths coincide, the callback is called once
+for the start of the segment, with @GSK_PATH_INTERSECTION_START, and
+once for the end of the segment, with @GSK_PATH_INTERSECTION_END.
+Note that other intersections may occur between the start and end
+of such a segment.
+
+If @func returns `FALSE`, the iteration is stopped.</doc>
+        <return-value transfer-ownership="none">
+          <doc xml:space="preserve">`FALSE` if @func returned FALSE`, `TRUE` otherwise.</doc>
+          <type name="gboolean" c:type="gboolean"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="path1" transfer-ownership="none">
+            <doc xml:space="preserve">the first path</doc>
+            <type name="Path" c:type="GskPath*"/>
+          </instance-parameter>
+          <parameter name="path2" transfer-ownership="none" nullable="1" allow-none="1">
+            <doc xml:space="preserve">the second path</doc>
+            <type name="Path" c:type="GskPath*"/>
+          </parameter>
+          <parameter name="func" transfer-ownership="none" scope="call" closure="2">
+            <doc xml:space="preserve">the function to call for intersections</doc>
+            <type name="PathIntersectionFunc" c:type="GskPathIntersectionFunc"/>
+          </parameter>
+          <parameter name="user_data" transfer-ownership="none" nullable="1" allow-none="1">
+            <doc xml:space="preserve">user data passed to @func</doc>
+            <type name="gpointer" c:type="gpointer"/>
+          </parameter>
+        </parameters>
+      </method>
       <method name="get_bounds" c:identifier="gsk_path_get_bounds" version="4.14">
         <doc xml:space="preserve">Computes the bounds of the given path.
 
@@ -3722,6 +3761,58 @@ Closed contours end with a @GSK_PATH_CLOSE operation.</doc>
         </parameter>
         <parameter name="user_data" transfer-ownership="none" nullable="1" allow-none="1" closure="4">
           <doc xml:space="preserve">The user data provided with the function</doc>
+          <type name="gpointer" c:type="gpointer"/>
+        </parameter>
+      </parameters>
+    </callback>
+    <enumeration name="PathIntersection" version="4.20" glib:type-name="GskPathIntersection" glib:get-type="gsk_path_intersection_get_type" c:type="GskPathIntersection">
+      <doc xml:space="preserve">The values of this enumeration classify intersections
+between paths.</doc>
+      <member name="none" value="0" c:identifier="GSK_PATH_INTERSECTION_NONE" glib:nick="none" glib:name="GSK_PATH_INTERSECTION_NONE">
+        <doc xml:space="preserve">No intersection</doc>
+      </member>
+      <member name="normal" value="1" c:identifier="GSK_PATH_INTERSECTION_NORMAL" glib:nick="normal" glib:name="GSK_PATH_INTERSECTION_NORMAL">
+        <doc xml:space="preserve">A normal intersection, where the two paths
+  cross each other</doc>
+      </member>
+      <member name="start" value="2" c:identifier="GSK_PATH_INTERSECTION_START" glib:nick="start" glib:name="GSK_PATH_INTERSECTION_START">
+        <doc xml:space="preserve">The start of a segment where the two paths coincide</doc>
+      </member>
+      <member name="end" value="3" c:identifier="GSK_PATH_INTERSECTION_END" glib:nick="end" glib:name="GSK_PATH_INTERSECTION_END">
+        <doc xml:space="preserve">The end of a segment where the two paths coincide</doc>
+      </member>
+    </enumeration>
+    <callback name="PathIntersectionFunc" c:type="GskPathIntersectionFunc" version="4.20">
+      <doc xml:space="preserve">Prototype of the callback to iterate through the
+intersections of two paths.</doc>
+      <return-value transfer-ownership="none">
+        <doc xml:space="preserve">true to continue iterating, false to
+  stop the iteration and not call the function again</doc>
+        <type name="gboolean" c:type="gboolean"/>
+      </return-value>
+      <parameters>
+        <parameter name="path1" transfer-ownership="none">
+          <doc xml:space="preserve">the first path</doc>
+          <type name="Path" c:type="GskPath*"/>
+        </parameter>
+        <parameter name="point1" transfer-ownership="none">
+          <doc xml:space="preserve">the intersection as point on @path1</doc>
+          <type name="PathPoint" c:type="const GskPathPoint*"/>
+        </parameter>
+        <parameter name="path2" transfer-ownership="none">
+          <doc xml:space="preserve">the second path</doc>
+          <type name="Path" c:type="GskPath*"/>
+        </parameter>
+        <parameter name="point2" transfer-ownership="none">
+          <doc xml:space="preserve">the intersection as point on @path2</doc>
+          <type name="PathPoint" c:type="const GskPathPoint*"/>
+        </parameter>
+        <parameter name="kind" transfer-ownership="none">
+          <doc xml:space="preserve">the nature of the intersection</doc>
+          <type name="PathIntersection" c:type="GskPathIntersection"/>
+        </parameter>
+        <parameter name="user_data" transfer-ownership="none" nullable="1" allow-none="1" closure="5">
+          <doc xml:space="preserve">user data</doc>
           <type name="gpointer" c:type="gpointer"/>
         </parameter>
       </parameters>
