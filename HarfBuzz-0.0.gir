@@ -65,10 +65,18 @@ the specified font, for horizontal text segments.</doc>
     <alias name="font_get_glyph_h_origin_func_t" c:type="hb_font_get_glyph_h_origin_func_t">
       <doc xml:space="preserve">A virtual method for the #hb_font_funcs_t of an #hb_font_t object.
 
-This method should retrieve the (X,Y) coordinates (in font units) of the
+This method should retrieve the (X,Y) coordinates (in scaled units) of the
 origin for a glyph, for horizontal-direction text segments. Each
 coordinate must be returned in an #hb_position_t output parameter.</doc>
       <type name="font_get_glyph_origin_func_t" c:type="hb_font_get_glyph_origin_func_t"/>
+    </alias>
+    <alias name="font_get_glyph_h_origins_func_t" c:type="hb_font_get_glyph_h_origins_func_t">
+      <doc xml:space="preserve">A virtual method for the #hb_font_funcs_t of an #hb_font_t object.
+
+This method should retrieve the (X,Y) coordinates (in scaled units) of the
+origin for requested glyph, for horizontal-direction text segments. Each
+coordinate must be returned in a the x/y #hb_position_t output parameters.</doc>
+      <type name="font_get_glyph_origins_func_t" c:type="hb_font_get_glyph_origins_func_t"/>
     </alias>
     <alias name="font_get_glyph_v_advance_func_t" c:type="hb_font_get_glyph_v_advance_func_t">
       <doc xml:space="preserve">A virtual method for the #hb_font_funcs_t of an #hb_font_t object.
@@ -95,10 +103,18 @@ the specified font, for vertical text segments.</doc>
     <alias name="font_get_glyph_v_origin_func_t" c:type="hb_font_get_glyph_v_origin_func_t">
       <doc xml:space="preserve">A virtual method for the #hb_font_funcs_t of an #hb_font_t object.
 
-This method should retrieve the (X,Y) coordinates (in font units) of the
+This method should retrieve the (X,Y) coordinates (in scaled units) of the
 origin for a glyph, for vertical-direction text segments. Each coordinate
 must be returned in an #hb_position_t output parameter.</doc>
       <type name="font_get_glyph_origin_func_t" c:type="hb_font_get_glyph_origin_func_t"/>
+    </alias>
+    <alias name="font_get_glyph_v_origins_func_t" c:type="hb_font_get_glyph_v_origins_func_t">
+      <doc xml:space="preserve">A virtual method for the #hb_font_funcs_t of an #hb_font_t object.
+
+This method should retrieve the (X,Y) coordinates (in scaled units) of the
+origin for requested glyph, for vertical-direction text segments. Each
+coordinate must be returned in a the x/y #hb_position_t output parameters.</doc>
+      <type name="font_get_glyph_origins_func_t" c:type="hb_font_get_glyph_origins_func_t"/>
     </alias>
     <alias name="mask_t" c:type="hb_mask_t">
       <doc xml:space="preserve">Data type for bitmasks.</doc>
@@ -335,13 +351,13 @@ a font.</doc>
     <constant name="VERSION_MAJOR" value="11" c:type="HB_VERSION_MAJOR">
       <type name="gint" c:type="gint"/>
     </constant>
-    <constant name="VERSION_MICRO" value="1" c:type="HB_VERSION_MICRO">
+    <constant name="VERSION_MICRO" value="2" c:type="HB_VERSION_MICRO">
       <type name="gint" c:type="gint"/>
     </constant>
-    <constant name="VERSION_MINOR" value="2" c:type="HB_VERSION_MINOR">
+    <constant name="VERSION_MINOR" value="3" c:type="HB_VERSION_MINOR">
       <type name="gint" c:type="gint"/>
     </constant>
-    <constant name="VERSION_STRING" value="11.2.1" c:type="HB_VERSION_STRING">
+    <constant name="VERSION_STRING" value="11.3.2" c:type="HB_VERSION_STRING">
       <type name="utf8" c:type="gchar*"/>
     </constant>
     <record name="aat_layout_feature_selector_info_t" c:type="hb_aat_layout_feature_selector_info_t">
@@ -5174,10 +5190,9 @@ objects, with @draw_data passed to them.</doc>
         </parameter>
       </parameters>
     </function>
-    <callback name="font_draw_glyph_func_t" c:type="hb_font_draw_glyph_func_t" version="7.0.0">
+    <callback name="font_draw_glyph_func_t" c:type="hb_font_draw_glyph_func_t" version="7.0.0" deprecated="1" deprecated-version="11.2.0">
       <doc xml:space="preserve">A virtual method for the #hb_font_funcs_t of an #hb_font_t object.</doc>
-      <doc-version xml:space="preserve">
-XDeprecated: REPLACEME: Use hb_font_draw_glyph_func_or_fail_t instead.</doc-version>
+      <doc-deprecated xml:space="preserve">Use hb_font_draw_glyph_func_or_fail_t instead.</doc-deprecated>
       <return-value transfer-ownership="none">
         <type name="none" c:type="void"/>
       </return-value>
@@ -5208,7 +5223,7 @@ XDeprecated: REPLACEME: Use hb_font_draw_glyph_func_or_fail_t instead.</doc-vers
         </parameter>
       </parameters>
     </callback>
-    <function name="font_draw_glyph_or_fail" c:identifier="hb_font_draw_glyph_or_fail">
+    <function name="font_draw_glyph_or_fail" c:identifier="hb_font_draw_glyph_or_fail" version="11.2.0">
       <doc xml:space="preserve">Draws the outline that corresponds to a glyph in the specified @font.
 
 This is a newer name for hb_font_draw_glyph(), that returns `false`
@@ -5217,9 +5232,7 @@ if the font has no outlines for the glyph.
 The outline is returned by way of calls to the callbacks of the @dfuncs
 objects, with @draw_data passed to them.</doc>
       <return-value transfer-ownership="none">
-        <doc xml:space="preserve">`true` if glyph was drawn, `false` otherwise
-
-XSince: REPLACEME</doc>
+        <doc xml:space="preserve">`true` if glyph was drawn, `false` otherwise</doc>
         <type name="bool_t" c:type="hb_bool_t"/>
       </return-value>
       <parameters>
@@ -5241,12 +5254,10 @@ XSince: REPLACEME</doc>
         </parameter>
       </parameters>
     </function>
-    <callback name="font_draw_glyph_or_fail_func_t" c:type="hb_font_draw_glyph_or_fail_func_t">
+    <callback name="font_draw_glyph_or_fail_func_t" c:type="hb_font_draw_glyph_or_fail_func_t" version="11.2.0">
       <doc xml:space="preserve">A virtual method for the #hb_font_funcs_t of an #hb_font_t object.</doc>
       <return-value transfer-ownership="none">
-        <doc xml:space="preserve">`true` if glyph was drawn, `false` otherwise
-
-XSince: REPLACEME</doc>
+        <doc xml:space="preserve">`true` if glyph was drawn, `false` otherwise</doc>
         <type name="bool_t" c:type="hb_bool_t"/>
       </return-value>
       <parameters>
@@ -5277,7 +5288,7 @@ XSince: REPLACEME</doc>
       </parameters>
     </callback>
     <record name="font_extents_t" c:type="hb_font_extents_t">
-      <doc xml:space="preserve">Font-wide extent values, measured in font units.
+      <doc xml:space="preserve">Font-wide extent values, measured in scaled units.
 
 Note that typically @ascender is positive and @descender
 negative, in coordinate systems that grow up.</doc>
@@ -5405,10 +5416,9 @@ attached to the specified font-functions structure.</doc>
         </parameter>
       </parameters>
     </function>
-    <function name="font_funcs_set_draw_glyph_func" c:identifier="hb_font_funcs_set_draw_glyph_func" version="7.0.0">
+    <function name="font_funcs_set_draw_glyph_func" c:identifier="hb_font_funcs_set_draw_glyph_func" version="7.0.0" deprecated="1" deprecated-version="11.2.0">
       <doc xml:space="preserve">Sets the implementation function for #hb_font_draw_glyph_func_t.</doc>
-      <doc-version xml:space="preserve">
-XDeprecated: REPLACEME: Use hb_font_funcs_set_draw_glyph_or_fail_func instead.</doc-version>
+      <doc-deprecated xml:space="preserve">Use hb_font_funcs_set_draw_glyph_or_fail_func instead.</doc-deprecated>
       <return-value transfer-ownership="none">
         <type name="none" c:type="void"/>
       </return-value>
@@ -5431,10 +5441,8 @@ XDeprecated: REPLACEME: Use hb_font_funcs_set_draw_glyph_or_fail_func instead.</
         </parameter>
       </parameters>
     </function>
-    <function name="font_funcs_set_draw_glyph_or_fail_func" c:identifier="hb_font_funcs_set_draw_glyph_or_fail_func">
-      <doc xml:space="preserve">Sets the implementation function for #hb_font_draw_glyph_or_fail_func_t.
-
-XSince: REPLACEME</doc>
+    <function name="font_funcs_set_draw_glyph_or_fail_func" c:identifier="hb_font_funcs_set_draw_glyph_or_fail_func" version="11.2.0">
+      <doc xml:space="preserve">Sets the implementation function for #hb_font_draw_glyph_or_fail_func_t.</doc>
       <return-value transfer-ownership="none">
         <type name="none" c:type="void"/>
       </return-value>
@@ -5698,6 +5706,30 @@ hb_font_funcs_set_variation_glyph_func() instead.</doc>
         </parameter>
       </parameters>
     </function>
+    <function name="font_funcs_set_glyph_h_origins_func" c:identifier="hb_font_funcs_set_glyph_h_origins_func" version="11.3.0">
+      <doc xml:space="preserve">Sets the implementation function for #hb_font_get_glyph_h_origins_func_t.</doc>
+      <return-value transfer-ownership="none">
+        <type name="none" c:type="void"/>
+      </return-value>
+      <parameters>
+        <parameter name="ffuncs" transfer-ownership="none">
+          <doc xml:space="preserve">A font-function structure</doc>
+          <type name="font_funcs_t" c:type="hb_font_funcs_t*"/>
+        </parameter>
+        <parameter name="func" transfer-ownership="none" scope="notified" closure="2" destroy="3">
+          <doc xml:space="preserve">The callback function to assign</doc>
+          <type name="font_get_glyph_h_origins_func_t" c:type="hb_font_get_glyph_h_origins_func_t"/>
+        </parameter>
+        <parameter name="user_data" transfer-ownership="none" nullable="1" allow-none="1">
+          <doc xml:space="preserve">Data to pass to @func</doc>
+          <type name="gpointer" c:type="void*"/>
+        </parameter>
+        <parameter name="destroy" transfer-ownership="none" nullable="1" allow-none="1" scope="notified">
+          <doc xml:space="preserve">The function to call when @user_data is not needed anymore</doc>
+          <type name="destroy_func_t" c:type="hb_destroy_func_t"/>
+        </parameter>
+      </parameters>
+    </function>
     <function name="font_funcs_set_glyph_name_func" c:identifier="hb_font_funcs_set_glyph_name_func" version="0.9.2">
       <doc xml:space="preserve">Sets the implementation function for #hb_font_get_glyph_name_func_t.</doc>
       <return-value transfer-ownership="none">
@@ -5844,6 +5876,30 @@ which is the same as #hb_font_draw_glyph_func_t.</doc>
         </parameter>
       </parameters>
     </function>
+    <function name="font_funcs_set_glyph_v_origins_func" c:identifier="hb_font_funcs_set_glyph_v_origins_func" version="11.3.0">
+      <doc xml:space="preserve">Sets the implementation function for #hb_font_get_glyph_v_origins_func_t.</doc>
+      <return-value transfer-ownership="none">
+        <type name="none" c:type="void"/>
+      </return-value>
+      <parameters>
+        <parameter name="ffuncs" transfer-ownership="none">
+          <doc xml:space="preserve">A font-function structure</doc>
+          <type name="font_funcs_t" c:type="hb_font_funcs_t*"/>
+        </parameter>
+        <parameter name="func" transfer-ownership="none" scope="notified" closure="2" destroy="3">
+          <doc xml:space="preserve">The callback function to assign</doc>
+          <type name="font_get_glyph_v_origins_func_t" c:type="hb_font_get_glyph_v_origins_func_t"/>
+        </parameter>
+        <parameter name="user_data" transfer-ownership="none" nullable="1" allow-none="1">
+          <doc xml:space="preserve">Data to pass to @func</doc>
+          <type name="gpointer" c:type="void*"/>
+        </parameter>
+        <parameter name="destroy" transfer-ownership="none" nullable="1" allow-none="1" scope="notified">
+          <doc xml:space="preserve">The function to call when @user_data is not needed anymore</doc>
+          <type name="destroy_func_t" c:type="hb_destroy_func_t"/>
+        </parameter>
+      </parameters>
+    </function>
     <function name="font_funcs_set_nominal_glyph_func" c:identifier="hb_font_funcs_set_nominal_glyph_func" version="1.2.3">
       <doc xml:space="preserve">Sets the implementation function for #hb_font_get_nominal_glyph_func_t.</doc>
       <return-value transfer-ownership="none">
@@ -5892,10 +5948,9 @@ which is the same as #hb_font_draw_glyph_func_t.</doc>
         </parameter>
       </parameters>
     </function>
-    <function name="font_funcs_set_paint_glyph_func" c:identifier="hb_font_funcs_set_paint_glyph_func" version="7.0.0">
+    <function name="font_funcs_set_paint_glyph_func" c:identifier="hb_font_funcs_set_paint_glyph_func" version="7.0.0" deprecated="1" deprecated-version="11.2.0">
       <doc xml:space="preserve">Sets the implementation function for #hb_font_paint_glyph_func_t.</doc>
-      <doc-version xml:space="preserve">
-XDeprecated: REPLACEME: Use hb_font_funcs_set_paint_glyph_or_fail_func() instead.</doc-version>
+      <doc-deprecated xml:space="preserve">Use hb_font_funcs_set_paint_glyph_or_fail_func() instead.</doc-deprecated>
       <return-value transfer-ownership="none">
         <type name="none" c:type="void"/>
       </return-value>
@@ -5918,10 +5973,8 @@ XDeprecated: REPLACEME: Use hb_font_funcs_set_paint_glyph_or_fail_func() instead
         </parameter>
       </parameters>
     </function>
-    <function name="font_funcs_set_paint_glyph_or_fail_func" c:identifier="hb_font_funcs_set_paint_glyph_or_fail_func">
-      <doc xml:space="preserve">Sets the implementation function for #hb_font_paint_glyph_or_fail_func_t.
-
-XSince: REPLACEME</doc>
+    <function name="font_funcs_set_paint_glyph_or_fail_func" c:identifier="hb_font_funcs_set_paint_glyph_or_fail_func" version="11.2.0">
+      <doc xml:space="preserve">Sets the implementation function for #hb_font_paint_glyph_or_fail_func_t.</doc>
       <return-value transfer-ownership="none">
         <type name="none" c:type="void"/>
       </return-value>
@@ -6317,7 +6370,7 @@ or vertical) depending on the value of @direction.</doc>
     <callback name="font_get_glyph_contour_point_func_t" c:type="hb_font_get_glyph_contour_point_func_t">
       <doc xml:space="preserve">A virtual method for the #hb_font_funcs_t of an #hb_font_t object.
 
-This method should retrieve the (X,Y) coordinates (in font units) for a
+This method should retrieve the (X,Y) coordinates (in scaled units) for a
 specified contour point in a glyph. Each coordinate must be returned as
 an #hb_position_t output parameter.</doc>
       <return-value transfer-ownership="none">
@@ -6644,6 +6697,48 @@ in the specified font, for horizontal text segments.</doc>
         </parameter>
       </parameters>
     </function>
+    <function name="font_get_glyph_h_origins" c:identifier="hb_font_get_glyph_h_origins" version="11.3.0">
+      <doc xml:space="preserve">Fetches the (X,Y) coordinates of the origin for requested glyph IDs
+in the specified font, for horizontal text segments.</doc>
+      <return-value transfer-ownership="none">
+        <doc xml:space="preserve">`true` if data found, `false` otherwise</doc>
+        <type name="bool_t" c:type="hb_bool_t"/>
+      </return-value>
+      <parameters>
+        <parameter name="font" transfer-ownership="none">
+          <doc xml:space="preserve">#hb_font_t to work upon</doc>
+          <type name="font_t" c:type="hb_font_t*"/>
+        </parameter>
+        <parameter name="count" transfer-ownership="none">
+          <doc xml:space="preserve">The number of glyph IDs in the sequence queried</doc>
+          <type name="guint" c:type="unsigned int"/>
+        </parameter>
+        <parameter name="first_glyph" transfer-ownership="none">
+          <doc xml:space="preserve">The first glyph ID to query</doc>
+          <type name="codepoint_t" c:type="const hb_codepoint_t*"/>
+        </parameter>
+        <parameter name="glyph_stride" transfer-ownership="none">
+          <doc xml:space="preserve">The stride between successive glyph IDs</doc>
+          <type name="guint" c:type="unsigned"/>
+        </parameter>
+        <parameter name="first_x" direction="out" caller-allocates="0" transfer-ownership="full">
+          <doc xml:space="preserve">The first X coordinate of the origin retrieved</doc>
+          <type name="position_t" c:type="hb_position_t*"/>
+        </parameter>
+        <parameter name="x_stride" transfer-ownership="none">
+          <doc xml:space="preserve">The stride between successive X coordinates</doc>
+          <type name="guint" c:type="unsigned"/>
+        </parameter>
+        <parameter name="first_y" direction="out" caller-allocates="0" transfer-ownership="full">
+          <doc xml:space="preserve">The first Y coordinate of the origin retrieved</doc>
+          <type name="position_t" c:type="hb_position_t*"/>
+        </parameter>
+        <parameter name="y_stride" transfer-ownership="none">
+          <doc xml:space="preserve">The stride between successive Y coordinates</doc>
+          <type name="guint" c:type="unsigned"/>
+        </parameter>
+      </parameters>
+    </function>
     <function name="font_get_glyph_kerning_for_direction" c:identifier="hb_font_get_glyph_kerning_for_direction" version="0.9.2">
       <doc xml:space="preserve">Fetches the kerning-adjustment value for a glyph-pair in the specified font.
 
@@ -6811,7 +6906,7 @@ or vertical) depending on the value of @direction.</doc>
     <callback name="font_get_glyph_origin_func_t" c:type="hb_font_get_glyph_origin_func_t">
       <doc xml:space="preserve">A virtual method for the #hb_font_funcs_t of an #hb_font_t object.
 
-This method should retrieve the (X,Y) coordinates (in font units) of the
+This method should retrieve the (X,Y) coordinates (in scaled units) of the
 origin for a glyph. Each coordinate must be returned in an #hb_position_t
 output parameter.</doc>
       <return-value transfer-ownership="none">
@@ -6840,6 +6935,59 @@ output parameter.</doc>
           <type name="position_t" c:type="hb_position_t*"/>
         </parameter>
         <parameter name="user_data" transfer-ownership="none" nullable="1" allow-none="1" closure="5">
+          <doc xml:space="preserve">User data pointer passed by the caller</doc>
+          <type name="gpointer" c:type="void*"/>
+        </parameter>
+      </parameters>
+    </callback>
+    <callback name="font_get_glyph_origins_func_t" c:type="hb_font_get_glyph_origins_func_t" version="11.3.0">
+      <doc xml:space="preserve">A virtual method for the #hb_font_funcs_t of an #hb_font_t object.
+
+This method should retrieve the (X,Y) coordinates (in scaled units) of the
+origin for each requested glyph. Each coordinate value must be returned in
+an #hb_position_t in the two output parameters.</doc>
+      <return-value transfer-ownership="none">
+        <doc xml:space="preserve">`true` if data found, `false` otherwise</doc>
+        <type name="bool_t" c:type="hb_bool_t"/>
+      </return-value>
+      <parameters>
+        <parameter name="font" transfer-ownership="none">
+          <doc xml:space="preserve">#hb_font_t to work upon</doc>
+          <type name="font_t" c:type="hb_font_t*"/>
+        </parameter>
+        <parameter name="font_data" transfer-ownership="none" nullable="1" allow-none="1">
+          <doc xml:space="preserve">@font user data pointer</doc>
+          <type name="gpointer" c:type="void*"/>
+        </parameter>
+        <parameter name="count" transfer-ownership="none">
+          <doc xml:space="preserve">number of glyphs to query</doc>
+          <type name="guint" c:type="unsigned int"/>
+        </parameter>
+        <parameter name="first_glyph" transfer-ownership="none">
+          <doc xml:space="preserve">The first glyph ID to query</doc>
+          <type name="codepoint_t" c:type="const hb_codepoint_t*"/>
+        </parameter>
+        <parameter name="glyph_stride" transfer-ownership="none">
+          <doc xml:space="preserve">The stride between successive glyph IDs</doc>
+          <type name="guint" c:type="unsigned"/>
+        </parameter>
+        <parameter name="first_x" direction="out" caller-allocates="0" transfer-ownership="full">
+          <doc xml:space="preserve">The first origin X coordinate retrieved</doc>
+          <type name="position_t" c:type="hb_position_t*"/>
+        </parameter>
+        <parameter name="x_stride" transfer-ownership="none">
+          <doc xml:space="preserve">The stride between successive origin X coordinates</doc>
+          <type name="guint" c:type="unsigned"/>
+        </parameter>
+        <parameter name="first_y" direction="out" caller-allocates="0" transfer-ownership="full">
+          <doc xml:space="preserve">The first origin Y coordinate retrieved</doc>
+          <type name="position_t" c:type="hb_position_t*"/>
+        </parameter>
+        <parameter name="y_stride" transfer-ownership="none">
+          <doc xml:space="preserve">The stride between successive origin Y coordinates</doc>
+          <type name="guint" c:type="unsigned"/>
+        </parameter>
+        <parameter name="user_data" transfer-ownership="none" nullable="1" allow-none="1" closure="9">
           <doc xml:space="preserve">User data pointer passed by the caller</doc>
           <type name="gpointer" c:type="void*"/>
         </parameter>
@@ -7004,6 +7152,48 @@ in the specified font, for vertical text segments.</doc>
         <parameter name="y" direction="out" caller-allocates="0" transfer-ownership="full">
           <doc xml:space="preserve">The Y coordinate of the origin</doc>
           <type name="position_t" c:type="hb_position_t*"/>
+        </parameter>
+      </parameters>
+    </function>
+    <function name="font_get_glyph_v_origins" c:identifier="hb_font_get_glyph_v_origins" version="11.3.0">
+      <doc xml:space="preserve">Fetches the (X,Y) coordinates of the origin for requested glyph IDs
+in the specified font, for vertical text segments.</doc>
+      <return-value transfer-ownership="none">
+        <doc xml:space="preserve">`true` if data found, `false` otherwise</doc>
+        <type name="bool_t" c:type="hb_bool_t"/>
+      </return-value>
+      <parameters>
+        <parameter name="font" transfer-ownership="none">
+          <doc xml:space="preserve">#hb_font_t to work upon</doc>
+          <type name="font_t" c:type="hb_font_t*"/>
+        </parameter>
+        <parameter name="count" transfer-ownership="none">
+          <doc xml:space="preserve">The number of glyph IDs in the sequence queried</doc>
+          <type name="guint" c:type="unsigned int"/>
+        </parameter>
+        <parameter name="first_glyph" transfer-ownership="none">
+          <doc xml:space="preserve">The first glyph ID to query</doc>
+          <type name="codepoint_t" c:type="const hb_codepoint_t*"/>
+        </parameter>
+        <parameter name="glyph_stride" transfer-ownership="none">
+          <doc xml:space="preserve">The stride between successive glyph IDs</doc>
+          <type name="guint" c:type="unsigned"/>
+        </parameter>
+        <parameter name="first_x" direction="out" caller-allocates="0" transfer-ownership="full">
+          <doc xml:space="preserve">The first X coordinate of the origin retrieved</doc>
+          <type name="position_t" c:type="hb_position_t*"/>
+        </parameter>
+        <parameter name="x_stride" transfer-ownership="none">
+          <doc xml:space="preserve">The stride between successive X coordinates</doc>
+          <type name="guint" c:type="unsigned"/>
+        </parameter>
+        <parameter name="first_y" direction="out" caller-allocates="0" transfer-ownership="full">
+          <doc xml:space="preserve">The first Y coordinate of the origin retrieved</doc>
+          <type name="position_t" c:type="hb_position_t*"/>
+        </parameter>
+        <parameter name="y_stride" transfer-ownership="none">
+          <doc xml:space="preserve">The stride between successive Y coordinates</doc>
+          <type name="guint" c:type="unsigned"/>
         </parameter>
       </parameters>
     </function>
@@ -7523,13 +7713,11 @@ characters and can only contain (a subset of) ASCII.</doc>
         </parameter>
       </parameters>
     </function>
-    <function name="font_is_synthetic" c:identifier="hb_font_is_synthetic">
+    <function name="font_is_synthetic" c:identifier="hb_font_is_synthetic" version="11.2.0">
       <doc xml:space="preserve">Tests whether a font is synthetic. A synthetic font is one
 that has either synthetic slant or synthetic bold set on it.</doc>
       <return-value transfer-ownership="none">
-        <doc xml:space="preserve">`true` if the font is synthetic, `false` otherwise.
-
-XSince: REPLACEME</doc>
+        <doc xml:space="preserve">`true` if the font is synthetic, `false` otherwise.</doc>
         <type name="bool_t" c:type="hb_bool_t"/>
       </return-value>
       <parameters>
@@ -7606,10 +7794,9 @@ has one palette, this will be 0.</doc>
         </parameter>
       </parameters>
     </function>
-    <callback name="font_paint_glyph_func_t" c:type="hb_font_paint_glyph_func_t" version="7.0.0">
+    <callback name="font_paint_glyph_func_t" c:type="hb_font_paint_glyph_func_t" version="7.0.0" deprecated="1" deprecated-version="11.2.0">
       <doc xml:space="preserve">A virtual method for the #hb_font_funcs_t of an #hb_font_t object.</doc>
-      <doc-version xml:space="preserve">
-XDeprecated: REPLACEME: Use hb_font_paint_glyph_or_fail_func_t instead.</doc-version>
+      <doc-deprecated xml:space="preserve">Use hb_font_paint_glyph_or_fail_func_t instead.</doc-deprecated>
       <return-value transfer-ownership="none">
         <type name="bool_t" c:type="hb_bool_t"/>
       </return-value>
@@ -7648,7 +7835,7 @@ XDeprecated: REPLACEME: Use hb_font_paint_glyph_or_fail_func_t instead.</doc-ver
         </parameter>
       </parameters>
     </callback>
-    <function name="font_paint_glyph_or_fail" c:identifier="hb_font_paint_glyph_or_fail">
+    <function name="font_paint_glyph_or_fail" c:identifier="hb_font_paint_glyph_or_fail" version="11.2.0">
       <doc xml:space="preserve">Paints a color glyph.
 
 This function is similar to, but lower-level than,
@@ -7665,9 +7852,7 @@ If the font has color palettes (see hb_ot_color_has_palettes()),
 then @palette_index selects the palette to use. If the font only
 has one palette, this will be 0.</doc>
       <return-value transfer-ownership="none">
-        <doc xml:space="preserve">`true` if glyph was painted, `false` otherwise
-
-XSince: REPLACEME</doc>
+        <doc xml:space="preserve">`true` if glyph was painted, `false` otherwise</doc>
         <type name="bool_t" c:type="hb_bool_t"/>
       </return-value>
       <parameters>
@@ -7697,12 +7882,10 @@ XSince: REPLACEME</doc>
         </parameter>
       </parameters>
     </function>
-    <callback name="font_paint_glyph_or_fail_func_t" c:type="hb_font_paint_glyph_or_fail_func_t">
+    <callback name="font_paint_glyph_or_fail_func_t" c:type="hb_font_paint_glyph_or_fail_func_t" version="11.2.0">
       <doc xml:space="preserve">A virtual method for the #hb_font_funcs_t of an #hb_font_t object.</doc>
       <return-value transfer-ownership="none">
-        <doc xml:space="preserve">`true` if glyph was painted, `false` otherwise
-
-XSince: REPLACEME</doc>
+        <doc xml:space="preserve">`true` if glyph was painted, `false` otherwise</doc>
         <type name="bool_t" c:type="hb_bool_t"/>
       </return-value>
       <parameters>
