@@ -280,7 +280,7 @@ The 4 sides of the border can have different widths and colors.</doc>
       <doc xml:space="preserve">A Broadway based renderer.
 
 See [class@Gsk.Renderer].</doc>
-      <constructor name="new" c:identifier="gsk_broadway_renderer_new">
+      <constructor name="new" c:identifier="gsk_broadway_renderer_new" deprecated="1" deprecated-version="4.20">
         <doc xml:space="preserve">Creates a new Broadway renderer.
 
 The Broadway renderer is the default renderer for the broadway backend.
@@ -289,6 +289,7 @@ call to gsk_renderer_realize().
 
 This function is only available when GTK was compiled with Broadway
 support.</doc>
+        <doc-deprecated xml:space="preserve">Broadway will be retired in GTK 5</doc-deprecated>
         <return-value transfer-ownership="full">
           <doc xml:space="preserve">a new Broadway renderer.</doc>
           <type name="Renderer" c:type="GskRenderer*"/>
@@ -5955,7 +5956,7 @@ See [enum@Gsk.LineJoin] for details.</doc>
       <method name="set_line_width" c:identifier="gsk_stroke_set_line_width" version="4.14">
         <doc xml:space="preserve">Sets the line width to be used when stroking.
 
-The line width must be &gt; 0.</doc>
+The line width must be &gt;= 0.</doc>
         <return-value transfer-ownership="none">
           <type name="none" c:type="void"/>
         </return-value>
@@ -6454,6 +6455,50 @@ if you want to keep it around.</doc>
           <parameter name="matrix" transfer-ownership="none">
             <doc xml:space="preserve">the matrix to multiply @next with</doc>
             <type name="Graphene.Matrix" c:type="const graphene_matrix_t*"/>
+          </parameter>
+        </parameters>
+      </method>
+      <method name="matrix_2d" c:identifier="gsk_transform_matrix_2d" version="4.20">
+        <doc xml:space="preserve">Multiplies @next with the matrix [ xx yx x0; xy yy y0; 0 0 1 ].
+
+The result of calling [method@Gsk.Transform.to_2d] on the returned
+[struct@Gsk.Transform] should match the input passed to this
+function.
+
+This function consumes @next. Use [method@Gsk.Transform.ref] first
+if you want to keep it around.</doc>
+        <return-value transfer-ownership="full" nullable="1">
+          <doc xml:space="preserve">The new transform</doc>
+          <type name="Transform" c:type="GskTransform*"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="next" transfer-ownership="full" nullable="1" allow-none="1">
+            <doc xml:space="preserve">the next transform</doc>
+            <type name="Transform" c:type="GskTransform*"/>
+          </instance-parameter>
+          <parameter name="xx" transfer-ownership="none">
+            <doc xml:space="preserve">the xx member</doc>
+            <type name="gfloat" c:type="float"/>
+          </parameter>
+          <parameter name="yx" transfer-ownership="none">
+            <doc xml:space="preserve">the yx member</doc>
+            <type name="gfloat" c:type="float"/>
+          </parameter>
+          <parameter name="xy" transfer-ownership="none">
+            <doc xml:space="preserve">the xy member</doc>
+            <type name="gfloat" c:type="float"/>
+          </parameter>
+          <parameter name="yy" transfer-ownership="none">
+            <doc xml:space="preserve">the yy member</doc>
+            <type name="gfloat" c:type="float"/>
+          </parameter>
+          <parameter name="dx" transfer-ownership="none">
+            <doc xml:space="preserve">the x0 member</doc>
+            <type name="gfloat" c:type="float"/>
+          </parameter>
+          <parameter name="dy" transfer-ownership="none">
+            <doc xml:space="preserve">the y0 member</doc>
+            <type name="gfloat" c:type="float"/>
           </parameter>
         </parameters>
       </method>

@@ -5739,7 +5739,7 @@ Initially, the hotspot is at the top left corner of the drag surface.</doc>
           </parameter>
         </parameters>
       </method>
-      <property name="actions" writable="1" transfer-ownership="none" getter="get_actions" default-value="0">
+      <property name="actions" writable="1" transfer-ownership="none" getter="get_actions" default-value="GDK_ACTION_NONE">
         <doc xml:space="preserve">The possible actions of this drag.</doc>
         <type name="DragAction"/>
       </property>
@@ -5759,7 +5759,7 @@ Initially, the hotspot is at the top left corner of the drag surface.</doc>
         <doc xml:space="preserve">The possible formats that the drag can provide its data in.</doc>
         <type name="ContentFormats"/>
       </property>
-      <property name="selected-action" writable="1" transfer-ownership="none" getter="get_selected_action" default-value="0">
+      <property name="selected-action" writable="1" transfer-ownership="none" getter="get_selected_action" default-value="GDK_ACTION_NONE">
         <doc xml:space="preserve">The currently selected action of the drag.</doc>
         <type name="DragAction"/>
       </property>
@@ -5797,6 +5797,9 @@ The drag object can now free all miscellaneous data.</doc>
     <bitfield name="DragAction" glib:type-name="GdkDragAction" glib:get-type="gdk_drag_action_get_type" c:type="GdkDragAction">
       <doc xml:space="preserve">Used in `GdkDrop` and `GdkDrag` to indicate the actions that the
 destination can and should do with the dropped data.</doc>
+      <member name="none" value="0" c:identifier="GDK_ACTION_NONE" version="4.20" glib:nick="none" glib:name="GDK_ACTION_NONE">
+        <doc xml:space="preserve">No action.</doc>
+      </member>
       <member name="copy" value="1" c:identifier="GDK_ACTION_COPY" glib:nick="copy" glib:name="GDK_ACTION_COPY">
         <doc xml:space="preserve">Copy the data.</doc>
       </member>
@@ -5816,7 +5819,7 @@ destination can and should do with the dropped data.</doc>
         <doc xml:space="preserve">Checks if @action represents a single action or includes
 multiple actions.
 
-When @action is 0 - ie no action was given, %TRUE
+When @action is `GDK_ACTION_NONE` - ie no action was given, `TRUE`
 is returned.</doc>
         <return-value transfer-ownership="none">
           <doc xml:space="preserve">%TRUE if exactly one action was given</doc>
@@ -6096,7 +6099,8 @@ available via [method@Gdk.Drop.get_actions].</doc>
             <type name="Drop" c:type="GdkDrop*"/>
           </instance-parameter>
           <parameter name="action" transfer-ownership="none">
-            <doc xml:space="preserve">the action performed by the destination or 0 if the drop failed</doc>
+            <doc xml:space="preserve">the action performed by the destination or `GDK_ACTION_NONE` if the
+  drop failed</doc>
             <type name="DragAction" c:type="GdkDragAction"/>
           </parameter>
         </parameters>
@@ -6340,8 +6344,8 @@ actions first and then later call this function again.</doc>
             <type name="Drop" c:type="GdkDrop*"/>
           </instance-parameter>
           <parameter name="actions" transfer-ownership="none">
-            <doc xml:space="preserve">Supported actions of the destination, or 0 to indicate
-   that a drop will not be accepted</doc>
+            <doc xml:space="preserve">Supported actions of the destination, or `GDK_ACTION_NONE` to
+   indicate that a drop will not be accepted</doc>
             <type name="DragAction" c:type="GdkDragAction"/>
           </parameter>
           <parameter name="preferred" transfer-ownership="none">
@@ -22321,7 +22325,7 @@ indicate a higher priority.</doc>
       <doc xml:space="preserve">Checks if @action represents a single action or includes
 multiple actions.
 
-When @action is 0 - ie no action was given, %TRUE
+When @action is `GDK_ACTION_NONE` - ie no action was given, `TRUE`
 is returned.</doc>
       <return-value transfer-ownership="none">
         <doc xml:space="preserve">%TRUE if exactly one action was given</doc>

@@ -555,8 +555,10 @@ than #gsize.</doc>
           </array>
         </return-value>
         <parameters>
-          <parameter name="data" transfer-ownership="none">
-            <doc xml:space="preserve">an array of elements of @element_size</doc>
+          <parameter name="data" transfer-ownership="full" nullable="1" allow-none="1">
+            <doc xml:space="preserve">an array
+    of elements of @element_size, %NULL terminated,
+    or %NULL for an empty array</doc>
             <array c:type="gpointer">
               <type name="gpointer" c:type="gpointer"/>
             </array>
@@ -853,8 +855,9 @@ This did not actually work, so any such code should be removed.</doc>
 the underlying array is preserved for use elsewhere and returned
 to the caller.
 
-If the array was created with the @zero_terminate property
-set to %TRUE, the returned data is zero terminated too.
+Note that if the array was created with the @zero_terminate
+property set to %TRUE, this may still return %NULL if the length
+of the array was zero and data was not yet allocated.
 
 If array elements contain dynamically-allocated memory,
 the array elements should also be freed by the caller.
@@ -41291,8 +41294,10 @@ than #gsize.</doc>
         </array>
       </return-value>
       <parameters>
-        <parameter name="data" transfer-ownership="none">
-          <doc xml:space="preserve">an array of elements of @element_size</doc>
+        <parameter name="data" transfer-ownership="full" nullable="1" allow-none="1">
+          <doc xml:space="preserve">an array
+    of elements of @element_size, %NULL terminated,
+    or %NULL for an empty array</doc>
           <array c:type="gpointer">
             <type name="gpointer" c:type="gpointer"/>
           </array>
