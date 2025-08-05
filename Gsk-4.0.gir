@@ -552,6 +552,237 @@ if the render node was created for a non-sRGB color.</doc>
         <type name="Gdk.RGBA" c:type="GdkRGBA"/>
       </field>
     </record>
+    <record name="ComponentTransfer" c:type="GskComponentTransfer" opaque="1" version="4.20" glib:type-name="GskComponentTransfer" glib:get-type="gsk_component_transfer_get_type" c:symbol-prefix="component_transfer">
+      <doc xml:space="preserve">Specifies a transfer function for a color component to be applied
+while rendering.
+
+The available functions include linear, piecewise-linear,
+gamma and step functions.
+
+Note that the transfer function is applied to un-premultiplied
+values, and all results are clamped to the [0, 1] range.</doc>
+      <constructor name="new_discrete" c:identifier="gsk_component_transfer_new_discrete" version="4.20">
+        <doc xml:space="preserve">Creates a new component transfer that applies
+a step function.
+
+The new value is computed as
+
+    C' = values[k]
+
+where k is the smallest value such that
+
+    k / n &lt;= C &lt; (k + 1) / n</doc>
+        <return-value transfer-ownership="full">
+          <doc xml:space="preserve">a new `GskComponentTransfer`</doc>
+          <type name="ComponentTransfer" c:type="GskComponentTransfer*"/>
+        </return-value>
+        <parameters>
+          <parameter name="n" transfer-ownership="none">
+            <type name="guint" c:type="guint"/>
+          </parameter>
+          <parameter name="values" transfer-ownership="none">
+            <type name="gfloat" c:type="float*"/>
+          </parameter>
+        </parameters>
+      </constructor>
+      <constructor name="new_gamma" c:identifier="gsk_component_transfer_new_gamma" version="4.20">
+        <doc xml:space="preserve">Creates a new component transfer that applies
+a gamma transform.
+
+The new value is computed as
+
+    C' = amp * pow (C, exp) + ofs</doc>
+        <return-value transfer-ownership="full">
+          <doc xml:space="preserve">a new `GskComponentTransfer`</doc>
+          <type name="ComponentTransfer" c:type="GskComponentTransfer*"/>
+        </return-value>
+        <parameters>
+          <parameter name="amp" transfer-ownership="none">
+            <type name="gfloat" c:type="float"/>
+          </parameter>
+          <parameter name="exp" transfer-ownership="none">
+            <type name="gfloat" c:type="float"/>
+          </parameter>
+          <parameter name="ofs" transfer-ownership="none">
+            <type name="gfloat" c:type="float"/>
+          </parameter>
+        </parameters>
+      </constructor>
+      <constructor name="new_identity" c:identifier="gsk_component_transfer_new_identity" version="4.20">
+        <doc xml:space="preserve">Creates a new component transfer that doesn't
+change the component value.</doc>
+        <return-value transfer-ownership="full">
+          <doc xml:space="preserve">a new `GskComponentTransfer`</doc>
+          <type name="ComponentTransfer" c:type="GskComponentTransfer*"/>
+        </return-value>
+      </constructor>
+      <constructor name="new_levels" c:identifier="gsk_component_transfer_new_levels" version="4.20">
+        <doc xml:space="preserve">Creates a new component transfer that limits
+the values of the component to `n` levels.
+
+The new value is computed as
+
+    C' = floor (C * n) / n</doc>
+        <return-value transfer-ownership="full">
+          <doc xml:space="preserve">a new `GskComponentTransfer`</doc>
+          <type name="ComponentTransfer" c:type="GskComponentTransfer*"/>
+        </return-value>
+        <parameters>
+          <parameter name="n" transfer-ownership="none">
+            <type name="gfloat" c:type="float"/>
+          </parameter>
+        </parameters>
+      </constructor>
+      <constructor name="new_linear" c:identifier="gsk_component_transfer_new_linear" version="4.20">
+        <doc xml:space="preserve">Creates a new component transfer that applies
+a linear transform.
+
+The new value is computed as
+
+    C' = C * m + b</doc>
+        <return-value transfer-ownership="full">
+          <doc xml:space="preserve">a new `GskComponentTransfer`</doc>
+          <type name="ComponentTransfer" c:type="GskComponentTransfer*"/>
+        </return-value>
+        <parameters>
+          <parameter name="m" transfer-ownership="none">
+            <type name="gfloat" c:type="float"/>
+          </parameter>
+          <parameter name="b" transfer-ownership="none">
+            <type name="gfloat" c:type="float"/>
+          </parameter>
+        </parameters>
+      </constructor>
+      <constructor name="new_table" c:identifier="gsk_component_transfer_new_table" version="4.20">
+        <doc xml:space="preserve">Creates a new component transfer that applies
+a piecewise linear function.
+
+The new value is computed as
+
+    C' = values[k] + (C - k / n) * n * (values[k + 1] - values[k])
+
+where k is the smallest value such that
+
+    k / n &lt;= C &lt; (k + 1) / n</doc>
+        <return-value transfer-ownership="full">
+          <doc xml:space="preserve">a new `GskComponentTransfer`</doc>
+          <type name="ComponentTransfer" c:type="GskComponentTransfer*"/>
+        </return-value>
+        <parameters>
+          <parameter name="n" transfer-ownership="none">
+            <type name="guint" c:type="guint"/>
+          </parameter>
+          <parameter name="values" transfer-ownership="none">
+            <type name="gfloat" c:type="float*"/>
+          </parameter>
+        </parameters>
+      </constructor>
+      <method name="copy" c:identifier="gsk_component_transfer_copy" version="4.20">
+        <doc xml:space="preserve">Creates a copy of @other.</doc>
+        <return-value transfer-ownership="full">
+          <doc xml:space="preserve">a newly allocated copy of @other</doc>
+          <type name="ComponentTransfer" c:type="GskComponentTransfer*"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="other" transfer-ownership="none">
+            <doc xml:space="preserve">a component transfer</doc>
+            <type name="ComponentTransfer" c:type="const GskComponentTransfer*"/>
+          </instance-parameter>
+        </parameters>
+      </method>
+      <method name="free" c:identifier="gsk_component_transfer_free" version="4.20">
+        <doc xml:space="preserve">Frees a component transfer.</doc>
+        <return-value transfer-ownership="none">
+          <type name="none" c:type="void"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="self" transfer-ownership="none">
+            <doc xml:space="preserve">a component transfer</doc>
+            <type name="ComponentTransfer" c:type="GskComponentTransfer*"/>
+          </instance-parameter>
+        </parameters>
+      </method>
+      <function name="equal" c:identifier="gsk_component_transfer_equal" version="4.20">
+        <doc xml:space="preserve">Compares two component transfers for equality.</doc>
+        <return-value transfer-ownership="none">
+          <doc xml:space="preserve">true if @self and @other are equal</doc>
+          <type name="gboolean" c:type="gboolean"/>
+        </return-value>
+        <parameters>
+          <parameter name="self" transfer-ownership="none" nullable="1" allow-none="1">
+            <doc xml:space="preserve">a component transfer</doc>
+            <type name="gpointer" c:type="gconstpointer"/>
+          </parameter>
+          <parameter name="other" transfer-ownership="none" nullable="1" allow-none="1">
+            <doc xml:space="preserve">another component transfer</doc>
+            <type name="gpointer" c:type="gconstpointer"/>
+          </parameter>
+        </parameters>
+      </function>
+    </record>
+    <class name="ComponentTransferNode" c:symbol-prefix="component_transfer_node" c:type="GskComponentTransferNode" parent="RenderNode" glib:type-name="GskComponentTransferNode" glib:get-type="gsk_component_transfer_node_get_type" glib:fundamental="1">
+      <constructor name="new" c:identifier="gsk_component_transfer_node_new" version="4.20">
+        <doc xml:space="preserve">Creates a render node that will apply component
+transfers to a child node.</doc>
+        <return-value transfer-ownership="full">
+          <doc xml:space="preserve">A new `GskRenderNode`</doc>
+          <type name="ComponentTransferNode" c:type="GskRenderNode*"/>
+        </return-value>
+        <parameters>
+          <parameter name="child" transfer-ownership="none">
+            <doc xml:space="preserve">The child to apply component transfers to</doc>
+            <type name="RenderNode" c:type="GskRenderNode*"/>
+          </parameter>
+          <parameter name="r" transfer-ownership="none">
+            <doc xml:space="preserve">transfer for the red component</doc>
+            <type name="ComponentTransfer" c:type="const GskComponentTransfer*"/>
+          </parameter>
+          <parameter name="g" transfer-ownership="none">
+            <doc xml:space="preserve">transfer for the green component</doc>
+            <type name="ComponentTransfer" c:type="const GskComponentTransfer*"/>
+          </parameter>
+          <parameter name="b" transfer-ownership="none">
+            <doc xml:space="preserve">transfer for the blue component</doc>
+            <type name="ComponentTransfer" c:type="const GskComponentTransfer*"/>
+          </parameter>
+          <parameter name="a" transfer-ownership="none">
+            <doc xml:space="preserve">transfer for the alpha component</doc>
+            <type name="ComponentTransfer" c:type="const GskComponentTransfer*"/>
+          </parameter>
+        </parameters>
+      </constructor>
+      <method name="get_child" c:identifier="gsk_component_transfer_node_get_child" version="4.20">
+        <doc xml:space="preserve">Gets the child node that is getting drawn by the given @node.</doc>
+        <return-value transfer-ownership="none">
+          <doc xml:space="preserve">the child `GskRenderNode`</doc>
+          <type name="RenderNode" c:type="GskRenderNode*"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="node" transfer-ownership="none">
+            <doc xml:space="preserve">a debug `GskRenderNode`</doc>
+            <type name="ComponentTransferNode" c:type="const GskRenderNode*"/>
+          </instance-parameter>
+        </parameters>
+      </method>
+      <method name="get_transfer" c:identifier="gsk_component_transfer_node_get_transfer" version="4.20">
+        <doc xml:space="preserve">Gets the component transfer for one of the components.</doc>
+        <return-value transfer-ownership="none">
+          <doc xml:space="preserve">the `GskComponentTransfer`</doc>
+          <type name="ComponentTransfer" c:type="const GskComponentTransfer*"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="node" transfer-ownership="none">
+            <doc xml:space="preserve">a debug `GskRenderNode`</doc>
+            <type name="ComponentTransferNode" c:type="const GskRenderNode*"/>
+          </instance-parameter>
+          <parameter name="component" transfer-ownership="none">
+            <doc xml:space="preserve">a value between 0 and 3 to indicate the red, green, blue
+  or alpha component</doc>
+            <type name="guint" c:type="guint"/>
+          </parameter>
+        </parameters>
+      </method>
+    </class>
     <class name="ConicGradientNode" c:symbol-prefix="conic_gradient_node" c:type="GskConicGradientNode" parent="RenderNode" glib:type-name="GskConicGradientNode" glib:get-type="gsk_conic_gradient_node_get_type" glib:fundamental="1">
       <doc xml:space="preserve">A render node for a conic gradient.</doc>
       <constructor name="new" c:identifier="gsk_conic_gradient_node_new">
@@ -4692,6 +4923,9 @@ node to a file for later inspection.</doc>
       <member name="subsurface_node" value="30" c:identifier="GSK_SUBSURFACE_NODE" version="4.14" glib:nick="subsurface-node" glib:name="GSK_SUBSURFACE_NODE">
         <doc xml:space="preserve">A node that possibly redirects part of the scene graph to a subsurface.</doc>
       </member>
+      <member name="component_transfer_node" value="31" c:identifier="GSK_COMPONENT_TRANSFER_NODE" version="4.20" glib:nick="component-transfer-node" glib:name="GSK_COMPONENT_TRANSFER_NODE">
+        <doc xml:space="preserve">A node that applies some function to each color component.</doc>
+      </member>
     </enumeration>
     <class name="Renderer" c:symbol-prefix="renderer" c:type="GskRenderer" parent="GObject.Object" abstract="1" glib:type-name="GskRenderer" glib:get-type="gsk_renderer_get_type" glib:type-struct="RendererClass">
       <doc xml:space="preserve">Renders a scene graph defined via a tree of [class@Gsk.RenderNode] instances.
@@ -7194,6 +7428,23 @@ Vulkan support.</doc>
       </constructor>
     </class>
     <record name="VulkanRendererClass" c:type="GskVulkanRendererClass" disguised="1" opaque="1" glib:is-gtype-struct-for="VulkanRenderer"/>
+    <function name="component_transfer_equal" c:identifier="gsk_component_transfer_equal" moved-to="ComponentTransfer.equal" version="4.20">
+      <doc xml:space="preserve">Compares two component transfers for equality.</doc>
+      <return-value transfer-ownership="none">
+        <doc xml:space="preserve">true if @self and @other are equal</doc>
+        <type name="gboolean" c:type="gboolean"/>
+      </return-value>
+      <parameters>
+        <parameter name="self" transfer-ownership="none" nullable="1" allow-none="1">
+          <doc xml:space="preserve">a component transfer</doc>
+          <type name="gpointer" c:type="gconstpointer"/>
+        </parameter>
+        <parameter name="other" transfer-ownership="none" nullable="1" allow-none="1">
+          <doc xml:space="preserve">another component transfer</doc>
+          <type name="gpointer" c:type="gconstpointer"/>
+        </parameter>
+      </parameters>
+    </function>
     <function name="path_parse" c:identifier="gsk_path_parse" moved-to="Path.parse" version="4.14">
       <doc xml:space="preserve">Constructs a path from a serialized form.
 
