@@ -5645,10 +5645,10 @@ or derived.</doc>
       </parameters>
     </function-macro>
     <function-macro name="IS_VALUE" c:identifier="G_IS_VALUE" introspectable="0">
-      <doc xml:space="preserve">Checks if @value is a valid and initialized #GValue structure.</doc>
+      <doc xml:space="preserve">Checks if @value is a valid and initialized [struct@GObject.Value] structure.</doc>
       <parameters>
         <parameter name="value">
-          <doc xml:space="preserve">A #GValue structure.</doc>
+          <doc xml:space="preserve">a [struct@GObject.Value] structure</doc>
         </parameter>
       </parameters>
     </function-macro>
@@ -10865,13 +10865,15 @@ g_type_interface_add_prerequisite() for an alternative).</doc>
       </parameters>
     </function-macro>
     <function-macro name="TYPE_IS_VALUE" c:identifier="G_TYPE_IS_VALUE" introspectable="0">
-      <doc xml:space="preserve">Checks whether the passed in type ID can be used for g_value_init().
+      <doc xml:space="preserve">Checks whether the passed in type ID can be used for
+[method@GObject.Value.init].
 
 That is, this macro checks whether this type provides an implementation
-of the #GTypeValueTable functions required for a type to create a #GValue of.</doc>
+of the [struct@GObject.TypeValueTable] functions required to be able to
+create a [struct@GObject.Value] instance.</doc>
       <parameters>
         <parameter name="type">
-          <doc xml:space="preserve">A #GType value.</doc>
+          <doc xml:space="preserve">a type</doc>
         </parameter>
       </parameters>
     </function-macro>
@@ -12641,15 +12643,16 @@ to the caller.</doc>
       </parameters>
     </function-macro>
     <function-macro name="VALUE_HOLDS" c:identifier="G_VALUE_HOLDS" introspectable="0">
-      <doc xml:space="preserve">Checks if @value holds (or contains) a value of @type.
-This macro will also check for @value != %NULL and issue a
+      <doc xml:space="preserve">Checks if @value holds a value of @type.
+
+This macro will also check for `value != NULL` and issue a
 warning if the check fails.</doc>
       <parameters>
         <parameter name="value">
-          <doc xml:space="preserve">A #GValue structure.</doc>
+          <doc xml:space="preserve">a [struct@GObject.Value] structure</doc>
         </parameter>
         <parameter name="type">
-          <doc xml:space="preserve">A #GType value.</doc>
+          <doc xml:space="preserve">a [type@GObject.Type]</doc>
         </parameter>
       </parameters>
     </function-macro>
@@ -12815,8 +12818,14 @@ from type %G_TYPE_BOXED.</doc>
       </parameters>
     </function-macro>
     <constant name="VALUE_INTERNED_STRING" value="268435456" c:type="G_VALUE_INTERNED_STRING" version="2.66">
-      <doc xml:space="preserve">For string values, indicates that the string contained is canonical and will
-exist for the duration of the process. See g_value_set_interned_string().</doc>
+      <doc xml:space="preserve">Flag to indicate that a string in a [struct@GObject.Value] is canonical and
+will exist for the duration of the process.
+
+See [method@GObject.Value.set_interned_string].
+
+This flag should be checked by implementations of
+[callback@GObject.TypeValueFreeFunc], [callback@GObject.TypeValueCollectFunc]
+and [callback@GObject.TypeValueLCopyFunc].</doc>
       <type name="gint" c:type="gint"/>
     </constant>
     <function-macro name="VALUE_IS_INTERNED_STRING" c:identifier="G_VALUE_IS_INTERNED_STRING" version="2.66" introspectable="0">
@@ -12850,25 +12859,33 @@ This is the inverse of G_VALUE_COLLECT().</doc>
       </parameters>
     </function-macro>
     <constant name="VALUE_NOCOPY_CONTENTS" value="134217728" c:type="G_VALUE_NOCOPY_CONTENTS">
-      <doc xml:space="preserve">If passed to G_VALUE_COLLECT(), allocated data won't be copied
-but used verbatim. This does not affect ref-counted types like
-objects. This does not affect usage of g_value_copy(), the data will
-be copied if it is not ref-counted.</doc>
+      <doc xml:space="preserve">Flag to indicate that allocated data in a [struct@GObject.Value] shouldn&#x2019;t be
+copied.
+
+If passed to [func@GObject.VALUE_COLLECT], allocated data won&#x2019;t be copied
+but used verbatim. This does not affect ref-counted types like objects.
+
+This does not affect usage of [method@GObject.Value.copy]: the data will
+be copied if it is not ref-counted.
+
+This flag should be checked by implementations of
+[callback@GObject.TypeValueFreeFunc], [callback@GObject.TypeValueCollectFunc]
+and [callback@GObject.TypeValueLCopyFunc].</doc>
       <type name="gint" c:type="gint"/>
     </constant>
     <function-macro name="VALUE_TYPE" c:identifier="G_VALUE_TYPE" introspectable="0">
       <doc xml:space="preserve">Get the type identifier of @value.</doc>
       <parameters>
         <parameter name="value">
-          <doc xml:space="preserve">A #GValue structure.</doc>
+          <doc xml:space="preserve">a [struct@GObject.Value] structure</doc>
         </parameter>
       </parameters>
     </function-macro>
     <function-macro name="VALUE_TYPE_NAME" c:identifier="G_VALUE_TYPE_NAME" introspectable="0">
-      <doc xml:space="preserve">Gets the type name of @value.</doc>
+      <doc xml:space="preserve">Gets the name of the type of @value.</doc>
       <parameters>
         <parameter name="value">
-          <doc xml:space="preserve">A #GValue structure.</doc>
+          <doc xml:space="preserve">a [struct@GObject.Value] structure</doc>
         </parameter>
       </parameters>
     </function-macro>
@@ -12921,14 +12938,23 @@ marshalling the signal argument into GValues.</doc>
     <record name="Value" c:type="GValue" glib:type-name="GValue" glib:get-type="g_value_get_type" c:symbol-prefix="value">
       <doc xml:space="preserve">An opaque structure used to hold different types of values.
 
-The data within the structure has protected scope: it is accessible only
-to functions within a #GTypeValueTable structure, or implementations of
-the g_value_*() API. That is, code portions which implement new fundamental
-types.
+Before it can be used, a `GValue` has to be initialized to a specific type by
+calling [method@GObject.Value.init] on it.
 
-#GValue users cannot make any assumptions about how data is stored
+Many types which are stored within a `GValue` need to allocate data on the
+heap, so [method@GObject.Value.unset] must always be called on a `GValue` to
+free any such data once you&#x2019;re finished with the `GValue`, even if the
+`GValue` itself is stored on the stack.
+
+The data within the structure has protected scope: it is accessible only
+to functions within a [struct@GObject.TypeValueTable] structure, or
+implementations of the `g_value_*()` API. That is, code which implements new
+fundamental types.
+
+`GValue` users cannot make any assumptions about how data is stored
 within the 2 element @data union, and the @g_type member should
-only be accessed through the G_VALUE_TYPE() macro.</doc>
+only be accessed through the [func@GObject.VALUE_TYPE] macro and related
+macros.</doc>
       <field name="g_type" readable="0" private="1">
         <type name="GType" c:type="GType"/>
       </field>
@@ -12944,11 +12970,12 @@ only be accessed through the G_VALUE_TYPE() macro.</doc>
         </return-value>
         <parameters>
           <instance-parameter name="src_value" transfer-ownership="none">
-            <doc xml:space="preserve">An initialized #GValue structure.</doc>
+            <doc xml:space="preserve">an initialized [struct@GObject.Value] structure</doc>
             <type name="Value" c:type="const GValue*"/>
           </instance-parameter>
           <parameter name="dest_value" transfer-ownership="none">
-            <doc xml:space="preserve">An initialized #GValue structure of the same type as @src_value.</doc>
+            <doc xml:space="preserve">an initialized [struct@GObject.Value] structure of the same type
+  as @src_value</doc>
             <type name="Value" c:type="GValue*"/>
           </parameter>
         </parameters>
@@ -13030,14 +13057,15 @@ reference count.</doc>
       </method>
       <method name="fits_pointer" c:identifier="g_value_fits_pointer">
         <doc xml:space="preserve">Determines if @value will fit inside the size of a pointer value.
+
 This is an internal function introduced mainly for C marshallers.</doc>
         <return-value transfer-ownership="none">
-          <doc xml:space="preserve">%TRUE if @value will fit inside a pointer value.</doc>
+          <doc xml:space="preserve">true if @value will fit inside a pointer value; false otherwise</doc>
           <type name="gboolean" c:type="gboolean"/>
         </return-value>
         <parameters>
           <instance-parameter name="value" transfer-ownership="none">
-            <doc xml:space="preserve">An initialized #GValue structure.</doc>
+            <doc xml:space="preserve">an initialized [struct@GObject.Value] structure</doc>
             <type name="Value" c:type="const GValue*"/>
           </instance-parameter>
         </parameters>
@@ -13320,36 +13348,51 @@ Get the contents of a %G_TYPE_CHAR #GValue.</doc>
         </parameters>
       </method>
       <method name="init" c:identifier="g_value_init">
-        <doc xml:space="preserve">Initializes @value with the default value of @type.</doc>
+        <doc xml:space="preserve">Initializes @value to store values of the given @type, and sets its value
+to the default for @type.
+
+This must be called before any other methods on a [struct@GObject.Value], so
+the value knows what type it&#x2019;s meant to store.
+
+```c
+  GValue value = G_VALUE_INIT;
+
+  g_value_init (&amp;value, SOME_G_TYPE);
+  &#x2026;
+  g_value_unset (&amp;value);
+```</doc>
         <return-value transfer-ownership="none">
-          <doc xml:space="preserve">the #GValue structure that has been passed in</doc>
+          <doc xml:space="preserve">the [struct@GObject.Value] structure that has been
+  passed in</doc>
           <type name="Value" c:type="GValue*"/>
         </return-value>
         <parameters>
           <instance-parameter name="value" transfer-ownership="none">
-            <doc xml:space="preserve">A zero-filled (uninitialized) #GValue structure.</doc>
+            <doc xml:space="preserve">a zero-filled (cleared) [struct@GObject.Value] structure</doc>
             <type name="Value" c:type="GValue*"/>
           </instance-parameter>
           <parameter name="g_type" transfer-ownership="none">
-            <doc xml:space="preserve">Type the #GValue should hold values of.</doc>
+            <doc xml:space="preserve">type the [struct@GObject.Value] should hold values of</doc>
             <type name="GType" c:type="GType"/>
           </parameter>
         </parameters>
       </method>
       <method name="init_from_instance" c:identifier="g_value_init_from_instance" version="2.42">
-        <doc xml:space="preserve">Initializes and sets @value from an instantiatable type via the
-value_table's collect_value() function.
+        <doc xml:space="preserve">Initializes and sets @value from an instantiatable type.
+
+This calls the [callback@GObject.TypeValueCollectFunc] function for the type
+the [struct@GObject.Value] contains.
 
 Note: The @value will be initialised with the exact type of
-@instance.  If you wish to set the @value's type to a different GType
-(such as a parent class GType), you need to manually call
-g_value_init() and g_value_set_instance().</doc>
+@instance.  If you wish to set the @value&#x2019;s type to a different
+[type@GObject.Type] (such as a parent class type), you need to manually call
+[method@GObject.Value.init] and [method@GObject.Value.set_instance].</doc>
         <return-value transfer-ownership="none">
           <type name="none" c:type="void"/>
         </return-value>
         <parameters>
           <instance-parameter name="value" transfer-ownership="none">
-            <doc xml:space="preserve">An uninitialized #GValue structure.</doc>
+            <doc xml:space="preserve">a zero-filled (cleared) [struct@GObject.Value] structure</doc>
             <type name="Value" c:type="GValue*"/>
           </instance-parameter>
           <parameter name="instance" transfer-ownership="none">
@@ -13359,30 +13402,34 @@ g_value_init() and g_value_set_instance().</doc>
         </parameters>
       </method>
       <method name="peek_pointer" c:identifier="g_value_peek_pointer">
-        <doc xml:space="preserve">Returns the value contents as pointer. This function asserts that
-g_value_fits_pointer() returned %TRUE for the passed in value.
+        <doc xml:space="preserve">Returns the value contents as a pointer.
+
+This function asserts that [method@GObject.Value.fits_pointer] returned true
+for the passed in value.
+
 This is an internal function introduced mainly for C marshallers.</doc>
         <return-value transfer-ownership="none" nullable="1">
-          <doc xml:space="preserve">the value contents as pointer</doc>
+          <doc xml:space="preserve">the value contents as a pointer</doc>
           <type name="gpointer" c:type="gpointer"/>
         </return-value>
         <parameters>
           <instance-parameter name="value" transfer-ownership="none">
-            <doc xml:space="preserve">An initialized #GValue structure</doc>
+            <doc xml:space="preserve">an initialized [struct@GObject.Value] structure</doc>
             <type name="Value" c:type="const GValue*"/>
           </instance-parameter>
         </parameters>
       </method>
       <method name="reset" c:identifier="g_value_reset">
         <doc xml:space="preserve">Clears the current value in @value and resets it to the default value
-(as if the value had just been initialized).</doc>
+(as if the value had just been initialized using
+[method@GObject.Value.init]).</doc>
         <return-value transfer-ownership="full">
-          <doc xml:space="preserve">the #GValue structure that has been passed in</doc>
+          <doc xml:space="preserve">the [struct@GObject.Value] structure that has been passed in</doc>
           <type name="Value" c:type="GValue*"/>
         </return-value>
         <parameters>
           <instance-parameter name="value" transfer-ownership="none">
-            <doc xml:space="preserve">An initialized #GValue structure.</doc>
+            <doc xml:space="preserve">an initialized [struct@GObject.Value] structure</doc>
             <type name="Value" c:type="GValue*"/>
           </instance-parameter>
         </parameters>
@@ -13534,14 +13581,16 @@ This is an internal function introduced mainly for C marshallers.</doc>
         </parameters>
       </method>
       <method name="set_instance" c:identifier="g_value_set_instance">
-        <doc xml:space="preserve">Sets @value from an instantiatable type via the
-value_table's collect_value() function.</doc>
+        <doc xml:space="preserve">Sets @value from an instantiatable type.
+
+This calls the [callback@GObject.TypeValueCollectFunc] function for the type
+the [struct@GObject.Value] contains.</doc>
         <return-value transfer-ownership="none">
           <type name="none" c:type="void"/>
         </return-value>
         <parameters>
           <instance-parameter name="value" transfer-ownership="none">
-            <doc xml:space="preserve">An initialized #GValue structure.</doc>
+            <doc xml:space="preserve">an initialized [struct@GObject.Value] structure</doc>
             <type name="Value" c:type="GValue*"/>
           </instance-parameter>
           <parameter name="instance" transfer-ownership="none" nullable="1" allow-none="1">
@@ -14003,100 +14052,109 @@ This is an internal function introduced mainly for C marshallers.</doc>
       </method>
       <method name="transform" c:identifier="g_value_transform">
         <doc xml:space="preserve">Tries to cast the contents of @src_value into a type appropriate
-to store in @dest_value, e.g. to transform a %G_TYPE_INT value
-into a %G_TYPE_FLOAT value. Performing transformations between
-value types might incur precision lossage. Especially
-transformations into strings might reveal seemingly arbitrary
-results and shouldn't be relied upon for production code (such
-as rcfile value or object property serialization).</doc>
+to store in @dest_value.
+
+If a transformation is not possible, @dest_value is not modified.
+
+For example, this could transform a `G_TYPE_INT` value into a `G_TYPE_FLOAT`
+value.
+
+Performing transformations between value types might incur precision loss.
+Especially transformations into strings might reveal seemingly arbitrary
+results and the format of particular transformations to strings is not
+guaranteed over time.</doc>
         <return-value transfer-ownership="none">
-          <doc xml:space="preserve">Whether a transformation rule was found and could be applied.
- Upon failing transformations, @dest_value is left untouched.</doc>
+          <doc xml:space="preserve">true on success; false otherwise</doc>
           <type name="gboolean" c:type="gboolean"/>
         </return-value>
         <parameters>
           <instance-parameter name="src_value" transfer-ownership="none">
-            <doc xml:space="preserve">Source value.</doc>
+            <doc xml:space="preserve">source value</doc>
             <type name="Value" c:type="const GValue*"/>
           </instance-parameter>
           <parameter name="dest_value" transfer-ownership="none">
-            <doc xml:space="preserve">Target value.</doc>
+            <doc xml:space="preserve">target value</doc>
             <type name="Value" c:type="GValue*"/>
           </parameter>
         </parameters>
       </method>
       <method name="unset" c:identifier="g_value_unset">
-        <doc xml:space="preserve">Clears the current value in @value (if any) and "unsets" the type,
-this releases all resources associated with this GValue. An unset
-value is the same as an uninitialized (zero-filled) #GValue
-structure.</doc>
+        <doc xml:space="preserve">Clears the current value in @value (if any) and &#x2018;unsets&#x2019; the type.
+
+This releases all resources associated with this [struct@GObject.Value]. An
+unset value is the same as a cleared (zero-filled)
+[struct@GObject.Value] structure set to `G_VALUE_INIT`.</doc>
         <return-value transfer-ownership="none">
           <type name="none" c:type="void"/>
         </return-value>
         <parameters>
           <instance-parameter name="value" transfer-ownership="none">
-            <doc xml:space="preserve">An initialized #GValue structure.</doc>
+            <doc xml:space="preserve">an initialized [struct@GObject.Value] structure</doc>
             <type name="Value" c:type="GValue*"/>
           </instance-parameter>
         </parameters>
       </method>
       <function name="register_transform_func" c:identifier="g_value_register_transform_func" introspectable="0">
-        <doc xml:space="preserve">Registers a value transformation function for use in g_value_transform().
-A previously registered transformation function for @src_type and @dest_type
-will be replaced.</doc>
+        <doc xml:space="preserve">Registers a value transformation function for use in
+[method@GObject.Value.transform].
+
+Any previously registered transformation function for @src_type and
+@dest_type will be replaced.</doc>
         <return-value transfer-ownership="none">
           <type name="none" c:type="void"/>
         </return-value>
         <parameters>
           <parameter name="src_type" transfer-ownership="none">
-            <doc xml:space="preserve">Source type.</doc>
+            <doc xml:space="preserve">source type</doc>
             <type name="GType" c:type="GType"/>
           </parameter>
           <parameter name="dest_type" transfer-ownership="none">
-            <doc xml:space="preserve">Target type.</doc>
+            <doc xml:space="preserve">target type</doc>
             <type name="GType" c:type="GType"/>
           </parameter>
           <parameter name="transform_func" transfer-ownership="none">
             <doc xml:space="preserve">a function which transforms values of type @src_type
- into value of type @dest_type</doc>
+  into values of type @dest_type</doc>
             <type name="ValueTransform" c:type="GValueTransform"/>
           </parameter>
         </parameters>
       </function>
       <function name="type_compatible" c:identifier="g_value_type_compatible">
-        <doc xml:space="preserve">Returns whether a #GValue of type @src_type can be copied into
-a #GValue of type @dest_type.</doc>
+        <doc xml:space="preserve">Checks whether a [method@GObject.Value.copy] is able to copy values of type
+@src_type into values of type @dest_type.</doc>
         <return-value transfer-ownership="none">
-          <doc xml:space="preserve">%TRUE if g_value_copy() is possible with @src_type and @dest_type.</doc>
+          <doc xml:space="preserve">true if the copy is possible; false otherwise</doc>
           <type name="gboolean" c:type="gboolean"/>
         </return-value>
         <parameters>
           <parameter name="src_type" transfer-ownership="none">
-            <doc xml:space="preserve">source type to be copied.</doc>
+            <doc xml:space="preserve">source type to be copied</doc>
             <type name="GType" c:type="GType"/>
           </parameter>
           <parameter name="dest_type" transfer-ownership="none">
-            <doc xml:space="preserve">destination type for copying.</doc>
+            <doc xml:space="preserve">destination type for copying</doc>
             <type name="GType" c:type="GType"/>
           </parameter>
         </parameters>
       </function>
       <function name="type_transformable" c:identifier="g_value_type_transformable">
-        <doc xml:space="preserve">Check whether g_value_transform() is able to transform values
-of type @src_type into values of type @dest_type. Note that for
-the types to be transformable, they must be compatible or a
-transformation function must be registered.</doc>
+        <doc xml:space="preserve">Checks whether [method@GObject.Value.transform] is able to transform values
+of type @src_type into values of type @dest_type.
+
+Note that for the types to be transformable, they must be compatible or a
+transformation function must be registered using
+[func@GObject.Value.register_transform_func].</doc>
         <return-value transfer-ownership="none">
-          <doc xml:space="preserve">%TRUE if the transformation is possible, %FALSE otherwise.</doc>
+          <doc xml:space="preserve">true if the transformation is possible; false otherwise</doc>
           <type name="gboolean" c:type="gboolean"/>
         </return-value>
         <parameters>
           <parameter name="src_type" transfer-ownership="none">
-            <doc xml:space="preserve">Source type.</doc>
+            <doc xml:space="preserve">source type</doc>
             <type name="GType" c:type="GType"/>
           </parameter>
           <parameter name="dest_type" transfer-ownership="none">
-            <doc xml:space="preserve">Target type.</doc>
+            <doc xml:space="preserve">target type</doc>
             <type name="GType" c:type="GType"/>
           </parameter>
         </parameters>
@@ -14332,7 +14390,7 @@ C qsort() function.</doc>
     </record>
     <callback name="ValueTransform" c:type="GValueTransform">
       <doc xml:space="preserve">The type of value transformation functions which can be registered with
-g_value_register_transform_func().
+[func@GObject.Value.register_transform_func].
 
 @dest_value will be initialized to the correct destination type.</doc>
       <return-value transfer-ownership="none">
@@ -14340,11 +14398,11 @@ g_value_register_transform_func().
       </return-value>
       <parameters>
         <parameter name="src_value" transfer-ownership="none">
-          <doc xml:space="preserve">Source value.</doc>
+          <doc xml:space="preserve">source value</doc>
           <type name="Value" c:type="const GValue*"/>
         </parameter>
         <parameter name="dest_value" transfer-ownership="none">
-          <doc xml:space="preserve">Target value.</doc>
+          <doc xml:space="preserve">target value</doc>
           <type name="Value" c:type="GValue*"/>
         </parameter>
       </parameters>
@@ -19669,62 +19727,66 @@ that implements or has internal knowledge of the implementation of
       </parameters>
     </function>
     <function name="value_register_transform_func" c:identifier="g_value_register_transform_func" moved-to="Value.register_transform_func" introspectable="0">
-      <doc xml:space="preserve">Registers a value transformation function for use in g_value_transform().
-A previously registered transformation function for @src_type and @dest_type
-will be replaced.</doc>
+      <doc xml:space="preserve">Registers a value transformation function for use in
+[method@GObject.Value.transform].
+
+Any previously registered transformation function for @src_type and
+@dest_type will be replaced.</doc>
       <return-value transfer-ownership="none">
         <type name="none" c:type="void"/>
       </return-value>
       <parameters>
         <parameter name="src_type" transfer-ownership="none">
-          <doc xml:space="preserve">Source type.</doc>
+          <doc xml:space="preserve">source type</doc>
           <type name="GType" c:type="GType"/>
         </parameter>
         <parameter name="dest_type" transfer-ownership="none">
-          <doc xml:space="preserve">Target type.</doc>
+          <doc xml:space="preserve">target type</doc>
           <type name="GType" c:type="GType"/>
         </parameter>
         <parameter name="transform_func" transfer-ownership="none">
           <doc xml:space="preserve">a function which transforms values of type @src_type
- into value of type @dest_type</doc>
+  into values of type @dest_type</doc>
           <type name="ValueTransform" c:type="GValueTransform"/>
         </parameter>
       </parameters>
     </function>
     <function name="value_type_compatible" c:identifier="g_value_type_compatible" moved-to="Value.type_compatible">
-      <doc xml:space="preserve">Returns whether a #GValue of type @src_type can be copied into
-a #GValue of type @dest_type.</doc>
+      <doc xml:space="preserve">Checks whether a [method@GObject.Value.copy] is able to copy values of type
+@src_type into values of type @dest_type.</doc>
       <return-value transfer-ownership="none">
-        <doc xml:space="preserve">%TRUE if g_value_copy() is possible with @src_type and @dest_type.</doc>
+        <doc xml:space="preserve">true if the copy is possible; false otherwise</doc>
         <type name="gboolean" c:type="gboolean"/>
       </return-value>
       <parameters>
         <parameter name="src_type" transfer-ownership="none">
-          <doc xml:space="preserve">source type to be copied.</doc>
+          <doc xml:space="preserve">source type to be copied</doc>
           <type name="GType" c:type="GType"/>
         </parameter>
         <parameter name="dest_type" transfer-ownership="none">
-          <doc xml:space="preserve">destination type for copying.</doc>
+          <doc xml:space="preserve">destination type for copying</doc>
           <type name="GType" c:type="GType"/>
         </parameter>
       </parameters>
     </function>
     <function name="value_type_transformable" c:identifier="g_value_type_transformable" moved-to="Value.type_transformable">
-      <doc xml:space="preserve">Check whether g_value_transform() is able to transform values
-of type @src_type into values of type @dest_type. Note that for
-the types to be transformable, they must be compatible or a
-transformation function must be registered.</doc>
+      <doc xml:space="preserve">Checks whether [method@GObject.Value.transform] is able to transform values
+of type @src_type into values of type @dest_type.
+
+Note that for the types to be transformable, they must be compatible or a
+transformation function must be registered using
+[func@GObject.Value.register_transform_func].</doc>
       <return-value transfer-ownership="none">
-        <doc xml:space="preserve">%TRUE if the transformation is possible, %FALSE otherwise.</doc>
+        <doc xml:space="preserve">true if the transformation is possible; false otherwise</doc>
         <type name="gboolean" c:type="gboolean"/>
       </return-value>
       <parameters>
         <parameter name="src_type" transfer-ownership="none">
-          <doc xml:space="preserve">Source type.</doc>
+          <doc xml:space="preserve">source type</doc>
           <type name="GType" c:type="GType"/>
         </parameter>
         <parameter name="dest_type" transfer-ownership="none">
-          <doc xml:space="preserve">Target type.</doc>
+          <doc xml:space="preserve">target type</doc>
           <type name="GType" c:type="GType"/>
         </parameter>
       </parameters>

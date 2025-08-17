@@ -15418,7 +15418,7 @@ linked against at application run time.</doc>
     <constant name="MAXUINT8" value="255" c:type="G_MAXUINT8">
       <type name="guint8" c:type="guint8"/>
     </constant>
-    <constant name="MICRO_VERSION" value="2" c:type="GLIB_MICRO_VERSION">
+    <constant name="MICRO_VERSION" value="3" c:type="GLIB_MICRO_VERSION">
       <doc xml:space="preserve">The micro version number of the GLib library.
 
 Like #gtk_micro_version, but from the headers used at
@@ -43771,13 +43771,13 @@ artifact and the argument passed to it should not be `volatile`.</doc>
       </parameters>
     </function>
     <function name="bit_unlock_and_set" c:identifier="g_bit_unlock_and_set" version="2.86">
-      <doc xml:space="preserve">This is like [func@GLib.bit_unlock]() but also atomically sets @address to
+      <doc xml:space="preserve">This is like [func@GLib.bit_unlock] but also atomically sets @address to
 @val.
 
 If @preserve_mask is not zero, then the @preserve_mask bits will be
 preserved in @address and are not set to @val.
 
-Note that the @lock_bit bit will be always unset regardless of
+Note that the @lock_bit bit will always be unset regardless of
 @val, @preserve_mask and the currently set value in @address.</doc>
       <return-value transfer-ownership="none">
         <type name="none" c:type="void"/>
@@ -43792,6 +43792,7 @@ Note that the @lock_bit bit will be always unset regardless of
           <type name="guint" c:type="guint"/>
         </parameter>
         <parameter name="new_val" transfer-ownership="none">
+          <doc xml:space="preserve">the new value to set</doc>
           <type name="gint" c:type="gint"/>
         </parameter>
         <parameter name="preserve_mask" transfer-ownership="none">
@@ -54946,8 +54947,9 @@ each prime is approximately 1.5-2 times the previous prime.</doc>
     <function name="spawn_async" c:identifier="g_spawn_async" throws="1">
       <doc xml:space="preserve">Executes a child program asynchronously.
 
-See g_spawn_async_with_pipes() for a full description; this function
-simply calls the g_spawn_async_with_pipes() without any pipes.
+See g_spawn_async_with_pipes_and_fds() for a full description; this function
+simply calls the g_spawn_async_with_pipes() without any pipes, which in turn
+calls g_spawn_async_with_pipes_and_fds().
 
 You should call g_spawn_close_pid() on the returned child process
 reference when you don't need it any more.
