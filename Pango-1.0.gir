@@ -3131,6 +3131,18 @@ To recreate a font from its serialized form, use [func@Pango.Font.deserialize].<
         </callback>
       </field>
     </record>
+    <enumeration name="FontColor" version="1.57" glib:type-name="PangoFontColor" glib:get-type="pango_font_color_get_type" c:type="PangoFontColor">
+      <doc xml:space="preserve">Specifies whether a font should or should not have color glyphs.</doc>
+      <member name="forbidden" value="0" c:identifier="PANGO_FONT_COLOR_FORBIDDEN" glib:nick="forbidden" glib:name="PANGO_FONT_COLOR_FORBIDDEN">
+        <doc xml:space="preserve">The font should not have color glyphs</doc>
+      </member>
+      <member name="required" value="1" c:identifier="PANGO_FONT_COLOR_REQUIRED" glib:nick="required" glib:name="PANGO_FONT_COLOR_REQUIRED">
+        <doc xml:space="preserve">The font should have color glyphs</doc>
+      </member>
+      <member name="dont_care" value="2" c:identifier="PANGO_FONT_COLOR_DONT_CARE" glib:nick="dont-care" glib:name="PANGO_FONT_COLOR_DONT_CARE">
+        <doc xml:space="preserve">The font may or may not use color</doc>
+      </member>
+    </enumeration>
     <record name="FontDescription" c:type="PangoFontDescription" opaque="1" glib:type-name="PangoFontDescription" glib:get-type="pango_font_description_get_type" c:symbol-prefix="font_description">
       <doc xml:space="preserve">A `PangoFontDescription` describes a font in an implementation-independent
 manner.
@@ -3245,6 +3257,21 @@ result in identical fonts being loaded, but still compare %FALSE.)</doc>
           <instance-parameter name="desc" transfer-ownership="none" nullable="1" allow-none="1">
             <doc xml:space="preserve">a `PangoFontDescription`, may be %NULL</doc>
             <type name="FontDescription" c:type="PangoFontDescription*"/>
+          </instance-parameter>
+        </parameters>
+      </method>
+      <method name="get_color" c:identifier="pango_font_description_get_color" version="1.57">
+        <doc xml:space="preserve">Returns the color field of the font description.
+
+This field determines whether the font description should
+match fonts that have color glyphs, or fonts that don't.</doc>
+        <return-value transfer-ownership="none">
+          <type name="FontColor" c:type="PangoFontColor"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="desc" transfer-ownership="none">
+            <doc xml:space="preserve">a `PangoFontDescription`</doc>
+            <type name="FontDescription" c:type="const PangoFontDescription*"/>
           </instance-parameter>
         </parameters>
       </method>
@@ -3531,6 +3558,25 @@ which sets the font size in points.</doc>
   in one device unit. For an output backend where a device unit is a pixel,
   a @size value of 10 * PANGO_SCALE gives a 10 pixel font.</doc>
             <type name="gdouble" c:type="double"/>
+          </parameter>
+        </parameters>
+      </method>
+      <method name="set_color" c:identifier="pango_font_description_set_color" version="1.57">
+        <doc xml:space="preserve">Sets the color field of a font description.
+
+This field determines whether the font description should
+match fonts that have color glyphs, or fonts that don't.</doc>
+        <return-value transfer-ownership="none">
+          <type name="none" c:type="void"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="desc" transfer-ownership="none">
+            <doc xml:space="preserve">a `PangoFontDescription`.</doc>
+            <type name="FontDescription" c:type="PangoFontDescription*"/>
+          </instance-parameter>
+          <parameter name="color" transfer-ownership="none">
+            <doc xml:space="preserve">the `PangoFontColor` value</doc>
+            <type name="FontColor" c:type="PangoFontColor"/>
           </parameter>
         </parameters>
       </method>
@@ -3915,6 +3961,9 @@ The following words are understood as stretch values:
 The following words are understood as gravity values:
 "Not-Rotated", "South", "Upside-Down", "North", "Rotated-Left",
 "East", "Rotated-Right", "West".
+
+The following words are understood as color values:
+"With-Color", "Without-Color".
 
 VARIATIONS is a comma-separated list of font variations
 of the form @&#x200D;axis1=value,axis2=value,...
@@ -5183,6 +5232,9 @@ See pango_font_map_get_serial().</doc>
       </member>
       <member name="features" value="256" c:identifier="PANGO_FONT_MASK_FEATURES" version="1.56" glib:nick="features" glib:name="PANGO_FONT_MASK_FEATURES">
         <doc xml:space="preserve">OpenType font features are specified.</doc>
+      </member>
+      <member name="color" value="512" c:identifier="PANGO_FONT_MASK_COLOR" version="1.57" glib:nick="color" glib:name="PANGO_FONT_MASK_COLOR">
+        <doc xml:space="preserve">Font color is specified.</doc>
       </member>
     </bitfield>
     <record name="FontMetrics" c:type="PangoFontMetrics" glib:type-name="PangoFontMetrics" glib:get-type="pango_font_metrics_get_type" c:symbol-prefix="font_metrics">
@@ -13402,6 +13454,9 @@ The following words are understood as stretch values:
 The following words are understood as gravity values:
 "Not-Rotated", "South", "Upside-Down", "North", "Rotated-Left",
 "East", "Rotated-Right", "West".
+
+The following words are understood as color values:
+"With-Color", "Without-Color".
 
 VARIATIONS is a comma-separated list of font variations
 of the form @&#x200D;axis1=value,axis2=value,...
