@@ -924,7 +924,7 @@ collecting APIs, such as [method@GObject.Object.set] or
 [func@GObject.signal_emit].
 
 ```c
-gdk_clipboard_set (clipboard, GTK_TYPE_STRING, "Hello World");
+gdk_clipboard_set (clipboard, G_TYPE_STRING, "Hello World");
 
 gdk_clipboard_set (clipboard, GDK_TYPE_TEXTURE, some_texture);
 ```</doc>
@@ -19240,6 +19240,16 @@ zero width or height).</doc>
     </enumeration>
     <class name="ScrollEvent" c:symbol-prefix="scroll_event" c:type="GdkScrollEvent" parent="Event" glib:type-name="GdkScrollEvent" glib:get-type="gdk_scroll_event_get_type" glib:fundamental="1">
       <doc xml:space="preserve">An event related to a scrolling motion.</doc>
+      <function name="get_relative_direction" c:identifier="gdk_scroll_event_get_relative_direction">
+        <return-value transfer-ownership="none">
+          <type name="ScrollRelativeDirection" c:type="GdkScrollRelativeDirection"/>
+        </return-value>
+        <parameters>
+          <parameter name="event" transfer-ownership="none">
+            <type name="Event" c:type="GdkEvent*"/>
+          </parameter>
+        </parameters>
+      </function>
       <method name="get_deltas" c:identifier="gdk_scroll_event_get_deltas">
         <doc xml:space="preserve">Extracts the scroll deltas of a scroll event.
 
@@ -19317,6 +19327,19 @@ Stop scroll events always have a delta of 0/0.</doc>
         </parameters>
       </method>
     </class>
+    <enumeration name="ScrollRelativeDirection" version="4.20" glib:type-name="GdkScrollRelativeDirection" glib:get-type="gdk_scroll_relative_direction_get_type" c:type="GdkScrollRelativeDirection">
+      <doc xml:space="preserve">Used in scroll events, to announce the direction relative
+to physical motion.</doc>
+      <member name="identical" value="0" c:identifier="GDK_SCROLL_RELATIVE_DIRECTION_IDENTICAL" glib:nick="identical" glib:name="GDK_SCROLL_RELATIVE_DIRECTION_IDENTICAL">
+        <doc xml:space="preserve">Physical motion and event motion are the same</doc>
+      </member>
+      <member name="inverted" value="1" c:identifier="GDK_SCROLL_RELATIVE_DIRECTION_INVERTED" glib:nick="inverted" glib:name="GDK_SCROLL_RELATIVE_DIRECTION_INVERTED">
+        <doc xml:space="preserve">Physical motion is inverted relative to event motion</doc>
+      </member>
+      <member name="unknown" value="2" c:identifier="GDK_SCROLL_RELATIVE_DIRECTION_UNKNOWN" glib:nick="unknown" glib:name="GDK_SCROLL_RELATIVE_DIRECTION_UNKNOWN">
+        <doc xml:space="preserve">Relative motion is unknown on this device or backend</doc>
+      </member>
+    </enumeration>
     <enumeration name="ScrollUnit" version="4.8" glib:type-name="GdkScrollUnit" glib:get-type="gdk_scroll_unit_get_type" c:type="GdkScrollUnit">
       <doc xml:space="preserve">Specifies the unit of scroll deltas.
 

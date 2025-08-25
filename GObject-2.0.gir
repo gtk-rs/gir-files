@@ -3206,7 +3206,7 @@ been invalidated before).</doc>
       <method name="ref" c:identifier="g_closure_ref">
         <doc xml:space="preserve">Increments the reference count on a closure to force it staying
 alive while the caller holds a pointer to it.</doc>
-        <return-value transfer-ownership="none">
+        <return-value transfer-ownership="full">
           <doc xml:space="preserve">The @closure passed in, for convenience</doc>
           <type name="Closure" c:type="GClosure*"/>
         </return-value>
@@ -3394,7 +3394,7 @@ destroyed and freed.</doc>
           <type name="none" c:type="void"/>
         </return-value>
         <parameters>
-          <instance-parameter name="closure" transfer-ownership="none">
+          <instance-parameter name="closure" transfer-ownership="full">
             <doc xml:space="preserve">#GClosure to decrement the reference count on</doc>
             <type name="Closure" c:type="GClosure*"/>
           </instance-parameter>
@@ -7159,7 +7159,7 @@ Since GLib 2.56, if `GLIB_VERSION_MAX_ALLOWED` is 2.56 or greater, the type
 of @object will be propagated to the return type (using the GCC typeof()
 extension), so any casting the caller needs to do on the return type must be
 explicit.</doc>
-        <return-value transfer-ownership="none">
+        <return-value transfer-ownership="full">
           <doc xml:space="preserve">the same @object</doc>
           <type name="Object" c:type="gpointer"/>
         </return-value>
@@ -7715,8 +7715,8 @@ invalid #GObject instance. Use g_clear_object() for this.</doc>
           <type name="none" c:type="void"/>
         </return-value>
         <parameters>
-          <instance-parameter name="object" transfer-ownership="none">
-            <doc xml:space="preserve">a #GObject</doc>
+          <instance-parameter name="object" transfer-ownership="full">
+            <doc xml:space="preserve">: a #GObject</doc>
             <type name="Object" c:type="gpointer"/>
           </instance-parameter>
         </parameters>
@@ -11174,7 +11174,7 @@ class pointer after g_type_class_unref() are invalid.</doc>
           <type name="none" c:type="void"/>
         </return-value>
         <parameters>
-          <instance-parameter name="g_class" transfer-ownership="none">
+          <instance-parameter name="g_class" transfer-ownership="full">
             <doc xml:space="preserve">a #GTypeClass structure to unref</doc>
             <type name="TypeClass" c:type="gpointer"/>
           </instance-parameter>
@@ -11269,13 +11269,13 @@ static types.</doc>
           </parameter>
         </parameters>
       </function>
-      <function name="ref" c:identifier="g_type_class_ref" deprecated="1" deprecated-version="2.84">
+      <function name="ref" c:identifier="g_type_class_ref" introspectable="0" deprecated="1" deprecated-version="2.84">
         <doc xml:space="preserve">Increments the reference count of the class structure belonging to
 @type.
 
 This function will demand-create the class if it doesn't exist already.</doc>
         <doc-deprecated xml:space="preserve">Use g_type_class_get() instead</doc-deprecated>
-        <return-value transfer-ownership="none">
+        <return-value transfer-ownership="full">
           <doc xml:space="preserve">the #GTypeClass
   structure for the given type ID</doc>
           <type name="TypeClass" c:type="gpointer"/>
@@ -18928,24 +18928,6 @@ static types.</doc>
         </parameter>
       </parameters>
     </function>
-    <function name="type_class_ref" c:identifier="g_type_class_ref" moved-to="TypeClass.ref" deprecated="1" deprecated-version="2.84">
-      <doc xml:space="preserve">Increments the reference count of the class structure belonging to
-@type.
-
-This function will demand-create the class if it doesn't exist already.</doc>
-      <doc-deprecated xml:space="preserve">Use g_type_class_get() instead</doc-deprecated>
-      <return-value transfer-ownership="none">
-        <doc xml:space="preserve">the #GTypeClass
-  structure for the given type ID</doc>
-        <type name="TypeClass" c:type="gpointer"/>
-      </return-value>
-      <parameters>
-        <parameter name="type" transfer-ownership="none">
-          <doc xml:space="preserve">type ID of a classed type</doc>
-          <type name="GType" c:type="GType"/>
-        </parameter>
-      </parameters>
-    </function>
     <function name="type_create_instance" c:identifier="g_type_create_instance" introspectable="0">
       <doc xml:space="preserve">Creates and initializes an instance of @type if @type is valid and
 can be instantiated. The type system only performs basic allocation
@@ -19017,7 +18999,7 @@ default interface vtable.</doc>
         </parameter>
       </parameters>
     </function>
-    <function name="type_default_interface_ref" c:identifier="g_type_default_interface_ref" version="2.4" deprecated="1" deprecated-version="2.84">
+    <function name="type_default_interface_ref" c:identifier="g_type_default_interface_ref" version="2.4" introspectable="0" deprecated="1" deprecated-version="2.84">
       <doc xml:space="preserve">Increments the reference count for the interface type @g_type,
 and returns the default interface vtable for the type.
 
@@ -19029,7 +19011,7 @@ Calling g_type_default_interface_ref() is useful when you
 want to make sure that signals and properties for an interface
 have been installed.</doc>
       <doc-deprecated xml:space="preserve">Use g_type_default_interface_get() instead</doc-deprecated>
-      <return-value transfer-ownership="none">
+      <return-value transfer-ownership="full">
         <doc xml:space="preserve">the default
   vtable for the interface; call g_type_default_interface_unref()
   when you are done using the interface.</doc>
@@ -19056,7 +19038,7 @@ default vtable (the @class_finalize member of #GTypeInfo) will be called.</doc>
         <type name="none" c:type="void"/>
       </return-value>
       <parameters>
-        <parameter name="g_iface" transfer-ownership="none">
+        <parameter name="g_iface" transfer-ownership="full">
           <doc xml:space="preserve">the default vtable
     structure for an interface, as returned by g_type_default_interface_ref()</doc>
           <type name="TypeInterface" c:type="gpointer"/>
