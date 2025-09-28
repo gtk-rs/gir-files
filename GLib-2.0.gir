@@ -3273,6 +3273,38 @@ copying the data within the resulting bytes structure if sufficiently small
           </parameter>
         </parameters>
       </constructor>
+      <constructor name="new_from_bytes" c:identifier="g_bytes_new_from_bytes" version="2.32">
+        <doc xml:space="preserve">Creates a [struct@GLib.Bytes] which is a subsection of another `GBytes`.
+
+The @offset + @length may not be longer than the size of @bytes.
+
+A reference to @bytes will be held by the newly created `GBytes` until
+the byte data is no longer needed.
+
+Since 2.56, if @offset is 0 and @length matches the size of @bytes, then
+@bytes will be returned with the reference count incremented by 1. If @bytes
+is a slice of another `GBytes`, then the resulting `GBytes` will reference
+the same `GBytes` instead of @bytes. This allows consumers to simplify the
+usage of `GBytes` when asynchronously writing to streams.</doc>
+        <return-value transfer-ownership="full">
+          <doc xml:space="preserve">a new [struct@GLib.Bytes]</doc>
+          <type name="Bytes" c:type="GBytes*"/>
+        </return-value>
+        <parameters>
+          <parameter name="bytes" transfer-ownership="none">
+            <doc xml:space="preserve">a [struct@GLib.Bytes]</doc>
+            <type name="Bytes" c:type="GBytes*"/>
+          </parameter>
+          <parameter name="offset" transfer-ownership="none">
+            <doc xml:space="preserve">offset which subsection starts at</doc>
+            <type name="gsize" c:type="gsize"/>
+          </parameter>
+          <parameter name="length" transfer-ownership="none">
+            <doc xml:space="preserve">length of subsection</doc>
+            <type name="gsize" c:type="gsize"/>
+          </parameter>
+        </parameters>
+      </constructor>
       <constructor name="new_static" c:identifier="g_bytes_new_static" version="2.32" introspectable="0">
         <doc xml:space="preserve">Creates a new [struct@GLib.Bytes] from static data.
 
@@ -3512,38 +3544,6 @@ a [struct@GLib.HashTable].</doc>
             <doc xml:space="preserve">a pointer to a [struct@GLib.Bytes] key</doc>
             <type name="Bytes" c:type="gconstpointer"/>
           </instance-parameter>
-        </parameters>
-      </method>
-      <method name="new_from_bytes" c:identifier="g_bytes_new_from_bytes" version="2.32">
-        <doc xml:space="preserve">Creates a [struct@GLib.Bytes] which is a subsection of another `GBytes`.
-
-The @offset + @length may not be longer than the size of @bytes.
-
-A reference to @bytes will be held by the newly created `GBytes` until
-the byte data is no longer needed.
-
-Since 2.56, if @offset is 0 and @length matches the size of @bytes, then
-@bytes will be returned with the reference count incremented by 1. If @bytes
-is a slice of another `GBytes`, then the resulting `GBytes` will reference
-the same `GBytes` instead of @bytes. This allows consumers to simplify the
-usage of `GBytes` when asynchronously writing to streams.</doc>
-        <return-value transfer-ownership="full">
-          <doc xml:space="preserve">a new [struct@GLib.Bytes]</doc>
-          <type name="Bytes" c:type="GBytes*"/>
-        </return-value>
-        <parameters>
-          <instance-parameter name="bytes" transfer-ownership="none">
-            <doc xml:space="preserve">a [struct@GLib.Bytes]</doc>
-            <type name="Bytes" c:type="GBytes*"/>
-          </instance-parameter>
-          <parameter name="offset" transfer-ownership="none">
-            <doc xml:space="preserve">offset which subsection starts at</doc>
-            <type name="gsize" c:type="gsize"/>
-          </parameter>
-          <parameter name="length" transfer-ownership="none">
-            <doc xml:space="preserve">length of subsection</doc>
-            <type name="gsize" c:type="gsize"/>
-          </parameter>
         </parameters>
       </method>
       <method name="ref" c:identifier="g_bytes_ref" version="2.32">
@@ -4774,7 +4774,7 @@ time of more than 5 seconds).</doc>
         <doc xml:space="preserve">Allocates and initializes a new #GCond.</doc>
         <doc-deprecated xml:space="preserve">GCond can now be statically allocated, or embedded
 in structures and initialised with g_cond_init().</doc-deprecated>
-        <return-value>
+        <return-value transfer-ownership="full">
           <doc xml:space="preserve">a newly allocated #GCond. Free with g_cond_free()</doc>
           <type name="Cond" c:type="GCond*"/>
         </return-value>
@@ -5168,6 +5168,12 @@ in the macro, so you shouldn't use double quotes.</doc>
         </parameter>
       </parameters>
     </function-macro>
+    <function-macro name="DEPRECATED_ENUMERATOR_IN_2_88_FOR" c:identifier="GLIB_DEPRECATED_ENUMERATOR_IN_2_88_FOR" introspectable="0">
+      <parameters>
+        <parameter name="f">
+        </parameter>
+      </parameters>
+    </function-macro>
     <function-macro name="DEPRECATED_FOR" c:identifier="GLIB_DEPRECATED_FOR" introspectable="0">
       <parameters>
         <parameter name="f">
@@ -5355,6 +5361,12 @@ in the macro, so you shouldn't use double quotes.</doc>
       </parameters>
     </function-macro>
     <function-macro name="DEPRECATED_IN_2_86_FOR" c:identifier="GLIB_DEPRECATED_IN_2_86_FOR" introspectable="0">
+      <parameters>
+        <parameter name="f">
+        </parameter>
+      </parameters>
+    </function-macro>
+    <function-macro name="DEPRECATED_IN_2_88_FOR" c:identifier="GLIB_DEPRECATED_IN_2_88_FOR" introspectable="0">
       <parameters>
         <parameter name="f">
         </parameter>
@@ -5552,6 +5564,12 @@ in the macro, so you shouldn't use double quotes.</doc>
         </parameter>
       </parameters>
     </function-macro>
+    <function-macro name="DEPRECATED_MACRO_IN_2_88_FOR" c:identifier="GLIB_DEPRECATED_MACRO_IN_2_88_FOR" introspectable="0">
+      <parameters>
+        <parameter name="f">
+        </parameter>
+      </parameters>
+    </function-macro>
     <function-macro name="DEPRECATED_TYPE_FOR" c:identifier="GLIB_DEPRECATED_TYPE_FOR" introspectable="0">
       <parameters>
         <parameter name="f">
@@ -5739,6 +5757,12 @@ in the macro, so you shouldn't use double quotes.</doc>
       </parameters>
     </function-macro>
     <function-macro name="DEPRECATED_TYPE_IN_2_86_FOR" c:identifier="GLIB_DEPRECATED_TYPE_IN_2_86_FOR" introspectable="0">
+      <parameters>
+        <parameter name="f">
+        </parameter>
+      </parameters>
+    </function-macro>
+    <function-macro name="DEPRECATED_TYPE_IN_2_88_FOR" c:identifier="GLIB_DEPRECATED_TYPE_IN_2_88_FOR" introspectable="0">
       <parameters>
         <parameter name="f">
         </parameter>
@@ -9714,7 +9738,7 @@ To iterate over the entries in a #GHashTable more efficiently, use a
 You should always unref the returned array with g_ptr_array_unref().</doc>
         <return-value transfer-ownership="container">
           <doc xml:space="preserve">a #GPtrArray containing each key from
-the table. Unref with with g_ptr_array_unref() when done.</doc>
+the table. Unref with g_ptr_array_unref() when done.</doc>
           <array name="GLib.PtrArray" c:type="GPtrArray*">
             <type name="gpointer" c:type="gpointer"/>
           </array>
@@ -9766,7 +9790,7 @@ To iterate over the entries in a #GHashTable more efficiently, use a
 You should always unref the returned array with g_ptr_array_unref().</doc>
         <return-value transfer-ownership="container">
           <doc xml:space="preserve">a #GPtrArray containing each value from
-the table. Unref with with g_ptr_array_unref() when done.</doc>
+the table. Unref with g_ptr_array_unref() when done.</doc>
           <array name="GLib.PtrArray" c:type="GPtrArray*">
             <type name="gpointer" c:type="gpointer"/>
           </array>
@@ -10137,7 +10161,7 @@ as a #GPtrArray with the free func set to the @hash_table key
 destroy function.</doc>
         <return-value transfer-ownership="container">
           <doc xml:space="preserve">a #GPtrArray containing each key of
-the table. Unref with with g_ptr_array_unref() when done.</doc>
+the table. Unref with g_ptr_array_unref() when done.</doc>
           <array name="GLib.PtrArray" c:type="GPtrArray*">
             <type name="gpointer" c:type="gpointer"/>
           </array>
@@ -10159,7 +10183,7 @@ as a #GPtrArray with the free func set to the @hash_table value
 destroy function.</doc>
         <return-value transfer-ownership="container">
           <doc xml:space="preserve">a #GPtrArray containing each value of
-the table. Unref with with g_ptr_array_unref() when done.</doc>
+the table. Unref with g_ptr_array_unref() when done.</doc>
           <array name="GLib.PtrArray" c:type="GPtrArray*">
             <type name="gpointer" c:type="gpointer"/>
           </array>
@@ -14411,7 +14435,7 @@ number_list = g_list_append (number_list, GINT_TO_POINTER (14));
           </type>
         </return-value>
         <parameters>
-          <parameter name="list" transfer-ownership="none">
+          <parameter name="list" transfer-ownership="none" nullable="1" allow-none="1">
             <doc xml:space="preserve">a pointer to a #GList</doc>
             <type name="GLib.List" c:type="GList*">
               <type name="gpointer" c:type="gpointer"/>
@@ -14748,7 +14772,7 @@ the given data (starting from 0).</doc>
           </type>
         </return-value>
         <parameters>
-          <parameter name="list" transfer-ownership="none">
+          <parameter name="list" transfer-ownership="none" nullable="1" allow-none="1">
             <doc xml:space="preserve">a pointer to a #GList, this must point to the top of the list</doc>
             <type name="GLib.List" c:type="GList*">
               <type name="gpointer" c:type="gpointer"/>
@@ -14775,7 +14799,7 @@ the given data (starting from 0).</doc>
           </type>
         </return-value>
         <parameters>
-          <parameter name="list" transfer-ownership="none">
+          <parameter name="list" transfer-ownership="none" nullable="1" allow-none="1">
             <doc xml:space="preserve">a pointer to a #GList, this must point to the top of the list</doc>
             <type name="GLib.List" c:type="GList*">
               <type name="gpointer" c:type="gpointer"/>
@@ -15059,7 +15083,7 @@ element than the start of the list. Use g_list_insert_before() instead.</doc>
           </type>
         </return-value>
         <parameters>
-          <parameter name="list" transfer-ownership="none">
+          <parameter name="list" transfer-ownership="none" nullable="1" allow-none="1">
             <doc xml:space="preserve">a pointer to a #GList, this must point to the top of the list</doc>
             <type name="GLib.List" c:type="GList*">
               <type name="gpointer" c:type="gpointer"/>
@@ -15418,7 +15442,7 @@ linked against at application run time.</doc>
     <constant name="MAXUINT8" value="255" c:type="G_MAXUINT8">
       <type name="guint8" c:type="guint8"/>
     </constant>
-    <constant name="MICRO_VERSION" value="4" c:type="GLIB_MICRO_VERSION">
+    <constant name="MICRO_VERSION" value="0" c:type="GLIB_MICRO_VERSION">
       <doc xml:space="preserve">The micro version number of the GLib library.
 
 Like #gtk_micro_version, but from the headers used at
@@ -15442,7 +15466,7 @@ linked against at application run time.</doc>
       <doc xml:space="preserve">The minimum value which can be held in a #gint8.</doc>
       <type name="gint8" c:type="gint8"/>
     </constant>
-    <constant name="MINOR_VERSION" value="85" c:type="GLIB_MINOR_VERSION">
+    <constant name="MINOR_VERSION" value="87" c:type="GLIB_MINOR_VERSION">
       <doc xml:space="preserve">The minor version number of the GLib library.
 
 Like #gtk_minor_version, but from the headers used at
@@ -18091,7 +18115,7 @@ current thread leads to undefined behaviour.</doc>
         <doc xml:space="preserve">Allocates and initializes a new #GMutex.</doc>
         <doc-deprecated xml:space="preserve">GMutex can now be statically allocated, or embedded
 in structures and initialised with g_mutex_init().</doc-deprecated>
-        <return-value>
+        <return-value transfer-ownership="full">
           <doc xml:space="preserve">a newly allocated #GMutex. Use g_mutex_free() to free</doc>
           <type name="Mutex" c:type="GMutex*"/>
         </return-value>
@@ -20298,7 +20322,7 @@ If the path buffer is empty, this function returns `NULL`.</doc>
         <doc xml:space="preserve">Compares two path buffers for equality and returns `TRUE`
 if they are equal.
 
-The path inside the paths buffers are not going to be normalized,
+The paths inside the path buffers are not going to be normalized,
 so `X/Y/Z/A/..`, `X/./Y/Z` and `X/Y/Z` are not going to be considered
 equal.
 
@@ -20628,7 +20652,7 @@ the #GDestroyNotify for @key is not called on the old value.</doc>
         <doc xml:space="preserve">Creates a new #GPrivate.</doc>
         <doc-deprecated xml:space="preserve">dynamic allocation of #GPrivate is a bad idea.  Use
                  static storage and G_PRIVATE_INIT() instead.</doc-deprecated>
-        <return-value>
+        <return-value transfer-ownership="full">
           <doc xml:space="preserve">a newly allocated #GPrivate (which can never be destroyed)</doc>
           <type name="Private" c:type="GPrivate*"/>
         </return-value>
@@ -25009,7 +25033,7 @@ number_list = g_slist_append (number_list, GINT_TO_POINTER (14));
           </type>
         </return-value>
         <parameters>
-          <parameter name="list" transfer-ownership="none">
+          <parameter name="list" transfer-ownership="none" nullable="1" allow-none="1">
             <doc xml:space="preserve">a #GSList</doc>
             <type name="GLib.SList" c:type="GSList*">
               <type name="gpointer" c:type="gpointer"/>
@@ -25324,7 +25348,7 @@ the given data (starting from 0).</doc>
           </type>
         </return-value>
         <parameters>
-          <parameter name="list" transfer-ownership="none">
+          <parameter name="list" transfer-ownership="none" nullable="1" allow-none="1">
             <doc xml:space="preserve">a #GSList</doc>
             <type name="GLib.SList" c:type="GSList*">
               <type name="gpointer" c:type="gpointer"/>
@@ -25352,7 +25376,7 @@ the given data (starting from 0).</doc>
           </type>
         </return-value>
         <parameters>
-          <parameter name="slist" transfer-ownership="none">
+          <parameter name="slist" transfer-ownership="none" nullable="1" allow-none="1">
             <doc xml:space="preserve">a #GSList</doc>
             <type name="GLib.SList" c:type="GSList*">
               <type name="gpointer" c:type="gpointer"/>
@@ -25559,7 +25583,7 @@ which is the new start of the #GSList</doc>
           </type>
         </return-value>
         <parameters>
-          <parameter name="list" transfer-ownership="none">
+          <parameter name="list" transfer-ownership="none" nullable="1" allow-none="1">
             <doc xml:space="preserve">a #GSList</doc>
             <type name="GLib.SList" c:type="GSList*">
               <type name="gpointer" c:type="gpointer"/>
@@ -29556,7 +29580,7 @@ bytes.</doc>
         <doc xml:space="preserve">Creates a new #GString, initialized with the given string.
 
 After this call, @init belongs to the #GString and may no longer be
-modified by the caller. The memory of @data has to be dynamically
+modified by the caller. The memory of @init has to be dynamically
 allocated and will eventually be freed with g_free().</doc>
         <return-value transfer-ownership="full">
           <doc xml:space="preserve">the new #GString</doc>
@@ -30204,9 +30228,14 @@ all instances of @find are replaced.
 If @find is the empty string, since versions 2.69.1 and 2.68.4 the
 replacement will be inserted no more than once per possible position
 (beginning of string, end of string and between characters). This did
-not work correctly in earlier versions.</doc>
+not work correctly in earlier versions.
+
+If @limit is zero and more than `G_MAXUINT` instances of @find are in
+the input string, they will all be replaced, but the return value will
+be capped at `G_MAXUINT`.</doc>
         <return-value transfer-ownership="none">
-          <doc xml:space="preserve">the number of find and replace operations performed.</doc>
+          <doc xml:space="preserve">the number of find and replace operations performed,
+  up to `G_MAXUINT`</doc>
           <type name="guint" c:type="guint"/>
         </return-value>
         <parameters>
@@ -34134,6 +34163,9 @@ See [Unicode Line Breaking Algorithm](https://www.unicode.org/reports/tr14/).</d
       <member name="virama" value="47" c:identifier="G_UNICODE_BREAK_VIRAMA" glib:nick="virama" glib:name="G_UNICODE_BREAK_VIRAMA">
         <doc xml:space="preserve">Virama (VI). Since: 2.80</doc>
       </member>
+      <member name="unambiguous_hyphen" value="48" c:identifier="G_UNICODE_BREAK_UNAMBIGUOUS_HYPHEN" glib:nick="unambiguous-hyphen" glib:name="G_UNICODE_BREAK_UNAMBIGUOUS_HYPHEN">
+        <doc xml:space="preserve">Unambiguous Hyphen (HH). Since: 2.88</doc>
+      </member>
     </enumeration>
     <enumeration name="UnicodeScript" glib:type-name="GUnicodeScript" glib:get-type="g_unicode_script_get_type" c:type="GUnicodeScript">
       <doc xml:space="preserve">The #GUnicodeScript enumeration identifies different writing
@@ -34663,6 +34695,18 @@ See [Unicode Standard Annex #24: Script names](http://www.unicode.org/reports/tr
       </member>
       <member name="ol_onal" value="171" c:identifier="G_UNICODE_SCRIPT_OL_ONAL" glib:nick="ol-onal" glib:name="G_UNICODE_SCRIPT_OL_ONAL">
         <doc xml:space="preserve">Ol Onal. Since: 2.84</doc>
+      </member>
+      <member name="sidetic" value="172" c:identifier="G_UNICODE_SCRIPT_SIDETIC" glib:nick="sidetic" glib:name="G_UNICODE_SCRIPT_SIDETIC">
+        <doc xml:space="preserve">Sidetic. Since: 2.88</doc>
+      </member>
+      <member name="tolong_siki" value="173" c:identifier="G_UNICODE_SCRIPT_TOLONG_SIKI" glib:nick="tolong-siki" glib:name="G_UNICODE_SCRIPT_TOLONG_SIKI">
+        <doc xml:space="preserve">Tolong Siki. Since: 2.88</doc>
+      </member>
+      <member name="tai_yo" value="174" c:identifier="G_UNICODE_SCRIPT_TAI_YO" glib:nick="tai-yo" glib:name="G_UNICODE_SCRIPT_TAI_YO">
+        <doc xml:space="preserve">Tai Yo. Since: 2.88</doc>
+      </member>
+      <member name="beria_erfe" value="175" c:identifier="G_UNICODE_SCRIPT_BERIA_ERFE" glib:nick="beria-erfe" glib:name="G_UNICODE_SCRIPT_BERIA_ERFE">
+        <doc xml:space="preserve">Beria Erfe. Since: 2.88</doc>
       </member>
       <function name="from_iso15924" c:identifier="g_unicode_script_from_iso15924" version="2.30">
         <doc xml:space="preserve">Looks up the Unicode script for @iso15924.  ISO 15924 assigns four-letter
@@ -44006,7 +44050,7 @@ of the separator are ignored.</doc>
       </return-value>
       <parameters>
         <parameter name="separator" transfer-ownership="none">
-          <doc xml:space="preserve">a string used to separator the elements of the path.</doc>
+          <doc xml:space="preserve">a string used to separate the elements of the path.</doc>
           <type name="filename" c:type="const gchar*"/>
         </parameter>
         <parameter name="first_element" transfer-ownership="none">
@@ -44031,7 +44075,7 @@ This function is mainly meant for language bindings.</doc>
       </return-value>
       <parameters>
         <parameter name="separator" transfer-ownership="none">
-          <doc xml:space="preserve">a string used to separator the elements of the path.</doc>
+          <doc xml:space="preserve">a string used to separate the elements of the path.</doc>
           <type name="utf8" c:type="const gchar*"/>
         </parameter>
         <parameter name="args" transfer-ownership="none">
@@ -45137,7 +45181,7 @@ The hexadecimal string returned will be in lower case.</doc>
       <doc xml:space="preserve">Allocates and initializes a new #GCond.</doc>
       <doc-deprecated xml:space="preserve">GCond can now be statically allocated, or embedded
 in structures and initialised with g_cond_init().</doc-deprecated>
-      <return-value>
+      <return-value transfer-ownership="full">
         <doc xml:space="preserve">a newly allocated #GCond. Free with g_cond_free()</doc>
         <type name="Cond" c:type="GCond*"/>
       </return-value>
@@ -48457,7 +48501,7 @@ To iterate over the entries in a #GHashTable more efficiently, use a
 You should always unref the returned array with g_ptr_array_unref().</doc>
       <return-value transfer-ownership="container">
         <doc xml:space="preserve">a #GPtrArray containing each key from
-the table. Unref with with g_ptr_array_unref() when done.</doc>
+the table. Unref with g_ptr_array_unref() when done.</doc>
         <array name="GLib.PtrArray" c:type="GPtrArray*">
           <type name="gpointer" c:type="gpointer"/>
         </array>
@@ -48483,7 +48527,7 @@ To iterate over the entries in a #GHashTable more efficiently, use a
 You should always unref the returned array with g_ptr_array_unref().</doc>
       <return-value transfer-ownership="container">
         <doc xml:space="preserve">a #GPtrArray containing each value from
-the table. Unref with with g_ptr_array_unref() when done.</doc>
+the table. Unref with g_ptr_array_unref() when done.</doc>
         <array name="GLib.PtrArray" c:type="GPtrArray*">
           <type name="gpointer" c:type="gpointer"/>
         </array>
@@ -48777,7 +48821,7 @@ as a #GPtrArray with the free func set to the @hash_table key
 destroy function.</doc>
       <return-value transfer-ownership="container">
         <doc xml:space="preserve">a #GPtrArray containing each key of
-the table. Unref with with g_ptr_array_unref() when done.</doc>
+the table. Unref with g_ptr_array_unref() when done.</doc>
         <array name="GLib.PtrArray" c:type="GPtrArray*">
           <type name="gpointer" c:type="gpointer"/>
         </array>
@@ -48799,7 +48843,7 @@ as a #GPtrArray with the free func set to the @hash_table value
 destroy function.</doc>
       <return-value transfer-ownership="container">
         <doc xml:space="preserve">a #GPtrArray containing each value of
-the table. Unref with with g_ptr_array_unref() when done.</doc>
+the table. Unref with g_ptr_array_unref() when done.</doc>
         <array name="GLib.PtrArray" c:type="GPtrArray*">
           <type name="gpointer" c:type="gpointer"/>
         </array>
@@ -51561,7 +51605,7 @@ on Windows it should be in UTF-8.</doc>
       <doc xml:space="preserve">Allocates and initializes a new #GMutex.</doc>
       <doc-deprecated xml:space="preserve">GMutex can now be statically allocated, or embedded
 in structures and initialised with g_mutex_init().</doc-deprecated>
-      <return-value>
+      <return-value transfer-ownership="full">
         <doc xml:space="preserve">a newly allocated #GMutex. Use g_mutex_free() to free</doc>
         <type name="Mutex" c:type="GMutex*"/>
       </return-value>
@@ -52114,7 +52158,7 @@ commas, or %NULL.</doc>
       <doc xml:space="preserve">Compares two path buffers for equality and returns `TRUE`
 if they are equal.
 
-The path inside the paths buffers are not going to be normalized,
+The paths inside the path buffers are not going to be normalized,
 so `X/Y/Z/A/..`, `X/./Y/Z` and `X/Y/Z` are not going to be considered
 equal.
 
@@ -52667,7 +52711,7 @@ placeholders in any case, as their behaviour is locale-dependent.</doc>
       <doc xml:space="preserve">Creates a new #GPrivate.</doc>
       <doc-deprecated xml:space="preserve">dynamic allocation of #GPrivate is a bad idea.  Use
                  static storage and G_PRIVATE_INIT() instead.</doc-deprecated>
-      <return-value>
+      <return-value transfer-ownership="full">
         <doc xml:space="preserve">a newly allocated #GPrivate (which can never be destroyed)</doc>
         <type name="Private" c:type="GPrivate*"/>
       </return-value>
@@ -57221,7 +57265,7 @@ and it is recommended to do so even if it isn&#x2019;t.</doc>
     <function name="test_add_data_func_full" c:identifier="g_test_add_data_func_full" version="2.34">
       <doc xml:space="preserve">Creates a new test case.
 
-In constract to [func@GLib.test_add_data_func], this function
+In contrast to [func@GLib.test_add_data_func], this function
 is freeing @test_data after the test run is complete.</doc>
       <return-value transfer-ownership="none">
         <type name="none" c:type="void"/>
