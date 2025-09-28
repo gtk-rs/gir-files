@@ -4092,7 +4092,9 @@ Calling this function will then initialize them if they aren't yet.
 The formats returned by this function can be used for negotiating
 buffer formats with producers such as v4l, pipewire or GStreamer.
 
-To learn more about dma-bufs, see [class@Gdk.DmabufTextureBuilder].</doc>
+To learn more about dma-bufs, see [class@Gdk.DmabufTextureBuilder].
+
+This function is threadsafe. It can be called from any thread.</doc>
         <return-value transfer-ownership="none">
           <doc xml:space="preserve">a `GdkDmabufFormats` object</doc>
           <type name="DmabufFormats" c:type="GdkDmabufFormats*"/>
@@ -20073,8 +20075,9 @@ a particular backend supports input regions.</doc>
             <doc xml:space="preserve">a `GdkSurface`</doc>
             <type name="Surface" c:type="GdkSurface*"/>
           </instance-parameter>
-          <parameter name="region" transfer-ownership="none">
-            <doc xml:space="preserve">region of surface to be reactive</doc>
+          <parameter name="region" transfer-ownership="none" nullable="1" allow-none="1">
+            <doc xml:space="preserve">region of surface to be reactive,
+  or %NULL to make the entire surface reactive</doc>
             <type name="cairo.Region" c:type="cairo_region_t*"/>
           </parameter>
         </parameters>

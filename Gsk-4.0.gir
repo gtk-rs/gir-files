@@ -571,7 +571,14 @@ The new value is computed as
 
 where k is the smallest value such that
 
-    k / n &lt;= C &lt; (k + 1) / n</doc>
+    k / n &lt;= C &lt; (k + 1) / n
+
+&lt;figure&gt;
+  &lt;picture&gt;
+    &lt;source srcset="discrete-dark.png" media="(prefers-color-scheme: dark)"&gt;
+      &lt;img alt="Component transfer: discrete" src="discrete-light.png"&gt;
+  &lt;/picture&gt;
+&lt;/figure&gt;</doc>
         <return-value transfer-ownership="full">
           <doc xml:space="preserve">a new `GskComponentTransfer`</doc>
           <type name="ComponentTransfer" c:type="GskComponentTransfer*"/>
@@ -595,7 +602,14 @@ a gamma transform.
 
 The new value is computed as
 
-    C' = amp * pow (C, exp) + ofs</doc>
+    C' = amp * pow (C, exp) + ofs
+
+&lt;figure&gt;
+  &lt;picture&gt;
+    &lt;source srcset="gamma-dark.png" media="(prefers-color-scheme: dark)"&gt;
+      &lt;img alt="Component transfer: gamma" src="gamma-light.png"&gt;
+  &lt;/picture&gt;
+&lt;/figure&gt;</doc>
         <return-value transfer-ownership="full">
           <doc xml:space="preserve">a new `GskComponentTransfer`</doc>
           <type name="ComponentTransfer" c:type="GskComponentTransfer*"/>
@@ -617,7 +631,14 @@ The new value is computed as
       </constructor>
       <constructor name="new_identity" c:identifier="gsk_component_transfer_new_identity" version="4.20">
         <doc xml:space="preserve">Creates a new component transfer that doesn't
-change the component value.</doc>
+change the component value.
+
+&lt;figure&gt;
+  &lt;picture&gt;
+    &lt;source srcset="identity-dark.png" media="(prefers-color-scheme: dark)"&gt;
+      &lt;img alt="Component transfer: identity" src="identity-light.png"&gt;
+  &lt;/picture&gt;
+&lt;/figure&gt;</doc>
         <return-value transfer-ownership="full">
           <doc xml:space="preserve">a new `GskComponentTransfer`</doc>
           <type name="ComponentTransfer" c:type="GskComponentTransfer*"/>
@@ -629,7 +650,14 @@ the values of the component to `n` levels.
 
 The new value is computed as
 
-    C' = floor (C * n) / n</doc>
+    C' = (floor (C * n) + 0.5) / n
+
+&lt;figure&gt;
+  &lt;picture&gt;
+    &lt;source srcset="levels-dark.png" media="(prefers-color-scheme: dark)"&gt;
+      &lt;img alt="Component transfer: levels" src="levels-light.png"&gt;
+  &lt;/picture&gt;
+&lt;/figure&gt;</doc>
         <return-value transfer-ownership="full">
           <doc xml:space="preserve">a new `GskComponentTransfer`</doc>
           <type name="ComponentTransfer" c:type="GskComponentTransfer*"/>
@@ -647,7 +675,14 @@ a linear transform.
 
 The new value is computed as
 
-    C' = C * m + b</doc>
+    C' = C * m + b
+
+&lt;figure&gt;
+  &lt;picture&gt;
+    &lt;source srcset="linear-dark.png" media="(prefers-color-scheme: dark)"&gt;
+      &lt;img alt="Component transfer: linear" src="linear-light.png"&gt;
+  &lt;/picture&gt;
+&lt;/figure&gt;</doc>
         <return-value transfer-ownership="full">
           <doc xml:space="preserve">a new `GskComponentTransfer`</doc>
           <type name="ComponentTransfer" c:type="GskComponentTransfer*"/>
@@ -669,11 +704,18 @@ a piecewise linear function.
 
 The new value is computed as
 
-    C' = values[k] + (C - k / n) * n * (values[k + 1] - values[k])
+    C' = values[k] + (C - k / (n - 1)) * n * (values[k + 1] - values[k])
 
 where k is the smallest value such that
 
-    k / n &lt;= C &lt; (k + 1) / n</doc>
+    k / (n - 1) &lt;= C &lt; (k + 1) / (n - 1)
+
+&lt;figure&gt;
+  &lt;picture&gt;
+    &lt;source srcset="table-dark.png" media="(prefers-color-scheme: dark)"&gt;
+      &lt;img alt="Component transfer: table" src="table-light.png"&gt;
+  &lt;/picture&gt;
+&lt;/figure&gt;</doc>
         <return-value transfer-ownership="full">
           <doc xml:space="preserve">a new `GskComponentTransfer`</doc>
           <type name="ComponentTransfer" c:type="GskComponentTransfer*"/>
@@ -734,7 +776,7 @@ where k is the smallest value such that
         </parameters>
       </function>
     </record>
-    <class name="ComponentTransferNode" c:symbol-prefix="component_transfer_node" c:type="GskComponentTransferNode" parent="RenderNode" glib:type-name="GskComponentTransferNode" glib:get-type="gsk_component_transfer_node_get_type" glib:fundamental="1">
+    <class name="ComponentTransferNode" c:symbol-prefix="component_transfer_node" c:type="GskComponentTransferNode" version="4.20" parent="RenderNode" glib:type-name="GskComponentTransferNode" glib:get-type="gsk_component_transfer_node_get_type" glib:fundamental="1">
       <constructor name="new" c:identifier="gsk_component_transfer_node_new" version="4.20">
         <doc xml:space="preserve">Creates a render node that will apply component
 transfers to a child node.</doc>
