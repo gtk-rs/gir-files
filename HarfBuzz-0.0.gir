@@ -354,10 +354,10 @@ a font.</doc>
     <constant name="VERSION_MICRO" value="0" c:type="HB_VERSION_MICRO">
       <type name="gint" c:type="gint"/>
     </constant>
-    <constant name="VERSION_MINOR" value="0" c:type="HB_VERSION_MINOR">
+    <constant name="VERSION_MINOR" value="1" c:type="HB_VERSION_MINOR">
       <type name="gint" c:type="gint"/>
     </constant>
-    <constant name="VERSION_STRING" value="12.0.0" c:type="HB_VERSION_STRING">
+    <constant name="VERSION_STRING" value="12.1.0" c:type="HB_VERSION_STRING">
       <type name="utf8" c:type="gchar*"/>
     </constant>
     <record name="aat_layout_feature_selector_info_t" c:type="hb_aat_layout_feature_selector_info_t">
@@ -10756,6 +10756,48 @@ underneath the specified script and language.</doc>
         <parameter name="feature_index" direction="out" caller-allocates="0" transfer-ownership="full">
           <doc xml:space="preserve">The index of the requested feature</doc>
           <type name="guint" c:type="unsigned int*"/>
+        </parameter>
+      </parameters>
+    </function>
+    <function name="ot_layout_lookup_collect_glyph_alternates" c:identifier="hb_ot_layout_lookup_collect_glyph_alternates" version="12.1.0">
+      <doc xml:space="preserve">Collects alternates of glyphs from a given GSUB lookup index.
+
+For one-to-one GSUB glyph substitutions, this function collects the
+substituted glyph.
+
+For lookups that assign multiple alternates to a glyph, all alternate glyphs are collected.
+
+For other lookup types, nothing is performed and `false` is returned.
+
+The `alternate_count` mapping will contain the number of alternates for each glyph id.
+Upon entry, this mapping should contain the glyph ids as keys, and the number of alternates
+currently known for each glyph id as values.
+
+The `alternate_glyphs` mapping will contain the alternate glyph ids for each glyph id.
+The mapping is encoded in the following way, upon entry and after processing:
+If G is the glyph id, and A0, A1, ..., A(n-1) are the alternate glyph ids,
+the mapping will contain the following entries: (G + (i &lt;&lt; 24)) -&gt; A(i)
+for i = 0, 1, ..., n-1 where n is the number of alternates for G as per `alternate_count`.</doc>
+      <return-value transfer-ownership="none">
+        <doc xml:space="preserve">`true` if alternates were collected, `false` otherwise.</doc>
+        <type name="bool_t" c:type="hb_bool_t"/>
+      </return-value>
+      <parameters>
+        <parameter name="face" transfer-ownership="none">
+          <doc xml:space="preserve">a face.</doc>
+          <type name="face_t" c:type="hb_face_t*"/>
+        </parameter>
+        <parameter name="lookup_index" transfer-ownership="none">
+          <doc xml:space="preserve">index of the feature lookup to query.</doc>
+          <type name="guint" c:type="unsigned"/>
+        </parameter>
+        <parameter name="alternate_count" direction="inout" caller-allocates="0" transfer-ownership="full">
+          <doc xml:space="preserve">mapping from glyph index to number of alternates for that glyph.</doc>
+          <type name="map_t" c:type="hb_map_t*"/>
+        </parameter>
+        <parameter name="alternate_glyphs" direction="inout" caller-allocates="0" transfer-ownership="full">
+          <doc xml:space="preserve">mapping from encoded glyph index and alternate index, to alternate glyph ids.</doc>
+          <type name="map_t" c:type="hb_map_t*"/>
         </parameter>
       </parameters>
     </function>
