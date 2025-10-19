@@ -3443,7 +3443,7 @@ builder, and unrefs the builder.</doc>
           <type name="Path" c:type="GskPath*"/>
         </return-value>
         <parameters>
-          <instance-parameter name="self" transfer-ownership="none">
+          <instance-parameter name="self" transfer-ownership="full">
             <doc xml:space="preserve">a path builder</doc>
             <type name="PathBuilder" c:type="GskPathBuilder*"/>
           </instance-parameter>
@@ -3933,9 +3933,10 @@ After this, @x, @y will be the new current point.</doc>
       <method name="to_path" c:identifier="gsk_path_builder_to_path" version="4.14">
         <doc xml:space="preserve">Creates a new path from the given builder.
 
-The given `GskPathBuilder` is reset once this function returns;
-you cannot call this function multiple times on the same builder
-instance.
+The given `GskPathBuilder` is reset to the initial state once this
+function returns. Calling this function again on the same builder
+instance will therefore produce an empty path, not a copy of the same
+path.
 
 This function is intended primarily for language bindings.
 C code should use [method@Gsk.PathBuilder.free_to_path].</doc>
@@ -5684,7 +5685,7 @@ on the @builder are zero-initialized.</doc>
           <type name="GLib.Bytes" c:type="GBytes*"/>
         </return-value>
         <parameters>
-          <instance-parameter name="builder" transfer-ownership="none">
+          <instance-parameter name="builder" transfer-ownership="full">
             <doc xml:space="preserve">a `GskShaderArgsBuilder`</doc>
             <type name="ShaderArgsBuilder" c:type="GskShaderArgsBuilder*"/>
           </instance-parameter>
