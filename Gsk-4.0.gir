@@ -777,6 +777,8 @@ where k is the smallest value such that
       </function>
     </record>
     <class name="ComponentTransferNode" c:symbol-prefix="component_transfer_node" c:type="GskComponentTransferNode" version="4.20" parent="RenderNode" glib:type-name="GskComponentTransferNode" glib:get-type="gsk_component_transfer_node_get_type" glib:fundamental="1">
+      <doc xml:space="preserve">A render node for applying a `GskComponentTransfer` for each color
+component of the child node.</doc>
       <constructor name="new" c:identifier="gsk_component_transfer_node_new" version="4.20">
         <doc xml:space="preserve">Creates a render node that will apply component
 transfers to a child node.</doc>
@@ -2689,6 +2691,26 @@ constructed from B&#xE9;zier segments.
   &lt;source srcset="path-dark.png" media="(prefers-color-scheme: dark)"&gt;
   &lt;img alt="A Path" src="path-light.png"&gt;
 &lt;/picture&gt;</doc>
+      <method name="equal" c:identifier="gsk_path_equal" version="4.22">
+        <doc xml:space="preserve">Returns whether two paths have identical structure.
+
+Note that it is possible to construct paths that render
+identical even though they don't have the same structure.</doc>
+        <return-value transfer-ownership="none">
+          <doc xml:space="preserve">true if @path1 and @path2 have identical structure</doc>
+          <type name="gboolean" c:type="gboolean"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="path1" transfer-ownership="none">
+            <doc xml:space="preserve">a path</doc>
+            <type name="Path" c:type="const GskPath*"/>
+          </instance-parameter>
+          <parameter name="path2" transfer-ownership="none">
+            <doc xml:space="preserve">another path</doc>
+            <type name="Path" c:type="const GskPath*"/>
+          </parameter>
+        </parameters>
+      </method>
       <method name="foreach" c:identifier="gsk_path_foreach" version="4.14">
         <doc xml:space="preserve">Calls @func for every operation of the path.
 
@@ -7044,7 +7066,7 @@ by this function, use
     gsk_transform_skew (
         gsk_transform_scale (
             gsk_transform_rotate (
-                gsk_transform_translate (NULL, &amp;GRAPHENE_POINT_T (dx, dy)),
+                gsk_transform_translate (NULL, &amp;GRAPHENE_POINT_INIT (dx, dy)),
                 angle),
             scale_x, scale_y),
         skew_x, skew_y)
