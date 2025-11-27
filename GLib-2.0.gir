@@ -11074,9 +11074,7 @@ list of hooks gets finalized.</doc>
       <member name="in_call" value="2" c:identifier="G_HOOK_FLAG_IN_CALL">
         <doc xml:space="preserve">set if the hook is currently being run</doc>
       </member>
-      <member name="mask" value="15" c:identifier="G_HOOK_FLAG_MASK">
-        <doc xml:space="preserve">A mask covering all bits reserved for
-  hook flags; see %G_HOOK_FLAG_USER_SHIFT</doc>
+      <member name="reserved1" value="4" c:identifier="G_HOOK_FLAG_RESERVED1">
       </member>
     </bitfield>
     <callback name="HookFunc" c:type="GHookFunc">
@@ -24380,25 +24378,7 @@ it using g_strfreev()</doc>
     recognized. If this option is set, the only recognized newline character
     is '\n'.</doc>
       </member>
-      <member name="newline_crlf" value="3145728" c:identifier="G_REGEX_NEWLINE_CRLF">
-        <doc xml:space="preserve">Usually any newline character or character sequence is
-    recognized. If this option is set, the only recognized newline character
-    sequence is '\r\n'.</doc>
-      </member>
-      <member name="newline_anycrlf" value="5242880" c:identifier="G_REGEX_NEWLINE_ANYCRLF">
-        <doc xml:space="preserve">Usually any newline character or character sequence
-    is recognized. If this option is set, the only recognized newline character
-    sequences are '\r', '\n', and '\r\n'. Since: 2.34</doc>
-      </member>
-      <member name="bsr_anycrlf" value="8388608" c:identifier="G_REGEX_BSR_ANYCRLF">
-        <doc xml:space="preserve">Usually any newline character or character sequence
-    is recognised. If this option is set, then "\R" only recognizes the newline
-   characters '\r', '\n' and '\r\n'. Since: 2.34</doc>
-      </member>
-      <member name="javascript_compat" value="33554432" c:identifier="G_REGEX_JAVASCRIPT_COMPAT">
-        <doc xml:space="preserve">Changes behaviour so that it is compatible with
-    JavaScript rather than PCRE. Since GLib 2.74 this is no longer supported,
-    as libpcre2 does not support it. Since: 2.34 Deprecated: 2.74</doc>
+      <member name="newline_reserved1" value="4194304" c:identifier="G_REGEX_NEWLINE_RESERVED1">
       </member>
     </bitfield>
     <enumeration name="RegexError" version="2.14" c:type="GRegexError" glib:error-domain="g-regex-error-quark">
@@ -31035,6 +31015,10 @@ and stderr.</doc>
   process will inherit the parent's stderr. Otherwise, the child's
   stderr will not be visible, but it will be captured to allow
   later tests with [func@GLib.test_trap_assert_stderr].</doc>
+      </member>
+      <member name="inherit_descriptors" value="8" c:identifier="G_TEST_SUBPROCESS_INHERIT_DESCRIPTORS">
+        <doc xml:space="preserve">If this flag is given, the
+  child process will inherit the parent&#x2019;s open file descriptors.</doc>
       </member>
     </bitfield>
     <record name="TestSuite" c:type="GTestSuite" disguised="1" opaque="1">
@@ -60127,7 +60111,7 @@ terminals support zero-width rendering of zero-width marks.</doc>
     <function name="unichar_to_utf8" c:identifier="g_unichar_to_utf8">
       <doc xml:space="preserve">Converts a single character to UTF-8.</doc>
       <return-value transfer-ownership="none">
-        <doc xml:space="preserve">number of bytes written</doc>
+        <doc xml:space="preserve">number of bytes written, guaranteed to be in the range [1, 6]</doc>
         <type name="gint" c:type="gint"/>
       </return-value>
       <parameters>

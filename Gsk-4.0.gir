@@ -817,7 +817,7 @@ transfers to a child node.</doc>
         </return-value>
         <parameters>
           <instance-parameter name="node" transfer-ownership="none">
-            <doc xml:space="preserve">a debug `GskRenderNode`</doc>
+            <doc xml:space="preserve">a component transfer `GskRenderNode`</doc>
             <type name="ComponentTransferNode" c:type="const GskRenderNode*"/>
           </instance-parameter>
         </parameters>
@@ -830,7 +830,7 @@ transfers to a child node.</doc>
         </return-value>
         <parameters>
           <instance-parameter name="node" transfer-ownership="none">
-            <doc xml:space="preserve">a debug `GskRenderNode`</doc>
+            <doc xml:space="preserve">a component transfer `GskRenderNode`</doc>
             <type name="ComponentTransferNode" c:type="const GskRenderNode*"/>
           </instance-parameter>
           <parameter name="component" transfer-ownership="none">
@@ -838,6 +838,76 @@ transfers to a child node.</doc>
   or alpha component</doc>
             <type name="guint" c:type="guint"/>
           </parameter>
+        </parameters>
+      </method>
+    </class>
+    <class name="CompositeNode" c:symbol-prefix="composite_node" c:type="GskCompositeNode" parent="RenderNode" glib:type-name="GskCompositeNode" glib:get-type="gsk_composite_node_get_type" glib:fundamental="1">
+      <doc xml:space="preserve">A render node that uses Porter/Duff compositing operators to combine
+its child with the background.</doc>
+      <constructor name="new" c:identifier="gsk_composite_node_new" version="4.22">
+        <doc xml:space="preserve">Creates a `GskRenderNode` that will composite the child onto the
+background with the given operator wherever the mask is set.
+
+Note that various operations can modify the background outside of
+the child's bounds, so the mask may cause visual changes outside
+of the child.</doc>
+        <return-value transfer-ownership="full">
+          <doc xml:space="preserve">A new `GskRenderNode`</doc>
+          <type name="CompositeNode" c:type="GskRenderNode*"/>
+        </return-value>
+        <parameters>
+          <parameter name="child" transfer-ownership="none">
+            <doc xml:space="preserve">The child to composite</doc>
+            <type name="RenderNode" c:type="GskRenderNode*"/>
+          </parameter>
+          <parameter name="mask" transfer-ownership="none">
+            <doc xml:space="preserve">The mask where the compositing will apply</doc>
+            <type name="RenderNode" c:type="GskRenderNode*"/>
+          </parameter>
+          <parameter name="op" transfer-ownership="none">
+            <doc xml:space="preserve">The compositing operator</doc>
+            <type name="PorterDuff" c:type="GskPorterDuff"/>
+          </parameter>
+        </parameters>
+      </constructor>
+      <method name="get_child" c:identifier="gsk_composite_node_get_child" version="4.22">
+        <doc xml:space="preserve">Gets the child node that is getting composited by the given @node.</doc>
+        <return-value transfer-ownership="none">
+          <doc xml:space="preserve">the child `GskRenderNode`</doc>
+          <type name="RenderNode" c:type="GskRenderNode*"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="node" transfer-ownership="none">
+            <doc xml:space="preserve">a composite `GskRenderNode`</doc>
+            <type name="CompositeNode" c:type="const GskRenderNode*"/>
+          </instance-parameter>
+        </parameters>
+      </method>
+      <method name="get_mask" c:identifier="gsk_composite_node_get_mask" version="4.22">
+        <doc xml:space="preserve">Gets the mask node that describes the region where the compositing
+applies.</doc>
+        <return-value transfer-ownership="none">
+          <doc xml:space="preserve">the mask `GskRenderNode`</doc>
+          <type name="RenderNode" c:type="GskRenderNode*"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="node" transfer-ownership="none">
+            <doc xml:space="preserve">a composite `GskRenderNode`</doc>
+            <type name="CompositeNode" c:type="const GskRenderNode*"/>
+          </instance-parameter>
+        </parameters>
+      </method>
+      <method name="get_operator" c:identifier="gsk_composite_node_get_operator" version="4.22">
+        <doc xml:space="preserve">Gets the compositing operator used by this node.</doc>
+        <return-value transfer-ownership="none">
+          <doc xml:space="preserve">The compositing operator</doc>
+          <type name="PorterDuff" c:type="GskPorterDuff"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="node" transfer-ownership="none">
+            <doc xml:space="preserve">a composite `GskRenderNode`</doc>
+            <type name="CompositeNode" c:type="const GskRenderNode*"/>
+          </instance-parameter>
         </parameters>
       </method>
     </class>
@@ -1008,6 +1078,37 @@ The new node will acquire a reference to each of the children.</doc>
           <instance-parameter name="node" transfer-ownership="none">
             <doc xml:space="preserve">a container `GskRenderNode`</doc>
             <type name="ContainerNode" c:type="const GskRenderNode*"/>
+          </instance-parameter>
+        </parameters>
+      </method>
+    </class>
+    <class name="CopyNode" c:symbol-prefix="copy_node" c:type="GskCopyNode" version="4.22" parent="RenderNode" glib:type-name="GskCopyNode" glib:get-type="gsk_copy_node_get_type" glib:fundamental="1">
+      <doc xml:space="preserve">A render node that copies the current state of the rendering canvas
+so a [class@Gsk.PasteNode] can draw it.</doc>
+      <constructor name="new" c:identifier="gsk_copy_node_new" version="4.22">
+        <doc xml:space="preserve">Creates a `GskRenderNode` that copies the current rendering
+canvas for playback by paste nodes that are part of the child.</doc>
+        <return-value transfer-ownership="full">
+          <doc xml:space="preserve">A new `GskRenderNode`</doc>
+          <type name="CopyNode" c:type="GskRenderNode*"/>
+        </return-value>
+        <parameters>
+          <parameter name="child" transfer-ownership="none">
+            <doc xml:space="preserve">The child</doc>
+            <type name="RenderNode" c:type="GskRenderNode*"/>
+          </parameter>
+        </parameters>
+      </constructor>
+      <method name="get_child" c:identifier="gsk_copy_node_get_child" version="4.22">
+        <doc xml:space="preserve">Gets the child node that is getting drawn by the given @node.</doc>
+        <return-value transfer-ownership="none">
+          <doc xml:space="preserve">the child `GskRenderNode`</doc>
+          <type name="RenderNode" c:type="GskRenderNode*"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="node" transfer-ownership="none">
+            <doc xml:space="preserve">a copy `GskRenderNode`</doc>
+            <type name="CopyNode" c:type="const GskRenderNode*"/>
           </instance-parameter>
         </parameters>
       </method>
@@ -2672,6 +2773,39 @@ during node deserialization.</doc>
         <type name="gsize" c:type="gsize"/>
       </field>
     </record>
+    <class name="PasteNode" c:symbol-prefix="paste_node" c:type="GskPasteNode" version="4.22" parent="RenderNode" glib:type-name="GskPasteNode" glib:get-type="gsk_paste_node_get_type" glib:fundamental="1">
+      <doc xml:space="preserve">A render node for a paste.</doc>
+      <constructor name="new" c:identifier="gsk_paste_node_new" version="4.22">
+        <doc xml:space="preserve">Creates a `GskRenderNode` that will paste copied contents.</doc>
+        <return-value transfer-ownership="full">
+          <doc xml:space="preserve">A new `GskRenderNode`</doc>
+          <type name="PasteNode" c:type="GskRenderNode*"/>
+        </return-value>
+        <parameters>
+          <parameter name="bounds" transfer-ownership="none">
+            <doc xml:space="preserve">the rectangle to render the paste into</doc>
+            <type name="Graphene.Rect" c:type="const graphene_rect_t*"/>
+          </parameter>
+          <parameter name="depth" transfer-ownership="none">
+            <doc xml:space="preserve">the index of which copy to paste. This will usually be 0.</doc>
+            <type name="gsize" c:type="gsize"/>
+          </parameter>
+        </parameters>
+      </constructor>
+      <method name="get_depth" c:identifier="gsk_paste_node_get_depth" version="4.22">
+        <doc xml:space="preserve">Retrieves the index of the copy that should be pasted.</doc>
+        <return-value transfer-ownership="none">
+          <doc xml:space="preserve">the index of the copy to paste.</doc>
+          <type name="gsize" c:type="gsize"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="node" transfer-ownership="none">
+            <doc xml:space="preserve">a `GskRenderNode`</doc>
+            <type name="PasteNode" c:type="const GskRenderNode*"/>
+          </instance-parameter>
+        </parameters>
+      </method>
+    </class>
     <record name="Path" c:type="GskPath" opaque="1" version="4.14" glib:type-name="GskPath" glib:get-type="gsk_path_get_type" c:symbol-prefix="path">
       <doc xml:space="preserve">Describes lines and curves that are more complex than simple rectangles.
 
@@ -4544,6 +4678,48 @@ convenient to use.</doc>
         </parameters>
       </method>
     </record>
+    <enumeration name="PorterDuff" version="4.22" glib:type-name="GskPorterDuff" glib:get-type="gsk_porter_duff_get_type" c:type="GskPorterDuff">
+      <doc xml:space="preserve">GSK_PORTER_DUFF_SOURCE:
+GSK_PORTER_DUFF_DEST:
+GSK_PORTER_DUFF_SOURCE_OVER_DEST:
+GSK_PORTER_DUFF_DEST_OVER_SOURCE:
+GSK_PORTER_DUFF_SOURCE_IN_DEST:
+GSK_PORTER_DUFF_DEST_IN_SOURCE:
+GSK_PORTER_DUFF_SOURCE_OUT_DEST:
+GSK_PORTER_DUFF_DEST_OUT_SOURCE:
+GSK_PORTER_DUFF_SOURCE_ATOP_DEST:
+GSK_PORTER_DUFF_DEST_ATOP_SOURCE:
+GSK_PORTER_DUFF_XOR:
+GSK_PORTER_DUFF_CLEAR:
+The 12 compositing modes defined by the seminal paper
+by Thomas Porter and Tom Duff.
+
+They are used in SVG, PDF and in Cairo with `cairo_operator_t`.</doc>
+      <member name="source" value="0" c:identifier="GSK_PORTER_DUFF_SOURCE" glib:nick="source" glib:name="GSK_PORTER_DUFF_SOURCE">
+      </member>
+      <member name="dest" value="1" c:identifier="GSK_PORTER_DUFF_DEST" glib:nick="dest" glib:name="GSK_PORTER_DUFF_DEST">
+      </member>
+      <member name="source_over_dest" value="2" c:identifier="GSK_PORTER_DUFF_SOURCE_OVER_DEST" glib:nick="source-over-dest" glib:name="GSK_PORTER_DUFF_SOURCE_OVER_DEST">
+      </member>
+      <member name="dest_over_source" value="3" c:identifier="GSK_PORTER_DUFF_DEST_OVER_SOURCE" glib:nick="dest-over-source" glib:name="GSK_PORTER_DUFF_DEST_OVER_SOURCE">
+      </member>
+      <member name="source_in_dest" value="4" c:identifier="GSK_PORTER_DUFF_SOURCE_IN_DEST" glib:nick="source-in-dest" glib:name="GSK_PORTER_DUFF_SOURCE_IN_DEST">
+      </member>
+      <member name="dest_in_source" value="5" c:identifier="GSK_PORTER_DUFF_DEST_IN_SOURCE" glib:nick="dest-in-source" glib:name="GSK_PORTER_DUFF_DEST_IN_SOURCE">
+      </member>
+      <member name="source_out_dest" value="6" c:identifier="GSK_PORTER_DUFF_SOURCE_OUT_DEST" glib:nick="source-out-dest" glib:name="GSK_PORTER_DUFF_SOURCE_OUT_DEST">
+      </member>
+      <member name="dest_out_source" value="7" c:identifier="GSK_PORTER_DUFF_DEST_OUT_SOURCE" glib:nick="dest-out-source" glib:name="GSK_PORTER_DUFF_DEST_OUT_SOURCE">
+      </member>
+      <member name="source_atop_dest" value="8" c:identifier="GSK_PORTER_DUFF_SOURCE_ATOP_DEST" glib:nick="source-atop-dest" glib:name="GSK_PORTER_DUFF_SOURCE_ATOP_DEST">
+      </member>
+      <member name="dest_atop_source" value="9" c:identifier="GSK_PORTER_DUFF_DEST_ATOP_SOURCE" glib:nick="dest-atop-source" glib:name="GSK_PORTER_DUFF_DEST_ATOP_SOURCE">
+      </member>
+      <member name="xor" value="10" c:identifier="GSK_PORTER_DUFF_XOR" glib:nick="xor" glib:name="GSK_PORTER_DUFF_XOR">
+      </member>
+      <member name="clear" value="11" c:identifier="GSK_PORTER_DUFF_CLEAR" glib:nick="clear" glib:name="GSK_PORTER_DUFF_CLEAR">
+      </member>
+    </enumeration>
     <function-macro name="RENDERER" c:identifier="GSK_RENDERER" introspectable="0">
       <parameters>
         <parameter name="obj">
@@ -5005,7 +5181,457 @@ node to a file for later inspection.</doc>
       <member name="component_transfer_node" value="31" c:identifier="GSK_COMPONENT_TRANSFER_NODE" version="4.20" glib:nick="component-transfer-node" glib:name="GSK_COMPONENT_TRANSFER_NODE">
         <doc xml:space="preserve">A node that applies some function to each color component.</doc>
       </member>
+      <member name="copy_node" value="32" c:identifier="GSK_COPY_NODE" version="4.22" glib:nick="copy-node" glib:name="GSK_COPY_NODE">
+        <doc xml:space="preserve">A node that copies the rendering canvas to be pasted later.</doc>
+      </member>
+      <member name="paste_node" value="33" c:identifier="GSK_PASTE_NODE" version="4.22" glib:nick="paste-node" glib:name="GSK_PASTE_NODE">
+        <doc xml:space="preserve">A node that pastes a previously copied canvas.</doc>
+      </member>
+      <member name="composite_node" value="34" c:identifier="GSK_COMPOSITE_NODE" version="4.22" glib:nick="composite-node" glib:name="GSK_COMPOSITE_NODE">
+        <doc xml:space="preserve">A node that combines a child with the background using Porter/Duff
+operations.</doc>
+      </member>
     </enumeration>
+    <record name="RenderReplay" c:type="GskRenderReplay" disguised="1" opaque="1" free-function="gsk_render_replay_free" version="4.22">
+      <doc xml:space="preserve">A facility to replay a [class@Gsk.RenderNode] and its children, potentially
+modifying them.
+
+This is a utility tool to walk a rendernode tree. The most powerful way
+is to provide a function via [method@Gsk.RenderReplay.set_node_filter]
+to filter each individual node and then run
+[method@Gsk.RenderReplay.filter_node] on the nodes you want to filter.
+
+An easier method exists to just walk the node tree and extract information
+without any modifications. If you want to do that, the functions
+[method@Gsk.RenderReplay.set_node_foreach] exists. You can also call
+[method@Gsk.RenderReplay.foreach_node] to run that function. Note that
+the previously mentioned complex functionality will still be invoked if you
+have set up a function for it, but its result will not be returned.
+
+Here is an example that combines both approaches to print the whole tree:
+
+```c
+#include &lt;gtk/gtk.h&gt;
+
+static GskRenderNode *
+print_nodes (GskRenderReplay *replay,
+             GskRenderNode   *node,
+             gpointer         user_data)
+{
+  int *depth = user_data;
+  GskRenderNode *result;
+
+  g_print ("%*s%s\n", 2 * *depth, "", g_type_name_from_instance ((GTypeInstance *) node));
+  
+  *depth += 1;
+  result = gsk_render_replay_default (replay, node);
+  *depth -= 1;
+
+  return result;
+}
+
+int
+main (int argc, char *argv[])
+{
+  GFile *file;
+  GBytes *bytes;
+  GskRenderNode *node;
+  GskRenderReplay *replay;
+  int depth = 0;
+
+  gtk_init ();
+
+  if (argc &lt; 2)
+    {
+      g_print ("usage: %s NODEFILE\n", argv[0]);
+      return 0;
+    }
+
+  file = g_file_new_for_commandline_arg (argv[1]);
+  bytes = g_file_load_bytes (file, NULL, NULL, NULL);
+  g_object_unref (file);
+  if (bytes == NULL)
+    return 1;
+
+  node = gsk_render_node_deserialize (bytes, NULL, NULL);
+  g_bytes_unref (bytes);
+  if (node == NULL)
+    return 1;
+
+  replay = gsk_render_replay_new ();
+  gsk_render_replay_set_node_filter (replay, print_nodes, &amp;depth, NULL);
+  gsk_render_node_foreach_node (replay, node);
+  gsk_render_node_unref (node);
+
+  return 0;
+}
+```</doc>
+      <method name="default" c:identifier="gsk_render_replay_default" version="4.22">
+        <doc xml:space="preserve">Replays the node using the default method.
+
+The default method calls [method@Gsk.RenderReplay.filter_node]
+on all its child nodes and the filter functions for all its
+proeprties. If none of them are changed, it returns the passed
+in node. Otherwise it constructs a new node with the changed
+children and properties.
+
+It may not be possible to construct a new node when any of the
+callbacks return NULL. In that case, this function will return
+NULL, too.</doc>
+        <return-value transfer-ownership="full" nullable="1">
+          <doc xml:space="preserve">The replayed node</doc>
+          <type name="RenderNode" c:type="GskRenderNode*"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="self" transfer-ownership="none">
+            <doc xml:space="preserve">the replay</doc>
+            <type name="RenderReplay" c:type="GskRenderReplay*"/>
+          </instance-parameter>
+          <parameter name="node" transfer-ownership="none">
+            <doc xml:space="preserve">the node to replay</doc>
+            <type name="RenderNode" c:type="GskRenderNode*"/>
+          </parameter>
+        </parameters>
+      </method>
+      <method name="filter_font" c:identifier="gsk_render_replay_filter_font" version="4.22">
+        <doc xml:space="preserve">Filters a font using the current filter function.</doc>
+        <return-value transfer-ownership="full">
+          <doc xml:space="preserve">the filtered font</doc>
+          <type name="Pango.Font" c:type="PangoFont*"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="self" transfer-ownership="none">
+            <doc xml:space="preserve">the replay</doc>
+            <type name="RenderReplay" c:type="GskRenderReplay*"/>
+          </instance-parameter>
+          <parameter name="font" transfer-ownership="none">
+            <doc xml:space="preserve">The font to filter</doc>
+            <type name="Pango.Font" c:type="PangoFont*"/>
+          </parameter>
+        </parameters>
+      </method>
+      <method name="filter_node" c:identifier="gsk_render_replay_filter_node" version="4.22">
+        <doc xml:space="preserve">Replays a node using the replay's filter function.
+
+After the replay the node may be unchanged, or it may be
+removed, which will result in %NULL being returned.
+
+This function calls the registered callback in the following order:
+
+1. If a foreach function is set, it is called first. If it returns
+   false, this function immediately exits and returns the passed
+   in node.
+
+2. If a node filter is set, it is called and its result is returned.
+
+3. [method@Gsk.RenderReplay.default] is called and its result is
+   returned.</doc>
+        <return-value transfer-ownership="full" nullable="1">
+          <doc xml:space="preserve">The replayed node</doc>
+          <type name="RenderNode" c:type="GskRenderNode*"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="self" transfer-ownership="none">
+            <doc xml:space="preserve">the replay</doc>
+            <type name="RenderReplay" c:type="GskRenderReplay*"/>
+          </instance-parameter>
+          <parameter name="node" transfer-ownership="none">
+            <doc xml:space="preserve">the node to replay</doc>
+            <type name="RenderNode" c:type="GskRenderNode*"/>
+          </parameter>
+        </parameters>
+      </method>
+      <method name="filter_texture" c:identifier="gsk_render_replay_filter_texture" version="4.22">
+        <doc xml:space="preserve">Filters a texture using the current filter function.</doc>
+        <return-value transfer-ownership="full">
+          <doc xml:space="preserve">the filtered texture</doc>
+          <type name="Gdk.Texture" c:type="GdkTexture*"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="self" transfer-ownership="none">
+            <doc xml:space="preserve">the replay</doc>
+            <type name="RenderReplay" c:type="GskRenderReplay*"/>
+          </instance-parameter>
+          <parameter name="texture" transfer-ownership="none">
+            <doc xml:space="preserve">The texture to filter</doc>
+            <type name="Gdk.Texture" c:type="GdkTexture*"/>
+          </parameter>
+        </parameters>
+      </method>
+      <method name="foreach_node" c:identifier="gsk_render_replay_foreach_node" version="4.22">
+        <doc xml:space="preserve">Calls the filter and foreach functions for each node.
+
+This function calls [method@Gsk.RenderReplay.filter_node] internally,
+but discards the result assuming no changes were made.</doc>
+        <return-value transfer-ownership="none">
+          <type name="none" c:type="void"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="self" transfer-ownership="none">
+            <doc xml:space="preserve">the replay</doc>
+            <type name="RenderReplay" c:type="GskRenderReplay*"/>
+          </instance-parameter>
+          <parameter name="node" transfer-ownership="none">
+            <doc xml:space="preserve">the node to replay</doc>
+            <type name="RenderNode" c:type="GskRenderNode*"/>
+          </parameter>
+        </parameters>
+      </method>
+      <method name="free" c:identifier="gsk_render_replay_free" version="4.22">
+        <doc xml:space="preserve">Frees a `GskRenderReplay`.</doc>
+        <return-value transfer-ownership="none">
+          <type name="none" c:type="void"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="self" transfer-ownership="none">
+            <doc xml:space="preserve">the replay object to free</doc>
+            <type name="RenderReplay" c:type="GskRenderReplay*"/>
+          </instance-parameter>
+        </parameters>
+      </method>
+      <method name="set_font_filter" c:identifier="gsk_render_replay_set_font_filter" version="4.22">
+        <doc xml:space="preserve">Sets a filter function to be called by [method@Gsk.RenderReplay.default]
+for nodes that contain fonts.
+
+You can call [method@GskRenderReplay.filter_font] to filter
+a font yourself.</doc>
+        <return-value transfer-ownership="none">
+          <type name="none" c:type="void"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="self" transfer-ownership="none">
+            <doc xml:space="preserve">the replay</doc>
+            <type name="RenderReplay" c:type="GskRenderReplay*"/>
+          </instance-parameter>
+          <parameter name="filter" transfer-ownership="none" nullable="1" allow-none="1" scope="notified" closure="1" destroy="2">
+            <doc xml:space="preserve">the font filter function</doc>
+            <type name="RenderReplayFontFilter" c:type="GskRenderReplayFontFilter"/>
+          </parameter>
+          <parameter name="user_data" transfer-ownership="none" nullable="1" allow-none="1">
+            <doc xml:space="preserve">user data to pass to @filter</doc>
+            <type name="gpointer" c:type="gpointer"/>
+          </parameter>
+          <parameter name="user_destroy" transfer-ownership="none" scope="async">
+            <doc xml:space="preserve">destroy notify that will be called to release
+  user_data</doc>
+            <type name="GLib.DestroyNotify" c:type="GDestroyNotify"/>
+          </parameter>
+        </parameters>
+      </method>
+      <method name="set_node_filter" c:identifier="gsk_render_replay_set_node_filter" version="4.22">
+        <doc xml:space="preserve">Sets the function to use as a node filter.
+
+This is the most complex function to use for replaying nodes.
+It can either:
+
+* keep the node and just return it unchanged
+
+* create a replacement node and return that
+
+* discard the node by returning %NULL
+
+* call [method@Gsk.RenderReplay.default] to have the default handler
+  run for this node, which calls your function on its children</doc>
+        <return-value transfer-ownership="none">
+          <type name="none" c:type="void"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="self" transfer-ownership="none">
+            <type name="RenderReplay" c:type="GskRenderReplay*"/>
+          </instance-parameter>
+          <parameter name="filter" transfer-ownership="none" scope="notified" closure="1" destroy="2">
+            <doc xml:space="preserve">The function to call to replay nodes</doc>
+            <type name="RenderReplayNodeFilter" c:type="GskRenderReplayNodeFilter"/>
+          </parameter>
+          <parameter name="user_data" transfer-ownership="none" nullable="1" allow-none="1">
+            <doc xml:space="preserve">user data to pass to @func</doc>
+            <type name="gpointer" c:type="gpointer"/>
+          </parameter>
+          <parameter name="user_destroy" transfer-ownership="none" scope="async">
+            <doc xml:space="preserve">destroy notify that will be called to release
+  user_data</doc>
+            <type name="GLib.DestroyNotify" c:type="GDestroyNotify"/>
+          </parameter>
+        </parameters>
+      </method>
+      <method name="set_node_foreach" c:identifier="gsk_render_replay_set_node_foreach" version="4.22">
+        <doc xml:space="preserve">Sets the function to call for every node.
+
+This function is called before the node filter, so if it returns
+FALSE, the node filter will never be called.</doc>
+        <return-value transfer-ownership="none">
+          <type name="none" c:type="void"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="self" transfer-ownership="none">
+            <doc xml:space="preserve">the replay</doc>
+            <type name="RenderReplay" c:type="GskRenderReplay*"/>
+          </instance-parameter>
+          <parameter name="foreach" transfer-ownership="none" scope="notified" closure="1" destroy="2">
+            <doc xml:space="preserve">the function to call for all nodes</doc>
+            <type name="RenderReplayNodeForeach" c:type="GskRenderReplayNodeForeach"/>
+          </parameter>
+          <parameter name="user_data" transfer-ownership="none" nullable="1" allow-none="1">
+            <doc xml:space="preserve">user data to pass to @func</doc>
+            <type name="gpointer" c:type="gpointer"/>
+          </parameter>
+          <parameter name="user_destroy" transfer-ownership="none" scope="async">
+            <doc xml:space="preserve">destroy notify that will be called to release
+  user_data</doc>
+            <type name="GLib.DestroyNotify" c:type="GDestroyNotify"/>
+          </parameter>
+        </parameters>
+      </method>
+      <method name="set_texture_filter" c:identifier="gsk_render_replay_set_texture_filter" version="4.22">
+        <doc xml:space="preserve">Sets a filter function to be called by [method@Gsk.RenderReplay.default]
+for nodes that contain textures.
+
+You can call [method@GskRenderReplay.filter_texture] to filter
+a texture yourself.</doc>
+        <return-value transfer-ownership="none">
+          <type name="none" c:type="void"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="self" transfer-ownership="none">
+            <doc xml:space="preserve">the replay</doc>
+            <type name="RenderReplay" c:type="GskRenderReplay*"/>
+          </instance-parameter>
+          <parameter name="filter" transfer-ownership="none" nullable="1" allow-none="1" scope="notified" closure="1" destroy="2">
+            <doc xml:space="preserve">the texture filter function</doc>
+            <type name="RenderReplayTextureFilter" c:type="GskRenderReplayTextureFilter"/>
+          </parameter>
+          <parameter name="user_data" transfer-ownership="none" nullable="1" allow-none="1">
+            <doc xml:space="preserve">user data to pass to @filter</doc>
+            <type name="gpointer" c:type="gpointer"/>
+          </parameter>
+          <parameter name="user_destroy" transfer-ownership="none" scope="async">
+            <doc xml:space="preserve">destroy notify that will be called to release
+  user_data</doc>
+            <type name="GLib.DestroyNotify" c:type="GDestroyNotify"/>
+          </parameter>
+        </parameters>
+      </method>
+      <function name="new" c:identifier="gsk_render_replay_new" version="4.22" introspectable="0">
+        <doc xml:space="preserve">Creates a new replay object to replay nodes.</doc>
+        <return-value>
+          <doc xml:space="preserve">A new replay object to replay nodes</doc>
+          <type name="RenderReplay" c:type="GskRenderReplay*"/>
+        </return-value>
+      </function>
+    </record>
+    <callback name="RenderReplayFontFilter" c:type="GskRenderReplayFontFilter" version="4.22">
+      <doc xml:space="preserve">A function that filters fonts.
+
+The function will be called by the default replay function for
+all nodes with fonts. They will then generate a node using the
+returned font.
+
+It is valid for the function to return the passed in font if
+the font shuld not be modified.</doc>
+      <return-value transfer-ownership="full">
+        <doc xml:space="preserve">The filtered font</doc>
+        <type name="Pango.Font" c:type="PangoFont*"/>
+      </return-value>
+      <parameters>
+        <parameter name="replay" transfer-ownership="none">
+          <doc xml:space="preserve">The replay object used to replay the node</doc>
+          <type name="RenderReplay" c:type="GskRenderReplay*"/>
+        </parameter>
+        <parameter name="font" transfer-ownership="none">
+          <doc xml:space="preserve">The font to filter</doc>
+          <type name="Pango.Font" c:type="PangoFont*"/>
+        </parameter>
+        <parameter name="user_data" transfer-ownership="none" nullable="1" allow-none="1" closure="2">
+          <doc xml:space="preserve">The user data</doc>
+          <type name="gpointer" c:type="gpointer"/>
+        </parameter>
+      </parameters>
+    </callback>
+    <callback name="RenderReplayNodeFilter" c:type="GskRenderReplayNodeFilter" version="4.22">
+      <doc xml:space="preserve">A function to replay a node.
+
+The node may be returned unmodified.
+
+The node may be discarded by returning %NULL.
+
+If you do not want to do any handling yourself, call
+[method@Gsk.RenderReplay.default] to use the default handler
+that calls your function on the children of the node.</doc>
+      <return-value transfer-ownership="full" nullable="1">
+        <doc xml:space="preserve">The replayed node</doc>
+        <type name="RenderNode" c:type="GskRenderNode*"/>
+      </return-value>
+      <parameters>
+        <parameter name="replay" transfer-ownership="none">
+          <doc xml:space="preserve">The replay object used to replay the node</doc>
+          <type name="RenderReplay" c:type="GskRenderReplay*"/>
+        </parameter>
+        <parameter name="node" transfer-ownership="none">
+          <doc xml:space="preserve">The node to replay</doc>
+          <type name="RenderNode" c:type="GskRenderNode*"/>
+        </parameter>
+        <parameter name="user_data" transfer-ownership="none" nullable="1" allow-none="1" closure="2">
+          <doc xml:space="preserve">The user data</doc>
+          <type name="gpointer" c:type="gpointer"/>
+        </parameter>
+      </parameters>
+    </callback>
+    <callback name="RenderReplayNodeForeach" c:type="GskRenderReplayNodeForeach" version="4.22">
+      <doc xml:space="preserve">A function called for every node.
+
+If this function returns TRUE, the replay will continue and call
+the filter function.
+
+If it returns FALSE, the filter function will not be called and
+any child nodes will be skipped.</doc>
+      <return-value transfer-ownership="none">
+        <doc xml:space="preserve">TRUE to descend into this node's child nodes (if any)
+  or FALSE to skip them</doc>
+        <type name="gboolean" c:type="gboolean"/>
+      </return-value>
+      <parameters>
+        <parameter name="replay" transfer-ownership="none">
+          <doc xml:space="preserve">The replay object used to replay the node</doc>
+          <type name="RenderReplay" c:type="GskRenderReplay*"/>
+        </parameter>
+        <parameter name="node" transfer-ownership="none">
+          <doc xml:space="preserve">The node to replay</doc>
+          <type name="RenderNode" c:type="GskRenderNode*"/>
+        </parameter>
+        <parameter name="user_data" transfer-ownership="none" nullable="1" allow-none="1" closure="2">
+          <doc xml:space="preserve">The user data</doc>
+          <type name="gpointer" c:type="gpointer"/>
+        </parameter>
+      </parameters>
+    </callback>
+    <callback name="RenderReplayTextureFilter" c:type="GskRenderReplayTextureFilter" version="4.22">
+      <doc xml:space="preserve">A function that filters textures.
+
+The function will be called by the default replay function for
+all nodes with textures. They will then generate a node using the
+returned texture.
+
+It is valid for the function to return the passed in texture if
+the texture shuld not be modified.</doc>
+      <return-value transfer-ownership="full">
+        <doc xml:space="preserve">The filtered texture</doc>
+        <type name="Gdk.Texture" c:type="GdkTexture*"/>
+      </return-value>
+      <parameters>
+        <parameter name="replay" transfer-ownership="none">
+          <doc xml:space="preserve">The replay object used to replay the node</doc>
+          <type name="RenderReplay" c:type="GskRenderReplay*"/>
+        </parameter>
+        <parameter name="texture" transfer-ownership="none">
+          <doc xml:space="preserve">The texture to filter</doc>
+          <type name="Gdk.Texture" c:type="GdkTexture*"/>
+        </parameter>
+        <parameter name="user_data" transfer-ownership="none" nullable="1" allow-none="1" closure="2">
+          <doc xml:space="preserve">The user data</doc>
+          <type name="gpointer" c:type="gpointer"/>
+        </parameter>
+      </parameters>
+    </callback>
     <class name="Renderer" c:symbol-prefix="renderer" c:type="GskRenderer" parent="GObject.Object" abstract="1" glib:type-name="GskRenderer" glib:get-type="gsk_renderer_get_type" glib:type-struct="RendererClass">
       <doc xml:space="preserve">Renders a scene graph defined via a tree of [class@Gsk.RenderNode] instances.
 
@@ -6443,7 +7069,7 @@ currently be created outside of GTK. See
         </return-value>
         <parameters>
           <parameter name="node" transfer-ownership="none">
-            <doc xml:space="preserve">a debug `GskRenderNode`</doc>
+            <doc xml:space="preserve">a subsurface `GskRenderNode`</doc>
             <type name="DebugNode" c:type="const GskRenderNode*"/>
           </parameter>
         </parameters>
@@ -6456,7 +7082,7 @@ currently be created outside of GTK. See
         </return-value>
         <parameters>
           <instance-parameter name="node" transfer-ownership="none">
-            <doc xml:space="preserve">a debug `GskRenderNode`</doc>
+            <doc xml:space="preserve">a subsurface `GskRenderNode`</doc>
             <type name="SubsurfaceNode" c:type="const GskRenderNode*"/>
           </instance-parameter>
         </parameters>
@@ -7255,7 +7881,9 @@ if you want to keep it around.</doc>
       <method name="transform_bounds" c:identifier="gsk_transform_transform_bounds">
         <doc xml:space="preserve">Transforms a rectangle using the given transform.
 
-The result is the bounding box containing the coplanar quad.</doc>
+The result is the bounding box containing the coplanar quad.
+
+The input and output rect may point to the same rectangle.</doc>
         <return-value transfer-ownership="none">
           <type name="none" c:type="void"/>
         </return-value>
