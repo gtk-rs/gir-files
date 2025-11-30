@@ -169,6 +169,10 @@ xmlstarlet ed -L \
     -u '//_:function[@name="win32_set_modal_dialog_libgtk_only"]//_:type[@name="win32.HWND"]/@c:type' -v 'gssize' \
     -u '//_:function[@name="win32_icon_to_pixbuf_libgtk_only"]//_:type[@name="win32.HICON"]/@c:type' -v 'gssize' \
     -u '//_:function[@name="win32_pixbuf_to_hicon_libgtk_only"]//_:type[@name="win32.HICON"]/@c:type' -v 'gssize' \
+	-i '//_:type[@c:type="ID3D12Fence*" and not(@name)]' -t 'attr' -n 'name' -v "gpointer" \
+	-u '//_:type[@c:type="ID3D12Fence*"]/@c:type' -v "gpointer" \
+	-i '//_:type[@c:type="ID3D12Resource*" and not(@name)]' -t 'attr' -n 'name' -v "gpointer" \
+	-u '//_:type[@c:type="ID3D12Resource*"]/@c:type' -v "gpointer" \
 	GdkWin32-4.0.gir
 
 # Fix invalid type for GtkImage and GtkStackSwitcher "icon-size" property
@@ -178,3 +182,20 @@ xmlstarlet ed -L \
 	-u '//_:class[@name="StackSwitcher"]/_:property[@name="icon-size"]/_:type/@c:type' -v "GtkIconSize" \
 	-u '//_:class[@name="StackSwitcher"]/_:property[@name="icon-size"]/_:type/@name' -v "IconSize" \
 	Gtk-3.0.gir
+
+# Fix GLibUnix type names to use GLibUnix prefix instead of GLib
+xmlstarlet ed -L \
+	-u '//_:type[@name="GLib.UnixPipe"]/@name' -v "GLibUnix.Pipe" \
+	-u '//_:type[@name="GLib.UnixPipeEnd"]/@name' -v "GLibUnix.PipeEnd" \
+	GLibUnix-2.0.gir
+
+# Fix GLibWin32 type name to remove GLib prefix
+xmlstarlet ed -L \
+	-u '//_:type[@name="GLib.Win32OSType"]/@name' -v "OSType" \
+	GLibWin32-2.0.gir
+
+# Fix GioWin32 NetworkMonitor types to use gpointer
+xmlstarlet ed -L \
+	-i '//_:record[@name="NetworkMonitor"]/_:field[@name="parent_instance"]/_:type[@c:type="GNetworkMonitorBase" and not(@name)]' -t 'attr' -n 'name' -v "gpointer" \
+	-i '//_:record[@name="NetworkMonitorClass"]/_:field[@name="parent_class"]/_:type[@c:type="GNetworkMonitorBaseClass" and not(@name)]' -t 'attr' -n 'name' -v "gpointer" \
+	GioWin32-2.0.gir
