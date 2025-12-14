@@ -841,7 +841,7 @@ transfers to a child node.</doc>
         </parameters>
       </method>
     </class>
-    <class name="CompositeNode" c:symbol-prefix="composite_node" c:type="GskCompositeNode" parent="RenderNode" glib:type-name="GskCompositeNode" glib:get-type="gsk_composite_node_get_type" glib:fundamental="1">
+    <class name="CompositeNode" c:symbol-prefix="composite_node" c:type="GskCompositeNode" version="4.22" parent="RenderNode" glib:type-name="GskCompositeNode" glib:get-type="gsk_composite_node_get_type" glib:fundamental="1">
       <doc xml:space="preserve">A render node that uses Porter/Duff compositing operators to combine
 its child with the background.</doc>
       <constructor name="new" c:identifier="gsk_composite_node_new" version="4.22">
@@ -2313,6 +2313,83 @@ if the render node was created for a non-sRGB color.</doc>
         </parameters>
       </method>
     </class>
+    <bitfield name="Isolation" version="4.22" glib:type-name="GskIsolation" glib:get-type="gsk_isolation_get_type" c:type="GskIsolation">
+      <doc xml:space="preserve">These flags describe the types of isolations possible with a
+[class@Gsk.IsolationNode].
+
+More isolation options may be added in the future.</doc>
+      <member name="none" value="0" c:identifier="GSK_ISOLATION_NONE" glib:nick="none" glib:name="GSK_ISOLATION_NONE">
+        <doc xml:space="preserve">No isolation is defined.</doc>
+      </member>
+      <member name="background" value="1" c:identifier="GSK_ISOLATION_BACKGROUND" glib:nick="background" glib:name="GSK_ISOLATION_BACKGROUND">
+        <doc xml:space="preserve">If the background should be made available.
+  If the background is not available, future operations will be rendered
+  to a transparent background and added to the existing background later.</doc>
+      </member>
+      <member name="copy_paste" value="2" c:identifier="GSK_ISOLATION_COPY_PASTE" glib:nick="copy-paste" glib:name="GSK_ISOLATION_COPY_PASTE">
+        <doc xml:space="preserve">If copies should be available to paste nodes.
+  If copies are not available, paste nodes can only paste from copies that
+  are made inside the isolated contents.</doc>
+      </member>
+      <member name="all" value="-1" c:identifier="GSK_ISOLATION_ALL" glib:nick="all" glib:name="GSK_ISOLATION_ALL">
+        <doc xml:space="preserve">Isolate everything. This will include features that
+  are added in the future.</doc>
+      </member>
+    </bitfield>
+    <class name="IsolationNode" c:symbol-prefix="isolation_node" c:type="GskIsolationNode" version="4.22" parent="RenderNode" glib:type-name="GskIsolationNode" glib:get-type="gsk_isolation_node_get_type" glib:fundamental="1">
+      <doc xml:space="preserve">A render node that isolates its child from surrounding rendernodes.</doc>
+      <constructor name="new" c:identifier="gsk_isolation_node_new" version="4.22">
+        <doc xml:space="preserve">Creates a `GskRenderNode` that isolates the drawing operations of
+the child from surrounding ones.
+
+You can express "everything but these flags" in a forward compatible
+way by using bit math:
+`GSK_ISOLATION_ALL &amp; ~(GSK_ISOLATION_BACKGROUND | GSK_ISOLATION_COPY_PASTE)`
+will isolate everything but background and copy/paste.
+
+For the available isolations, see [flags@Gsk.Isolation].</doc>
+        <return-value transfer-ownership="full">
+          <doc xml:space="preserve">A new `GskRenderNode`</doc>
+          <type name="IsolationNode" c:type="GskRenderNode*"/>
+        </return-value>
+        <parameters>
+          <parameter name="child" transfer-ownership="none">
+            <doc xml:space="preserve">The child</doc>
+            <type name="RenderNode" c:type="GskRenderNode*"/>
+          </parameter>
+          <parameter name="isolations" transfer-ownership="none">
+            <doc xml:space="preserve">features to isolate</doc>
+            <type name="Isolation" c:type="GskIsolation"/>
+          </parameter>
+        </parameters>
+      </constructor>
+      <method name="get_child" c:identifier="gsk_isolation_node_get_child" version="4.22">
+        <doc xml:space="preserve">Gets the child node that is getting drawn by the given @node.</doc>
+        <return-value transfer-ownership="none">
+          <doc xml:space="preserve">the child `GskRenderNode`</doc>
+          <type name="RenderNode" c:type="GskRenderNode*"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="node" transfer-ownership="none">
+            <doc xml:space="preserve">an isolation `GskRenderNode`</doc>
+            <type name="IsolationNode" c:type="const GskRenderNode*"/>
+          </instance-parameter>
+        </parameters>
+      </method>
+      <method name="get_isolations" c:identifier="gsk_isolation_node_get_isolations" version="4.22">
+        <doc xml:space="preserve">Gets the isolation features that are enforced by this node.</doc>
+        <return-value transfer-ownership="none">
+          <doc xml:space="preserve">the isolation features</doc>
+          <type name="Isolation" c:type="GskIsolation"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="node" transfer-ownership="none">
+            <doc xml:space="preserve">an isolation `GskRenderNode`</doc>
+            <type name="IsolationNode" c:type="const GskRenderNode*"/>
+          </instance-parameter>
+        </parameters>
+      </method>
+    </class>
     <enumeration name="LineCap" version="4.14" glib:type-name="GskLineCap" glib:get-type="gsk_line_cap_get_type" c:type="GskLineCap">
       <doc xml:space="preserve">Specifies how to render the start and end points of contours or
 dashes when stroking.
@@ -2926,7 +3003,8 @@ If @func returns `FALSE`, the iteration is stopped.</doc>
 
 The returned bounds may be larger than necessary, because this
 function aims to be fast, not accurate. The bounds are guaranteed
-to contain the path.
+to contain the path. For accurate bounds, use
+[method@Gsk.Path.get_tight_bounds].
 
 It is possible that the returned rectangle has 0 width and/or height.
 This can happen when the path only describes a point or an
@@ -3005,6 +3083,46 @@ is returned in this case.</doc>
           </parameter>
         </parameters>
       </method>
+      <method name="get_next" c:identifier="gsk_path_get_next" version="4.22">
+        <doc xml:space="preserve">Moves @point to the next vertex.
+
+An empty path has no points, so false
+is returned in this case.</doc>
+        <return-value transfer-ownership="none">
+          <doc xml:space="preserve">true if @point was set</doc>
+          <type name="gboolean" c:type="gboolean"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="self" transfer-ownership="none">
+            <doc xml:space="preserve">a path</doc>
+            <type name="Path" c:type="GskPath*"/>
+          </instance-parameter>
+          <parameter name="point" direction="inout" caller-allocates="0" transfer-ownership="full">
+            <doc xml:space="preserve">the current point</doc>
+            <type name="PathPoint" c:type="GskPathPoint*"/>
+          </parameter>
+        </parameters>
+      </method>
+      <method name="get_previous" c:identifier="gsk_path_get_previous" version="4.22">
+        <doc xml:space="preserve">Moves @point to the previous vertex.
+
+An empty path has no points, so false
+is returned in this case.</doc>
+        <return-value transfer-ownership="none">
+          <doc xml:space="preserve">true if @point was set</doc>
+          <type name="gboolean" c:type="gboolean"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="self" transfer-ownership="none">
+            <doc xml:space="preserve">a path</doc>
+            <type name="Path" c:type="GskPath*"/>
+          </instance-parameter>
+          <parameter name="point" direction="inout" caller-allocates="0" transfer-ownership="full">
+            <doc xml:space="preserve">the current point</doc>
+            <type name="PathPoint" c:type="GskPathPoint*"/>
+          </parameter>
+        </parameters>
+      </method>
       <method name="get_start_point" c:identifier="gsk_path_get_start_point" version="4.14">
         <doc xml:space="preserve">Gets the start point of the path.
 
@@ -3049,6 +3167,27 @@ like miters.</doc>
           </parameter>
           <parameter name="bounds" direction="out" caller-allocates="1" transfer-ownership="none">
             <doc xml:space="preserve">the bounds to fill in</doc>
+            <type name="Graphene.Rect" c:type="graphene_rect_t*"/>
+          </parameter>
+        </parameters>
+      </method>
+      <method name="get_tight_bounds" c:identifier="gsk_path_get_tight_bounds" version="4.22">
+        <doc xml:space="preserve">Computes the tight bounds of the given path.
+
+This function works harder than [method@Gsk.Path.get_bounds] to
+produce the smallest possible bounds.</doc>
+        <return-value transfer-ownership="none">
+          <doc xml:space="preserve">true if the path has bounds, false if the path is known
+  to be empty and have no bounds</doc>
+          <type name="gboolean" c:type="gboolean"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="self" transfer-ownership="none">
+            <doc xml:space="preserve">a path</doc>
+            <type name="Path" c:type="GskPath*"/>
+          </instance-parameter>
+          <parameter name="bounds" direction="out" caller-allocates="1" transfer-ownership="none">
+            <doc xml:space="preserve">return location for the bounds</doc>
             <type name="Graphene.Rect" c:type="graphene_rect_t*"/>
           </parameter>
         </parameters>
@@ -5191,6 +5330,9 @@ node to a file for later inspection.</doc>
         <doc xml:space="preserve">A node that combines a child with the background using Porter/Duff
 operations.</doc>
       </member>
+      <member name="isolation_node" value="35" c:identifier="GSK_ISOLATION_NODE" version="4.22" glib:nick="isolation-node" glib:name="GSK_ISOLATION_NODE">
+        <doc xml:space="preserve">A node that isolated content of its child from previous content.</doc>
+      </member>
     </enumeration>
     <record name="RenderReplay" c:type="GskRenderReplay" disguised="1" opaque="1" free-function="gsk_render_replay_free" version="4.22">
       <doc xml:space="preserve">A facility to replay a [class@Gsk.RenderNode] and its children, potentially
@@ -5271,7 +5413,7 @@ main (int argc, char *argv[])
 
 The default method calls [method@Gsk.RenderReplay.filter_node]
 on all its child nodes and the filter functions for all its
-proeprties. If none of them are changed, it returns the passed
+properties. If none of them are changed, it returns the passed
 in node. Otherwise it constructs a new node with the changed
 children and properties.
 
@@ -5404,7 +5546,8 @@ a font yourself.</doc>
             <type name="RenderReplay" c:type="GskRenderReplay*"/>
           </instance-parameter>
           <parameter name="filter" transfer-ownership="none" nullable="1" allow-none="1" scope="notified" closure="1" destroy="2">
-            <doc xml:space="preserve">the font filter function</doc>
+            <doc xml:space="preserve">
+  the font filter function</doc>
             <type name="RenderReplayFontFilter" c:type="GskRenderReplayFontFilter"/>
           </parameter>
           <parameter name="user_data" transfer-ownership="none" nullable="1" allow-none="1">
@@ -5413,7 +5556,7 @@ a font yourself.</doc>
           </parameter>
           <parameter name="user_destroy" transfer-ownership="none" scope="async">
             <doc xml:space="preserve">destroy notify that will be called to release
-  user_data</doc>
+  the user data parameter</doc>
             <type name="GLib.DestroyNotify" c:type="GDestroyNotify"/>
           </parameter>
         </parameters>
@@ -5428,7 +5571,7 @@ It can either:
 
 * create a replacement node and return that
 
-* discard the node by returning %NULL
+* discard the node by returning `NULL`
 
 * call [method@Gsk.RenderReplay.default] to have the default handler
   run for this node, which calls your function on its children</doc>
@@ -5439,8 +5582,9 @@ It can either:
           <instance-parameter name="self" transfer-ownership="none">
             <type name="RenderReplay" c:type="GskRenderReplay*"/>
           </instance-parameter>
-          <parameter name="filter" transfer-ownership="none" scope="notified" closure="1" destroy="2">
-            <doc xml:space="preserve">The function to call to replay nodes</doc>
+          <parameter name="filter" transfer-ownership="none" nullable="1" allow-none="1" scope="notified" closure="1" destroy="2">
+            <doc xml:space="preserve">
+  the function to call to replay nodes</doc>
             <type name="RenderReplayNodeFilter" c:type="GskRenderReplayNodeFilter"/>
           </parameter>
           <parameter name="user_data" transfer-ownership="none" nullable="1" allow-none="1">
@@ -5449,7 +5593,7 @@ It can either:
           </parameter>
           <parameter name="user_destroy" transfer-ownership="none" scope="async">
             <doc xml:space="preserve">destroy notify that will be called to release
-  user_data</doc>
+  the user data parameter</doc>
             <type name="GLib.DestroyNotify" c:type="GDestroyNotify"/>
           </parameter>
         </parameters>
@@ -5458,7 +5602,7 @@ It can either:
         <doc xml:space="preserve">Sets the function to call for every node.
 
 This function is called before the node filter, so if it returns
-FALSE, the node filter will never be called.</doc>
+false, the node filter will never be called.</doc>
         <return-value transfer-ownership="none">
           <type name="none" c:type="void"/>
         </return-value>
@@ -5467,8 +5611,9 @@ FALSE, the node filter will never be called.</doc>
             <doc xml:space="preserve">the replay</doc>
             <type name="RenderReplay" c:type="GskRenderReplay*"/>
           </instance-parameter>
-          <parameter name="foreach" transfer-ownership="none" scope="notified" closure="1" destroy="2">
-            <doc xml:space="preserve">the function to call for all nodes</doc>
+          <parameter name="foreach" transfer-ownership="none" nullable="1" allow-none="1" scope="notified" closure="1" destroy="2">
+            <doc xml:space="preserve">
+  the function to call for all nodes</doc>
             <type name="RenderReplayNodeForeach" c:type="GskRenderReplayNodeForeach"/>
           </parameter>
           <parameter name="user_data" transfer-ownership="none" nullable="1" allow-none="1">
@@ -5477,7 +5622,7 @@ FALSE, the node filter will never be called.</doc>
           </parameter>
           <parameter name="user_destroy" transfer-ownership="none" scope="async">
             <doc xml:space="preserve">destroy notify that will be called to release
-  user_data</doc>
+  the user data parameter</doc>
             <type name="GLib.DestroyNotify" c:type="GDestroyNotify"/>
           </parameter>
         </parameters>
@@ -5497,7 +5642,8 @@ a texture yourself.</doc>
             <type name="RenderReplay" c:type="GskRenderReplay*"/>
           </instance-parameter>
           <parameter name="filter" transfer-ownership="none" nullable="1" allow-none="1" scope="notified" closure="1" destroy="2">
-            <doc xml:space="preserve">the texture filter function</doc>
+            <doc xml:space="preserve">
+  the texture filter function</doc>
             <type name="RenderReplayTextureFilter" c:type="GskRenderReplayTextureFilter"/>
           </parameter>
           <parameter name="user_data" transfer-ownership="none" nullable="1" allow-none="1">
@@ -5506,7 +5652,7 @@ a texture yourself.</doc>
           </parameter>
           <parameter name="user_destroy" transfer-ownership="none" scope="async">
             <doc xml:space="preserve">destroy notify that will be called to release
-  user_data</doc>
+  the user data parameter</doc>
             <type name="GLib.DestroyNotify" c:type="GDestroyNotify"/>
           </parameter>
         </parameters>
