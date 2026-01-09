@@ -15440,7 +15440,7 @@ linked against at application run time.</doc>
     <constant name="MAXUINT8" value="255" c:type="G_MAXUINT8">
       <type name="guint8" c:type="guint8"/>
     </constant>
-    <constant name="MICRO_VERSION" value="0" c:type="GLIB_MICRO_VERSION">
+    <constant name="MICRO_VERSION" value="1" c:type="GLIB_MICRO_VERSION">
       <doc xml:space="preserve">The micro version number of the GLib library.
 
 Like #gtk_micro_version, but from the headers used at
@@ -56998,18 +56998,21 @@ before calling `g_strsplit()`.</doc>
       </parameters>
     </function>
     <function name="strsplit_set" c:identifier="g_strsplit_set" version="2.4">
-      <doc xml:space="preserve">Splits @string into a number of tokens not containing any of the characters
-in @delimiters. A token is the (possibly empty) longest string that does not
-contain any of the characters in @delimiters. If @max_tokens is reached, the
-remainder is appended to the last token.
+      <doc xml:space="preserve">Splits @string into a number of tokens not containing any of the
+bytes in @delimiters.
 
-For example, the result of g_strsplit_set ("abc:def/ghi", ":/", -1) is an
-array containing the three strings "abc", "def", and "ghi".
+A token is the (possibly empty) longest string that does not
+contain any of the bytes in @delimiters. Note that separators
+will only be single bytes from @delimiters. If @max_tokens is reached,
+the remainder is appended to the last token.
 
-The result of g_strsplit_set (":def/ghi:", ":/", -1) is an array containing
-the four strings "", "def", "ghi", and "".
+For example, the result of `g_strsplit_set ("abc:def/ghi", ":/", -1)`
+is an array containing the three strings `"abc"`, `"def"`, and `"ghi"`.
 
-As a special case, the result of splitting the empty string "" is an empty
+The result of `g_strsplit_set (":def/ghi:/x", ":/", -1)` is an array
+containing the five strings `""`, `"def"`, `"ghi"`, `""`, `"x"`.
+
+As a special case, the result of splitting the empty string `""` is an empty
 array, not an array containing a single string. The reason for this
 special case is that being able to represent an empty array is typically
 more useful than consistent handling of empty elements. If you do need
@@ -57031,8 +57034,9 @@ to delimit UTF-8 strings for anything but ASCII characters.</doc>
           <type name="utf8" c:type="const gchar*"/>
         </parameter>
         <parameter name="delimiters" transfer-ownership="none">
-          <doc xml:space="preserve">a string containing characters that are used to split the
-  string. Can be empty, which will result in no string splitting</doc>
+          <doc xml:space="preserve">a nul-terminated byte array containing bytes that are used to
+  split the string; can be empty (just a nul byte), which will result in no
+  string splitting</doc>
           <type name="utf8" c:type="const gchar*"/>
         </parameter>
         <parameter name="max_tokens" transfer-ownership="none">
