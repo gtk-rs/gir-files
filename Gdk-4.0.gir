@@ -1125,6 +1125,25 @@ provided otherwise.</doc>
         </return-value>
       </glib:signal>
     </class>
+    <enumeration name="ColorChannel" version="4.22" glib:type-name="GdkColorChannel" glib:get-type="gdk_color_channel_get_type" c:type="GdkColorChannel">
+      <doc xml:space="preserve">Enumerates the color channels of RGBA values as used in
+`GdkColor` and OpenGL/Vulkan shaders.
+
+Note that this is not the order of pixel values in Cairo
+and `GdkMemoryFormat` can have many different orders.</doc>
+      <member name="red" value="0" c:identifier="GDK_COLOR_CHANNEL_RED" glib:nick="red" glib:name="GDK_COLOR_CHANNEL_RED">
+        <doc xml:space="preserve">The red color channel, aka 0</doc>
+      </member>
+      <member name="green" value="1" c:identifier="GDK_COLOR_CHANNEL_GREEN" glib:nick="green" glib:name="GDK_COLOR_CHANNEL_GREEN">
+        <doc xml:space="preserve">The green color channel, aka 1</doc>
+      </member>
+      <member name="blue" value="2" c:identifier="GDK_COLOR_CHANNEL_BLUE" glib:nick="blue" glib:name="GDK_COLOR_CHANNEL_BLUE">
+        <doc xml:space="preserve">The blue color channel, aka 2</doc>
+      </member>
+      <member name="alpha" value="3" c:identifier="GDK_COLOR_CHANNEL_ALPHA" glib:nick="alpha" glib:name="GDK_COLOR_CHANNEL_ALPHA">
+        <doc xml:space="preserve">The alpha color channel, aka 3</doc>
+      </member>
+    </enumeration>
     <record name="ColorState" c:type="GdkColorState" opaque="1" version="4.16" glib:type-name="GdkColorState" glib:get-type="gdk_color_state_get_type" c:symbol-prefix="color_state">
       <doc xml:space="preserve">Provides information to interpret colors and pixels in a variety of ways.
 
@@ -19016,14 +19035,16 @@ The string can be either one of:
 - A RGB color in the form &#x201C;rgb(r,g,b)&#x201D; (In this case the color
   will have full opacity)
 - A RGBA color in the form &#x201C;rgba(r,g,b,a)&#x201D;
-- A HSL color in the form "hsl(hue, saturation, lightness)"
-- A HSLA color in the form "hsla(hue, saturation, lightness, alpha)"
+- A HSL color in the form &#x201C;hsl(h,s,l)&#x201D;
+- A HSLA color in the form &#x201C;hsla(h,s,l,a)&#x201D;
 
 Where &#x201C;r&#x201D;, &#x201C;g&#x201D;, &#x201C;b&#x201D; and &#x201C;a&#x201D; are respectively the red, green,
 blue and alpha color values. In the last two cases, &#x201C;r&#x201D;, &#x201C;g&#x201D;,
 and &#x201C;b&#x201D; are either integers in the range 0 to 255 or percentage
 values in the range 0% to 100%, and a is a floating point value
-in the range 0 to 1.</doc>
+in the range 0 to 1. The range for &#x201C;h&#x201D; is 0 to 360, and
+&#x201C;s&#x201D;, &#x201C;l&#x201D; can be either numbers in the range 0 to 100 or
+percentages.</doc>
         <return-value transfer-ownership="none">
           <doc xml:space="preserve">%TRUE if the parsing succeeded</doc>
           <type name="gboolean" c:type="gboolean"/>
