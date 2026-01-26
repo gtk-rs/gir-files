@@ -15440,7 +15440,7 @@ linked against at application run time.</doc>
     <constant name="MAXUINT8" value="255" c:type="G_MAXUINT8">
       <type name="guint8" c:type="guint8"/>
     </constant>
-    <constant name="MICRO_VERSION" value="1" c:type="GLIB_MICRO_VERSION">
+    <constant name="MICRO_VERSION" value="2" c:type="GLIB_MICRO_VERSION">
       <doc xml:space="preserve">The micro version number of the GLib library.
 
 Like #gtk_micro_version, but from the headers used at
@@ -16796,6 +16796,42 @@ semantics for what constitutes the "current" line number other than
           <parameter name="char_number" direction="out" caller-allocates="0" transfer-ownership="full" optional="1" allow-none="1">
             <doc xml:space="preserve">return location for a char-on-line number, or %NULL</doc>
             <type name="gint" c:type="gint*"/>
+          </parameter>
+        </parameters>
+      </method>
+      <method name="get_tag_start" c:identifier="g_markup_parse_context_get_tag_start" version="2.88">
+        <doc xml:space="preserve">Retrieves the start position of the current start or end tag.
+
+This function can be used in the `start_element` or `end_element`
+callbacks to obtain location information for error reporting.
+
+Note that @line_number and @char_number are intended for human
+readable error messages and are therefore 1-based and in Unicode
+characters. @offset on the other hand is meant for programmatic
+use, and thus is 0-based and in bytes.
+
+The information is meant to accompany the values returned by
+[method@GLib.MarkupParseContext.get_position], and comes with the
+same accuracy guarantees.</doc>
+        <return-value transfer-ownership="none">
+          <type name="none" c:type="void"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="context" transfer-ownership="none">
+            <doc xml:space="preserve">a #GMarkupParseContext</doc>
+            <type name="MarkupParseContext" c:type="GMarkupParseContext*"/>
+          </instance-parameter>
+          <parameter name="line_number" direction="out" caller-allocates="0" transfer-ownership="full">
+            <doc xml:space="preserve">return location for the line number</doc>
+            <type name="gsize" c:type="gsize*"/>
+          </parameter>
+          <parameter name="char_number" direction="out" caller-allocates="0" transfer-ownership="full">
+            <doc xml:space="preserve">return location for the character number</doc>
+            <type name="gsize" c:type="gsize*"/>
+          </parameter>
+          <parameter name="offset" direction="out" caller-allocates="0" transfer-ownership="full">
+            <doc xml:space="preserve">return location for offset from the beginning of the document</doc>
+            <type name="gsize" c:type="gsize*"/>
           </parameter>
         </parameters>
       </method>
@@ -57034,10 +57070,13 @@ to delimit UTF-8 strings for anything but ASCII characters.</doc>
           <type name="utf8" c:type="const gchar*"/>
         </parameter>
         <parameter name="delimiters" transfer-ownership="none">
-          <doc xml:space="preserve">a nul-terminated byte array containing bytes that are used to
+          <doc xml:space="preserve">a
+  nul-terminated byte array containing bytes that are used to
   split the string; can be empty (just a nul byte), which will result in no
   string splitting</doc>
-          <type name="utf8" c:type="const gchar*"/>
+          <array c:type="const gchar*">
+            <type name="guint8"/>
+          </array>
         </parameter>
         <parameter name="max_tokens" transfer-ownership="none">
           <doc xml:space="preserve">the maximum number of tokens to split @string into.
