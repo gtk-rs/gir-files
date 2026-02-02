@@ -15,22 +15,47 @@ PIPELINES_URL = f"{GITLAB_URL}/api/v4/projects/{PROJECT_ID}/pipelines"
 HEADERS = {"Authorization": f"Bearer {PERSONAL_ACCESS_TOKEN}"}
 
 
+def http_get(url, *, expect_json=True, **kwargs):
+    response = requests.get(url, **kwargs)
+
+    content_type = response.headers.get("Content-Type", "")
+    print(f"\nGET {url}")
+    print(f"Status: {response.status_code}")
+    print(f"Content-Type: {content_type}")
+
+    preview = response.text[:500]
+    if preview:
+        print("Body preview:")
+        print(preview)
+    else:
+        print("Body preview: <empty>")
+
+    response.raise_for_status()
+
+    if expect_json:
+        if "application/json" not in content_type:
+            raise ValueError(f"Expected JSON response, got '{content_type}'")
+        return response.json()
+
+    return response
+
+
 def get_job_with_artifact(pipeline_id, job_name):
     url = f"{GITLAB_URL}/api/v4/projects/{PROJECT_ID}/pipelines/{pipeline_id}/jobs"
 
     try:
-        response = requests.get(url, headers=HEADERS)
-        response.raise_for_status()
+        jobs = http_get(url, headers=HEADERS)
 
-        jobs = response.json()
         for job in jobs:
             if job["name"] == job_name:
                 return job
+
         print(
             f"No job with artifact '{ARTIFACT_NAME}' found in pipeline {pipeline_id}."
         )
         return None
-    except requests.exceptions.RequestException as e:
+
+    except (requests.exceptions.RequestException, ValueError) as e:
         print(f"Error fetching jobs: {e}")
         return None
 
@@ -39,18 +64,25 @@ def download_artifact(job_id, save_path):
     url = f"{GITLAB_URL}/api/v4/projects/{PROJECT_ID}/jobs/{job_id}/artifacts"
 
     try:
-        response = requests.get(url, headers=HEADERS, stream=True)
-        response.raise_for_status()
+        response = http_get(
+            url,
+            headers=HEADERS,
+            stream=True,
+            expect_json=False,
+        )
 
-        # Save the artifact to the specified path
         artifact_path = os.path.join(save_path, ARTIFACT_NAME)
         with open(artifact_path, "wb") as file:
             for chunk in response.iter_content(chunk_size=1024):
-                file.write(chunk)
+                if chunk:
+                    file.write(chunk)
+
         print(f"Artifact saved to: {artifact_path}")
         return artifact_path
+
     except requests.exceptions.RequestException as e:
         print(f"Error downloading artifact: {e}")
+        return None
 
 
 def extract_and_copy_file(artifact_path, target_file, destination_path):
@@ -76,33 +108,35 @@ def extract_and_copy_file(artifact_path, target_file, destination_path):
         print(f"Error extracting or copying file: {e}")
 
 
-try:
-    response = requests.get(
-        PIPELINES_URL,
-        headers=HEADERS,
-        params={
-            "order_by": "updated_at",  # Order pipelines by their updated date
-            "sort": "desc",  # Descending order to get the latest first
-        },
-    )
-    response.raise_for_status()
+def main():
+    try:
+        pipelines = http_get(
+            PIPELINES_URL,
+            headers=HEADERS,
+            params={
+                "order_by": "updated_at",
+                "sort": "desc",
+            },
+        )
 
-    pipelines = response.json()
-    if not pipelines:
-        exit("No successful pipelines found.")
+        if not pipelines:
+            exit("No pipelines found.")
 
-    for pipeline in pipelines:
+        for pipeline in pipelines:
+            job = get_job_with_artifact(pipeline["id"], JOB_NAME)
+            if not job or job["status"] != "success":
+                continue
 
-        job = get_job_with_artifact(pipeline["id"], JOB_NAME)
-        if not job or job["status"] != "success":
-            continue
+            print(f"Job '{job['name']}' succeeded (Job ID: {job['id']}).")
 
-        print(f"Job '{job['name']}' succeeded (Job ID: {job['id']}).")
-        artifact_path = download_artifact(job["id"], SAVE_PATH)
+            artifact_path = download_artifact(job["id"], SAVE_PATH)
+            if artifact_path:
+                extract_and_copy_file(artifact_path, TARGET_FILE, "./")
+            break
 
-        extract_and_copy_file(artifact_path, TARGET_FILE, "./")
-        break
+    except (requests.exceptions.RequestException, ValueError) as e:
+        exit(f"Error fetching pipelines: {e}")
 
 
-except requests.exceptions.RequestException as e:
-    exit(f"Error fetching pipelines: {e}")
+if __name__ == "__main__":
+    main()
