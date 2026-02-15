@@ -59319,15 +59319,15 @@ A nul character (U+0000) will be added to the result after the converted text.</
           <type name="glong" c:type="glong"/>
         </parameter>
         <parameter name="items_read" direction="out" caller-allocates="0" transfer-ownership="full" optional="1" allow-none="1">
-          <doc xml:space="preserve">location to store number of
-  bytes read, or `NULL`. If an error occurs then the index of the invalid
-  input is stored here.</doc>
+          <doc xml:space="preserve">location to store number of bytes read, or
+  `NULL` to ignore. If an error occurs then the index of the invalid input is
+  stored here. The value stored here will never be negative.</doc>
           <type name="glong" c:type="glong*"/>
         </parameter>
         <parameter name="items_written" direction="out" caller-allocates="0" transfer-ownership="full" optional="1" allow-none="1">
           <doc xml:space="preserve">location to store number
-  of `gunichar2` written, or `NULL`. The value stored here does not include
-  the trailing nul.</doc>
+  of `gunichar2` written, or `NULL` to ignore. The value stored here does not
+  include the trailing nul, and will never be negative.</doc>
           <type name="glong" c:type="glong*"/>
         </parameter>
       </parameters>
@@ -59339,9 +59339,7 @@ to UTF-8.
 The result will be terminated with a nul byte.</doc>
       <return-value transfer-ownership="full">
         <doc xml:space="preserve">a pointer to a newly allocated UTF-8 string.
-  This value must be freed with [func@GLib.free]. If an error occurs,
-  @items_read will be set to the position of the first invalid input
-  character.</doc>
+  This value must be freed with [func@GLib.free].</doc>
         <type name="utf8" c:type="gchar*"/>
       </return-value>
       <parameters>
@@ -59357,14 +59355,15 @@ The result will be terminated with a nul byte.</doc>
           <type name="glong" c:type="glong"/>
         </parameter>
         <parameter name="items_read" direction="out" caller-allocates="0" transfer-ownership="full" optional="1" allow-none="1">
-          <doc xml:space="preserve">location to store number of
-  characters read, or `NULL`.</doc>
+          <doc xml:space="preserve">location to store number of characters read,
+  or `NULL` to ignore. If an error occurs then the index of the invalid input
+  is stored here. The value stored here will never be negative.</doc>
           <type name="glong" c:type="glong*"/>
         </parameter>
         <parameter name="items_written" direction="out" caller-allocates="0" transfer-ownership="full" optional="1" allow-none="1">
           <doc xml:space="preserve">location to store number
-  of bytes written or `NULL`. The value here stored does not include the
-  trailing nul byte.</doc>
+  of bytes written, or `NULL` to ignore. The value stored here does not
+  include the trailing nul, and will never be negative.</doc>
           <type name="glong" c:type="glong*"/>
         </parameter>
       </parameters>
@@ -60968,16 +60967,17 @@ The result will be nul-terminated.</doc>
           <type name="glong" c:type="glong"/>
         </parameter>
         <parameter name="items_read" direction="out" caller-allocates="0" transfer-ownership="full" optional="1" allow-none="1">
-          <doc xml:space="preserve">location to store number of words read, or
-  `NULL`. If `NULL`, then [error@GLib.ConvertError.PARTIAL_INPUT] will be
-  returned in case @str contains a trailing partial character. If
-  an error occurs then the index of the invalid input is stored here.</doc>
+          <doc xml:space="preserve">location to store number of `gunichar2` read,
+  or `NULL` to ignore. If `NULL`, then [error@GLib.ConvertError.PARTIAL_INPUT]
+  will be returned in case @str contains a trailing partial character. If
+  an error occurs then the index of the invalid input is stored here. The
+  value stored here will never be negative.</doc>
           <type name="glong" c:type="glong*"/>
         </parameter>
         <parameter name="items_written" direction="out" caller-allocates="0" transfer-ownership="full" optional="1" allow-none="1">
           <doc xml:space="preserve">location to store number
-  of characters written, or `NULL`. The value stored here does not include
-  the trailing nul character.</doc>
+  of characters written, or `NULL` to ignore. The value stored here does not
+  include the trailing nul, and will never be negative.</doc>
           <type name="glong" c:type="glong*"/>
         </parameter>
       </parameters>
@@ -61015,17 +61015,17 @@ unpaired surrogates or partial character sequences.</doc>
           <type name="glong" c:type="glong"/>
         </parameter>
         <parameter name="items_read" direction="out" caller-allocates="0" transfer-ownership="full" optional="1" allow-none="1">
-          <doc xml:space="preserve">location to store number of words read, or
-  `NULL`. If `NULL`, then [error@GLib.ConvertError.PARTIAL_INPUT] will
-  be returned in case @str contains a trailing partial character. If
-  an error occurs then the index of the invalid input is stored here.
-  It&#x2019;s guaranteed to be non-negative.</doc>
+          <doc xml:space="preserve">location to store number of `gunichar2` read,
+  or `NULL` to ignore. If `NULL`, then [error@GLib.ConvertError.PARTIAL_INPUT]
+  will be returned in case @str contains a trailing partial character. If
+  an error occurs then the index of the invalid input is stored here. The
+  value stored here will never be negative.</doc>
           <type name="glong" c:type="glong*"/>
         </parameter>
         <parameter name="items_written" direction="out" caller-allocates="0" transfer-ownership="full" optional="1" allow-none="1">
           <doc xml:space="preserve">location to store number
-  of bytes written, or `NULL`. The value stored here does not include the
-  trailing nul byte. It&#x2019;s guaranteed to be non-negative.</doc>
+  of bytes written, or `NULL` to ignore. The value stored here does not
+  include the trailing nul, and will never be negative.</doc>
           <type name="glong" c:type="glong*"/>
         </parameter>
       </parameters>
@@ -61633,18 +61633,17 @@ converted text.</doc>
           <type name="glong" c:type="glong"/>
         </parameter>
         <parameter name="items_read" direction="out" caller-allocates="0" transfer-ownership="full" optional="1" allow-none="1">
-          <doc xml:space="preserve">location to store number of
- bytes read, or `NULL`.
-  If `NULL`, then %G_CONVERT_ERROR_PARTIAL_INPUT will be
-  returned in case @str contains a trailing partial
-  character. If an error occurs then the index of the
-  invalid input is stored here.</doc>
+          <doc xml:space="preserve">location to store number of bytes read, or
+  `NULL` to ignore. If `NULL`, then [error@GLib.ConvertError.PARTIAL_INPUT]
+  will be returned in case @str contains a trailing partial character. If
+  an error occurs then the index of the invalid input is stored here. The
+  value stored here will never be negative.</doc>
           <type name="glong" c:type="glong*"/>
         </parameter>
         <parameter name="items_written" direction="out" caller-allocates="0" transfer-ownership="full" optional="1" allow-none="1">
           <doc xml:space="preserve">location to store number
-  of characters written or `NULL`. The value here stored does not include
-  the trailing nul character.</doc>
+  of characters written, or `NULL` to ignore. The value stored here does not
+  include the trailing nul, and will never be negative.</doc>
           <type name="glong" c:type="glong*"/>
         </parameter>
       </parameters>
@@ -61699,15 +61698,16 @@ A nul character (U+0000) will be added to the result after the converted text.</
         </parameter>
         <parameter name="items_read" direction="out" caller-allocates="0" transfer-ownership="full" optional="1" allow-none="1">
           <doc xml:space="preserve">location to store number of bytes read, or
-  `NULL`. If `NULL`, then [error@GLib.ConvertError.PARTIAL_INPUT] will
-  be returned in case @str contains a trailing partial character. If
-  an error occurs then the index of the invalid input is stored here.</doc>
+  `NULL` to ignore. If `NULL`, then [error@GLib.ConvertError.PARTIAL_INPUT]
+  will be returned in case @str contains a trailing partial character. If
+  an error occurs then the index of the invalid input is stored here. The
+  value stored here will never be negative.</doc>
           <type name="glong" c:type="glong*"/>
         </parameter>
         <parameter name="items_written" direction="out" caller-allocates="0" transfer-ownership="full" optional="1" allow-none="1">
           <doc xml:space="preserve">location to store number
-  of `gunichar2` written, or `NULL`. The value stored here does not include
-  the trailing nul.</doc>
+  of `gunichar2` written, or `NULL` to ignore. The value stored here does not
+  include the trailing nul, and will never be negative.</doc>
           <type name="glong" c:type="glong*"/>
         </parameter>
       </parameters>
