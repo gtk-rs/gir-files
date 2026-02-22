@@ -5110,6 +5110,29 @@ The node will not draw outside of its boundaries.</doc>
           </parameter>
         </parameters>
       </method>
+      <method name="get_children" c:identifier="gsk_render_node_get_children">
+        <doc xml:space="preserve">Gets a list of all children nodes of the rendernode.
+
+Keep in mind that for various rendernodes, their children have different
+semantics, like the mask vs the source of a mask node. If you care about
+thse semantics, don't use this function, use the specific getters instead.</doc>
+        <return-value transfer-ownership="none" nullable="1">
+          <doc xml:space="preserve">The children</doc>
+          <array length="0" zero-terminated="0" c:type="GskRenderNode**">
+            <type name="RenderNode" c:type="GskRenderNode*"/>
+          </array>
+        </return-value>
+        <parameters>
+          <instance-parameter name="self" transfer-ownership="none">
+            <doc xml:space="preserve">the render node</doc>
+            <type name="RenderNode" c:type="GskRenderNode*"/>
+          </instance-parameter>
+          <parameter name="n_children" direction="out" caller-allocates="0" transfer-ownership="full">
+            <doc xml:space="preserve">the number of items in the returned array</doc>
+            <type name="gsize" c:type="gsize*"/>
+          </parameter>
+        </parameters>
+      </method>
       <method name="get_node_type" c:identifier="gsk_render_node_get_node_type">
         <doc xml:space="preserve">Returns the type of the render node.</doc>
         <return-value transfer-ownership="none">
@@ -5348,31 +5371,35 @@ is to provide a function via [method@Gsk.RenderReplay.set_node_filter]
 to filter each individual node and then run
 [method@Gsk.RenderReplay.filter_node] on the nodes you want to filter.
 
-An easier method exists to just walk the node tree and extract information
-without any modifications. If you want to do that, the functions
-[method@Gsk.RenderReplay.set_node_foreach] exists. You can also call
-[method@Gsk.RenderReplay.foreach_node] to run that function. Note that
-the previously mentioned complex functionality will still be invoked if you
-have set up a function for it, but its result will not be returned.
+If you want to just walk the node tree and extract information
+without any modifications, you can also use [method@Gsk.RenderNode.get_children].
 
-Here is an example that combines both approaches to print the whole tree:
+Here is a little example application that redacts text in a node file:
 
-```c
+```
 #include &lt;gtk/gtk.h&gt;
 
 static GskRenderNode *
-print_nodes (GskRenderReplay *replay,
-             GskRenderNode   *node,
-             gpointer         user_data)
+redact_nodes (GskRenderReplay *replay,
+              GskRenderNode   *node,
+              gpointer         user_data)
 {
-  int *depth = user_data;
   GskRenderNode *result;
 
-  g_print ("%*s%s\n", 2 * *depth, "", g_type_name_from_instance ((GTypeInstance *) node));
-  
-  *depth += 1;
-  result = gsk_render_replay_default (replay, node);
-  *depth -= 1;
+  if (gsk_render_node_get_node_type (node) == GSK_TEXT_NODE)
+    {
+      graphene_rect_t bounds;
+      const GdkRGBA *color;
+
+      gsk_render_node_get_bounds (node, &amp;bounds);
+      color = gsk_text_node_get_color (node);
+
+      result = gsk_color_node_new (color, &amp;bounds);
+    }
+  else
+    {
+      result = gsk_render_replay_default (replay, node);
+    }
 
   return result;
 }
@@ -5382,15 +5409,14 @@ main (int argc, char *argv[])
 {
   GFile *file;
   GBytes *bytes;
-  GskRenderNode *node;
+  GskRenderNode *result, *node;
   GskRenderReplay *replay;
-  int depth = 0;
 
   gtk_init ();
 
-  if (argc &lt; 2)
+  if (argc != 3)
     {
-      g_print ("usage: %s NODEFILE\n", argv[0]);
+      g_print ("usage: %s INFILE OUTFILE\n", argv[0]);
       return 0;
     }
 
@@ -5406,8 +5432,14 @@ main (int argc, char *argv[])
     return 1;
 
   replay = gsk_render_replay_new ();
-  gsk_render_replay_set_node_filter (replay, print_nodes, &amp;depth, NULL);
-  gsk_render_node_foreach_node (replay, node);
+  gsk_render_replay_set_node_filter (replay, redact_nodes, NULL, NULL);
+  result = gsk_render_replay_filter_node (replay, node);
+  gsk_render_replay_free (replay);
+
+  if (!gsk_render_node_write_to_file (result, argv[2], NULL))
+    return 1;
+
+  gsk_render_node_unref (result);
   gsk_render_node_unref (node);
 
   return 0;
@@ -5470,16 +5502,8 @@ NULL, too.</doc>
 After the replay the node may be unchanged, or it may be
 removed, which will result in %NULL being returned.
 
-This function calls the registered callback in the following order:
-
-1. If a foreach function is set, it is called first. If it returns
-   false, this function immediately exits and returns the passed
-   in node.
-
-2. If a node filter is set, it is called and its result is returned.
-
-3. [method@Gsk.RenderReplay.default] is called and its result is
-   returned.</doc>
+If no filter node is set, [method@Gsk.RenderReplay.default] is
+called instead.</doc>
         <return-value transfer-ownership="full" nullable="1">
           <doc xml:space="preserve">The replayed node</doc>
           <type name="RenderNode" c:type="GskRenderNode*"/>
@@ -5509,25 +5533,6 @@ This function calls the registered callback in the following order:
           <parameter name="texture" transfer-ownership="none">
             <doc xml:space="preserve">The texture to filter</doc>
             <type name="Gdk.Texture" c:type="GdkTexture*"/>
-          </parameter>
-        </parameters>
-      </method>
-      <method name="foreach_node" c:identifier="gsk_render_replay_foreach_node" version="4.22">
-        <doc xml:space="preserve">Calls the filter and foreach functions for each node.
-
-This function calls [method@Gsk.RenderReplay.filter_node] internally,
-but discards the result assuming no changes were made.</doc>
-        <return-value transfer-ownership="none">
-          <type name="none" c:type="void"/>
-        </return-value>
-        <parameters>
-          <instance-parameter name="self" transfer-ownership="none">
-            <doc xml:space="preserve">the replay</doc>
-            <type name="RenderReplay" c:type="GskRenderReplay*"/>
-          </instance-parameter>
-          <parameter name="node" transfer-ownership="none">
-            <doc xml:space="preserve">the node to replay</doc>
-            <type name="RenderNode" c:type="GskRenderNode*"/>
           </parameter>
         </parameters>
       </method>
@@ -5598,35 +5603,6 @@ It can either:
             <doc xml:space="preserve">
   the function to call to replay nodes</doc>
             <type name="RenderReplayNodeFilter" c:type="GskRenderReplayNodeFilter"/>
-          </parameter>
-          <parameter name="user_data" transfer-ownership="none" nullable="1" allow-none="1">
-            <doc xml:space="preserve">user data to pass to @func</doc>
-            <type name="gpointer" c:type="gpointer"/>
-          </parameter>
-          <parameter name="user_destroy" transfer-ownership="none" scope="async">
-            <doc xml:space="preserve">destroy notify that will be called to release
-  the user data parameter</doc>
-            <type name="GLib.DestroyNotify" c:type="GDestroyNotify"/>
-          </parameter>
-        </parameters>
-      </method>
-      <method name="set_node_foreach" c:identifier="gsk_render_replay_set_node_foreach" version="4.22">
-        <doc xml:space="preserve">Sets the function to call for every node.
-
-This function is called before the node filter, so if it returns
-false, the node filter will never be called.</doc>
-        <return-value transfer-ownership="none">
-          <type name="none" c:type="void"/>
-        </return-value>
-        <parameters>
-          <instance-parameter name="self" transfer-ownership="none">
-            <doc xml:space="preserve">the replay</doc>
-            <type name="RenderReplay" c:type="GskRenderReplay*"/>
-          </instance-parameter>
-          <parameter name="foreach" transfer-ownership="none" nullable="1" allow-none="1" scope="notified" closure="1" destroy="2">
-            <doc xml:space="preserve">
-  the function to call for all nodes</doc>
-            <type name="RenderReplayNodeForeach" c:type="GskRenderReplayNodeForeach"/>
           </parameter>
           <parameter name="user_data" transfer-ownership="none" nullable="1" allow-none="1">
             <doc xml:space="preserve">user data to pass to @func</doc>
@@ -5711,34 +5687,6 @@ that calls your function on the children of the node.</doc>
       <return-value transfer-ownership="full" nullable="1">
         <doc xml:space="preserve">The replayed node</doc>
         <type name="RenderNode" c:type="GskRenderNode*"/>
-      </return-value>
-      <parameters>
-        <parameter name="replay" transfer-ownership="none">
-          <doc xml:space="preserve">The replay object used to replay the node</doc>
-          <type name="RenderReplay" c:type="GskRenderReplay*"/>
-        </parameter>
-        <parameter name="node" transfer-ownership="none">
-          <doc xml:space="preserve">The node to replay</doc>
-          <type name="RenderNode" c:type="GskRenderNode*"/>
-        </parameter>
-        <parameter name="user_data" transfer-ownership="none" nullable="1" allow-none="1" closure="2">
-          <doc xml:space="preserve">The user data</doc>
-          <type name="gpointer" c:type="gpointer"/>
-        </parameter>
-      </parameters>
-    </callback>
-    <callback name="RenderReplayNodeForeach" c:type="GskRenderReplayNodeForeach" version="4.22">
-      <doc xml:space="preserve">A function called for every node.
-
-If this function returns TRUE, the replay will continue and call
-the filter function.
-
-If it returns FALSE, the filter function will not be called and
-any child nodes will be skipped.</doc>
-      <return-value transfer-ownership="none">
-        <doc xml:space="preserve">TRUE to descend into this node's child nodes (if any)
-  or FALSE to skip them</doc>
-        <type name="gboolean" c:type="gboolean"/>
       </return-value>
       <parameters>
         <parameter name="replay" transfer-ownership="none">

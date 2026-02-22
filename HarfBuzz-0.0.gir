@@ -2792,7 +2792,12 @@ hb_buffer_serialize_glyphs() for a description of the output format.</doc>
       </member>
       <member name="no_advances" value="32" c:identifier="HB_BUFFER_SERIALIZE_FLAG_NO_ADVANCES">
         <doc xml:space="preserve">do not serialize glyph advances,
- glyph offsets will reflect absolute glyph positions. Since: 1.8.0</doc>
+ glyph offsets will reflect absolute glyph positions. Since: 1.8.0.
+ Note: when this flag is used with a partial range of the buffer (i.e.
+ @start is not 0), calculating the absolute positions has a cost
+ proportional to @start. If the buffer is serialized in many small
+ chunks, this can lead to quadratic behavior. It is recommended to
+ use a larger @buf_size to minimize this cost.</doc>
       </member>
       <member name="defined" value="63" c:identifier="HB_BUFFER_SERIALIZE_FLAG_DEFINED">
         <doc xml:space="preserve">All currently defined flags. Since: 4.4.0</doc>
