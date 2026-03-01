@@ -18189,6 +18189,11 @@ in structures and initialised with g_mutex_init().</doc-deprecated>
         </parameter>
       </parameters>
     </function-macro>
+    <constant name="NSEC_PER_SEC" value="1000000000" c:type="G_NSEC_PER_SEC" version="2.88">
+      <doc xml:space="preserve">Number of nanoseconds in one second (1 billion).
+This macro is provided for code readability.</doc>
+      <type name="guint64" c:type="guint64"/>
+    </constant>
     <function-macro name="N_ELEMENTS" c:identifier="G_N_ELEMENTS" introspectable="0">
       <doc xml:space="preserve">Determines the number of elements in an array. The array must be
 declared so the compiler knows its size at compile-time; this
@@ -42807,7 +42812,7 @@ compatibility reasons.  Don't use this function in new code.</doc>
       <doc xml:space="preserve">Gets the current value of @atomic.
 
 This call acts as a full compiler and hardware
-memory barrier (before the get).
+memory barrier.
 
 While @atomic has a `volatile` qualifier, this is a historical artifact and
 the pointer passed to it should not be `volatile`.</doc>
@@ -42871,7 +42876,7 @@ the pointer passed to it should not be `volatile`.</doc>
       <doc xml:space="preserve">Sets the value of @atomic to @newval.
 
 This call acts as a full compiler and hardware
-memory barrier (after the set).
+memory barrier.
 
 While @atomic has a `volatile` qualifier, this is a historical artifact and
 the pointer passed to it should not be `volatile`.</doc>
@@ -43070,7 +43075,7 @@ This call acts as a full compiler and hardware memory barrier.</doc>
       <doc xml:space="preserve">Gets the current value of @atomic.
 
 This call acts as a full compiler and hardware
-memory barrier (before the get).
+memory barrier.
 
 While @atomic has a `volatile` qualifier, this is a historical artifact and
 the pointer passed to it should not be `volatile`.</doc>
@@ -43119,7 +43124,7 @@ code.</doc>
       <doc xml:space="preserve">Sets the value of @atomic to @newval.
 
 This call acts as a full compiler and hardware
-memory barrier (after the set).
+memory barrier.
 
 While @atomic has a `volatile` qualifier, this is a historical artifact and
 the pointer passed to it should not be `volatile`.</doc>
@@ -47735,7 +47740,7 @@ use g_get_language_names().</doc>
       </parameters>
     </function>
     <function name="get_monotonic_time" c:identifier="g_get_monotonic_time" version="2.28">
-      <doc xml:space="preserve">Queries the system monotonic time.
+      <doc xml:space="preserve">Queries the system monotonic time in microseconds.
 
 The monotonic clock will always increase and doesn&#x2019;t suffer
 discontinuities when the user (or NTP) changes the system time.  It
@@ -47745,10 +47750,34 @@ suspended.
 We try to use the clock that corresponds as closely as possible to
 the passage of time as measured by system calls such as
 [`poll()`](man:poll(2)) but it
-may not always be possible to do this.</doc>
+may not always be possible to do this.
+
+A more accurate version of this function exists.
+[func@GLib.get_monotonic_time_ns] returns the time in nanoseconds.</doc>
       <return-value transfer-ownership="none">
         <doc xml:space="preserve">the monotonic time, in microseconds</doc>
         <type name="gint64" c:type="gint64"/>
+      </return-value>
+    </function>
+    <function name="get_monotonic_time_ns" c:identifier="g_get_monotonic_time_ns" version="2.88">
+      <doc xml:space="preserve">Queries the system monotonic time in nanoseconds.
+
+The monotonic clock will always increase and doesn&#x2019;t suffer
+discontinuities when the user (or NTP) changes the system time.  It
+may or may not continue to tick during times where the machine is
+suspended.
+
+We try to use the clock that corresponds as closely as possible to
+the passage of time as measured by system calls such as
+[`poll()`](man:poll(2)) but it
+may not always be possible to do this.
+
+Another version of this function exists.
+[func@GLib.get_monotonic_time] returns the time in microseconds.
+If you want to support older GLib versions, it is an alternative.</doc>
+      <return-value transfer-ownership="none">
+        <doc xml:space="preserve">the monotonic time, in nanoseconds</doc>
+        <type name="guint64" c:type="uint64_t"/>
       </return-value>
     </function>
     <function name="get_num_processors" c:identifier="g_get_num_processors" version="2.36">
