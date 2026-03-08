@@ -9497,6 +9497,46 @@ Regarding these various memory-modes:
         <doc xml:space="preserve">See above</doc>
       </member>
     </enumeration>
+    <function name="ot_color_get_svg_document_count" c:identifier="hb_ot_color_get_svg_document_count" version="12.1.0">
+      <doc xml:space="preserve">Gets the number of SVG documents in the face `SVG` table.</doc>
+      <return-value transfer-ownership="none">
+        <doc xml:space="preserve">number of SVG documents in the face.</doc>
+        <type name="guint" c:type="unsigned int"/>
+      </return-value>
+      <parameters>
+        <parameter name="face" transfer-ownership="none">
+          <doc xml:space="preserve">#hb_face_t to work upon.</doc>
+          <type name="face_t" c:type="hb_face_t*"/>
+        </parameter>
+      </parameters>
+    </function>
+    <function name="ot_color_get_svg_document_glyph_range" c:identifier="hb_ot_color_get_svg_document_glyph_range">
+      <doc xml:space="preserve">Gets the glyph range covered by an `SVG`-table document index.</doc>
+      <return-value transfer-ownership="none">
+        <doc xml:space="preserve">`true` if @svg_document_index is valid, `false` otherwise.
+
+XSince: REPLACEME</doc>
+        <type name="bool_t" c:type="hb_bool_t"/>
+      </return-value>
+      <parameters>
+        <parameter name="face" transfer-ownership="none">
+          <doc xml:space="preserve">#hb_face_t to work upon.</doc>
+          <type name="face_t" c:type="hb_face_t*"/>
+        </parameter>
+        <parameter name="svg_document_index" transfer-ownership="none">
+          <doc xml:space="preserve">SVG document index.</doc>
+          <type name="guint" c:type="unsigned int"/>
+        </parameter>
+        <parameter name="start_glyph_id" direction="out" caller-allocates="0" transfer-ownership="full" nullable="1">
+          <doc xml:space="preserve">output start glyph ID.</doc>
+          <type name="codepoint_t" c:type="hb_codepoint_t*"/>
+        </parameter>
+        <parameter name="end_glyph_id" direction="out" caller-allocates="0" transfer-ownership="full" nullable="1">
+          <doc xml:space="preserve">output end glyph ID.</doc>
+          <type name="codepoint_t" c:type="hb_codepoint_t*"/>
+        </parameter>
+      </parameters>
+    </function>
     <function name="ot_color_glyph_get_layers" c:identifier="hb_ot_color_glyph_get_layers" version="2.1.0">
       <doc xml:space="preserve">Fetches a list of all color layers for the specified glyph index in the specified
 face. The list returned will begin at the offset provided.</doc>
@@ -9527,6 +9567,27 @@ face. The list returned will begin at the offset provided.</doc>
           <array length="3" zero-terminated="0" c:type="hb_ot_color_layer_t*">
             <type name="ot_color_layer_t" c:type="hb_ot_color_layer_t"/>
           </array>
+        </parameter>
+      </parameters>
+    </function>
+    <function name="ot_color_glyph_get_svg_document_index" c:identifier="hb_ot_color_glyph_get_svg_document_index" version="12.1.0">
+      <doc xml:space="preserve">Gets the `SVG`-table document index associated with a glyph.</doc>
+      <return-value transfer-ownership="none">
+        <doc xml:space="preserve">`true` if @glyph maps to an SVG document, `false` otherwise.</doc>
+        <type name="bool_t" c:type="hb_bool_t"/>
+      </return-value>
+      <parameters>
+        <parameter name="face" transfer-ownership="none">
+          <doc xml:space="preserve">#hb_face_t to work upon.</doc>
+          <type name="face_t" c:type="hb_face_t*"/>
+        </parameter>
+        <parameter name="glyph" transfer-ownership="none">
+          <doc xml:space="preserve">glyph ID to query.</doc>
+          <type name="codepoint_t" c:type="hb_codepoint_t"/>
+        </parameter>
+        <parameter name="svg_document_index" direction="out" caller-allocates="0" transfer-ownership="full" nullable="1">
+          <doc xml:space="preserve">output SVG document index.</doc>
+          <type name="guint" c:type="unsigned int*"/>
         </parameter>
       </parameters>
     </function>
@@ -13112,63 +13173,64 @@ inverse effect to @HB_PAINT_COMPOSITE_MODE_HSL_COLOR.</doc>
       </member>
     </enumeration>
     <function name="paint_custom_palette_color" c:identifier="hb_paint_custom_palette_color" version="7.0.0">
-      <doc xml:space="preserve">Gets the custom palette color for @color_index.</doc>
+      <doc xml:space="preserve">Gets the custom palette override color for @color_index.</doc>
       <return-value transfer-ownership="none">
-        <doc xml:space="preserve">`true` if found, `false` otherwise</doc>
+        <doc xml:space="preserve">`true` if a custom color is provided, `false` otherwise.</doc>
         <type name="bool_t" c:type="hb_bool_t"/>
       </return-value>
       <parameters>
         <parameter name="funcs" transfer-ownership="none">
-          <doc xml:space="preserve">paint functions</doc>
+          <doc xml:space="preserve">paint functions.</doc>
           <type name="paint_funcs_t" c:type="hb_paint_funcs_t*"/>
         </parameter>
         <parameter name="paint_data" transfer-ownership="none" nullable="1" allow-none="1">
-          <doc xml:space="preserve">associated data passed by the caller</doc>
+          <doc xml:space="preserve">associated data passed by the caller.</doc>
           <type name="gpointer" c:type="void*"/>
         </parameter>
         <parameter name="color_index" transfer-ownership="none">
-          <doc xml:space="preserve">color index</doc>
+          <doc xml:space="preserve">color index to fetch.</doc>
           <type name="guint" c:type="unsigned int"/>
         </parameter>
         <parameter name="color" direction="out" caller-allocates="0" transfer-ownership="full">
-          <doc xml:space="preserve">fetched color</doc>
+          <doc xml:space="preserve">fetched color.</doc>
           <type name="color_t" c:type="hb_color_t*"/>
         </parameter>
       </parameters>
     </function>
     <callback name="paint_custom_palette_color_func_t" c:type="hb_paint_custom_palette_color_func_t" version="7.0.0">
-      <doc xml:space="preserve">A virtual method for the #hb_paint_funcs_t to fetch a color from the custom
-color palette.
+      <doc xml:space="preserve">A virtual method for #hb_paint_funcs_t to fetch a custom palette override
+color for @color_index.
 
-Custom palette colors override the colors from the fonts selected color
-palette. It is not necessary to override all palette entries; for entries
-that should be taken from the font palette, return `false`.
+Custom palette colors override colors from the font's selected color palette.
+It is not necessary to override all palette entries; return `false` for
+entries that should be taken from the font palette.
 
-This function might get called multiple times, but the custom palette is
-expected to remain unchanged for duration of a hb_font_paint_glyph() call.</doc>
+This function might be called multiple times, but the custom palette is
+expected to remain unchanged for the duration of one
+hb_font_paint_glyph() call.</doc>
       <return-value transfer-ownership="none">
-        <doc xml:space="preserve">`true` if found, `false` otherwise</doc>
+        <doc xml:space="preserve">`true` if a custom color is provided, `false` otherwise.</doc>
         <type name="bool_t" c:type="hb_bool_t"/>
       </return-value>
       <parameters>
         <parameter name="funcs" transfer-ownership="none">
-          <doc xml:space="preserve">paint functions object</doc>
+          <doc xml:space="preserve">paint functions object.</doc>
           <type name="paint_funcs_t" c:type="hb_paint_funcs_t*"/>
         </parameter>
         <parameter name="paint_data" transfer-ownership="none" nullable="1" allow-none="1">
-          <doc xml:space="preserve">The data accompanying the paint functions in hb_font_paint_glyph()</doc>
+          <doc xml:space="preserve">data accompanying the paint functions in hb_font_paint_glyph().</doc>
           <type name="gpointer" c:type="void*"/>
         </parameter>
         <parameter name="color_index" transfer-ownership="none">
-          <doc xml:space="preserve">the color index</doc>
+          <doc xml:space="preserve">color index to fetch.</doc>
           <type name="guint" c:type="unsigned int"/>
         </parameter>
         <parameter name="color" direction="out" caller-allocates="0" transfer-ownership="full">
-          <doc xml:space="preserve">fetched color</doc>
+          <doc xml:space="preserve">fetched color.</doc>
           <type name="color_t" c:type="hb_color_t*"/>
         </parameter>
         <parameter name="user_data" transfer-ownership="none" nullable="1" allow-none="1" closure="4">
-          <doc xml:space="preserve">User data pointer passed to hb_paint_funcs_set_pop_group_func()</doc>
+          <doc xml:space="preserve">user data pointer passed to hb_paint_funcs_set_custom_palette_color_func().</doc>
           <type name="gpointer" c:type="void*"/>
         </parameter>
       </parameters>
@@ -13340,25 +13402,25 @@ call to hb_paint_funcs_destroy() is made.</doc>
       </parameters>
     </function>
     <function name="paint_funcs_set_custom_palette_color_func" c:identifier="hb_paint_funcs_set_custom_palette_color_func" version="7.0.0">
-      <doc xml:space="preserve">Sets the custom-palette-color callback on the paint functions struct.</doc>
+      <doc xml:space="preserve">Sets the custom-palette-color callback on @funcs.</doc>
       <return-value transfer-ownership="none">
         <type name="none" c:type="void"/>
       </return-value>
       <parameters>
         <parameter name="funcs" transfer-ownership="none">
-          <doc xml:space="preserve">A paint functions struct</doc>
+          <doc xml:space="preserve">a paint functions struct.</doc>
           <type name="paint_funcs_t" c:type="hb_paint_funcs_t*"/>
         </parameter>
         <parameter name="func" transfer-ownership="none" scope="notified" closure="2" destroy="3">
-          <doc xml:space="preserve">The custom-palette-color callback</doc>
+          <doc xml:space="preserve">custom-palette-color callback.</doc>
           <type name="paint_custom_palette_color_func_t" c:type="hb_paint_custom_palette_color_func_t"/>
         </parameter>
         <parameter name="user_data" transfer-ownership="none" nullable="1" allow-none="1">
-          <doc xml:space="preserve">Data to pass to @func</doc>
+          <doc xml:space="preserve">data to pass to @func.</doc>
           <type name="gpointer" c:type="void*"/>
         </parameter>
         <parameter name="destroy" transfer-ownership="none" nullable="1" allow-none="1" scope="notified">
-          <doc xml:space="preserve">Function to call when @user_data is no longer needed</doc>
+          <doc xml:space="preserve">function to call when @user_data is no longer needed.</doc>
           <type name="destroy_func_t" c:type="hb_destroy_func_t"/>
         </parameter>
       </parameters>

@@ -9411,15 +9411,16 @@ selected, meaning it has been found or it should be removed from the
     </callback>
     <callback name="HashFunc" c:type="GHashFunc">
       <doc xml:space="preserve">Specifies the type of the hash function which is passed to
-g_hash_table_new() when a #GHashTable is created.
+[func@HashTable.new] when a [struct@HashTable] is created.
 
-The function is passed a key and should return a #guint hash value.
-The functions g_direct_hash(), g_int_hash() and g_str_hash() provide
-hash functions which can be used when the key is a #gpointer, #gint*,
-and #gchar* respectively.
+The function is passed a key and should return an `unsigned int` hash value.
+The functions [func@direct_hash], [func@int_hash] and [func@str_hash] provide
+hash functions which can be used when the key is a `void*`, `int*`,
+and `char*` respectively.
 
-g_direct_hash() is also the appropriate hash function for keys
-of the form `GINT_TO_POINTER (n)` (or similar macros).
+[func@direct_hash] is also the appropriate hash function for keys
+of the form [`GINT_TO_POINTER (n)`](conversion-macros.html#gint-to-pointer)
+(or similar macros).
 
 A good hash functions should produce
 hash values that are evenly distributed over a fairly large range.
@@ -9430,9 +9431,9 @@ be very fast, since it is called for each key lookup.
 Note that the hash functions provided by GLib have these qualities,
 but are not particularly robust against manufactured keys that
 cause hash collisions. Therefore, you should consider choosing
-a more secure hash function when using a GHashTable with keys
+a more secure hash function when using a [struct@HashTable] with keys
 that originate in untrusted data (such as HTTP requests).
-Using g_str_hash() in that situation might make your application
+Using [func@str_hash] in that situation might make your application
 vulnerable to
 [Algorithmic Complexity Attacks](https://lwn.net/Articles/474912/).
 
@@ -15440,7 +15441,7 @@ linked against at application run time.</doc>
     <constant name="MAXUINT8" value="255" c:type="G_MAXUINT8">
       <type name="guint8" c:type="guint8"/>
     </constant>
-    <constant name="MICRO_VERSION" value="2" c:type="GLIB_MICRO_VERSION">
+    <constant name="MICRO_VERSION" value="3" c:type="GLIB_MICRO_VERSION">
       <doc xml:space="preserve">The micro version number of the GLib library.
 
 Like #gtk_micro_version, but from the headers used at
@@ -29165,7 +29166,7 @@ g_thread_init().
       </method>
     </record>
     <record name="StaticRWLock" c:type="GStaticRWLock" introspectable="0" deprecated="1" deprecated-version="2.32">
-      <doc xml:space="preserve">The #GStaticRWLock struct represents a read-write lock. A read-write
+      <doc xml:space="preserve">The [struct@StaticRWLock] struct represents a read-write lock. A read-write
 lock can be used for protecting data that some portions of code only
 read from, while others also write. In such situations it is
 desirable that several readers can read at once, whereas of course
@@ -29209,8 +29210,8 @@ Take a look at the following example:
 ]|
 
 This example shows an array which can be accessed by many readers
-(the my_array_get() function) simultaneously, whereas the writers
-(the my_array_set() function) will only be allowed once at a time
+(the `my_array_get()` function) simultaneously, whereas the writers
+(the `my_array_set()` function) will only be allowed once at a time
 and only if no readers currently access the array. This is because
 of the potentially dangerous resizing of the array. Using these
 functions is fully multi-thread safe now.
@@ -29222,22 +29223,22 @@ of course, the readers that already have locked the data are allowed
 to finish their operation. As soon as the last reader unlocks the
 data, the writer will lock it.
 
-Even though #GStaticRWLock is not opaque, it should only be used
+Even though [struct@StaticRWLock] is not opaque, it should only be used
 with the following functions.
 
-All of the g_static_rw_lock_* functions can be used even if
-g_thread_init() has not been called. Then they do nothing, apart
-from g_static_rw_lock_*_trylock, which does nothing but returning %TRUE.
+All of the `g_static_rw_lock_*` functions can be used even if
+[func@Thread.init] has not been called. Then they do nothing, apart
+from `g_static_rw_lock_*_trylock`, which does nothing but returning true.
 
 A read-write lock has a higher overhead than a mutex. For example, both
-g_static_rw_lock_reader_lock() and g_static_rw_lock_reader_unlock() have
-to lock and unlock a #GStaticMutex, so it takes at least twice the time
-to lock and unlock a #GStaticRWLock that it does to lock and unlock a
-#GStaticMutex. So only data structures that are accessed by multiple
+[method@StaticRWLock.reader_lock] and [method@StaticRWLock.reader_unlock] have
+to lock and unlock a [struct@StaticMutex], so it takes at least twice the time
+to lock and unlock a [struct@StaticRWLock] that it does to lock and unlock a
+[struct@StaticMutex]. So only data structures that are accessed by multiple
 readers, and which keep the lock for a considerable time justify a
-#GStaticRWLock. The above example most probably would fare better with a
-#GStaticMutex.</doc>
-      <doc-deprecated xml:space="preserve">Use a #GRWLock instead</doc-deprecated>
+[struct@StaticRWLock]. The above example most probably would fare better with a
+[struct@StaticMutex].</doc>
+      <doc-deprecated xml:space="preserve">Use a [struct@RWLock] instead</doc-deprecated>
       <field name="mutex" readable="0" private="1">
         <type name="StaticMutex" c:type="GStaticMutex"/>
       </field>
@@ -38590,11 +38591,11 @@ plan to do many lookups then #GVariantDict may be more efficient.</doc>
       <method name="lookup_value" c:identifier="g_variant_lookup_value" version="2.28">
         <doc xml:space="preserve">Looks up a value in a dictionary #GVariant.
 
-This function works with dictionaries of the type a{s*} (and equally
-well with type a{o*}, but we only further discuss the string case
+This function works with dictionaries of the type `a{s*}` (and equally
+well with type `a{o*}`), but we only further discuss the string case
 for sake of clarity).
 
-In the event that @dictionary has the type a{sv}, the @expected_type
+In the event that @dictionary has the type `a{sv}`, the @expected_type
 string specifies what type of value is expected to be inside of the
 variant. If the value inside the variant has a different type then
 %NULL is returned. In the event that @dictionary has a value type other
@@ -38608,7 +38609,7 @@ returned.  If @expected_type was specified then any non-%NULL return
 value will have this type.
 
 This function is currently implemented with a linear scan.  If you
-plan to do many lookups then #GVariantDict may be more efficient.</doc>
+plan to do many lookups then [struct@VariantDict] may be more efficient.</doc>
         <return-value transfer-ownership="full">
           <doc xml:space="preserve">the value of the dictionary key, or %NULL</doc>
           <type name="Variant" c:type="GVariant*"/>
