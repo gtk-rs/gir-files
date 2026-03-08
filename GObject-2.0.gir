@@ -406,7 +406,7 @@ g_object_bind_property() and is owned by the binding.</doc>
         <doc xml:space="preserve">The name of the property of #GBinding:source that should be used
 as the source of the binding.
 
-This should be in [canonical form][canonical-parameter-names] to get the
+This should be in [canonical form][class@GObject.ParamSpec#parameter-names] to get the
 best performance.</doc>
         <type name="utf8" c:type="gchar*"/>
       </property>
@@ -418,7 +418,7 @@ best performance.</doc>
         <doc xml:space="preserve">The name of the property of #GBinding:target that should be used
 as the target of the binding.
 
-This should be in [canonical form][canonical-parameter-names] to get the
+This should be in [canonical form][class@GObject.ParamSpec#parameter-names] to get the
 best performance.</doc>
         <type name="utf8" c:type="gchar*"/>
       </property>
@@ -2875,31 +2875,31 @@ time.</doc>
 
 It will generally comprise a function of some kind and a marshaller
 used to call it. It is the responsibility of the marshaller to
-convert the arguments for the invocation from #GValues into
+convert the arguments for the invocation from [GValues][struct@Value] into
 a suitable form, perform the callback on the converted arguments,
-and transform the return value back into a #GValue.
+and transform the return value back into a [struct@Value].
 
 In the case of C programs, a closure usually just holds a pointer
 to a function and maybe a data argument, and the marshaller
-converts between #GValue and native C types. The GObject
-library provides the #GCClosure type for this purpose. Bindings for
-other languages need marshallers which convert between #GValues
+converts between [struct@Value] and native C types. The GObject
+library provides the [struct@CClosure] type for this purpose. Bindings for
+other languages need marshallers which convert between [GValues][struct@Value]
 and suitable representations in the runtime of the language in
 order to use functions written in that language as callbacks. Use
-g_closure_set_marshal() to set the marshaller on such a custom
+[method@Closure.set_marshal] to set the marshaller on such a custom
 closure implementation.
 
 Within GObject, closures play an important role in the
 implementation of signals. When a signal is registered, the
-@c_marshaller argument to g_signal_new() specifies the default C
+@c_marshaller argument to [func@signal_new] specifies the default C
 marshaller for any closure which is connected to this
 signal. GObject provides a number of C marshallers for this
-purpose, see the g_cclosure_marshal_*() functions. Additional C
+purpose, see the `g_cclosure_marshal_*()` functions. Additional C
 marshallers can be generated with the [glib-genmarshal][glib-genmarshal]
 utility.  Closures can be explicitly connected to signals with
-g_signal_connect_closure(), but it usually more convenient to let
+[func@signal_connect_closure], but it usually more convenient to let
 GObject create a closure automatically by using one of the
-g_signal_connect_*() functions which take a callback function/user
+`g_signal_connect_*()` functions which take a callback function/user
 data pair.
 
 Using closures has a number of important advantages over a simple
@@ -2909,11 +2909,11 @@ callback function/data pointer combination:
   which means that language bindings don't have to write individual glue
   for each callback type.
 
-- The reference counting of #GClosure makes it easy to handle reentrancy
+- The reference counting of [struct@Closure] makes it easy to handle reentrancy
   right; if a callback is removed while it is being invoked, the closure
   and its parameters won't be freed until the invocation finishes.
 
-- g_closure_invalidate() and invalidation notifiers allow callbacks to be
+- [method@Closure.invalidate] and invalidation notifiers allow callbacks to be
   automatically removed when the objects they point to go away.</doc>
       <field name="ref_count" readable="0" bits="15" private="1">
         <type name="guint" c:type="guint"/>
@@ -6077,7 +6077,7 @@ properties in set_property() and get_property() implementations.</doc>
 methods for all object types in GTK, Pango and other libraries
 based on GObject. The `GObject` class provides methods for object
 construction and destruction, property access methods, and signal
-support. Signals are described in detail [here][gobject-Signals].
+support. Signals are described in detail [here](signals.html).
 
 For a tutorial on implementing a new `GObject` class, see [How to define and
 implement a new GObject](tutorial.html#how-to-define-and-implement-a-new-gobject).
@@ -6882,7 +6882,7 @@ object.</doc>
       </method>
       <method name="force_floating" c:identifier="g_object_force_floating" version="2.10">
         <doc xml:space="preserve">This function is intended for #GObject implementations to re-enforce
-a [floating][floating-ref] object reference. Doing this is seldom
+a [floating](floating-refs.html) object reference. Doing this is seldom
 required: all #GInitiallyUnowneds are created with a floating reference
 which usually just needs to be sunken by calling g_object_ref_sink().</doc>
         <return-value transfer-ownership="none">
@@ -7091,7 +7091,7 @@ properties are passed in.</doc>
         </parameters>
       </method>
       <method name="is_floating" c:identifier="g_object_is_floating" version="2.10">
-        <doc xml:space="preserve">Checks whether @object has a [floating][floating-ref] reference.</doc>
+        <doc xml:space="preserve">Checks whether @object has a [floating](floating-refs.html) reference.</doc>
         <return-value transfer-ownership="none">
           <doc xml:space="preserve">%TRUE if @object has a floating reference</doc>
           <type name="gboolean" c:type="gboolean"/>
@@ -7200,7 +7200,7 @@ explicit.</doc>
       </method>
       <method name="ref_sink" c:identifier="g_object_ref_sink" version="2.10">
         <doc xml:space="preserve">Increase the reference count of @object, and possibly remove the
-[floating][floating-ref] reference, if @object has a floating reference.
+[floating](floating-refs.html) reference, if @object has a floating reference.
 
 In other words, if the object is floating, then this call "assumes
 ownership" of the floating reference, converting it to a normal
@@ -13377,7 +13377,7 @@ Get the contents of a %G_TYPE_CHAR #GValue.</doc>
       </method>
       <method name="init" c:identifier="g_value_init">
         <doc xml:space="preserve">Initializes @value to store values of the given @type, and sets its value
-to the default for @type.
+to the initial value for @type.
 
 This must be called before any other methods on a [struct@GObject.Value], so
 the value knows what type it&#x2019;s meant to store.
@@ -13448,7 +13448,7 @@ This is an internal function introduced mainly for C marshallers.</doc>
         </parameters>
       </method>
       <method name="reset" c:identifier="g_value_reset">
-        <doc xml:space="preserve">Clears the current value in @value and resets it to the default value
+        <doc xml:space="preserve">Clears the current value in @value and resets it to the initial value
 (as if the value had just been initialized using
 [method@GObject.Value.init]).</doc>
         <return-value transfer-ownership="full">
