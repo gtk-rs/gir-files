@@ -348,16 +348,16 @@ a font.</doc>
         </parameter>
       </parameters>
     </function-macro>
-    <constant name="VERSION_MAJOR" value="12" c:type="HB_VERSION_MAJOR">
+    <constant name="VERSION_MAJOR" value="13" c:type="HB_VERSION_MAJOR">
       <type name="gint" c:type="gint"/>
     </constant>
-    <constant name="VERSION_MICRO" value="2" c:type="HB_VERSION_MICRO">
+    <constant name="VERSION_MICRO" value="1" c:type="HB_VERSION_MICRO">
       <type name="gint" c:type="gint"/>
     </constant>
-    <constant name="VERSION_MINOR" value="3" c:type="HB_VERSION_MINOR">
+    <constant name="VERSION_MINOR" value="0" c:type="HB_VERSION_MINOR">
       <type name="gint" c:type="gint"/>
     </constant>
-    <constant name="VERSION_STRING" value="12.3.2" c:type="HB_VERSION_STRING">
+    <constant name="VERSION_STRING" value="13.0.1" c:type="HB_VERSION_STRING">
       <type name="utf8" c:type="gchar*"/>
     </constant>
     <record name="aat_layout_feature_selector_info_t" c:type="hb_aat_layout_feature_selector_info_t">
@@ -1954,6 +1954,21 @@ see hb_buffer_set_replacement_codepoint().</doc>
         </parameter>
       </parameters>
     </function>
+    <function name="buffer_changed" c:identifier="hb_buffer_changed" version="13.0.0">
+      <doc xml:space="preserve">Called by a message callback after modifying buffer glyph indices,
+to update internal caches.
+
+If not called from inside a message callback, does nothing.</doc>
+      <return-value transfer-ownership="none">
+        <type name="none" c:type="void"/>
+      </return-value>
+      <parameters>
+        <parameter name="buffer" transfer-ownership="none">
+          <doc xml:space="preserve">An #hb_buffer_t</doc>
+          <type name="buffer_t" c:type="hb_buffer_t*"/>
+        </parameter>
+      </parameters>
+    </function>
     <function name="buffer_clear_contents" c:identifier="hb_buffer_clear_contents" version="0.9.11">
       <doc xml:space="preserve">Similar to hb_buffer_reset(), but does not clear the Unicode functions and
 the replacement code point.</doc>
@@ -2861,9 +2876,9 @@ There are currently two supported serialization formats:
 A human-readable, plain text format.
 The serialized glyphs will look something like:
 
-```
+|[&lt;!-- language="plain" --&gt;
 [uni0651=0@518,0+0|uni0628=0+1897]
-```
+]|
 
 - The serialized glyphs are delimited with `[` and `]`.
 - Glyphs are separated with `|`
@@ -2879,10 +2894,10 @@ The serialized glyphs will look something like:
 A machine-readable, structured format.
 The serialized glyphs will look something like:
 
-```
+|[&lt;!-- language="plain" --&gt;
 [{"g":"uni0651","cl":0,"dx":518,"dy":0,"ax":0,"ay":0},
-{"g":"uni0628","cl":0,"dx":0,"dy":0,"ax":1897,"ay":0}]
-```
+ {"g":"uni0628","cl":0,"dx":0,"dy":0,"ax":1897,"ay":0}]
+]|
 
 Each glyph is a JSON object, with the following properties:
 - `g`: the glyph name or glyph index if
@@ -2963,9 +2978,9 @@ There are currently two supported serialization formats:
 A human-readable, plain text format.
 The serialized codepoints will look something like:
 
-```
+|[&lt;!-- language="plain" --&gt;
 &#xA0;&lt;U+0651=0|U+0628=1&gt;
-```
+]|
 
 - Glyphs are separated with `|`
 - Unicode codepoints are expressed as zero-padded four (or more)
@@ -2983,9 +2998,9 @@ properties:
 
 For example:
 
-```
+|[&lt;!-- language="plain" --&gt;
 [{u:1617,cl:0},{u:1576,cl:1}]
-```</doc>
+]|</doc>
       <return-value transfer-ownership="none">
         <doc xml:space="preserve">The number of serialized items.</doc>
         <type name="guint" c:type="unsigned int"/>
@@ -9510,12 +9525,10 @@ Regarding these various memory-modes:
         </parameter>
       </parameters>
     </function>
-    <function name="ot_color_get_svg_document_glyph_range" c:identifier="hb_ot_color_get_svg_document_glyph_range">
+    <function name="ot_color_get_svg_document_glyph_range" c:identifier="hb_ot_color_get_svg_document_glyph_range" version="13.0.0">
       <doc xml:space="preserve">Gets the glyph range covered by an `SVG`-table document index.</doc>
       <return-value transfer-ownership="none">
-        <doc xml:space="preserve">`true` if @svg_document_index is valid, `false` otherwise.
-
-XSince: REPLACEME</doc>
+        <doc xml:space="preserve">`true` if @svg_document_index is valid, `false` otherwise.</doc>
         <type name="bool_t" c:type="hb_bool_t"/>
       </return-value>
       <parameters>
