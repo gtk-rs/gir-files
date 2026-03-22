@@ -15441,7 +15441,7 @@ linked against at application run time.</doc>
     <constant name="MAXUINT8" value="255" c:type="G_MAXUINT8">
       <type name="guint8" c:type="guint8"/>
     </constant>
-    <constant name="MICRO_VERSION" value="3" c:type="GLIB_MICRO_VERSION">
+    <constant name="MICRO_VERSION" value="5" c:type="GLIB_MICRO_VERSION">
       <doc xml:space="preserve">The micro version number of the GLib library.
 
 Like #gtk_micro_version, but from the headers used at
@@ -54668,8 +54668,8 @@ It calls g_slice_alloc() with `sizeof (@type)` and casts the
 returned pointer to a pointer of the given type, avoiding a type
 cast in the source code.
 
-This can never return %NULL as the minimum allocation size from
-`sizeof (@type)` is 1 byte.
+This can never return %NULL. If the size of the type is 0, then 1 byte will
+still be allocated.
 
 Since GLib 2.76 this always uses the system malloc() implementation
 internally.</doc>
@@ -54687,8 +54687,8 @@ It calls g_slice_alloc0() with `sizeof (@type)`
 and casts the returned pointer to a pointer of the given type,
 avoiding a type cast in the source code.
 
-This can never return %NULL as the minimum allocation size from
-`sizeof (@type)` is 1 byte.
+This can never return %NULL. If the size of the type is 0, then 1 byte will
+still be allocated.
 
 Since GLib 2.76 this always uses the system malloc() implementation
 internally.</doc>
