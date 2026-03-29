@@ -107,7 +107,7 @@ g_object_unref (context);
 
 This only works when running under a window manager that
 supports multiple workspaces, as described in the
-[Extended Window Manager Hints](http://www.freedesktop.org/Standards/wm-spec).
+[Extended Window Manager Hints](https://specifications.freedesktop.org/wm/latest/).
 Specifically this sets the `_NET_WM_DESKTOP` property described
 in that spec.
 
@@ -4978,8 +4978,10 @@ four planes. Even if the memory is a single block, the data can be organized in
 multiple planes, by specifying offsets from the beginning of the data.
 
 DMA buffers are exposed to user-space as file descriptors allowing to pass them
-between processes. If a DMA buffer has multiple planes, there is one file
-descriptor per plane.
+between processes. If a DMA buffer has multiple planes, more than one file
+descriptor may be present, up to the number of planes. If the number of file
+descriptors is less than the number of planes, the remaining ones should be set to
+-1.
 
 The format of the data (for graphics data, essentially its colorspace) is described
 by a 32-bit integer. These format identifiers are defined in the header file `drm_fourcc.h`
@@ -5084,7 +5086,7 @@ associated with.</doc>
         </parameters>
       </method>
       <method name="get_fd" c:identifier="gdk_dmabuf_texture_builder_get_fd" version="4.14">
-        <doc xml:space="preserve">Gets the file descriptor for a plane.</doc>
+        <doc xml:space="preserve">Gets the file descriptor for a plane or -1 if none.</doc>
         <return-value transfer-ownership="none">
           <doc xml:space="preserve">the file descriptor</doc>
           <type name="gint" c:type="int"/>
@@ -5286,7 +5288,7 @@ dma-buf formats.</doc>
         </parameters>
       </method>
       <method name="set_fd" c:identifier="gdk_dmabuf_texture_builder_set_fd" version="4.14">
-        <doc xml:space="preserve">Sets the file descriptor for a plane.</doc>
+        <doc xml:space="preserve">Sets the file descriptor for a plane or to -1 to unset it.</doc>
         <return-value transfer-ownership="none">
           <type name="none" c:type="void"/>
         </return-value>
@@ -16339,9 +16341,28 @@ byte each of red, green and blue. It is not endian-dependent, so
 `CAIRO_FORMAT_ARGB32` is represented by different `GdkMemoryFormats`
 on architectures with different endiannesses.
 
-Its naming is modelled after
-[VkFormat](https://www.khronos.org/registry/vulkan/specs/1.0/html/vkspec.html#VkFormat)
-for details).</doc>
+# A note on naming
+
+The format names are roughly modelled after
+[VkFormat](https://www.khronos.org/registry/vulkan/specs/1.0/html/vkspec.html#VkFormat).
+A name follows `GDK_MEMORY_&lt;CHANNELS&gt;_&lt;DATA_TYPE&gt;_&lt;SUBSAMPLING&gt; &lt;PREMULTIPLIED&gt;`
+where CHANNELS describe how the RGBA channels are layed out in memory, with an
+X denoting padding. DATA_TYPE is unsigned normalized integer if not present, or
+otherwise FLOAT. The optional SUBSAMPLING defines the subsampling method used.
+The optional ENDIAN term describes the endianness if it is not
+host-endian. Finally, an optional PREMULTIPLIED term indicates that the color
+channels are premultiplied with the alpha value, if it is omitted, the data is
+not premultiplied or there is no alpha channel.
+
+The CHANNELS are given as a list of planes seperated by underscores where
+each plane is split into multiple elements describing one or more bytes of memory.
+Each element is given as the list of channels folowed by the amount of bits taken
+up.
+
+So the fictional format `RGB565_A8_PREMULTIPLIED` would describe a format with 2
+planes where the first plane is an unsigned 16 bit integer containing the RGB
+channels with 5, 6, and 5 bits respectively while the 2nd plane contains the
+alpha channel as an unisnged 8bit integer.</doc>
       <member name="b8g8r8a8_premultiplied" value="0" c:identifier="GDK_MEMORY_B8G8R8A8_PREMULTIPLIED" glib:nick="b8g8r8a8-premultiplied" glib:name="GDK_MEMORY_B8G8R8A8_PREMULTIPLIED">
         <doc xml:space="preserve">4 bytes; for blue, green, red, alpha.
   The color values are premultiplied with the alpha value.</doc>
@@ -16930,7 +16951,45 @@ mapped into the 1st channel.
 
 Commonly known by the fourcc "S416".</doc>
       </member>
-      <member name="n_formats" value="65" c:identifier="GDK_MEMORY_N_FORMATS" glib:nick="n-formats" glib:name="GDK_MEMORY_N_FORMATS">
+      <member name="argb2101010_premultiplied" value="65" c:identifier="GDK_MEMORY_ARGB2101010_PREMULTIPLIED" version="4.24" glib:nick="argb2101010-premultiplied" glib:name="GDK_MEMORY_ARGB2101010_PREMULTIPLIED">
+        <doc xml:space="preserve">4 bytes per pixel
+
+Bits 31..30 contain the alpha channel, 29..20 red, 19..10 green
+and 9..0 blue.
+
+The color values are premultiplied with the alpha value.</doc>
+      </member>
+      <member name="argb2101010" value="66" c:identifier="GDK_MEMORY_ARGB2101010" version="4.24" glib:nick="argb2101010" glib:name="GDK_MEMORY_ARGB2101010">
+        <doc xml:space="preserve">4 bytes per pixel
+
+Bits 31..30 contain the alpha channel, 29..20 red, 19..10 green
+and 9..0 blue.</doc>
+      </member>
+      <member name="xrgb2101010" value="67" c:identifier="GDK_MEMORY_XRGB2101010" version="4.24" glib:nick="xrgb2101010" glib:name="GDK_MEMORY_XRGB2101010">
+        <doc xml:space="preserve">4 bytes per pixel
+
+Bits 31..30 are padding, bits 29..20 contain red, 19..10 green
+and 9..0 blue.
+
+The format is opaque.</doc>
+      </member>
+      <member name="abgr2101010_premultiplied" value="68" c:identifier="GDK_MEMORY_ABGR2101010_PREMULTIPLIED" glib:nick="abgr2101010-premultiplied" glib:name="GDK_MEMORY_ABGR2101010_PREMULTIPLIED">
+      </member>
+      <member name="abgr2101010" value="69" c:identifier="GDK_MEMORY_ABGR2101010" version="4.24" glib:nick="abgr2101010" glib:name="GDK_MEMORY_ABGR2101010">
+        <doc xml:space="preserve">4 bytes per pixel
+
+Bits 31..30 contain the alpha channel, 29..20 blue, 19..10 green
+and 9..0 red.</doc>
+      </member>
+      <member name="xbgr2101010" value="70" c:identifier="GDK_MEMORY_XBGR2101010" version="4.24" glib:nick="xbgr2101010" glib:name="GDK_MEMORY_XBGR2101010">
+        <doc xml:space="preserve">4 bytes per pixel
+
+Bits 31..30 are padding, bits 29..20 contain blue, 19..10 green
+and 9..0 red.
+
+The format is opaque.</doc>
+      </member>
+      <member name="n_formats" value="71" c:identifier="GDK_MEMORY_N_FORMATS" glib:nick="n-formats" glib:name="GDK_MEMORY_N_FORMATS">
         <doc xml:space="preserve">The number of formats. This value will change as
   more formats get added, so do not rely on its concrete integer.</doc>
       </member>
