@@ -25,21 +25,39 @@ and/or use gtk-doc annotations.  -->
  Windows Server 2008 R2.</doc>
       </member>
     </enumeration>
-    <function name="check_windows_version" c:identifier="g_win32_check_windows_version">
+    <function name="check_windows_version" c:identifier="g_win32_check_windows_version" version="2.44">
+      <doc xml:space="preserve">Returns whether the version of the Windows operating system the
+code is running on is at least the specified major, minor and
+service pack versions.  See MSDN documentation for the Operating
+System Version.  Software that needs even more detailed version and
+feature information should use the Win32 API VerifyVersionInfo()
+directly.
+
+Successive calls of this function can be used for enabling or
+disabling features at run-time for a range of Windows versions,
+as per the VerifyVersionInfo() API documentation.</doc>
       <return-value transfer-ownership="none">
+        <doc xml:space="preserve">%TRUE if the Windows Version is the same or greater than
+         the specified major, minor and service pack versions, and
+         whether the running Windows is a workstation or server edition
+         of Windows, if specifically specified.</doc>
         <type name="gboolean" c:type="gboolean"/>
       </return-value>
       <parameters>
         <parameter name="major" transfer-ownership="none">
+          <doc xml:space="preserve">major version of Windows</doc>
           <type name="gint" c:type="const gint"/>
         </parameter>
         <parameter name="minor" transfer-ownership="none">
+          <doc xml:space="preserve">minor version of Windows</doc>
           <type name="gint" c:type="const gint"/>
         </parameter>
         <parameter name="spver" transfer-ownership="none">
+          <doc xml:space="preserve">Windows Service Pack Level, 0 if none</doc>
           <type name="gint" c:type="const gint"/>
         </parameter>
         <parameter name="os_type" transfer-ownership="none">
+          <doc xml:space="preserve">Type of Windows OS</doc>
           <type name="OSType" c:type="const GWin32OSType"/>
         </parameter>
       </parameters>
@@ -60,11 +78,26 @@ Windows COM objects.</doc>
       </parameters>
     </function-macro>
     <function name="error_message" c:identifier="g_win32_error_message">
+      <doc xml:space="preserve">Translate a Win32 error code into a human readable message.
+
+The error code could be as returned by
+[`GetLastError()`](https://learn.microsoft.com/en-us/windows/win32/api/errhandlingapi/nf-errhandlingapi-getlasterror)
+or [`WSAGetLastError()`](https://learn.microsoft.com/en-us/windows/win32/api/winsock/nf-winsock-wsagetlasterror).
+
+The message is either language neutral, or in the thread&#x2019;s language, or the
+user&#x2019;s language, the system&#x2019;s language, or US English (see documentation for
+[`FormatMessage()`](https://learn.microsoft.com/en-us/windows/win32/api/winbase/nf-winbase-formatmessagew)).
+The returned string is in UTF-8.
+
+If a human readable message cannot be found for the given @error, an empty
+string is returned.</doc>
       <return-value transfer-ownership="full">
+        <doc xml:space="preserve">newly-allocated error message</doc>
         <type name="utf8" c:type="gchar*"/>
       </return-value>
       <parameters>
         <parameter name="error" transfer-ownership="none">
+          <doc xml:space="preserve">Win32 error code</doc>
           <type name="gint" c:type="gint"/>
         </parameter>
       </parameters>
@@ -82,68 +115,247 @@ Windows COM objects.</doc>
         </parameter>
       </parameters>
     </function>
-    <function name="get_command_line" c:identifier="g_win32_get_command_line" introspectable="0">
-      <return-value>
+    <function name="get_command_line" c:identifier="g_win32_get_command_line" version="2.40">
+      <doc xml:space="preserve">Gets the command line arguments, on Windows, in the GLib filename
+encoding (ie: UTF-8).
+
+Normally, on Windows, the command line arguments are passed to main()
+in the system codepage encoding.  This prevents passing filenames as
+arguments if the filenames contain characters that fall outside of
+this codepage.  If such filenames are passed, then substitutions
+will occur (such as replacing some characters with '?').
+
+GLib's policy of using UTF-8 as a filename encoding on Windows was
+designed to localise the pain of dealing with filenames outside of
+the system codepage to one area: dealing with commandline arguments
+in main().
+
+As such, most GLib programs should ignore the value of argv passed to
+their main() function and call g_win32_get_command_line() instead.
+This will get the "full Unicode" commandline arguments using
+GetCommandLineW() and convert it to the GLib filename encoding (which
+is UTF-8 on Windows).
+
+The strings returned by this function are suitable for use with
+functions such as g_open() and g_file_new_for_commandline_arg() but
+are not suitable for use with g_option_context_parse(), which assumes
+that its input will be in the system codepage.  The return value is
+suitable for use with g_option_context_parse_strv(), however, which
+is a better match anyway because it won't leak memory.
+
+Unlike argv, the returned value is a normal strv and can (and should)
+be freed with g_strfreev() when no longer needed.</doc>
+      <return-value transfer-ownership="full">
+        <doc xml:space="preserve">the commandline arguments in the GLib
+  filename encoding (ie: UTF-8)</doc>
         <array c:type="gchar**">
           <type name="utf8"/>
         </array>
       </return-value>
     </function>
-    <function name="get_package_installation_directory" c:identifier="g_win32_get_package_installation_directory">
+    <function name="get_package_installation_directory" c:identifier="g_win32_get_package_installation_directory" deprecated="1" deprecated-version="2.18">
+      <doc xml:space="preserve">Try to determine the installation directory for a software package.
+
+This function is deprecated. Use
+g_win32_get_package_installation_directory_of_module() instead.
+
+The use of @package is deprecated. You should always pass %NULL. A
+warning is printed if non-NULL is passed as @package.
+
+The original intended use of @package was for a short identifier of
+the package, typically the same identifier as used for
+`GETTEXT_PACKAGE` in software configured using GNU
+autotools. The function first looks in the Windows Registry for the
+value `#InstallationDirectory` in the key
+`#HKLM\Software\@package`, and if that value
+exists and is a string, returns that.
+
+It is strongly recommended that packagers of GLib-using libraries
+for Windows do not store installation paths in the Registry to be
+used by this function as that interferes with having several
+parallel installations of the library. Enabling multiple
+installations of different versions of some GLib-using library, or
+GLib itself, is desirable for various reasons.
+
+For this reason it is recommended to always pass %NULL as
+@package to this function, to avoid the temptation to use the
+Registry. In version 2.20 of GLib the @package parameter
+will be ignored and this function won't look in the Registry at all.
+
+If @package is %NULL, or the above value isn't found in the
+Registry, but @dll_name is non-%NULL, it should name a DLL loaded
+into the current process. Typically that would be the name of the
+DLL calling this function, looking for its installation
+directory. The function then asks Windows what directory that DLL
+was loaded from. If that directory's last component is "bin" or
+"lib", the parent directory is returned, otherwise the directory
+itself. If that DLL isn't loaded, the function proceeds as if
+@dll_name was %NULL.
+
+If both @package and @dll_name are %NULL, the directory from where
+the main executable of the process was loaded is used instead in
+the same way as above.</doc>
+      <doc-deprecated xml:space="preserve">Pass the HMODULE of a DLL or EXE to
+g_win32_get_package_installation_directory_of_module() instead.</doc-deprecated>
       <return-value transfer-ownership="full">
+        <doc xml:space="preserve">a string containing the installation directory for
+@package. The string is in the GLib file name encoding,
+i.e. UTF-8. The return value should be freed with g_free() when not
+needed any longer. If the function fails %NULL is returned.</doc>
         <type name="utf8" c:type="gchar*"/>
       </return-value>
       <parameters>
-        <parameter name="package" transfer-ownership="none">
+        <parameter name="package" transfer-ownership="none" nullable="1" allow-none="1">
+          <doc xml:space="preserve">You should pass %NULL for this.</doc>
           <type name="utf8" c:type="const gchar*"/>
         </parameter>
-        <parameter name="dll_name" transfer-ownership="none">
+        <parameter name="dll_name" transfer-ownership="none" nullable="1" allow-none="1">
+          <doc xml:space="preserve">The name of a DLL that a package provides in UTF-8, or %NULL.</doc>
           <type name="utf8" c:type="const gchar*"/>
         </parameter>
       </parameters>
     </function>
-    <function name="get_package_installation_directory_of_module" c:identifier="g_win32_get_package_installation_directory_of_module">
+    <function name="get_package_installation_directory_of_module" c:identifier="g_win32_get_package_installation_directory_of_module" version="2.16">
+      <doc xml:space="preserve">This function tries to determine the installation directory of a
+software package based on the location of a DLL of the software
+package.
+
+@hmodule should be the handle of a loaded DLL or %NULL. The
+function looks up the directory that DLL was loaded from. If
+@hmodule is NULL, the directory the main executable of the current
+process is looked up. If that directory's last component is "bin"
+or "lib", its parent directory is returned, otherwise the directory
+itself.
+
+It thus makes sense to pass only the handle to a "public" DLL of a
+software package to this function, as such DLLs typically are known
+to be installed in a "bin" or occasionally "lib" subfolder of the
+installation folder. DLLs that are of the dynamically loaded module
+or plugin variety are often located in more private locations
+deeper down in the tree, from which it is impossible for GLib to
+deduce the root of the package installation.
+
+The typical use case for this function is to have a DllMain() that
+saves the handle for the DLL. Then when code in the DLL needs to
+construct names of files in the installation tree it calls this
+function passing the DLL handle.</doc>
       <return-value transfer-ownership="full">
+        <doc xml:space="preserve">a string containing the guessed installation directory for
+the software package @hmodule is from. The string is in the GLib
+file name encoding, i.e. UTF-8. The return value should be freed
+with g_free() when not needed any longer. If the function fails
+%NULL is returned.</doc>
         <type name="utf8" c:type="gchar*"/>
       </return-value>
       <parameters>
         <parameter name="hmodule" transfer-ownership="none" nullable="1" allow-none="1">
+          <doc xml:space="preserve">The Win32 handle for a DLL loaded into the current process, or %NULL</doc>
           <type name="gpointer" c:type="gpointer"/>
         </parameter>
       </parameters>
     </function>
-    <function name="get_package_installation_subdirectory" c:identifier="g_win32_get_package_installation_subdirectory">
+    <function name="get_package_installation_subdirectory" c:identifier="g_win32_get_package_installation_subdirectory" deprecated="1" deprecated-version="2.18">
+      <doc xml:space="preserve">This function is deprecated. Use
+g_win32_get_package_installation_directory_of_module() and
+g_build_filename() instead.
+
+Returns a newly-allocated string containing the path of the
+subdirectory @subdir in the return value from calling
+g_win32_get_package_installation_directory() with the @package and
+@dll_name parameters. See the documentation for
+g_win32_get_package_installation_directory() for more details. In
+particular, note that it is deprecated to pass anything except NULL
+as @package.</doc>
+      <doc-deprecated xml:space="preserve">Pass the HMODULE of a DLL or EXE to
+g_win32_get_package_installation_directory_of_module() instead, and
+then construct a subdirectory pathname with g_build_filename().</doc-deprecated>
       <return-value transfer-ownership="full">
+        <doc xml:space="preserve">a string containing the complete path to @subdir inside
+the installation directory of @package. The returned string is in
+the GLib file name encoding, i.e. UTF-8. The return value should be
+freed with g_free() when no longer needed. If something goes wrong,
+%NULL is returned.</doc>
         <type name="utf8" c:type="gchar*"/>
       </return-value>
       <parameters>
-        <parameter name="package" transfer-ownership="none">
+        <parameter name="package" transfer-ownership="none" nullable="1" allow-none="1">
+          <doc xml:space="preserve">You should pass %NULL for this.</doc>
           <type name="utf8" c:type="const gchar*"/>
         </parameter>
-        <parameter name="dll_name" transfer-ownership="none">
+        <parameter name="dll_name" transfer-ownership="none" nullable="1" allow-none="1">
+          <doc xml:space="preserve">The name of a DLL that a package provides, in UTF-8, or %NULL.</doc>
           <type name="utf8" c:type="const gchar*"/>
         </parameter>
         <parameter name="subdir" transfer-ownership="none">
+          <doc xml:space="preserve">A subdirectory of the package installation directory, also in UTF-8</doc>
           <type name="utf8" c:type="const gchar*"/>
         </parameter>
       </parameters>
     </function>
-    <function name="get_windows_version" c:identifier="g_win32_get_windows_version">
+    <function name="get_windows_version" c:identifier="g_win32_get_windows_version" deprecated="1" deprecated-version="2.44">
+      <doc xml:space="preserve">This function is deprecated. Use
+g_win32_check_windows_version() instead.
+
+Returns version information for the Windows operating system the
+code is running on. See MSDN documentation for the GetVersion()
+function. To summarize, the most significant bit is one on Win9x,
+and zero on NT-based systems. Since version 2.14, GLib works only
+on NT-based systems, so checking whether your are running on Win9x
+in your own software is moot. The least significant byte is 4 on
+Windows NT 4, and 5 on Windows XP. Software that needs really
+detailed version and feature information should use Win32 API like
+GetVersionEx() and VerifyVersionInfo().</doc>
+      <doc-deprecated xml:space="preserve">Be aware that for Windows 8.1 and Windows Server
+2012 R2 and later, this will return 62 unless the application is
+manifested for Windows 8.1/Windows Server 2012 R2, for example.
+MSDN stated that GetVersion(), which is used here, is subject to
+further change or removal after Windows 8.1.</doc-deprecated>
       <return-value transfer-ownership="none">
+        <doc xml:space="preserve">The version information.</doc>
         <type name="guint" c:type="guint"/>
       </return-value>
     </function>
     <function name="getlocale" c:identifier="g_win32_getlocale">
+      <doc xml:space="preserve">The setlocale() function in the Microsoft C library uses locale
+names of the form "English_United States.1252" etc. We want the
+UNIXish standard form "en_US", "zh_TW" etc. This function gets the
+current thread locale from Windows - without any encoding info -
+and returns it as a string of the above form for use in forming
+file names etc. The returned string should be deallocated with
+g_free().</doc>
       <return-value transfer-ownership="full">
+        <doc xml:space="preserve">newly-allocated locale name.</doc>
         <type name="utf8" c:type="gchar*"/>
       </return-value>
     </function>
-    <function name="locale_filename_from_utf8" c:identifier="g_win32_locale_filename_from_utf8">
+    <function name="locale_filename_from_utf8" c:identifier="g_win32_locale_filename_from_utf8" version="2.8">
+      <doc xml:space="preserve">Converts a filename from UTF-8 to the system codepage.
+
+On NT-based Windows, on NTFS file systems, file names are in
+Unicode. It is quite possible that Unicode file names contain
+characters not representable in the system codepage. (For instance,
+Greek or Cyrillic characters on Western European or US Windows
+installations, or various less common CJK characters on CJK Windows
+installations.)
+
+In such a case, and if the filename refers to an existing file, and
+the file system stores alternate short (8.3) names for directory
+entries, the short form of the filename is returned. Note that the
+"short" name might in fact be longer than the Unicode name if the
+Unicode name has very short pathname components containing
+non-ASCII characters. If no system codepage name for the file is
+possible, %NULL is returned.
+
+The return value is dynamically allocated and should be freed with
+g_free() when no longer needed.</doc>
       <return-value transfer-ownership="full">
+        <doc xml:space="preserve">The converted filename, or %NULL on conversion
+failure and lack of short names.</doc>
         <type name="utf8" c:type="gchar*"/>
       </return-value>
       <parameters>
         <parameter name="utf8filename" transfer-ownership="none">
+          <doc xml:space="preserve">a UTF-8 encoded filename.</doc>
           <type name="utf8" c:type="const gchar*"/>
         </parameter>
       </parameters>

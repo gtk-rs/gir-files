@@ -5174,6 +5174,12 @@ in the macro, so you shouldn't use double quotes.</doc>
         </parameter>
       </parameters>
     </function-macro>
+    <function-macro name="DEPRECATED_ENUMERATOR_IN_2_90_FOR" c:identifier="GLIB_DEPRECATED_ENUMERATOR_IN_2_90_FOR" introspectable="0">
+      <parameters>
+        <parameter name="f">
+        </parameter>
+      </parameters>
+    </function-macro>
     <function-macro name="DEPRECATED_FOR" c:identifier="GLIB_DEPRECATED_FOR" introspectable="0">
       <parameters>
         <parameter name="f">
@@ -5367,6 +5373,12 @@ in the macro, so you shouldn't use double quotes.</doc>
       </parameters>
     </function-macro>
     <function-macro name="DEPRECATED_IN_2_88_FOR" c:identifier="GLIB_DEPRECATED_IN_2_88_FOR" introspectable="0">
+      <parameters>
+        <parameter name="f">
+        </parameter>
+      </parameters>
+    </function-macro>
+    <function-macro name="DEPRECATED_IN_2_90_FOR" c:identifier="GLIB_DEPRECATED_IN_2_90_FOR" introspectable="0">
       <parameters>
         <parameter name="f">
         </parameter>
@@ -5570,6 +5582,12 @@ in the macro, so you shouldn't use double quotes.</doc>
         </parameter>
       </parameters>
     </function-macro>
+    <function-macro name="DEPRECATED_MACRO_IN_2_90_FOR" c:identifier="GLIB_DEPRECATED_MACRO_IN_2_90_FOR" introspectable="0">
+      <parameters>
+        <parameter name="f">
+        </parameter>
+      </parameters>
+    </function-macro>
     <function-macro name="DEPRECATED_TYPE_FOR" c:identifier="GLIB_DEPRECATED_TYPE_FOR" introspectable="0">
       <parameters>
         <parameter name="f">
@@ -5763,6 +5781,12 @@ in the macro, so you shouldn't use double quotes.</doc>
       </parameters>
     </function-macro>
     <function-macro name="DEPRECATED_TYPE_IN_2_88_FOR" c:identifier="GLIB_DEPRECATED_TYPE_IN_2_88_FOR" introspectable="0">
+      <parameters>
+        <parameter name="f">
+        </parameter>
+      </parameters>
+    </function-macro>
+    <function-macro name="DEPRECATED_TYPE_IN_2_90_FOR" c:identifier="GLIB_DEPRECATED_TYPE_IN_2_90_FOR" introspectable="0">
       <parameters>
         <parameter name="f">
         </parameter>
@@ -15472,7 +15496,7 @@ linked against at application run time.</doc>
       <doc xml:space="preserve">The minimum value which can be held in a #gint8.</doc>
       <type name="gint8" c:type="gint8"/>
     </constant>
-    <constant name="MINOR_VERSION" value="88" c:type="GLIB_MINOR_VERSION">
+    <constant name="MINOR_VERSION" value="89" c:type="GLIB_MINOR_VERSION">
       <doc xml:space="preserve">The minor version number of the GLib library.
 
 Like #gtk_minor_version, but from the headers used at
@@ -16724,6 +16748,62 @@ This function can't be called from inside one of the
           </instance-parameter>
         </parameters>
       </method>
+      <method name="get_attribute_position" c:identifier="g_markup_parse_context_get_attribute_position" version="2.90">
+        <doc xml:space="preserve">Retrieves the start and end positions of an attribute assignment
+in a start tag.
+
+This function can be used in the `start_element` callback to
+obtain location information for error reporting.
+
+Calling it outside of the `start_element` callback
+has undefined results.
+
+Note that @line_number and @char_number are intended for human
+readable error messages and are therefore 1-based and in Unicode
+characters. @offset on the other hand is meant for programmatic
+use, and thus is 0-based and in bytes.
+
+The information is meant to accompany the values returned by
+[method@GLib.MarkupParseContext.get_position], and comes with the
+same accuracy guarantees.</doc>
+        <return-value transfer-ownership="none">
+          <type name="none" c:type="void"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="context" transfer-ownership="none">
+            <doc xml:space="preserve">a #GMarkupParseContext</doc>
+            <type name="MarkupParseContext" c:type="GMarkupParseContext*"/>
+          </instance-parameter>
+          <parameter name="attr" transfer-ownership="none">
+            <doc xml:space="preserve">the index of the attribute to query</doc>
+            <type name="guint" c:type="unsigned int"/>
+          </parameter>
+          <parameter name="start_lines" direction="out" caller-allocates="0" transfer-ownership="full" optional="1" allow-none="1">
+            <doc xml:space="preserve">return location for the line number of the attribute assignment start</doc>
+            <type name="gsize" c:type="size_t*"/>
+          </parameter>
+          <parameter name="start_chars" direction="out" caller-allocates="0" transfer-ownership="full" optional="1" allow-none="1">
+            <doc xml:space="preserve">return location for the character number of the attribute assignment start</doc>
+            <type name="gsize" c:type="size_t*"/>
+          </parameter>
+          <parameter name="start_offset" direction="out" caller-allocates="0" transfer-ownership="full" optional="1" allow-none="1">
+            <doc xml:space="preserve">return location for offset of the attribute assignment</doc>
+            <type name="gsize" c:type="size_t*"/>
+          </parameter>
+          <parameter name="end_lines" direction="out" caller-allocates="0" transfer-ownership="full" optional="1" allow-none="1">
+            <doc xml:space="preserve">return location for the line number of the attribute assignment end</doc>
+            <type name="gsize" c:type="size_t*"/>
+          </parameter>
+          <parameter name="end_chars" direction="out" caller-allocates="0" transfer-ownership="full" optional="1" allow-none="1">
+            <doc xml:space="preserve">return location for the character number of the attribute assignment end</doc>
+            <type name="gsize" c:type="size_t*"/>
+          </parameter>
+          <parameter name="end_offset" direction="out" caller-allocates="0" transfer-ownership="full" optional="1" allow-none="1">
+            <doc xml:space="preserve">return location for offset of the attribute assignment end</doc>
+            <type name="gsize" c:type="size_t*"/>
+          </parameter>
+        </parameters>
+      </method>
       <method name="get_element" c:identifier="g_markup_parse_context_get_element" version="2.2">
         <doc xml:space="preserve">Retrieves the name of the currently open element.
 
@@ -16812,6 +16892,8 @@ semantics for what constitutes the "current" line number other than
 
 This function can be used in the `start_element` or `end_element`
 callbacks to obtain location information for error reporting.
+
+Calling it outside of these callbacks has undefined results.
 
 Note that @line_number and @char_number are intended for human
 readable error messages and are therefore 1-based and in Unicode
@@ -43456,9 +43538,9 @@ state).</doc>
       </return-value>
       <parameters>
         <parameter name="in" transfer-ownership="none">
-          <doc xml:space="preserve">binary input data</doc>
+          <doc xml:space="preserve">base-64 encoded input data</doc>
           <array length="1" zero-terminated="0" c:type="const gchar*">
-            <type name="guint8"/>
+            <type name="utf8" c:type="gchar"/>
           </array>
         </parameter>
         <parameter name="len" transfer-ownership="none">
@@ -50024,7 +50106,7 @@ There can only be one writer function. It is an error to set more than one.</doc
           <doc xml:space="preserve">user data to pass to @func</doc>
           <type name="gpointer" c:type="gpointer"/>
         </parameter>
-        <parameter name="user_data_free" transfer-ownership="none" scope="async" destroy="0">
+        <parameter name="user_data_free" transfer-ownership="none" scope="async">
           <doc xml:space="preserve">function to free @user_data once it&#x2019;s
    finished with, if non-`NULL`</doc>
           <type name="DestroyNotify" c:type="GDestroyNotify"/>

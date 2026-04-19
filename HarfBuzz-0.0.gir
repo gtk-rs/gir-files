@@ -355,16 +355,16 @@ The serial number will increase when internal #hb_glyph_info_t and
         </parameter>
       </parameters>
     </function-macro>
-    <constant name="VERSION_MAJOR" value="13" c:type="HB_VERSION_MAJOR">
+    <constant name="VERSION_MAJOR" value="14" c:type="HB_VERSION_MAJOR">
       <type name="gint" c:type="gint"/>
     </constant>
-    <constant name="VERSION_MICRO" value="1" c:type="HB_VERSION_MICRO">
+    <constant name="VERSION_MICRO" value="0" c:type="HB_VERSION_MICRO">
       <type name="gint" c:type="gint"/>
     </constant>
-    <constant name="VERSION_MINOR" value="2" c:type="HB_VERSION_MINOR">
+    <constant name="VERSION_MINOR" value="1" c:type="HB_VERSION_MINOR">
       <type name="gint" c:type="gint"/>
     </constant>
-    <constant name="VERSION_STRING" value="13.2.1" c:type="HB_VERSION_STRING">
+    <constant name="VERSION_STRING" value="14.1.0" c:type="HB_VERSION_STRING">
       <type name="utf8" c:type="gchar*"/>
     </constant>
     <record name="aat_layout_feature_selector_info_t" c:type="hb_aat_layout_feature_selector_info_t">
@@ -13621,6 +13621,32 @@ call to hb_paint_funcs_destroy() is made.</doc>
         </parameter>
       </parameters>
     </function>
+    <function name="paint_funcs_set_push_group_for_func" c:identifier="hb_paint_funcs_set_push_group_for_func">
+      <doc xml:space="preserve">Sets the push-group-for callback on the paint functions struct.
+
+XSince: REPLACEME</doc>
+      <return-value transfer-ownership="none">
+        <type name="none" c:type="void"/>
+      </return-value>
+      <parameters>
+        <parameter name="funcs" transfer-ownership="none">
+          <doc xml:space="preserve">A paint functions struct</doc>
+          <type name="paint_funcs_t" c:type="hb_paint_funcs_t*"/>
+        </parameter>
+        <parameter name="func" transfer-ownership="none" scope="notified" closure="2" destroy="3">
+          <doc xml:space="preserve">The push-group-for callback</doc>
+          <type name="paint_push_group_for_func_t" c:type="hb_paint_push_group_for_func_t"/>
+        </parameter>
+        <parameter name="user_data" transfer-ownership="none" nullable="1" allow-none="1">
+          <doc xml:space="preserve">Data to pass to @func</doc>
+          <type name="gpointer" c:type="void*"/>
+        </parameter>
+        <parameter name="destroy" transfer-ownership="none" nullable="1" allow-none="1" scope="notified">
+          <doc xml:space="preserve">Function to call when @user_data is no longer needed</doc>
+          <type name="destroy_func_t" c:type="hb_destroy_func_t"/>
+        </parameter>
+      </parameters>
+    </function>
     <function name="paint_funcs_set_push_group_func" c:identifier="hb_paint_funcs_set_push_group_func" version="7.0.0">
       <doc xml:space="preserve">Sets the push-group callback on the paint functions struct.</doc>
       <return-value transfer-ownership="none">
@@ -14265,6 +14291,62 @@ settings onto the paint functions.</doc>
         </parameter>
       </parameters>
     </function>
+    <function name="paint_push_group_for" c:identifier="hb_paint_push_group_for">
+      <doc xml:space="preserve">Perform a "push-group" paint operation, with the compositing
+mode known in advance.  By default, this calls
+hb_paint_push_group().
+
+XSince: REPLACEME</doc>
+      <return-value transfer-ownership="none">
+        <type name="none" c:type="void"/>
+      </return-value>
+      <parameters>
+        <parameter name="funcs" transfer-ownership="none">
+          <doc xml:space="preserve">paint functions</doc>
+          <type name="paint_funcs_t" c:type="hb_paint_funcs_t*"/>
+        </parameter>
+        <parameter name="paint_data" transfer-ownership="none" nullable="1" allow-none="1">
+          <doc xml:space="preserve">associated data passed by the caller</doc>
+          <type name="gpointer" c:type="void*"/>
+        </parameter>
+        <parameter name="mode" transfer-ownership="none">
+          <doc xml:space="preserve">the compositing mode that will be used when the group is popped</doc>
+          <type name="paint_composite_mode_t" c:type="hb_paint_composite_mode_t"/>
+        </parameter>
+      </parameters>
+    </function>
+    <callback name="paint_push_group_for_func_t" c:type="hb_paint_push_group_for_func_t">
+      <doc xml:space="preserve">A virtual method for the #hb_paint_funcs_t to use
+an intermediate surface for subsequent paint calls,
+with the compositing mode known in advance.
+
+This is like #hb_paint_push_group_func_t, but the
+compositing mode is provided at push time. By default
+this calls #hb_paint_push_group_func_t.
+
+XSince: REPLACEME</doc>
+      <return-value transfer-ownership="none">
+        <type name="none" c:type="void"/>
+      </return-value>
+      <parameters>
+        <parameter name="funcs" transfer-ownership="none">
+          <doc xml:space="preserve">paint functions object</doc>
+          <type name="paint_funcs_t" c:type="hb_paint_funcs_t*"/>
+        </parameter>
+        <parameter name="paint_data" transfer-ownership="none" nullable="1" allow-none="1">
+          <doc xml:space="preserve">The data accompanying the paint functions in hb_font_paint_glyph()</doc>
+          <type name="gpointer" c:type="void*"/>
+        </parameter>
+        <parameter name="mode" transfer-ownership="none">
+          <doc xml:space="preserve">the compositing mode that will be used when the group is popped</doc>
+          <type name="paint_composite_mode_t" c:type="hb_paint_composite_mode_t"/>
+        </parameter>
+        <parameter name="user_data" transfer-ownership="none" nullable="1" allow-none="1" closure="3">
+          <doc xml:space="preserve">User data pointer passed to hb_paint_funcs_set_push_group_for_func()</doc>
+          <type name="gpointer" c:type="void*"/>
+        </parameter>
+      </parameters>
+    </callback>
     <callback name="paint_push_group_func_t" c:type="hb_paint_push_group_func_t" version="7.0.0">
       <doc xml:space="preserve">A virtual method for the #hb_paint_funcs_t to use
 an intermediate surface for subsequent paint calls.

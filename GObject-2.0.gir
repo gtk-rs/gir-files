@@ -3542,7 +3542,7 @@ This results in the following things happening:
 
 - g_autoptr() support being added for your type, based on the type of your parent class
 
-You can only use this function if your parent type also supports g_autoptr().
+You can only use this function if your parent type also supports `g_autoptr()`.
 
 Because the type macro (`GTK_TYPE_FROBBER` in the above example) is not a callable, you must continue to
 manually define this as a macro for yourself.
@@ -3551,14 +3551,14 @@ The declaration of the `_get_type()` function is the first thing emitted by the 
 to be used in the usual way with export control and API versioning macros.
 
 If you are writing a library, it is important to note that it is possible to convert a type from using
-G_DECLARE_FINAL_TYPE() to G_DECLARE_DERIVABLE_TYPE() without breaking API or ABI.  As a precaution, you
-should therefore use G_DECLARE_FINAL_TYPE() until you are sure that it makes sense for your class to be
+[func@GObject.DECLARE_FINAL_TYPE] to `G_DECLARE_DERIVABLE_TYPE()` without breaking API or ABI.  As a precaution, you
+should therefore use `G_DECLARE_FINAL_TYPE()` until you are sure that it makes sense for your class to be
 subclassed.  Once a class structure has been exposed it is not possible to change its size or remove or
 reorder items without breaking the API and/or ABI.  If you want to declare your own class structure, use
-G_DECLARE_DERIVABLE_TYPE().  If you want to declare a class without exposing the class or instance
-structures, use G_DECLARE_FINAL_TYPE().
+`G_DECLARE_DERIVABLE_TYPE()`.  If you want to declare a class without exposing the class or instance
+structures, use `G_DECLARE_FINAL_TYPE()`.
 
-If you must use G_DECLARE_DERIVABLE_TYPE() you should be sure to include some padding at the bottom of your
+If you must use `G_DECLARE_DERIVABLE_TYPE()` you should be sure to include some padding at the bottom of your
 class structure to leave space for the addition of future virtual functions.</doc>
       <parameters>
         <parameter name="ModuleObjName">
@@ -3617,7 +3617,7 @@ This results in the following things happening:
 - the usual `my_app_window_get_type()` function is declared with a return type of #GType
 
 - the `MyAppWindow` type is defined as a `typedef` of `struct _MyAppWindow`.  The struct itself is not
-  defined and should be defined from the .c file before G_DEFINE_TYPE() is used.
+  defined and should be defined from the `.c` file before `G_DEFINE_TYPE()` is used.
 
 - the `MY_APP_WINDOW()` cast is emitted as `static inline` function along with the `MY_APP_IS_WINDOW()` type
   checking function
@@ -3628,9 +3628,9 @@ This results in the following things happening:
   and therefore the fact that the size of the class structure is exposed is not a concern and it can be
   freely changed at any point in the future.
 
-- g_autoptr() support being added for your type, based on the type of your parent class
+- `g_autoptr()` support being added for your type, based on the type of your parent class
 
-You can only use this function if your parent type also supports g_autoptr().
+You can only use this function if your parent type also supports `g_autoptr()`.
 
 Because the type macro (`MY_APP_TYPE_WINDOW` in the above example) is not a callable, you must continue to
 manually define this as a macro for yourself.
@@ -3638,11 +3638,11 @@ manually define this as a macro for yourself.
 The declaration of the `_get_type()` function is the first thing emitted by the macro.  This allows this macro
 to be used in the usual way with export control and API versioning macros.
 
-If you want to declare your own class structure, use G_DECLARE_DERIVABLE_TYPE().
+If you want to declare your own class structure, use [func@GObject.DECLARE_DERIVABLE_TYPE].
 
 If you are writing a library, it is important to note that it is possible to convert a type from using
-G_DECLARE_FINAL_TYPE() to G_DECLARE_DERIVABLE_TYPE() without breaking API or ABI.  As a precaution, you
-should therefore use G_DECLARE_FINAL_TYPE() until you are sure that it makes sense for your class to be
+`G_DECLARE_FINAL_TYPE()` to `G_DECLARE_DERIVABLE_TYPE()` without breaking API or ABI.  As a precaution, you
+should therefore use `G_DECLARE_FINAL_TYPE()` until you are sure that it makes sense for your class to be
 subclassed.  Once a class structure has been exposed it is not possible to change its size or remove or
 reorder items without breaking the API and/or ABI.</doc>
       <parameters>
@@ -4054,9 +4054,9 @@ G_DEFINE_FLAGS_TYPE().</doc>
     <function-macro name="DEFINE_FINAL_TYPE" c:identifier="G_DEFINE_FINAL_TYPE" version="2.70" introspectable="0">
       <doc xml:space="preserve">A convenience macro for type implementations.
 
-Similar to G_DEFINE_TYPE(), but defines a final type.
+Similar to [func@GObject.DEFINE_TYPE], but defines a final type.
 
-See G_DEFINE_TYPE_EXTENDED() for an example.</doc>
+See [func@GObject.DEFINE_TYPE_EXTENDED] for an example.</doc>
       <parameters>
         <parameter name="TN">
           <doc xml:space="preserve">the name of the new type, in Camel case</doc>
@@ -4572,6 +4572,12 @@ See also: G_ADD_PRIVATE()</doc>
         </parameter>
       </parameters>
     </function-macro>
+    <function-macro name="DEPRECATED_ENUMERATOR_IN_2_90_FOR" c:identifier="GOBJECT_DEPRECATED_ENUMERATOR_IN_2_90_FOR" introspectable="0">
+      <parameters>
+        <parameter name="f">
+        </parameter>
+      </parameters>
+    </function-macro>
     <function-macro name="DEPRECATED_FOR" c:identifier="GOBJECT_DEPRECATED_FOR" introspectable="0">
       <parameters>
         <parameter name="f">
@@ -4770,6 +4776,12 @@ See also: G_ADD_PRIVATE()</doc>
         </parameter>
       </parameters>
     </function-macro>
+    <function-macro name="DEPRECATED_IN_2_90_FOR" c:identifier="GOBJECT_DEPRECATED_IN_2_90_FOR" introspectable="0">
+      <parameters>
+        <parameter name="f">
+        </parameter>
+      </parameters>
+    </function-macro>
     <function-macro name="DEPRECATED_MACRO_IN_2_26_FOR" c:identifier="GOBJECT_DEPRECATED_MACRO_IN_2_26_FOR" introspectable="0">
       <parameters>
         <parameter name="f">
@@ -4962,6 +4974,12 @@ See also: G_ADD_PRIVATE()</doc>
         </parameter>
       </parameters>
     </function-macro>
+    <function-macro name="DEPRECATED_MACRO_IN_2_90_FOR" c:identifier="GOBJECT_DEPRECATED_MACRO_IN_2_90_FOR" introspectable="0">
+      <parameters>
+        <parameter name="f">
+        </parameter>
+      </parameters>
+    </function-macro>
     <function-macro name="DEPRECATED_TYPE_IN_2_26_FOR" c:identifier="GOBJECT_DEPRECATED_TYPE_IN_2_26_FOR" introspectable="0">
       <parameters>
         <parameter name="f">
@@ -5149,6 +5167,12 @@ See also: G_ADD_PRIVATE()</doc>
       </parameters>
     </function-macro>
     <function-macro name="DEPRECATED_TYPE_IN_2_88_FOR" c:identifier="GOBJECT_DEPRECATED_TYPE_IN_2_88_FOR" introspectable="0">
+      <parameters>
+        <parameter name="f">
+        </parameter>
+      </parameters>
+    </function-macro>
+    <function-macro name="DEPRECATED_TYPE_IN_2_90_FOR" c:identifier="GOBJECT_DEPRECATED_TYPE_IN_2_90_FOR" introspectable="0">
       <parameters>
         <parameter name="f">
         </parameter>
@@ -9999,13 +10023,13 @@ You may not attach these to signals created with the %G_SIGNAL_NO_HOOKS flag.</d
     <bitfield name="SignalFlags" c:type="GSignalFlags">
       <doc xml:space="preserve">The signal flags are used to specify a signal's behaviour.</doc>
       <member name="run_first" value="1" c:identifier="G_SIGNAL_RUN_FIRST">
-        <doc xml:space="preserve">Invoke the object method handler in the first emission stage.</doc>
+        <doc xml:space="preserve">Invoke the default signal handler in the first emission stage</doc>
       </member>
       <member name="run_last" value="2" c:identifier="G_SIGNAL_RUN_LAST">
-        <doc xml:space="preserve">Invoke the object method handler in the third emission stage.</doc>
+        <doc xml:space="preserve">Invoke the default signal handler in the third emission stage</doc>
       </member>
       <member name="run_cleanup" value="4" c:identifier="G_SIGNAL_RUN_CLEANUP">
-        <doc xml:space="preserve">Invoke the object method handler in the last emission stage.</doc>
+        <doc xml:space="preserve">Invoke the default signal handler in the last emission stage</doc>
       </member>
       <member name="no_recurse" value="8" c:identifier="G_SIGNAL_NO_RECURSE">
         <doc xml:space="preserve">Signals being emitted for an object while currently being in
@@ -10013,12 +10037,12 @@ You may not attach these to signals created with the %G_SIGNAL_NO_HOOKS flag.</d
  but instead cause the first emission to be restarted.</doc>
       </member>
       <member name="detailed" value="16" c:identifier="G_SIGNAL_DETAILED">
-        <doc xml:space="preserve">This signal supports "::detail" appendices to the signal name
+        <doc xml:space="preserve">This signal supports `::detail` appendices to the signal name
  upon handler connections and emissions.</doc>
       </member>
       <member name="action" value="32" c:identifier="G_SIGNAL_ACTION">
         <doc xml:space="preserve">Action signals are signals that may freely be emitted on alive
- objects from user code via g_signal_emit() and friends, without
+ objects from user code via [func@GObject.signal_emit] and friends, without
  the need of being embedded into extra code that performs pre or
  post emission adjustments on the object. They can also be thought
  of as object methods which can be called generically by
