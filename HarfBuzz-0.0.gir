@@ -3633,6 +3633,9 @@ color stops are sorted by their offset before they are used.</doc>
 Color lines typically have offsets ranging between 0 and 1,
 but that is not required.
 
+The @is_foreground and @color fields have the same semantics
+as in #hb_paint_color_func_t.
+
 Note: despite @color being unpremultiplied here, interpolation in
 gradients shall happen in premultiplied space. See the OpenType spec
 [COLR](https://learn.microsoft.com/en-us/typography/opentype/spec/colr)
@@ -3718,6 +3721,48 @@ HB_DIRECTION_IS_HORIZONTAL() or HB_DIRECTION_IS_VERTICAL().</doc>
         <parameter name="direction" transfer-ownership="none">
           <doc xml:space="preserve">The #hb_direction_t to convert</doc>
           <type name="direction_t" c:type="hb_direction_t"/>
+        </parameter>
+      </parameters>
+    </function>
+    <function name="draw_circle" c:identifier="hb_draw_circle">
+      <doc xml:space="preserve">Emits a circle approximated by four cubic Bezier curves.  If
+@stroke_width is a finite positive value, the circle is
+rendered as an outlined ring of that thickness centered on
+the nominal radius; if @stroke_width is `NaN`, the circle is
+rendered as a filled disc.
+
+XSince: REPLACEME</doc>
+      <return-value transfer-ownership="none">
+        <type name="none" c:type="void"/>
+      </return-value>
+      <parameters>
+        <parameter name="dfuncs" transfer-ownership="none">
+          <doc xml:space="preserve">draw functions</doc>
+          <type name="draw_funcs_t" c:type="hb_draw_funcs_t*"/>
+        </parameter>
+        <parameter name="draw_data" transfer-ownership="none" nullable="1" allow-none="1">
+          <doc xml:space="preserve">associated draw data passed by the caller</doc>
+          <type name="gpointer" c:type="void*"/>
+        </parameter>
+        <parameter name="st" transfer-ownership="none">
+          <doc xml:space="preserve">current draw state</doc>
+          <type name="draw_state_t" c:type="hb_draw_state_t*"/>
+        </parameter>
+        <parameter name="cx" transfer-ownership="none">
+          <doc xml:space="preserve">center X coordinate</doc>
+          <type name="gfloat" c:type="float"/>
+        </parameter>
+        <parameter name="cy" transfer-ownership="none">
+          <doc xml:space="preserve">center Y coordinate</doc>
+          <type name="gfloat" c:type="float"/>
+        </parameter>
+        <parameter name="r" transfer-ownership="none">
+          <doc xml:space="preserve">radius</doc>
+          <type name="gfloat" c:type="float"/>
+        </parameter>
+        <parameter name="stroke_width" transfer-ownership="none">
+          <doc xml:space="preserve">stroke width, or `NaN` for a filled disc</doc>
+          <type name="gfloat" c:type="float"/>
         </parameter>
       </parameters>
     </function>
@@ -4109,6 +4154,80 @@ The referenced #hb_draw_funcs_t.</doc>
 #hb_draw_quadratic_to_func_t calls to #hb_draw_cubic_to_func_t if the
 callback isn't defined.</doc>
     </record>
+    <function name="draw_line" c:identifier="hb_draw_line">
+      <doc xml:space="preserve">Emits a tapered line segment as a filled trapezoid.  @w0 and
+@w1 are the full stroke widths at the start and end points
+respectively; they may differ for a tapered stroke or match
+for a uniform one.  Pass `NaN` for @w1 to use @w0 (uniform
+stroke) without repeating the value.
+
+With #HB_DRAW_LINE_CAP_SQUARE each endpoint is extended along
+the line direction by half its local stroke width, so four
+`hb_draw_line()` calls form a closed rectangle without gaps
+at the corners.
+
+XSince: REPLACEME</doc>
+      <return-value transfer-ownership="none">
+        <type name="none" c:type="void"/>
+      </return-value>
+      <parameters>
+        <parameter name="dfuncs" transfer-ownership="none">
+          <doc xml:space="preserve">draw functions</doc>
+          <type name="draw_funcs_t" c:type="hb_draw_funcs_t*"/>
+        </parameter>
+        <parameter name="draw_data" transfer-ownership="none" nullable="1" allow-none="1">
+          <doc xml:space="preserve">associated draw data passed by the caller</doc>
+          <type name="gpointer" c:type="void*"/>
+        </parameter>
+        <parameter name="st" transfer-ownership="none">
+          <doc xml:space="preserve">current draw state</doc>
+          <type name="draw_state_t" c:type="hb_draw_state_t*"/>
+        </parameter>
+        <parameter name="x0" transfer-ownership="none">
+          <doc xml:space="preserve">start X coordinate</doc>
+          <type name="gfloat" c:type="float"/>
+        </parameter>
+        <parameter name="y0" transfer-ownership="none">
+          <doc xml:space="preserve">start Y coordinate</doc>
+          <type name="gfloat" c:type="float"/>
+        </parameter>
+        <parameter name="w0" transfer-ownership="none">
+          <doc xml:space="preserve">stroke width at the start</doc>
+          <type name="gfloat" c:type="float"/>
+        </parameter>
+        <parameter name="x1" transfer-ownership="none">
+          <doc xml:space="preserve">end X coordinate</doc>
+          <type name="gfloat" c:type="float"/>
+        </parameter>
+        <parameter name="y1" transfer-ownership="none">
+          <doc xml:space="preserve">end Y coordinate</doc>
+          <type name="gfloat" c:type="float"/>
+        </parameter>
+        <parameter name="w1" transfer-ownership="none">
+          <doc xml:space="preserve">stroke width at the end</doc>
+          <type name="gfloat" c:type="float"/>
+        </parameter>
+        <parameter name="cap" transfer-ownership="none">
+          <doc xml:space="preserve">end-cap shape (butt or square)</doc>
+          <type name="draw_line_cap_t" c:type="hb_draw_line_cap_t"/>
+        </parameter>
+      </parameters>
+    </function>
+    <enumeration name="draw_line_cap_t" c:type="hb_draw_line_cap_t">
+      <doc xml:space="preserve">End-cap shape for hb_draw_line().
+
+XSince: REPLACEME</doc>
+      <member name="butt" value="0" c:identifier="HB_DRAW_LINE_CAP_BUTT">
+        <doc xml:space="preserve">No cap; the line ends exactly at
+  its endpoint.</doc>
+      </member>
+      <member name="square" value="1" c:identifier="HB_DRAW_LINE_CAP_SQUARE">
+        <doc xml:space="preserve">Square cap; the line is extended
+  past its endpoint by half the local stroke width.  Useful
+  for composing closed shapes from line segments (e.g. a
+  rectangle made from four lines).</doc>
+      </member>
+    </enumeration>
     <function name="draw_line_to" c:identifier="hb_draw_line_to" version="4.0.0">
       <doc xml:space="preserve">Perform a "line-to" draw operation.</doc>
       <return-value transfer-ownership="none">
@@ -4308,6 +4427,59 @@ operation.</doc>
         </parameter>
       </parameters>
     </callback>
+    <function name="draw_rectangle" c:identifier="hb_draw_rectangle">
+      <doc xml:space="preserve">Emits an axis-aligned rectangle.  If @stroke_width is a finite
+positive value, the rectangle is rendered as an outlined ring
+of that thickness centered on the edges; if @stroke_width is
+`NaN`, the rectangle is rendered filled.
+
+Note: stroked rectangles produce a bounding box covering the
+full outer rectangle, so if the pen is a GPU fragment-shader
+backend, the shader runs for every interior pixel even though
+only the outline contributes coverage.  For very thin
+outlines where the interior is much larger than the stroke,
+emitting four hb_draw_line() segments (one per edge) is
+considerably cheaper per frame.
+
+XSince: REPLACEME</doc>
+      <return-value transfer-ownership="none">
+        <type name="none" c:type="void"/>
+      </return-value>
+      <parameters>
+        <parameter name="dfuncs" transfer-ownership="none">
+          <doc xml:space="preserve">draw functions</doc>
+          <type name="draw_funcs_t" c:type="hb_draw_funcs_t*"/>
+        </parameter>
+        <parameter name="draw_data" transfer-ownership="none" nullable="1" allow-none="1">
+          <doc xml:space="preserve">associated draw data passed by the caller</doc>
+          <type name="gpointer" c:type="void*"/>
+        </parameter>
+        <parameter name="st" transfer-ownership="none">
+          <doc xml:space="preserve">current draw state</doc>
+          <type name="draw_state_t" c:type="hb_draw_state_t*"/>
+        </parameter>
+        <parameter name="x" transfer-ownership="none">
+          <doc xml:space="preserve">top-left X coordinate</doc>
+          <type name="gfloat" c:type="float"/>
+        </parameter>
+        <parameter name="y" transfer-ownership="none">
+          <doc xml:space="preserve">top-left Y coordinate</doc>
+          <type name="gfloat" c:type="float"/>
+        </parameter>
+        <parameter name="w" transfer-ownership="none">
+          <doc xml:space="preserve">width (may be negative)</doc>
+          <type name="gfloat" c:type="float"/>
+        </parameter>
+        <parameter name="h" transfer-ownership="none">
+          <doc xml:space="preserve">height (may be negative)</doc>
+          <type name="gfloat" c:type="float"/>
+        </parameter>
+        <parameter name="stroke_width" transfer-ownership="none">
+          <doc xml:space="preserve">stroke width, or `NaN` for a filled rectangle</doc>
+          <type name="gfloat" c:type="float"/>
+        </parameter>
+      </parameters>
+    </function>
     <record name="draw_state_t" c:type="hb_draw_state_t" version="4.0.0" glib:type-name="hb_draw_state_t" glib:get-type="hb_gobject_draw_state_get_type" c:symbol-prefix="gobject_draw_state">
       <doc xml:space="preserve">Current drawing state.</doc>
       <field name="path_open" writable="1">
@@ -7865,11 +8037,12 @@ has one palette, this will be 0.</doc>
     <function name="font_paint_glyph_or_fail" c:identifier="hb_font_paint_glyph_or_fail" version="11.2.0">
       <doc xml:space="preserve">Paints a color glyph.
 
-This function is similar to, but lower-level than,
-hb_font_paint_glyph(). It is suitable for clients that
-need more control.  If there are no color glyphs available,
-it will return `false`. The client can then fall back to
-hb_font_draw_glyph_or_fail() for the monochrome outline glyph.
+Succeeds if @glyph has color paint layers (COLRv0),
+a color paint graph (COLRv1), or a bitmap image that the
+font's callbacks render successfully.  Returns `false` if
+the font has no color data for @glyph; the client can then
+fall back to hb_font_draw_glyph_or_fail() for the monochrome
+outline.
 
 The painting instructions are returned by way of calls to
 the callbacks of the @funcs object, with @paint_data passed
@@ -13000,7 +13173,24 @@ Otherwise, the behavior is undefined.</doc>
     </function>
     <callback name="paint_color_func_t" c:type="hb_paint_color_func_t" version="7.0.0">
       <doc xml:space="preserve">A virtual method for the #hb_paint_funcs_t to paint a
-color everywhere within the current clip.</doc>
+color everywhere within the current clip.
+
+When @is_foreground is true, this color originates from the
+foreground-color sentinel in the font's color data.  The
+@color parameter still carries a fully resolved RGBA value
+(with any paint-tree alpha already applied), so backends
+that do not need to distinguish the foreground can simply
+use @color directly.
+
+Backends that defer foreground resolution (e.g. to honor a
+CSS `currentColor` or a runtime uniform) should substitute
+their own foreground RGB when @is_foreground is true, but
+must combine the alpha from @color with their foreground
+alpha, since it encodes additional modulation from the
+paint tree.  For this mode to work correctly, the caller
+should pass a fully-opaque foreground color to
+hb_font_paint_glyph(), so that the alpha in @color
+reflects only the paint-tree contribution.</doc>
       <return-value transfer-ownership="none">
         <type name="none" c:type="void"/>
       </return-value>
@@ -13597,6 +13787,58 @@ call to hb_paint_funcs_destroy() is made.</doc>
         </parameter>
       </parameters>
     </function>
+    <function name="paint_funcs_set_push_clip_path_end_func" c:identifier="hb_paint_funcs_set_push_clip_path_end_func">
+      <doc xml:space="preserve">Sets the push-clip-path-end callback on the paint functions struct.
+
+XSince: REPLACEME</doc>
+      <return-value transfer-ownership="none">
+        <type name="none" c:type="void"/>
+      </return-value>
+      <parameters>
+        <parameter name="funcs" transfer-ownership="none">
+          <doc xml:space="preserve">A paint functions struct</doc>
+          <type name="paint_funcs_t" c:type="hb_paint_funcs_t*"/>
+        </parameter>
+        <parameter name="func" transfer-ownership="none" scope="notified" closure="2" destroy="3">
+          <doc xml:space="preserve">The push-clip-path-end callback</doc>
+          <type name="paint_push_clip_path_end_func_t" c:type="hb_paint_push_clip_path_end_func_t"/>
+        </parameter>
+        <parameter name="user_data" transfer-ownership="none" nullable="1" allow-none="1">
+          <doc xml:space="preserve">Data to pass to @func</doc>
+          <type name="gpointer" c:type="void*"/>
+        </parameter>
+        <parameter name="destroy" transfer-ownership="none" nullable="1" allow-none="1" scope="notified">
+          <doc xml:space="preserve">Function to call when @user_data is no longer needed</doc>
+          <type name="destroy_func_t" c:type="hb_destroy_func_t"/>
+        </parameter>
+      </parameters>
+    </function>
+    <function name="paint_funcs_set_push_clip_path_start_func" c:identifier="hb_paint_funcs_set_push_clip_path_start_func">
+      <doc xml:space="preserve">Sets the push-clip-path-start callback on the paint functions struct.
+
+XSince: REPLACEME</doc>
+      <return-value transfer-ownership="none">
+        <type name="none" c:type="void"/>
+      </return-value>
+      <parameters>
+        <parameter name="funcs" transfer-ownership="none">
+          <doc xml:space="preserve">A paint functions struct</doc>
+          <type name="paint_funcs_t" c:type="hb_paint_funcs_t*"/>
+        </parameter>
+        <parameter name="func" transfer-ownership="none" scope="notified" closure="2" destroy="3">
+          <doc xml:space="preserve">The push-clip-path-start callback</doc>
+          <type name="paint_push_clip_path_start_func_t" c:type="hb_paint_push_clip_path_start_func_t"/>
+        </parameter>
+        <parameter name="user_data" transfer-ownership="none" nullable="1" allow-none="1">
+          <doc xml:space="preserve">Data to pass to @func</doc>
+          <type name="gpointer" c:type="void*"/>
+        </parameter>
+        <parameter name="destroy" transfer-ownership="none" nullable="1" allow-none="1" scope="notified">
+          <doc xml:space="preserve">Function to call when @user_data is no longer needed</doc>
+          <type name="destroy_func_t" c:type="hb_destroy_func_t"/>
+        </parameter>
+      </parameters>
+    </function>
     <function name="paint_funcs_set_push_clip_rectangle_func" c:identifier="hb_paint_funcs_set_push_clip_rectangle_func" version="7.0.0">
       <doc xml:space="preserve">Sets the push-clip-rect callback on the paint functions struct.</doc>
       <return-value transfer-ownership="none">
@@ -13990,6 +14232,39 @@ of the gradient, and how to interpret the @color_line.</doc>
         </parameter>
       </parameters>
     </callback>
+    <function name="paint_normalize_color_line" c:identifier="hb_paint_normalize_color_line">
+      <doc xml:space="preserve">Sorts @stops by offset and rescales offsets into [0, 1] in
+place.  Writes the original (min, max) to @min / @max so the
+caller can shift the gradient geometry (axis endpoints for
+linear, centers+radii for radial, start+end angles for sweep)
+to keep the rendered gradient visually unchanged after the
+rescale.  Empty input is safe: both out-parameters set to 0.
+
+XSince: REPLACEME</doc>
+      <return-value transfer-ownership="none">
+        <type name="none" c:type="void"/>
+      </return-value>
+      <parameters>
+        <parameter name="stops" direction="inout" caller-allocates="0" transfer-ownership="full">
+          <doc xml:space="preserve">color stops.</doc>
+          <array length="1" zero-terminated="0" c:type="hb_color_stop_t*">
+            <type name="color_stop_t" c:type="hb_color_stop_t"/>
+          </array>
+        </parameter>
+        <parameter name="len" direction="inout" caller-allocates="0" transfer-ownership="none">
+          <doc xml:space="preserve">number of stops.</doc>
+          <type name="guint" c:type="unsigned int"/>
+        </parameter>
+        <parameter name="min" direction="out" caller-allocates="0" transfer-ownership="full">
+          <doc xml:space="preserve">original minimum offset.</doc>
+          <type name="gfloat" c:type="float*"/>
+        </parameter>
+        <parameter name="max" direction="out" caller-allocates="0" transfer-ownership="full">
+          <doc xml:space="preserve">original maximum offset.</doc>
+          <type name="gfloat" c:type="float*"/>
+        </parameter>
+      </parameters>
+    </function>
     <function name="paint_pop_clip" c:identifier="hb_paint_pop_clip" version="7.0.0">
       <doc xml:space="preserve">Perform a "pop-clip" paint operation.</doc>
       <return-value transfer-ownership="none">
@@ -14008,8 +14283,9 @@ of the gradient, and how to interpret the @color_line.</doc>
     </function>
     <callback name="paint_pop_clip_func_t" c:type="hb_paint_pop_clip_func_t" version="7.0.0">
       <doc xml:space="preserve">A virtual method for the #hb_paint_funcs_t to undo
-the effect of a prior call to the #hb_paint_funcs_push_clip_glyph_func_t
-or #hb_paint_funcs_push_clip_rectangle_func_t vfuncs.</doc>
+the effect of a prior call to the #hb_paint_funcs_push_clip_glyph_func_t,
+#hb_paint_funcs_push_clip_rectangle_func_t, or
+#hb_paint_funcs_push_clip_path_end_func_t vfuncs.</doc>
       <return-value transfer-ownership="none">
         <type name="none" c:type="void"/>
       </return-value>
@@ -14174,6 +14450,139 @@ the #hb_paint_funcs_pop_clip_func_t vfunc.</doc>
         </parameter>
         <parameter name="user_data" transfer-ownership="none" nullable="1" allow-none="1" closure="4">
           <doc xml:space="preserve">User data pointer passed to hb_paint_funcs_set_push_clip_glyph_func()</doc>
+          <type name="gpointer" c:type="void*"/>
+        </parameter>
+      </parameters>
+    </callback>
+    <function name="paint_push_clip_path_end" c:identifier="hb_paint_push_clip_path_end">
+      <doc xml:space="preserve">Signal that the arbitrary-clip path started by
+hb_paint_push_clip_path_start() is fully drawn.  The
+accumulated path now acts as a clip on the paint context
+until a matching hb_paint_pop_clip() call.
+
+XSince: REPLACEME</doc>
+      <return-value transfer-ownership="none">
+        <type name="none" c:type="void"/>
+      </return-value>
+      <parameters>
+        <parameter name="funcs" transfer-ownership="none">
+          <doc xml:space="preserve">paint functions</doc>
+          <type name="paint_funcs_t" c:type="hb_paint_funcs_t*"/>
+        </parameter>
+        <parameter name="paint_data" transfer-ownership="none" nullable="1" allow-none="1">
+          <doc xml:space="preserve">associated data passed by the caller</doc>
+          <type name="gpointer" c:type="void*"/>
+        </parameter>
+      </parameters>
+    </function>
+    <callback name="paint_push_clip_path_end_func_t" c:type="hb_paint_push_clip_path_end_func_t">
+      <doc xml:space="preserve">A virtual method for the #hb_paint_funcs_t to close the
+clip path started by the #hb_paint_push_clip_path_start_func_t
+vfunc.  The emitted path is now active as a clip; subsequent
+paint ops are masked by it until a matching
+#hb_paint_pop_clip_func_t call.
+
+XSince: REPLACEME</doc>
+      <return-value transfer-ownership="none">
+        <type name="none" c:type="void"/>
+      </return-value>
+      <parameters>
+        <parameter name="funcs" transfer-ownership="none">
+          <doc xml:space="preserve">paint functions object</doc>
+          <type name="paint_funcs_t" c:type="hb_paint_funcs_t*"/>
+        </parameter>
+        <parameter name="paint_data" transfer-ownership="none" nullable="1" allow-none="1">
+          <doc xml:space="preserve">The data accompanying the paint functions in hb_font_paint_glyph()</doc>
+          <type name="gpointer" c:type="void*"/>
+        </parameter>
+        <parameter name="user_data" transfer-ownership="none" nullable="1" allow-none="1" closure="2">
+          <doc xml:space="preserve">User data pointer passed to hb_paint_funcs_set_push_clip_path_end_func()</doc>
+          <type name="gpointer" c:type="void*"/>
+        </parameter>
+      </parameters>
+    </callback>
+    <function name="paint_push_clip_path_start" c:identifier="hb_paint_push_clip_path_start">
+      <doc xml:space="preserve">Begin clipping to an arbitrary path.  Returns an
+#hb_draw_funcs_t owned by the backend (the caller must not
+free it) that the caller uses to emit the clip outline via
+hb_draw_*() calls, using the returned @draw_data as the
+draw data.  The returned draw funcs and draw data are only
+valid until the matching hb_paint_push_clip_path_end() call;
+no other paint calls should be made between start and end
+except hb_draw_*() on the returned funcs.  Finish the path
+with hb_paint_push_clip_path_end(); pop the clip later
+with hb_paint_pop_clip().
+
+Usage:
+
+|[&lt;!-- language="plain" --&gt;
+hb_draw_funcs_t *df = hb_paint_push_clip_path_start (pf, pd, &amp;dd);
+hb_draw_move_to (df, dd, NULL, ...);
+hb_draw_line_to (df, dd, NULL, ...);
+...
+hb_draw_close_path (df, dd, NULL);
+hb_paint_push_clip_path_end (pf, pd);
+/&amp;ast; paint ops here are clipped to the emitted path &amp;ast;/
+hb_paint_pop_clip (pf, pd);
+]|</doc>
+      <return-value transfer-ownership="none">
+        <doc xml:space="preserve">draw funcs that accumulate
+  the clip path, or `NULL` if the backend does not implement
+  arbitrary-path clipping.
+
+XSince: REPLACEME</doc>
+        <type name="draw_funcs_t" c:type="hb_draw_funcs_t*"/>
+      </return-value>
+      <parameters>
+        <parameter name="funcs" transfer-ownership="none">
+          <doc xml:space="preserve">paint functions</doc>
+          <type name="paint_funcs_t" c:type="hb_paint_funcs_t*"/>
+        </parameter>
+        <parameter name="paint_data" transfer-ownership="none" nullable="1" allow-none="1">
+          <doc xml:space="preserve">associated data passed by the caller</doc>
+          <type name="gpointer" c:type="void*"/>
+        </parameter>
+        <parameter name="draw_data" direction="out" caller-allocates="0" transfer-ownership="full" nullable="1">
+          <doc xml:space="preserve">location to receive the draw data
+  the caller should pass alongside the returned draw funcs.</doc>
+          <type name="gpointer" c:type="void**"/>
+        </parameter>
+      </parameters>
+    </function>
+    <callback name="paint_push_clip_path_start_func_t" c:type="hb_paint_push_clip_path_start_func_t">
+      <doc xml:space="preserve">A virtual method for the #hb_paint_funcs_t to begin clipping
+to an arbitrary path.  The backend returns an
+#hb_draw_funcs_t it owns (the caller must not free it)
+that the caller feeds the clip outline to via hb_draw_*()
+calls, plus a @draw_data value to pass alongside those
+calls.  Both are only valid until the matching
+#hb_paint_push_clip_path_end_func_t call; no other paint
+calls should be made in between.  The clip remains
+in effect until a later #hb_paint_pop_clip_func_t call.</doc>
+      <return-value transfer-ownership="none">
+        <doc xml:space="preserve">draw funcs that accumulate
+  the clip path, or `NULL` if arbitrary-path clipping is not
+  supported.
+
+XSince: REPLACEME</doc>
+        <type name="draw_funcs_t" c:type="hb_draw_funcs_t*"/>
+      </return-value>
+      <parameters>
+        <parameter name="funcs" transfer-ownership="none">
+          <doc xml:space="preserve">paint functions object</doc>
+          <type name="paint_funcs_t" c:type="hb_paint_funcs_t*"/>
+        </parameter>
+        <parameter name="paint_data" transfer-ownership="none" nullable="1" allow-none="1">
+          <doc xml:space="preserve">The data accompanying the paint functions in hb_font_paint_glyph()</doc>
+          <type name="gpointer" c:type="void*"/>
+        </parameter>
+        <parameter name="draw_data" direction="out" caller-allocates="0" transfer-ownership="full" nullable="1">
+          <doc xml:space="preserve">location to store the draw data the caller should
+  pass alongside the returned draw funcs.</doc>
+          <type name="gpointer" c:type="void**"/>
+        </parameter>
+        <parameter name="user_data" transfer-ownership="none" nullable="1" allow-none="1" closure="3">
+          <doc xml:space="preserve">User data pointer passed to hb_paint_funcs_set_push_clip_path_start_func()</doc>
           <type name="gpointer" c:type="void*"/>
         </parameter>
       </parameters>
@@ -14585,6 +14994,62 @@ of the gradient, and how to interpret the @color_line.</doc>
         </parameter>
       </parameters>
     </callback>
+    <function name="paint_reduce_linear_anchors" c:identifier="hb_paint_reduce_linear_anchors">
+      <doc xml:space="preserve">Reduces a COLRv1 linear gradient's 3-anchor spec (P0=color
+stop 0, P1=color stop 1, P2=rotation reference) to the
+2-point axis (P0, P1') used by SVG / cairo / most software
+renderers.  P1' is the foot of P1 on the line through P0
+perpendicular to (P2 - P0); the resulting axis is the
+gradient's actual direction (perpendicular to the rotation
+line).  Degenerate (P0 == P2) passes through unchanged.
+
+XSince: REPLACEME</doc>
+      <return-value transfer-ownership="none">
+        <type name="none" c:type="void"/>
+      </return-value>
+      <parameters>
+        <parameter name="x0" transfer-ownership="none">
+          <doc xml:space="preserve">x coordinate of P0 (color stop 0).</doc>
+          <type name="gfloat" c:type="float"/>
+        </parameter>
+        <parameter name="y0" transfer-ownership="none">
+          <doc xml:space="preserve">y coordinate of P0 (color stop 0).</doc>
+          <type name="gfloat" c:type="float"/>
+        </parameter>
+        <parameter name="x1" transfer-ownership="none">
+          <doc xml:space="preserve">x coordinate of P1 (color stop 1).</doc>
+          <type name="gfloat" c:type="float"/>
+        </parameter>
+        <parameter name="y1" transfer-ownership="none">
+          <doc xml:space="preserve">y coordinate of P1 (color stop 1).</doc>
+          <type name="gfloat" c:type="float"/>
+        </parameter>
+        <parameter name="x2" transfer-ownership="none">
+          <doc xml:space="preserve">x coordinate of P2 (rotation reference).</doc>
+          <type name="gfloat" c:type="float"/>
+        </parameter>
+        <parameter name="y2" transfer-ownership="none">
+          <doc xml:space="preserve">y coordinate of P2 (rotation reference).</doc>
+          <type name="gfloat" c:type="float"/>
+        </parameter>
+        <parameter name="xx0" direction="out" caller-allocates="0" transfer-ownership="full">
+          <doc xml:space="preserve">x coordinate of the resulting axis start.</doc>
+          <type name="gfloat" c:type="float*"/>
+        </parameter>
+        <parameter name="yy0" direction="out" caller-allocates="0" transfer-ownership="full">
+          <doc xml:space="preserve">y coordinate of the resulting axis start.</doc>
+          <type name="gfloat" c:type="float*"/>
+        </parameter>
+        <parameter name="xx1" direction="out" caller-allocates="0" transfer-ownership="full">
+          <doc xml:space="preserve">x coordinate of the resulting axis end.</doc>
+          <type name="gfloat" c:type="float*"/>
+        </parameter>
+        <parameter name="yy1" direction="out" caller-allocates="0" transfer-ownership="full">
+          <doc xml:space="preserve">y coordinate of the resulting axis end.</doc>
+          <type name="gfloat" c:type="float*"/>
+        </parameter>
+      </parameters>
+    </function>
     <function name="paint_sweep_gradient" c:identifier="hb_paint_sweep_gradient" version="7.0.0">
       <doc xml:space="preserve">Perform a "sweep-gradient" paint operation.</doc>
       <return-value transfer-ownership="none">
@@ -14672,6 +15137,82 @@ of the gradient, and how to interpret the @color_line.</doc>
         </parameter>
       </parameters>
     </callback>
+    <callback name="paint_sweep_gradient_tile_func_t" c:type="hb_paint_sweep_gradient_tile_func_t">
+      <doc xml:space="preserve">Callback invoked once per (a0, a1) sector of a sweep
+gradient tiling.  See hb_paint_sweep_gradient_tiles().
+
+XSince: REPLACEME</doc>
+      <return-value transfer-ownership="none">
+        <type name="none" c:type="void"/>
+      </return-value>
+      <parameters>
+        <parameter name="a0" transfer-ownership="none">
+          <doc xml:space="preserve">segment start angle, in radians.</doc>
+          <type name="gfloat" c:type="float"/>
+        </parameter>
+        <parameter name="c0" transfer-ownership="none">
+          <doc xml:space="preserve">segment start color.</doc>
+          <type name="color_t" c:type="hb_color_t"/>
+        </parameter>
+        <parameter name="a1" transfer-ownership="none">
+          <doc xml:space="preserve">segment end angle, in radians.</doc>
+          <type name="gfloat" c:type="float"/>
+        </parameter>
+        <parameter name="c1" transfer-ownership="none">
+          <doc xml:space="preserve">segment end color.</doc>
+          <type name="color_t" c:type="hb_color_t"/>
+        </parameter>
+        <parameter name="user_data" transfer-ownership="none" nullable="1" allow-none="1" closure="4">
+          <doc xml:space="preserve">user data passed to hb_paint_sweep_gradient_tiles().</doc>
+          <type name="gpointer" c:type="void*"/>
+        </parameter>
+      </parameters>
+    </callback>
+    <function name="paint_sweep_gradient_tiles" c:identifier="hb_paint_sweep_gradient_tiles">
+      <doc xml:space="preserve">Iterates the full 0..2&#x3C0; sweep produced by a color-stop list,
+invoking @emit_patch once per (start, end) angular segment.
+Handles #HB_PAINT_EXTEND_PAD, #HB_PAINT_EXTEND_REPEAT, and
+#HB_PAINT_EXTEND_REFLECT.  Stops must be pre-sorted by
+offset; use hb_paint_normalize_color_line() first if they
+aren't.
+
+XSince: REPLACEME</doc>
+      <return-value transfer-ownership="none">
+        <type name="none" c:type="void"/>
+      </return-value>
+      <parameters>
+        <parameter name="stops" direction="inout" caller-allocates="0" transfer-ownership="full">
+          <doc xml:space="preserve">color stops (sorted, offsets in [0,1]).</doc>
+          <array length="1" zero-terminated="0" c:type="hb_color_stop_t*">
+            <type name="color_stop_t" c:type="hb_color_stop_t"/>
+          </array>
+        </parameter>
+        <parameter name="n_stops" direction="inout" caller-allocates="0" transfer-ownership="none">
+          <doc xml:space="preserve">number of stops.</doc>
+          <type name="guint" c:type="unsigned int"/>
+        </parameter>
+        <parameter name="extend" transfer-ownership="none">
+          <doc xml:space="preserve">extend mode.</doc>
+          <type name="paint_extend_t" c:type="hb_paint_extend_t"/>
+        </parameter>
+        <parameter name="start_angle" transfer-ownership="none">
+          <doc xml:space="preserve">sweep start angle, in radians.</doc>
+          <type name="gfloat" c:type="float"/>
+        </parameter>
+        <parameter name="end_angle" transfer-ownership="none">
+          <doc xml:space="preserve">sweep end angle, in radians.</doc>
+          <type name="gfloat" c:type="float"/>
+        </parameter>
+        <parameter name="emit_patch" transfer-ownership="none" scope="call" closure="6">
+          <doc xml:space="preserve">callback invoked once per tile.</doc>
+          <type name="paint_sweep_gradient_tile_func_t" c:type="hb_paint_sweep_gradient_tile_func_t"/>
+        </parameter>
+        <parameter name="user_data" transfer-ownership="none" nullable="1" allow-none="1">
+          <doc xml:space="preserve">data passed to @emit_patch.</doc>
+          <type name="gpointer" c:type="void*"/>
+        </parameter>
+      </parameters>
+    </function>
     <function name="realloc" c:identifier="hb_realloc" version="11.0.0">
       <doc xml:space="preserve">Reallocates the memory pointed to by @ptr to @size bytes, using the
 allocator set at compile-time. Typically just realloc().</doc>
