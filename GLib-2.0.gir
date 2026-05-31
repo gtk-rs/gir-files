@@ -36457,7 +36457,10 @@ enumeration.</doc>
       <member name="directory_videos" value="7" c:identifier="G_USER_DIRECTORY_VIDEOS">
         <doc xml:space="preserve">the user's Movies directory</doc>
       </member>
-      <member name="n_directories" value="8" c:identifier="G_USER_N_DIRECTORIES">
+      <member name="directory_projects" value="8" c:identifier="G_USER_DIRECTORY_PROJECTS" version="2.90">
+        <doc xml:space="preserve">The user's Projects directory.</doc>
+      </member>
+      <member name="n_directories" value="9" c:identifier="G_USER_N_DIRECTORIES">
         <doc xml:space="preserve">the number of enum values</doc>
       </member>
     </enumeration>
@@ -41876,8 +41879,10 @@ way, use [func@GLib.ascii_dtostr].
 
 If the correct value would cause overflow, plus or minus `HUGE_VAL`
 is returned (according to the sign of the value), and `ERANGE` is
-stored in `errno`. If the correct value would cause underflow,
-zero is returned and `ERANGE` is stored in `errno`.
+stored in `errno`. If the correct value would cause underflow, a value
+whose magnitude is no greater than the smallest normalised positive number
+is returned; whether `ERANGE` is set is implementation-defined (it may
+not be set for gradual underflow where a subnormal value is returned).
 
 This function resets `errno` before calling `strtod()` so that
 you can reliably detect overflow and underflow.</doc>
@@ -47886,7 +47891,11 @@ If you want to support older GLib versions, it is an alternative.</doc>
       <doc xml:space="preserve">Determine the approximate number of threads that the system will
 schedule simultaneously for this process.  This is intended to be
 used as a parameter to g_thread_pool_new() for CPU bound tasks and
-similar cases.</doc>
+similar cases.
+
+On platforms where enough information is known, this will be the number of
+high performance cores and will not include low power &#x2018;efficiency&#x2019; cores.
+Use platform specific APIs to query for low power cores if needed.</doc>
       <return-value transfer-ownership="none">
         <doc xml:space="preserve">Number of schedulable threads, always greater than 0</doc>
         <type name="guint" c:type="guint"/>
@@ -54345,7 +54354,10 @@ foo_set_bar (Foo        *foo,
   if (g_set_str (&amp;foo-&gt;bar, new_bar))
     g_object_notify (foo, "bar");
 }
-```</doc>
+```
+
+See also [func@GLib.set_str_take] for a version of this which steals
+ownership of @new_str.</doc>
       <return-value transfer-ownership="none">
         <doc xml:space="preserve">true if the value of @str_pointer changed, false otherwise</doc>
         <type name="gboolean" c:type="gboolean"/>
@@ -54359,6 +54371,126 @@ foo_set_bar (Foo        *foo,
         <parameter name="new_str" transfer-ownership="none" nullable="1" allow-none="1">
           <doc xml:space="preserve">a string to assign to @str_pointer</doc>
           <type name="utf8" c:type="const char*"/>
+        </parameter>
+      </parameters>
+    </function-inline>
+    <function-inline name="set_str_take" c:identifier="g_set_str_take" version="2.90" introspectable="0">
+      <doc xml:space="preserve">Updates a pointer to a string to @new_str and returns whether the
+string was changed. Steals ownership of @new_str.
+
+If @new_str matches the previous string, this function will free @new_str and
+leave @str_pointer unchanged. If @new_str is different, it will be assigned
+to @str_pointer and the previous string pointed to by @str_pointer will be
+freed with [func@GLib.free].
+
+@str_pointer must not be `NULL`, but can point to a `NULL` value.
+
+One convenient usage of this function is in implementing property settings:
+```C
+void
+foo_set_bar (Foo        *foo,
+             const char *new_bar)
+{
+  g_autofree computed_new_bar = NULL;
+
+  g_return_if_fail (IS_FOO (foo));
+
+  computed_new_bar = g_strconcat (new_bar, "some-suffix", NULL);
+
+  if (g_set_str_take (&amp;foo-&gt;bar, g_steal_pointer (&amp;computed_new_bar)))
+    g_object_notify (foo, "bar");
+}
+```
+
+See also [func@GLib.set_str] for a version of this which takes a copy of
+@new_str.</doc>
+      <return-value transfer-ownership="none">
+        <doc xml:space="preserve">true if the value of @str_pointer changed, false otherwise</doc>
+        <type name="gboolean" c:type="gboolean"/>
+      </return-value>
+      <parameters>
+        <parameter name="str_pointer" direction="inout" caller-allocates="0" transfer-ownership="full">
+          <doc xml:space="preserve">a pointer to either
+  a string or `NULL`</doc>
+          <type name="utf8" c:type="char**"/>
+        </parameter>
+        <parameter name="new_str" transfer-ownership="full" nullable="1" allow-none="1">
+          <doc xml:space="preserve">a string to assign to @str_pointer</doc>
+          <type name="utf8" c:type="char*"/>
+        </parameter>
+      </parameters>
+    </function-inline>
+    <function-inline name="set_strv" c:identifier="g_set_strv" version="2.90" introspectable="0">
+      <doc xml:space="preserve">Safely replaces a string vector.
+
+Updates a pointer to a `NULL`-terminated string array to a copy of @new_strv
+and returns whether the value was changed.
+
+If @new_strv matches the previous array, this function is a no-op. If
+@new_strv is different, a copy of it will be assigned to @strv_pointer and
+the previous array pointed to by @strv_pointer will be freed with
+[func@GLib.strfreev].
+
+The contents of both string arrays are compared for equality before
+replacing the value. In the worst case this requires O(N) time.
+
+This function avoids a potential use-after-free when @new_strv reuses
+pointers from the original string array. This allows callers to build
+a replacement array using existing strings without needing to copy
+them beforehand.
+
+@strv_pointer must not be `NULL`, but can point to a `NULL` value.</doc>
+      <return-value transfer-ownership="none">
+        <doc xml:space="preserve">true if the value of @strv_pointer changed, false otherwise</doc>
+        <type name="gboolean" c:type="gboolean"/>
+      </return-value>
+      <parameters>
+        <parameter name="strv_pointer" direction="inout" caller-allocates="0" transfer-ownership="full">
+          <doc xml:space="preserve">a pointer to either
+  a `NULL`-terminated string array or `NULL`</doc>
+          <type name="utf8" c:type="char***"/>
+        </parameter>
+        <parameter name="new_strv" transfer-ownership="none" nullable="1" allow-none="1">
+          <doc xml:space="preserve">a NULL-terminated string array to assign to
+  @strv_pointer</doc>
+          <type name="utf8" c:type="const char* const*"/>
+        </parameter>
+      </parameters>
+    </function-inline>
+    <function-inline name="set_strv_take" c:identifier="g_set_strv_take" version="2.90" introspectable="0">
+      <doc xml:space="preserve">Safely replaces a string vector, taking ownership of the new value.
+
+Updates a pointer to a `NULL`-terminated string array to @new_strv and
+returns whether the value was changed.
+
+If @new_strv contains the same strings as the previous array, this function
+is a no-op. If @new_strv is different, it will be assigned to @strv_pointer
+and the previous array pointed to by @strv_pointer will be freed with
+[func@GLib.strfreev].
+
+If @new_strv does not replace the existing value, it will be freed with
+[func@GLib.strfreev], unless it is `NULL`.
+
+The contents of both string arrays are compared for equality before
+replacing the value. In the worst case this requires O(N) time.
+
+@strv_pointer must not be `NULL`, but can point to a `NULL` value.
+@new_strv must be `NULL` or a string array not already stored in
+@strv_pointer.</doc>
+      <return-value transfer-ownership="none">
+        <doc xml:space="preserve">true if the value of @strv_pointer changed, false otherwise</doc>
+        <type name="gboolean" c:type="gboolean"/>
+      </return-value>
+      <parameters>
+        <parameter name="strv_pointer" direction="inout" caller-allocates="0" transfer-ownership="full">
+          <doc xml:space="preserve">a pointer to either
+  a `NULL`-terminated string array or `NULL`</doc>
+          <type name="utf8" c:type="char***"/>
+        </parameter>
+        <parameter name="new_strv" transfer-ownership="full" nullable="1" allow-none="1">
+          <doc xml:space="preserve">a `NULL`-terminated string array to
+  assign to @strv_pointer</doc>
+          <type name="utf8" c:type="char**"/>
         </parameter>
       </parameters>
     </function-inline>
@@ -54425,6 +54557,9 @@ only whitespace), %G_SHELL_ERROR_EMPTY_STRING will be returned. It&#x2019;s
 guaranteed that @argvp will be a non-empty array if this function returns
 successfully.
 
+When constructing @command_line, quote any filenames or potentially
+untrusted input using [func@GLib.shell_quote].
+
 Free the returned vector with g_strfreev().</doc>
       <return-value transfer-ownership="none">
         <doc xml:space="preserve">%TRUE on success, %FALSE if error set</doc>
@@ -54452,8 +54587,11 @@ Free the returned vector with g_strfreev().</doc>
       <doc xml:space="preserve">Quotes a string so that the shell (/bin/sh) will interpret the
 quoted string to mean @unquoted_string.
 
-If you pass a filename to the shell, for example, you should first
-quote it with this function.
+If you pass a filename or other untrusted input to [func@GLib.shell_parse_argv],
+you should first quote it with this function. This is sufficient to ensure
+untrusted input cannot &#x2018;break out&#x2019; of the quotes. Beware: this only works
+because [func@GLib.shell_parse_argv] is not a real Unix shell. Quoting untrusted
+input is not an adequate security mechanism when using a real shell.
 
 The return value must be freed with g_free().
 
@@ -55588,6 +55726,9 @@ though it doesn't do anything under UNIX.</doc>
       <doc xml:space="preserve">A simple version of g_spawn_async() that parses a command line with
 g_shell_parse_argv() and passes it to g_spawn_async().
 
+Filenames and potentially untrusted input in @command_line should be quoted
+using [func@GLib.shell_quote].
+
 Runs a command line in the background. Unlike g_spawn_async(), the
 %G_SPAWN_SEARCH_PATH flag is enabled, other flags are not. Note
 that %G_SPAWN_SEARCH_PATH can have security implications, so
@@ -55612,7 +55753,9 @@ removed, taking a command line instead of an argument vector.
 
 See g_spawn_sync() for full details.
 
-The @command_line argument will be parsed by g_shell_parse_argv().
+The @command_line argument will be parsed by [func@GLib.shell_parse_argv].
+Filenames and potentially untrusted input should be quoted using
+[func@GLib.shell_quote].
 
 Unlike g_spawn_sync(), the %G_SPAWN_SEARCH_PATH flag is enabled.
 Note that %G_SPAWN_SEARCH_PATH can have security implications, so
