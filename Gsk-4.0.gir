@@ -9,6 +9,10 @@ and/or use gtk-doc annotations.  -->
   <c:include name="gsk/gsk.h"/>
   <doc:format name="gi-docgen"/>
   <namespace name="Gsk" version="4.0" shared-library="libgtk-4.so.1" c:identifier-prefixes="Gsk" c:symbol-prefixes="gsk">
+    <alias name="RectSnap" c:type="GskRectSnap">
+      <doc xml:space="preserve">The ways a rectangle can be snapped to a grid.</doc>
+      <type name="guint" c:type="unsigned"/>
+    </alias>
     <function-macro name="BROADWAY_RENDERER" c:identifier="GSK_BROADWAY_RENDERER" introspectable="0">
       <parameters>
         <parameter name="obj">
@@ -229,6 +233,19 @@ The 4 sides of the border can have different widths and colors.</doc>
           </parameter>
         </parameters>
       </constructor>
+      <method name="get_border_snap" c:identifier="gsk_border_node_get_border_snap" version="4.24">
+        <doc xml:space="preserve">Retrieves the snap value for the border</doc>
+        <return-value transfer-ownership="none">
+          <doc xml:space="preserve">the snap value</doc>
+          <type name="RectSnap" c:type="GskRectSnap"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="node" transfer-ownership="none">
+            <doc xml:space="preserve">a `GskRenderNode` for a border</doc>
+            <type name="BorderNode" c:type="const GskRenderNode*"/>
+          </instance-parameter>
+        </parameters>
+      </method>
       <method name="get_colors" c:identifier="gsk_border_node_get_colors">
         <doc xml:space="preserve">Retrieves the colors of the border.</doc>
         <return-value transfer-ownership="none">
@@ -250,6 +267,19 @@ The 4 sides of the border can have different widths and colors.</doc>
         <return-value transfer-ownership="none">
           <doc xml:space="preserve">the outline of the border</doc>
           <type name="RoundedRect" c:type="const GskRoundedRect*"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="node" transfer-ownership="none">
+            <doc xml:space="preserve">a `GskRenderNode` for a border</doc>
+            <type name="BorderNode" c:type="const GskRenderNode*"/>
+          </instance-parameter>
+        </parameters>
+      </method>
+      <method name="get_snap" c:identifier="gsk_border_node_get_snap" version="4.24">
+        <doc xml:space="preserve">Retrieves the snap value for this node</doc>
+        <return-value transfer-ownership="none">
+          <doc xml:space="preserve">the snap value</doc>
+          <type name="RectSnap" c:type="GskRectSnap"/>
         </return-value>
         <parameters>
           <instance-parameter name="node" transfer-ownership="none">
@@ -432,6 +462,19 @@ given by @clip.</doc>
           </instance-parameter>
         </parameters>
       </method>
+      <method name="get_snap" c:identifier="gsk_clip_node_get_snap" version="4.24">
+        <doc xml:space="preserve">Retrieves the snap value for this node</doc>
+        <return-value transfer-ownership="none">
+          <doc xml:space="preserve">the snap value</doc>
+          <type name="RectSnap" c:type="GskRectSnap"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="node" transfer-ownership="none">
+            <doc xml:space="preserve">a `GskClipNode`</doc>
+            <type name="ClipNode" c:type="const GskRenderNode*"/>
+          </instance-parameter>
+        </parameters>
+      </method>
     </class>
     <class name="ColorMatrixNode" c:symbol-prefix="color_matrix_node" c:type="GskColorMatrixNode" parent="RenderNode" glib:type-name="GskColorMatrixNode" glib:get-type="gsk_color_matrix_node_get_type" glib:fundamental="1">
       <doc xml:space="preserve">A render node controlling the color matrix of its single child node.</doc>
@@ -503,6 +546,19 @@ colors, with color components ordered R, G, B, A.</doc>
           </instance-parameter>
         </parameters>
       </method>
+      <method name="get_snap" c:identifier="gsk_color_matrix_node_get_snap" version="4.24">
+        <doc xml:space="preserve">Retrieves the snap value for this node</doc>
+        <return-value transfer-ownership="none">
+          <doc xml:space="preserve">the snap value</doc>
+          <type name="RectSnap" c:type="GskRectSnap"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="node" transfer-ownership="none">
+            <doc xml:space="preserve">a `GskColorMatrixNode`</doc>
+            <type name="ColorMatrixNode" c:type="const GskRenderNode*"/>
+          </instance-parameter>
+        </parameters>
+      </method>
     </class>
     <class name="ColorNode" c:symbol-prefix="color_node" c:type="GskColorNode" parent="RenderNode" glib:type-name="GskColorNode" glib:get-type="gsk_color_node_get_type" glib:fundamental="1">
       <doc xml:space="preserve">A render node for a solid color.</doc>
@@ -536,6 +592,19 @@ if the render node was created for a non-sRGB color.</doc>
         <parameters>
           <instance-parameter name="node" transfer-ownership="none">
             <doc xml:space="preserve">a `GskRenderNode`</doc>
+            <type name="ColorNode" c:type="const GskRenderNode*"/>
+          </instance-parameter>
+        </parameters>
+      </method>
+      <method name="get_snap" c:identifier="gsk_color_node_get_snap" version="4.24">
+        <doc xml:space="preserve">Retrieves the snap value for this node</doc>
+        <return-value transfer-ownership="none">
+          <doc xml:space="preserve">the snap value</doc>
+          <type name="RectSnap" c:type="GskRectSnap"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="node" transfer-ownership="none">
+            <doc xml:space="preserve">a `GskRenderNode` for textures</doc>
             <type name="ColorNode" c:type="const GskRenderNode*"/>
           </instance-parameter>
         </parameters>
@@ -1018,6 +1087,19 @@ in the css specification:
         <return-value transfer-ownership="none">
           <doc xml:space="preserve">the rotation for the gradient</doc>
           <type name="gfloat" c:type="float"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="node" transfer-ownership="none">
+            <doc xml:space="preserve">a `GskRenderNode` for a conic gradient</doc>
+            <type name="ConicGradientNode" c:type="const GskRenderNode*"/>
+          </instance-parameter>
+        </parameters>
+      </method>
+      <method name="get_snap" c:identifier="gsk_conic_gradient_node_get_snap" version="4.24">
+        <doc xml:space="preserve">Retrieves the snap value for this node</doc>
+        <return-value transfer-ownership="none">
+          <doc xml:space="preserve">the snap value</doc>
+          <type name="RectSnap" c:type="GskRectSnap"/>
         </return-value>
         <parameters>
           <instance-parameter name="node" transfer-ownership="none">
@@ -2298,6 +2380,19 @@ if the render node was created for a non-sRGB color.</doc>
           </instance-parameter>
         </parameters>
       </method>
+      <method name="get_snap" c:identifier="gsk_inset_shadow_node_get_snap" version="4.24">
+        <doc xml:space="preserve">Retrieves the snap value for this node</doc>
+        <return-value transfer-ownership="none">
+          <doc xml:space="preserve">the snap value</doc>
+          <type name="RectSnap" c:type="GskRectSnap"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="node" transfer-ownership="none">
+            <doc xml:space="preserve">a `GskRenderNode` for an inset shadow</doc>
+            <type name="InsetShadowNode" c:type="const GskRenderNode*"/>
+          </instance-parameter>
+        </parameters>
+      </method>
       <method name="get_spread" c:identifier="gsk_inset_shadow_node_get_spread">
         <doc xml:space="preserve">Retrieves how much the shadow spreads inwards.</doc>
         <return-value transfer-ownership="none">
@@ -2517,6 +2612,19 @@ points and color stops, and render that into the area given by @bounds.</doc>
         <return-value transfer-ownership="none">
           <doc xml:space="preserve">the number of color stops</doc>
           <type name="gsize" c:type="gsize"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="node" transfer-ownership="none">
+            <doc xml:space="preserve">a `GskRenderNode` for a linear gradient</doc>
+            <type name="LinearGradientNode" c:type="const GskRenderNode*"/>
+          </instance-parameter>
+        </parameters>
+      </method>
+      <method name="get_snap" c:identifier="gsk_linear_gradient_node_get_snap" version="4.24">
+        <doc xml:space="preserve">Retrieves the snap value for this node</doc>
+        <return-value transfer-ownership="none">
+          <doc xml:space="preserve">the snap value</doc>
+          <type name="RectSnap" c:type="GskRectSnap"/>
         </return-value>
         <parameters>
           <instance-parameter name="node" transfer-ownership="none">
@@ -2787,6 +2895,19 @@ if the render node was created for a non-sRGB color.</doc>
           </instance-parameter>
         </parameters>
       </method>
+      <method name="get_snap" c:identifier="gsk_outset_shadow_node_get_snap" version="4.24">
+        <doc xml:space="preserve">Retrieves the snap value for this node</doc>
+        <return-value transfer-ownership="none">
+          <doc xml:space="preserve">the snap value</doc>
+          <type name="RectSnap" c:type="GskRectSnap"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="node" transfer-ownership="none">
+            <doc xml:space="preserve">a `GskRenderNode` for an outset shadow</doc>
+            <type name="OutsetShadowNode" c:type="const GskRenderNode*"/>
+          </instance-parameter>
+        </parameters>
+      </method>
       <method name="get_spread" c:identifier="gsk_outset_shadow_node_get_spread">
         <doc xml:space="preserve">Retrieves how much the shadow spreads outwards.</doc>
         <return-value transfer-ownership="none">
@@ -2877,6 +2998,19 @@ during node deserialization.</doc>
         <parameters>
           <instance-parameter name="node" transfer-ownership="none">
             <doc xml:space="preserve">a `GskRenderNode`</doc>
+            <type name="PasteNode" c:type="const GskRenderNode*"/>
+          </instance-parameter>
+        </parameters>
+      </method>
+      <method name="get_snap" c:identifier="gsk_paste_node_get_snap" version="4.24">
+        <doc xml:space="preserve">Retrieves the snap value for this node</doc>
+        <return-value transfer-ownership="none">
+          <doc xml:space="preserve">the snap value</doc>
+          <type name="RectSnap" c:type="GskRectSnap"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="node" transfer-ownership="none">
+            <doc xml:space="preserve">a `GskPasteNode`</doc>
             <type name="PasteNode" c:type="const GskRenderNode*"/>
           </instance-parameter>
         </parameters>
@@ -4858,6 +4992,56 @@ They are used in SVG, PDF and in Cairo with `cairo_operator_t`.</doc>
       <member name="clear" value="11" c:identifier="GSK_PORTER_DUFF_CLEAR" glib:nick="clear" glib:name="GSK_PORTER_DUFF_CLEAR">
       </member>
     </enumeration>
+    <constant name="RECT_SNAP_GROW" value="16908801" c:type="GSK_RECT_SNAP_GROW" version="4.24">
+      <doc xml:space="preserve">Makes the rectangle grow in every direction.
+
+This is useful to avoid seams but can lead to overlap with adjacent content.
+
+![Snap by growing](snap-grow.svg)</doc>
+      <type name="gint" c:type="gint"/>
+    </constant>
+    <function-macro name="RECT_SNAP_INIT" c:identifier="GSK_RECT_SNAP_INIT" version="4.24" introspectable="0">
+      <doc xml:space="preserve">A macro that initializes a snap value. Equivalent to calling
+gsk_rect_snap_new().</doc>
+      <parameters>
+        <parameter name="top">
+          <doc xml:space="preserve">How to snap the top edge</doc>
+        </parameter>
+        <parameter name="right">
+          <doc xml:space="preserve">How to snap the right edge</doc>
+        </parameter>
+        <parameter name="bottom">
+          <doc xml:space="preserve">How to snap the bottom edge</doc>
+        </parameter>
+        <parameter name="left">
+          <doc xml:space="preserve">How to snap the left edge</doc>
+        </parameter>
+      </parameters>
+    </function-macro>
+    <constant name="RECT_SNAP_NONE" value="0" c:type="GSK_RECT_SNAP_NONE" version="4.24">
+      <doc xml:space="preserve">Makes the rectangle not snap at all.
+
+This is the default value for snapping.</doc>
+      <type name="gint" c:type="gint"/>
+    </constant>
+    <constant name="RECT_SNAP_ROUND" value="50529027" c:type="GSK_RECT_SNAP_ROUND" version="4.24">
+      <doc xml:space="preserve">Makes the rectangle round to the closest pixel edge on all sides.
+
+This is useful when multiple rectangles are placed next to each other at the same coordinate, and they should
+do so without any seams.
+
+![Snap by rounding](snap-round.svg)</doc>
+      <type name="gint" c:type="gint"/>
+    </constant>
+    <constant name="RECT_SNAP_SHRINK" value="33620226" c:type="GSK_RECT_SNAP_SHRINK" version="4.24">
+      <doc xml:space="preserve">Makes the rectangle shrink in every direction.
+
+This is useful to make sure the rectangle fits into the allocated area and does not overlap content
+that is not snapped.
+
+![Snap by shrinking](snap-shrink.svg)</doc>
+      <type name="gint" c:type="gint"/>
+    </constant>
     <function-macro name="RENDERER" c:identifier="GSK_RENDERER" introspectable="0">
       <parameters>
         <parameter name="obj">
@@ -4998,6 +5182,19 @@ in horizontal orientation and by @vradius in vertical orientation.</doc>
         <return-value transfer-ownership="none">
           <doc xml:space="preserve">the number of color stops</doc>
           <type name="gsize" c:type="gsize"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="node" transfer-ownership="none">
+            <doc xml:space="preserve">a `GskRenderNode` for a radial gradient</doc>
+            <type name="RadialGradientNode" c:type="const GskRenderNode*"/>
+          </instance-parameter>
+        </parameters>
+      </method>
+      <method name="get_snap" c:identifier="gsk_radial_gradient_node_get_snap" version="4.24">
+        <doc xml:space="preserve">Retrieves the snap value for this node</doc>
+        <return-value transfer-ownership="none">
+          <doc xml:space="preserve">the snap value</doc>
+          <type name="RectSnap" c:type="GskRectSnap"/>
         </return-value>
         <parameters>
           <instance-parameter name="node" transfer-ownership="none">
@@ -5967,6 +6164,33 @@ the given @bounds.</doc>
           </instance-parameter>
         </parameters>
       </method>
+      <method name="get_child_snap" c:identifier="gsk_repeat_node_get_child_snap" version="4.24">
+        <doc xml:space="preserve">Retrieves the snap value for the child's bounding
+rectangle.</doc>
+        <return-value transfer-ownership="none">
+          <doc xml:space="preserve">the snap value</doc>
+          <type name="RectSnap" c:type="GskRectSnap"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="node" transfer-ownership="none">
+            <doc xml:space="preserve">a repeat `GskRenderNode`</doc>
+            <type name="RepeatNode" c:type="const GskRenderNode*"/>
+          </instance-parameter>
+        </parameters>
+      </method>
+      <method name="get_snap" c:identifier="gsk_repeat_node_get_snap" version="4.24">
+        <doc xml:space="preserve">Retrieves the snap value for this node</doc>
+        <return-value transfer-ownership="none">
+          <doc xml:space="preserve">the snap value</doc>
+          <type name="RectSnap" c:type="GskRectSnap"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="node" transfer-ownership="none">
+            <doc xml:space="preserve">a repeat `GskRenderNode`</doc>
+            <type name="RepeatNode" c:type="const GskRenderNode*"/>
+          </instance-parameter>
+        </parameters>
+      </method>
     </class>
     <class name="RepeatingLinearGradientNode" c:symbol-prefix="repeating_linear_gradient_node" c:type="GskRepeatingLinearGradientNode" parent="RenderNode" glib:type-name="GskRepeatingLinearGradientNode" glib:get-type="gsk_repeating_linear_gradient_node_get_type" glib:fundamental="1">
       <doc xml:space="preserve">A render node for a repeating linear gradient.</doc>
@@ -6102,6 +6326,19 @@ given by @clip.</doc>
         <parameters>
           <instance-parameter name="node" transfer-ownership="none">
             <doc xml:space="preserve">a rounded clip `GskRenderNode`</doc>
+            <type name="RoundedClipNode" c:type="const GskRenderNode*"/>
+          </instance-parameter>
+        </parameters>
+      </method>
+      <method name="get_snap" c:identifier="gsk_rounded_clip_node_get_snap" version="4.24">
+        <doc xml:space="preserve">Retrieves the snap value for this node</doc>
+        <return-value transfer-ownership="none">
+          <doc xml:space="preserve">the snap value</doc>
+          <type name="RectSnap" c:type="GskRectSnap"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="node" transfer-ownership="none">
+            <doc xml:space="preserve">a `GskRoundedClipNode`</doc>
             <type name="RoundedClipNode" c:type="const GskRenderNode*"/>
           </instance-parameter>
         </parameters>
@@ -6760,6 +6997,42 @@ If the resulting reference count is zero, frees the builder.</doc>
         </parameters>
       </method>
     </class>
+    <enumeration name="Side" version="4.24" glib:type-name="GskSide" glib:get-type="gsk_side_get_type" c:type="GskSide">
+      <doc xml:space="preserve">The sides of a rectangle as used by `GskRectSnap` or `GskBorderNode`.
+
+This is the order used by CSS shorthand arguments.</doc>
+      <member name="top" value="0" c:identifier="GSK_SIDE_TOP" glib:nick="top" glib:name="GSK_SIDE_TOP">
+        <doc xml:space="preserve">The top side</doc>
+      </member>
+      <member name="right" value="1" c:identifier="GSK_SIDE_RIGHT" glib:nick="right" glib:name="GSK_SIDE_RIGHT">
+        <doc xml:space="preserve">The right side</doc>
+      </member>
+      <member name="bottom" value="2" c:identifier="GSK_SIDE_BOTTOM" glib:nick="bottom" glib:name="GSK_SIDE_BOTTOM">
+        <doc xml:space="preserve">The bottom side</doc>
+      </member>
+      <member name="left" value="3" c:identifier="GSK_SIDE_LEFT" glib:nick="left" glib:name="GSK_SIDE_LEFT">
+        <doc xml:space="preserve">The left side</doc>
+      </member>
+    </enumeration>
+    <enumeration name="SnapDirection" version="4.24" glib:type-name="GskSnapDirection" glib:get-type="gsk_snap_direction_get_type" c:type="GskSnapDirection">
+      <doc xml:space="preserve">Specifies how a coordinate should be snapped to the pixel grid.
+
+Note that the top and left sides of rectangles need to be snapped
+in the opposite direction from the bottom and right sides to make
+the rectangle grow or shrink.</doc>
+      <member name="none" value="0" c:identifier="GSK_SNAP_NONE" glib:nick="none" glib:name="GSK_SNAP_NONE">
+        <doc xml:space="preserve">Don't snap the value</doc>
+      </member>
+      <member name="floor" value="1" c:identifier="GSK_SNAP_FLOOR" glib:nick="floor" glib:name="GSK_SNAP_FLOOR">
+        <doc xml:space="preserve">Use floor() to snap</doc>
+      </member>
+      <member name="ceil" value="2" c:identifier="GSK_SNAP_CEIL" glib:nick="ceil" glib:name="GSK_SNAP_CEIL">
+        <doc xml:space="preserve">Use ceil() to snap</doc>
+      </member>
+      <member name="round" value="3" c:identifier="GSK_SNAP_ROUND" glib:nick="round" glib:name="GSK_SNAP_ROUND">
+        <doc xml:space="preserve">Use round() to snap</doc>
+      </member>
+    </enumeration>
     <record name="Stroke" c:type="GskStroke" opaque="1" version="4.14" glib:type-name="GskStroke" glib:get-type="gsk_stroke_get_type" c:symbol-prefix="stroke">
       <doc xml:space="preserve">Collects the parameters that are needed when stroking a path.</doc>
       <constructor name="new" c:identifier="gsk_stroke_new" version="4.14">
@@ -7333,6 +7606,19 @@ for a way to influence filtering.</doc>
           </parameter>
         </parameters>
       </constructor>
+      <method name="get_snap" c:identifier="gsk_texture_node_get_snap" version="4.24">
+        <doc xml:space="preserve">Retrieves the snap value for this node</doc>
+        <return-value transfer-ownership="none">
+          <doc xml:space="preserve">the snap value</doc>
+          <type name="RectSnap" c:type="GskRectSnap"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="node" transfer-ownership="none">
+            <doc xml:space="preserve">a `GskRenderNode` for textures</doc>
+            <type name="TextureNode" c:type="const GskRenderNode*"/>
+          </instance-parameter>
+        </parameters>
+      </method>
       <method name="get_texture" c:identifier="gsk_texture_node_get_texture">
         <doc xml:space="preserve">Retrieves the `GdkTexture` used when creating this `GskRenderNode`.</doc>
         <return-value transfer-ownership="none">
@@ -7386,6 +7672,19 @@ of this node.</doc>
         <return-value transfer-ownership="none">
           <doc xml:space="preserve">the `GskScalingFilter`</doc>
           <type name="ScalingFilter" c:type="GskScalingFilter"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="node" transfer-ownership="none">
+            <doc xml:space="preserve">a `GskRenderNode` of type %GSK_TEXTURE_SCALE_NODE</doc>
+            <type name="TextureScaleNode" c:type="const GskRenderNode*"/>
+          </instance-parameter>
+        </parameters>
+      </method>
+      <method name="get_snap" c:identifier="gsk_texture_scale_node_get_snap" version="4.24">
+        <doc xml:space="preserve">Retrieves the snap value for this node</doc>
+        <return-value transfer-ownership="none">
+          <doc xml:space="preserve">the snap value</doc>
+          <type name="RectSnap" c:type="GskRectSnap"/>
         </return-value>
         <parameters>
           <instance-parameter name="node" transfer-ownership="none">
@@ -8288,6 +8587,48 @@ The `O` command is an extension that is not supported in SVG.</doc>
         <parameter name="string" transfer-ownership="none">
           <doc xml:space="preserve">a string</doc>
           <type name="utf8" c:type="const char*"/>
+        </parameter>
+      </parameters>
+    </function>
+    <function name="rect_snap_get_direction" c:identifier="gsk_rect_snap_get_direction" version="4.24">
+      <doc xml:space="preserve">Queries the way a given border is snapped.</doc>
+      <return-value transfer-ownership="none">
+        <doc xml:space="preserve">the direction the given border is snapped</doc>
+        <type name="SnapDirection" c:type="GskSnapDirection"/>
+      </return-value>
+      <parameters>
+        <parameter name="snap" transfer-ownership="none">
+          <doc xml:space="preserve">a rectangle snap</doc>
+          <type name="RectSnap" c:type="GskRectSnap"/>
+        </parameter>
+        <parameter name="side" transfer-ownership="none">
+          <doc xml:space="preserve">the border to query</doc>
+          <type name="Side" c:type="GskSide"/>
+        </parameter>
+      </parameters>
+    </function>
+    <function name="rect_snap_new" c:identifier="gsk_rect_snap_new" version="4.24">
+      <doc xml:space="preserve">Creates a new way to snap rectangles for the 4 given sides.</doc>
+      <return-value transfer-ownership="none">
+        <doc xml:space="preserve">a description for how to snap rectangles</doc>
+        <type name="RectSnap" c:type="GskRectSnap"/>
+      </return-value>
+      <parameters>
+        <parameter name="top" transfer-ownership="none">
+          <doc xml:space="preserve">How to snap the top edge</doc>
+          <type name="SnapDirection" c:type="GskSnapDirection"/>
+        </parameter>
+        <parameter name="right" transfer-ownership="none">
+          <doc xml:space="preserve">How to snap the right edge</doc>
+          <type name="SnapDirection" c:type="GskSnapDirection"/>
+        </parameter>
+        <parameter name="bottom" transfer-ownership="none">
+          <doc xml:space="preserve">How to snap the bottom edge</doc>
+          <type name="SnapDirection" c:type="GskSnapDirection"/>
+        </parameter>
+        <parameter name="left" transfer-ownership="none">
+          <doc xml:space="preserve">How to snap the left edge</doc>
+          <type name="SnapDirection" c:type="GskSnapDirection"/>
         </parameter>
       </parameters>
     </function>
