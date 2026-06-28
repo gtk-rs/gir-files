@@ -7485,40 +7485,49 @@ February on a non-leap year, the day will be clamped to 28th February.</doc>
         </parameters>
       </method>
       <method name="compare" c:identifier="g_date_time_compare" version="2.26">
-        <doc xml:space="preserve">A comparison function for #GDateTimes that is suitable
-as a #GCompareFunc. Both #GDateTimes must be non-%NULL.</doc>
+        <doc xml:space="preserve">A comparison function for date-times that is suitable
+as a [type@GLib.CompareFunc].
+
+This effectively converts both date-times to the same time zone before
+comparing, so date-times in different time zones can compare equal if they
+refer to the same instant. See [method@GLib.DateTime.difference].
+
+Both date-times must be non-`NULL`.</doc>
         <return-value transfer-ownership="none">
-          <doc xml:space="preserve">-1, 0 or 1 if @dt1 is less than, equal to or greater
-  than @dt2.</doc>
+          <doc xml:space="preserve">`-1`, `0` or `1` if @dt1 is less than, equal to or greater than @dt2</doc>
           <type name="gint" c:type="gint"/>
         </return-value>
         <parameters>
           <instance-parameter name="dt1" transfer-ownership="none">
-            <doc xml:space="preserve">first #GDateTime to compare</doc>
+            <doc xml:space="preserve">first date-time to compare</doc>
             <type name="DateTime" c:type="gconstpointer"/>
           </instance-parameter>
           <parameter name="dt2" transfer-ownership="none">
-            <doc xml:space="preserve">second #GDateTime to compare</doc>
+            <doc xml:space="preserve">second date-time to compare</doc>
             <type name="DateTime" c:type="gconstpointer"/>
           </parameter>
         </parameters>
       </method>
       <method name="difference" c:identifier="g_date_time_difference" version="2.26">
-        <doc xml:space="preserve">Calculates the difference in time between @end and @begin.  The
-#GTimeSpan that is returned is effectively @end - @begin (ie:
-positive if the first parameter is larger).</doc>
+        <doc xml:space="preserve">Calculates the difference in time between @end and @begin.
+
+The time span that is returned is effectively @end - @begin (positive if the
+first parameter is larger).
+
+This effectively converts both date-times to the same time zone before
+calculating the difference.</doc>
         <return-value transfer-ownership="none">
-          <doc xml:space="preserve">the difference between the two #GDateTime, as a time
-  span expressed in microseconds.</doc>
+          <doc xml:space="preserve">the difference between the two date-times, as a time
+  span expressed in microseconds</doc>
           <type name="TimeSpan" c:type="GTimeSpan"/>
         </return-value>
         <parameters>
           <instance-parameter name="end" transfer-ownership="none">
-            <doc xml:space="preserve">a #GDateTime</doc>
+            <doc xml:space="preserve">a date-time</doc>
             <type name="DateTime" c:type="GDateTime*"/>
           </instance-parameter>
           <parameter name="begin" transfer-ownership="none">
-            <doc xml:space="preserve">a #GDateTime</doc>
+            <doc xml:space="preserve">another date-time</doc>
             <type name="DateTime" c:type="GDateTime*"/>
           </parameter>
         </parameters>
@@ -7527,7 +7536,12 @@ positive if the first parameter is larger).</doc>
         <doc xml:space="preserve">Checks to see if @dt1 and @dt2 are equal.
 
 Equal here means that they represent the same moment after converting
-them to the same time zone.</doc>
+them to the same time zone.
+
+If you need to check that the date-times are in the same time zone as well
+as referring to the same instant in time, additionally compare the values
+returned by [method@GLib.TimeZone.get_offset] for the time zones for the two
+date-times.</doc>
         <return-value transfer-ownership="none">
           <doc xml:space="preserve">%TRUE if @dt1 and @dt2 are equal</doc>
           <type name="gboolean" c:type="gboolean"/>
@@ -17365,6 +17379,8 @@ set, 2 the second, and so on.
 If @match_num is a valid sub pattern but it didn't match anything
 (e.g. sub pattern 1, matching "b" against "(a)?b") then an empty
 string is returned.
+When a partial match is reported via g_match_info_is_partial_match()
+only the full text of the match can be queried (@match_num must be `0`).
 
 If the match was obtained using the DFA algorithm, that is using
 g_regex_match_all() or g_regex_match_all_full(), the retrieved
@@ -17398,6 +17414,9 @@ text.
 
 If a sub pattern didn't match anything (e.g. sub pattern 1, matching
 "b" against "(a)?b") then an empty string is inserted.
+
+When a partial match is reported via g_match_info_is_partial_match()
+only the full text of the match will be returned, i.e. an array of size 1.
 
 If the last match was obtained using the DFA algorithm, that is using
 g_regex_match_all() or g_regex_match_all_full(), the retrieved
@@ -17489,6 +17508,8 @@ capture parenthesis.
 
 Valid values for @match_num are `0` for the full text of the match,
 `1` for the first paren set, `2` for the second, and so on.
+When a partial match is reported via g_match_info_is_partial_match()
+only the full text of the match can be queried (@match_num must be `0`).
 
 As @end_pos is set to the byte after the final byte of the match (on success),
 the length of the match can be calculated as `end_pos - start_pos`.
@@ -17811,6 +17832,10 @@ are set, the latter takes precedence.
 
 There were formerly some restrictions on the pattern for partial matching.
 The restrictions no longer apply.
+
+If the match was partial g_match_info_fetch(), g_match_info_fetch_pos()
+and g_match_info_fetch_all() can be called to retrieve the text and positions
+of the entire match, i.e. only for sub expression `0`.
 
 See pcrepartial(3) for more information on partial matching.</doc>
         <return-value transfer-ownership="none">
@@ -52696,11 +52721,11 @@ g_prefix_error().</doc>
         <type name="none" c:type="void"/>
       </return-value>
       <parameters>
-        <parameter name="dest" transfer-ownership="none">
+        <parameter name="dest" direction="out" caller-allocates="0" transfer-ownership="full" nullable="1" optional="1" allow-none="1">
           <doc xml:space="preserve">error return location</doc>
           <type name="Error" c:type="GError**"/>
         </parameter>
-        <parameter name="src" transfer-ownership="none">
+        <parameter name="src" transfer-ownership="full">
           <doc xml:space="preserve">error to move into the return location</doc>
           <type name="Error" c:type="GError*"/>
         </parameter>
