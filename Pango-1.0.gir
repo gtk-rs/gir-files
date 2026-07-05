@@ -1134,6 +1134,9 @@ listed in parentheses after the description.</doc>
       <member name="font_scale" value="37" c:identifier="PANGO_ATTR_FONT_SCALE" glib:nick="font-scale" glib:name="PANGO_ATTR_FONT_SCALE">
         <doc xml:space="preserve">font-relative size change ([struct@Pango.AttrInt]). Since 1.50</doc>
       </member>
+      <member name="width" value="38" c:identifier="PANGO_ATTR_WIDTH" glib:nick="width" glib:name="PANGO_ATTR_WIDTH">
+        <doc xml:space="preserve">font width ([struct@Pango.AttrInt]). Since: 1.58</doc>
+      </member>
       <function name="get_name" c:identifier="pango_attr_type_get_name" version="1.22">
         <doc xml:space="preserve">Fetches the attribute type name.
 
@@ -3163,7 +3166,7 @@ a font to load.</doc>
 for @desc than those of @old_match are, or if @old_match is %NULL,
 determines if @new_match is a match at all.
 
-Approximate matching is done for weight and style; other style attributes
+Approximate matching is done for weight, width and style; other style attributes
 must match exactly. Style attributes are all attributes other than family
 and size-related attributes. Approximate matching for style considers
 %PANGO_STYLE_OBLIQUE and %PANGO_STYLE_ITALIC as matches, but not as good
@@ -3462,6 +3465,23 @@ See [method@Pango.FontDescription.set_weight].</doc>
         <parameters>
           <instance-parameter name="desc" transfer-ownership="none">
             <doc xml:space="preserve">a `PangoFontDescription`</doc>
+            <type name="FontDescription" c:type="const PangoFontDescription*"/>
+          </instance-parameter>
+        </parameters>
+      </method>
+      <method name="get_width" c:identifier="pango_font_description_get_width" version="1.58">
+        <doc xml:space="preserve">Gets the width field of a font description.
+
+See [method@Pango.FontDescription.set_width].</doc>
+        <return-value transfer-ownership="none">
+          <doc xml:space="preserve">the width field for the font description.
+  Use [method@Pango.FontDescription.get_set_fields] to find
+  out if the field was explicitly set or not.</doc>
+          <type name="Width" c:type="PangoWidth"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="desc" transfer-ownership="none">
+            <doc xml:space="preserve">a `PangoFontDescription`.</doc>
             <type name="FontDescription" c:type="const PangoFontDescription*"/>
           </instance-parameter>
         </parameters>
@@ -3871,6 +3891,27 @@ intermediate numeric values are possible.</doc>
           <parameter name="weight" transfer-ownership="none">
             <doc xml:space="preserve">the weight for the font description.</doc>
             <type name="Weight" c:type="PangoWeight"/>
+          </parameter>
+        </parameters>
+      </method>
+      <method name="set_width" c:identifier="pango_font_description_set_width" version="1.58">
+        <doc xml:space="preserve">Sets the width field of a font description.
+
+The width field specifies how narrow or wide the
+font should be. In addition to the values of the
+[enum@Pango.Width] enumeration, other
+intermediate numeric values are possible.</doc>
+        <return-value transfer-ownership="none">
+          <type name="none" c:type="void"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="desc" transfer-ownership="none">
+            <doc xml:space="preserve">a `PangoFontDescription`</doc>
+            <type name="FontDescription" c:type="PangoFontDescription*"/>
+          </instance-parameter>
+          <parameter name="width" transfer-ownership="none">
+            <doc xml:space="preserve">the width for the font description</doc>
+            <type name="Width" c:type="PangoWidth"/>
           </parameter>
         </parameters>
       </method>
@@ -5218,8 +5259,15 @@ See pango_font_map_get_serial().</doc>
       <member name="weight" value="8" c:identifier="PANGO_FONT_MASK_WEIGHT" glib:nick="weight" glib:name="PANGO_FONT_MASK_WEIGHT">
         <doc xml:space="preserve">the font weight is specified.</doc>
       </member>
+      <member name="width" value="16" c:identifier="PANGO_FONT_MASK_WIDTH" glib:nick="width" glib:name="PANGO_FONT_MASK_WIDTH">
+        <doc xml:space="preserve">Font width is specified.
+
+This is an alias for [enum@Pango.FontMask.STRETCH].
+
+1.58</doc>
+      </member>
       <member name="stretch" value="16" c:identifier="PANGO_FONT_MASK_STRETCH" glib:nick="stretch" glib:name="PANGO_FONT_MASK_STRETCH">
-        <doc xml:space="preserve">the font stretch is specified.</doc>
+        <doc xml:space="preserve">the font stretch/width is specified.</doc>
       </member>
       <member name="size" value="32" c:identifier="PANGO_FONT_MASK_SIZE" glib:nick="size" glib:name="PANGO_FONT_MASK_SIZE">
         <doc xml:space="preserve">the font size is specified.</doc>
@@ -10050,6 +10098,9 @@ to the left of the horizontal origin.</doc>
         </parameter>
       </parameters>
     </function-macro>
+    <constant name="RENDER_COMPONENT_ALL" value="62" c:type="PANGO_RENDER_COMPONENT_ALL">
+      <type name="gint" c:type="gint"/>
+    </constant>
     <record name="Rectangle" c:type="PangoRectangle">
       <doc xml:space="preserve">The `PangoRectangle` structure represents a rectangle.
 
@@ -10073,6 +10124,35 @@ extents of a single glyph or section of text. (See, for instance,
         <type name="gint" c:type="int"/>
       </field>
     </record>
+    <bitfield name="RenderComponent" version="1.58" glib:type-name="PangoRenderComponent" glib:get-type="pango_render_component_get_type" c:type="PangoRenderComponent">
+      <doc xml:space="preserve">Flags that specify which components of a layout to include
+in renderer output.
+
+This is more or less parallel to the [enum@Pango.RenderPart] enum,
+but allows separating plain and color glyphs, and specifying more
+than one component.</doc>
+      <member name="none" value="0" c:identifier="PANGO_RENDER_COMPONENT_NONE" glib:nick="none" glib:name="PANGO_RENDER_COMPONENT_NONE">
+        <doc xml:space="preserve">No components</doc>
+      </member>
+      <member name="plain_glyph" value="2" c:identifier="PANGO_RENDER_COMPONENT_PLAIN_GLYPH" glib:nick="plain-glyph" glib:name="PANGO_RENDER_COMPONENT_PLAIN_GLYPH">
+        <doc xml:space="preserve">The plain glyphs of the layout</doc>
+      </member>
+      <member name="color_glyph" value="4" c:identifier="PANGO_RENDER_COMPONENT_COLOR_GLYPH" glib:nick="color-glyph" glib:name="PANGO_RENDER_COMPONENT_COLOR_GLYPH">
+        <doc xml:space="preserve">The color glyphs of the layout</doc>
+      </member>
+      <member name="background" value="8" c:identifier="PANGO_RENDER_COMPONENT_BACKGROUND" glib:nick="background" glib:name="PANGO_RENDER_COMPONENT_BACKGROUND">
+        <doc xml:space="preserve">Background of the layout</doc>
+      </member>
+      <member name="underline" value="8" c:identifier="PANGO_RENDER_COMPONENT_UNDERLINE" glib:nick="underline" glib:name="PANGO_RENDER_COMPONENT_UNDERLINE">
+        <doc xml:space="preserve">Underlines of the layout</doc>
+      </member>
+      <member name="strikethrough" value="16" c:identifier="PANGO_RENDER_COMPONENT_STRIKETHROUGH" glib:nick="strikethrough" glib:name="PANGO_RENDER_COMPONENT_STRIKETHROUGH">
+        <doc xml:space="preserve">Strikethrough lines of the layout</doc>
+      </member>
+      <member name="overline" value="32" c:identifier="PANGO_RENDER_COMPONENT_OVERLINE" glib:nick="overline" glib:name="PANGO_RENDER_COMPONENT_OVERLINE">
+        <doc xml:space="preserve">Overlines of the layout</doc>
+      </member>
+    </bitfield>
     <enumeration name="RenderPart" version="1.8" glib:type-name="PangoRenderPart" glib:get-type="pango_render_part_get_type" c:type="PangoRenderPart">
       <doc xml:space="preserve">`PangoRenderPart` defines different items to render for such
 purposes as setting colors.</doc>
@@ -10758,6 +10838,19 @@ using the given `PangoRenderer`; coordinates are in device space.</doc>
           </parameter>
         </parameters>
       </method>
+      <method name="get_components" c:identifier="pango_renderer_get_components" version="1.58">
+        <doc xml:space="preserve">Gets the components that are included in the output of the renderer.</doc>
+        <return-value transfer-ownership="none">
+          <doc xml:space="preserve">the components</doc>
+          <type name="RenderComponent" c:type="PangoRenderComponent"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="renderer" transfer-ownership="none">
+            <doc xml:space="preserve">a `PangoRenderer`</doc>
+            <type name="Renderer" c:type="PangoRenderer*"/>
+          </instance-parameter>
+        </parameters>
+      </method>
       <method name="get_layout" c:identifier="pango_renderer_get_layout" version="1.20">
         <doc xml:space="preserve">Gets the layout currently being rendered using @renderer.
 
@@ -10891,6 +10984,22 @@ Also see [method@Pango.Renderer.set_alpha].</doc>
           </parameter>
         </parameters>
       </method>
+      <method name="set_components" c:identifier="pango_renderer_set_components" version="1.58">
+        <doc xml:space="preserve">Sets the components to include in the output of the renderer.</doc>
+        <return-value transfer-ownership="none">
+          <type name="none" c:type="void"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="renderer" transfer-ownership="none">
+            <doc xml:space="preserve">a `PangoRenderer`</doc>
+            <type name="Renderer" c:type="PangoRenderer*"/>
+          </instance-parameter>
+          <parameter name="components" transfer-ownership="none">
+            <doc xml:space="preserve">the components to include</doc>
+            <type name="RenderComponent" c:type="PangoRenderComponent"/>
+          </parameter>
+        </parameters>
+      </method>
       <method name="set_matrix" c:identifier="pango_renderer_set_matrix" version="1.8">
         <doc xml:space="preserve">Sets the transformation matrix that will be applied when rendering.</doc>
         <return-value transfer-ownership="none">
@@ -10946,6 +11055,12 @@ The default draw_shape implementation draws nothing.
 The following vfuncs take device space coordinates as doubles
 and must be implemented:
 - draw_trapezoid
+- draw_glyph
+
+The following vfuncs should look at the components value and
+skip color or plain glyphs accordingly:
+- draw_glyphs
+- draw_glyph_item
 - draw_glyph</doc>
       <field name="parent_class" readable="0" private="1">
         <type name="GObject.ObjectClass" c:type="GObjectClass"/>
@@ -12348,15 +12463,15 @@ Two encoded version numbers can be compared as integers.</doc>
       <doc xml:space="preserve">The major component of the version of Pango available at compile-time.</doc>
       <type name="gint" c:type="gint"/>
     </constant>
-    <constant name="VERSION_MICRO" value="2" c:type="PANGO_VERSION_MICRO">
+    <constant name="VERSION_MICRO" value="0" c:type="PANGO_VERSION_MICRO">
       <doc xml:space="preserve">The micro component of the version of Pango available at compile-time.</doc>
       <type name="gint" c:type="gint"/>
     </constant>
-    <constant name="VERSION_MINOR" value="57" c:type="PANGO_VERSION_MINOR">
+    <constant name="VERSION_MINOR" value="58" c:type="PANGO_VERSION_MINOR">
       <doc xml:space="preserve">The minor component of the version of Pango available at compile-time.</doc>
       <type name="gint" c:type="gint"/>
     </constant>
-    <constant name="VERSION_STRING" value="1.57.2" c:type="PANGO_VERSION_STRING">
+    <constant name="VERSION_STRING" value="1.58.0" c:type="PANGO_VERSION_STRING">
       <doc xml:space="preserve">A string literal containing the version of Pango available at compile-time.</doc>
       <type name="utf8" c:type="gchar*"/>
     </constant>
@@ -12432,6 +12547,41 @@ This enumeration simply provides some common, predefined values.</doc>
       </member>
       <member name="ultraheavy" value="1000" c:identifier="PANGO_WEIGHT_ULTRAHEAVY" glib:nick="ultraheavy" glib:name="PANGO_WEIGHT_ULTRAHEAVY">
         <doc xml:space="preserve">the ultraheavy weight (= 1000) Since: 1.24</doc>
+      </member>
+    </enumeration>
+    <enumeration name="Width" version="1.58" glib:type-name="PangoWidth" glib:get-type="pango_width_get_type" c:type="PangoWidth">
+      <doc xml:space="preserve">An enumeration specifying the width of the font relative to other designs
+within a family.
+
+The enumeration values match [enum@PangoStretch], but
+the numeric values are expanded to allow intermediate
+values.</doc>
+      <member name="ultra_condensed" value="500" c:identifier="PANGO_WIDTH_ULTRA_CONDENSED" glib:nick="ultra-condensed" glib:name="PANGO_WIDTH_ULTRA_CONDENSED">
+        <doc xml:space="preserve">ultra condensed width</doc>
+      </member>
+      <member name="extra_condensed" value="625" c:identifier="PANGO_WIDTH_EXTRA_CONDENSED" glib:nick="extra-condensed" glib:name="PANGO_WIDTH_EXTRA_CONDENSED">
+        <doc xml:space="preserve">extra condensed width</doc>
+      </member>
+      <member name="condensed" value="750" c:identifier="PANGO_WIDTH_CONDENSED" glib:nick="condensed" glib:name="PANGO_WIDTH_CONDENSED">
+        <doc xml:space="preserve">condensed width</doc>
+      </member>
+      <member name="semi_condensed" value="875" c:identifier="PANGO_WIDTH_SEMI_CONDENSED" glib:nick="semi-condensed" glib:name="PANGO_WIDTH_SEMI_CONDENSED">
+        <doc xml:space="preserve">semi condensed width</doc>
+      </member>
+      <member name="normal" value="1000" c:identifier="PANGO_WIDTH_NORMAL" glib:nick="normal" glib:name="PANGO_WIDTH_NORMAL">
+        <doc xml:space="preserve">the normal width</doc>
+      </member>
+      <member name="semi_expanded" value="1125" c:identifier="PANGO_WIDTH_SEMI_EXPANDED" glib:nick="semi-expanded" glib:name="PANGO_WIDTH_SEMI_EXPANDED">
+        <doc xml:space="preserve">semi expanded width</doc>
+      </member>
+      <member name="expanded" value="1250" c:identifier="PANGO_WIDTH_EXPANDED" glib:nick="expanded" glib:name="PANGO_WIDTH_EXPANDED">
+        <doc xml:space="preserve">expanded width</doc>
+      </member>
+      <member name="extra_expanded" value="1500" c:identifier="PANGO_WIDTH_EXTRA_EXPANDED" glib:nick="extra-expanded" glib:name="PANGO_WIDTH_EXTRA_EXPANDED">
+        <doc xml:space="preserve">extra expanded width</doc>
+      </member>
+      <member name="ultra_expanded" value="2000" c:identifier="PANGO_WIDTH_ULTRA_EXPANDED" glib:nick="ultra-expanded" glib:name="PANGO_WIDTH_ULTRA_EXPANDED">
+        <doc xml:space="preserve">ultra expanded width</doc>
       </member>
     </enumeration>
     <enumeration name="WrapMode" glib:type-name="PangoWrapMode" glib:get-type="pango_wrap_mode_get_type" c:type="PangoWrapMode">
@@ -13223,6 +13373,21 @@ If not set, underlines will use the foreground color.</doc>
         <parameter name="weight" transfer-ownership="none">
           <doc xml:space="preserve">the weight</doc>
           <type name="Weight" c:type="PangoWeight"/>
+        </parameter>
+      </parameters>
+    </function>
+    <function name="attr_width_new" c:identifier="pango_attr_width_new" version="1.58">
+      <doc xml:space="preserve">Create a new font width attribute.</doc>
+      <return-value transfer-ownership="full">
+        <doc xml:space="preserve">the newly allocated
+  `PangoAttribute`, which should be freed with
+  [method@Pango.Attribute.destroy]</doc>
+        <type name="Attribute" c:type="PangoAttribute*"/>
+      </return-value>
+      <parameters>
+        <parameter name="width" transfer-ownership="none">
+          <doc xml:space="preserve">the width</doc>
+          <type name="Width" c:type="PangoWidth"/>
         </parameter>
       </parameters>
     </function>

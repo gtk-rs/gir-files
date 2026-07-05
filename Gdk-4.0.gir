@@ -7349,6 +7349,60 @@ The elements of the enumeration correspond to the signals of `GdkFrameClock`.</d
       </member>
     </bitfield>
     <record name="FrameClockPrivate" c:type="GdkFrameClockPrivate" disguised="1" opaque="1"/>
+    <enumeration name="FrameResult" version="4.24" glib:type-name="GdkFrameResult" glib:get-type="gdk_frame_result_get_type" c:type="GdkFrameResult">
+      <doc xml:space="preserve">An enumeration describing the process of rendering a frame.
+Rendering a frame starts with the frame clock cycle and then follows
+the rendered frame (if there was one) through the display server
+until it appears on screen.
+
+It is relevant in particular for [struct@Gdk.FrameTimings] which
+may still be waiting for values to be filled in.</doc>
+      <member name="preparing" value="0" c:identifier="GDK_FRAME_PREPARING" version="4.24" glib:nick="preparing" glib:name="GDK_FRAME_PREPARING">
+        <doc xml:space="preserve">The frame is currently being prepared and rendered by GTK.
+This is the initial state.</doc>
+      </member>
+      <member name="skipped" value="1" c:identifier="GDK_FRAME_SKIPPED" version="4.24" glib:nick="skipped" glib:name="GDK_FRAME_SKIPPED">
+        <doc xml:space="preserve">GTK has determined that nothing needs to be rendered because
+there are no visual changes. No rendering will be submitted to
+the display server and because of that no information will
+be forthcoming from the display server.
+
+The frame is complete.</doc>
+      </member>
+      <member name="empty" value="2" c:identifier="GDK_FRAME_EMPTY" version="4.24" glib:nick="empty" glib:name="GDK_FRAME_EMPTY">
+        <doc xml:space="preserve">GTK has determined that nothing needs to be rendered because
+there are no visual changes. This information has been submitted
+to the display server. The presentation time has been updated to
+reflect when this frame would have been displayed.
+
+The frame is complete.</doc>
+      </member>
+      <member name="submitted" value="3" c:identifier="GDK_FRAME_SUBMITTED" version="4.24" glib:nick="submitted" glib:name="GDK_FRAME_SUBMITTED">
+        <doc xml:space="preserve">A frame has been drawn and submitted to the display server, but
+the display server will not provide any further feedback about when
+or how the frame is going to be displayed.
+
+The frame is complete.</doc>
+      </member>
+      <member name="outstanding" value="4" c:identifier="GDK_FRAME_OUTSTANDING" version="4.24" glib:nick="outstanding" glib:name="GDK_FRAME_OUTSTANDING">
+        <doc xml:space="preserve">The frame has been drawn and submitted to the display server, but the
+display server has not yet replied what is going to happen with the
+rendered image.</doc>
+      </member>
+      <member name="discarded" value="5" c:identifier="GDK_FRAME_DISCARDED" version="4.24" glib:nick="discarded" glib:name="GDK_FRAME_DISCARDED">
+        <doc xml:space="preserve">The frame has been drawn and submitted to the display server, but the
+display server has not displayed it. No presentation time will be available.
+
+The frame is complete.</doc>
+      </member>
+      <member name="presented" value="6" c:identifier="GDK_FRAME_PRESENTED" version="4.24" glib:nick="presented" glib:name="GDK_FRAME_PRESENTED">
+        <doc xml:space="preserve">The frame has been drawn and submitted to the display server, and the
+display server has rendered it and displayed the result. The presentation
+time is accurately reflecting when that happened.
+
+The frame is complete.</doc>
+      </member>
+    </enumeration>
     <record name="FrameTimings" c:type="GdkFrameTimings" opaque="1" glib:type-name="GdkFrameTimings" glib:get-type="gdk_frame_timings_get_type" c:symbol-prefix="frame_timings">
       <doc xml:space="preserve">Holds timing information for a single frame of the application&#x2019;s displays.
 
@@ -7468,6 +7522,28 @@ blanking interval&#x201D;.</doc>
   or 0 if the refresh interval is not available.
   See [method@Gdk.FrameTimings.get_complete].</doc>
           <type name="gint64" c:type="gint64"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="timings" transfer-ownership="none">
+            <doc xml:space="preserve">a `GdkFrameTimings`</doc>
+            <type name="FrameTimings" c:type="GdkFrameTimings*"/>
+          </instance-parameter>
+        </parameters>
+      </method>
+      <method name="get_result" c:identifier="gdk_frame_timings_get_result" version="4.24">
+        <doc xml:space="preserve">Gets the result of the frame cycle that recorded these timings.
+
+The timing information in a `GdkFrameTimings` is filled in
+incrementally as the frame as drawn and passed off to the
+window system for processing and display to the user. The
+accessor functions for `GdkFrameTimings` can return 0 to
+indicate an unavailable value for two reasons: either because
+the information is not yet available, or because it isn't
+available at all. Looking at the result of the timings gives
+an explanation for why a value is not available.</doc>
+        <return-value transfer-ownership="none">
+          <doc xml:space="preserve">The result of the frame these timings have been recorded for.</doc>
+          <type name="FrameResult" c:type="GdkFrameResult"/>
         </return-value>
         <parameters>
           <instance-parameter name="timings" transfer-ownership="none">
