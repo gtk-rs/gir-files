@@ -3,9 +3,9 @@ set -x -e
 
 # `///` used as `//` not works in Windows in this case
 for file in *.gir; do
-	xmlstarlet ed -L \
-		-d '//_:doc/@line' \
-		-d '//_:doc/@filename' \
-		-d '///_:source-position' \
+	xmlstarlet edit --inplace \
+		--delete '//_:doc/@line' \
+		--delete '//_:doc/@filename' \
+		--delete '///_:source-position' \
 		"$file"
 done
