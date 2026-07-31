@@ -1,4 +1,4 @@
-<?xml version="1.0"?>
+<?xml version="1.0" encoding="utf-8"?>
 <!-- This file was automatically generated from C sources - DO NOT EDIT!
 To affect the contents of this file, edit the original C definitions,
 and/or use gtk-doc annotations.  -->
@@ -1608,11 +1608,11 @@ associated with the #graphene_euler_t; for instance, if the order
 used to initialize @e is %GRAPHENE_EULER_ORDER_XYZ:
 
  * the first rotation moves the body around the X axis with
-   an angle &#x3C6;
+   an angle φ
  * the second rotation moves the body around the Y axis with
-   an angle of &#x3D1;
+   an angle of ϑ
  * the third rotation moves the body around the Z axis with
-   an angle of &#x3C8;
+   an angle of ψ
 
 The rotation sign convention is right-handed, to preserve compatibility
 between Euler-based, quaternion-based, and angle-axis-based rotations.</doc>
@@ -2229,9 +2229,9 @@ transformation matrix.
 The arguments map to the following matrix layout:
 
 |[&lt;!-- language="plain" --&gt;
-  &#x239B; xx  yx &#x239E;   &#x239B;  a   b  0 &#x239E;
-  &#x239C; xy  yy &#x239F; = &#x239C;  c   d  0 &#x239F;
-  &#x239D; x0  y0 &#x23A0;   &#x239D; tx  ty  1 &#x23A0;
+  ⎛ xx  yx ⎞   ⎛  a   b  0 ⎞
+  ⎜ xy  yy ⎟ = ⎜  c   d  0 ⎟
+  ⎝ x0  y0 ⎠   ⎝ tx  ty  1 ⎠
 ]|
 
 This function can be used to convert between an affine matrix type
@@ -2692,7 +2692,7 @@ a 2D affine transformation matrix.</doc>
         <doc xml:space="preserve">Multiplies two #graphene_matrix_t.
 
 Matrix multiplication is not commutative in general; the order of the factors matters.
-The product of this multiplication is (@a &#xD7; @b)</doc>
+The product of this multiplication is (@a × @b)</doc>
         <return-value transfer-ownership="none">
           <type name="none" c:type="void"/>
         </return-value>
@@ -3057,9 +3057,9 @@ matrix, if the given matrix is compatible.
 The returned values have the following layout:
 
 |[&lt;!-- language="plain" --&gt;
-  &#x239B; xx  yx &#x239E;   &#x239B;  a   b  0 &#x239E;
-  &#x239C; xy  yy &#x239F; = &#x239C;  c   d  0 &#x239F;
-  &#x239D; x0  y0 &#x23A0;   &#x239D; tx  ty  1 &#x23A0;
+  ⎛ xx  yx ⎞   ⎛  a   b  0 ⎞
+  ⎜ xy  yy ⎟ = ⎜  c   d  0 ⎟
+  ⎝ x0  y0 ⎠   ⎝ tx  ty  1 ⎠
 ]|
 
 This function can be used to convert between a #graphene_matrix_t
@@ -5968,8 +5968,8 @@ calling `ceil` on the bottom-right coordinates.
 
 If you want to be sure that the rounded rectangle
 completely covers the area that was covered by the
-original rectangle &#x2014; i.e. you want to cover the area
-including all its corners &#x2014; this function will make sure
+original rectangle — i.e. you want to cover the area
+including all its corners — this function will make sure
 that the size is recomputed taking into account the ceiling
 of the coordinates of the bottom-right corner.
 If the difference between the original coordinates and the
@@ -8667,25 +8667,25 @@ three angles. It also optionally can describe the order of the rotations.
 states that, in three-dimensional space, any displacement of a rigid body
 such that a point on the rigid body remains fixed, is equivalent to a single
 rotation about some axis that runs through the fixed point. The angles on
-each axis can be placed in a vector of three components&#x2014;&#x3B1;, &#x3B2;, and &#x3B3;&#x2014;called
+each axis can be placed in a vector of three components—α, β, and γ—called
 the *Euler angle vector*. Each rotation described by these components results
 in a rotation matrix:
 
 |[
-  rot(&#x3B1;) = A
-  rot(&#x3B2;) = B
-  rot(&#x3B3;) = G
+  rot(α) = A
+  rot(β) = B
+  rot(γ) = G
 ]|
 
 The resulting rotation matrix expressed by the Euler angle vector is
 given by the product of each rotation matrix:
 
 |[
-  G &#xD7; B &#xD7; A = R
+  G × B × A = R
 ]|
 
 In order to specify the meaning of an Euler angle vector, we need to
-assign each axis of rotation to the corresponding &#x3B1;, &#x3B2;, and &#x3B3; components,
+assign each axis of rotation to the corresponding α, β, and γ components,
 for instance X, Y, and Z.
 
 Additionally, we need to specify whether the rotations move the axes
@@ -8705,7 +8705,7 @@ by the right-hand rule, which means all rotations are counterclockwise.
 
 Rotations described Euler angles are typically immediately understandable,
 compared to rotations expressed using quaternions, but they are susceptible
-of ["Gimbal lock"](http://en.wikipedia.org/wiki/Gimbal_lock) &#x2014; the loss of
+of ["Gimbal lock"](http://en.wikipedia.org/wiki/Gimbal_lock) — the loss of
 one degree of freedom caused by two axis on the same plane. You typically
 should use #graphene_euler_t to expose rotation angles in your API, or to
 store them, but use #graphene_quaternion_t to apply rotations to modelview
@@ -8807,10 +8807,10 @@ The matrix is treated as row-major, i.e. it has four vectors (x, y, z, and
 w) representing rows, and elements of each vector are a column:
 
 |[&lt;!-- language="plain" --&gt;
-  &#x23A1; m.x &#x23A4;    &#x239B; x.x  x.y  x.z  x.w &#x239E;
-  &#x239C; m.y &#x239F; -\ &#x239C; y.x  y.y  y.z  y.w &#x239F;
-  &#x239C; m.z &#x239F; -/ &#x239C; z.x  z.y  z.z  z.w &#x239F;
-  &#x23A3; m.w &#x23A6;    &#x239D; w.x  w.y  w.z  w.w &#x23A0;
+  ⎡ m.x ⎤    ⎛ x.x  x.y  x.z  x.w ⎞
+  ⎜ m.y ⎟ -\ ⎜ y.x  y.y  y.z  y.w ⎟
+  ⎜ m.z ⎟ -/ ⎜ z.x  z.y  z.z  z.w ⎟
+  ⎣ m.w ⎦    ⎝ w.x  w.y  w.z  w.w ⎠
 ]|
 
 It is possible to easily convert a #graphene_matrix_t to and from an array
@@ -8827,7 +8827,7 @@ matrices; in other words, given a matrix `A` and a vector `b`, the result
 of a multiplication is going to be:
 
 |[
-  res = b &#xD7; A
+  res = b × A
 ]|
 
 Multiplying two matrices, on the other hand, will use right-multiplication;
@@ -8835,17 +8835,17 @@ given two matrices `A` and `B`, the result of the multiplication is going
 to be
 
 |[
-  res = A &#xD7; B
+  res = A × B
 ]|
 
 as the implementation will multiply each row vector of matrix `A` with the
 matrix `B` to obtain the new row vectors of the result matrix:
 
 |[
-  res = &#x23A1; A.x &#xD7; B &#x23A4;
-        &#x239C; A.y &#xD7; B &#x239F;
-        &#x239C; A.z &#xD7; B &#x239F;
-        &#x23A3; A.w &#xD7; B &#x23A6;
+  res = ⎡ A.x × B ⎤
+        ⎜ A.y × B ⎟
+        ⎜ A.z × B ⎟
+        ⎣ A.w × B ⎦
 ]|
 
 For more information, see the documentation for #graphene_simd4x4f_t,
