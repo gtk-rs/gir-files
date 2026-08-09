@@ -13243,13 +13243,16 @@ delayed until g_dbus_connection_start_message_processing() is called.</doc>
         <doc xml:space="preserve">When authenticating
 as a server, require the UID of the peer to be the same as the UID of the server. (Since: 2.68)</doc>
       </member>
-      <member name="cross_namespace" value="64" c:identifier="G_DBUS_CONNECTION_FLAGS_CROSS_NAMESPACE" glib:nick="cross-namespace" glib:name="G_DBUS_CONNECTION_FLAGS_CROSS_NAMESPACE">
-        <doc xml:space="preserve">When authenticating, try to use
- protocols that work across a Linux user namespace boundary, even if this
- reduces interoperability with older D-Bus implementations. This currently
- affects client-side `EXTERNAL` authentication, for which this flag makes
- connections to a server in another user namespace succeed, but causes
- a deadlock when connecting to a GDBus server older than 2.73.3. Since: 2.74</doc>
+      <member name="cross_namespace" value="64" c:identifier="G_DBUS_CONNECTION_FLAGS_CROSS_NAMESPACE" version="2.74" glib:nick="cross-namespace" glib:name="G_DBUS_CONNECTION_FLAGS_CROSS_NAMESPACE">
+        <doc xml:space="preserve">Prefers protocols that work across user namespace boundaries during
+authentication.
+
+When authenticating, try to use protocols that work across a Linux user
+namespace boundary, even if this reduces interoperability with older D-Bus
+implementations. This currently affects client-side `EXTERNAL`
+authentication, for which this flag makes connections to a server in
+another user namespace succeed, but causes a deadlock when connecting to a
+GDBus server older than 2.73.3.</doc>
       </member>
     </bitfield>
     <enumeration name="DBusError" version="2.26" glib:type-name="GDBusError" glib:get-type="g_dbus_error_get_type" c:type="GDBusError" glib:error-domain="g-dbus-error-quark">
@@ -78584,8 +78587,8 @@ particular type of error. For example, it would be incorrect to mask
 %G_TLS_CERTIFICATE_EXPIRED if you want to allow expired certificates,
 because this could potentially be the only error flag set even if
 other problems exist with the certificate.</doc>
-      <member name="no_flags" value="0" c:identifier="G_TLS_CERTIFICATE_NO_FLAGS" glib:nick="no-flags" glib:name="G_TLS_CERTIFICATE_NO_FLAGS">
-        <doc xml:space="preserve">No flags set. Since: 2.74</doc>
+      <member name="no_flags" value="0" c:identifier="G_TLS_CERTIFICATE_NO_FLAGS" version="2.74" glib:nick="no-flags" glib:name="G_TLS_CERTIFICATE_NO_FLAGS">
+        <doc xml:space="preserve">No flags set.</doc>
       </member>
       <member name="unknown_ca" value="1" c:identifier="G_TLS_CERTIFICATE_UNKNOWN_CA" glib:nick="unknown-ca" glib:name="G_TLS_CERTIFICATE_UNKNOWN_CA">
         <doc xml:space="preserve">The signing certificate authority is
@@ -78678,9 +78681,8 @@ binding type is not currently implemented.</doc>
         <doc xml:space="preserve">[`tls-server-end-point`](https://tools.ietf.org/html/rfc5929#section-4)
    binding type</doc>
       </member>
-      <member name="exporter" value="2" c:identifier="G_TLS_CHANNEL_BINDING_TLS_EXPORTER" glib:nick="exporter" glib:name="G_TLS_CHANNEL_BINDING_TLS_EXPORTER">
-        <doc xml:space="preserve">[`tls-exporter`](https://www.rfc-editor.org/rfc/rfc9266.html) binding
-   type. Since: 2.74</doc>
+      <member name="exporter" value="2" c:identifier="G_TLS_CHANNEL_BINDING_TLS_EXPORTER" version="2.74" glib:nick="exporter" glib:name="G_TLS_CHANNEL_BINDING_TLS_EXPORTER">
+        <doc xml:space="preserve">[`tls-exporter`](https://www.rfc-editor.org/rfc/rfc9266.html) binding type.</doc>
       </member>
     </enumeration>
     <interface name="TlsClientConnection" c:symbol-prefix="tls_client_connection" c:type="GTlsClientConnection" version="2.28" glib:type-name="GTlsClientConnection" glib:get-type="g_tls_client_connection_get_type" glib:type-struct="TlsClientConnectionInterface">
@@ -83219,42 +83221,41 @@ using it.
 
 Since 2.74, the API is available for Windows.</doc>
       <constructor name="new" c:identifier="g_unix_fd_list_new" version="2.24">
-        <doc xml:space="preserve">Creates a new #GUnixFDList containing no file descriptors.</doc>
+        <doc xml:space="preserve">Creates a new [class@Gio.UnixFDList] containing no file descriptors.</doc>
         <return-value transfer-ownership="full">
-          <doc xml:space="preserve">a new #GUnixFDList</doc>
+          <doc xml:space="preserve">a new [class@Gio.UnixFDList]</doc>
           <type name="UnixFDList" c:type="GUnixFDList*"/>
         </return-value>
       </constructor>
       <constructor name="new_from_array" c:identifier="g_unix_fd_list_new_from_array" version="2.24">
-        <doc xml:space="preserve">Creates a new #GUnixFDList containing the file descriptors given in
-@fds.  The file descriptors become the property of the new list and
-may no longer be used by the caller.  The array itself is owned by
-the caller.
+        <doc xml:space="preserve">Creates a new [class@Gio.UnixFDList] containing the file descriptors given
+in @fds. The file descriptors become the property of the new list and may no
+longer be used by the caller. The array itself is owned by the caller.
 
 Each file descriptor in the array should be set to close-on-exec.
 
 If @n_fds is -1 then @fds must be terminated with -1.</doc>
         <return-value transfer-ownership="full">
-          <doc xml:space="preserve">a new #GUnixFDList</doc>
+          <doc xml:space="preserve">a new [class@Gio.UnixFDList]</doc>
           <type name="UnixFDList" c:type="GUnixFDList*"/>
         </return-value>
         <parameters>
           <parameter name="fds" transfer-ownership="none">
             <doc xml:space="preserve">the initial list of file descriptors</doc>
-            <array length="1" zero-terminated="0" c:type="const gint*">
-              <type name="gint" c:type="gint"/>
+            <array length="1" zero-terminated="0" c:type="const int*">
+              <type name="gint" c:type="int"/>
             </array>
           </parameter>
           <parameter name="n_fds" transfer-ownership="none">
-            <doc xml:space="preserve">the length of #fds, or -1</doc>
-            <type name="gint" c:type="gint"/>
+            <doc xml:space="preserve">the length of @fds, or `-1`</doc>
+            <type name="gint" c:type="int"/>
           </parameter>
         </parameters>
       </constructor>
       <method name="append" c:identifier="g_unix_fd_list_append" version="2.24" throws="1">
         <doc xml:space="preserve">Adds a file descriptor to @list.
 
-The file descriptor is duplicated using dup(). You keep your copy
+The file descriptor is duplicated using `dup()`. You keep your copy
 of the descriptor and the copy contained in @list will be closed
 when @list is finalized.
 
@@ -83262,21 +83263,47 @@ A possible cause of failure is exceeding the per-process or
 system-wide file descriptor limit.
 
 The index of the file descriptor in the list is returned.  If you use
-this index with g_unix_fd_list_get() then you will receive back a
+this index with [method@Gio.UnixFDList.get] then you will receive back a
 duplicated copy of the same file descriptor.</doc>
         <return-value transfer-ownership="none">
-          <doc xml:space="preserve">the index of the appended fd in case of success, else -1
+          <doc xml:space="preserve">the index of the appended fd in case of success, else `-1`
          (and @error is set)</doc>
-          <type name="gint" c:type="gint"/>
+          <type name="gint" c:type="int"/>
         </return-value>
         <parameters>
           <instance-parameter name="list" transfer-ownership="none">
-            <doc xml:space="preserve">a #GUnixFDList</doc>
+            <doc xml:space="preserve">a [class@Gio.UnixFDList]</doc>
             <type name="UnixFDList" c:type="GUnixFDList*"/>
           </instance-parameter>
           <parameter name="fd" transfer-ownership="none">
             <doc xml:space="preserve">a valid open file descriptor</doc>
-            <type name="gint" c:type="gint"/>
+            <type name="gint" c:type="int"/>
+          </parameter>
+        </parameters>
+      </method>
+      <method name="append_take" c:identifier="g_unix_fd_list_append_take" version="2.90">
+        <doc xml:space="preserve">Adds a file descriptor to @list.
+
+After this call, @fd belongs to the @list and may no longer be closed by the
+caller.
+
+The file descriptor @fd should be set to close-on-exec.
+
+The index of the file descriptor in the list is returned. If you use this
+index with [method@Gio.UnixFDList.get] then you will receive back a
+duplicated copy of the same file descriptor.</doc>
+        <return-value transfer-ownership="none">
+          <doc xml:space="preserve">the index of the appended @fd</doc>
+          <type name="gsize" c:type="size_t"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="list" transfer-ownership="none">
+            <doc xml:space="preserve">a [class@Gio.UnixFDList]</doc>
+            <type name="UnixFDList" c:type="GUnixFDList*"/>
+          </instance-parameter>
+          <parameter name="fd" transfer-ownership="none">
+            <doc xml:space="preserve">a valid open file descriptor</doc>
+            <type name="gint" c:type="int"/>
           </parameter>
         </parameters>
       </method>
@@ -83284,27 +83311,28 @@ duplicated copy of the same file descriptor.</doc>
         <doc xml:space="preserve">Gets a file descriptor out of @list.
 
 @index_ specifies the index of the file descriptor to get.  It is a
-programmer error for @index_ to be out of range; see
-g_unix_fd_list_get_length().
+programmer error for @index_ to be out of range. Either use
+[method@Gio.UnixFDList.lookup] to do a checked lookup, or check the index
+against the list length using [method@Gio.UnixFDList.get_length].
 
-The file descriptor is duplicated using dup() and set as
-close-on-exec before being returned.  You must call close() on it
+The file descriptor is duplicated using `dup()` and set as
+close-on-exec before being returned.  You must call `close()` on it
 when you are done.
 
 A possible cause of failure is exceeding the per-process or
 system-wide file descriptor limit.</doc>
         <return-value transfer-ownership="none">
-          <doc xml:space="preserve">the file descriptor, or -1 in case of error</doc>
-          <type name="gint" c:type="gint"/>
+          <doc xml:space="preserve">the file descriptor, or `-1` in case of error</doc>
+          <type name="gint" c:type="int"/>
         </return-value>
         <parameters>
           <instance-parameter name="list" transfer-ownership="none">
-            <doc xml:space="preserve">a #GUnixFDList</doc>
+            <doc xml:space="preserve">a [method@Gio.UnixFDList.get]</doc>
             <type name="UnixFDList" c:type="GUnixFDList*"/>
           </instance-parameter>
           <parameter name="index_" transfer-ownership="none">
             <doc xml:space="preserve">the index into the list</doc>
-            <type name="gint" c:type="gint"/>
+            <type name="gint" c:type="int"/>
           </parameter>
         </parameters>
       </method>
@@ -83313,13 +83341,63 @@ system-wide file descriptor limit.</doc>
 contained within).</doc>
         <return-value transfer-ownership="none">
           <doc xml:space="preserve">the length of @list</doc>
-          <type name="gint" c:type="gint"/>
+          <type name="gint" c:type="int"/>
         </return-value>
         <parameters>
           <instance-parameter name="list" transfer-ownership="none">
-            <doc xml:space="preserve">a #GUnixFDList</doc>
+            <doc xml:space="preserve">a [class@Gio.UnixFDList]</doc>
             <type name="UnixFDList" c:type="GUnixFDList*"/>
           </instance-parameter>
+        </parameters>
+      </method>
+      <method name="lookup" c:identifier="g_unix_fd_list_lookup" version="2.90">
+        <doc xml:space="preserve">Looks up a file descriptor in @list at position @index_.
+
+@index_ specifies the index of the file descriptor to get. If no file
+descriptor exists at this index, `-1` is returned.
+
+After this call, the descriptor remains the property of @list. The caller
+must not close it. The descriptor is valid only until @list is changed in any
+way.</doc>
+        <return-value transfer-ownership="none">
+          <doc xml:space="preserve">the file descriptor, or `-1` if not found</doc>
+          <type name="gint" c:type="int"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="list" transfer-ownership="none">
+            <doc xml:space="preserve">a [class@Gio.UnixFDList]</doc>
+            <type name="UnixFDList" c:type="GUnixFDList*"/>
+          </instance-parameter>
+          <parameter name="index_" transfer-ownership="none">
+            <doc xml:space="preserve">the file descriptor index</doc>
+            <type name="gsize" c:type="size_t"/>
+          </parameter>
+        </parameters>
+      </method>
+      <method name="peek" c:identifier="g_unix_fd_list_peek" version="2.90">
+        <doc xml:space="preserve">Gets a file descriptor out of @list.
+
+@index_ specifies the index of the file descriptor to get. It is a programmer
+error for @index_ to be out of range; see [method@Gio.UnixFDList.get_length].
+
+This will always return a valid (non-negative) file descriptor.
+
+After this call, the descriptor remains the property of @list. The caller
+must not close it. The descriptor is valid only until @list is changed in any
+way.</doc>
+        <return-value transfer-ownership="none">
+          <doc xml:space="preserve">the file descriptor</doc>
+          <type name="gint" c:type="int"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="list" transfer-ownership="none">
+            <doc xml:space="preserve">a [class@Gio.UnixFDList]</doc>
+            <type name="UnixFDList" c:type="GUnixFDList*"/>
+          </instance-parameter>
+          <parameter name="index_" transfer-ownership="none">
+            <doc xml:space="preserve">the index into the list</doc>
+            <type name="gsize" c:type="size_t"/>
+          </parameter>
         </parameters>
       </method>
       <method name="peek_fds" c:identifier="g_unix_fd_list_peek_fds" version="2.24">
@@ -83330,28 +83408,28 @@ After this call, the descriptors remain the property of @list.  The
 caller must not close them and must not free the array.  The array is
 valid only until @list is changed in any way.
 
-If @length is non-%NULL then it is set to the number of file
+If @length is non-`NULL` then it is set to the number of file
 descriptors in the returned array. The returned array is also
-terminated with -1.
+terminated with `-1`.
 
-This function never returns %NULL. In case there are no file
+This function never returns `NULL`. In case there are no file
 descriptors contained in @list, an empty array is returned.</doc>
         <return-value transfer-ownership="none">
           <doc xml:space="preserve">an array of file
     descriptors</doc>
-          <array length="0" zero-terminated="0" c:type="const gint*">
-            <type name="gint" c:type="gint"/>
+          <array length="0" zero-terminated="0" c:type="const int*">
+            <type name="gint" c:type="int"/>
           </array>
         </return-value>
         <parameters>
           <instance-parameter name="list" transfer-ownership="none">
-            <doc xml:space="preserve">a #GUnixFDList</doc>
+            <doc xml:space="preserve">a [class@Gio.UnixFDList]</doc>
             <type name="UnixFDList" c:type="GUnixFDList*"/>
           </instance-parameter>
           <parameter name="length" direction="out" caller-allocates="0" transfer-ownership="full" optional="1" allow-none="1">
             <doc xml:space="preserve">pointer to the length of the returned
-    array, or %NULL</doc>
-            <type name="gint" c:type="gint*"/>
+    array, or `NULL`</doc>
+            <type name="gint" c:type="int*"/>
           </parameter>
         </parameters>
       </method>
@@ -83363,33 +83441,33 @@ After this call, the descriptors are no longer contained in
 @list. Further calls will return an empty list (unless more
 descriptors have been added).
 
-The return result of this function must be freed with g_free().
+The return result of this function must be freed with `g_free()`.
 The caller is also responsible for closing all of the file
 descriptors.  The file descriptors in the array are set to
 close-on-exec.
 
-If @length is non-%NULL then it is set to the number of file
+If @length is non-`NULL` then it is set to the number of file
 descriptors in the returned array. The returned array is also
-terminated with -1.
+terminated with `-1`.
 
-This function never returns %NULL. In case there are no file
+This function never returns `NULL`. In case there are no file
 descriptors contained in @list, an empty array is returned.</doc>
         <return-value transfer-ownership="full">
           <doc xml:space="preserve">an array of file
     descriptors</doc>
-          <array length="0" zero-terminated="0" c:type="gint*">
-            <type name="gint" c:type="gint"/>
+          <array length="0" zero-terminated="0" c:type="int*">
+            <type name="gint" c:type="int"/>
           </array>
         </return-value>
         <parameters>
           <instance-parameter name="list" transfer-ownership="none">
-            <doc xml:space="preserve">a #GUnixFDList</doc>
+            <doc xml:space="preserve">a [class@Gio.UnixFDList]</doc>
             <type name="UnixFDList" c:type="GUnixFDList*"/>
           </instance-parameter>
           <parameter name="length" direction="out" caller-allocates="0" transfer-ownership="full" optional="1" allow-none="1">
             <doc xml:space="preserve">pointer to the length of the returned
-    array, or %NULL</doc>
-            <type name="gint" c:type="gint*"/>
+    array, or `NULL`</doc>
+            <type name="gint" c:type="int*"/>
           </parameter>
         </parameters>
       </method>

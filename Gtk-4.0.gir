@@ -6012,27 +6012,6 @@ displays the shortcuts window, associate the item with the action
 default window icon. Use [func@Gtk.Window.set_default_icon_name] or
 [property@Gtk.Window:icon-name] to override that behavior.
 
-## State saving
-
-`GtkApplication` registers with a session manager if possible and
-offers various functionality related to the session life-cycle,
-such as state saving.
-
-State-saving functionality can be enabled by setting the
-[property@Gtk.Application:support-save] property to true.
-
-In order to save and restore per-window state, applications must
-connect to the [signal@Gtk.Application::restore-window] signal and
-handle the [signal@Gtk.ApplicationWindow::save-state] signal. There
-are also [signal@Gtk.Application::restore-state] and
-[signal@GtkApplication::save-state] signals, which can be used
-for global state that is not connected to any window.
-
-`GtkApplication` automatically saves state before app shutdown, and by
-default periodically auto-saves app state (as configured by the
-[property@Gtk.Application:autosave-interval] property). Applications can
-also call [method@Gtk.Application.save] themselves at opportune times.
-
 # Inhibiting
 
 An application can block various ways to end the session with
@@ -6088,61 +6067,6 @@ uniqueness) will be disabled.</doc>
           </parameter>
         </parameters>
       </constructor>
-      <virtual-method name="restore_state" version="4.24">
-        <doc xml:space="preserve">Class closure for the [signal@Application::restore-state] signal.</doc>
-        <return-value transfer-ownership="none">
-          <doc xml:space="preserve">true to stop further handlers from running</doc>
-          <type name="gboolean" c:type="gboolean"/>
-        </return-value>
-        <parameters>
-          <instance-parameter name="application" transfer-ownership="none">
-            <type name="Application" c:type="GtkApplication*"/>
-          </instance-parameter>
-          <parameter name="reason" transfer-ownership="none">
-            <doc xml:space="preserve">the reason for restoring state</doc>
-            <type name="RestoreReason" c:type="GtkRestoreReason"/>
-          </parameter>
-          <parameter name="state" transfer-ownership="none">
-            <doc xml:space="preserve">a dictionary containing the application state to restore</doc>
-            <type name="GLib.Variant" c:type="GVariant*"/>
-          </parameter>
-        </parameters>
-      </virtual-method>
-      <virtual-method name="restore_window" version="4.24">
-        <doc xml:space="preserve">Class closure for the [signal@Application::restore-window] signal.</doc>
-        <return-value transfer-ownership="none">
-          <type name="none" c:type="void"/>
-        </return-value>
-        <parameters>
-          <instance-parameter name="application" transfer-ownership="none">
-            <type name="Application" c:type="GtkApplication*"/>
-          </instance-parameter>
-          <parameter name="reason" transfer-ownership="none">
-            <doc xml:space="preserve">the reason this window is restored</doc>
-            <type name="RestoreReason" c:type="GtkRestoreReason"/>
-          </parameter>
-          <parameter name="state" transfer-ownership="none">
-            <doc xml:space="preserve">a dictionary containing the application window state to restore</doc>
-            <type name="GLib.Variant" c:type="GVariant*"/>
-          </parameter>
-        </parameters>
-      </virtual-method>
-      <virtual-method name="save_state" version="4.24">
-        <doc xml:space="preserve">Class closure for the [signal@Application::save-state] signal.</doc>
-        <return-value transfer-ownership="none">
-          <doc xml:space="preserve">true to stop further handlers from running</doc>
-          <type name="gboolean" c:type="gboolean"/>
-        </return-value>
-        <parameters>
-          <instance-parameter name="application" transfer-ownership="none">
-            <type name="Application" c:type="GtkApplication*"/>
-          </instance-parameter>
-          <parameter name="state" transfer-ownership="none">
-            <doc xml:space="preserve">a dictionary to populate with application state</doc>
-            <type name="GLib.VariantDict" c:type="GVariantDict*"/>
-          </parameter>
-        </parameters>
-      </virtual-method>
       <virtual-method name="window_added">
         <doc xml:space="preserve">Signal emitted when a `GtkWindow` is added to
    application through gtk_application_add_window().</doc>
@@ -6201,21 +6125,6 @@ GTK will keep the application running as long as it has any windows.</doc>
             <doc xml:space="preserve">a window</doc>
             <type name="Window" c:type="GtkWindow*"/>
           </parameter>
-        </parameters>
-      </method>
-      <method name="forget" c:identifier="gtk_application_forget" version="4.24">
-        <doc xml:space="preserve">Forget state that has been previously saved and prevent further automatic
-state saving.
-
-In order to re-enable state saving, call [method@Gtk.Application.save].</doc>
-        <return-value transfer-ownership="none">
-          <type name="none" c:type="void"/>
-        </return-value>
-        <parameters>
-          <instance-parameter name="application" transfer-ownership="none">
-            <doc xml:space="preserve">an application</doc>
-            <type name="Application" c:type="GtkApplication*"/>
-          </instance-parameter>
         </parameters>
       </method>
       <method name="get_accels_for_action" c:identifier="gtk_application_get_accels_for_action">
@@ -6464,20 +6373,6 @@ function, if the window was the last window of the application.</doc>
           </parameter>
         </parameters>
       </method>
-      <method name="save" c:identifier="gtk_application_save" version="4.24">
-        <doc xml:space="preserve">Saves the state of the application.
-
-See [method@Gtk.Application.forget] for a way to forget the state.</doc>
-        <return-value transfer-ownership="none">
-          <type name="none" c:type="void"/>
-        </return-value>
-        <parameters>
-          <instance-parameter name="application" transfer-ownership="none">
-            <doc xml:space="preserve">an application</doc>
-            <type name="Application" c:type="GtkApplication*"/>
-          </instance-parameter>
-        </parameters>
-      </method>
       <method name="set_accels_for_action" c:identifier="gtk_application_set_accels_for_action">
         <doc xml:space="preserve">Sets zero or more keyboard accelerators that will trigger the
 given action.
@@ -6569,11 +6464,6 @@ Inhibitors are also cleared when the application exits.</doc>
         <doc xml:space="preserve">The currently focused window of the application.</doc>
         <type name="Window"/>
       </property>
-      <property name="autosave-interval" version="4.24" writable="1" transfer-ownership="none" default-value="15">
-        <doc xml:space="preserve">The number of seconds between automatic state saves. Defaults to 15.
-A value of 0 will opt out of automatic state saving.</doc>
-        <type name="guint" c:type="guint"/>
-      </property>
       <property name="menubar" writable="1" transfer-ownership="none" setter="set_menubar" getter="get_menubar">
         <doc xml:space="preserve">The menu model to be used for the application's menu bar.</doc>
         <type name="Gio.MenuModel"/>
@@ -6595,11 +6485,6 @@ Tracking the screensaver state is currently only supported on
 Linux.</doc>
         <type name="gboolean" c:type="gboolean"/>
       </property>
-      <property name="support-save" version="4.24" writable="1" transfer-ownership="none" default-value="FALSE">
-        <doc xml:space="preserve">Set this property to true if the application supports
-state saving and restoring.</doc>
-        <type name="gboolean" c:type="gboolean"/>
-      </property>
       <field name="parent_instance">
         <type name="Gio.Application" c:type="GApplication"/>
       </field>
@@ -6612,91 +6497,6 @@ to delay the end of the session until state has been saved.</doc>
         <return-value transfer-ownership="none">
           <type name="none" c:type="void"/>
         </return-value>
-      </glib:signal>
-      <glib:signal name="restore-state" when="last" version="4.24">
-        <doc xml:space="preserve">Emitted when application global state is restored.
-
-The handler for this signal should do the opposite of what the
-corresponding handler for [signal@Gtk.Application::save-state]
-does.
-
-You must be careful to be robust in the face of app upgrades and downgrades:
-the @state might have been created by a previous or occasionally even a future
-version of your app. Do not assume that a given key exists in the state.
-Apps must try to restore state saved by a previous version, but are free to
-discard state if it was written by a future version.</doc>
-        <return-value transfer-ownership="none">
-          <doc xml:space="preserve">true to stop further handlers from running</doc>
-          <type name="gboolean" c:type="gboolean"/>
-        </return-value>
-        <parameters>
-          <parameter name="reason" transfer-ownership="none">
-            <doc xml:space="preserve">the reason for restoring state</doc>
-            <type name="RestoreReason"/>
-          </parameter>
-          <parameter name="state" transfer-ownership="none">
-            <doc xml:space="preserve">an `a{sv}` dictionary containing the state to restore, as saved by a [signal@Gtk.Application::save-state] handler</doc>
-            <type name="GLib.Variant"/>
-          </parameter>
-        </parameters>
-      </glib:signal>
-      <glib:signal name="restore-window" when="first" version="4.24">
-        <doc xml:space="preserve">Emitted when an application's per-window state is restored.
-
-In response to this signal, you should create a new application
-window, add it to @application, apply the provided @state, and present it.
-The application can use the @reason to determine how much of the state
-should be restored.
-
-You must be careful to be robust in the face of app upgrades and downgrades:
-the @state might have been created by a previous or occasionally even a future
-version of your app. Do not assume that a given key exists in the state.
-Apps must try to restore state saved by a previous version, but are free to
-discard state if it was written by a future version.
-
-GTK will remember which window the user was using most recently, and will
-emit this signal for that window first. Thus, if you decide that the provided
-@reason means that only one window should be restored, you can reliably
-ignore emissions if a window already exists
-
-This signal will be emitted whenever the application needs to restore its
-windows. This normally happens during the initial launch, but it can also
-happen in the existing application instance if it is re-activated after all
-application windows were closed.</doc>
-        <return-value transfer-ownership="none">
-          <type name="none" c:type="void"/>
-        </return-value>
-        <parameters>
-          <parameter name="reason" transfer-ownership="none">
-            <doc xml:space="preserve">the reason this window is restored</doc>
-            <type name="RestoreReason"/>
-          </parameter>
-          <parameter name="state" transfer-ownership="none">
-            <doc xml:space="preserve">an `a{sv}` dictionary containing the state to restore, as saved by a [signal@Gtk.ApplicationWindow::save-state] handler</doc>
-            <type name="GLib.Variant"/>
-          </parameter>
-        </parameters>
-      </glib:signal>
-      <glib:signal name="save-state" when="last" version="4.24">
-        <doc xml:space="preserve">Emitted when the application is saving global state.
-
-The handler for this signal should persist any global state of
-@application into @dict.
-
-See [signal@Gtk.Application::restore-state] for how to
-restore global state, and [signal@Gtk.ApplicationWindow::save-state]
-and [signal@Gtk.Application::restore-window] for handling
-per-window state.</doc>
-        <return-value transfer-ownership="none">
-          <doc xml:space="preserve">true to stop further handlers from running</doc>
-          <type name="gboolean" c:type="gboolean"/>
-        </return-value>
-        <parameters>
-          <parameter name="dict" transfer-ownership="none">
-            <doc xml:space="preserve">a dictionary to populate with application state</doc>
-            <type name="GLib.VariantDict"/>
-          </parameter>
-        </parameters>
       </glib:signal>
       <glib:signal name="window-added" when="first">
         <doc xml:space="preserve">Emitted when a window is added to an application.
@@ -6768,66 +6568,8 @@ or explicitly through [method@Gtk.Application.remove_window].</doc>
           </parameters>
         </callback>
       </field>
-      <field name="save_state">
-        <callback name="save_state">
-          <return-value transfer-ownership="none">
-            <doc xml:space="preserve">true to stop further handlers from running</doc>
-            <type name="gboolean" c:type="gboolean"/>
-          </return-value>
-          <parameters>
-            <parameter name="application" transfer-ownership="none">
-              <type name="Application" c:type="GtkApplication*"/>
-            </parameter>
-            <parameter name="state" transfer-ownership="none">
-              <doc xml:space="preserve">a dictionary to populate with application state</doc>
-              <type name="GLib.VariantDict" c:type="GVariantDict*"/>
-            </parameter>
-          </parameters>
-        </callback>
-      </field>
-      <field name="restore_state">
-        <callback name="restore_state">
-          <return-value transfer-ownership="none">
-            <doc xml:space="preserve">true to stop further handlers from running</doc>
-            <type name="gboolean" c:type="gboolean"/>
-          </return-value>
-          <parameters>
-            <parameter name="application" transfer-ownership="none">
-              <type name="Application" c:type="GtkApplication*"/>
-            </parameter>
-            <parameter name="reason" transfer-ownership="none">
-              <doc xml:space="preserve">the reason for restoring state</doc>
-              <type name="RestoreReason" c:type="GtkRestoreReason"/>
-            </parameter>
-            <parameter name="state" transfer-ownership="none">
-              <doc xml:space="preserve">a dictionary containing the application state to restore</doc>
-              <type name="GLib.Variant" c:type="GVariant*"/>
-            </parameter>
-          </parameters>
-        </callback>
-      </field>
-      <field name="restore_window">
-        <callback name="restore_window">
-          <return-value transfer-ownership="none">
-            <type name="none" c:type="void"/>
-          </return-value>
-          <parameters>
-            <parameter name="application" transfer-ownership="none">
-              <type name="Application" c:type="GtkApplication*"/>
-            </parameter>
-            <parameter name="reason" transfer-ownership="none">
-              <doc xml:space="preserve">the reason this window is restored</doc>
-              <type name="RestoreReason" c:type="GtkRestoreReason"/>
-            </parameter>
-            <parameter name="state" transfer-ownership="none">
-              <doc xml:space="preserve">a dictionary containing the application window state to restore</doc>
-              <type name="GLib.Variant" c:type="GVariant*"/>
-            </parameter>
-          </parameters>
-        </callback>
-      </field>
       <field name="padding" readable="0" private="1">
-        <array zero-terminated="0" fixed-size="5">
+        <array zero-terminated="0" fixed-size="8">
           <type name="gpointer" c:type="gpointer"/>
         </array>
       </field>
@@ -6943,22 +6685,6 @@ GtkWidget *window = gtk_application_window_new (app);
           </parameter>
         </parameters>
       </constructor>
-      <virtual-method name="save_state" version="4.24">
-        <doc xml:space="preserve">Class closure for the [signal@ApplicationWindow::save-state] signal.</doc>
-        <return-value transfer-ownership="none">
-          <doc xml:space="preserve">true to stop stop further handlers from running</doc>
-          <type name="gboolean" c:type="gboolean"/>
-        </return-value>
-        <parameters>
-          <instance-parameter name="window" transfer-ownership="none">
-            <type name="ApplicationWindow" c:type="GtkApplicationWindow*"/>
-          </instance-parameter>
-          <parameter name="dict" transfer-ownership="none">
-            <doc xml:space="preserve">a dictionary to populate with application window state</doc>
-            <type name="GLib.VariantDict" c:type="GVariantDict*"/>
-          </parameter>
-        </parameters>
-      </virtual-method>
       <method name="get_help_overlay" c:identifier="gtk_application_window_get_help_overlay" deprecated="1" deprecated-version="4.18">
         <doc xml:space="preserve">Gets the `GtkShortcutsWindow` that is associated with @window.
 
@@ -7058,51 +6784,14 @@ of whether the desktop shell is showing it or not.</doc>
       <field name="parent_instance">
         <type name="Window" c:type="GtkWindow"/>
       </field>
-      <glib:signal name="save-state" when="last" version="4.24">
-        <doc xml:space="preserve">The handler for this signal should persist any application-specific
-state of @window into @dict.
-
-Note that window management state such as maximized, fullscreen,
-or window size should not be saved as part of this. They are handled
-by GTK.
-
-See [signal@Gtk.Application::restore-window].</doc>
-        <return-value transfer-ownership="none">
-          <doc xml:space="preserve">true to stop stop further handlers from running</doc>
-          <type name="gboolean" c:type="gboolean"/>
-        </return-value>
-        <parameters>
-          <parameter name="dict" transfer-ownership="none">
-            <doc xml:space="preserve">a dictionary to populate with application window state</doc>
-            <type name="GLib.VariantDict"/>
-          </parameter>
-        </parameters>
-      </glib:signal>
     </class>
     <record name="ApplicationWindowClass" c:type="GtkApplicationWindowClass" glib:is-gtype-struct-for="ApplicationWindow">
       <field name="parent_class">
         <doc xml:space="preserve">The parent class.</doc>
         <type name="WindowClass" c:type="GtkWindowClass"/>
       </field>
-      <field name="save_state">
-        <callback name="save_state">
-          <return-value transfer-ownership="none">
-            <doc xml:space="preserve">true to stop stop further handlers from running</doc>
-            <type name="gboolean" c:type="gboolean"/>
-          </return-value>
-          <parameters>
-            <parameter name="window" transfer-ownership="none">
-              <type name="ApplicationWindow" c:type="GtkApplicationWindow*"/>
-            </parameter>
-            <parameter name="dict" transfer-ownership="none">
-              <doc xml:space="preserve">a dictionary to populate with application window state</doc>
-              <type name="GLib.VariantDict" c:type="GVariantDict*"/>
-            </parameter>
-          </parameters>
-        </callback>
-      </field>
       <field name="padding" readable="0" private="1">
-        <array zero-terminated="0" fixed-size="7">
+        <array zero-terminated="0" fixed-size="8">
           <type name="gpointer" c:type="gpointer"/>
         </array>
       </field>
@@ -8033,7 +7722,7 @@ See gtk_assistant_commit() for details.</doc>
  add its own buttons through gtk_assistant_add_action_widget().</doc>
       </member>
     </enumeration>
-    <constant name="BINARY_AGE" value="2302" c:type="GTK_BINARY_AGE">
+    <constant name="BINARY_AGE" value="2303" c:type="GTK_BINARY_AGE">
       <doc xml:space="preserve">Like [func@get_binary_age], but from the headers used at
 application compile time, rather than from the library linked
 against at application run time.</doc>
@@ -60625,7 +60314,7 @@ This macro is longer used by GTK.</doc>
         </parameter>
       </parameters>
     </function-macro>
-    <constant name="MICRO_VERSION" value="2" c:type="GTK_MICRO_VERSION">
+    <constant name="MICRO_VERSION" value="3" c:type="GTK_MICRO_VERSION">
       <doc xml:space="preserve">Like [func@get_micro_version], but from the headers used at
 application compile time, rather than from the library linked
 against at application run time.</doc>
@@ -77913,23 +77602,6 @@ application-defined response ids.</doc>
         <doc xml:space="preserve">Returned by Help buttons in GTK dialogs</doc>
       </member>
     </enumeration>
-    <enumeration name="RestoreReason" version="4.24" glib:type-name="GtkRestoreReason" glib:get-type="gtk_restore_reason_get_type" c:type="GtkRestoreReason">
-      <doc xml:space="preserve">Enumerates possible reasons for an application to restore saved state.
-
-See [signal@Gtk.Application::restore-state].</doc>
-      <member name="pristine" value="0" c:identifier="GTK_RESTORE_REASON_PRISTINE" glib:nick="pristine" glib:name="GTK_RESTORE_REASON_PRISTINE">
-        <doc xml:space="preserve">Don't restore anything</doc>
-      </member>
-      <member name="launch" value="1" c:identifier="GTK_RESTORE_REASON_LAUNCH" glib:nick="launch" glib:name="GTK_RESTORE_REASON_LAUNCH">
-        <doc xml:space="preserve">This is normal launch. Restore as little as is reasonable</doc>
-      </member>
-      <member name="recover" value="2" c:identifier="GTK_RESTORE_REASON_RECOVER" glib:nick="recover" glib:name="GTK_RESTORE_REASON_RECOVER">
-        <doc xml:space="preserve">The application has crashed before. Try to restore the previous state</doc>
-      </member>
-      <member name="restore" value="3" c:identifier="GTK_RESTORE_REASON_RESTORE" glib:nick="restore" glib:name="GTK_RESTORE_REASON_RESTORE">
-        <doc xml:space="preserve">This is a session restore. Restore the previous state as far as possible</doc>
-      </member>
-    </enumeration>
     <class name="Revealer" c:symbol-prefix="revealer" c:type="GtkRevealer" parent="Widget" glib:type-name="GtkRevealer" glib:get-type="gtk_revealer_get_type">
       <doc xml:space="preserve">Animates the transition of its child from invisible to visible.
 
@@ -91339,6 +91011,15 @@ This can be a number between 0 and 63.</doc>
       <property name="stylesheet" version="4.24" writable="1" transfer-ownership="none" setter="set_stylesheet" getter="get_stylesheet">
         <doc xml:space="preserve">A CSS stylesheet to apply to the SVG.</doc>
         <type name="GLib.Bytes"/>
+      </property>
+      <property name="svg" version="4.24" transfer-ownership="none">
+        <doc xml:space="preserve">The GtkSvg paintable used for rendering.
+
+This property is mainly useful for making details of the
+SVG rendering machinery available in the GTK inspector.
+
+You should not modify the returned object.</doc>
+        <type name="Svg"/>
       </property>
       <glib:signal name="activate" when="last" version="4.24">
         <doc xml:space="preserve">Emitted when a link or other element is activated.
