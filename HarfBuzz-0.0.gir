@@ -358,13 +358,13 @@ The serial number will increase when internal #hb_glyph_info_t and
     <constant name="VERSION_MAJOR" value="14" c:type="HB_VERSION_MAJOR">
       <type name="gint" c:type="gint"/>
     </constant>
-    <constant name="VERSION_MICRO" value="1" c:type="HB_VERSION_MICRO">
+    <constant name="VERSION_MICRO" value="0" c:type="HB_VERSION_MICRO">
       <type name="gint" c:type="gint"/>
     </constant>
-    <constant name="VERSION_MINOR" value="2" c:type="HB_VERSION_MINOR">
+    <constant name="VERSION_MINOR" value="3" c:type="HB_VERSION_MINOR">
       <type name="gint" c:type="gint"/>
     </constant>
-    <constant name="VERSION_STRING" value="14.2.1" c:type="HB_VERSION_STRING">
+    <constant name="VERSION_STRING" value="14.3.0" c:type="HB_VERSION_STRING">
       <type name="utf8" c:type="gchar*"/>
     </constant>
     <record name="aat_layout_feature_selector_info_t" c:type="hb_aat_layout_feature_selector_info_t">
@@ -8144,7 +8144,7 @@ has one palette, this will be 0.</doc>
         </parameter>
       </parameters>
     </function>
-    <function name="font_set_funcs" c:identifier="hb_font_set_funcs" version="0.9.2" introspectable="0">
+    <function name="font_set_funcs" c:identifier="hb_font_set_funcs" version="0.9.2">
       <doc xml:space="preserve">Replaces the font-functions structure attached to a font, updating
 the font's user-data with @font-data and the @destroy callback.</doc>
       <return-value transfer-ownership="none">
@@ -8163,13 +8163,13 @@ the font's user-data with @font-data and the @destroy callback.</doc>
           <doc xml:space="preserve">Data to attach to @font</doc>
           <type name="gpointer" c:type="void*"/>
         </parameter>
-        <parameter name="destroy" transfer-ownership="none" nullable="1" allow-none="1">
+        <parameter name="destroy" transfer-ownership="none" nullable="1" allow-none="1" scope="async" closure="2">
           <doc xml:space="preserve">The function to call when @font_data is not needed anymore</doc>
           <type name="destroy_func_t" c:type="hb_destroy_func_t"/>
         </parameter>
       </parameters>
     </function>
-    <function name="font_set_funcs_data" c:identifier="hb_font_set_funcs_data" version="0.9.2" introspectable="0">
+    <function name="font_set_funcs_data" c:identifier="hb_font_set_funcs_data" version="0.9.2">
       <doc xml:space="preserve">Replaces the user data attached to a font, updating the font's
 @destroy callback.</doc>
       <return-value transfer-ownership="none">
@@ -8184,7 +8184,7 @@ the font's user-data with @font-data and the @destroy callback.</doc>
           <doc xml:space="preserve">Data to attach to @font</doc>
           <type name="gpointer" c:type="void*"/>
         </parameter>
-        <parameter name="destroy" transfer-ownership="none" nullable="1" allow-none="1">
+        <parameter name="destroy" transfer-ownership="none" nullable="1" allow-none="1" scope="async" closure="1">
           <doc xml:space="preserve">The function to call when @font_data is not needed anymore</doc>
           <type name="destroy_func_t" c:type="hb_destroy_func_t"/>
         </parameter>
@@ -8586,7 +8586,7 @@ compile-time. Typically just free().</doc>
       <doc xml:space="preserve">Creates an #hb_face_t face object from the specified
 font blob and face index.
 
-This is similar in functionality to hb_face_create_from_blob_or_fail(),
+This is similar in functionality to hb_face_create_or_fail(),
 but uses the FreeType library for loading the font blob. This can
 be useful, for example, to load WOFF and WOFF2 font data.</doc>
       <return-value transfer-ownership="full">
@@ -9123,6 +9123,13 @@ use if desired.</doc>
       <doc xml:space="preserve">Functions for fetching color-font information from OpenType font faces.
 
 HarfBuzz supports `COLR`/`CPAL`, `sbix`, `CBDT`, and `SVG` color fonts.</doc>
+    </docsection>
+    <docsection name="hb-ot-fetch">
+      <doc xml:space="preserve">Functions for fetching various bit fields and numbers scattered around
+OpenType tables.
+
+These are raw table values, and many of them are legacy or unreliable, but
+applications might need them for various legacy reasons.</doc>
     </docsection>
     <docsection name="hb-ot-font">
       <doc xml:space="preserve">Functions for using OpenType fonts with hb_shape().  Note that fonts returned
@@ -9684,6 +9691,39 @@ Regarding these various memory-modes:
         <doc xml:space="preserve">See above</doc>
       </member>
     </enumeration>
+    <bitfield name="ot_bits_tag_t" version="14.3.0" c:type="hb_ot_bits_tag_t">
+      <doc xml:space="preserve">Bit fields that can be fetched with hb_ot_fetch_bits().</doc>
+      <member name="b_ot_bits_tag_fs_type" value="1718842480" c:identifier="HB_OT_BITS_TAG_FS_TYPE">
+        <doc xml:space="preserve">`fsType` of the `OS/2` table.</doc>
+      </member>
+      <member name="b_ot_bits_tag_fs_selection" value="1718842220" c:identifier="HB_OT_BITS_TAG_FS_SELECTION">
+        <doc xml:space="preserve">`fsSelection` of the `OS/2` table.</doc>
+      </member>
+      <member name="b_ot_bits_tag_mac_style" value="1835234164" c:identifier="HB_OT_BITS_TAG_MAC_STYLE">
+        <doc xml:space="preserve">`macStyle` of the `head` table.</doc>
+      </member>
+      <member name="b_ot_bits_tag_is_fixed_pitch" value="1719169140" c:identifier="HB_OT_BITS_TAG_IS_FIXED_PITCH">
+        <doc xml:space="preserve">`isFixedPitch` of the `post` table.</doc>
+      </member>
+      <member name="b_ot_bits_tag_unicode_range_1" value="1970433585" c:identifier="HB_OT_BITS_TAG_UNICODE_RANGE_1">
+        <doc xml:space="preserve">`ulUnicodeRange1` of the `OS/2` table.</doc>
+      </member>
+      <member name="b_ot_bits_tag_unicode_range_2" value="1970433586" c:identifier="HB_OT_BITS_TAG_UNICODE_RANGE_2">
+        <doc xml:space="preserve">`ulUnicodeRange2` of the `OS/2` table.</doc>
+      </member>
+      <member name="b_ot_bits_tag_unicode_range_3" value="1970433587" c:identifier="HB_OT_BITS_TAG_UNICODE_RANGE_3">
+        <doc xml:space="preserve">`ulUnicodeRange3` of the `OS/2` table.</doc>
+      </member>
+      <member name="b_ot_bits_tag_unicode_range_4" value="1970433588" c:identifier="HB_OT_BITS_TAG_UNICODE_RANGE_4">
+        <doc xml:space="preserve">`ulUnicodeRange4` of the `OS/2` table.</doc>
+      </member>
+      <member name="b_ot_bits_tag_code_page_range_1" value="1668313649" c:identifier="HB_OT_BITS_TAG_CODE_PAGE_RANGE_1">
+        <doc xml:space="preserve">`ulCodePageRange1` of the `OS/2` table.</doc>
+      </member>
+      <member name="b_ot_bits_tag_code_page_range_2" value="1668313650" c:identifier="HB_OT_BITS_TAG_CODE_PAGE_RANGE_2">
+        <doc xml:space="preserve">`ulCodePageRange2` of the `OS/2` table.</doc>
+      </member>
+    </bitfield>
     <function name="ot_color_get_svg_document_count" c:identifier="hb_ot_color_get_svg_document_count" version="12.1.0">
       <doc xml:space="preserve">Gets the number of SVG documents in the face `SVG` table.</doc>
       <return-value transfer-ownership="none">
@@ -10043,6 +10083,40 @@ If the requested palette has no name the result is #HB_OT_NAME_ID_INVALID.</doc>
         <parameter name="palette_index" transfer-ownership="none">
           <doc xml:space="preserve">The index of the color palette</doc>
           <type name="guint" c:type="unsigned int"/>
+        </parameter>
+      </parameters>
+    </function>
+    <function name="ot_fetch_bits" c:identifier="hb_ot_fetch_bits" version="14.3.0">
+      <doc xml:space="preserve">Fetches a bit field of @face.</doc>
+      <return-value transfer-ownership="none">
+        <doc xml:space="preserve">the bit field, or zero if the font does not have it.</doc>
+        <type name="guint32" c:type="uint32_t"/>
+      </return-value>
+      <parameters>
+        <parameter name="face" transfer-ownership="none">
+          <doc xml:space="preserve">#hb_face_t to work upon</doc>
+          <type name="face_t" c:type="hb_face_t*"/>
+        </parameter>
+        <parameter name="tag" transfer-ownership="none">
+          <doc xml:space="preserve">tag of the bit field to fetch</doc>
+          <type name="ot_bits_tag_t" c:type="hb_ot_bits_tag_t"/>
+        </parameter>
+      </parameters>
+    </function>
+    <function name="ot_fetch_number" c:identifier="hb_ot_fetch_number" version="14.3.0">
+      <doc xml:space="preserve">Fetches a number of @face in font units.</doc>
+      <return-value transfer-ownership="none">
+        <doc xml:space="preserve">the number, or zero if the font does not have it.</doc>
+        <type name="gint32" c:type="int32_t"/>
+      </return-value>
+      <parameters>
+        <parameter name="face" transfer-ownership="none">
+          <doc xml:space="preserve">#hb_face_t to work upon</doc>
+          <type name="face_t" c:type="hb_face_t*"/>
+        </parameter>
+        <parameter name="tag" transfer-ownership="none">
+          <doc xml:space="preserve">tag of the number to fetch</doc>
+          <type name="ot_number_tag_t" c:type="hb_ot_number_tag_t"/>
         </parameter>
       </parameters>
     </function>
@@ -12583,6 +12657,21 @@ used as long as @face is alive.</doc>
         </parameter>
       </parameters>
     </function>
+    <bitfield name="ot_number_tag_t" version="14.3.0" c:type="hb_ot_number_tag_t">
+      <doc xml:space="preserve">Numbers that can be fetched with hb_ot_fetch_number().</doc>
+      <member name="b_ot_number_tag_font_x_min" value="2020436334" c:identifier="HB_OT_NUMBER_TAG_FONT_X_MIN">
+        <doc xml:space="preserve">`xMin` of the `head` table.</doc>
+      </member>
+      <member name="b_ot_number_tag_font_y_min" value="2037213550" c:identifier="HB_OT_NUMBER_TAG_FONT_Y_MIN">
+        <doc xml:space="preserve">`yMin` of the `head` table.</doc>
+      </member>
+      <member name="b_ot_number_tag_font_x_max" value="2020434296" c:identifier="HB_OT_NUMBER_TAG_FONT_X_MAX">
+        <doc xml:space="preserve">`xMax` of the `head` table.</doc>
+      </member>
+      <member name="b_ot_number_tag_font_y_max" value="2037211512" c:identifier="HB_OT_NUMBER_TAG_FONT_Y_MAX">
+        <doc xml:space="preserve">`yMax` of the `head` table.</doc>
+      </member>
+    </bitfield>
     <function name="ot_shape_get_buffer_format_serial" c:identifier="hb_ot_shape_get_buffer_format_serial" version="13.2.0">
       <doc xml:space="preserve">Returns the serial number of the current internal buffer format.
 See #HB_OT_SHAPE_BUFFER_FORMAT_SERIAL for more information.</doc>
@@ -13467,11 +13556,9 @@ section for details.</doc>
      color stops is the reverse of the adjacent interval.</doc>
       </member>
     </enumeration>
-    <function name="paint_fill_glyph" c:identifier="hb_paint_fill_glyph">
+    <function name="paint_fill_glyph" c:identifier="hb_paint_fill_glyph" version="14.3.0">
       <doc xml:space="preserve">Perform a "fill-glyph" paint operation: fill the glyph's shape
-with a solid color.
-
-XSince: REPLACEME</doc>
+with a solid color.</doc>
       <return-value transfer-ownership="none">
         <type name="none" c:type="void"/>
       </return-value>
@@ -13502,13 +13589,11 @@ XSince: REPLACEME</doc>
         </parameter>
       </parameters>
     </function>
-    <callback name="paint_fill_glyph_func_t" c:type="hb_paint_fill_glyph_func_t">
+    <callback name="paint_fill_glyph_func_t" c:type="hb_paint_fill_glyph_func_t" version="14.3.0">
       <doc xml:space="preserve">A virtual method for the #hb_paint_funcs_t to fill a glyph's shape with
 a solid color. If not implemented, a sequence of "push-clip-glyph",
 "color", "pop-clip" paint operations, in that order, will be emitted
-instead.
-
-XSince: REPLACEME</doc>
+instead.</doc>
       <return-value transfer-ownership="none">
         <type name="none" c:type="void"/>
       </return-value>
@@ -13711,10 +13796,8 @@ call to hb_paint_funcs_destroy() is made.</doc>
         </parameter>
       </parameters>
     </function>
-    <function name="paint_funcs_set_fill_glyph_func" c:identifier="hb_paint_funcs_set_fill_glyph_func">
-      <doc xml:space="preserve">Sets the fill-glyph callback on the paint functions struct.
-
-XSince: REPLACEME</doc>
+    <function name="paint_funcs_set_fill_glyph_func" c:identifier="hb_paint_funcs_set_fill_glyph_func" version="14.3.0">
+      <doc xml:space="preserve">Sets the fill-glyph callback on the paint functions struct.</doc>
       <return-value transfer-ownership="none">
         <type name="none" c:type="void"/>
       </return-value>
