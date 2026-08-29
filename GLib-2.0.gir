@@ -15594,7 +15594,7 @@ linked against at application run time.</doc>
     <constant name="MAXUINT8" value="255" c:type="G_MAXUINT8">
       <type name="guint8" c:type="guint8"/>
     </constant>
-    <constant name="MICRO_VERSION" value="3" c:type="GLIB_MICRO_VERSION">
+    <constant name="MICRO_VERSION" value="4" c:type="GLIB_MICRO_VERSION">
       <doc xml:space="preserve">The micro version number of the GLib library.
 
 Like #gtk_micro_version, but from the headers used at
@@ -55303,7 +55303,22 @@ the Single Unix Specification.</doc>
 the comparison routine accepts a user data argument
 (like [`qsort_r()`](man:qsort_r(3))).
 
-Unlike `qsort()`, this is guaranteed to be a stable sort.</doc>
+Unlike `qsort()`, this is guaranteed to be a stable sort.
+
+An example of sorting an array of strings (a strv):
+```
+static int
+strcmp_data (const void *a,
+             const void *b,
+             void       *user_data)
+{
+  return strcmp (*((const char * const *) a), *((const char * const *) b));
+}
+
+char **my_strv = …;
+size_t my_strv_length = g_strv_length (my_strv);
+g_sort_array (my_strv, (my_strv_length, sizeof (*my_strv), strcmp_data, NULL);
+```</doc>
       <return-value transfer-ownership="none">
         <type name="none" c:type="void"/>
       </return-value>
