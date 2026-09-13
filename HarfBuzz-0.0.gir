@@ -146,6 +146,19 @@ human-readable names.</doc>
 there is no selector index corresponding to the selector of interest.</doc>
       <type name="gint" c:type="gint"/>
     </constant>
+    <constant name="BUDGET_DEFAULT" value="-9223372036854775808" c:type="HB_BUDGET_DEFAULT">
+      <doc xml:space="preserve">Use the implementation's finite default work budget.
+
+XSince: REPLACEME</doc>
+      <type name="gint64" c:type="int64_t"/>
+    </constant>
+    <constant name="BUDGET_UNLIMITED" value="9223372036854775807" c:type="HB_BUDGET_UNLIMITED">
+      <doc xml:space="preserve">Use an effectively unlimited work budget. Structural safety limits remain
+active.
+
+XSince: REPLACEME</doc>
+      <type name="gint64" c:type="int64_t"/>
+    </constant>
     <function-macro name="BUFFER_CLUSTER_LEVEL_IS_CHARACTERS" c:identifier="HB_BUFFER_CLUSTER_LEVEL_IS_CHARACTERS" version="11.0.0" introspectable="0">
       <doc xml:space="preserve">Tests whether a cluster level does not group cluster values by graphemes.
 Requires that the level be valid.</doc>
@@ -4043,6 +4056,58 @@ The referenced #hb_draw_funcs_t.</doc>
         </parameter>
       </parameters>
     </function>
+    <function name="draw_funcs_set_get_budget_func" c:identifier="hb_draw_funcs_set_get_budget_func">
+      <doc xml:space="preserve">Sets the budget-policy getter callback.
+
+XSince: REPLACEME</doc>
+      <return-value transfer-ownership="none">
+        <type name="none" c:type="void"/>
+      </return-value>
+      <parameters>
+        <parameter name="dfuncs" transfer-ownership="none">
+          <doc xml:space="preserve">draw functions object</doc>
+          <type name="draw_funcs_t" c:type="hb_draw_funcs_t*"/>
+        </parameter>
+        <parameter name="func" transfer-ownership="none" scope="notified" closure="2" destroy="3">
+          <doc xml:space="preserve">budget getter</doc>
+          <type name="draw_get_budget_func_t" c:type="hb_draw_get_budget_func_t"/>
+        </parameter>
+        <parameter name="user_data" transfer-ownership="none" nullable="1" allow-none="1">
+          <doc xml:space="preserve">Data to pass to @func</doc>
+          <type name="gpointer" c:type="void*"/>
+        </parameter>
+        <parameter name="destroy" transfer-ownership="none" nullable="1" allow-none="1" scope="notified">
+          <doc xml:space="preserve">callback to destroy @user_data</doc>
+          <type name="destroy_func_t" c:type="hb_destroy_func_t"/>
+        </parameter>
+      </parameters>
+    </function>
+    <function name="draw_funcs_set_get_budget_remaining_func" c:identifier="hb_draw_funcs_set_get_budget_remaining_func">
+      <doc xml:space="preserve">Sets the live-budget getter callback.
+
+XSince: REPLACEME</doc>
+      <return-value transfer-ownership="none">
+        <type name="none" c:type="void"/>
+      </return-value>
+      <parameters>
+        <parameter name="dfuncs" transfer-ownership="none">
+          <doc xml:space="preserve">draw functions object</doc>
+          <type name="draw_funcs_t" c:type="hb_draw_funcs_t*"/>
+        </parameter>
+        <parameter name="func" transfer-ownership="none" scope="notified" closure="2" destroy="3">
+          <doc xml:space="preserve">live-budget getter</doc>
+          <type name="draw_get_budget_remaining_func_t" c:type="hb_draw_get_budget_remaining_func_t"/>
+        </parameter>
+        <parameter name="user_data" transfer-ownership="none" nullable="1" allow-none="1">
+          <doc xml:space="preserve">Data to pass to @func</doc>
+          <type name="gpointer" c:type="void*"/>
+        </parameter>
+        <parameter name="destroy" transfer-ownership="none" nullable="1" allow-none="1" scope="notified">
+          <doc xml:space="preserve">callback to destroy @user_data</doc>
+          <type name="destroy_func_t" c:type="hb_destroy_func_t"/>
+        </parameter>
+      </parameters>
+    </function>
     <function name="draw_funcs_set_line_to_func" c:identifier="hb_draw_funcs_set_line_to_func" version="4.0.0">
       <doc xml:space="preserve">Sets line-to callback to the draw functions object.</doc>
       <return-value transfer-ownership="none">
@@ -4115,6 +4180,32 @@ The referenced #hb_draw_funcs_t.</doc>
         </parameter>
       </parameters>
     </function>
+    <function name="draw_funcs_set_set_budget_func" c:identifier="hb_draw_funcs_set_set_budget_func">
+      <doc xml:space="preserve">Sets the budget setter callback.
+
+XSince: REPLACEME</doc>
+      <return-value transfer-ownership="none">
+        <type name="none" c:type="void"/>
+      </return-value>
+      <parameters>
+        <parameter name="dfuncs" transfer-ownership="none">
+          <doc xml:space="preserve">draw functions object</doc>
+          <type name="draw_funcs_t" c:type="hb_draw_funcs_t*"/>
+        </parameter>
+        <parameter name="func" transfer-ownership="none" scope="notified" closure="2" destroy="3">
+          <doc xml:space="preserve">budget setter</doc>
+          <type name="draw_set_budget_func_t" c:type="hb_draw_set_budget_func_t"/>
+        </parameter>
+        <parameter name="user_data" transfer-ownership="none" nullable="1" allow-none="1">
+          <doc xml:space="preserve">Data to pass to @func</doc>
+          <type name="gpointer" c:type="void*"/>
+        </parameter>
+        <parameter name="destroy" transfer-ownership="none" nullable="1" allow-none="1" scope="notified">
+          <doc xml:space="preserve">callback to destroy @user_data</doc>
+          <type name="destroy_func_t" c:type="hb_destroy_func_t"/>
+        </parameter>
+      </parameters>
+    </function>
     <function name="draw_funcs_set_user_data" c:identifier="hb_draw_funcs_set_user_data" version="7.0.0" introspectable="0">
       <doc xml:space="preserve">Attaches a user-data key/data pair to the specified draw-functions structure.</doc>
       <return-value transfer-ownership="none">
@@ -4152,6 +4243,97 @@ The referenced #hb_draw_funcs_t.</doc>
 #hb_draw_quadratic_to_func_t calls to #hb_draw_cubic_to_func_t if the
 callback isn't defined.</doc>
     </record>
+    <function name="draw_get_budget" c:identifier="hb_draw_get_budget">
+      <doc xml:space="preserve">Fetches the configured work-budget policy.</doc>
+      <return-value transfer-ownership="none">
+        <doc xml:space="preserve">the configured policy, or #HB_BUDGET_DEFAULT if unsupported
+
+XSince: REPLACEME</doc>
+        <type name="gint64" c:type="int64_t"/>
+      </return-value>
+      <parameters>
+        <parameter name="dfuncs" transfer-ownership="none">
+          <doc xml:space="preserve">draw functions object</doc>
+          <type name="draw_funcs_t" c:type="hb_draw_funcs_t*"/>
+        </parameter>
+        <parameter name="draw_data" transfer-ownership="none" nullable="1" allow-none="1">
+          <doc xml:space="preserve">associated draw data</doc>
+          <type name="gpointer" c:type="void*"/>
+        </parameter>
+      </parameters>
+    </function>
+    <callback name="draw_get_budget_func_t" c:type="hb_draw_get_budget_func_t">
+      <doc xml:space="preserve">Fetches the configured work-budget policy.</doc>
+      <return-value transfer-ownership="none">
+        <doc xml:space="preserve">the configured work-budget policy
+
+XSince: REPLACEME</doc>
+        <type name="gint64" c:type="int64_t"/>
+      </return-value>
+      <parameters>
+        <parameter name="dfuncs" transfer-ownership="none">
+          <doc xml:space="preserve">draw functions object</doc>
+          <type name="draw_funcs_t" c:type="hb_draw_funcs_t*"/>
+        </parameter>
+        <parameter name="draw_data" transfer-ownership="none" nullable="1" allow-none="1">
+          <doc xml:space="preserve">The data accompanying the draw functions</doc>
+          <type name="gpointer" c:type="void*"/>
+        </parameter>
+        <parameter name="user_data" transfer-ownership="none" nullable="1" allow-none="1" closure="2">
+          <doc xml:space="preserve">User data pointer passed to hb_draw_funcs_set_get_budget_func()</doc>
+          <type name="gpointer" c:type="void*"/>
+        </parameter>
+      </parameters>
+    </callback>
+    <function name="draw_get_budget_remaining" c:identifier="hb_draw_get_budget_remaining">
+      <doc xml:space="preserve">Fetches the live work budget. A negative value means the budget was
+exhausted. Zero means the preceding work fit exactly, but no positive-cost
+work can start.</doc>
+      <return-value transfer-ownership="none">
+        <doc xml:space="preserve">the live work budget; if it is not tracked, the concrete
+  configured policy or #HB_BUDGET_UNLIMITED
+
+XSince: REPLACEME</doc>
+        <type name="gint64" c:type="int64_t"/>
+      </return-value>
+      <parameters>
+        <parameter name="dfuncs" transfer-ownership="none">
+          <doc xml:space="preserve">draw functions object</doc>
+          <type name="draw_funcs_t" c:type="hb_draw_funcs_t*"/>
+        </parameter>
+        <parameter name="draw_data" transfer-ownership="none" nullable="1" allow-none="1">
+          <doc xml:space="preserve">associated draw data</doc>
+          <type name="gpointer" c:type="void*"/>
+        </parameter>
+      </parameters>
+    </function>
+    <callback name="draw_get_budget_remaining_func_t" c:type="hb_draw_get_budget_remaining_func_t">
+      <doc xml:space="preserve">Fetches the address of the live work budget. The returned address must stay
+valid while @draw_data is used with @dfuncs. The live value must be concrete;
+it must not contain #HB_BUDGET_DEFAULT.</doc>
+      <return-value transfer-ownership="none" nullable="1">
+        <doc xml:space="preserve">the live work budget, or `NULL` if
+  live budget accounting is unsupported
+
+XSince: REPLACEME</doc>
+        <type name="gint64" c:type="int64_t*"/>
+      </return-value>
+      <parameters>
+        <parameter name="dfuncs" transfer-ownership="none">
+          <doc xml:space="preserve">draw functions object</doc>
+          <type name="draw_funcs_t" c:type="hb_draw_funcs_t*"/>
+        </parameter>
+        <parameter name="draw_data" transfer-ownership="none" nullable="1" allow-none="1">
+          <doc xml:space="preserve">The data accompanying the draw functions</doc>
+          <type name="gpointer" c:type="void*"/>
+        </parameter>
+        <parameter name="user_data" transfer-ownership="none" nullable="1" allow-none="1" closure="2">
+          <doc xml:space="preserve">User data pointer passed to
+  hb_draw_funcs_set_get_budget_remaining_func()</doc>
+          <type name="gpointer" c:type="void*"/>
+        </parameter>
+      </parameters>
+    </callback>
     <function name="draw_line" c:identifier="hb_draw_line" version="14.2.0">
       <doc xml:space="preserve">Emits a tapered line segment as a filled trapezoid.  @w0 and
 @w1 are the full stroke widths at the start and end points
@@ -4472,6 +4654,58 @@ considerably cheaper per frame.</doc>
         </parameter>
       </parameters>
     </function>
+    <function name="draw_set_budget" c:identifier="hb_draw_set_budget">
+      <doc xml:space="preserve">Sets the work-budget policy and recharges the live work budget. Negative
+values other than #HB_BUDGET_DEFAULT are clamped to zero.</doc>
+      <return-value transfer-ownership="none">
+        <doc xml:space="preserve">`true` if the draw functions support work budgets
+
+XSince: REPLACEME</doc>
+        <type name="bool_t" c:type="hb_bool_t"/>
+      </return-value>
+      <parameters>
+        <parameter name="dfuncs" transfer-ownership="none">
+          <doc xml:space="preserve">draw functions object</doc>
+          <type name="draw_funcs_t" c:type="hb_draw_funcs_t*"/>
+        </parameter>
+        <parameter name="draw_data" transfer-ownership="none" nullable="1" allow-none="1">
+          <doc xml:space="preserve">associated draw data</doc>
+          <type name="gpointer" c:type="void*"/>
+        </parameter>
+        <parameter name="budget" transfer-ownership="none">
+          <doc xml:space="preserve">the new work-budget policy</doc>
+          <type name="gint64" c:type="int64_t"/>
+        </parameter>
+      </parameters>
+    </function>
+    <callback name="draw_set_budget_func_t" c:type="hb_draw_set_budget_func_t">
+      <doc xml:space="preserve">Sets the work-budget policy and recharges the live work budget. @budget is
+#HB_BUDGET_DEFAULT, #HB_BUDGET_UNLIMITED, or a non-negative concrete value.</doc>
+      <return-value transfer-ownership="none">
+        <doc xml:space="preserve">`true` if the budget was set, `false` if unsupported
+
+XSince: REPLACEME</doc>
+        <type name="bool_t" c:type="hb_bool_t"/>
+      </return-value>
+      <parameters>
+        <parameter name="dfuncs" transfer-ownership="none">
+          <doc xml:space="preserve">draw functions object</doc>
+          <type name="draw_funcs_t" c:type="hb_draw_funcs_t*"/>
+        </parameter>
+        <parameter name="draw_data" transfer-ownership="none" nullable="1" allow-none="1">
+          <doc xml:space="preserve">The data accompanying the draw functions</doc>
+          <type name="gpointer" c:type="void*"/>
+        </parameter>
+        <parameter name="budget" transfer-ownership="none">
+          <doc xml:space="preserve">the new work-budget policy</doc>
+          <type name="gint64" c:type="int64_t"/>
+        </parameter>
+        <parameter name="user_data" transfer-ownership="none" nullable="1" allow-none="1" closure="3">
+          <doc xml:space="preserve">User data pointer passed to hb_draw_funcs_set_set_budget_func()</doc>
+          <type name="gpointer" c:type="void*"/>
+        </parameter>
+      </parameters>
+    </callback>
     <record name="draw_state_t" c:type="hb_draw_state_t" version="4.0.0" glib:type-name="hb_draw_state_t" glib:get-type="hb_gobject_draw_state_get_type" c:symbol-prefix="gobject_draw_state">
       <doc xml:space="preserve">Current drawing state.</doc>
       <field name="path_open" writable="1">
@@ -13820,6 +14054,58 @@ call to hb_paint_funcs_destroy() is made.</doc>
         </parameter>
       </parameters>
     </function>
+    <function name="paint_funcs_set_get_budget_func" c:identifier="hb_paint_funcs_set_get_budget_func">
+      <doc xml:space="preserve">Sets the budget-policy getter callback.
+
+XSince: REPLACEME</doc>
+      <return-value transfer-ownership="none">
+        <type name="none" c:type="void"/>
+      </return-value>
+      <parameters>
+        <parameter name="funcs" transfer-ownership="none">
+          <doc xml:space="preserve">paint functions object</doc>
+          <type name="paint_funcs_t" c:type="hb_paint_funcs_t*"/>
+        </parameter>
+        <parameter name="func" transfer-ownership="none" scope="notified" closure="2" destroy="3">
+          <doc xml:space="preserve">budget getter</doc>
+          <type name="paint_get_budget_func_t" c:type="hb_paint_get_budget_func_t"/>
+        </parameter>
+        <parameter name="user_data" transfer-ownership="none" nullable="1" allow-none="1">
+          <doc xml:space="preserve">Data to pass to @func</doc>
+          <type name="gpointer" c:type="void*"/>
+        </parameter>
+        <parameter name="destroy" transfer-ownership="none" nullable="1" allow-none="1" scope="notified">
+          <doc xml:space="preserve">callback to destroy @user_data</doc>
+          <type name="destroy_func_t" c:type="hb_destroy_func_t"/>
+        </parameter>
+      </parameters>
+    </function>
+    <function name="paint_funcs_set_get_budget_remaining_func" c:identifier="hb_paint_funcs_set_get_budget_remaining_func">
+      <doc xml:space="preserve">Sets the live-budget getter callback.
+
+XSince: REPLACEME</doc>
+      <return-value transfer-ownership="none">
+        <type name="none" c:type="void"/>
+      </return-value>
+      <parameters>
+        <parameter name="funcs" transfer-ownership="none">
+          <doc xml:space="preserve">paint functions object</doc>
+          <type name="paint_funcs_t" c:type="hb_paint_funcs_t*"/>
+        </parameter>
+        <parameter name="func" transfer-ownership="none" scope="notified" closure="2" destroy="3">
+          <doc xml:space="preserve">live-budget getter</doc>
+          <type name="paint_get_budget_remaining_func_t" c:type="hb_paint_get_budget_remaining_func_t"/>
+        </parameter>
+        <parameter name="user_data" transfer-ownership="none" nullable="1" allow-none="1">
+          <doc xml:space="preserve">Data to pass to @func</doc>
+          <type name="gpointer" c:type="void*"/>
+        </parameter>
+        <parameter name="destroy" transfer-ownership="none" nullable="1" allow-none="1" scope="notified">
+          <doc xml:space="preserve">callback to destroy @user_data</doc>
+          <type name="destroy_func_t" c:type="hb_destroy_func_t"/>
+        </parameter>
+      </parameters>
+    </function>
     <function name="paint_funcs_set_image_func" c:identifier="hb_paint_funcs_set_image_func" version="7.0.0">
       <doc xml:space="preserve">Sets the paint-image callback on the paint functions struct.</doc>
       <return-value transfer-ownership="none">
@@ -14132,6 +14418,32 @@ call to hb_paint_funcs_destroy() is made.</doc>
         </parameter>
       </parameters>
     </function>
+    <function name="paint_funcs_set_set_budget_func" c:identifier="hb_paint_funcs_set_set_budget_func">
+      <doc xml:space="preserve">Sets the budget setter callback.
+
+XSince: REPLACEME</doc>
+      <return-value transfer-ownership="none">
+        <type name="none" c:type="void"/>
+      </return-value>
+      <parameters>
+        <parameter name="funcs" transfer-ownership="none">
+          <doc xml:space="preserve">paint functions object</doc>
+          <type name="paint_funcs_t" c:type="hb_paint_funcs_t*"/>
+        </parameter>
+        <parameter name="func" transfer-ownership="none" scope="notified" closure="2" destroy="3">
+          <doc xml:space="preserve">budget setter</doc>
+          <type name="paint_set_budget_func_t" c:type="hb_paint_set_budget_func_t"/>
+        </parameter>
+        <parameter name="user_data" transfer-ownership="none" nullable="1" allow-none="1">
+          <doc xml:space="preserve">Data to pass to @func</doc>
+          <type name="gpointer" c:type="void*"/>
+        </parameter>
+        <parameter name="destroy" transfer-ownership="none" nullable="1" allow-none="1" scope="notified">
+          <doc xml:space="preserve">callback to destroy @user_data</doc>
+          <type name="destroy_func_t" c:type="hb_destroy_func_t"/>
+        </parameter>
+      </parameters>
+    </function>
     <function name="paint_funcs_set_sweep_gradient_func" c:identifier="hb_paint_funcs_set_sweep_gradient_func" version="7.0.0">
       <doc xml:space="preserve">Sets the sweep-gradient callback on the paint functions struct.</doc>
       <return-value transfer-ownership="none">
@@ -14207,6 +14519,97 @@ The custom-palette-color callback is only necessary if
 you want to override colors from the font palette with
 custom colors.</doc>
     </record>
+    <function name="paint_get_budget" c:identifier="hb_paint_get_budget">
+      <doc xml:space="preserve">Fetches the configured work-budget policy.</doc>
+      <return-value transfer-ownership="none">
+        <doc xml:space="preserve">the configured policy, or #HB_BUDGET_DEFAULT if unsupported
+
+XSince: REPLACEME</doc>
+        <type name="gint64" c:type="int64_t"/>
+      </return-value>
+      <parameters>
+        <parameter name="funcs" transfer-ownership="none">
+          <doc xml:space="preserve">paint functions object</doc>
+          <type name="paint_funcs_t" c:type="hb_paint_funcs_t*"/>
+        </parameter>
+        <parameter name="paint_data" transfer-ownership="none" nullable="1" allow-none="1">
+          <doc xml:space="preserve">associated paint data</doc>
+          <type name="gpointer" c:type="void*"/>
+        </parameter>
+      </parameters>
+    </function>
+    <callback name="paint_get_budget_func_t" c:type="hb_paint_get_budget_func_t">
+      <doc xml:space="preserve">Fetches the configured work-budget policy.</doc>
+      <return-value transfer-ownership="none">
+        <doc xml:space="preserve">the configured work-budget policy
+
+XSince: REPLACEME</doc>
+        <type name="gint64" c:type="int64_t"/>
+      </return-value>
+      <parameters>
+        <parameter name="funcs" transfer-ownership="none">
+          <doc xml:space="preserve">paint functions object</doc>
+          <type name="paint_funcs_t" c:type="hb_paint_funcs_t*"/>
+        </parameter>
+        <parameter name="paint_data" transfer-ownership="none" nullable="1" allow-none="1">
+          <doc xml:space="preserve">The data accompanying the paint functions</doc>
+          <type name="gpointer" c:type="void*"/>
+        </parameter>
+        <parameter name="user_data" transfer-ownership="none" nullable="1" allow-none="1" closure="2">
+          <doc xml:space="preserve">User data pointer passed to hb_paint_funcs_set_get_budget_func()</doc>
+          <type name="gpointer" c:type="void*"/>
+        </parameter>
+      </parameters>
+    </callback>
+    <function name="paint_get_budget_remaining" c:identifier="hb_paint_get_budget_remaining">
+      <doc xml:space="preserve">Fetches the live work budget. A negative value means the budget was
+exhausted. Zero means the preceding work fit exactly, but no positive-cost
+work can start.</doc>
+      <return-value transfer-ownership="none">
+        <doc xml:space="preserve">the live work budget; if it is not tracked, the concrete
+  configured policy or #HB_BUDGET_UNLIMITED
+
+XSince: REPLACEME</doc>
+        <type name="gint64" c:type="int64_t"/>
+      </return-value>
+      <parameters>
+        <parameter name="funcs" transfer-ownership="none">
+          <doc xml:space="preserve">paint functions object</doc>
+          <type name="paint_funcs_t" c:type="hb_paint_funcs_t*"/>
+        </parameter>
+        <parameter name="paint_data" transfer-ownership="none" nullable="1" allow-none="1">
+          <doc xml:space="preserve">associated paint data</doc>
+          <type name="gpointer" c:type="void*"/>
+        </parameter>
+      </parameters>
+    </function>
+    <callback name="paint_get_budget_remaining_func_t" c:type="hb_paint_get_budget_remaining_func_t">
+      <doc xml:space="preserve">Fetches the address of the live work budget. The returned address must stay
+valid while @paint_data is used with @funcs. The live value must be concrete;
+it must not contain #HB_BUDGET_DEFAULT.</doc>
+      <return-value transfer-ownership="none" nullable="1">
+        <doc xml:space="preserve">the live work budget, or `NULL` if
+  live budget accounting is unsupported
+
+XSince: REPLACEME</doc>
+        <type name="gint64" c:type="int64_t*"/>
+      </return-value>
+      <parameters>
+        <parameter name="funcs" transfer-ownership="none">
+          <doc xml:space="preserve">paint functions object</doc>
+          <type name="paint_funcs_t" c:type="hb_paint_funcs_t*"/>
+        </parameter>
+        <parameter name="paint_data" transfer-ownership="none" nullable="1" allow-none="1">
+          <doc xml:space="preserve">The data accompanying the paint functions</doc>
+          <type name="gpointer" c:type="void*"/>
+        </parameter>
+        <parameter name="user_data" transfer-ownership="none" nullable="1" allow-none="1" closure="2">
+          <doc xml:space="preserve">User data pointer passed to
+  hb_paint_funcs_set_get_budget_remaining_func()</doc>
+          <type name="gpointer" c:type="void*"/>
+        </parameter>
+      </parameters>
+    </callback>
     <function name="paint_image" c:identifier="hb_paint_image" version="7.0.0">
       <doc xml:space="preserve">Perform a "image" paint operation.</doc>
       <return-value transfer-ownership="none">
@@ -15205,6 +15608,58 @@ line).  Degenerate (P0 == P2) passes through unchanged.</doc>
         </parameter>
       </parameters>
     </function>
+    <function name="paint_set_budget" c:identifier="hb_paint_set_budget">
+      <doc xml:space="preserve">Sets the work-budget policy and recharges the live work budget. Negative
+values other than #HB_BUDGET_DEFAULT are clamped to zero.</doc>
+      <return-value transfer-ownership="none">
+        <doc xml:space="preserve">`true` if the paint functions support work budgets
+
+XSince: REPLACEME</doc>
+        <type name="bool_t" c:type="hb_bool_t"/>
+      </return-value>
+      <parameters>
+        <parameter name="funcs" transfer-ownership="none">
+          <doc xml:space="preserve">paint functions object</doc>
+          <type name="paint_funcs_t" c:type="hb_paint_funcs_t*"/>
+        </parameter>
+        <parameter name="paint_data" transfer-ownership="none" nullable="1" allow-none="1">
+          <doc xml:space="preserve">associated paint data</doc>
+          <type name="gpointer" c:type="void*"/>
+        </parameter>
+        <parameter name="budget" transfer-ownership="none">
+          <doc xml:space="preserve">the new work-budget policy</doc>
+          <type name="gint64" c:type="int64_t"/>
+        </parameter>
+      </parameters>
+    </function>
+    <callback name="paint_set_budget_func_t" c:type="hb_paint_set_budget_func_t">
+      <doc xml:space="preserve">Sets the work-budget policy and recharges the live work budget. @budget is
+#HB_BUDGET_DEFAULT, #HB_BUDGET_UNLIMITED, or a non-negative concrete value.</doc>
+      <return-value transfer-ownership="none">
+        <doc xml:space="preserve">`true` if the budget was set, `false` if unsupported
+
+XSince: REPLACEME</doc>
+        <type name="bool_t" c:type="hb_bool_t"/>
+      </return-value>
+      <parameters>
+        <parameter name="funcs" transfer-ownership="none">
+          <doc xml:space="preserve">paint functions object</doc>
+          <type name="paint_funcs_t" c:type="hb_paint_funcs_t*"/>
+        </parameter>
+        <parameter name="paint_data" transfer-ownership="none" nullable="1" allow-none="1">
+          <doc xml:space="preserve">The data accompanying the paint functions</doc>
+          <type name="gpointer" c:type="void*"/>
+        </parameter>
+        <parameter name="budget" transfer-ownership="none">
+          <doc xml:space="preserve">the new work-budget policy</doc>
+          <type name="gint64" c:type="int64_t"/>
+        </parameter>
+        <parameter name="user_data" transfer-ownership="none" nullable="1" allow-none="1" closure="3">
+          <doc xml:space="preserve">User data pointer passed to hb_paint_funcs_set_set_budget_func()</doc>
+          <type name="gpointer" c:type="void*"/>
+        </parameter>
+      </parameters>
+    </callback>
     <function name="paint_sweep_gradient" c:identifier="hb_paint_sweep_gradient" version="7.0.0">
       <doc xml:space="preserve">Perform a "sweep-gradient" paint operation.</doc>
       <return-value transfer-ownership="none">
