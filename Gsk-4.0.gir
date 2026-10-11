@@ -3325,6 +3325,28 @@ produce the smallest possible bounds.</doc>
           </parameter>
         </parameters>
       </method>
+      <method name="hash" c:identifier="gsk_path_hash" version="4.26">
+        <doc xml:space="preserve">Generates a hash value for the path suitable for use in a `GHashTable`.
+
+Paths that compare equal with [method@Gsk.Path.equal] will have the same
+hash value and so will paths that compare equal with
+[method@Gsk.Path.translatable]. If it is important to generate different
+hash values for translatable paths, consider xor-ing a hash of the path's
+bounds.
+
+The returned hash values may not be identical across multiple runs
+of the same program.</doc>
+        <return-value transfer-ownership="none">
+          <doc xml:space="preserve">The path's hash value.</doc>
+          <type name="guint" c:type="guint"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="self" transfer-ownership="none">
+            <doc xml:space="preserve">a path</doc>
+            <type name="Path" c:type="const GskPath*"/>
+          </instance-parameter>
+        </parameters>
+      </method>
       <method name="in_fill" c:identifier="gsk_path_in_fill" version="4.14">
         <doc xml:space="preserve">Returns whether a point is inside the fill area of a path.
 
@@ -3447,6 +3469,31 @@ for details.</doc>
             <doc xml:space="preserve">a path</doc>
             <type name="Path" c:type="GskPath*"/>
           </instance-parameter>
+        </parameters>
+      </method>
+      <method name="translatable" c:identifier="gsk_path_translatable" version="4.26">
+        <doc xml:space="preserve">Returns whether 2 paths only differ by an x/y translation and
+compare [method@Gsk.Path.equal] otherwise.
+
+If you want to know the translation, you can use
+[method@Gsk.Path.get_bounds] and compare the bounds.
+
+Note that this function may return false for otherwise translatable
+paths due to floating point quantization.</doc>
+        <return-value transfer-ownership="none">
+          <doc xml:space="preserve">true if @path1 and @path2 are equal when applying a
+    translation</doc>
+          <type name="gboolean" c:type="gboolean"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="path1" transfer-ownership="none">
+            <doc xml:space="preserve">a path</doc>
+            <type name="Path" c:type="const GskPath*"/>
+          </instance-parameter>
+          <parameter name="path2" transfer-ownership="none">
+            <doc xml:space="preserve">another path</doc>
+            <type name="Path" c:type="const GskPath*"/>
+          </parameter>
         </parameters>
       </method>
       <method name="unref" c:identifier="gsk_path_unref" version="4.14">

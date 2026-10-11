@@ -7722,7 +7722,7 @@ See gtk_assistant_commit() for details.</doc>
  add its own buttons through gtk_assistant_add_action_widget().</doc>
       </member>
     </enumeration>
-    <constant name="BINARY_AGE" value="2401" c:type="GTK_BINARY_AGE">
+    <constant name="BINARY_AGE" value="2500" c:type="GTK_BINARY_AGE">
       <doc xml:space="preserve">Like [func@get_binary_age], but from the headers used at
 application compile time, rather than from the library linked
 against at application run time.</doc>
@@ -48918,7 +48918,7 @@ signal in case of conversion failure.
 See [signal@Gtk.SpinButton::input].</doc>
       <type name="gint" c:type="gint"/>
     </constant>
-    <constant name="INTERFACE_AGE" value="1" c:type="GTK_INTERFACE_AGE">
+    <constant name="INTERFACE_AGE" value="0" c:type="GTK_INTERFACE_AGE">
       <doc xml:space="preserve">Like [func@get_interface_age], but from the headers used at
 application compile time, rather than from the library linked
 against at application run time.</doc>
@@ -60314,13 +60314,13 @@ This macro is longer used by GTK.</doc>
         </parameter>
       </parameters>
     </function-macro>
-    <constant name="MICRO_VERSION" value="1" c:type="GTK_MICRO_VERSION">
+    <constant name="MICRO_VERSION" value="0" c:type="GTK_MICRO_VERSION">
       <doc xml:space="preserve">Like [func@get_micro_version], but from the headers used at
 application compile time, rather than from the library linked
 against at application run time.</doc>
       <type name="gint" c:type="gint"/>
     </constant>
-    <constant name="MINOR_VERSION" value="24" c:type="GTK_MINOR_VERSION">
+    <constant name="MINOR_VERSION" value="25" c:type="GTK_MINOR_VERSION">
       <doc xml:space="preserve">Like [func@get_minor_version], but from the headers used at
 application compile time, rather than from the library linked
 against at application run time.</doc>
@@ -113726,11 +113726,12 @@ to remove it yourself.</doc>
         <doc xml:space="preserve">Assigns size, position, (optionally) a baseline and transform
 to a child widget.
 
-In this function, the allocation and baseline may be adjusted.
-The given allocation will be forced to be bigger than the
-widget's minimum size, as well as at least 0×0 in size.
+The given allocation must be large enough for the widget's minimum
+size, as well as at least 0×0 in size. See [method@Gtk.Widget.measure]
+for querying a minimum size.
 
-This function is only used by widget implementations.
+This function is only used by widget implementations to allocate a size
+for their direct children.
 
 For a version that does not take a transform, see
 [method@Gtk.Widget.size_allocate].</doc>
@@ -116889,8 +116890,15 @@ toplevel widget is realized and mapped.</doc>
         </parameters>
       </method>
       <method name="size_allocate" c:identifier="gtk_widget_size_allocate">
-        <doc xml:space="preserve">Allocates widget with a transformation that translates
-the origin to the position in @allocation.
+        <doc xml:space="preserve">Allocates widget with a transformation that translates the origin to
+the position in @allocation.
+
+The given allocation must be large enough for the widget's minimum
+size, as well as at least 0×0 in size. See [method@Gtk.Widget.measure]
+for querying a minimum size.
+
+This function is only used by widget implementations to allocate a size
+for their direct children.
 
 This is a simple form of [method@Gtk.Widget.allocate].</doc>
         <return-value transfer-ownership="none">
