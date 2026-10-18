@@ -33895,7 +33895,7 @@ This function will set up @completion
 to have a list displaying all (and just) strings in the completion list,
 and to get those strings from @column in the model of @completion.
 
-This functions creates and adds a `GtkCellRendererText` for the selected
+This function creates and adds a `GtkCellRendererText` for the selected
 column. If you need to set the text column, but don't want the cell
 renderer, use g_object_set() to set the
 [property@Gtk.EntryCompletion:text-column] property directly.</doc>
@@ -46464,6 +46464,11 @@ to %GTK_ALIGN_BASELINE.</doc>
 visible item and shows them in a grid. The orientation of the grid view
 determines if the grid reflows vertically or horizontally.
 
+Setting [property@Gtk.GridView:header-factory] displays section headers
+supplied by the model's [iface@Gtk.SectionModel] implementation. Each
+section starts a new row and its header spans all columns. Headers scroll
+with the items and do not participate in selection.
+
 `GtkGridView` allows the user to select items according to the selection
 characteristics of the model. For models that allow multiple selected items,
 it is possible to turn on _rubberband selection_, using
@@ -46483,8 +46488,10 @@ To learn more about the list widget framework, see the
 
 ```
 gridview
+├── header
 ├── child[.activatable]
 │
+├── header
 ├── child[.activatable]
 │
 ┊
@@ -46494,7 +46501,8 @@ gridview
 `GtkGridView` uses a single CSS node with name `gridview`. Each child uses
 a single CSS node with name `child`. If the [property@Gtk.ListItem:activatable]
 property is set, the corresponding row will have the `.activatable` style
-class. For rubberband selection, a subnode with name `rubberband` is used.
+class. Section headers use CSS nodes with name `header`. For rubberband
+selection, a subnode with name `rubberband` is used.
 
 # Accessibility
 
@@ -46552,6 +46560,19 @@ grid_view = gtk_grid_view_new (create_model (),
         <parameters>
           <instance-parameter name="self" transfer-ownership="none">
             <doc xml:space="preserve">a `GtkGridView`</doc>
+            <type name="GridView" c:type="GtkGridView*"/>
+          </instance-parameter>
+        </parameters>
+      </method>
+      <method name="get_header_factory" c:identifier="gtk_grid_view_get_header_factory" glib:get-property="header-factory" version="4.26">
+        <doc xml:space="preserve">Gets the factory that's currently used to populate section headers.</doc>
+        <return-value transfer-ownership="none" nullable="1">
+          <doc xml:space="preserve">The factory in use</doc>
+          <type name="ListItemFactory" c:type="GtkListItemFactory*"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="self" transfer-ownership="none">
+            <doc xml:space="preserve">a gridview</doc>
             <type name="GridView" c:type="GtkGridView*"/>
           </instance-parameter>
         </parameters>
@@ -46684,6 +46705,26 @@ If it isn't, then the changes will take effect once that happens.</doc>
           </parameter>
         </parameters>
       </method>
+      <method name="set_header_factory" c:identifier="gtk_grid_view_set_header_factory" glib:set-property="header-factory" version="4.26">
+        <doc xml:space="preserve">Sets the `GtkListItemFactory` to use for populating the
+[class@Gtk.ListHeader] objects used in section headers.
+
+If this factory is set to `NULL`, the list will not show
+section headers.</doc>
+        <return-value transfer-ownership="none">
+          <type name="none" c:type="void"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="self" transfer-ownership="none">
+            <doc xml:space="preserve">a gridview</doc>
+            <type name="GridView" c:type="GtkGridView*"/>
+          </instance-parameter>
+          <parameter name="factory" transfer-ownership="none" nullable="1" allow-none="1">
+            <doc xml:space="preserve">the factory to use</doc>
+            <type name="ListItemFactory" c:type="GtkListItemFactory*"/>
+          </parameter>
+        </parameters>
+      </method>
       <method name="set_max_columns" c:identifier="gtk_grid_view_set_max_columns" glib:set-property="max-columns">
         <doc xml:space="preserve">Sets the maximum number of columns to use.
 
@@ -46785,6 +46826,12 @@ selected on hover.</doc>
         <doc xml:space="preserve">Factory for populating list items.
 
 The factory must be for configuring [class@Gtk.ListItem] objects.</doc>
+        <type name="ListItemFactory"/>
+      </property>
+      <property name="header-factory" version="4.26" writable="1" transfer-ownership="none" setter="set_header_factory" getter="get_header_factory">
+        <doc xml:space="preserve">Factory for creating header widgets.
+
+The factory must be for configuring [class@Gtk.ListHeader] objects.</doc>
         <type name="ListItemFactory"/>
       </property>
       <property name="max-columns" writable="1" transfer-ownership="none" setter="set_max_columns" getter="get_max_columns" default-value="7">
@@ -85439,7 +85486,9 @@ to [method@Gtk.Snapshot.pop].</doc>
         </parameters>
       </method>
       <method name="push_blur" c:identifier="gtk_snapshot_push_blur">
-        <doc xml:space="preserve">Blurs an image.
+        <doc xml:space="preserve">Blurs an image using a gaussian blur.
+
+The blur radius has to be set to 2x the std deviation of the blur.
 
 The image is recorded until the next call to [method@Gtk.Snapshot.pop].</doc>
         <return-value transfer-ownership="none">
@@ -85451,7 +85500,7 @@ The image is recorded until the next call to [method@Gtk.Snapshot.pop].</doc>
             <type name="Snapshot" c:type="GtkSnapshot*"/>
           </instance-parameter>
           <parameter name="radius" transfer-ownership="none">
-            <doc xml:space="preserve">the blur radius to use. Must be positive</doc>
+            <doc xml:space="preserve">the blur radius to use. Must be positive. May be 0</doc>
             <type name="gdouble" c:type="double"/>
           </parameter>
         </parameters>
@@ -87154,7 +87203,7 @@ See [method@Gtk.SpinButton.set_increments].</doc>
         </parameters>
       </method>
       <method name="get_numeric" c:identifier="gtk_spin_button_get_numeric" glib:get-property="numeric">
-        <doc xml:space="preserve">Returns whether non-numeric text can be typed into the spin button.</doc>
+        <doc xml:space="preserve">Returns whether only numeric text can be typed into the spin button.</doc>
         <return-value transfer-ownership="none">
           <doc xml:space="preserve">%TRUE if only numeric text can be entered</doc>
           <type name="gboolean" c:type="gboolean"/>
@@ -87352,7 +87401,7 @@ the spin button’s arrows are activated.</doc>
         </parameters>
       </method>
       <method name="set_numeric" c:identifier="gtk_spin_button_set_numeric" glib:set-property="numeric">
-        <doc xml:space="preserve">Sets the flag that determines if non-numeric text can be typed
+        <doc xml:space="preserve">Sets the flag that determines if only numeric text can be typed
 into the spin button.</doc>
         <return-value transfer-ownership="none">
           <type name="none" c:type="void"/>
@@ -107515,7 +107564,7 @@ This function is meant primarily for types that inherit from
 `GtkTreeStore`, and should only be used when constructing a new
 `GtkTreeStore`.
 
-This functions cannot be called after a row has been added,
+This function cannot be called after a row has been added,
 or a method on the `GtkTreeModel` interface is called on the
 tree store.</doc>
         <doc-deprecated xml:space="preserve">Use [class@Gtk.TreeListModel] instead</doc-deprecated>
@@ -113188,7 +113237,7 @@ This function is only for use in widget implementations.</doc>
         <doc xml:space="preserve">Measures @widget in the orientation @orientation and for the given @for_size.
 
 As an example, if @orientation is %GTK_ORIENTATION_HORIZONTAL and @for_size
-is 300, this functions will compute the minimum and natural width of @widget
+is 300, this function will compute the minimum and natural width of @widget
 if it is allocated at a height of 300 pixels.
 
 See [GtkWidget’s geometry management section](class.Widget.html#height-for-width-geometry-management) for
@@ -115695,7 +115744,7 @@ This function is only for use in widget implementations.</doc>
         <doc xml:space="preserve">Measures @widget in the orientation @orientation and for the given @for_size.
 
 As an example, if @orientation is %GTK_ORIENTATION_HORIZONTAL and @for_size
-is 300, this functions will compute the minimum and natural width of @widget
+is 300, this function will compute the minimum and natural width of @widget
 if it is allocated at a height of 300 pixels.
 
 See [GtkWidget’s geometry management section](class.Widget.html#height-for-width-geometry-management) for
@@ -116502,7 +116551,7 @@ with respect to event delivery.</doc>
 Setting a name allows you to refer to the widget from a
 CSS file. You can apply a style to widgets with a particular name
 in the CSS file. See the documentation for the CSS syntax (on the
-same page as the docs for [class@Gtk.StyleContext].
+same page as the docs for [class@Gtk.StyleContext]).
 
 Note that the CSS syntax has certain special characters to delimit
 and represent elements in a selector (period, #, &gt;, *...), so using

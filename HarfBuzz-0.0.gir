@@ -367,13 +367,13 @@ The serial number will increase when internal #hb_glyph_info_t and
     <constant name="VERSION_MAJOR" value="14" c:type="HB_VERSION_MAJOR">
       <type name="gint" c:type="gint"/>
     </constant>
-    <constant name="VERSION_MICRO" value="1" c:type="HB_VERSION_MICRO">
+    <constant name="VERSION_MICRO" value="0" c:type="HB_VERSION_MICRO">
       <type name="gint" c:type="gint"/>
     </constant>
-    <constant name="VERSION_MINOR" value="5" c:type="HB_VERSION_MINOR">
+    <constant name="VERSION_MINOR" value="6" c:type="HB_VERSION_MINOR">
       <type name="gint" c:type="gint"/>
     </constant>
-    <constant name="VERSION_STRING" value="14.5.1" c:type="HB_VERSION_STRING">
+    <constant name="VERSION_STRING" value="14.6.0" c:type="HB_VERSION_STRING">
       <type name="utf8" c:type="gchar*"/>
     </constant>
     <record name="aat_layout_feature_selector_info_t" c:type="hb_aat_layout_feature_selector_info_t">
@@ -1986,8 +1986,12 @@ If not called from inside a message callback, does nothing.</doc>
       </parameters>
     </function>
     <function name="buffer_clear_contents" c:identifier="hb_buffer_clear_contents" version="0.9.11">
-      <doc xml:space="preserve">Similar to hb_buffer_reset(), but does not clear the Unicode functions and
-the replacement code point.</doc>
+      <doc xml:space="preserve">Clears the buffer contents and segment properties (direction, script,
+language), and resets the random state to its default value of 1.
+
+Unlike hb_buffer_reset(), this function preserves the Unicode functions,
+flags, cluster level, replacement code point, and invisible and not-found
+glyphs. The message callback and attached user data are also preserved.</doc>
       <return-value transfer-ownership="none">
         <type name="none" c:type="void"/>
       </return-value>
@@ -2689,8 +2693,12 @@ The referenced #hb_buffer_t.</doc>
       </parameters>
     </function>
     <function name="buffer_reset" c:identifier="hb_buffer_reset" version="0.9.2">
-      <doc xml:space="preserve">Resets the buffer to its initial status, as if it was just newly created
-with hb_buffer_create().</doc>
+      <doc xml:space="preserve">Clears the buffer contents and segment properties, and restores the
+default Unicode functions and buffer settings.
+
+The message callback, its associated data, and any attached user data are
+preserved. To remove the message callback, call
+hb_buffer_set_message_func() with a `NULL` function.</doc>
       <return-value transfer-ownership="none">
         <type name="none" c:type="void"/>
       </return-value>
@@ -3221,7 +3229,10 @@ end.</doc>
       </parameters>
     </function>
     <function name="buffer_set_message_func" c:identifier="hb_buffer_set_message_func" version="1.1.3">
-      <doc xml:space="preserve">Sets the implementation function for #hb_buffer_message_func_t.</doc>
+      <doc xml:space="preserve">Sets the implementation function for #hb_buffer_message_func_t.
+The callback and its associated data are preserved by hb_buffer_reset()
+and hb_buffer_clear_contents(). The @destroy function is called when the
+callback is replaced or removed, or when @buffer is destroyed.</doc>
       <return-value transfer-ownership="none">
         <type name="none" c:type="void"/>
       </return-value>

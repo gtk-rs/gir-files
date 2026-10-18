@@ -158,7 +158,9 @@ node onto the @bottom node.</doc>
     <class name="BlurNode" c:symbol-prefix="blur_node" c:type="GskBlurNode" parent="RenderNode" glib:type-name="GskBlurNode" glib:get-type="gsk_blur_node_get_type" glib:fundamental="1">
       <doc xml:space="preserve">A render node applying a blur effect to its single child.</doc>
       <constructor name="new" c:identifier="gsk_blur_node_new">
-        <doc xml:space="preserve">Creates a render node that blurs the child.</doc>
+        <doc xml:space="preserve">Creates a render node that blurs the child.
+
+The blur radius should be set to 2x the standard deviation.</doc>
         <return-value transfer-ownership="full">
           <doc xml:space="preserve">a new `GskRenderNode`</doc>
           <type name="BlurNode" c:type="GskRenderNode*"/>
@@ -174,6 +176,22 @@ node onto the @bottom node.</doc>
           </parameter>
         </parameters>
       </constructor>
+      <method name="get_blur_radius" c:identifier="gsk_blur_node_get_blur_radius" version="4.26">
+        <doc xml:space="preserve">Retrieves the blur radius of the @node.
+
+The blur radius is the standard deviation of the blur to apply
+in the horizontal and vertical direction respectively.</doc>
+        <return-value transfer-ownership="none">
+          <doc xml:space="preserve">the blur radius</doc>
+          <type name="Graphene.Size" c:type="const graphene_size_t*"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="node" transfer-ownership="none">
+            <doc xml:space="preserve">a blur `GskRenderNode`</doc>
+            <type name="BlurNode" c:type="const GskRenderNode*"/>
+          </instance-parameter>
+        </parameters>
+      </method>
       <method name="get_child" c:identifier="gsk_blur_node_get_child">
         <doc xml:space="preserve">Retrieves the child `GskRenderNode` of the blur @node.</doc>
         <return-value transfer-ownership="none">
@@ -187,8 +205,15 @@ node onto the @bottom node.</doc>
           </instance-parameter>
         </parameters>
       </method>
-      <method name="get_radius" c:identifier="gsk_blur_node_get_radius">
-        <doc xml:space="preserve">Retrieves the blur radius of the @node.</doc>
+      <method name="get_radius" c:identifier="gsk_blur_node_get_radius" deprecated="1" deprecated-version="4.26">
+        <doc xml:space="preserve">Retrieves the blur radius of the @node.
+
+The blur radius is 2x the standard deviation of the blur,
+which, uhm, don't ask.</doc>
+        <doc-deprecated xml:space="preserve">Use [method@Gsk.BlurNode.get_blur_radius] to
+  get the separate horizontal and vertical radius.
+  And to not get confused by this function multiplying the std
+  deviation by 2.</doc-deprecated>
         <return-value transfer-ownership="none">
           <doc xml:space="preserve">the blur radius</doc>
           <type name="gfloat" c:type="float"/>
@@ -5438,7 +5463,7 @@ the result of a call to gsk_render_node_serialize() and
 gsk_render_node_deserialize() will correctly reject files it cannot open
 that were created with previous versions of GTK.
 
-The intended use of this functions is testing, benchmarking and debugging.
+The intended use of this function is testing, benchmarking and debugging.
 The format is not meant as a permanent storage format.</doc>
         <return-value transfer-ownership="full">
           <doc xml:space="preserve">a `GBytes` representing the node.</doc>
