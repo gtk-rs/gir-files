@@ -5181,6 +5181,12 @@ in the macro, so you shouldn't use double quotes.</doc>
         </parameter>
       </parameters>
     </function-macro>
+    <function-macro name="DEPRECATED_ENUMERATOR_IN_2_92_FOR" c:identifier="GLIB_DEPRECATED_ENUMERATOR_IN_2_92_FOR" introspectable="0">
+      <parameters>
+        <parameter name="f">
+        </parameter>
+      </parameters>
+    </function-macro>
     <function-macro name="DEPRECATED_FOR" c:identifier="GLIB_DEPRECATED_FOR" introspectable="0">
       <parameters>
         <parameter name="f">
@@ -5380,6 +5386,12 @@ in the macro, so you shouldn't use double quotes.</doc>
       </parameters>
     </function-macro>
     <function-macro name="DEPRECATED_IN_2_90_FOR" c:identifier="GLIB_DEPRECATED_IN_2_90_FOR" introspectable="0">
+      <parameters>
+        <parameter name="f">
+        </parameter>
+      </parameters>
+    </function-macro>
+    <function-macro name="DEPRECATED_IN_2_92_FOR" c:identifier="GLIB_DEPRECATED_IN_2_92_FOR" introspectable="0">
       <parameters>
         <parameter name="f">
         </parameter>
@@ -5589,6 +5601,12 @@ in the macro, so you shouldn't use double quotes.</doc>
         </parameter>
       </parameters>
     </function-macro>
+    <function-macro name="DEPRECATED_MACRO_IN_2_92_FOR" c:identifier="GLIB_DEPRECATED_MACRO_IN_2_92_FOR" introspectable="0">
+      <parameters>
+        <parameter name="f">
+        </parameter>
+      </parameters>
+    </function-macro>
     <function-macro name="DEPRECATED_TYPE_FOR" c:identifier="GLIB_DEPRECATED_TYPE_FOR" introspectable="0">
       <parameters>
         <parameter name="f">
@@ -5788,6 +5806,12 @@ in the macro, so you shouldn't use double quotes.</doc>
       </parameters>
     </function-macro>
     <function-macro name="DEPRECATED_TYPE_IN_2_90_FOR" c:identifier="GLIB_DEPRECATED_TYPE_IN_2_90_FOR" introspectable="0">
+      <parameters>
+        <parameter name="f">
+        </parameter>
+      </parameters>
+    </function-macro>
+    <function-macro name="DEPRECATED_TYPE_IN_2_92_FOR" c:identifier="GLIB_DEPRECATED_TYPE_IN_2_92_FOR" introspectable="0">
       <parameters>
         <parameter name="f">
         </parameter>
@@ -15618,7 +15642,7 @@ linked against at application run time.</doc>
       <doc xml:space="preserve">The minimum value which can be held in a #gint8.</doc>
       <type name="gint8" c:type="gint8"/>
     </constant>
-    <constant name="MINOR_VERSION" value="90" c:type="GLIB_MINOR_VERSION">
+    <constant name="MINOR_VERSION" value="91" c:type="GLIB_MINOR_VERSION">
       <doc xml:space="preserve">The minor version number of the GLib library.
 
 Like #gtk_minor_version, but from the headers used at
@@ -25203,6 +25227,40 @@ currently the number of fields must be 2.</doc>
         </parameters>
       </function>
     </record>
+    <function-macro name="SAVE_ERRNO" c:identifier="G_SAVE_ERRNO" version="2.92" introspectable="0">
+      <doc xml:space="preserve">Helper to save and restore `errno`.
+
+This macro declares a variable named @var,
+and initializes it from `errno`.
+When control flow leaves the enclosing scope,
+the saved value is stored back into `errno`.
+This is convenient to use when handling an error using functions that
+could overwrite ("clobber") the value of `errno`,
+such as anything that might allocate memory:
+
+|[
+if (g_unlink (path) &lt; 0)
+  {
+    G_SAVE_ERRNO (errsv);
+    g_autofree char *details = get_more_details ();
+
+    g_info ("could not delete %s (%s): %s",
+            path, details, g_strerror (errsv));
+  }
+
+// now errno is as set by g_unlink(), even if get_more_details()
+// or g_info() temporarily changed it
+]|
+
+This feature is only supported on GCC and clang.  This macro is not
+defined on other compilers and should not be used in programs that
+are intended to be portable to those compilers.</doc>
+      <parameters>
+        <parameter name="var">
+          <doc xml:space="preserve">A variable name, traditionally `errsv`</doc>
+        </parameter>
+      </parameters>
+    </function-macro>
     <constant name="SEARCHPATH_SEPARATOR" value="58" c:type="G_SEARCHPATH_SEPARATOR">
       <doc xml:space="preserve">The search path separator character.
 This is ':' on UNIX machines and ';' under Windows.</doc>
@@ -48188,6 +48246,22 @@ taking the last component of @argv[0].</doc>
   or %NULL if it has not been set yet. The returned string belongs
   to GLib and must not be modified or freed.</doc>
         <type name="utf8" c:type="const gchar*"/>
+      </return-value>
+    </function>
+    <function name="get_process_executable_dir" c:identifier="g_get_process_executable_dir" version="2.92">
+      <doc xml:space="preserve">Gets the absolute path to the directory containing the currently running
+executable.
+
+This is useful for locating application resources relative to the
+installation directory.
+
+The returned path is cached on first call and remains constant for the
+lifetime of the program. So, it must not be freed or modified.</doc>
+      <return-value transfer-ownership="none" nullable="1">
+        <doc xml:space="preserve">the absolute path
+  to the directory containing the program's executable, or `NULL` if
+  not found</doc>
+        <type name="filename" c:type="const char*"/>
       </return-value>
     </function>
     <function name="get_real_name" c:identifier="g_get_real_name">
