@@ -37157,7 +37157,7 @@ new_variant = g_variant_new ("(t^as)",
                              (guint64) some_flags,
                              some_strings);
 ]|</doc>
-        <return-value transfer-ownership="full">
+        <return-value transfer-ownership="none">
           <doc xml:space="preserve">a new floating #GVariant instance</doc>
           <type name="Variant" c:type="GVariant*"/>
         </return-value>
@@ -37852,7 +37852,7 @@ returning control to the user that originally provided the pointer.
 At this point, the caller will have their own full reference to the
 result.  This can also be done by adding the result to a container,
 or by passing it to another g_variant_new() call.</doc>
-        <return-value transfer-ownership="full">
+        <return-value transfer-ownership="none">
           <doc xml:space="preserve">a new, usually floating, #GVariant</doc>
           <type name="Variant" c:type="GVariant*"/>
         </return-value>
@@ -49373,7 +49373,11 @@ segments.</doc>
       <doc xml:space="preserve">Tests if @hostname is the string form of an IPv4 or IPv6 address.
 (Eg, "192.168.0.1".)
 
-Since 2.66, IPv6 addresses with a zone-id are accepted (RFC6874).</doc>
+Since 2.66, IPv6 addresses with a zone-id are accepted (RFC6874).
+
+Note that this function only checks the syntax. It does not guarantee that
+the string will be accepted by the current OS and in particular by
+[ctor@gio.InetAddress.new_from_string].</doc>
       <return-value transfer-ownership="none">
         <doc xml:space="preserve">%TRUE if @hostname is an IP address</doc>
         <type name="gboolean" c:type="gboolean"/>
