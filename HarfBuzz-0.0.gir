@@ -4741,7 +4741,8 @@ values other than #HB_BUDGET_DEFAULT are clamped to zero.</doc>
     </record>
     <function name="face_builder_add_table" c:identifier="hb_face_builder_add_table" version="1.9.0">
       <doc xml:space="preserve">Add table for @tag with data provided by @blob to the face.  @face must
-be created using hb_face_builder_create().</doc>
+be created using hb_face_builder_create().  A face can hold at most
+65535 tables; adding more fails.</doc>
       <return-value transfer-ownership="none">
         <type name="bool_t" c:type="hb_bool_t"/>
       </return-value>
@@ -15756,6 +15757,7 @@ gradient tiling.  See hb_paint_sweep_gradient_tiles().</doc>
     <function name="paint_sweep_gradient_tiles" c:identifier="hb_paint_sweep_gradient_tiles" version="14.2.0">
       <doc xml:space="preserve">Iterates the full 0..2π sweep produced by a color-stop list,
 invoking @emit_patch once per (start, end) angular segment.
+Segments are clipped to 0..2π, wherever the angles lie.
 Handles #HB_PAINT_EXTEND_PAD, #HB_PAINT_EXTEND_REPEAT, and
 #HB_PAINT_EXTEND_REFLECT.  Stops must be pre-sorted by
 offset; use hb_paint_normalize_color_line() first if they
