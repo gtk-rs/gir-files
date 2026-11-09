@@ -113,6 +113,83 @@ prefix-to-subdirectory mapping that is described in the
           </parameter>
         </parameters>
       </constructor>
+      <function name="get_default_for_intent" c:identifier="g_desktop_app_info_get_default_for_intent" version="2.92">
+        <doc xml:space="preserve">Gets the default [iface@Gio.AppInfo] that implements @interface and, if @scope
+is not `NULL`, also supports @scope.
+
+An application implements an interface if that interface is listed in
+the `Implements` line of the desktop file, as per the
+[Desktop Entry Specification](https://specifications.freedesktop.org/desktop-entry/latest/interfaces.html).
+
+An application implements a scope of an interface, if the scope is listed in
+the [`Supports` line](https://specifications.freedesktop.org/intent-apps/latest/#scopes)
+of the section of the desktop file named after @interface. Scopes are specific
+to each @interface and are defined in the specification which defines that intent
+interface. A URI handler intent might have `https`, `http` and `ftp` as scopes,
+for example.
+
+Application priority can be adjusted via
+[`intentapps.list` files](https://specifications.freedesktop.org/intent-apps/latest/#file).</doc>
+        <return-value transfer-ownership="full" nullable="1">
+          <doc xml:space="preserve">app info for the given @intent and @scope,
+  or `NULL` if not found.</doc>
+          <type name="Gio.AppInfo" c:type="GAppInfo*"/>
+        </return-value>
+        <parameters>
+          <parameter name="interface" transfer-ownership="none">
+            <doc xml:space="preserve">the intent interface to find an app for</doc>
+            <type name="utf8" c:type="const char*"/>
+          </parameter>
+          <parameter name="scope" transfer-ownership="none" nullable="1" allow-none="1">
+            <doc xml:space="preserve">an optional scope</doc>
+            <type name="utf8" c:type="const char*"/>
+          </parameter>
+        </parameters>
+      </function>
+      <function name="get_for_intent" c:identifier="g_desktop_app_info_get_for_intent" version="2.92">
+        <doc xml:space="preserve">Gets all [iface@Gio.AppInfo]s that implement @interface and, if @scope is not
+`NULL`, also supports @scope.
+
+Applications earlier in the list have higher priority.
+
+An application implements an interface if that interface is listed in
+the `Implements` line of the desktop file, as per the
+[Desktop Entry Specification](https://specifications.freedesktop.org/desktop-entry/latest/interfaces.html).
+
+An application implements a scope of an interface, if the scope is listed in
+the [`Supports` line](https://specifications.freedesktop.org/intent-apps/latest/#scopes)
+of the section of the desktop file named after @interface. Scopes are specific
+to each @interface and are defined in the specification which defines that intent
+interface. A URI handler intent might have `https`, `http` and `ftp` as scopes,
+for example.
+
+Application priority can be adjusted via
+[`intentapps.list` files](https://specifications.freedesktop.org/intent-apps/latest/#file).
+
+The list is guaranteed to be `NULL` terminated. The `NULL` terminator is not
+counted in @out_n_results.</doc>
+        <return-value transfer-ownership="full" nullable="1">
+          <doc xml:space="preserve">an array of
+app infos for the given @intent and @scope, or `NULL` if none are found.</doc>
+          <array length="2" zero-terminated="0" c:type="GAppInfo**">
+            <type name="Gio.AppInfo" c:type="GAppInfo*"/>
+          </array>
+        </return-value>
+        <parameters>
+          <parameter name="interface" transfer-ownership="none">
+            <doc xml:space="preserve">the intent interface to find an app for</doc>
+            <type name="utf8" c:type="const char*"/>
+          </parameter>
+          <parameter name="scope" transfer-ownership="none" nullable="1" allow-none="1">
+            <doc xml:space="preserve">an optional scope</doc>
+            <type name="utf8" c:type="const char*"/>
+          </parameter>
+          <parameter name="out_n_results" direction="out" caller-allocates="0" transfer-ownership="full" optional="1" allow-none="1">
+            <doc xml:space="preserve">the number of infos returned</doc>
+            <type name="gsize" c:type="size_t*"/>
+          </parameter>
+        </parameters>
+      </function>
       <function name="get_implementations" c:identifier="g_desktop_app_info_get_implementations" version="2.42">
         <doc xml:space="preserve">Gets all applications that implement @interface.
 
@@ -278,6 +355,25 @@ will return `NULL`.</doc>
           </instance-parameter>
         </parameters>
       </method>
+      <method name="get_intents" c:identifier="g_desktop_app_info_get_intents" version="2.92">
+        <doc xml:space="preserve">Gets the implemented intents from the desktop file.
+
+As per the specification, this is the list of intents that are
+explicitly listed in the [`Implements` key](https://specifications.freedesktop.org/desktop-entry/latest/recognized-keys.html) of the `Desktop Entry` group.</doc>
+        <return-value transfer-ownership="none">
+          <doc xml:space="preserve">a
+list of strings, always non-`NULL`</doc>
+          <array c:type="const char* const*">
+            <type name="utf8"/>
+          </array>
+        </return-value>
+        <parameters>
+          <instance-parameter name="info" transfer-ownership="none">
+            <doc xml:space="preserve">an app info</doc>
+            <type name="DesktopAppInfo" c:type="GDesktopAppInfo*"/>
+          </instance-parameter>
+        </parameters>
+      </method>
       <method name="get_is_hidden" c:identifier="g_desktop_app_info_get_is_hidden">
         <doc xml:space="preserve">A desktop file is hidden if the
 [`Hidden` key](https://specifications.freedesktop.org/desktop-entry-spec/latest/ar01s06.html#key-hidden)
@@ -437,6 +533,26 @@ The @key is looked up in the `Desktop Entry` group.</doc>
             <doc xml:space="preserve">return location for the number of returned
   strings, or `NULL`</doc>
             <type name="gsize" c:type="gsize*"/>
+          </parameter>
+        </parameters>
+      </method>
+      <method name="has_intent" c:identifier="g_desktop_app_info_has_intent" version="2.92">
+        <doc xml:space="preserve">Returns whether @intent is implemented by the application.
+
+As per specification, an intent implemented by the application is listed in
+the [`Implements` key](https://specifications.freedesktop.org/desktop-entry/latest/recognized-keys.html) of the `Desktop Entry` group.</doc>
+        <return-value transfer-ownership="none">
+          <doc xml:space="preserve">true if the @intent is implemented by the application</doc>
+          <type name="gboolean" c:type="gboolean"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="info" transfer-ownership="none">
+            <doc xml:space="preserve">an app info</doc>
+            <type name="DesktopAppInfo" c:type="GDesktopAppInfo*"/>
+          </instance-parameter>
+          <parameter name="intent" transfer-ownership="none">
+            <doc xml:space="preserve">the intent to look up</doc>
+            <type name="utf8" c:type="const char*"/>
           </parameter>
         </parameters>
       </method>
@@ -633,6 +749,35 @@ explicitly listed in the `Actions` key of the `Desktop Entry` group.</doc>
             <doc xml:space="preserve">a [class@GioUnix.DesktopAppInfo]</doc>
             <type name="DesktopAppInfo" c:type="GDesktopAppInfo*"/>
           </instance-parameter>
+        </parameters>
+      </method>
+      <method name="set_as_default_for_intent" c:identifier="g_desktop_app_info_set_as_default_for_intent" version="2.92" throws="1">
+        <doc xml:space="preserve">Sets the application as the default handler for an intent interface, or for
+a scope of the intent interface.
+
+If @scope is provided, the default handler for that scope of the intent
+interface will be set. Additionally, the application will be added to the
+list of the default handlers for the intent interface.
+
+If @scope is not provided, the default handler for the intent interface will
+be set to the application.</doc>
+        <return-value transfer-ownership="none">
+          <doc xml:space="preserve">true on success; false otherwise</doc>
+          <type name="gboolean" c:type="gboolean"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="info" transfer-ownership="none">
+            <doc xml:space="preserve">an app info</doc>
+            <type name="DesktopAppInfo" c:type="GDesktopAppInfo*"/>
+          </instance-parameter>
+          <parameter name="interface" transfer-ownership="none">
+            <doc xml:space="preserve">the intent interface to set the app as default for</doc>
+            <type name="utf8" c:type="const char*"/>
+          </parameter>
+          <parameter name="scope" transfer-ownership="none" nullable="1" allow-none="1">
+            <doc xml:space="preserve">an optional scope</doc>
+            <type name="utf8" c:type="const char*"/>
+          </parameter>
         </parameters>
       </method>
       <property name="filename" writable="1" construct-only="1" transfer-ownership="none" getter="get_filename" default-value="NULL">

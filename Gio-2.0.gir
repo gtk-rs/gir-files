@@ -47374,7 +47374,8 @@ This structure closely mirrors `struct mmsghdr` and `struct msghdr` from
 the POSIX sockets API (see `man 2 recvmmsg`).
 
 If @address is non-%NULL then it is set to the source address the message
-was received from, and the caller must free it afterwards.
+was received from (or %NULL if it is not available), and the caller must
+free it afterwards.
 
 If @control_messages is non-%NULL then it is set to an array of control
 messages received with the message (if any), and the caller must free it
@@ -65978,8 +65979,9 @@ g_free().  You should not attempt to free or unref the contents of
             <doc xml:space="preserve">a #GTree containing the changes</doc>
             <type name="GLib.Tree" c:type="GTree*"/>
           </parameter>
-          <parameter name="path" direction="out" caller-allocates="0" transfer-ownership="full">
-            <doc xml:space="preserve">the location to save the path</doc>
+          <parameter name="path" direction="out" caller-allocates="0" transfer-ownership="full" nullable="1">
+            <doc xml:space="preserve">the location to save the path, which is set to
+       %NULL if @tree is empty</doc>
             <type name="utf8" c:type="gchar**"/>
           </parameter>
           <parameter name="keys" direction="out" caller-allocates="0" transfer-ownership="container">
@@ -69657,7 +69659,7 @@ This function is a variant of [method@Gio.Socket.receive_from] which returns
 a [struct@GLib.Bytes] rather than a plain buffer.
 
 If @address is non-%NULL then @address will be set equal to the
-source address of the received packet.
+source address of the received packet, or %NULL if it is not available.
 
 The @address is owned by the caller.
 
@@ -69675,7 +69677,7 @@ for that many microseconds for data before returning `G_IO_ERROR_TIMED_OUT`.</do
             <doc xml:space="preserve">a #GSocket</doc>
             <type name="Socket" c:type="GSocket*"/>
           </instance-parameter>
-          <parameter name="address" direction="out" caller-allocates="0" transfer-ownership="full" optional="1" allow-none="1">
+          <parameter name="address" direction="out" caller-allocates="0" transfer-ownership="full" nullable="1" optional="1" allow-none="1">
             <doc xml:space="preserve">return location for a #GSocketAddress</doc>
             <type name="SocketAddress" c:type="GSocketAddress**"/>
           </parameter>
@@ -69698,7 +69700,7 @@ for that many microseconds for data before returning `G_IO_ERROR_TIMED_OUT`.</do
         <doc xml:space="preserve">Receive data (up to @size bytes) from a socket.
 
 If @address is non-%NULL then @address will be set equal to the
-source address of the received packet.
+source address of the received packet, or %NULL if it is not available.
 @address is owned by the caller.
 
 See g_socket_receive() for additional information.</doc>
@@ -69712,7 +69714,7 @@ the peer, or -1 on error</doc>
             <doc xml:space="preserve">a #GSocket</doc>
             <type name="Socket" c:type="GSocket*"/>
           </instance-parameter>
-          <parameter name="address" direction="out" caller-allocates="0" transfer-ownership="full" optional="1" allow-none="1">
+          <parameter name="address" direction="out" caller-allocates="0" transfer-ownership="full" nullable="1" optional="1" allow-none="1">
             <doc xml:space="preserve">a pointer to a #GSocketAddress
     pointer, or %NULL</doc>
             <type name="SocketAddress" c:type="GSocketAddress**"/>
@@ -69740,7 +69742,7 @@ g_socket_receive_messages(); for easier use, see
 g_socket_receive() and g_socket_receive_from().
 
 If @address is non-%NULL then @address will be set equal to the
-source address of the received packet.
+source address of the received packet, or %NULL if it is not available.
 @address is owned by the caller.
 
 @vector must point to an array of #GInputVector structs and
@@ -69804,7 +69806,7 @@ the peer, or -1 on error</doc>
             <doc xml:space="preserve">a #GSocket</doc>
             <type name="Socket" c:type="GSocket*"/>
           </instance-parameter>
-          <parameter name="address" direction="out" caller-allocates="0" transfer-ownership="full" optional="1" allow-none="1">
+          <parameter name="address" direction="out" caller-allocates="0" transfer-ownership="full" nullable="1" optional="1" allow-none="1">
             <doc xml:space="preserve">a pointer to a #GSocketAddress
     pointer, or %NULL</doc>
             <type name="SocketAddress" c:type="GSocketAddress**"/>
