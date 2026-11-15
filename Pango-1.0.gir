@@ -6643,7 +6643,7 @@ attributes for the text to compute the valid cursor position.</doc>
       <doc xml:space="preserve">A `PangoGlyphVisAttr` structure communicates information between
 the shaping and rendering phases.
 
-Currently, it contains cluster start and color information.
+Currently, it contains cluster start, color, and shaping-boundary information.
 More attributes may be added in the future.
 
 Clusters are stored in visual order, within the cluster, glyphs
@@ -6652,6 +6652,18 @@ that is, in Arabic text, accent glyphs follow the glyphs for the
 base character.</doc>
       <field name="is_cluster_start" writable="1">
         <doc xml:space="preserve">set for the first logical glyph in each cluster.</doc>
+        <type name="guint" c:type="guint"/>
+      </field>
+      <field name="unsafe_to_break" writable="1">
+        <doc xml:space="preserve">set when existing glyphs cannot safely be split at the start
+  of this glyph's cluster; callers should reshape the text on both sides of
+  the split. Since 1.60</doc>
+        <type name="guint" c:type="guint"/>
+      </field>
+      <field name="unsafe_to_concat" writable="1">
+        <doc xml:space="preserve">set when existing glyphs cannot safely be joined at this
+  cluster boundary; callers should shape the combined text again instead
+  of concatenating the existing glyph strings. Since 1.60</doc>
         <type name="guint" c:type="guint"/>
       </field>
     </record>
@@ -11924,6 +11936,14 @@ and %FALSE is returned.</doc>
         <doc xml:space="preserve">Round glyph positions and widths to whole device units
   This option should be set if the target renderer can't do subpixel positioning of glyphs</doc>
       </member>
+      <member name="not_start_of_paragraph" value="4" c:identifier="PANGO_SHAPE_NOT_START_OF_PARAGRAPH" glib:nick="not-start-of-paragraph" glib:name="PANGO_SHAPE_NOT_START_OF_PARAGRAPH">
+        <doc xml:space="preserve">The shaped text is not at the start of
+  the paragraph. Since 1.60</doc>
+      </member>
+      <member name="not_end_of_paragraph" value="8" c:identifier="PANGO_SHAPE_NOT_END_OF_PARAGRAPH" glib:nick="not-end-of-paragraph" glib:name="PANGO_SHAPE_NOT_END_OF_PARAGRAPH">
+        <doc xml:space="preserve">The shaped text is not at the end of the
+  paragraph. Since 1.60</doc>
+      </member>
     </bitfield>
     <bitfield name="ShowFlags" version="1.44" glib:type-name="PangoShowFlags" glib:get-type="pango_show_flags_get_type" c:type="PangoShowFlags">
       <doc xml:space="preserve">These flags affect how Pango treats characters that are normally
@@ -12463,15 +12483,15 @@ Two encoded version numbers can be compared as integers.</doc>
       <doc xml:space="preserve">The major component of the version of Pango available at compile-time.</doc>
       <type name="gint" c:type="gint"/>
     </constant>
-    <constant name="VERSION_MICRO" value="2" c:type="PANGO_VERSION_MICRO">
+    <constant name="VERSION_MICRO" value="0" c:type="PANGO_VERSION_MICRO">
       <doc xml:space="preserve">The micro component of the version of Pango available at compile-time.</doc>
       <type name="gint" c:type="gint"/>
     </constant>
-    <constant name="VERSION_MINOR" value="58" c:type="PANGO_VERSION_MINOR">
+    <constant name="VERSION_MINOR" value="59" c:type="PANGO_VERSION_MINOR">
       <doc xml:space="preserve">The minor component of the version of Pango available at compile-time.</doc>
       <type name="gint" c:type="gint"/>
     </constant>
-    <constant name="VERSION_STRING" value="1.58.2" c:type="PANGO_VERSION_STRING">
+    <constant name="VERSION_STRING" value="1.59.0" c:type="PANGO_VERSION_STRING">
       <doc xml:space="preserve">A string literal containing the version of Pango available at compile-time.</doc>
       <type name="utf8" c:type="gchar*"/>
     </constant>
@@ -13927,6 +13947,61 @@ The base direction is used when computing bidirectional levels.
         <parameter name="cached_iter" transfer-ownership="none" nullable="1" allow-none="1">
           <doc xml:space="preserve">Cached attribute iterator</doc>
           <type name="AttrIterator" c:type="PangoAttrIterator*"/>
+        </parameter>
+      </parameters>
+    </function>
+    <function name="itemize_with_base_dir_and_embedding_levels" c:identifier="pango_itemize_with_base_dir_and_embedding_levels" version="1.60">
+      <doc xml:space="preserve">Itemizes a range using embedding levels computed for the complete paragraph.
+
+This is useful when itemizing bounded ranges of a paragraph without changing
+the directional analysis at range boundaries. The embedding levels must
+contain one entry for every Unicode character in @text. @start_index and
+@length must identify UTF-8 character boundaries.</doc>
+      <return-value transfer-ownership="full">
+        <doc xml:space="preserve">newly allocated items in logical order</doc>
+        <type name="GLib.List" c:type="GList*">
+          <type name="Item"/>
+        </type>
+      </return-value>
+      <parameters>
+        <parameter name="context" transfer-ownership="none">
+          <doc xml:space="preserve">a structure holding information that affects itemization</doc>
+          <type name="Context" c:type="PangoContext*"/>
+        </parameter>
+        <parameter name="base_dir" transfer-ownership="none">
+          <doc xml:space="preserve">base direction of the paragraph</doc>
+          <type name="Direction" c:type="PangoDirection"/>
+        </parameter>
+        <parameter name="text" transfer-ownership="none">
+          <doc xml:space="preserve">valid UTF-8 paragraph text</doc>
+          <type name="utf8" c:type="const char*"/>
+        </parameter>
+        <parameter name="start_index" transfer-ownership="none">
+          <doc xml:space="preserve">first byte in @text to process</doc>
+          <type name="gint" c:type="int"/>
+        </parameter>
+        <parameter name="length" transfer-ownership="none">
+          <doc xml:space="preserve">number of bytes to process</doc>
+          <type name="gint" c:type="int"/>
+        </parameter>
+        <parameter name="attrs" transfer-ownership="none" nullable="1" allow-none="1">
+          <doc xml:space="preserve">attributes that apply to @text</doc>
+          <type name="AttrList" c:type="PangoAttrList*"/>
+        </parameter>
+        <parameter name="cached_iter" transfer-ownership="none" nullable="1" allow-none="1">
+          <doc xml:space="preserve">cached attribute iterator</doc>
+          <type name="AttrIterator" c:type="PangoAttrIterator*"/>
+        </parameter>
+        <parameter name="embedding_levels" transfer-ownership="none">
+          <doc xml:space="preserve">one embedding level
+  for each character in @text</doc>
+          <array length="8" zero-terminated="0" c:type="const guint8*">
+            <type name="guint8" c:type="guint8"/>
+          </array>
+        </parameter>
+        <parameter name="n_embedding_levels" transfer-ownership="none">
+          <doc xml:space="preserve">length of @embedding_levels</doc>
+          <type name="gint" c:type="int"/>
         </parameter>
       </parameters>
     </function>
