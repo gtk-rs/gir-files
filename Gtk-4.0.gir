@@ -4992,6 +4992,106 @@ positions the widget to line up the baselines, where that is supported.</doc>
         <doc xml:space="preserve">align the baseline.</doc>
       </member>
     </enumeration>
+    <record name="AllocationDetails" c:type="GtkAllocationDetails" opaque="1" version="4.26" glib:type-name="GtkAllocationDetails" glib:get-type="gtk_allocation_details_get_type" c:symbol-prefix="allocation_details">
+      <doc xml:space="preserve">Collects extra parameters that can be passed to [method@Gtk.Widget.allocate_detailed].</doc>
+      <constructor name="new" c:identifier="gtk_allocation_details_new" version="4.26">
+        <doc xml:space="preserve">Creates a new `GtkAllocationDetails`.</doc>
+        <return-value transfer-ownership="full">
+          <doc xml:space="preserve">a new `GtkAllocationDetails`</doc>
+          <type name="AllocationDetails" c:type="GtkAllocationDetails*"/>
+        </return-value>
+      </constructor>
+      <method name="copy" c:identifier="gtk_allocation_details_copy" version="4.26">
+        <doc xml:space="preserve">Creates a copy of a `GtkAllocationDetails`.</doc>
+        <return-value transfer-ownership="full">
+          <doc xml:space="preserve">a new `GtkAllocationDetails`. Use [method@Gtk.AllocationDetails.free] to free it</doc>
+          <type name="AllocationDetails" c:type="GtkAllocationDetails*"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="other" transfer-ownership="none">
+            <doc xml:space="preserve">the allocation_details to copy</doc>
+            <type name="AllocationDetails" c:type="const GtkAllocationDetails*"/>
+          </instance-parameter>
+        </parameters>
+      </method>
+      <method name="free" c:identifier="gtk_allocation_details_free" version="4.26">
+        <doc xml:space="preserve">Frees a `GtkAllocationDetails`.</doc>
+        <return-value transfer-ownership="none">
+          <type name="none" c:type="void"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="self" transfer-ownership="none">
+            <doc xml:space="preserve">a allocation_details</doc>
+            <type name="AllocationDetails" c:type="GtkAllocationDetails*"/>
+          </instance-parameter>
+        </parameters>
+      </method>
+      <method name="get_baseline" c:identifier="gtk_allocation_details_get_baseline" version="4.26">
+        <doc xml:space="preserve">Gets the baseline that was set via [method@Gtk.AllocationDetails.set_baseline]</doc>
+        <return-value transfer-ownership="none">
+          <doc xml:space="preserve">the baseline or -1 if unset</doc>
+          <type name="gint" c:type="int"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="self" transfer-ownership="none">
+            <doc xml:space="preserve">the details</doc>
+            <type name="AllocationDetails" c:type="const GtkAllocationDetails*"/>
+          </instance-parameter>
+        </parameters>
+      </method>
+      <method name="get_transform" c:identifier="gtk_allocation_details_get_transform" version="4.26">
+        <doc xml:space="preserve">Gets the transform that was set via [method@Gtk.AllocationDetails.set_transform]</doc>
+        <return-value transfer-ownership="full" nullable="1">
+          <doc xml:space="preserve">the transform</doc>
+          <type name="Gsk.Transform" c:type="GskTransform*"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="self" transfer-ownership="none">
+            <doc xml:space="preserve">the details</doc>
+            <type name="AllocationDetails" c:type="const GtkAllocationDetails*"/>
+          </instance-parameter>
+        </parameters>
+      </method>
+      <method name="set_baseline" c:identifier="gtk_allocation_details_set_baseline" version="4.26">
+        <doc xml:space="preserve">Sets or unsets the baseline to use.
+
+A baseline of -1 unsets the baseline.
+
+By default, the baseline is unset.</doc>
+        <return-value transfer-ownership="none">
+          <type name="none" c:type="void"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="self" transfer-ownership="none">
+            <doc xml:space="preserve">the details</doc>
+            <type name="AllocationDetails" c:type="GtkAllocationDetails*"/>
+          </instance-parameter>
+          <parameter name="baseline" transfer-ownership="none">
+            <doc xml:space="preserve">the baseline</doc>
+            <type name="gint" c:type="int"/>
+          </parameter>
+        </parameters>
+      </method>
+      <method name="set_transform" c:identifier="gtk_allocation_details_set_transform" version="4.26">
+        <doc xml:space="preserve">Sets the transform that will be applied to the parent's coordinate space
+before allocating the size.
+
+By default, the identity transform is used.</doc>
+        <return-value transfer-ownership="none">
+          <type name="none" c:type="void"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="self" transfer-ownership="none">
+            <doc xml:space="preserve">the details</doc>
+            <type name="AllocationDetails" c:type="GtkAllocationDetails*"/>
+          </instance-parameter>
+          <parameter name="transform" transfer-ownership="none" nullable="1" allow-none="1">
+            <doc xml:space="preserve">The transform to use</doc>
+            <type name="Gsk.Transform" c:type="GskTransform*"/>
+          </parameter>
+        </parameters>
+      </method>
+    </record>
     <class name="AlternativeTrigger" c:symbol-prefix="alternative_trigger" c:type="GtkAlternativeTrigger" parent="ShortcutTrigger" glib:type-name="GtkAlternativeTrigger" glib:get-type="gtk_alternative_trigger_get_type" glib:type-struct="AlternativeTriggerClass">
       <doc xml:space="preserve">Combines two shortcut triggers.
 
@@ -7722,7 +7822,7 @@ See gtk_assistant_commit() for details.</doc>
  add its own buttons through gtk_assistant_add_action_widget().</doc>
       </member>
     </enumeration>
-    <constant name="BINARY_AGE" value="2500" c:type="GTK_BINARY_AGE">
+    <constant name="BINARY_AGE" value="2501" c:type="GTK_BINARY_AGE">
       <doc xml:space="preserve">Like [func@get_binary_age], but from the headers used at
 application compile time, rather than from the library linked
 against at application run time.</doc>
@@ -60367,7 +60467,7 @@ This macro is longer used by GTK.</doc>
         </parameter>
       </parameters>
     </function-macro>
-    <constant name="MICRO_VERSION" value="0" c:type="GTK_MICRO_VERSION">
+    <constant name="MICRO_VERSION" value="1" c:type="GTK_MICRO_VERSION">
       <doc xml:space="preserve">Like [func@get_micro_version], but from the headers used at
 application compile time, rather than from the library linked
 against at application run time.</doc>
@@ -96836,6 +96936,36 @@ if no toggle is found.</doc>
           </parameter>
         </parameters>
       </method>
+      <method name="forward_to_tag_toggle_with_limit" c:identifier="gtk_text_iter_forward_to_tag_toggle_with_limit" version="4.26">
+        <doc xml:space="preserve">Moves forward to the next tag toggle before @limit.
+
+Finds the next start or end of @tag, or of any tag if @tag is %NULL.
+Toggles at the initial position of @iter and at @limit are excluded.
+If no toggle is found, sets @iter to @limit and returns %FALSE.
+If @limit is at or before @iter, returns %FALSE without moving @iter.
+
+If @limit is %NULL, searches to the end of the buffer, including any
+toggle at the end iterator, just like
+[method@Gtk.TextIter.forward_to_tag_toggle].</doc>
+        <return-value transfer-ownership="none">
+          <doc xml:space="preserve">whether a matching tag toggle was found</doc>
+          <type name="gboolean" c:type="gboolean"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="iter" transfer-ownership="none">
+            <doc xml:space="preserve">a `GtkTextIter`</doc>
+            <type name="TextIter" c:type="GtkTextIter*"/>
+          </instance-parameter>
+          <parameter name="tag" transfer-ownership="none" nullable="1" allow-none="1">
+            <doc xml:space="preserve">a `GtkTextTag`, or %NULL to find any tag toggle</doc>
+            <type name="TextTag" c:type="GtkTextTag*"/>
+          </parameter>
+          <parameter name="limit" transfer-ownership="none" nullable="1" allow-none="1">
+            <doc xml:space="preserve">the exclusive search limit, in the same buffer as @iter</doc>
+            <type name="TextIter" c:type="const GtkTextIter*"/>
+          </parameter>
+        </parameters>
+      </method>
       <method name="forward_visible_cursor_position" c:identifier="gtk_text_iter_forward_visible_cursor_position">
         <doc xml:space="preserve">Moves @iter forward to the next visible cursor position.
 
@@ -113813,6 +113943,48 @@ For a version that does not take a transform, see
           <parameter name="transform" transfer-ownership="full" nullable="1" allow-none="1">
             <doc xml:space="preserve">transformation to be applied</doc>
             <type name="Gsk.Transform" c:type="GskTransform*"/>
+          </parameter>
+        </parameters>
+      </method>
+      <method name="allocate_detailed" c:identifier="gtk_widget_allocate_detailed" version="4.26">
+        <doc xml:space="preserve">Assigns size, position, and further details to a child widget.
+
+The given allocation must be large enough for the widget's minimum
+size, as well as at least 0×0 in size. See [method@Gtk.Widget.measure]
+for querying a minimum size.
+
+The transform given by the details is applied first, before
+the `x`, `y`, `width` and `height` arguments are considered.
+
+This function is only used by widget implementations to allocate a size
+for their direct children.</doc>
+        <return-value transfer-ownership="none">
+          <type name="none" c:type="void"/>
+        </return-value>
+        <parameters>
+          <instance-parameter name="widget" transfer-ownership="none">
+            <doc xml:space="preserve">a widget</doc>
+            <type name="Widget" c:type="GtkWidget*"/>
+          </instance-parameter>
+          <parameter name="x" transfer-ownership="none">
+            <doc xml:space="preserve">new x coordinate</doc>
+            <type name="gint" c:type="int"/>
+          </parameter>
+          <parameter name="y" transfer-ownership="none">
+            <doc xml:space="preserve">new y coordinate</doc>
+            <type name="gint" c:type="int"/>
+          </parameter>
+          <parameter name="width" transfer-ownership="none">
+            <doc xml:space="preserve">new width</doc>
+            <type name="gint" c:type="int"/>
+          </parameter>
+          <parameter name="height" transfer-ownership="none">
+            <doc xml:space="preserve">new height</doc>
+            <type name="gint" c:type="int"/>
+          </parameter>
+          <parameter name="details" transfer-ownership="none" nullable="1" allow-none="1">
+            <doc xml:space="preserve">details of the allocation</doc>
+            <type name="AllocationDetails" c:type="const GtkAllocationDetails*"/>
           </parameter>
         </parameters>
       </method>

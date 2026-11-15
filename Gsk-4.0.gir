@@ -10,7 +10,17 @@ and/or use gtk-doc annotations.  -->
   <doc:format name="gi-docgen"/>
   <namespace name="Gsk" version="4.0" shared-library="libgtk-4.so.1" c:identifier-prefixes="Gsk" c:symbol-prefixes="gsk">
     <alias name="RectSnap" c:type="GskRectSnap">
-      <doc xml:space="preserve">The ways a rectangle can be snapped to a grid.</doc>
+      <doc xml:space="preserve">The ways a rectangle can be snapped to a grid.
+
+A `GskRectSnap` describes how the 4 edges of a rectangle should be adjusted
+to fit a grid - usually the rectangle describes the bounds or clip region
+of a render operation and the grid is the pixel grid of a display.
+
+You can see [some use cases on the GTK blog](https://blogs.gnome.org/gtk/2026/05/28/snapping/).
+
+Commonly, you will want to use constants such as [const@Gsk.RECT_SNAP_ROUND],
+[const@Gsk.RECT_SNAP_GROW], or [const@Gsk.RECT_SNAP_SHRINK], but you can
+also construct an individual way to snap using [func@Gsk.rect_snap_new].</doc>
       <type name="guint" c:type="unsigned"/>
     </alias>
     <function-macro name="BROADWAY_RENDERER" c:identifier="GSK_BROADWAY_RENDERER" introspectable="0">
@@ -6698,6 +6708,12 @@ rendering pipeline.</doc>
   plus mipmap generation, with linear interpolation along the mipmap
   levels</doc>
       </member>
+      <member name="bicubic" value="3" c:identifier="GSK_SCALING_FILTER_BICUBIC" version="4.26" glib:nick="bicubic" glib:name="GSK_SCALING_FILTER_BICUBIC">
+        <doc xml:space="preserve">Bicubic interpolation along each axis.
+
+This is an experimental feature, the exact interpolation method has not
+been decided yet.</doc>
+      </member>
     </enumeration>
     <enumeration name="SerializationError" glib:type-name="GskSerializationError" glib:get-type="gsk_serialization_error_get_type" c:type="GskSerializationError" glib:error-domain="gsk-serialization-error-quark">
       <doc xml:space="preserve">Errors that can happen during (de)serialization.</doc>
@@ -8698,7 +8714,8 @@ The `O` command is an extension that is not supported in SVG.</doc>
       </parameters>
     </function>
     <function name="rect_snap_new" c:identifier="gsk_rect_snap_new" version="4.24">
-      <doc xml:space="preserve">Creates a new way to snap rectangles for the 4 given sides.</doc>
+      <doc xml:space="preserve">Creates a new way to snap rectangles with individual values for the
+top, right, bottom, and left side.</doc>
       <return-value transfer-ownership="none">
         <doc xml:space="preserve">a description for how to snap rectangles</doc>
         <type name="RectSnap" c:type="GskRectSnap"/>

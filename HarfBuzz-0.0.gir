@@ -370,10 +370,10 @@ The serial number will increase when internal #hb_glyph_info_t and
     <constant name="VERSION_MICRO" value="0" c:type="HB_VERSION_MICRO">
       <type name="gint" c:type="gint"/>
     </constant>
-    <constant name="VERSION_MINOR" value="0" c:type="HB_VERSION_MINOR">
+    <constant name="VERSION_MINOR" value="1" c:type="HB_VERSION_MINOR">
       <type name="gint" c:type="gint"/>
     </constant>
-    <constant name="VERSION_STRING" value="15.0.0" c:type="HB_VERSION_STRING">
+    <constant name="VERSION_STRING" value="15.1.0" c:type="HB_VERSION_STRING">
       <type name="utf8" c:type="gchar*"/>
     </constant>
     <record name="aat_layout_feature_selector_info_t" c:type="hb_aat_layout_feature_selector_info_t">
@@ -2128,6 +2128,48 @@ produced by hb_buffer_serialize_glyphs().</doc>
         </parameter>
       </parameters>
     </function>
+    <function name="buffer_deserialize_glyphs2" c:identifier="hb_buffer_deserialize_glyphs2" version="15.1.0">
+      <doc xml:space="preserve">Deserializes glyphs into @buffer from the textual representation produced
+by hb_buffer_serialize_glyphs().
+
+Behaves like hb_buffer_deserialize_glyphs(), including its return value and
+any partial buffer contents left on failure, but reports progress as a byte
+offset from @buf instead of a pointer into it. If no input is consumed,
+@buf_consumed is set to zero.</doc>
+      <return-value transfer-ownership="none">
+        <doc xml:space="preserve">`true` if the full string was parsed, `false` otherwise.</doc>
+        <type name="bool_t" c:type="hb_bool_t"/>
+      </return-value>
+      <parameters>
+        <parameter name="buffer" transfer-ownership="none">
+          <doc xml:space="preserve">an #hb_buffer_t buffer.</doc>
+          <type name="buffer_t" c:type="hb_buffer_t*"/>
+        </parameter>
+        <parameter name="buf" transfer-ownership="none">
+          <doc xml:space="preserve">string to deserialize</doc>
+          <array length="2" zero-terminated="0" c:type="const char*">
+            <type name="guint8"/>
+          </array>
+        </parameter>
+        <parameter name="buf_len" transfer-ownership="none">
+          <doc xml:space="preserve">the size of @buf in bytes, or -1 if it is `NULL`-terminated</doc>
+          <type name="gint" c:type="int"/>
+        </parameter>
+        <parameter name="buf_consumed" direction="out" caller-allocates="0" transfer-ownership="full" optional="1" allow-none="1">
+          <doc xml:space="preserve">output byte offset of the character after
+              the last consumed one, on success or failure</doc>
+          <type name="guint" c:type="unsigned int*"/>
+        </parameter>
+        <parameter name="font" transfer-ownership="none" nullable="1" allow-none="1">
+          <doc xml:space="preserve">font for getting glyph IDs</doc>
+          <type name="font_t" c:type="hb_font_t*"/>
+        </parameter>
+        <parameter name="format" transfer-ownership="none">
+          <doc xml:space="preserve">the #hb_buffer_serialize_format_t of the input @buf</doc>
+          <type name="buffer_serialize_format_t" c:type="hb_buffer_serialize_format_t"/>
+        </parameter>
+      </parameters>
+    </function>
     <function name="buffer_deserialize_unicode" c:identifier="hb_buffer_deserialize_unicode" version="2.7.3">
       <doc xml:space="preserve">Deserializes Unicode @buffer from textual representation in the format
 produced by hb_buffer_serialize_unicode().</doc>
@@ -2154,6 +2196,44 @@ produced by hb_buffer_serialize_unicode().</doc>
           <doc xml:space="preserve">output pointer to the character after last
                               consumed one.</doc>
           <type name="utf8" c:type="const char**"/>
+        </parameter>
+        <parameter name="format" transfer-ownership="none">
+          <doc xml:space="preserve">the #hb_buffer_serialize_format_t of the input @buf</doc>
+          <type name="buffer_serialize_format_t" c:type="hb_buffer_serialize_format_t"/>
+        </parameter>
+      </parameters>
+    </function>
+    <function name="buffer_deserialize_unicode2" c:identifier="hb_buffer_deserialize_unicode2" version="15.1.0">
+      <doc xml:space="preserve">Deserializes Unicode into @buffer from the textual representation produced
+by hb_buffer_serialize_unicode().
+
+Behaves like hb_buffer_deserialize_unicode(), including its return value and
+any partial buffer contents left on failure, but reports progress as a byte
+offset from @buf instead of a pointer into it. If no input is consumed,
+@buf_consumed is set to zero.</doc>
+      <return-value transfer-ownership="none">
+        <doc xml:space="preserve">`true` if the full string was parsed, `false` otherwise.</doc>
+        <type name="bool_t" c:type="hb_bool_t"/>
+      </return-value>
+      <parameters>
+        <parameter name="buffer" transfer-ownership="none">
+          <doc xml:space="preserve">an #hb_buffer_t buffer.</doc>
+          <type name="buffer_t" c:type="hb_buffer_t*"/>
+        </parameter>
+        <parameter name="buf" transfer-ownership="none">
+          <doc xml:space="preserve">string to deserialize</doc>
+          <array length="2" zero-terminated="0" c:type="const char*">
+            <type name="guint8"/>
+          </array>
+        </parameter>
+        <parameter name="buf_len" transfer-ownership="none">
+          <doc xml:space="preserve">the size of @buf in bytes, or -1 if it is `NULL`-terminated</doc>
+          <type name="gint" c:type="int"/>
+        </parameter>
+        <parameter name="buf_consumed" direction="out" caller-allocates="0" transfer-ownership="full" optional="1" allow-none="1">
+          <doc xml:space="preserve">output byte offset of the character after
+              the last consumed one, on success or failure</doc>
+          <type name="guint" c:type="unsigned int*"/>
         </parameter>
         <parameter name="format" transfer-ownership="none">
           <doc xml:space="preserve">the #hb_buffer_serialize_format_t of the input @buf</doc>
