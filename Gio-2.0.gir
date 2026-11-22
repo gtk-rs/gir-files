@@ -10473,7 +10473,13 @@ On Solaris (including OpenSolaris and its derivatives), the native credential ty
 is a `ucred_t`. This corresponds to `G_CREDENTIALS_TYPE_SOLARIS_UCRED`.
 
 Since GLib 2.72, on Windows, the native credentials may contain the PID of a
-process. This corresponds to `G_CREDENTIALS_TYPE_WIN32_PID`.</doc>
+process. This corresponds to `G_CREDENTIALS_TYPE_WIN32_PID`.
+
+Since GLib 2.92, on Windows, [method@Gio.Credentials.is_same_user] looks up
+the user who owns each of the processes in the credentials, and compares the
+two.  The lookup is made when the method is called.  A process that is gone,
+or that cannot be inspected (as it is more privileged than the caller), is
+not the same user as anyone.</doc>
       <constructor name="new" c:identifier="g_credentials_new" version="2.26">
         <doc xml:space="preserve">Creates a new #GCredentials object with credentials matching the
 the current process.</doc>
@@ -10551,7 +10557,11 @@ particularly in language bindings.</doc>
         <doc xml:space="preserve">Checks if @credentials and @other_credentials is the same user.
 
 This operation can fail if #GCredentials is not supported on the
-the OS.</doc>
+the OS.
+
+On Windows, since 2.92, the owners of the two processes are compared.  If
+one of the processes cannot be inspected, the result is %FALSE and @error
+is not set.</doc>
         <return-value transfer-ownership="none">
           <doc xml:space="preserve">%TRUE if @credentials and @other_credentials has the same
 user, %FALSE otherwise or if @error is set.</doc>
@@ -13165,6 +13175,11 @@ Despite its name, the format of #GDBusConnection:guid does not follow
 [RFC 4122](https://datatracker.ietf.org/doc/html/rfc4122) or the Microsoft
 GUID format.</doc>
         <type name="utf8" c:type="gchar*"/>
+      </property>
+      <property name="max-message-unix-fds" version="2.92" writable="1" construct-only="1" transfer-ownership="none" default-value="253">
+        <doc xml:space="preserve">The maximum number of Unix file descriptors that may be received in a
+single D-Bus message.</doc>
+        <type name="guint" c:type="guint"/>
       </property>
       <property name="stream" version="2.26" writable="1" construct-only="1" transfer-ownership="none" getter="get_stream">
         <doc xml:space="preserve">The underlying #GIOStream used for I/O.
@@ -18060,7 +18075,7 @@ object path.</doc>
           </instance-parameter>
         </parameters>
       </method>
-      <property name="g-connection" version="2.30" writable="1" construct-only="1" transfer-ownership="none" getter="get-connection">
+      <property name="g-connection" version="2.30" writable="1" construct-only="1" transfer-ownership="none" getter="get_connection">
         <doc xml:space="preserve">The connection of the proxy.</doc>
         <type name="DBusConnection"/>
       </property>
@@ -19651,6 +19666,11 @@ by @server.</doc>
 
 See #GDBusConnection:guid for more details.</doc>
         <type name="utf8" c:type="gchar*"/>
+      </property>
+      <property name="max-message-unix-fds" version="2.92" writable="1" construct-only="1" transfer-ownership="none" default-value="253">
+        <doc xml:space="preserve">The maximum number of Unix file descriptors that may be received in a
+single D-Bus message on connections accepted by the server.</doc>
+        <type name="guint" c:type="guint"/>
       </property>
       <glib:signal name="new-connection" when="last" version="2.26">
         <doc xml:space="preserve">Emitted when a new authenticated connection has been made. Use

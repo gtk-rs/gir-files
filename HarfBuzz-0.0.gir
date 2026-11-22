@@ -5641,6 +5641,30 @@ replicating the parent's properties.</doc>
         </parameter>
       </parameters>
     </function>
+    <function name="font_create_without_funcs_or_fail" c:identifier="hb_font_create_without_funcs_or_fail">
+      <doc xml:space="preserve">Constructs a new font object with the same initial properties as
+hb_font_create(), but without setting up default font functions.
+The face is referenced and made immutable, and the scale and variation
+coordinates are initialized as in hb_font_create().
+
+This is useful for clients that install their own font functions with
+hb_font_set_funcs() or hb_font_set_funcs_using(), to avoid the overhead
+of setting up default font functions only to replace them immediately.
+The `HB_FONT_FUNCS` environment variable is not consulted.</doc>
+      <return-value transfer-ownership="full" nullable="1">
+        <doc xml:space="preserve">The new font object, or `NULL`
+if allocation fails
+
+XSince: REPLACEME</doc>
+        <type name="font_t" c:type="hb_font_t*"/>
+      </return-value>
+      <parameters>
+        <parameter name="face" transfer-ownership="none" nullable="1" allow-none="1">
+          <doc xml:space="preserve">a face</doc>
+          <type name="face_t" c:type="hb_face_t*"/>
+        </parameter>
+      </parameters>
+    </function>
     <function name="font_destroy" c:identifier="hb_font_destroy" version="0.9.2" introspectable="0">
       <doc xml:space="preserve">Decreases the reference count on the given font object. When the
 reference count reaches zero, the font is destroyed,
@@ -10940,6 +10964,51 @@ This function is like hb_ot_layout_get_baseline_with_fallback() but takes
         <parameter name="coord" direction="out" caller-allocates="0" transfer-ownership="full">
           <doc xml:space="preserve">baseline value if found.</doc>
           <type name="position_t" c:type="hb_position_t*"/>
+        </parameter>
+      </parameters>
+    </function>
+    <function name="ot_layout_get_extender_glyphs" c:identifier="hb_ot_layout_get_extender_glyphs">
+      <doc xml:space="preserve">Fetches extender glyphs for a given script and language. Extender glyphs
+are used in certain scripts to extend the length of a word for
+justification purposes, such as variants of tatweel (U+0640) for the
+Arabic script.
+
+Only glyphs listed in the JSTF table are returned; clients can handle the
+default tatweel glyph separately.</doc>
+      <return-value transfer-ownership="none">
+        <doc xml:space="preserve">Total number of extender glyphs for the given script.
+
+XSince: REPLACEME</doc>
+        <type name="guint" c:type="unsigned"/>
+      </return-value>
+      <parameters>
+        <parameter name="face" transfer-ownership="none">
+          <doc xml:space="preserve">The #hb_face_t to work on</doc>
+          <type name="face_t" c:type="hb_face_t*"/>
+        </parameter>
+        <parameter name="script" transfer-ownership="none">
+          <doc xml:space="preserve">the script to get extender glyphs for.</doc>
+          <type name="script_t" c:type="hb_script_t"/>
+        </parameter>
+        <parameter name="language" transfer-ownership="none" nullable="1" allow-none="1">
+          <doc xml:space="preserve">the language, currently unused.</doc>
+          <type name="language_t" c:type="hb_language_t"/>
+        </parameter>
+        <parameter name="start_offset" transfer-ownership="none">
+          <doc xml:space="preserve">offset of the first extender glyph to retrieve</doc>
+          <type name="guint" c:type="unsigned"/>
+        </parameter>
+        <parameter name="glyphs_count" direction="out" caller-allocates="0" transfer-ownership="full" nullable="1">
+          <doc xml:space="preserve">Input = the maximum number of extender glyphs to return;
+               Output = the actual number of extender glyphs returned (may be zero).</doc>
+          <type name="guint" c:type="unsigned*"/>
+        </parameter>
+        <parameter name="glyphs" direction="out" caller-allocates="1" transfer-ownership="none" nullable="1">
+          <doc xml:space="preserve">A glyphs buffer.
+         Extender glyphs associated with the script tag.</doc>
+          <array length="4" zero-terminated="0" c:type="hb_codepoint_t*">
+            <type name="codepoint_t" c:type="hb_codepoint_t"/>
+          </array>
         </parameter>
       </parameters>
     </function>
